@@ -14,6 +14,16 @@
 #include "../../openlcb/openlcb_utilities.h"
 
 
+
+void CanUtilities_clear_can_message(can_msg_t* can_msg) {
+    
+    can_msg->identifier = 0;
+    can_msg->payload_count = 0;
+    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) 
+      can_msg->payload[i] = 0x00;
+    
+}
+
 uint16_t CanUtilities_extract_source_alias_from_can_message(can_msg_t* can_msg) {
 
     return (can_msg->identifier & 0x000000FFF);
@@ -169,7 +179,7 @@ uint64_t CanUtilities_extract_can_payload_as_node_id(payload_bytes_can_t* payloa
 
 }
 
-uint16_t CanUtilties_extract_can_mti_from_can_message(can_msg_t* can_msg) {
+uint16_t CanUtilties_extract_can_mti_from_can_identifier(can_msg_t* can_msg) {
 
     if ((can_msg->identifier & MASK_CAN_FRAME_TYPE) == CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
 
@@ -200,7 +210,7 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t* openlcb_
     uint8_t result = can_bytes_start;
 
     // Don't overrun either buffer
-    while ((can_payload_index < LEN_CAN_DATA_ARRAY) && (*openlcb_msg_payload_index < openlcb_msg->payload_count)) {
+    while ((can_payload_index < LEN_CAN_BYTE_ARRAY) && (*openlcb_msg_payload_index < openlcb_msg->payload_count)) {
 
         can_msg->payload[can_payload_index] = (*((payload_bytes_can_t*) (openlcb_msg->payload)))[*openlcb_msg_payload_index];
 
@@ -251,7 +261,7 @@ void CanUtilities_copy_node_id_to_payload(can_msg_t* can_msg, uint64_t node_id, 
 
 void CanUtilities_copy_64_bit_to_can_message(can_msg_t* can_msg, uint64_t data) {
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 7; i >= 0; i--) {
 
         can_msg->payload[i] = data & 0xFF;
         data = data >> 8;

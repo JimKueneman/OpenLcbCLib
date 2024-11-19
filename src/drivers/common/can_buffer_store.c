@@ -21,7 +21,7 @@ void CanBufferStore_initialize() {
         _can_buffer_store[i].allocated = FALSE;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
-        for (int j = 0; j < LEN_CAN_DATA_ARRAY; j++)
+        for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++)
             _can_buffer_store[i].payload[j] = 0;
 
     }

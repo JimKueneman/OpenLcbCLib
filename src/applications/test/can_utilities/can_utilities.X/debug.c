@@ -195,6 +195,23 @@ void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg) {
 
 }
 
+void PrintCanMsg(can_msg_t* can_msg) {
+    
+    printf("Identifier: ");
+    PrintCanIdentifier(can_msg->identifier);
+    printf("[ ");
+    for (int i = 0; i < can_msg->payload_count; i++) {
+        
+        if (i < can_msg->payload_count - 1)
+          printf("%02X.", can_msg->payload[i]);
+        else
+          printf("%02X", can_msg->payload[i]);  
+        
+    }
+    printf(" ]");
+     
+}
+
 void PrintEventID(event_id_t event_id) {
 
     printf("EventID: 0x%04X", (uint16_t) (event_id >> 48));

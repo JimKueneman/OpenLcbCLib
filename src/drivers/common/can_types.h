@@ -22,11 +22,11 @@
 #define TX_CHANNEL_CAN_CONTROL 0
 #define TX_CHANNEL_OPENLCB_MSG 0
 
-#define LEN_CAN_DATA_ARRAY   8
+#define LEN_CAN_BYTE_ARRAY   8
 
 
 // Structure for a basic CAN payload
-typedef uint8_t payload_bytes_can_t[LEN_CAN_DATA_ARRAY];
+typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
 typedef struct {
     uint8_t allocated;

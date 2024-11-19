@@ -259,6 +259,12 @@
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
         <property key="codecoverage.outputfile" value=""/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
         <property key="oscillator.frequency" value="1"/>
@@ -295,7 +301,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart1io.uartioenabled" value="true"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -728,6 +734,12 @@
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
         <property key="codecoverage.outputfile" value=""/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
         <property key="oscillator.frequency" value="1"/>
@@ -764,7 +776,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart1io.uartioenabled" value="true"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
