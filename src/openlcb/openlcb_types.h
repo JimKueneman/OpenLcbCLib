@@ -18,8 +18,8 @@
 // Total number of message buffers available for use
 
 #define LEN_BASIC_BUFFER     2  // USER DEFINED
-#define LEN_DATAGRAM_BUFFER  0  // USER DEFINED
-#define LEN_SNIP_BUFFER      0  // USER DEFINED
+#define LEN_DATAGRAM_BUFFER  2  // USER DEFINED
+#define LEN_SNIP_BUFFER      2  // USER DEFINED
 #define LEN_STREAM_BUFFER    0  // USER DEFINED
 
 // *********************END USER DEFINED VARIABLES *****************************

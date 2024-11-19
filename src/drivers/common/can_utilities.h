@@ -22,7 +22,11 @@ extern void CanUtilities_clear_can_message(can_msg_t* can_msg);
 
 extern void CanUtilities_copy_node_id_to_payload(can_msg_t* can_msg, uint64_t node_id, uint8_t start_offset);
 
-extern uint8_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t start_index);
+extern uint8_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t can_start_index);
+
+//extern uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t can_start_index);
+
+extern uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t can_start_index);
 
 extern void CanUtilities_copy_64_bit_to_can_message(can_msg_t* can_msg, uint64_t data);
 
@@ -43,13 +47,7 @@ extern uint16_t CanUtilities_is_dest_alias_in_can_payload(can_msg_t* can_msg);
 
 extern uint8_t CanUtilities_count_nulls_in_can_payload(can_msg_t* can_msg);
 
-extern uint8_t CanUtilities_count_nulls_in_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg);
-
-
-
-extern uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t start_index);
-
-extern uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t can_bytes_start_index, uint16_t* openlcb_msg_payload_index);
+extern uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg);
 
 extern uint8_t CanUtilities_is_openlcb_message(can_msg_t* msg);
 
