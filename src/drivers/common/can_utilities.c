@@ -146,32 +146,6 @@ uint8_t CanUtilities_is_openlcb_message(can_msg_t* msg) {
     
 }
 
-
-
-
-//uint16_t Copy_Datagram_CAN_Buffer_To_OpenLcb_Buffer(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t start_index, payload_datagram_t* payload) {
-//
-//    uint16_t result = 0;
-//
-//
-//    for (int can_payload_index = start_index; can_payload_index < can_msg->payload_count; can_payload_index++) {
-//
-//        if (openlcb_msg->payload_count < openlcb_msg->payload_size) {
-//
-//            *openlcb_msg->payload[openlcb_msg->payload_count] = can_msg->payload[can_payload_index];
-//
-//            result = result + 1;
-//
-//        }
-//
-//        openlcb_msg->payload_count = openlcb_msg->payload_count + 1;
-//
-//    }
-//
-//    return result;
-//
-//}
-
 uint64_t CanUtilities_extract_can_payload_as_node_id(payload_bytes_can_t* payload) {
 
     return ((uint64_t) (*payload)[0] << 40) |
@@ -208,37 +182,48 @@ uint16_t CanUtilities_is_dest_alias_in_can_payload(can_msg_t* can_msg) {
 
 }
 
-//uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_t can_start_index) {
-//
-//    int can_payload_index = can_bytes_start_index;
-//    uint8_t result = can_bytes_start_index;
-//
-//    // Don't overrun either buffer
-//    
-//    for (int i = can_bytes_start_index; i < can_msg->payload_count; i++) {
-//        
-//        
-//        
-//        
-//        
-//    }
-//    while ((can_payload_index < LEN_CAN_BYTE_ARRAY) && (*openlcb_msg_payload_index < openlcb_msg->payload_count)) {
-//        
-//        
-//
-//        can_msg->payload[can_payload_index] =  *openlcb_msg->payload[*openlcb_msg_payload_index];
-//
-//        can_payload_index = can_payload_index + 1;
-//        *openlcb_msg_payload_index = *openlcb_msg_payload_index + 1;
-//        result = result + 1;
-//
-//    }
-//
-//    can_msg->payload_count = result;
-//
-//    return result;
-//
-//}
+uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint16_t openlcb_start_index, uint8_t can_start_index) {
+
+    can_msg->payload_count = 0;
+    
+    if (openlcb_start_index >= openlcb_msg->payload_count) 
+        return 0;
+    
+    uint16_t count = 0;
+    
+    for (int i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
+          
+        can_msg->payload[i] = *openlcb_msg->payload[openlcb_start_index];
+        
+
+        openlcb_start_index = openlcb_start_index + 1;
+        
+        count = count + 1;
+        
+     
+        // have we hit the end of the OpenLcb payload? 
+        if (openlcb_start_index >= openlcb_msg->payload_count) {
+   
+            break;
+            
+        }
+          
+    }
+    
+    can_msg->payload_count = can_start_index + count;
+    
+    // problem
+    if (can_msg->payload_count > LEN_CAN_BYTE_ARRAY) {
+        
+        can_msg->payload_count = 0;
+        
+        return 0;
+        
+    }
+    
+    return count;
+
+}
 
 void CanUtilties_load_can_message(can_msg_t* can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8) {
 

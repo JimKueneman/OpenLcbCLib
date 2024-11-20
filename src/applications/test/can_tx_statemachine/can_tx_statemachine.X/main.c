@@ -60,6 +60,7 @@
 #include "../../../../drivers/common/can_utilities.h"
 
 #include "../../../../drivers/common/can_rx_statemachine.h"
+#include "../../../../drivers/common/can_tx_statemachine.h"
 
 #include "../../../../drivers/common/../mcu_driver.h"
 
@@ -67,196 +68,94 @@
 
 #include "debug.h"
 
-void LegacySimpleSnipSequence(can_msg_t* can_msg) {
+void _test_datagram() {
 
-    // SIMPLE LEGACY SNIP
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0x04, 0x79, 0x01, 0xAA, 0x00, 0xBB, 0x00, 0xCC);
-    _state_machine_incoming_can(0, can_msg);
+    can_msg_t can_msg;
 
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0x04, 0x79, 0x00, 0xDD, 0x00, 0x01, 0xFF, 0x00);
-    _state_machine_incoming_can(0, can_msg);
+    openlcb_msg_t* openlcb_msg = BufferFifo_push(LEN_MESSAGE_BYTES_DATAGRAM);
 
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 4, 0x04, 0x79, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
+    *openlcb_msg->payload[0] = 0x20;
+    *openlcb_msg->payload[1] = 0x53;
+    *openlcb_msg->payload[2] = 0x00;
+    *openlcb_msg->payload[3] = 0x00;
+    *openlcb_msg->payload[4] = 0x00;
+    *openlcb_msg->payload[5] = 0x00;
 
-    printf("%d\n", BufferFifo_get_allocated_count());
+    uint16_t index = 50;
 
-}
 
-void DatagramSequence(can_msg_t* can_msg) {
+    for (int i = 6; i < index; i++)
+        *openlcb_msg->payload[i] = i;
 
-    //  DATAGRAM
-    //[[1a03a479] 20 43 00 00 00 00 28   ]  S: 02.01.12.FE.27.F3 - 05.02.01.02.02.4B Datagram: (7) 20.43.0.0.0.0.28 
-    CanUtilties_load_can_message(can_msg, 0x1a03a479, 7, 0x20, 0x43, 0x00, 0x00, 0x00, 0x00, 0x28, 0x00);
-    _state_machine_incoming_can(0, can_msg);
+    openlcb_msg->payload_count = index;
+    openlcb_msg->dest_alias = 0x0AA;
+    openlcb_msg->source_alias = 0x555;
+    openlcb_msg->mti = MTI_DATAGRAM;
 
-    printf("%d\n", BufferFifo_get_allocated_count());
 
-    //[[19a2803a] 04 79                  ]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 DatagramReceivedOK with no payload
-    CanUtilties_load_can_message(can_msg, 0x19a2803a, 2, 0x04, 0x79, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
+    index = 0;
+    while (index < openlcb_msg->payload_count)
+        index = index + CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg, &can_msg, index);
 
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[1b47903a] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
-    CanUtilties_load_can_message(can_msg, 0x1b47903a, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[1c47903a] 78 6D 6C 20 76 65 72 73]  R: (Middle of Datagram)
-    CanUtilties_load_can_message(can_msg, 0x1c47903a, 8, 0x78, 0x6D, 0x6C, 0x20, 0x76, 0x65, 0x72, 0x73);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[1c47903a] 69 6F 6E 3D 27 31 2E 30]  R: (Middle of Datagram)
-    CanUtilties_load_can_message(can_msg, 0x1c47903a, 8, 0x69, 0x6F, 0x6E, 0x3D, 0x27, 0x31, 0x2E, 0x30);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[1c47903a] 27 20 65 6E 63 6F 64 69]  R: (Middle of Datagram)
-    CanUtilties_load_can_message(can_msg, 0x1c47903a, 8, 0x27, 0x20, 0x65, 0x6E, 0x63, 0x6F, 0x64, 0x69);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[1c47903a] 6E 67 3D 27 55 54 46 2D]  R: (Middle of Datagram)
-    CanUtilties_load_can_message(can_msg, 0x1c47903a, 8, 0x6E, 0x67, 0x3D, 0x27, 0x55, 0x54, 0x46, 0x2D);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[1d47903a] 38 27 3F 3E 3C 3F      ]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Datagram: (46) 20.53.0.0.0.0.3C.3F.78.6D.6C.20.76.65.72.73.69.6F.6E.3D.27.31.2E.30.27.20.65.6E.63.6F.64.69.6E.67.3D.27.55.54.46.2D.38.27.3F.3E.3C.3F
-    CanUtilties_load_can_message(can_msg, 0x1d47903a, 6, 0x38, 0x27, 0x3F, 0x3E, 0x3C, 0x3F, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
-
-    //[[19a28479] 00 3A                  ]  S: 02.01.12.FE.27.F3 - 05.02.01.02.02.4B DatagramReceivedOK with no payload
-    CanUtilties_load_can_message(can_msg, 0x19a28479, 2, 0x00, 0x3A, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    printf("%d\n", BufferFifo_get_allocated_count());
+    BufferStore_freeBuffer(BufferFifo_pop());
 
 
 }
 
-void MultiFrameSnipSequence(can_msg_t* can_msg) {
+void _test_snip() {
+    
+    can_msg_t can_msg;
 
-    ////  MULTI-FRAME SNIP
+    openlcb_msg_t* openlcb_msg = BufferFifo_push(LEN_MESSAGE_BYTES_SNIP);
 
-    //[[19de8479] 04 90                  ]  S: 02.01.12.FE.27.F3 - AA.02.03.04.05.07 SimpleNodeIdentInfoRequest with no payload
-    CanUtilties_load_can_message(can_msg, 0x19de8479, 2, 0x04, 0x90, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
+    *(openlcb_msg->payload)[0] = 0x01;
+    *(openlcb_msg->payload)[1] = 'N';   // 0x4E
+    *(openlcb_msg->payload)[2] = 'a';
+    *(openlcb_msg->payload)[3] = 'm';
+    *(openlcb_msg->payload)[4] = 'e';
+    *(openlcb_msg->payload)[5] = 0x00;
+    *(openlcb_msg->payload)[6] = 'M';   // 0x4D
+    *(openlcb_msg->payload)[7] = 'o';
+    *(openlcb_msg->payload)[8] = 'd';
+    *(openlcb_msg->payload)[9] = 'e';
+    *(openlcb_msg->payload)[10] = 'l';   // 0x6C
+    *(openlcb_msg->payload)[11] = 0x00;
+    *(openlcb_msg->payload)[12] = '1';   // 0x31
+    *(openlcb_msg->payload)[13] = '.';   // 0x2E
+    *(openlcb_msg->payload)[14] = '2';   // 0x32
+    *(openlcb_msg->payload)[15] = 0x00;
+    *(openlcb_msg->payload)[16] = '0';   // 0x30
+    *(openlcb_msg->payload)[17] = '.';   // 0x2E
+    *(openlcb_msg->payload)[18] = '9';   // 0x39
+    *(openlcb_msg->payload)[19] = 0x00;
+    *(openlcb_msg->payload)[20] = 0x02;
+    *(openlcb_msg->payload)[21] = 'J';   // 0x4A
+    *(openlcb_msg->payload)[22] = 'i';   // 0x69
+    *(openlcb_msg->payload)[23] = 'm';   // 0x6D
+    *(openlcb_msg->payload)[24] = 0x00;
+    *(openlcb_msg->payload)[25] = 'H';   // 0x48
+    *(openlcb_msg->payload)[26] = 'i';   // 0x69
+    *(openlcb_msg->payload)[27] = 0x00;
+    
+    openlcb_msg->payload_count = 28;
+    openlcb_msg->dest_alias = 0xAAA;
+    openlcb_msg->source_alias = 0x555;
+    openlcb_msg->mti = MTI_SIMPLE_NODE_INFO_REPLY;
+    
+    uint16_t index = 0;
+    
+    while (index < openlcb_msg->payload_count)
+        index = index + CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg, &can_msg, index);
 
-    //[[19a0803a] 04 79 01 52 61 69 6C 73]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content '1,Rails'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0x44, 0x79, 0x01, 0x52, 0x61, 0x69, 0x6C, 0x73);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 74 61 72 73 20 4C]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'tars L'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x74, 0x61, 0x72, 0x73, 0x20, 0x4C);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 69 6D 69 74 65 64]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'imited'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x69, 0x6D, 0x69, 0x74, 0x65, 0x64);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 00 49 6F 20 44 65]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content ',Io De'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x00, 0x49, 0x6F, 0x20, 0x44, 0x65);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 76 65 6C 6F 70 65]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'velope'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x76, 0x65, 0x6C, 0x6F, 0x70, 0x65);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 72 27 73 20 42 6F]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'r's Bo'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x72, 0x27, 0x73, 0x20, 0x42, 0x6F);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 61 72 64 00 31 2E]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'ard,1.'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x61, 0x72, 0x64, 0x00, 0x31, 0x2E);
-    _state_machine_incoming_can(0, can_msg);
-
-
-    //[[19a0803a] 04 79 30 00 31 2E 34 00]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content '0,1.4,'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x30, 0x00, 0x31, 0x2E, 0x34, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 01 4A 69 6D 27 73]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content '1,Jim's'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x01, 0x4A, 0x69, 0x6D, 0x27, 0x73);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 20 49 4F 20 4E 6F]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content ' IO No'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x20, 0x49, 0x4F, 0x20, 0x4E, 0x6F);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 64 65 20 23 31 00]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'de #1,'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x64, 0x65, 0x20, 0x23, 0x31, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 4D 79 20 66 69 72]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'My fir'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x4D, 0x79, 0x20, 0x66, 0x69, 0x72);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 73 74 20 62 61 74]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'st bat'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x73, 0x74, 0x20, 0x63, 0x61, 0x74);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 63 68 20 6F 66 20]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'ch of '
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x63, 0x68, 0x20, 0x6F, 0x66, 0x20);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 49 4F 20 4E 6F 64]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'IO Nod'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x49, 0x4F, 0x20, 0x4E, 0x6F, 0x64);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 65 73 20 66 72 6F]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'es fro'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0xC4, 0x79, 0x65, 0x73, 0x20, 0x66, 0x72, 0x6F);
-    _state_machine_incoming_can(0, can_msg);
-
-    //[[19a0803a] 04 79 6D 20 44 6F 6E 00]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'm Don,'
-    CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0x84, 0x79, 0x6D, 0x20, 0x44, 0x6F, 0x6E, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-
-}
-
-void CanFrameLogin(can_msg_t* can_msg) {
-
-    // CID7
-    CanUtilties_load_can_message(can_msg, 0x17050641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    // CID6
-    CanUtilties_load_can_message(can_msg, 0x16101641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    // CID5
-    CanUtilties_load_can_message(can_msg, 0x16101641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    // CID4
-    CanUtilties_load_can_message(can_msg, 0x16101641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    //RID
-    CanUtilties_load_can_message(can_msg, 0x10700641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _state_machine_incoming_can(0, can_msg);
-
-    //AMD
-    CanUtilties_load_can_message(can_msg, 0x1070103b, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    CanUtilities_copy_node_id_to_payload(can_msg, 0x050101010700, 0);
-    _state_machine_incoming_can(0, can_msg);
-
+    BufferStore_freeBuffer(BufferFifo_pop());
 
 
 }
 
 int main(void) {
 
-    CanRxStatemachine_initialize();
+    CanTxStatemachine_initialize();
+
     CanBufferStore_initialize();
     CanBufferFifo_initialiaze();
     BufferStore_initialize();
@@ -264,7 +163,7 @@ int main(void) {
     BufferFifo_initialiaze();
 
     //   McuDriver_initialization();
-
+    CanRxStatemachine_initialize();
 
     // Setup the UART to send to the console in the simulator 
     //  https://developerhelp.microchip.com/xwiki/bin/view/software-tools/xc8/simulator-console/
@@ -274,48 +173,8 @@ int main(void) {
 
     printf("\n\nTest Start **********************************\n");
 
-    can_msg_t can_msg;
-
-    LegacySimpleSnipSequence(&can_msg);
-
-    LegacySimpleSnipSequence(&can_msg);
-
-    MultiFrameSnipSequence(&can_msg);
-
-    CanFrameLogin(&can_msg);
-
-
-    printf("%d\\nn", BufferFifo_get_allocated_count());
-
-
-    printf("\n\n BUffer Store Messages allocated: %d\n\n", BufferStore_messages_allocated());
-
-    printf("OpenLcb Message Pop: \n");
-    openlcb_msg_t* openlcb_msg = BufferFifo_pop();
-    while (openlcb_msg) {
-        printf("%d\n\n", BufferFifo_get_allocated_count());
-        PrintOpenLcbMsg(openlcb_msg);
-        printf("\n\n");
-        BufferStore_freeBuffer(openlcb_msg);
-        openlcb_msg = BufferFifo_pop();
-    }
-
-    printf("\n\n BUffer Store Messages allocated: %d\n\n", BufferStore_messages_allocated());
-
-
-    printf("\n\n Buffer Store CAN Messages allocated: %d\n\n", CanBufferStore_messages_allocated());
-
-    printf("CAN Message Pop: \n");
-    can_msg_t* can_msg_ptr = CanBufferFifo_pop();
-    while (can_msg_ptr) {
-        printf("%d\n\n", CanBufferFifo_get_allocated_count());
-        PrintCanMsg(can_msg_ptr);
-        printf("\n\n");
-        CanBufferStore_freeBuffer(can_msg_ptr);
-        can_msg_ptr = CanBufferFifo_pop();
-    }
-
-    printf("\n Buffer Store CAN Messages allocated: %d\n\n", CanBufferStore_messages_allocated());
+    _test_datagram();
+    _test_snip();
 
     while (1) {
 

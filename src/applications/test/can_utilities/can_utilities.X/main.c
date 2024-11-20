@@ -81,11 +81,11 @@ int main(void) {
     can_msg_t can_msg;
 
     openlcb_msg_t* openlcb_msg = BufferFifo_push(LEN_MESSAGE_BYTES_DATAGRAM);
-    
+
     uint16_t mti = 0;
 
     uint16_t alias = 0;
-    
+
     payload_bytes_can_t payload;
 
     uint64_t node_id = 0xAABBCCDD11223344;
@@ -121,8 +121,8 @@ int main(void) {
     printf("\n");
     PrintCanMsg(&can_msg);
     printf("\n\n");
-    
-    
+
+
     // extern void CanUtilties_load_can_message(can_msg_t* can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2 , uint8_t byte3 , uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)
     printf("\n");
     printf(" Testing.........: CanUtilties_load_can_message()\n");
@@ -138,8 +138,8 @@ int main(void) {
     printf("\n");
     PrintCanMsg(&can_msg);
     printf("\n\n");
-    
-   // CanUtilities_copy_node_id_to_payload(&can_msg, node_id, start_offset);
+
+    // CanUtilities_copy_node_id_to_payload(&can_msg, node_id, start_offset);
     printf("\n");
     printf(" Testing.........: CanUtilities_copy_node_id_to_payload()\n");
     printf("\n");
@@ -157,7 +157,7 @@ int main(void) {
     printf("\n");
     PrintCanMsg(&can_msg);
     printf("\n\n");
-    
+
     //  CanUtilities_copy_64_bit_to_can_message(&can_msg, data);
     printf("\n");
     printf(" Testing.........: CanUtilities_copy_64_bit_to_can_message()\n");
@@ -169,8 +169,8 @@ int main(void) {
     printf("\n");
     PrintCanMsg(&can_msg);
     printf("\n\n");
-    
-        //  CanUtilities_extract_can_payload_as_node_id(&payload);
+
+    //  CanUtilities_extract_can_payload_as_node_id(&payload);
     printf("\n");
     printf(" Testing.........: CanUtilities_extract_can_payload_as_node_id()\n");
     printf("\n");
@@ -184,8 +184,8 @@ int main(void) {
     printf("Read Back: ");
     PrintNodeID(node_id);
     printf("\n\n");
-    
-        //  CanUtilities_extract_source_alias_from_can_message(&can_msg);
+
+    //  CanUtilities_extract_source_alias_from_can_message(&can_msg);
     printf("\n");
     printf(" Testing.........: CanUtilities_extract_source_alias_from_can_message()\n");
     printf("\n");
@@ -196,8 +196,8 @@ int main(void) {
     printf("\n");
     printf("Read Back: 0x%04X\n", alias);
     printf("\n\n");
-    
-    
+
+
     //  CanUtilties_extract_dest_alias_from_can_message(&can_msg);(&can_msg);
     printf("\n");
     printf(" Testing.........: CanUtilties_extract_dest_alias_from_can_message();()\n");
@@ -218,8 +218,8 @@ int main(void) {
     printf("\n");
     printf("Read Back: 0x%04X\n", alias);
     printf("\n\n");
-    
-          //  CanUtilties_extract_can_mti_from_can_identifier();
+
+    //  CanUtilties_extract_can_mti_from_can_identifier();
     printf("\n");
     printf(" Testing.........: CanUtilties_extract_can_mti_from_can_identifier()\n");
     printf("\n");
@@ -237,7 +237,7 @@ int main(void) {
     mti = CanUtilties_extract_can_mti_from_can_identifier(&can_msg);
     printf("\n");
     printf("Read Back: 0x%04X\n", mti);
-    PrintMtiName(mti);   
+    PrintMtiName(mti);
     printf("\n");
     CanUtilities_clear_can_message(&can_msg);
     printf("Loading with Identifier = 0x1C555BBB (this is a CAN datagram and should return 0)\n");
@@ -246,8 +246,8 @@ int main(void) {
     printf("\n");
     printf("Read Back: 0x%04X\n", mti);
     printf("\n\n");
-    
-    
+
+
     //  CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);(&can_msg);
     printf("\n");
     printf(" Testing.........: CanUtilties_convert_can_mti_to_openlcb_mti();()\n");
@@ -268,8 +268,8 @@ int main(void) {
     printf("Read Back: 0x%04X\n", mti);
     PrintMtiName(mti);
     printf("\n\n");
-    
-        //  CanUtilities_is_dest_alias_in_can_payload);
+
+    //  CanUtilities_is_dest_alias_in_can_payload);
     printf("\n");
     printf(" Testing.........: CanUtilities_is_dest_alias_in_can_payload();()\n");
     printf("\n");
@@ -278,7 +278,7 @@ int main(void) {
     can_msg.identifier = 0x19488BBB;
     mti = CanUtilities_is_dest_alias_in_can_payload(&can_msg);
     printf("\n");
-    if (mti) 
+    if (mti)
         printf("Alias is in the payload for this message\n");
     else
         printf("Alias is not in the payload for this message\n");
@@ -287,12 +287,12 @@ int main(void) {
     can_msg.identifier = 0x1C555BBB;
     mti = CanUtilities_is_dest_alias_in_can_payload(&can_msg);
     printf("\n");
-    if (mti) 
+    if (mti)
         printf("Alias is in the payload for this message\n");
     else
         printf("Alias is not in the payload for this message\n");
     printf("\n\n");
-    
+
     printf(" Testing.........: CanUtilities_count_nulls_in_can_payload()\n");
     printf("\n");
     CanUtilities_clear_can_message(&can_msg);
@@ -302,7 +302,7 @@ int main(void) {
     uint16_t count = CanUtilities_count_nulls_in_can_payload(&can_msg);
     printf("read: %d null bytes", count);
     printf("\n\n");
-    
+
     printf(" Testing.........: CanUtilities_count_nulls_in_payloads()\n");
     printf("\n");
     Utilities_clear_openlcb_message_payload(openlcb_msg);
@@ -316,33 +316,135 @@ int main(void) {
     count = CanUtilities_count_nulls_in_payloads(openlcb_msg, &can_msg);
     printf("read: %d null bytes", count);
     printf("\n\n");
- 
 
 
-//    printf(" Testing.........: CanUtilities_copy_openlcb_payload_to_can_payload()\n");
-//    printf("\n");
-//    Utilities_clear_openlcb_message_payload(openlcb_msg);
-//    CanUtilities_copy_64_bit_to_can_message(&can_msg, 0xFF00440055660011);
-//    printf("copied 0xFF00440055660011 to the can payload\n");
-//    Utilities_clear_openlcb_message_payload(openlcb_msg);
-//    printf("\n");
-//    printf("cleared the openlcb message payload");
-//    printf("\n");
-//    printf("\n");
-//    printf("copying the CAN payload to the OpenLcb Payload both zero offsets");
-//    printf("\n");
-//    uint16_t payload_index = 0;
-//    CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &payload_index, &can_msg, 0);
-//    PrintCanMsg(&can_msg);
-//  
-//    printf("\n\n");
+    printf(" Testing.........: CanUtilities_copy_openlcb_payload_to_can_payload()\n");
+    printf("\n");
+    printf("Copying 0xAABB to the OpenLcb Message payload\n");
+    Utilities_copy_dword_to_openlcb_payload(openlcb_msg, 0xAABBCCDD, 0);
+    openlcb_msg->payload_count = 4;
+    printf("\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+    printf("Clearing CAN Message\n");
+    CanUtilities_clear_can_message(&can_msg);
+    printf("\n");
+    PrintCanMsg(&can_msg);
+    printf("\n\n");
+    printf("Copying OpenLcb payload to the CAN payload at index 0 for both\n");
+    CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 0, 0);
+    printf("\n\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+    PrintCanMsg(&can_msg);
+    printf("\n\n");
+    printf("Clearing CAN Message\n");
+    CanUtilities_clear_can_message(&can_msg);
+    printf("\n");
+    PrintCanMsg(&can_msg);
+    printf("\n\n");
+    printf("Copying OpenLcb payload at index 1 to the CAN payload at index 6\n");
+    CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 1, 6);
+    printf("\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+    PrintCanMsg(&can_msg);
+    printf("\n");
+
+    *openlcb_msg->payload[4] = 0x99;
+    *openlcb_msg->payload[5] = 0x88;
+    *openlcb_msg->payload[6] = 0x77;
+    *openlcb_msg->payload[7] = 0x66;
+    *openlcb_msg->payload[8] = 0x55;
+    *openlcb_msg->payload[9] = 0x44;
     
+    *openlcb_msg->payload[10] = 0x33;
+    *openlcb_msg->payload[11] = 0x22;
+    *openlcb_msg->payload[12] = 0x11;
+    *openlcb_msg->payload[13] = 0x00;
+    *openlcb_msg->payload[14] = 0xAF;
+    *openlcb_msg->payload[15] = 0xBF;
+    *openlcb_msg->payload[16] = 0xCF;
 
-        //  CanUtilities_copy_can_payload_to_openlcb_payload and CanUtilities_append_can_payload_to_openlcb_payload
+    openlcb_msg->payload_count = 9;
+
+    printf("\n\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+
+    uint16_t index = 0;
+    while (index < openlcb_msg->payload_count) {
+
+        CanUtilities_clear_can_message(&can_msg);
+        index = index + CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, index, 0);
+
+        printf("\n");
+        PrintCanMsg(&can_msg);
+        printf("\n");
+
+    }
+   
+
+    openlcb_msg->payload_count = 12;
+
+    printf("\n\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+
+    index = 0;
+    while (index < openlcb_msg->payload_count) {
+
+        CanUtilities_clear_can_message(&can_msg);
+        index = index + CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, index, 0);
+
+        printf("\n");
+        PrintCanMsg(&can_msg);
+        printf("\n");
+
+    }
+    
+    openlcb_msg->payload_count = 16;
+
+    printf("\n\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+
+    index = 0;
+    while (index < openlcb_msg->payload_count) {
+
+        CanUtilities_clear_can_message(&can_msg);
+        index = index + CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, index, 0);
+
+        printf("\n");
+        PrintCanMsg(&can_msg);
+        printf("\n");
+
+    }
+    
+    printf("\n\n");
+    PrintOpenLcbMsg(openlcb_msg);
+    printf("\n");
+
+    index = 0;
+    while (index < openlcb_msg->payload_count) {
+
+        CanUtilities_clear_can_message(&can_msg);
+        index = index + CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, index, 2);
+
+        printf("\n");
+        PrintCanMsg(&can_msg);
+        printf("\n");
+
+    }
+
+    printf("\n\n");
+
+
+    //  CanUtilities_copy_can_payload_to_openlcb_payload and CanUtilities_append_can_payload_to_openlcb_payload
     printf("\n");
     printf(" Testing.........: CanUtilities_copy_can_payload_to_openlcb_payload() and CanUtilities_append_can_payload_to_openlcb_payload()\n");
     printf("\n");
-    
+
     CanUtilities_clear_can_message(&can_msg);
     CanUtilties_load_can_message(&can_msg, 0x19556AAA, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
     printf("Can payload loaded with 0x0102030405060708\n");
@@ -355,21 +457,21 @@ int main(void) {
     printf("\n");
     PrintOpenLcbMsg(openlcb_msg);
     printf("\n");
-    
+
     printf("Copying the CAN payload to the OpenLcb Payload");
     CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
     printf("OpenLcb message: \n");
     printf("\n");
     PrintOpenLcbMsg(openlcb_msg);
     printf("\n");
-    
+
     printf("Appending the same CAN message to the Openlcb Message \n");
     CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
     printf("OpenLcb message: \n");
     printf("\n");
     PrintOpenLcbMsg(openlcb_msg);
     printf("\n");
-    
+
     printf("Appending the last 2 bytes of the CAN message to the Openlcb message \n");
     CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 6);
     printf("OpenLcb message: \n");
@@ -378,8 +480,8 @@ int main(void) {
     printf("\n");
 
     printf("\n\n");
-    
-  
+
+
     while (1) {
 
 

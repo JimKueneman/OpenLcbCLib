@@ -24,6 +24,9 @@
 
 #define LEN_CAN_BYTE_ARRAY   8
 
+#define OFFSET_CAN_WITHOUT_DEST_ADDRESS   0
+#define OFFSET_CAN_WITH_DEST_ADDRESS      2
+
 
 // Structure for a basic CAN payload
 typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];

@@ -15,37 +15,42 @@
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_node_buffer.h"
+#include "../../openlcb/openlcb_utilities.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
 #include "can_types.h"
 #include "../mcu_driver.h"
 
+#include "../../applications/test/can_tx_statemachine/can_tx_statemachine.X/debug.h"
 
-void InitializeCanOutgoingStateMachine() {
+
+#define CAN_TX_TEST
+
+void CanTxStatemachine_initialize() {
 
 
 }
 
-uint32_t Construct_Identfier_For_Datagram_OnlyFrameMsg(openlcb_msg_t* openlcb_msg) {
+uint32_t _construct_identfier_datagram_only_frame(openlcb_msg_t* openlcb_msg) {
 
     return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_ONLY | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
-uint32_t Construct_Identfier_For_Datagram_FirstFrameMsg(openlcb_msg_t* openlcb_msg) {
+uint32_t _construct_identfier_datagram_first_frame(openlcb_msg_t* openlcb_msg) {
 
     return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FIRST | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
-uint32_t Construct_Identfier_For_Datagram_MiddleFrameMsg(openlcb_msg_t* openlcb_msg) {
+uint32_t _construct_identfier_datagram_middle_frame(openlcb_msg_t* openlcb_msg) {
 
     return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_MIDDLE | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
-uint32_t Construct_Identfier_For_Datagram_LastFrameMsg(openlcb_msg_t* openlcb_msg) {
+uint32_t construct_identfier_datagram_last_frame(openlcb_msg_t* openlcb_msg) {
 
     return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FINAL | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
@@ -57,281 +62,227 @@ uint32_t Construct_Identfier_For_UnAddressMsg(openlcb_msg_t* openlcb_msg) {
 
 }
 
-uint32_t Construct_Identfier_For_AddressedMsg(openlcb_msg_t* openlcb_msg) {
+uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_msg) {
 
     return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
 
 }
 
-void Handle_OpenLcb_Msg_Transmit(can_msg_t* can_msg) {
+void _transmit_can_frame(can_msg_t* can_msg) {
 
-    TransmitRawCanFrame(TX_CHANNEL_OPENLCB_MSG, can_msg);
-
-}
-
-void Handle_OpenLcb_Msg_Last_Frame_Transmit(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    TransmitRawCanFrame(TX_CHANNEL_OPENLCB_MSG, can_msg);
-    ClearOpenLcbInprocessBuffer(&outgoing_fifo);
-    FreeOpenLcbMessage(openlcb_msg);
-
-}
-
-void Handle_OpenLcb_Msg_Only_Frame_Transmit(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    TransmitRawCanFrame(TX_CHANNEL_OPENLCB_MSG, can_msg);
-    ClearOpenLcbInprocessBuffer(&outgoing_fifo);
-    FreeOpenLcbMessage(openlcb_msg);
+#ifdef CAN_TX_TEST 
+    
+    printf("\n");
+    PrintCanMsg(can_msg);
+    printf("\n\n");
+    
+#else
+    
+    McuDriver_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
+    
+#endif
 
 }
 
-void Handle_Outgoing_Datagram_Only_Frame(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
+void _datagram_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
 
-    can_msg->identifier = Construct_Identfier_For_Datagram_OnlyFrameMsg(openlcb_msg);
-    Handle_OpenLcb_Msg_Only_Frame_Transmit(can_msg, openlcb_msg);
-
-}
-
-void Handle_Outgoing_Datagram_First_Frame(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    can_msg->identifier = Construct_Identfier_For_Datagram_FirstFrameMsg(openlcb_msg);
-    Handle_OpenLcb_Msg_Transmit(can_msg);
+    can_msg_worker->identifier = _construct_identfier_datagram_only_frame(openlcb_msg);
+    _transmit_can_frame(can_msg_worker);
 
 }
 
-void Handle_Outgoing_Datagram_Middle_Frame(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
+void _datagram_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
 
-    can_msg->identifier = Construct_Identfier_For_Datagram_MiddleFrameMsg(openlcb_msg);
-    Handle_OpenLcb_Msg_Transmit(can_msg);
-
-}
-
-void Handle_Outgoing_Datagram_Last_Frame(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    can_msg->identifier = Construct_Identfier_For_Datagram_LastFrameMsg(openlcb_msg);
-    Handle_OpenLcb_Msg_Last_Frame_Transmit(can_msg, openlcb_msg);
+    can_msg_worker->identifier = _construct_identfier_datagram_first_frame(openlcb_msg);
+    _transmit_can_frame(can_msg_worker);
 
 }
 
-void Handle_Outgoing_Datagram(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg, uint16_t* tx_payload_index) {
+void _datagram_middle_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
 
-    CopyOpenLcbPayloadToCanPayload(openlcb_msg, can_msg, 0, tx_payload_index);
+    can_msg_worker->identifier = _construct_identfier_datagram_middle_frame(openlcb_msg);
+    _transmit_can_frame(can_msg_worker);
+
+}
+
+void _datagram_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
+
+    can_msg_worker->identifier = construct_identfier_datagram_last_frame(openlcb_msg);
+    _transmit_can_frame(can_msg_worker);
+
+}
+
+void _addressed_message_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+
+    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_ONLY);
+    _transmit_can_frame(can_msg);
+
+}
+
+void _addressed_message_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+
+    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FIRST);
+    _transmit_can_frame(can_msg);
+
+}
+
+void _addressed_message_middle(can_msg_t* can_msg) {
+
+    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_MIDDLE);
+    _transmit_can_frame(can_msg);
+
+}
+
+void _addressed_message_last(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+
+    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FINAL);
+    _transmit_can_frame(can_msg);
+
+}
+
+void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+
+    can_msg->payload[0] = (openlcb_msg->dest_alias >> 8) & 0xFF; // Setup the first two CAN data bytes with the destination address
+    can_msg->payload[1] = openlcb_msg->dest_alias & 0xFF;
+
+}
+
+uint16_t _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+
+    uint16_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
 
     if (openlcb_msg->payload_count <= 8)
 
-        Handle_Outgoing_Datagram_Only_Frame(can_msg, openlcb_msg);
+        _datagram_only_frame(openlcb_msg, can_msg_worker);
 
-    else if (*tx_payload_index <= LEN_CAN_DATA_ARRAY)
+    else if (openlcb_start_index <= LEN_CAN_BYTE_ARRAY)
 
-        Handle_Outgoing_Datagram_First_Frame(can_msg, openlcb_msg);
+        _datagram_first_frame(openlcb_msg, can_msg_worker);
 
-    else if (*tx_payload_index < openlcb_msg->payload_count)
+    else if (openlcb_start_index < openlcb_msg->payload_count)
 
-        Handle_Outgoing_Datagram_Middle_Frame(can_msg, openlcb_msg);
+        _datagram_middle_frame(openlcb_msg, can_msg_worker);
 
     else
 
-        Handle_Outgoing_Datagram_Last_Frame(can_msg, openlcb_msg);
+        _datagram_last_frame(openlcb_msg, can_msg_worker);
+
+    return result;
 
 }
 
-void Handle_Outgoing_UnaddresedMsg(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg, uint16_t* tx_payload_index) {
+uint16_t _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
 
-    if (openlcb_msg->payload_count <= LEN_CAN_DATA_ARRAY) { // single frame
+    uint16_t result = 0;
 
-        uint16_t openlcb_msg_payload_index = 0;
+    if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) { // single frame
 
-        CopyOpenLcbPayloadToCanPayload(openlcb_msg, can_msg, 0, &openlcb_msg_payload_index);
-        can_msg->identifier = Construct_Identfier_For_UnAddressMsg(openlcb_msg);
-        Handle_OpenLcb_Msg_Last_Frame_Transmit(can_msg, openlcb_msg);
+        can_msg_worker->identifier = Construct_Identfier_For_UnAddressMsg(openlcb_msg);
+        result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+        _transmit_can_frame(can_msg_worker);
 
     } else { // multi frame
 
         // TODO Is there such a thing as a unaddressed multi frame?
 
     }
-
-}
-
-void Handle_Outgoing_AddressedMsg_Only_Frame(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    SetMultiFrameFlag(&can_msg->payload[0], MULTIFRAME_ONLY);
-    Handle_OpenLcb_Msg_Last_Frame_Transmit(can_msg, openlcb_msg);
-
-}
-
-void Handle_Outgoing_AddressedMsg_First_Frame(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    SetMultiFrameFlag(&can_msg->payload[0], MULTIFRAME_FIRST);
-    Handle_OpenLcb_Msg_Transmit(can_msg);
-
-}
-
-void Handle_Outgoing_AddressedMsg_Middle(can_msg_t* can_msg) {
-
-    SetMultiFrameFlag(&can_msg->payload[0], MULTIFRAME_MIDDLE);
-    Handle_OpenLcb_Msg_Transmit(can_msg);
-
-}
-
-void Handle_Outgoing_AddressedMsg_Last(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    SetMultiFrameFlag(&can_msg->payload[0], MULTIFRAME_FINAL);
-    Handle_OpenLcb_Msg_Last_Frame_Transmit(can_msg, openlcb_msg);
-
-}
-
-void Handle_Outgoing_AddressedMsg_Destination_Address(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
     
-    can_msg->payload[0] = (openlcb_msg->dest_alias >> 8) & 0xFF; // Setup the first two CAN data bytes with the destination address
-    can_msg->payload[1] = openlcb_msg->dest_alias & 0xFF;
-    
+    return result;
+
 }
 
-void Handle_Outgoing_AddressedMsg(can_msg_t* can_msg, openlcb_msg_t* openlcb_msg, uint16_t* tx_payload_index) {
-    
+uint16_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
 
-    Handle_Outgoing_AddressedMsg_Destination_Address(can_msg, openlcb_msg);
-    
-    can_msg->identifier = Construct_Identfier_For_AddressedMsg(openlcb_msg);
-    
-    CopyOpenLcbPayloadToCanPayload(openlcb_msg, can_msg, 2, tx_payload_index);
+    _load_destination_address_in_payload(openlcb_msg, can_msg_worker);
 
-    if (openlcb_msg->payload_count <= 6)  // Account for 2 bytes used for dest alias
 
-        Handle_Outgoing_AddressedMsg_Only_Frame(can_msg, openlcb_msg);
+    can_msg_worker->identifier = _construct_addressed_message_identifier(openlcb_msg);
 
-    if (*tx_payload_index <= 6) // Account for 2 bytes used for dest alias
+    uint16_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
 
-        Handle_Outgoing_AddressedMsg_First_Frame(can_msg, openlcb_msg);
 
-    else if (*tx_payload_index < openlcb_msg->payload_count)
+    if (openlcb_msg->payload_count <= 6) // Account for 2 bytes used for dest alias
 
-        Handle_Outgoing_AddressedMsg_Middle(can_msg);
+        _addressed_message_only_frame(openlcb_msg, can_msg_worker);
+
+
+    if (openlcb_start_index < 6) // Account for 2 bytes used for dest alias
+
+        _addressed_message_first_frame(openlcb_msg, can_msg_worker);
+
+
+    else if ((openlcb_start_index + result) < openlcb_msg->payload_count)
+
+        _addressed_message_middle(can_msg_worker);
+
 
     else
 
-        Handle_Outgoing_AddressedMsg_Last(can_msg, openlcb_msg);
+        _addressed_message_last(openlcb_msg, can_msg_worker);
 
+    return result;
 }
 
-uint8_t Try_Load_Next_ControlFrame_Message(can_msg_t* can_msg) {
+uint16_t CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
 
-    if (IsCanControlFrameTxBufferEmpty(&outgoing_can_control_frame_fifo)) {
+    uint16_t result = 0;
+    
+    if (!McuDriver_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL))
 
-        if (PopCanControlFrameMessage(&outgoing_can_control_frame_fifo, can_msg)) {
+        return result;
 
-            SetCanControlFrameTxBuffer(&outgoing_can_control_frame_fifo, can_msg);
 
-            return TRUE;
+    if (Utilities_is_addressed_openlcb_message(openlcb_msg)) {
 
-        } else
+        switch (openlcb_msg->mti) {
 
-            return FALSE;
-
-    } else
-
-        return TRUE;
-
-}
-
-void Handle_CAN_Frame_Transmit() { // Function assumes that TX_CHANNEL_CAN_CONTROL is clear
-
-    can_msg_t* tx_can_msg = GetCanControlFrameTxBuffer(&outgoing_can_control_frame_fifo);
-
-    if (Try_Load_Next_ControlFrame_Message(tx_can_msg)) {
-
-        TransmitRawCanFrame(TX_CHANNEL_CAN_CONTROL, tx_can_msg);
-
-        ClearCanControlFrameTxBuffer(&outgoing_can_control_frame_fifo);
-        
-    }
-
-}
-
-uint8_t Try_Load_Next_OpenLcb_Message() {
-
-    if (IsOpenLcbInprocessBufferEmpty(&outgoing_fifo)) {
-
-        openlcb_msg_t* tx_msg = PopOpenLcbMessage(&outgoing_fifo);
-
-        if (tx_msg) {
-
-            SetOpenLcbInprocessBuffer(&outgoing_fifo, tx_msg);
-
-            return TRUE;
-
-        } else
-
-            return FALSE;
-
-    } else
-
-        return TRUE;
-
-}
-
-void Handle_OpenLcb_Transmit() { // Function assumes that TX_CHANNEL_OPENLCB_MSG is clear
-
-    can_msg_t can_msg;
-
-    if (Try_Load_Next_OpenLcb_Message()) {
-
-        openlcb_msg_t* tx_msg = GetOpenLcbInprocessMsgPtr(&outgoing_fifo);
-        uint16_t* tx_payload_index = GetOpenLcbInprocessPayloadIndexPtr(&outgoing_fifo);
-
-        if (IsAddressedOpenLcbMessage(tx_msg)) {
-
-            switch (tx_msg->mti) {
-
-                case MTI_DATAGRAM:
-                {
-                    Handle_Outgoing_Datagram(&can_msg, tx_msg, tx_payload_index);
-
-                    return;
-
-                }
-
-                case MTI_STREAM_COMPLETE:
-                case MTI_STREAM_INIT_REPLY:
-                case MTI_STREAM_INIT_REQUEST:
-                case MTI_STREAM_PROCEED:
-                {
-
-                    return;
-
-                }
-
-                default:
-
-                    Handle_Outgoing_AddressedMsg(&can_msg, tx_msg, tx_payload_index);
-
-                    return;
+            case MTI_DATAGRAM:
+            {
+                result = _handle_datagram(openlcb_msg, can_msg_worker, openlcb_start_index);
+                break;
 
             }
 
+            case MTI_STREAM_COMPLETE:
+            case MTI_STREAM_INIT_REPLY:
+            case MTI_STREAM_INIT_REQUEST:
+            case MTI_STREAM_PROCEED:
+            {
+                
+                break;
 
-        } else {
+            }
 
-            Handle_Outgoing_UnaddresedMsg(&can_msg, tx_msg, tx_payload_index);
+            default:
 
-            return;
+                result = _handle_addressed_message(openlcb_msg, can_msg_worker, openlcb_start_index);
+                
+                break;
 
         }
 
+    } else {
+
+        result = _handle_unaddressed_message(openlcb_msg, can_msg_worker, openlcb_start_index);
+
     }
+
+    return result;
 
 }
 
-void StatemachineOutgoingCanFrameBuffer() {
+uint8_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
+    
+    uint8_t result = 0;
 
-    // As of today this is all run in the context of the main loop so no need to disable interrupts
-    // Insertion and Deletion of the buffers is handled in the main loop as of 11/11/2024
+    if (McuDriver_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 
-    if (IsCanTxBufferClear(TX_CHANNEL_CAN_CONTROL))
-        Handle_CAN_Frame_Transmit();
+        McuDriver_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
 
-    if (IsCanTxBufferClear(TX_CHANNEL_OPENLCB_MSG))
-        Handle_OpenLcb_Transmit();
+        return can_msg->payload_count;
+
+    }
+
+    return result;
 
 }
