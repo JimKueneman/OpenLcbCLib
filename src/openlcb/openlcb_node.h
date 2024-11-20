@@ -8,8 +8,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __OPENLCB_NODE_BUFFER__
-#define	__OPENLCB_NODE_BUFFER__
+#ifndef __OPENLCB_NODE__
+#define	__OPENLCB_NODE__
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 

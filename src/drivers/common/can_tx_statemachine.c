@@ -1,6 +1,6 @@
 
 /*
- * File:   can_outgoing_msg_statemachine.c
+ * File:   can_tx_statemachine.c
  * Author: Jim Kueneman
  *
  * Created on November 7, 2024, 2:57 PM
@@ -14,7 +14,7 @@
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_node_buffer.h"
+#include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_utilities.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
@@ -25,7 +25,7 @@
 #include "../../applications/test/can_tx_statemachine/can_tx_statemachine.X/debug.h"
 
 
-#define CAN_TX_TEST
+// #define CAN_TX_TEST
 
 void CanTxStatemachine_initialize() {
 

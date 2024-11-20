@@ -22,7 +22,7 @@
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_node_buffer.h"
+#include "../../openlcb/openlcb_node.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
