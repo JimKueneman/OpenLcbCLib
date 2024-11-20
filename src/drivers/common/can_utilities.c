@@ -42,6 +42,7 @@ uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t* can_msg) {
 
             break;
 
+        case CAN_FRAME_TYPE_DATAGRAM_ONLY:
         case CAN_FRAME_TYPE_DATAGRAM_FIRST:
         case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
         case CAN_FRAME_TYPE_DATAGRAM_FINAL:

@@ -92,7 +92,7 @@ uint8_t CanBufferFifo_is_empty() {
 
 }
 
-uint16_t CanBufferFifo_get_free_count() {
+uint16_t CanBufferFifo_get_allocated_count() {
 
     if (can_msg_buffer_fifo.tail > can_msg_buffer_fifo.head) {
 

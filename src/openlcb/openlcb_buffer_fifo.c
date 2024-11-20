@@ -99,7 +99,7 @@ uint8_t BufferFifo_is_empty(openlcb_msg_fifo_t* fifo) {
 
 }
 
-uint16_t BufferFifo_get_free_count() {
+uint16_t BufferFifo_get_allocated_count() {
 
     if (openlcb_msg_buffer_fifo.tail > openlcb_msg_buffer_fifo.head) {
 

@@ -14,6 +14,7 @@
 #include <xc.h> // include processor files - each processor file is guarded.  
 #include "../../../../openlcb/openlcb_defines.h"
 #include "../../../../openlcb/openlcb_types.h"
+#include "../../../../drivers/common/can_types.h"
 
 extern void PrintCAN1Registers(void);
 
@@ -47,6 +48,8 @@ extern void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg);
 extern void PrintInt64(uint64_t n);
 
 extern void PrintDWord(uint32_t dword);
+
+extern void PrintCanMsg(can_msg_t* can_msg);
     
 
 extern uint8_t print_msg;

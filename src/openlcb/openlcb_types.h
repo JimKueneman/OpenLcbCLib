@@ -17,10 +17,13 @@
 
 // Total number of message buffers available for use
 
-#define LEN_BASIC_BUFFER     2  // USER DEFINED
-#define LEN_DATAGRAM_BUFFER  2  // USER DEFINED
-#define LEN_SNIP_BUFFER      2  // USER DEFINED
+#define LEN_BASIC_BUFFER     10  // USER DEFINED
+#define LEN_DATAGRAM_BUFFER  10  // USER DEFINED
+#define LEN_SNIP_BUFFER      10  // USER DEFINED
 #define LEN_STREAM_BUFFER    0  // USER DEFINED
+
+#define USER_DEFINED_PRODUCER_COUNT     8   // The maximum number of events supported is 32
+#define USER_DEFINED_CONSUMER_COUNT     8   // The maximum number of events supported is 32
 
 // *********************END USER DEFINED VARIABLES *****************************
 
@@ -84,6 +87,50 @@ typedef struct {
 } message_buffer_t;
 
 
+
+// Event ID Structures
+
+typedef struct {
+    uint16_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
+    uint16_t flag : 1; // message so the next message starts in a known state
+
+} event_id_enum_t;
+
+typedef struct {
+    event_id_t list[USER_DEFINED_CONSUMER_COUNT];
+    event_id_enum_t enumerator;
+    uint64_t event_state; // 2 bits for each event limiting it to 32 events
+
+} event_id_consumer_list_t;
+
+typedef struct {
+    event_id_t list[USER_DEFINED_PRODUCER_COUNT];
+    event_id_enum_t enumerator;
+    uint64_t event_state; // 2 bits for each event limiting it to 32 events
+
+} event_id_producer_list_t;
+
+typedef struct {
+    uint16_t run : 6; // Run state... limits the number to how many bits here.... 64 possible states.
+    uint16_t allocated : 1; // Allocated to be used
+    uint16_t permitted : 1; // Has the CAN alias been allocated and the network notified
+    uint16_t initalized : 1; // Has the node been logged into the the network
+    uint16_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
+} nodestateBITS;
+
+typedef struct {
+    nodestateBITS state;
+    uint64_t id;
+    uint16_t alias;
+    uint64_t seed; // Seed for generating the alias 
+    event_id_consumer_list_t consumers;
+    event_id_producer_list_t producers;
+    uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
+    openlcb_msg_t* working_msg; // When a handler is called the statemachine loads this with the message being dispatched.  
+    // The handler MUST clear this so the loop knows the message is fully handled and can move on to the next incoming message.
+
+    uint16_t working_msg_index;
+} openlcb_node_t;
 
 
 #ifdef	__cplusplus

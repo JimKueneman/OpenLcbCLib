@@ -24,7 +24,7 @@ extern openlcb_msg_t* BufferFifo_pop();
 
 extern uint8_t BufferFifo_is_empty();
 
-extern uint16_t BufferFifo_get_free_count();
+extern uint16_t BufferFifo_get_allocated_count();
 
 
 #ifdef	__cplusplus

@@ -22,7 +22,7 @@ extern can_msg_t* CanBufferFifo_pop();
 
 extern uint8_t CanBufferFifo_is_empty();
 
-extern uint16_t CanBufferFifo_get_free_count();
+extern uint16_t CanBufferFifo_get_allocated_count();
 
 
 #ifdef	__cplusplus

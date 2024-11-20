@@ -180,6 +180,7 @@ void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg) {
         PrintAliasAndNodeID(openlcb_msg->source_alias, openlcb_msg->source_id);
         printf("Dest : ");
         PrintAliasAndNodeID(openlcb_msg->dest_alias, openlcb_msg->dest_id);
+        printf("mti : %04X\n", openlcb_msg->mti);
         PrintMtiName(openlcb_msg->mti);
         printf("Payload Count: %d = ", openlcb_msg->payload_count);
         printf("0x");
@@ -193,6 +194,23 @@ void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg) {
 
     }
 
+}
+
+void PrintCanMsg(can_msg_t* can_msg) {
+    
+    printf("Identifier: ");
+    PrintCanIdentifier(can_msg->identifier);
+    printf("[ ");
+    for (int i = 0; i < can_msg->payload_count; i++) {
+        
+        if (i < can_msg->payload_count - 1)
+          printf("%02X.", can_msg->payload[i]);
+        else
+          printf("%02X", can_msg->payload[i]);  
+        
+    }
+    printf(" ]");
+     
 }
 
 void PrintEventID(event_id_t event_id) {

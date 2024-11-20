@@ -15,7 +15,7 @@
 
 // ************************ USER DEFINED VARIABLES *****************************
 
-#define LEN_CAN_CONTROL_FRAME_FIFO_BUFFER 1   // USER DEFINED 
+#define LEN_CAN_CONTROL_FRAME_FIFO_BUFFER 20   // USER DEFINED 
 
 // *********************END USER DEFINED VARIABLES *****************************
 

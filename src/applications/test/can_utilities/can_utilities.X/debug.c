@@ -180,6 +180,7 @@ void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg) {
         PrintAliasAndNodeID(openlcb_msg->source_alias, openlcb_msg->source_id);
         printf("Dest : ");
         PrintAliasAndNodeID(openlcb_msg->dest_alias, openlcb_msg->dest_id);
+        printf("mti : %04X\n", openlcb_msg->mti);
         PrintMtiName(openlcb_msg->mti);
         printf("Payload Count: %d = ", openlcb_msg->payload_count);
         printf("0x");

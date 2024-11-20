@@ -11,7 +11,37 @@
 #ifndef __OPENLCB_DEFINES__
 #define	__OPENLCB_DEFINES__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+#include <xc.h> // include processor files - each processor file is guarded.
+
+// General boot initialization
+#define RUNSTATE_INIT                             0
+// Generate the 48 bit seed to create the Alias from
+#define RUNSTATE_GENERATE_SEED                    1
+// Generate the Alias
+#define RUNSTATE_GENERATE_ALIAS                   2
+// Send the 4 (CID) messages with the NodeID and suggested Alias
+#define RUNSTATE_SEND_CHECK_ID_07                 3
+#define RUNSTATE_SEND_CHECK_ID_06                 4
+#define RUNSTATE_SEND_CHECK_ID_05                 5   
+#define RUNSTATE_SEND_CHECK_ID_04                 6   
+// Wait for 200ms to see if anyone objects.  They objection could occur in this or the previous state, 
+// if they do then jump back to RUNSTATE_GENERATE_SEED to try again
+#define RUNSTATE_WAIT_200ms                       7
+// Send the Alias Reserved message (AMR)
+#define RUNSTATE_TRANSMIT_RESERVE_ID              8
+// At this point the alias is reserved
+// To "log in" send the (AMD) message, this sets the node to "Permitted" but still not OpenLCB "Initialized"
+#define RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION    9
+// At this point the CAN specific login is complete, the Alias is reserved and the node is ready to be an OpenLCB Node
+#define RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE 10
+// Node is Initialized and can send any message, need to send the events we handle
+#define RUNSTATE_TRANSMIT_CONSUMER_EVENTS         11
+// Node is Initialized and can send any message, need to send the events we handle
+#define RUNSTATE_TRANSMIT_PRODUCER_EVENTS         12
+// Runs the message loop
+#define RUNSTATE_RUN                              13
+// Error state, detected someone is using our NodeID
+#define RUNSTATE_DUPLICATE_NODEID                 14
 
 
 #define RESERVED_TOP_BIT                 0x10000000

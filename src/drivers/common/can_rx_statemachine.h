@@ -16,7 +16,8 @@
 
 extern void CanRxStatemachine_initialize();
 
-void _StatemachineIncomingCan(uint8_t channel, can_msg_t* msg); 
+// TODO: THIS IS TEMPORARY TO ALLOW SIMULATOR TESTING OF THE RX CHANNEL
+extern void _StatemachineIncomingCan(uint8_t channel, can_msg_t* msg); 
 
 
 #ifdef	__cplusplus
