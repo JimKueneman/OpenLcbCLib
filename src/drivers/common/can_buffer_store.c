@@ -16,7 +16,7 @@ uint16_t _can_buffer_store_message_allocated = 0;
 
 void CanBufferStore_initialize() {
 
-    for (int i = 0; i < LEN_CAN_CONTROL_FRAME_FIFO_BUFFER; i++) {
+    for (int i = 0; i < LEN_CAN_BUFFER; i++) {
 
         _can_buffer_store[i].allocated = FALSE;
         _can_buffer_store[i].identifier = 0;
@@ -36,7 +36,7 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
 can_msg_t* CanBufferStore_allocateBuffer() {
 
-    for (int i = 0; i < LEN_CAN_CONTROL_FRAME_FIFO_BUFFER; i++) {
+    for (int i = 0; i < LEN_CAN_BUFFER; i++) {
 
         if (!_can_buffer_store[i].allocated) {
 

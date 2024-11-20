@@ -30,6 +30,8 @@ extern uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t*
 
 extern void CanUtilities_copy_64_bit_to_can_message(can_msg_t* can_msg, uint64_t data);
 
+extern void CanUtilities_copy_can_message(can_msg_t* can_msg_source, can_msg_t* can_msg_target);
+
 
 extern uint64_t CanUtilities_extract_can_payload_as_node_id(payload_bytes_can_t* payload);
 

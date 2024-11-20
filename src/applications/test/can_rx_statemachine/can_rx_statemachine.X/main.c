@@ -68,8 +68,8 @@
 #include "debug.h"
 
 void LegacySimpleSnipSequence(can_msg_t* can_msg) {
-    
-        // SIMPLE LEGACY SNIP
+
+    // SIMPLE LEGACY SNIP
     CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0x04, 0x79, 0x01, 0xAA, 0x00, 0xBB, 0x00, 0xCC);
     _state_machine_incoming_can(0, can_msg);
 
@@ -80,12 +80,12 @@ void LegacySimpleSnipSequence(can_msg_t* can_msg) {
     _state_machine_incoming_can(0, can_msg);
 
     printf("%d\n", BufferFifo_get_allocated_count());
-      
+
 }
 
 void DatagramSequence(can_msg_t* can_msg) {
-    
-        //  DATAGRAM
+
+    //  DATAGRAM
     //[[1a03a479] 20 43 00 00 00 00 28   ]  S: 02.01.12.FE.27.F3 - 05.02.01.02.02.4B Datagram: (7) 20.43.0.0.0.0.28 
     CanUtilties_load_can_message(can_msg, 0x1a03a479, 7, 0x20, 0x43, 0x00, 0x00, 0x00, 0x00, 0x28, 0x00);
     _state_machine_incoming_can(0, can_msg);
@@ -139,13 +139,13 @@ void DatagramSequence(can_msg_t* can_msg) {
     _state_machine_incoming_can(0, can_msg);
 
     printf("%d\n", BufferFifo_get_allocated_count());
-    
-    
+
+
 }
 
 void MultiFrameSnipSequence(can_msg_t* can_msg) {
-    
-       ////  MULTI-FRAME SNIP
+
+    ////  MULTI-FRAME SNIP
 
     //[[19de8479] 04 90                  ]  S: 02.01.12.FE.27.F3 - AA.02.03.04.05.07 SimpleNodeIdentInfoRequest with no payload
     CanUtilties_load_can_message(can_msg, 0x19de8479, 2, 0x04, 0x90, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
@@ -219,39 +219,39 @@ void MultiFrameSnipSequence(can_msg_t* can_msg) {
     //[[19a0803a] 04 79 6D 20 44 6F 6E 00]  R: 05.02.01.02.02.4B - 02.01.12.FE.27.F3 Simple Node Ident Info with content 'm Don,'
     CanUtilties_load_can_message(can_msg, 0x19a0803a, 8, 0x84, 0x79, 0x6D, 0x20, 0x44, 0x6F, 0x6E, 0x00);
     _state_machine_incoming_can(0, can_msg);
-    
-    
+
+
 }
 
 void CanFrameLogin(can_msg_t* can_msg) {
-    
+
     // CID7
     CanUtilties_load_can_message(can_msg, 0x17050641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _state_machine_incoming_can(0, can_msg);
-    
+
     // CID6
     CanUtilties_load_can_message(can_msg, 0x16101641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _state_machine_incoming_can(0, can_msg);
-    
+
     // CID5
     CanUtilties_load_can_message(can_msg, 0x16101641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _state_machine_incoming_can(0, can_msg);
-    
+
     // CID4
     CanUtilties_load_can_message(can_msg, 0x16101641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _state_machine_incoming_can(0, can_msg);
-    
+
     //RID
     CanUtilties_load_can_message(can_msg, 0x10700641, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _state_machine_incoming_can(0, can_msg);
-    
+
     //AMD
     CanUtilties_load_can_message(can_msg, 0x1070103b, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     CanUtilities_copy_node_id_to_payload(can_msg, 0x050101010700, 0);
     _state_machine_incoming_can(0, can_msg);
 
-    
-    
+
+
 }
 
 int main(void) {
@@ -275,18 +275,21 @@ int main(void) {
     printf("\n\nTest Start **********************************\n");
 
     can_msg_t can_msg;
-    
+
     LegacySimpleSnipSequence(&can_msg);
-    
+
     LegacySimpleSnipSequence(&can_msg);
 
     MultiFrameSnipSequence(&can_msg);
-    
+
     CanFrameLogin(&can_msg);
-            
-            
+
+
     printf("%d\\nn", BufferFifo_get_allocated_count());
- 
+
+
+    printf("\n\n BUffer Store Messages allocated: %d\n\n", BufferStore_messages_allocated());
+
     printf("OpenLcb Message Pop: \n");
     openlcb_msg_t* openlcb_msg = BufferFifo_pop();
     while (openlcb_msg) {
@@ -296,9 +299,12 @@ int main(void) {
         BufferStore_freeBuffer(openlcb_msg);
         openlcb_msg = BufferFifo_pop();
     }
-    
-    printf("\n\n Messages allocated: %d\n\n", BufferStore_messages_allocated());
-    
+
+    printf("\n\n BUffer Store Messages allocated: %d\n\n", BufferStore_messages_allocated());
+
+
+    printf("\n\n Buffer Store CAN Messages allocated: %d\n\n", CanBufferStore_messages_allocated());
+
     printf("CAN Message Pop: \n");
     can_msg_t* can_msg_ptr = CanBufferFifo_pop();
     while (can_msg_ptr) {
@@ -309,6 +315,7 @@ int main(void) {
         can_msg_ptr = CanBufferFifo_pop();
     }
 
+    printf("\n Buffer Store CAN Messages allocated: %d\n\n", CanBufferStore_messages_allocated());
 
     while (1) {
 

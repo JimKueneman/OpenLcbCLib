@@ -285,6 +285,15 @@ void CanUtilities_copy_64_bit_to_can_message(can_msg_t* can_msg, uint64_t data) 
     can_msg->payload_count = 8;
 
 }
+
+void CanUtilities_copy_can_message(can_msg_t* can_msg_source, can_msg_t* can_msg_target) {
+    
+    can_msg_target->identifier = can_msg_source->identifier;
+    
+    for (int i = 0; i < can_msg_source->payload_count; i++) 
+        can_msg_target->payload[i] = can_msg_source->payload[i];
+          
+}
 //
 //uint8_t IsCanMessageAddressedToNode(openlcb_nodes_t* openlcb_nodes, can_msg_t* msg) {
 //

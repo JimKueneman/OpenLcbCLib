@@ -33,6 +33,7 @@
         <itemPath>../../../../openlcb/openlcb_buffer_fifo.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_store.h</itemPath>
+        <itemPath>../../../../openlcb/openlcb_node_buffer.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -81,6 +82,7 @@
         <itemPath>../../../../openlcb/openlcb_buffer_store.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_utilities.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_list.c</itemPath>
+        <itemPath>../../../../openlcb/openlcb_node_buffer.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
