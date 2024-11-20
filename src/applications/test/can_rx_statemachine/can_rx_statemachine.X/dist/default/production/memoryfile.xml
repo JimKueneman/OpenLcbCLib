@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/debug/can_rx_statemachine.X.debug.elf">
+  <executable name="dist/default/production/can_rx_statemachine.X.production.elf">
     <memory name="data">
       <units>bytes</units>
       <length>8192</length>

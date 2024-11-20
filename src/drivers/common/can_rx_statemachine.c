@@ -449,7 +449,7 @@ void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
 
 }
 
-void _StatemachineIncomingCan(uint8_t channel, can_msg_t* can_msg) {
+void _state_machine_incoming_can(uint8_t channel, can_msg_t* can_msg) {
 
     if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
 
@@ -510,7 +510,7 @@ void CanRxStatemachine_initialize() {
 
     // The mcu_driver.h file exports a function pointer that is used to hook into the incoming CAN message stream
     // This allows the mcu_driver to call into this unit with incoming CAN frames.
-    Incoming_CAN_Message_Callback_Func = &_StatemachineIncomingCan;
+    Incoming_CAN_Message_Callback_Func = &_state_machine_incoming_can;
 
 }
 
