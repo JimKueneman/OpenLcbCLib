@@ -1,6 +1,6 @@
 
 /* 
- * File: can_incoming_statemachine.h
+ * File: can_outgoing_statemachine.h
  * Author: Jim Kueneman
  * Comments:
  * Revision history: 
@@ -8,18 +8,15 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_RX_STATEMACHINE__
-#define	__CAN_RX_STATEMACHINE__
+#ifndef __CAN_TX_STATEMACHINE__
+#define	__CAN_TX_STATEMACHINE__
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
 
-extern void CanRxStatemachine_initialize();
+extern void InitializeCanOutgoingStateMachine();
 
-
-// TODO: THIS IS TEMPORARY TO ALLOW SIMULATOR TESTING OF THE RX CHANNEL
-extern void _state_machine_incoming_can(uint8_t channel, can_msg_t* msg); 
-
+extern void StatemachineOutgoingCanFrameBuffer(); 
 
 #ifdef	__cplusplus
 extern "C" {
@@ -32,5 +29,6 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_RX_STATEMACHINE__ */
+
+#endif	/* __CAN_TX_STATEMACHINE__ */
 
