@@ -57,7 +57,6 @@
         <itemPath>traps.c</itemPath>
         <itemPath>debug.c</itemPath>
         <itemPath>main.c</itemPath>
-        <itemPath>openlcb_node_definition.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="common" displayName="common" projectFiles="true">

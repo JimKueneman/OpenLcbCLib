@@ -7,7 +7,7 @@ Command:
   -p33EP64GP502 \
   --mdfp=/Users/jimkueneman/.mchp_packs/Microchip/dsPIC33E-GM-GP-MC-GU-MU_DFP/1.6.297/xc16 \
   -o \
-  dist/default/production/can_rx_statemachine.X.production.elf \
+  dist/default/production/can_utilities.X.production.elf \
   -L/Applications/microchip/xc16/v2.10/bin/bin/.. \
   -L/Users/jimkueneman/.mchp_packs/Microchip/dsPIC33E-GM-GP-MC-GU-MU_DFP/1.6.297/xc16/bin/../support/PIC24E/gld \
   -L/Users/jimkueneman/.mchp_packs/Microchip/dsPIC33E-GM-GP-MC-GU-MU_DFP/1.6.297/xc16/bin/../support/dsPIC33E/gld \
@@ -22,10 +22,8 @@ Command:
   build/default/production/traps.o \
   build/default/production/debug.o \
   build/default/production/main.o \
-  build/default/production/openlcb_node_definition.o \
   build/default/production/_ext/216671855/can_buffer_fifo.o \
   build/default/production/_ext/216671855/can_utilities.o \
-  build/default/production/_ext/216671855/can_rx_statemachine.o \
   build/default/production/_ext/216671855/can_buffer_store.o \
   build/default/production/_ext/585199093/mcu_driver.o \
   build/default/production/_ext/526222337/openlcb_buffer_fifo.o \
@@ -46,7 +44,7 @@ Command:
   --stackguard=16 \
   --no-force-link \
   --smart-io \
-  -Map=dist/default/production/can_rx_statemachine.X.production.map \
+  -Map=dist/default/production/can_utilities.X.production.map \
   --report-mem \
   --memorysummary \
   dist/default/production/memoryfile.xml \
@@ -68,8 +66,6 @@ Archive member included because of file (symbol)
                               (__crt_start_mode_normal)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(delay32ep.Meo)
                               build/default/production/_ext/585199093/mcu_driver.o (___delay32)
-/Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_0.EP_o)
-                              build/default/production/_ext/216671855/can_rx_statemachine.o (__printf_0)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
                               build/default/production/debug.o (__printf_cdnopuxX)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putchar.EP_o)
@@ -77,7 +73,7 @@ Archive member included because of file (symbol)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(puts.EP_o)
                               build/default/production/debug.o (_puts)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
-                              /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_0.EP_o) (__stdout)
+                              /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o) (__stdout)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_d.EP_o)
                               /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o) (___fmt_d_needed)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_o.EP_o)
@@ -89,7 +85,7 @@ Archive member included because of file (symbol)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_x.EP_o)
                               /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o) (___fmt_x_needed)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__int_vfprintf.EP_o)
-                              /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_0.EP_o) (___vfprintf)
+                              /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o) (___vfprintf)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__io_init_needed.EP_o)
                               /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o) (___io_init_needed)
 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
@@ -173,13 +169,13 @@ Default Scalar Model: Small
 
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
-.text                        0x200              0x122c          0x1b42  (6978)
-.const                      0x142c              0x1280          0x1bc0  (7104)
-.text                       0x26ac              0x36cc          0x5232  (21042)
-.dinit                      0x5d78                0x92            0xdb  (219)
-.init.delay32               0x5e0a                0x1c            0x2a  (42)
+.text                        0x200              0x1216          0x1b21  (6945)
+.const                      0x1416              0x161e          0x212d  (8493)
+.text                       0x2a34              0x32e8          0x4c5c  (19548)
+.dinit                      0x5d1c                0x92            0xdb  (219)
+.init.delay32               0x5dae                0x1c            0x2a  (42)
 
-                 Total "program" memory used (bytes):         0x8a39  (35385) 52%
+                 Total "program" memory used (bytes):         0x89af  (35247) 52%
 
 
 "data" Memory  [Origin = 0x1000, Length = 0x2000]
@@ -187,17 +183,16 @@ section                    address   length (PC units)   length (bytes) (dec)
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
 .nbss                       0x1000                   0             0xc  (12)
-.bss                        0x100c                   0           0x182  (386)
-.data                       0x118e                   0            0x42  (66)
-.bss                        0x11d0                   0            0x2c  (44)
-.bss                        0x11fc                   0             0x2  (2)
-.data                       0x11fe                   0             0x2  (2)
-_0x10df8bd20673d50dc        0x1200                   0           0x200  (512)
-.bss                        0x1400                   0          0x1130  (4400)
-.bss                        0x2530                   0            0x3c  (60)
-.data                       0x256c                   0            0x1e  (30)
+.bss                        0x100c                   0           0x140  (320)
+.data                       0x114c                   0            0x42  (66)
+.bss                        0x118e                   0            0x72  (114)
+_0x10f8c3d20673e8f23        0x1200                   0           0x200  (512)
+.bss                        0x1400                   0           0x5c0  (1472)
+.data                       0x19c0                   0            0x1e  (30)
+.bss                        0x19de                   0             0x2  (2)
+.data                       0x19e0                   0             0x2  (2)
 
-                 Total "data" memory used (bytes):         0x158a  (5514) 67%
+                 Total "data" memory used (bytes):          0x9e2  (2530) 30%
 
 
 Dynamic Memory Usage
@@ -205,9 +200,11 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                       0x258a                               0xa76  (2678)
+stack                       0x19e2                              0x161e  (5662)
 
-                 Maximum dynamic memory (bytes):          0xa76  (2678)
+                 Maximum dynamic memory (bytes):         0x161e  (5662)
+
+Info: Project is using a large data memory model when small data memory model is sufficient.
 
 
 External Symbols in Data Memory (by address):
@@ -219,34 +216,34 @@ External Symbols in Data Memory (by address):
                     0x1008                  __can_buffer_store_message_allocated
                     0x100a                  __buffer_store_message_allocated
                     0x100c                  __can_buffer_store
-                    0x114c                  _openlcb_msg_buffer_fifo
-                    0x118e                  __stdout
-                    0x1190                  ___stdout_used
-                    0x11d0                  _can_msg_buffer_fifo
-                    0x11fc                  ___errno_val
-                    0x11fe                  ___C30_UART
+                    0x114c                  __stdout
+                    0x114e                  ___stdout_used
+                    0x118e                  _can_msg_buffer_fifo
+                    0x11ba                  _openlcb_msg_buffer_fifo
+                    0x11e0                  _openlcb_msg_buffer_list
                     0x1200                  _ecan1msgBuf
                     0x1400                  __message_buffer
-                    0x2530                  _openlcb_msg_buffer_list
+                    0x19de                  ___errno_val
+                    0x19e0                  ___C30_UART
 
 External Symbols in Data Memory (by name):
 
                     0x1000                  _Incoming_CAN_Message_Callback_Func
                     0x1004                  _Uart_Rx_Callback_Func
                     0x1002                  __100ms_Timer_Callback_Func
-                    0x11fe                  ___C30_UART
-                    0x11fc                  ___errno_val
-                    0x1190                  ___stdout_used
+                    0x19e0                  ___C30_UART
+                    0x19de                  ___errno_val
+                    0x114e                  ___stdout_used
                     0x100a                  __buffer_store_message_allocated
                     0x100c                  __can_buffer_store
                     0x1008                  __can_buffer_store_message_allocated
                     0x1400                  __message_buffer
-                    0x118e                  __stdout
-                    0x11d0                  _can_msg_buffer_fifo
+                    0x114c                  __stdout
+                    0x118e                  _can_msg_buffer_fifo
                     0x1200                  _ecan1msgBuf
                     0x1006                  _max_can_fifo_depth
-                    0x114c                  _openlcb_msg_buffer_fifo
-                    0x2530                  _openlcb_msg_buffer_list
+                    0x11ba                  _openlcb_msg_buffer_fifo
+                    0x11e0                  _openlcb_msg_buffer_list
 
 External Symbols in Program Memory (by address):
 
@@ -254,383 +251,331 @@ External Symbols in Program Memory (by address):
                   0x00023c                  __psv_init
                   0x000248                  __data_init_extended
                   0x000248                  __data_init
-                  0x00030a                  __OscillatorFail
-                  0x000310                  __AddressError
-                  0x000316                  __StackError
-                  0x00031c                  __MathError
-                  0x000322                  __DMACError
-                  0x000328                  __T2Interrupt
-                  0x00034e                  __U1TXInterrupt
-                  0x000356                  __U1RXInterrupt
-                  0x000386                  __C1Interrupt
-                  0x00045a                  __DMA2Interrupt
-                  0x000462                  __DMA0Interrupt
-                  0x00046a                  __DefaultInterrupt
-                  0x000516                  ___sio_printf_0
-                  0x000528                  ___sio_printf_doux
-                  0x000536                  _putchar
-                  0x00053c                  _puts
-                  0x00055c                  ___init_stdout
-                  0x000564                  ___fmt_d
-                  0x00061c                  ___fmt_o
-                  0x00068e                  ___fmt_s
-                  0x0006e2                  ___cvt_u
-                  0x000788                  ___fmt_u
-                  0x0007de                  ___fmt_x
-                  0x00093c                  ___vfprintf
-                  0x000982                  ___out
-                  0x000992                  ___pop_int
-                  0x000a42                  ___pop_ptr
-                  0x000ad8                  ___pad
-                  0x000b52                  ___fmt_state
-                  0x000e5c                  ___printf_core
-                  0x000e9c                  ___stdio_close
-                  0x000eda                  ___stdio_close_rw
-                  0x000f46                  _atoi
-                  0x000f92                  _fputs
-                  0x000fbe                  _fwrite
-                  0x000fea                  ___lseek
-                  0x000ff6                  _memcpy
-                  0x001004                  _memset
-                  0x0010cc                  ___putc_unbuffered
-                  0x0010fa                  _putc
-                  0x0010fc                  _strlen
-                  0x00112c                  ___syscall_ret
-                  0x001140                  _tolower
-                  0x00114c                  ___tolower_l
-                  0x00114e                  _toupper
-                  0x00115a                  ___toupper_l
-                  0x00115e                  ___init_stdio
-                  0x001164                  ___pop_float
-                  0x0011b0                  ___extendsfdf2
-                  0x0011ee                  __funpack
-                  0x001218                  ___mulp32eds3
-                  0x001218                  ___mulp32peds3
-                  0x001218                  ___mulsi3
-                  0x001274                  ___udivmoddi3
-                  0x00135a                  ___udivdi3
-                  0x001368                  ___umoddi3
-                  0x001370                  ___divdi3
-                  0x0013d0                  ___moddi3
-                  0x001dcc                  _USER_DEFINED_PROTOCOL_SUPPORT
-                  0x001dd0                  _MAX_CDI_ARRAY
-                  0x001dd2                  _CDI_ARRAY
-                  0x00268a                  _FIFO_RX_START_INDEX
-                  0x00268c                  _FIFO_FLAG_MASKS
-                  0x0026ac                  _Ecan1WriteRxAcptFilter
-                  0x002818                  _Ecan1WriteRxAcptMask
-                  0x002922                  _Ecan1TxBufferSetTransmit
-                  0x002970                  _Ecan1TxBufferClearTransmit
-                  0x0029be                  _Is_Ecan1_TxBuffer_Clear
-                  0x002a76                  _McuDriver_is_can_tx_buffer_clear
-                  0x002a82                  _Ecan1WriteTxMsgBufId
-                  0x002ca0                  _Ecan1WriteTxMsgBufData
-                  0x002e34                  _Ecan1WriteTxMsgBufDataWord
-                  0x002f86                  _Ecan1WriteTxMsgBufDataByte
-                  0x003102                  _Ecan1ReadRxMsgBufId
-                  0x003222                  _Ecan1ReadRxMsgBufData
-                  0x00342e                  _McuDriver_transmit_raw_can_frame
-                  0x003468                  _McuDriver_initialization
-                  0x0035e0                  _Ecan1DisableRXFilter
-                  0x003602                  _McuDriver_pause_can_rx
-                  0x00360a                  _McuDriver_resume_can_rx
-                  0x003612                  _McuDriver_pause_can_tx_complete_notify
-                  0x00361a                  _McuDriver_resume_can_tx_complete_notify
-                  0x003622                  _McuDriver_pause_100ms_timer
-                  0x00362a                  _McuDriver_resume_100ms_timer
-                  0x003632                  _PrintInt64
-                  0x00368a                  _PrintAlias
-                  0x00369c                  _PrintNodeID
-                  0x0036de                  _PrintAliasAndNodeID
-                  0x0036fc                  _PrintMtiName
-                  0x003a0e                  _PrintOpenLcbMsg
-                  0x003ac8                  _PrintCanMsg
-                  0x003b3c                  _PrintEventID
-                  0x003b94                  _PrintCanIdentifier
-                  0x003bba                  _PrintDWord
-                  0x003bc8                  _PrintCAN1Registers
-                  0x003dd4                  _PrintDMA0Registers
-                  0x003e42                  _PrintDMA1Registers
-                  0x003eb0                  _PrintDMA2Registers
-                  0x003f1e                  _PrintDMA3Registers
-                  0x003f8c                  _PrintDMACommonRegisters
-                  0x003fe2                  _LegacySimpleSnipSequence
-                  0x004074                  _DatagramSequence
-                  0x004262                  _MultiFrameSnipSequence
-                  0x00455e                  _CanFrameLogin
-                  0x004670                  _main
-                  0x004704                  __handle_first_frame
-                  0x004782                  __handle_middle_frame
-                  0x0047cc                  __handle_last_frame
-                  0x004826                  __handle_single_frame
-                  0x00488a                  __handle_can_legacy_snip
-                  0x0048e0                  __handle_global_addressed_messages
-                  0x004994                  __flush_alias_node_id_mappings
-                  0x0049a0                  __test_can_message_for_alias_conflict
-                  0x0049aa                  __hard_alias_conflict_check
-                  0x004a1a                  __soft_alias_conflict_check
-                  0x004a64                  __reply_to_ame_control_frame
-                  0x004a6e                  __handle_rid_control_frame
-                  0x004a7a                  __handle_amd_control_frame
-                  0x004a86                  __handle_ame_control_frame
-                  0x004aa8                  __handle_amr_control_frame
-                  0x004ab4                  __handle_incoming_can_variable_field
-                  0x004b40                  __handle_incoming_cid
-                  0x004b4c                  __handle_incoming_can_frame_sequence_number
-                  0x004bb6                  __state_machine_incoming_can
-                  0x004ca4                  _CanRxStatemachine_statemachine_initialize
-                  0x004cae                  _Utilities_load_openlcb_message
-                  0x004d06                  _Utilities_clear_openlcb_message_payload
-                  0x004d34                  _Utilities_copy_event_id_to_openlcb_payload
-                  0x004d8c                  _Utilities_copy_openlcb_message
-                  0x004e14                  _Utilities_copy_word_to_openlcb_payload
-                  0x004e48                  _Utilities_copy_dword_to_openlcb_payload
-                  0x004eb6                  _Utilities_copy_node_id_to_openlcb_payload
-                  0x004f0e                  _Utilities_copy_64_bit_to_openlcb_payload
-                  0x004f66                  _Utilities_extract_node_id_from_openlcb_payload
-                  0x00502e                  _Utilities_extract_event_id_from_openlcb_payload
-                  0x00512e                  _Utilities_extract_word_from_openlcb_payload
-                  0x00515a                  _Utilities_extract_dword_from_openlcb_payload
-                  0x0051c6                  _Utilities_set_multi_frame_flag
-                  0x0051dc                  _Utilities_is_addressed_openlcb_message
-                  0x0051f4                  _Utilities_count_nulls_in_openlcb_payload
-                  0x00522a                  _CanUtilities_clear_can_message
-                  0x005258                  _CanUtilities_extract_source_alias_from_can_message
-                  0x00526c                  _CanUtilties_extract_dest_alias_from_can_message
-                  0x005324                  _CanUtilties_convert_can_mti_to_openlcb_mti
-                  0x0053b2                  _CanUtilities_append_can_payload_to_openlcb_payload
-                  0x005414                  _CanUtilities_copy_can_payload_to_openlcb_payload
-                  0x00542e                  _CanUtilities_count_nulls_in_can_payload
-                  0x005464                  _CanUtilities_count_nulls_in_payloads
-                  0x00547e                  _CanUtilities_is_openlcb_message
-                  0x0054ae                  _CanUtilities_extract_can_payload_as_node_id
-                  0x005560                  _CanUtilties_extract_can_mti_from_can_identifier
-                  0x0055a4                  _CanUtilities_is_dest_alias_in_can_payload
-                  0x005600                  _CanUtilties_load_can_message
-                  0x005656                  _CanUtilities_copy_node_id_to_payload
-                  0x0056c0                  _CanUtilities_copy_64_bit_to_can_message
-                  0x005714                  _BufferStore_clear_openlcb_message
-                  0x005766                  _BufferStore_initialize
-                  0x00581c                  _BufferStore_allocateBuffer
-                  0x0058c8                  _BufferStore_freeBuffer
-                  0x0058e8                  _BufferStore_messages_allocated
-                  0x0058f0                  _BufferList_initialiaze
-                  0x005910                  _BufferList_allocate
-                  0x005956                  _BufferList_find
-                  0x0059c2                  _BufferList_free
-                  0x005a04                  _BufferList_release
-                  0x005a40                  _BufferList_index_of
-                  0x005a5c                  _BufferList_is_empty
-                  0x005a84                  _CanBufferFifo_initialiaze
-                  0x005ab0                  _CanBufferFifo_push
-                  0x005b00                  _CanBufferFifo_pop
-                  0x005b4e                  _CanBufferFifo_is_empty
-                  0x005b66                  _CanBufferFifo_get_allocated_count
-                  0x005b98                  _BufferFifo_initialiaze
-                  0x005bc0                  _BufferFifo_push
-                  0x005c02                  _BufferFifo_push_existing
-                  0x005c34                  _BufferFifo_pop
-                  0x005c62                  _BufferFifo_is_empty
-                  0x005c7a                  _BufferFifo_get_allocated_count
-                  0x005c98                  _CanBufferStore_initialize
-                  0x005cf2                  _CanBufferStore_clear_can_message
-                  0x005d08                  _CanBufferStore_allocateBuffer
-                  0x005d52                  _CanBufferStore_freeBuffer
-                  0x005d70                  _CanBufferStore_messages_allocated
-                  0x005e0a                  ___delay32
+                  0x000306                  __OscillatorFail
+                  0x00030c                  __AddressError
+                  0x000312                  __StackError
+                  0x000318                  __MathError
+                  0x00031e                  __DMACError
+                  0x000324                  __T2Interrupt
+                  0x00034a                  __U1TXInterrupt
+                  0x000352                  __U1RXInterrupt
+                  0x000382                  __C1Interrupt
+                  0x000456                  __DMA2Interrupt
+                  0x00045e                  __DMA0Interrupt
+                  0x000466                  __DefaultInterrupt
+                  0x000512                  ___sio_printf_doux
+                  0x000520                  _putchar
+                  0x000526                  _puts
+                  0x000546                  ___init_stdout
+                  0x00054e                  ___fmt_d
+                  0x000606                  ___fmt_o
+                  0x000678                  ___fmt_s
+                  0x0006cc                  ___cvt_u
+                  0x000772                  ___fmt_u
+                  0x0007c8                  ___fmt_x
+                  0x000926                  ___vfprintf
+                  0x00096c                  ___out
+                  0x00097c                  ___pop_int
+                  0x000a2c                  ___pop_ptr
+                  0x000ac2                  ___pad
+                  0x000b3c                  ___fmt_state
+                  0x000e46                  ___printf_core
+                  0x000e86                  ___stdio_close
+                  0x000ec4                  ___stdio_close_rw
+                  0x000f30                  _atoi
+                  0x000f7c                  _fputs
+                  0x000fa8                  _fwrite
+                  0x000fd4                  ___lseek
+                  0x000fe0                  _memcpy
+                  0x000fee                  _memset
+                  0x0010b6                  ___putc_unbuffered
+                  0x0010e4                  _putc
+                  0x0010e6                  _strlen
+                  0x001116                  ___syscall_ret
+                  0x00112a                  _tolower
+                  0x001136                  ___tolower_l
+                  0x001138                  _toupper
+                  0x001144                  ___toupper_l
+                  0x001148                  ___init_stdio
+                  0x00114e                  ___pop_float
+                  0x00119a                  ___extendsfdf2
+                  0x0011d8                  __funpack
+                  0x001202                  ___mulp32eds3
+                  0x001202                  ___mulsi3
+                  0x001202                  ___mulp32peds3
+                  0x00125e                  ___udivmoddi3
+                  0x001344                  ___udivdi3
+                  0x001352                  ___umoddi3
+                  0x00135a                  ___divdi3
+                  0x0013ba                  ___moddi3
+                  0x002a12                  _FIFO_RX_START_INDEX
+                  0x002a14                  _FIFO_FLAG_MASKS
+                  0x002a34                  _Ecan1WriteRxAcptFilter
+                  0x002ba0                  _Ecan1WriteRxAcptMask
+                  0x002caa                  _Ecan1TxBufferSetTransmit
+                  0x002cf8                  _Ecan1TxBufferClearTransmit
+                  0x002d46                  _Is_Ecan1_TxBuffer_Clear
+                  0x002dfe                  _McuDriver_is_can_tx_buffer_clear
+                  0x002e0a                  _Ecan1WriteTxMsgBufId
+                  0x003028                  _Ecan1WriteTxMsgBufData
+                  0x0031bc                  _Ecan1WriteTxMsgBufDataWord
+                  0x00330e                  _Ecan1WriteTxMsgBufDataByte
+                  0x00348a                  _Ecan1ReadRxMsgBufId
+                  0x0035aa                  _Ecan1ReadRxMsgBufData
+                  0x0037b6                  _McuDriver_transmit_raw_can_frame
+                  0x0037f0                  _McuDriver_initialization
+                  0x003968                  _Ecan1DisableRXFilter
+                  0x00398a                  _McuDriver_pause_can_rx
+                  0x003992                  _McuDriver_resume_can_rx
+                  0x00399a                  _McuDriver_pause_can_tx_complete_notify
+                  0x0039a2                  _McuDriver_resume_can_tx_complete_notify
+                  0x0039aa                  _McuDriver_pause_100ms_timer
+                  0x0039b2                  _McuDriver_resume_100ms_timer
+                  0x0039ba                  _PrintInt64
+                  0x003a12                  _PrintAlias
+                  0x003a24                  _PrintNodeID
+                  0x003a66                  _PrintAliasAndNodeID
+                  0x003a84                  _PrintMtiName
+                  0x003d96                  _PrintOpenLcbMsg
+                  0x003e50                  _PrintCanMsg
+                  0x003ec4                  _PrintEventID
+                  0x003f1c                  _PrintCanIdentifier
+                  0x003f42                  _PrintDWord
+                  0x003f50                  _PrintCAN1Registers
+                  0x00415c                  _PrintDMA0Registers
+                  0x0041ca                  _PrintDMA1Registers
+                  0x004238                  _PrintDMA2Registers
+                  0x0042a6                  _PrintDMA3Registers
+                  0x004314                  _PrintDMACommonRegisters
+                  0x00436a                  _main
+                  0x004b92                  _CanUtilities_clear_can_message
+                  0x004bc0                  _CanUtilities_extract_source_alias_from_can_message
+                  0x004bd4                  _CanUtilties_extract_dest_alias_from_can_message
+                  0x004c8c                  _CanUtilties_convert_can_mti_to_openlcb_mti
+                  0x004d1a                  _CanUtilities_append_can_payload_to_openlcb_payload
+                  0x004d7c                  _CanUtilities_copy_can_payload_to_openlcb_payload
+                  0x004d96                  _CanUtilities_count_nulls_in_can_payload
+                  0x004dcc                  _CanUtilities_count_nulls_in_payloads
+                  0x004de6                  _CanUtilities_is_openlcb_message
+                  0x004e16                  _CanUtilities_extract_can_payload_as_node_id
+                  0x004ec8                  _CanUtilties_extract_can_mti_from_can_identifier
+                  0x004f0c                  _CanUtilities_is_dest_alias_in_can_payload
+                  0x004f68                  _CanUtilities_copy_openlcb_payload_to_can_payload
+                  0x004ff0                  _CanUtilties_load_can_message
+                  0x005046                  _CanUtilities_copy_node_id_to_payload
+                  0x0050b0                  _CanUtilities_copy_64_bit_to_can_message
+                  0x005104                  _CanUtilities_copy_can_message
+                  0x00513e                  _Utilities_load_openlcb_message
+                  0x005196                  _Utilities_clear_openlcb_message_payload
+                  0x0051c4                  _Utilities_copy_event_id_to_openlcb_payload
+                  0x00521c                  _Utilities_copy_openlcb_message
+                  0x0052a4                  _Utilities_copy_word_to_openlcb_payload
+                  0x0052d8                  _Utilities_copy_dword_to_openlcb_payload
+                  0x005346                  _Utilities_copy_node_id_to_openlcb_payload
+                  0x00539e                  _Utilities_copy_64_bit_to_openlcb_payload
+                  0x0053f6                  _Utilities_extract_node_id_from_openlcb_payload
+                  0x0054be                  _Utilities_extract_event_id_from_openlcb_payload
+                  0x0055be                  _Utilities_extract_word_from_openlcb_payload
+                  0x0055ea                  _Utilities_extract_dword_from_openlcb_payload
+                  0x005656                  _Utilities_set_multi_frame_flag
+                  0x00566c                  _Utilities_is_addressed_openlcb_message
+                  0x005684                  _Utilities_count_nulls_in_openlcb_payload
+                  0x0056ba                  _BufferStore_clear_openlcb_message
+                  0x00570c                  _BufferStore_initialize
+                  0x0057c2                  _BufferStore_allocateBuffer
+                  0x00586c                  _BufferStore_freeBuffer
+                  0x00588c                  _BufferStore_messages_allocated
+                  0x005894                  _BufferList_initialiaze
+                  0x0058b4                  _BufferList_allocate
+                  0x0058fa                  _BufferList_find
+                  0x005966                  _BufferList_free
+                  0x0059a8                  _BufferList_release
+                  0x0059e4                  _BufferList_index_of
+                  0x005a00                  _BufferList_is_empty
+                  0x005a28                  _CanBufferFifo_initialiaze
+                  0x005a54                  _CanBufferFifo_push
+                  0x005aa4                  _CanBufferFifo_pop
+                  0x005af2                  _CanBufferFifo_is_empty
+                  0x005b0a                  _CanBufferFifo_get_allocated_count
+                  0x005b3c                  _BufferFifo_initialiaze
+                  0x005b64                  _BufferFifo_push
+                  0x005ba6                  _BufferFifo_push_existing
+                  0x005bd8                  _BufferFifo_pop
+                  0x005c06                  _BufferFifo_is_empty
+                  0x005c1e                  _BufferFifo_get_allocated_count
+                  0x005c3c                  _CanBufferStore_initialize
+                  0x005c96                  _CanBufferStore_clear_can_message
+                  0x005cac                  _CanBufferStore_allocateBuffer
+                  0x005cf6                  _CanBufferStore_freeBuffer
+                  0x005d14                  _CanBufferStore_messages_allocated
+                  0x005dae                  ___delay32
                   0x00affa                  __FGS.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x005c7a                  _BufferFifo_get_allocated_count
-                  0x005b98                  _BufferFifo_initialiaze
-                  0x005c62                  _BufferFifo_is_empty
-                  0x005c34                  _BufferFifo_pop
-                  0x005bc0                  _BufferFifo_push
-                  0x005c02                  _BufferFifo_push_existing
-                  0x005910                  _BufferList_allocate
-                  0x005956                  _BufferList_find
-                  0x0059c2                  _BufferList_free
-                  0x005a40                  _BufferList_index_of
-                  0x0058f0                  _BufferList_initialiaze
-                  0x005a5c                  _BufferList_is_empty
-                  0x005a04                  _BufferList_release
-                  0x00581c                  _BufferStore_allocateBuffer
-                  0x005714                  _BufferStore_clear_openlcb_message
-                  0x0058c8                  _BufferStore_freeBuffer
-                  0x005766                  _BufferStore_initialize
-                  0x0058e8                  _BufferStore_messages_allocated
-                  0x001dd2                  _CDI_ARRAY
-                  0x005b66                  _CanBufferFifo_get_allocated_count
-                  0x005a84                  _CanBufferFifo_initialiaze
-                  0x005b4e                  _CanBufferFifo_is_empty
-                  0x005b00                  _CanBufferFifo_pop
-                  0x005ab0                  _CanBufferFifo_push
-                  0x005d08                  _CanBufferStore_allocateBuffer
-                  0x005cf2                  _CanBufferStore_clear_can_message
-                  0x005d52                  _CanBufferStore_freeBuffer
-                  0x005c98                  _CanBufferStore_initialize
-                  0x005d70                  _CanBufferStore_messages_allocated
-                  0x00455e                  _CanFrameLogin
-                  0x004ca4                  _CanRxStatemachine_statemachine_initialize
-                  0x0053b2                  _CanUtilities_append_can_payload_to_openlcb_payload
-                  0x00522a                  _CanUtilities_clear_can_message
-                  0x0056c0                  _CanUtilities_copy_64_bit_to_can_message
-                  0x005414                  _CanUtilities_copy_can_payload_to_openlcb_payload
-                  0x005656                  _CanUtilities_copy_node_id_to_payload
-                  0x00542e                  _CanUtilities_count_nulls_in_can_payload
-                  0x005464                  _CanUtilities_count_nulls_in_payloads
-                  0x0054ae                  _CanUtilities_extract_can_payload_as_node_id
-                  0x005258                  _CanUtilities_extract_source_alias_from_can_message
-                  0x0055a4                  _CanUtilities_is_dest_alias_in_can_payload
-                  0x00547e                  _CanUtilities_is_openlcb_message
-                  0x005324                  _CanUtilties_convert_can_mti_to_openlcb_mti
-                  0x005560                  _CanUtilties_extract_can_mti_from_can_identifier
-                  0x00526c                  _CanUtilties_extract_dest_alias_from_can_message
-                  0x005600                  _CanUtilties_load_can_message
-                  0x004074                  _DatagramSequence
-                  0x0035e0                  _Ecan1DisableRXFilter
-                  0x003222                  _Ecan1ReadRxMsgBufData
-                  0x003102                  _Ecan1ReadRxMsgBufId
-                  0x002970                  _Ecan1TxBufferClearTransmit
-                  0x002922                  _Ecan1TxBufferSetTransmit
-                  0x0026ac                  _Ecan1WriteRxAcptFilter
-                  0x002818                  _Ecan1WriteRxAcptMask
-                  0x002ca0                  _Ecan1WriteTxMsgBufData
-                  0x002f86                  _Ecan1WriteTxMsgBufDataByte
-                  0x002e34                  _Ecan1WriteTxMsgBufDataWord
-                  0x002a82                  _Ecan1WriteTxMsgBufId
-                  0x00268c                  _FIFO_FLAG_MASKS
-                  0x00268a                  _FIFO_RX_START_INDEX
-                  0x0029be                  _Is_Ecan1_TxBuffer_Clear
-                  0x003fe2                  _LegacySimpleSnipSequence
-                  0x001dd0                  _MAX_CDI_ARRAY
-                  0x003468                  _McuDriver_initialization
-                  0x002a76                  _McuDriver_is_can_tx_buffer_clear
-                  0x003622                  _McuDriver_pause_100ms_timer
-                  0x003602                  _McuDriver_pause_can_rx
-                  0x003612                  _McuDriver_pause_can_tx_complete_notify
-                  0x00362a                  _McuDriver_resume_100ms_timer
-                  0x00360a                  _McuDriver_resume_can_rx
-                  0x00361a                  _McuDriver_resume_can_tx_complete_notify
-                  0x00342e                  _McuDriver_transmit_raw_can_frame
-                  0x004262                  _MultiFrameSnipSequence
-                  0x00368a                  _PrintAlias
-                  0x0036de                  _PrintAliasAndNodeID
-                  0x003bc8                  _PrintCAN1Registers
-                  0x003b94                  _PrintCanIdentifier
-                  0x003ac8                  _PrintCanMsg
-                  0x003dd4                  _PrintDMA0Registers
-                  0x003e42                  _PrintDMA1Registers
-                  0x003eb0                  _PrintDMA2Registers
-                  0x003f1e                  _PrintDMA3Registers
-                  0x003f8c                  _PrintDMACommonRegisters
-                  0x003bba                  _PrintDWord
-                  0x003b3c                  _PrintEventID
-                  0x003632                  _PrintInt64
-                  0x0036fc                  _PrintMtiName
-                  0x00369c                  _PrintNodeID
-                  0x003a0e                  _PrintOpenLcbMsg
-                  0x001dcc                  _USER_DEFINED_PROTOCOL_SUPPORT
-                  0x004d06                  _Utilities_clear_openlcb_message_payload
-                  0x004f0e                  _Utilities_copy_64_bit_to_openlcb_payload
-                  0x004e48                  _Utilities_copy_dword_to_openlcb_payload
-                  0x004d34                  _Utilities_copy_event_id_to_openlcb_payload
-                  0x004eb6                  _Utilities_copy_node_id_to_openlcb_payload
-                  0x004d8c                  _Utilities_copy_openlcb_message
-                  0x004e14                  _Utilities_copy_word_to_openlcb_payload
-                  0x0051f4                  _Utilities_count_nulls_in_openlcb_payload
-                  0x00515a                  _Utilities_extract_dword_from_openlcb_payload
-                  0x00502e                  _Utilities_extract_event_id_from_openlcb_payload
-                  0x004f66                  _Utilities_extract_node_id_from_openlcb_payload
-                  0x00512e                  _Utilities_extract_word_from_openlcb_payload
-                  0x0051dc                  _Utilities_is_addressed_openlcb_message
-                  0x004cae                  _Utilities_load_openlcb_message
-                  0x0051c6                  _Utilities_set_multi_frame_flag
-                  0x000310                  __AddressError
-                  0x000386                  __C1Interrupt
-                  0x000462                  __DMA0Interrupt
-                  0x00045a                  __DMA2Interrupt
-                  0x000322                  __DMACError
-                  0x00046a                  __DefaultInterrupt
+                  0x005c1e                  _BufferFifo_get_allocated_count
+                  0x005b3c                  _BufferFifo_initialiaze
+                  0x005c06                  _BufferFifo_is_empty
+                  0x005bd8                  _BufferFifo_pop
+                  0x005b64                  _BufferFifo_push
+                  0x005ba6                  _BufferFifo_push_existing
+                  0x0058b4                  _BufferList_allocate
+                  0x0058fa                  _BufferList_find
+                  0x005966                  _BufferList_free
+                  0x0059e4                  _BufferList_index_of
+                  0x005894                  _BufferList_initialiaze
+                  0x005a00                  _BufferList_is_empty
+                  0x0059a8                  _BufferList_release
+                  0x0057c2                  _BufferStore_allocateBuffer
+                  0x0056ba                  _BufferStore_clear_openlcb_message
+                  0x00586c                  _BufferStore_freeBuffer
+                  0x00570c                  _BufferStore_initialize
+                  0x00588c                  _BufferStore_messages_allocated
+                  0x005b0a                  _CanBufferFifo_get_allocated_count
+                  0x005a28                  _CanBufferFifo_initialiaze
+                  0x005af2                  _CanBufferFifo_is_empty
+                  0x005aa4                  _CanBufferFifo_pop
+                  0x005a54                  _CanBufferFifo_push
+                  0x005cac                  _CanBufferStore_allocateBuffer
+                  0x005c96                  _CanBufferStore_clear_can_message
+                  0x005cf6                  _CanBufferStore_freeBuffer
+                  0x005c3c                  _CanBufferStore_initialize
+                  0x005d14                  _CanBufferStore_messages_allocated
+                  0x004d1a                  _CanUtilities_append_can_payload_to_openlcb_payload
+                  0x004b92                  _CanUtilities_clear_can_message
+                  0x0050b0                  _CanUtilities_copy_64_bit_to_can_message
+                  0x005104                  _CanUtilities_copy_can_message
+                  0x004d7c                  _CanUtilities_copy_can_payload_to_openlcb_payload
+                  0x005046                  _CanUtilities_copy_node_id_to_payload
+                  0x004f68                  _CanUtilities_copy_openlcb_payload_to_can_payload
+                  0x004d96                  _CanUtilities_count_nulls_in_can_payload
+                  0x004dcc                  _CanUtilities_count_nulls_in_payloads
+                  0x004e16                  _CanUtilities_extract_can_payload_as_node_id
+                  0x004bc0                  _CanUtilities_extract_source_alias_from_can_message
+                  0x004f0c                  _CanUtilities_is_dest_alias_in_can_payload
+                  0x004de6                  _CanUtilities_is_openlcb_message
+                  0x004c8c                  _CanUtilties_convert_can_mti_to_openlcb_mti
+                  0x004ec8                  _CanUtilties_extract_can_mti_from_can_identifier
+                  0x004bd4                  _CanUtilties_extract_dest_alias_from_can_message
+                  0x004ff0                  _CanUtilties_load_can_message
+                  0x003968                  _Ecan1DisableRXFilter
+                  0x0035aa                  _Ecan1ReadRxMsgBufData
+                  0x00348a                  _Ecan1ReadRxMsgBufId
+                  0x002cf8                  _Ecan1TxBufferClearTransmit
+                  0x002caa                  _Ecan1TxBufferSetTransmit
+                  0x002a34                  _Ecan1WriteRxAcptFilter
+                  0x002ba0                  _Ecan1WriteRxAcptMask
+                  0x003028                  _Ecan1WriteTxMsgBufData
+                  0x00330e                  _Ecan1WriteTxMsgBufDataByte
+                  0x0031bc                  _Ecan1WriteTxMsgBufDataWord
+                  0x002e0a                  _Ecan1WriteTxMsgBufId
+                  0x002a14                  _FIFO_FLAG_MASKS
+                  0x002a12                  _FIFO_RX_START_INDEX
+                  0x002d46                  _Is_Ecan1_TxBuffer_Clear
+                  0x0037f0                  _McuDriver_initialization
+                  0x002dfe                  _McuDriver_is_can_tx_buffer_clear
+                  0x0039aa                  _McuDriver_pause_100ms_timer
+                  0x00398a                  _McuDriver_pause_can_rx
+                  0x00399a                  _McuDriver_pause_can_tx_complete_notify
+                  0x0039b2                  _McuDriver_resume_100ms_timer
+                  0x003992                  _McuDriver_resume_can_rx
+                  0x0039a2                  _McuDriver_resume_can_tx_complete_notify
+                  0x0037b6                  _McuDriver_transmit_raw_can_frame
+                  0x003a12                  _PrintAlias
+                  0x003a66                  _PrintAliasAndNodeID
+                  0x003f50                  _PrintCAN1Registers
+                  0x003f1c                  _PrintCanIdentifier
+                  0x003e50                  _PrintCanMsg
+                  0x00415c                  _PrintDMA0Registers
+                  0x0041ca                  _PrintDMA1Registers
+                  0x004238                  _PrintDMA2Registers
+                  0x0042a6                  _PrintDMA3Registers
+                  0x004314                  _PrintDMACommonRegisters
+                  0x003f42                  _PrintDWord
+                  0x003ec4                  _PrintEventID
+                  0x0039ba                  _PrintInt64
+                  0x003a84                  _PrintMtiName
+                  0x003a24                  _PrintNodeID
+                  0x003d96                  _PrintOpenLcbMsg
+                  0x005196                  _Utilities_clear_openlcb_message_payload
+                  0x00539e                  _Utilities_copy_64_bit_to_openlcb_payload
+                  0x0052d8                  _Utilities_copy_dword_to_openlcb_payload
+                  0x0051c4                  _Utilities_copy_event_id_to_openlcb_payload
+                  0x005346                  _Utilities_copy_node_id_to_openlcb_payload
+                  0x00521c                  _Utilities_copy_openlcb_message
+                  0x0052a4                  _Utilities_copy_word_to_openlcb_payload
+                  0x005684                  _Utilities_count_nulls_in_openlcb_payload
+                  0x0055ea                  _Utilities_extract_dword_from_openlcb_payload
+                  0x0054be                  _Utilities_extract_event_id_from_openlcb_payload
+                  0x0053f6                  _Utilities_extract_node_id_from_openlcb_payload
+                  0x0055be                  _Utilities_extract_word_from_openlcb_payload
+                  0x00566c                  _Utilities_is_addressed_openlcb_message
+                  0x00513e                  _Utilities_load_openlcb_message
+                  0x005656                  _Utilities_set_multi_frame_flag
+                  0x00030c                  __AddressError
+                  0x000382                  __C1Interrupt
+                  0x00045e                  __DMA0Interrupt
+                  0x000456                  __DMA2Interrupt
+                  0x00031e                  __DMACError
+                  0x000466                  __DefaultInterrupt
                   0x00affa                  __FGS.sec
-                  0x00031c                  __MathError
-                  0x00030a                  __OscillatorFail
-                  0x000316                  __StackError
-                  0x000328                  __T2Interrupt
-                  0x000356                  __U1RXInterrupt
-                  0x00034e                  __U1TXInterrupt
-                  0x0006e2                  ___cvt_u
-                  0x005e0a                  ___delay32
-                  0x001370                  ___divdi3
-                  0x0011b0                  ___extendsfdf2
-                  0x000564                  ___fmt_d
-                  0x00061c                  ___fmt_o
-                  0x00068e                  ___fmt_s
-                  0x000b52                  ___fmt_state
-                  0x000788                  ___fmt_u
-                  0x0007de                  ___fmt_x
-                  0x00115e                  ___init_stdio
-                  0x00055c                  ___init_stdout
-                  0x000fea                  ___lseek
-                  0x0013d0                  ___moddi3
-                  0x001218                  ___mulp32eds3
-                  0x001218                  ___mulp32peds3
-                  0x001218                  ___mulsi3
-                  0x000982                  ___out
-                  0x000ad8                  ___pad
-                  0x001164                  ___pop_float
-                  0x000992                  ___pop_int
-                  0x000a42                  ___pop_ptr
-                  0x000e5c                  ___printf_core
-                  0x0010cc                  ___putc_unbuffered
-                  0x000516                  ___sio_printf_0
-                  0x000528                  ___sio_printf_doux
-                  0x000e9c                  ___stdio_close
-                  0x000eda                  ___stdio_close_rw
-                  0x00112c                  ___syscall_ret
-                  0x00114c                  ___tolower_l
-                  0x00115a                  ___toupper_l
-                  0x00135a                  ___udivdi3
-                  0x001274                  ___udivmoddi3
-                  0x001368                  ___umoddi3
-                  0x00093c                  ___vfprintf
+                  0x000318                  __MathError
+                  0x000306                  __OscillatorFail
+                  0x000312                  __StackError
+                  0x000324                  __T2Interrupt
+                  0x000352                  __U1RXInterrupt
+                  0x00034a                  __U1TXInterrupt
+                  0x0006cc                  ___cvt_u
+                  0x005dae                  ___delay32
+                  0x00135a                  ___divdi3
+                  0x00119a                  ___extendsfdf2
+                  0x00054e                  ___fmt_d
+                  0x000606                  ___fmt_o
+                  0x000678                  ___fmt_s
+                  0x000b3c                  ___fmt_state
+                  0x000772                  ___fmt_u
+                  0x0007c8                  ___fmt_x
+                  0x001148                  ___init_stdio
+                  0x000546                  ___init_stdout
+                  0x000fd4                  ___lseek
+                  0x0013ba                  ___moddi3
+                  0x001202                  ___mulp32eds3
+                  0x001202                  ___mulp32peds3
+                  0x001202                  ___mulsi3
+                  0x00096c                  ___out
+                  0x000ac2                  ___pad
+                  0x00114e                  ___pop_float
+                  0x00097c                  ___pop_int
+                  0x000a2c                  ___pop_ptr
+                  0x000e46                  ___printf_core
+                  0x0010b6                  ___putc_unbuffered
+                  0x000512                  ___sio_printf_doux
+                  0x000e86                  ___stdio_close
+                  0x000ec4                  ___stdio_close_rw
+                  0x001116                  ___syscall_ret
+                  0x001136                  ___tolower_l
+                  0x001144                  ___toupper_l
+                  0x001344                  ___udivdi3
+                  0x00125e                  ___udivmoddi3
+                  0x001352                  ___umoddi3
+                  0x000926                  ___vfprintf
                   0x000248                  __data_init
                   0x000248                  __data_init_extended
-                  0x004994                  __flush_alias_node_id_mappings
-                  0x0011ee                  __funpack
-                  0x004a7a                  __handle_amd_control_frame
-                  0x004a86                  __handle_ame_control_frame
-                  0x004aa8                  __handle_amr_control_frame
-                  0x00488a                  __handle_can_legacy_snip
-                  0x004704                  __handle_first_frame
-                  0x0048e0                  __handle_global_addressed_messages
-                  0x004b4c                  __handle_incoming_can_frame_sequence_number
-                  0x004ab4                  __handle_incoming_can_variable_field
-                  0x004b40                  __handle_incoming_cid
-                  0x0047cc                  __handle_last_frame
-                  0x004782                  __handle_middle_frame
-                  0x004a6e                  __handle_rid_control_frame
-                  0x004826                  __handle_single_frame
-                  0x0049aa                  __hard_alias_conflict_check
+                  0x0011d8                  __funpack
                   0x00023c                  __psv_init
-                  0x004a64                  __reply_to_ame_control_frame
                   0x000200                  __resetPRI
-                  0x004a1a                  __soft_alias_conflict_check
-                  0x004bb6                  __state_machine_incoming_can
-                  0x0049a0                  __test_can_message_for_alias_conflict
-                  0x000f46                  _atoi
-                  0x000f92                  _fputs
-                  0x000fbe                  _fwrite
-                  0x004670                  _main
-                  0x000ff6                  _memcpy
-                  0x001004                  _memset
-                  0x0010fa                  _putc
-                  0x000536                  _putchar
-                  0x00053c                  _puts
-                  0x0010fc                  _strlen
-                  0x001140                  _tolower
-                  0x00114e                  _toupper
+                  0x000f30                  _atoi
+                  0x000f7c                  _fputs
+                  0x000fa8                  _fwrite
+                  0x00436a                  _main
+                  0x000fe0                  _memcpy
+                  0x000fee                  _memset
+                  0x0010e4                  _putc
+                  0x000520                  _putchar
+                  0x000526                  _puts
+                  0x0010e6                  _strlen
+                  0x00112a                  _tolower
+                  0x001138                  _toupper
 
 Memory Configuration
 
@@ -656,10 +601,8 @@ Linker script and memory map
 LOAD build/default/production/traps.o
 LOAD build/default/production/debug.o
 LOAD build/default/production/main.o
-LOAD build/default/production/openlcb_node_definition.o
 LOAD build/default/production/_ext/216671855/can_buffer_fifo.o
 LOAD build/default/production/_ext/216671855/can_utilities.o
-LOAD build/default/production/_ext/216671855/can_rx_statemachine.o
 LOAD build/default/production/_ext/216671855/can_buffer_store.o
 LOAD build/default/production/_ext/585199093/mcu_driver.o
 LOAD build/default/production/_ext/526222337/openlcb_buffer_fifo.o
@@ -694,7 +637,7 @@ LOAD /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libfx-elf.a
                   0x000002          0x2 SHORT 0x0 ((ABSOLUTE (__reset) >> 0x10) & 0x7f)
                   0x000003          0x2 SHORT 0x0
 
-.text             0x000200       0x122c
+.text             0x000200       0x1216
  *(.init)
  .init            0x000200         0x48 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt0_extendedep.o)
                   0x000200                  __reset
@@ -706,210 +649,203 @@ LOAD /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libfx-elf.a
  *(.user_init)
  *(.handle)
  *(.isr*)
- .isr.text        0x00030a         0x1e build/default/production/traps.o
-                  0x00030a                  __OscillatorFail
-                  0x000310                  __AddressError
-                  0x000316                  __StackError
-                  0x00031c                  __MathError
-                  0x000322                  __DMACError
- .isr.text        0x000328        0x142 build/default/production/_ext/585199093/mcu_driver.o
-                  0x000328                  __T2Interrupt
-                  0x00034e                  __U1TXInterrupt
-                  0x000356                  __U1RXInterrupt
-                  0x000386                  __C1Interrupt
-                  0x00045a                  __DMA2Interrupt
-                  0x000462                  __DMA0Interrupt
- .isr             0x00046a          0x4 default_isr
-                  0x00046a                  __DefaultInterrupt
+ .isr.text        0x000306         0x1e build/default/production/traps.o
+                  0x000306                  __OscillatorFail
+                  0x00030c                  __AddressError
+                  0x000312                  __StackError
+                  0x000318                  __MathError
+                  0x00031e                  __DMACError
+ .isr.text        0x000324        0x142 build/default/production/_ext/585199093/mcu_driver.o
+                  0x000324                  __T2Interrupt
+                  0x00034a                  __U1TXInterrupt
+                  0x000352                  __U1RXInterrupt
+                  0x000382                  __C1Interrupt
+                  0x000456                  __DMA2Interrupt
+                  0x00045e                  __DMA0Interrupt
+ .isr             0x000466          0x4 default_isr
+                  0x000466                  __DefaultInterrupt
  *(.libc)
- .libc            0x00046e         0x12 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(closeep.Meo)
-                  0x00046e                  _close
- .libc            0x000480         0x84 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(writeep.Meo)
-                  0x000480                  _write
+ .libc            0x00046a         0x12 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(closeep.Meo)
+                  0x00046a                  _close
+ .libc            0x00047c         0x84 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(writeep.Meo)
+                  0x00047c                  _write
  *(.libm)
  *(.libdsp)
  *(.lib*)
  .libpic30_crt_start_mode
-                  0x000504          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt_start_mode_normalep.Meo)
-                  0x000504                  __crt_start_mode_normal
-                  0x000504                  __crt_start_mode
+                  0x000500          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt_start_mode_normalep.Meo)
+                  0x000500                  __crt_start_mode_normal
+                  0x000500                  __crt_start_mode
  .libc.__wrap_printf
-                  0x000506         0x10 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_0.EP_o)
-                  0x000506                  __dprintf_0
-                  0x000506                  __printf_0
- .libc.__sio_printf_0
-                  0x000516          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_0.EP_o)
-                  0x000516                  ___sio_printf_0
- .libc.__wrap_printf
-                  0x000518         0x10 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
-                  0x000518                  __dprintf_cdnopuxX
-                  0x000518                  __printf_cdnopuxX
+                  0x000502         0x10 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
+                  0x000502                  __dprintf_cdnopuxX
+                  0x000502                  __printf_cdnopuxX
  .libc.__sio_printf_doux
-                  0x000528          0xe /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
-                  0x000528                  ___sio_printf_doux
- .libc.putchar    0x000536          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putchar.EP_o)
-                  0x000536                  _putchar
- .libc.puts       0x00053c         0x1a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(puts.EP_o)
-                  0x00053c                  _puts
+                  0x000512          0xe /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
+                  0x000512                  ___sio_printf_doux
+ .libc.putchar    0x000520          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putchar.EP_o)
+                  0x000520                  _putchar
+ .libc.puts       0x000526         0x1a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(puts.EP_o)
+                  0x000526                  _puts
  .libc.__dummy0
-                  0x000556          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
-                  0x000556                  ___stdio_seek
- .libc.__dummy    0x000558          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
-                  0x000558                  ___get_stdout
+                  0x000540          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
+                  0x000540                  ___stdio_seek
+ .libc.__dummy    0x000542          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
+                  0x000542                  ___get_stdout
  .libc.__init_stdout
-                  0x00055c          0x8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
-                  0x00055c                  ___init_stdout
- .libc.__fmt_d    0x000564         0xb8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_d.EP_o)
-                  0x000564                  ___fmt_d_needed
-                  0x000564                  ___fmt_d
- .libc.__fmt_o    0x00061c         0x72 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_o.EP_o)
-                  0x00061c                  ___fmt_o_needed
-                  0x00061c                  ___fmt_o
- .libc.__fmt_s    0x00068e         0x54 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_s.EP_o)
-                  0x00068e                  ___fmt_s
-                  0x00068e                  ___fmt_0_needed
-                  0x00068e                  ___fmt_s_needed
- .libc.__cvt_u    0x0006e2         0xa6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_u.EP_o)
-                  0x0006e2                  ___cvt_u
- .libc.__fmt_u    0x000788         0x56 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_u.EP_o)
-                  0x000788                  ___fmt_u_needed
-                  0x000788                  ___fmt_u
- .libc.__fmt_x    0x0007de        0x15e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_x.EP_o)
-                  0x0007de                  ___fmt_x
-                  0x0007de                  ___fmt_x_needed
+                  0x000546          0x8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
+                  0x000546                  ___init_stdout
+ .libc.__fmt_d    0x00054e         0xb8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_d.EP_o)
+                  0x00054e                  ___fmt_d_needed
+                  0x00054e                  ___fmt_d
+ .libc.__fmt_o    0x000606         0x72 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_o.EP_o)
+                  0x000606                  ___fmt_o_needed
+                  0x000606                  ___fmt_o
+ .libc.__fmt_s    0x000678         0x54 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_s.EP_o)
+                  0x000678                  ___fmt_s
+                  0x000678                  ___fmt_0_needed
+                  0x000678                  ___fmt_s_needed
+ .libc.__cvt_u    0x0006cc         0xa6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_u.EP_o)
+                  0x0006cc                  ___cvt_u
+ .libc.__fmt_u    0x000772         0x56 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_u.EP_o)
+                  0x000772                  ___fmt_u_needed
+                  0x000772                  ___fmt_u
+ .libc.__fmt_x    0x0007c8        0x15e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_x.EP_o)
+                  0x0007c8                  ___fmt_x
+                  0x0007c8                  ___fmt_x_needed
  .libc.__vfprintf
-                  0x00093c         0x1c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__int_vfprintf.EP_o)
-                  0x00093c                  ___vfprintf
+                  0x000926         0x1c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__int_vfprintf.EP_o)
+                  0x000926                  ___vfprintf
  .libc.__string_out
-                  0x000958         0x26 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
+                  0x000942         0x26 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
  .libc.__fwrite_min
-                  0x00097e          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
-                  0x00097e                  ___stdio_write_unbuffered
-                  0x00097e                  ___fwrite
-                  0x00097e                  ___stdio_write
- .libc.__out      0x000982         0x10 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
-                  0x000982                  ___out
-                  0x000982                  ___out_needed
+                  0x000968          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
+                  0x000968                  ___stdio_write_unbuffered
+                  0x000968                  ___fwrite
+                  0x000968                  ___stdio_write
+ .libc.__out      0x00096c         0x10 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
+                  0x00096c                  ___out
+                  0x00096c                  ___out_needed
  .libc.__pop_int
-                  0x000992         0xb0 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_int.EP_o)
-                  0x000992                  ___pop_int_needed
-                  0x000992                  ___pop_int
+                  0x00097c         0xb0 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_int.EP_o)
+                  0x00097c                  ___pop_int_needed
+                  0x00097c                  ___pop_int
  .libc.__pop_ptr
-                  0x000a42         0x70 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_ptr.EP_o)
-                  0x000a42                  ___pop_ptr
-                  0x000a42                  ___pop_ptr_needed
+                  0x000a2c         0x70 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_ptr.EP_o)
+                  0x000a2c                  ___pop_ptr
+                  0x000a2c                  ___pop_ptr_needed
  .libc.__string_out
-                  0x000ab2         0x26 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
- .libc.__pad      0x000ad8         0x74 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
-                  0x000ad8                  ___pad
+                  0x000a9c         0x26 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+ .libc.__pad      0x000ac2         0x74 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000ac2                  ___pad
  .libc.__dummy_fmt3
-                  0x000b4c          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000b36          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
  .libc.__dummy_fmt4
-                  0x000b4e          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
-                  0x000b4e                  ___fmt_a
-                  0x000b4e                  ___fmt_fp
+                  0x000b38          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000b38                  ___fmt_a
+                  0x000b38                  ___fmt_fp
  .libc.__dummy_fmts
-                  0x000b50          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000b3a          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
  .libc.__fmt_state
-                  0x000b52         0x32 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
-                  0x000b52                  ___fmt_state
+                  0x000b3c         0x32 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000b3c                  ___fmt_state
  .libc.vfpfcnvrt.clone.0
-                  0x000b84        0x2d8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000b6e        0x2d8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
  .libc.__printf_core
-                  0x000e5c         0x40 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
-                  0x000e5c                  ___printf_core
+                  0x000e46         0x40 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000e46                  ___printf_core
  .libc.__stdio_close
-                  0x000e9c         0x3e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__stdio_close.EP_o)
-                  0x000e9c                  ___stdio_close
+                  0x000e86         0x3e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__stdio_close.EP_o)
+                  0x000e86                  ___stdio_close
  .libc.__stdio_close_rw
-                  0x000eda         0x58 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__stdio_close.EP_o)
-                  0x000eda                  ___stdio_close_rw
+                  0x000ec4         0x58 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__stdio_close.EP_o)
+                  0x000ec4                  ___stdio_close_rw
  .libc.__isspace
-                  0x000f32         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(atoi.EP_o)
- .libc.atoi       0x000f46         0x4c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(atoi.EP_o)
-                  0x000f46                  _atoi
- .libc.fputs      0x000f92         0x28 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fputs.EP_o)
-                  0x000f92                  _fputs
-                  0x000f92                  _fputs_unlocked
+                  0x000f1c         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(atoi.EP_o)
+ .libc.atoi       0x000f30         0x4c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(atoi.EP_o)
+                  0x000f30                  _atoi
+ .libc.fputs      0x000f7c         0x28 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fputs.EP_o)
+                  0x000f7c                  _fputs
+                  0x000f7c                  _fputs_unlocked
  .libc.__fwrite_min
-                  0x000fba          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fwrite.EP_o)
- .libc.fwrite     0x000fbe         0x2c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fwrite.EP_o)
-                  0x000fbe                  _fwrite_unlocked
-                  0x000fbe                  _fwrite
- .libc.__lseek    0x000fea          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(lseek.EP_o)
-                  0x000fea                  ___lseek
-                  0x000fea                  _lseek
- .libc.memcpy     0x000ff6          0xe /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memcpy.EP_o)
-                  0x000ff6                  _memcpy
- .libc.memset     0x001004         0xc8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memset.EP_o)
-                  0x001004                  _memset
+                  0x000fa4          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fwrite.EP_o)
+ .libc.fwrite     0x000fa8         0x2c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fwrite.EP_o)
+                  0x000fa8                  _fwrite_unlocked
+                  0x000fa8                  _fwrite
+ .libc.__lseek    0x000fd4          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(lseek.EP_o)
+                  0x000fd4                  ___lseek
+                  0x000fd4                  _lseek
+ .libc.memcpy     0x000fe0          0xe /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memcpy.EP_o)
+                  0x000fe0                  _memcpy
+ .libc.memset     0x000fee         0xc8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memset.EP_o)
+                  0x000fee                  _memset
  .libc.__putc_unbuffered
-                  0x0010cc         0x2e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putc.EP_o)
-                  0x0010cc                  ___putc_unbuffered
-                  0x0010cc                  ___putc
- .libc.putc       0x0010fa          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putc.EP_o)
-                  0x0010fa                  __IO_putc
-                  0x0010fa                  _putc
-                  0x0010fa                  _fputc
-                  0x0010fa                  _putc_unlocked
- .libc.strlen     0x0010fc         0x30 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(strlen.EP_o)
-                  0x0010fc                  _strlen
+                  0x0010b6         0x2e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putc.EP_o)
+                  0x0010b6                  ___putc_unbuffered
+                  0x0010b6                  ___putc
+ .libc.putc       0x0010e4          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putc.EP_o)
+                  0x0010e4                  __IO_putc
+                  0x0010e4                  _putc
+                  0x0010e4                  _fputc
+                  0x0010e4                  _putc_unlocked
+ .libc.strlen     0x0010e6         0x30 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(strlen.EP_o)
+                  0x0010e6                  _strlen
  .libc.__syscall_ret
-                  0x00112c         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(syscall_ret.EP_o)
-                  0x00112c                  ___syscall_ret
- .libc.tolower    0x001140          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(tolower.EP_o)
-                  0x001140                  _tolower
+                  0x001116         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(syscall_ret.EP_o)
+                  0x001116                  ___syscall_ret
+ .libc.tolower    0x00112a          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(tolower.EP_o)
+                  0x00112a                  _tolower
  .libc.__tolower_l
-                  0x00114c          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(tolower.EP_o)
-                  0x00114c                  _tolower_l
-                  0x00114c                  ___tolower_l
- .libc.toupper    0x00114e          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(toupper.EP_o)
-                  0x00114e                  _toupper
+                  0x001136          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(tolower.EP_o)
+                  0x001136                  _tolower_l
+                  0x001136                  ___tolower_l
+ .libc.toupper    0x001138          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(toupper.EP_o)
+                  0x001138                  _toupper
  .libc.__toupper_l
-                  0x00115a          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(toupper.EP_o)
-                  0x00115a                  _toupper_l
-                  0x00115a                  ___toupper_l
- .libc.__dummy    0x00115c          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__init_stdio.EP_o)
-                  0x00115c                  ___init_stdin
-                  0x00115c                  ___init_stderr
+                  0x001144          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(toupper.EP_o)
+                  0x001144                  _toupper_l
+                  0x001144                  ___toupper_l
+ .libc.__dummy    0x001146          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__init_stdio.EP_o)
+                  0x001146                  ___init_stdin
+                  0x001146                  ___init_stderr
  .libc.__init_stdio
-                  0x00115e          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__init_stdio.EP_o)
-                  0x00115e                  ___init_stdio_needed
-                  0x00115e                  ___init_stdio
+                  0x001148          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__init_stdio.EP_o)
+                  0x001148                  ___init_stdio_needed
+                  0x001148                  ___init_stdio
  .libc.__pop_float
-                  0x001164         0x44 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_float.EP_o)
-                  0x001164                  ___pop_float_needed
-                  0x001164                  ___pop_float
- .libc.doclose    0x0011a8          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(closeep.Meo)
- .libc.dowrite    0x0011ac          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(writeep.Meo)
+                  0x00114e         0x44 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_float.EP_o)
+                  0x00114e                  ___pop_float_needed
+                  0x00114e                  ___pop_float
+ .libc.doclose    0x001192          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(closeep.Meo)
+ .libc.dowrite    0x001196          0x4 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(writeep.Meo)
  .libm.extendsfdf2
-                  0x0011b0         0x3e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
-                  0x0011b0                  ___extendsfdf2
- .libm.funpack    0x0011ee         0x2a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
-                  0x0011ee                  __funpack
- .libm.mulsi3     0x001218          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
-                  0x001218                  ___mulp32eds3
-                  0x001218                  ___mulp32peds3
-                  0x001218                  ___mulsi3
+                  0x00119a         0x3e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
+                  0x00119a                  ___extendsfdf2
+ .libm.funpack    0x0011d8         0x2a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
+                  0x0011d8                  __funpack
+ .libm.mulsi3     0x001202          0xc /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
+                  0x001202                  ___mulp32eds3
+                  0x001202                  ___mulp32peds3
+                  0x001202                  ___mulsi3
  .libm.__PplusBdi
-                  0x001224         0x26 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x00120e         0x26 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
  .libm.__PminusBdi
-                  0x00124a         0x2a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x001234         0x2a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
  .libm.__udivmoddi3
-                  0x001274         0xe6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
-                  0x001274                  ___udivmoddi3
+                  0x00125e         0xe6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x00125e                  ___udivmoddi3
  .libm.__udivdi3
-                  0x00135a          0xe /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
-                  0x00135a                  ___udivdi3
+                  0x001344          0xe /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x001344                  ___udivdi3
  .libm.__umoddi3
-                  0x001368          0x8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
-                  0x001368                  ___umoddi3
+                  0x001352          0x8 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x001352                  ___umoddi3
  .libm.__divdi3
-                  0x001370         0x60 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
-                  0x001370                  ___divdi3
+                  0x00135a         0x60 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x00135a                  ___divdi3
  .libm.__moddi3
-                  0x0013d0         0x5c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
-                  0x0013d0                  ___moddi3
+                  0x0013ba         0x5c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x0013ba                  ___moddi3
 
 usercode
  *(usercode)
@@ -931,7 +867,7 @@ __FOSCSEL
 
 __FGS             0x00affa          0x2
  *(__FGS.sec*)
- __FGS.sec        0x00affa          0x2 /CW/_FGSX8eJ®
+ __FGS.sec        0x00affa          0x2 /CW/_FGSXØiì
                   0x00affa                  __FGS.sec
 
 __FUID0
@@ -949,93 +885,85 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x90fd
+.debug_info       0x000000       0x8241
  *(.debug_info)
- .debug_info      0x000000        0x387 build/default/production/traps.o
- .debug_info      0x000387       0x11bd build/default/production/debug.o
- .debug_info      0x001544        0x4e9 build/default/production/main.o
- .debug_info      0x001a2d        0x21e build/default/production/openlcb_node_definition.o
- .debug_info      0x001c4b        0x3fc build/default/production/_ext/216671855/can_buffer_fifo.o
- .debug_info      0x002047        0xa17 build/default/production/_ext/216671855/can_utilities.o
- .debug_info      0x002a5e        0xd54 build/default/production/_ext/216671855/can_rx_statemachine.o
- .debug_info      0x0037b2        0x40f build/default/production/_ext/216671855/can_buffer_store.o
- .debug_info      0x003bc1       0x38c7 build/default/production/_ext/585199093/mcu_driver.o
- .debug_info      0x007488        0x563 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
- .debug_info      0x0079eb        0x684 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_info      0x00806f        0x969 build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_info      0x0089d8        0x57c build/default/production/_ext/526222337/openlcb_buffer_list.o
- .debug_info      0x008f54         0x90 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
- .debug_info      0x008fe4         0x8d /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
- .debug_info      0x009071         0x8c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
+ .debug_info      0x000000        0x37b build/default/production/traps.o
+ .debug_info      0x00037b       0x11b1 build/default/production/debug.o
+ .debug_info      0x00152c        0x4e7 build/default/production/main.o
+ .debug_info      0x001a13        0x3f0 build/default/production/_ext/216671855/can_buffer_fifo.o
+ .debug_info      0x001e03        0xb3b build/default/production/_ext/216671855/can_utilities.o
+ .debug_info      0x00293e        0x403 build/default/production/_ext/216671855/can_buffer_store.o
+ .debug_info      0x002d41       0x38bb build/default/production/_ext/585199093/mcu_driver.o
+ .debug_info      0x0065fc        0x557 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+ .debug_info      0x006b53        0x678 build/default/production/_ext/526222337/openlcb_buffer_store.o
+ .debug_info      0x0071cb        0x95d build/default/production/_ext/526222337/openlcb_utilities.o
+ .debug_info      0x007b28        0x570 build/default/production/_ext/526222337/openlcb_buffer_list.o
+ .debug_info      0x008098         0x90 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
+ .debug_info      0x008128         0x8d /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
+ .debug_info      0x0081b5         0x8c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0xf59
+.debug_abbrev     0x000000        0xd5c
  *(.debug_abbrev)
  .debug_abbrev    0x000000         0x8a build/default/production/traps.o
  .debug_abbrev    0x00008a        0x182 build/default/production/debug.o
- .debug_abbrev    0x00020c         0xf7 build/default/production/main.o
- .debug_abbrev    0x000303         0x56 build/default/production/openlcb_node_definition.o
- .debug_abbrev    0x000359         0xde build/default/production/_ext/216671855/can_buffer_fifo.o
- .debug_abbrev    0x000437        0x15b build/default/production/_ext/216671855/can_utilities.o
- .debug_abbrev    0x000592        0x1a8 build/default/production/_ext/216671855/can_rx_statemachine.o
- .debug_abbrev    0x00073a        0x104 build/default/production/_ext/216671855/can_buffer_store.o
- .debug_abbrev    0x00083e        0x24d build/default/production/_ext/585199093/mcu_driver.o
- .debug_abbrev    0x000a8b        0x11b build/default/production/_ext/526222337/openlcb_buffer_fifo.o
- .debug_abbrev    0x000ba6        0x138 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_abbrev    0x000cde        0x104 build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_abbrev    0x000de2        0x13b build/default/production/_ext/526222337/openlcb_buffer_list.o
- .debug_abbrev    0x000f1d         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
- .debug_abbrev    0x000f31         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
- .debug_abbrev    0x000f45         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
+ .debug_abbrev    0x00020c         0xf8 build/default/production/main.o
+ .debug_abbrev    0x000304         0xde build/default/production/_ext/216671855/can_buffer_fifo.o
+ .debug_abbrev    0x0003e2        0x15b build/default/production/_ext/216671855/can_utilities.o
+ .debug_abbrev    0x00053d        0x104 build/default/production/_ext/216671855/can_buffer_store.o
+ .debug_abbrev    0x000641        0x24d build/default/production/_ext/585199093/mcu_driver.o
+ .debug_abbrev    0x00088e        0x11b build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+ .debug_abbrev    0x0009a9        0x138 build/default/production/_ext/526222337/openlcb_buffer_store.o
+ .debug_abbrev    0x000ae1        0x104 build/default/production/_ext/526222337/openlcb_utilities.o
+ .debug_abbrev    0x000be5        0x13b build/default/production/_ext/526222337/openlcb_buffer_list.o
+ .debug_abbrev    0x000d20         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
+ .debug_abbrev    0x000d34         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
+ .debug_abbrev    0x000d48         0x14 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
 
-.debug_line       0x000000       0x13a9
+.debug_line       0x000000       0x11db
  *(.debug_line)
  .debug_line      0x000000        0x114 build/default/production/traps.o
- .debug_line      0x000114        0x265 build/default/production/debug.o
- .debug_line      0x000379        0x198 build/default/production/main.o
- .debug_line      0x000511         0x83 build/default/production/openlcb_node_definition.o
- .debug_line      0x000594         0xdb build/default/production/_ext/216671855/can_buffer_fifo.o
- .debug_line      0x00066f        0x182 build/default/production/_ext/216671855/can_utilities.o
- .debug_line      0x0007f1        0x254 build/default/production/_ext/216671855/can_rx_statemachine.o
- .debug_line      0x000a45         0xdb build/default/production/_ext/216671855/can_buffer_store.o
- .debug_line      0x000b20        0x379 build/default/production/_ext/585199093/mcu_driver.o
- .debug_line      0x000e99         0xe3 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
- .debug_line      0x000f7c        0x100 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_line      0x00107c        0x150 build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_line      0x0011cc        0x100 build/default/production/_ext/526222337/openlcb_buffer_list.o
- .debug_line      0x0012cc         0x59 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
- .debug_line      0x001325         0x4a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
- .debug_line      0x00136f         0x3a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
+ .debug_line      0x000114        0x270 build/default/production/debug.o
+ .debug_line      0x000384        0x241 build/default/production/main.o
+ .debug_line      0x0005c5         0xdb build/default/production/_ext/216671855/can_buffer_fifo.o
+ .debug_line      0x0006a0        0x1d7 build/default/production/_ext/216671855/can_utilities.o
+ .debug_line      0x000877         0xdb build/default/production/_ext/216671855/can_buffer_store.o
+ .debug_line      0x000952        0x379 build/default/production/_ext/585199093/mcu_driver.o
+ .debug_line      0x000ccb         0xe3 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+ .debug_line      0x000dae        0x100 build/default/production/_ext/526222337/openlcb_buffer_store.o
+ .debug_line      0x000eae        0x150 build/default/production/_ext/526222337/openlcb_utilities.o
+ .debug_line      0x000ffe        0x100 build/default/production/_ext/526222337/openlcb_buffer_list.o
+ .debug_line      0x0010fe         0x59 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
+ .debug_line      0x001157         0x4a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
+ .debug_line      0x0011a1         0x3a /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
 
-.debug_frame      0x000000       0x1348
+.debug_frame      0x000000        0xf28
  *(.debug_frame)
  .debug_frame     0x000000         0x96 build/default/production/traps.o
  .debug_frame     0x000096        0x304 build/default/production/debug.o
- .debug_frame     0x00039a        0x30e build/default/production/main.o
- .debug_frame     0x0006a8         0x96 build/default/production/_ext/216671855/can_buffer_fifo.o
- .debug_frame     0x00073e        0x1bc build/default/production/_ext/216671855/can_utilities.o
- .debug_frame     0x0008fa        0x254 build/default/production/_ext/216671855/can_rx_statemachine.o
- .debug_frame     0x000b4e         0x96 build/default/production/_ext/216671855/can_buffer_store.o
- .debug_frame     0x000be4        0x3a6 build/default/production/_ext/585199093/mcu_driver.o
- .debug_frame     0x000f8a         0xb0 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
- .debug_frame     0x00103a         0x96 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_frame     0x0010d0        0x1ae build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_frame     0x00127e         0xca build/default/production/_ext/526222337/openlcb_buffer_list.o
+ .debug_frame     0x00039a        0x10e build/default/production/main.o
+ .debug_frame     0x0004a8         0x96 build/default/production/_ext/216671855/can_buffer_fifo.o
+ .debug_frame     0x00053e        0x1f0 build/default/production/_ext/216671855/can_utilities.o
+ .debug_frame     0x00072e         0x96 build/default/production/_ext/216671855/can_buffer_store.o
+ .debug_frame     0x0007c4        0x3a6 build/default/production/_ext/585199093/mcu_driver.o
+ .debug_frame     0x000b6a         0xb0 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+ .debug_frame     0x000c1a         0x96 build/default/production/_ext/526222337/openlcb_buffer_store.o
+ .debug_frame     0x000cb0        0x1ae build/default/production/_ext/526222337/openlcb_utilities.o
+ .debug_frame     0x000e5e         0xca build/default/production/_ext/526222337/openlcb_buffer_list.o
 
-.debug_str        0x000000        0x697
+.debug_str        0x000000        0x5c9
  *(.debug_str)
  .debug_str       0x000000          0xc build/default/production/traps.o
  .debug_str       0x00000c        0x1c1 build/default/production/debug.o
  .debug_str       0x0001cd         0x20 build/default/production/main.o
  .debug_str       0x0001ed         0x14 build/default/production/_ext/216671855/can_buffer_fifo.o
  .debug_str       0x000201         0x5c build/default/production/_ext/216671855/can_utilities.o
- .debug_str       0x00025d         0xce build/default/production/_ext/216671855/can_rx_statemachine.o
- .debug_str       0x00032b         0x36 build/default/production/_ext/216671855/can_buffer_store.o
- .debug_str       0x000361        0x27b build/default/production/_ext/585199093/mcu_driver.o
- .debug_str       0x0005dc         0x18 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
- .debug_str       0x0005f4         0x30 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_str       0x000624         0x43 build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_str       0x000667         0x30 build/default/production/_ext/526222337/openlcb_buffer_list.o
+ .debug_str       0x00025d         0x36 build/default/production/_ext/216671855/can_buffer_store.o
+ .debug_str       0x000293        0x27b build/default/production/_ext/585199093/mcu_driver.o
+ .debug_str       0x00050e         0x18 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+ .debug_str       0x000526         0x30 build/default/production/_ext/526222337/openlcb_buffer_store.o
+ .debug_str       0x000556         0x43 build/default/production/_ext/526222337/openlcb_utilities.o
+ .debug_str       0x000599         0x30 build/default/production/_ext/526222337/openlcb_buffer_list.o
 
 .debug_loc
  *(.debug_loc)
@@ -1044,39 +972,35 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000       0x1260
+                  0x000000        0xf70
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0x66 build/default/production/traps.o
  .debug_pubnames
                   0x000066        0x153 build/default/production/debug.o
  .debug_pubnames
-                  0x0001b9         0x7a build/default/production/main.o
+                  0x0001b9         0x1b build/default/production/main.o
  .debug_pubnames
-                  0x000233         0x54 build/default/production/openlcb_node_definition.o
+                  0x0001d4         0xb6 build/default/production/_ext/216671855/can_buffer_fifo.o
  .debug_pubnames
-                  0x000287         0xb6 build/default/production/_ext/216671855/can_buffer_fifo.o
+                  0x00028a        0x313 build/default/production/_ext/216671855/can_utilities.o
  .debug_pubnames
-                  0x00033d        0x2bc build/default/production/_ext/216671855/can_utilities.o
+                  0x00059d         0xf9 build/default/production/_ext/216671855/can_buffer_store.o
  .debug_pubnames
-                  0x0005f9        0x294 build/default/production/_ext/216671855/can_rx_statemachine.o
+                  0x000696        0x3b2 build/default/production/_ext/585199093/mcu_driver.o
  .debug_pubnames
-                  0x00088d         0xf9 build/default/production/_ext/216671855/can_buffer_store.o
+                  0x000a48         0xc8 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
  .debug_pubnames
-                  0x000986        0x3b2 build/default/production/_ext/585199093/mcu_driver.o
+                  0x000b10         0xe8 build/default/production/_ext/526222337/openlcb_buffer_store.o
  .debug_pubnames
-                  0x000d38         0xc8 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+                  0x000bf8        0x2a8 build/default/production/_ext/526222337/openlcb_utilities.o
  .debug_pubnames
-                  0x000e00         0xe8 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_pubnames
-                  0x000ee8        0x2a8 build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_pubnames
-                  0x001190         0xd0 build/default/production/_ext/526222337/openlcb_buffer_list.o
+                  0x000ea0         0xd0 build/default/production/_ext/526222337/openlcb_buffer_list.o
 
 .debug_ranges
  *(.debug_ranges)
 
-.debug_aranges    0x000000        0x180
+.debug_aranges    0x000000        0x168
  *(.debug_aranges)
  .debug_aranges
                   0x000000         0x18 build/default/production/traps.o
@@ -1089,25 +1013,23 @@ __FUID3
  .debug_aranges
                   0x000060         0x18 build/default/production/_ext/216671855/can_utilities.o
  .debug_aranges
-                  0x000078         0x18 build/default/production/_ext/216671855/can_rx_statemachine.o
+                  0x000078         0x18 build/default/production/_ext/216671855/can_buffer_store.o
  .debug_aranges
-                  0x000090         0x18 build/default/production/_ext/216671855/can_buffer_store.o
+                  0x000090         0x18 build/default/production/_ext/585199093/mcu_driver.o
  .debug_aranges
-                  0x0000a8         0x18 build/default/production/_ext/585199093/mcu_driver.o
+                  0x0000a8         0x18 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
  .debug_aranges
-                  0x0000c0         0x18 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+                  0x0000c0         0x18 build/default/production/_ext/526222337/openlcb_buffer_store.o
  .debug_aranges
-                  0x0000d8         0x18 build/default/production/_ext/526222337/openlcb_buffer_store.o
+                  0x0000d8         0x18 build/default/production/_ext/526222337/openlcb_utilities.o
  .debug_aranges
-                  0x0000f0         0x18 build/default/production/_ext/526222337/openlcb_utilities.o
+                  0x0000f0         0x18 build/default/production/_ext/526222337/openlcb_buffer_list.o
  .debug_aranges
-                  0x000108         0x18 build/default/production/_ext/526222337/openlcb_buffer_list.o
+                  0x000108         0x20 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
  .debug_aranges
-                  0x000120         0x20 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
+                  0x000128         0x20 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
  .debug_aranges
-                  0x000140         0x20 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
- .debug_aranges
-                  0x000160         0x20 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
+                  0x000148         0x20 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -2210,153 +2132,143 @@ LOAD /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a
 LOAD /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libm-elf.a
 LOAD /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a
 END GROUP
-OUTPUT(dist/default/production/can_rx_statemachine.X.production.elf elf32-pic30)
-LOAD /CW/_FGSX8eJ®
+OUTPUT(dist/default/production/can_utilities.X.production.elf elf32-pic30)
+LOAD /CW/_FGSXØiì
 LOAD jump_table
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000180        0xc83
+                  0x000168        0xaf8
  .debug_pubtypes
-                  0x000180         0x42 build/default/production/traps.o
+                  0x000168         0x42 build/default/production/traps.o
  .debug_pubtypes
-                  0x0001c2         0xe9 build/default/production/debug.o
+                  0x0001aa         0xe9 build/default/production/debug.o
  .debug_pubtypes
-                  0x0002ab         0xb7 build/default/production/main.o
+                  0x000293         0xc6 build/default/production/main.o
  .debug_pubtypes
-                  0x000362         0x38 build/default/production/openlcb_node_definition.o
+                  0x000359         0x6d build/default/production/_ext/216671855/can_buffer_fifo.o
  .debug_pubtypes
-                  0x00039a         0x6d build/default/production/_ext/216671855/can_buffer_fifo.o
+                  0x0003c6         0xb7 build/default/production/_ext/216671855/can_utilities.o
  .debug_pubtypes
-                  0x000407         0xb7 build/default/production/_ext/216671855/can_utilities.o
+                  0x00047d         0x75 build/default/production/_ext/216671855/can_buffer_store.o
  .debug_pubtypes
-                  0x0004be        0x162 build/default/production/_ext/216671855/can_rx_statemachine.o
+                  0x0004f2        0x47b build/default/production/_ext/585199093/mcu_driver.o
  .debug_pubtypes
-                  0x000620         0x75 build/default/production/_ext/216671855/can_buffer_store.o
+                  0x00096d         0x9b build/default/production/_ext/526222337/openlcb_buffer_fifo.o
  .debug_pubtypes
-                  0x000695        0x47b build/default/production/_ext/585199093/mcu_driver.o
+                  0x000a08        0x134 build/default/production/_ext/526222337/openlcb_buffer_store.o
  .debug_pubtypes
-                  0x000b10         0x9b build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+                  0x000b3c         0xa0 build/default/production/_ext/526222337/openlcb_utilities.o
  .debug_pubtypes
-                  0x000bab        0x134 build/default/production/_ext/526222337/openlcb_buffer_store.o
- .debug_pubtypes
-                  0x000cdf         0xa0 build/default/production/_ext/526222337/openlcb_utilities.o
- .debug_pubtypes
-                  0x000d7f         0x84 build/default/production/_ext/526222337/openlcb_buffer_list.o
+                  0x000bdc         0x84 build/default/production/_ext/526222337/openlcb_buffer_list.o
 
 __c30_signature
-                  0x000e03        0x14a
+                  0x000c60        0x138
  __c30_signature
-                  0x000e03          0x6 build/default/production/traps.o
+                  0x000c60          0x6 build/default/production/traps.o
  __c30_signature
-                  0x000e09          0x6 build/default/production/debug.o
+                  0x000c66          0x6 build/default/production/debug.o
  __c30_signature
-                  0x000e0f          0x6 build/default/production/main.o
+                  0x000c6c          0x6 build/default/production/main.o
  __c30_signature
-                  0x000e15          0x6 build/default/production/openlcb_node_definition.o
+                  0x000c72          0x6 build/default/production/_ext/216671855/can_buffer_fifo.o
  __c30_signature
-                  0x000e1b          0x6 build/default/production/_ext/216671855/can_buffer_fifo.o
+                  0x000c78          0x6 build/default/production/_ext/216671855/can_utilities.o
  __c30_signature
-                  0x000e21          0x6 build/default/production/_ext/216671855/can_utilities.o
+                  0x000c7e          0x6 build/default/production/_ext/216671855/can_buffer_store.o
  __c30_signature
-                  0x000e27          0x6 build/default/production/_ext/216671855/can_rx_statemachine.o
+                  0x000c84          0x6 build/default/production/_ext/585199093/mcu_driver.o
  __c30_signature
-                  0x000e2d          0x6 build/default/production/_ext/216671855/can_buffer_store.o
+                  0x000c8a          0x6 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
  __c30_signature
-                  0x000e33          0x6 build/default/production/_ext/585199093/mcu_driver.o
+                  0x000c90          0x6 build/default/production/_ext/526222337/openlcb_buffer_store.o
  __c30_signature
-                  0x000e39          0x6 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+                  0x000c96          0x6 build/default/production/_ext/526222337/openlcb_utilities.o
  __c30_signature
-                  0x000e3f          0x6 build/default/production/_ext/526222337/openlcb_buffer_store.o
+                  0x000c9c          0x6 build/default/production/_ext/526222337/openlcb_buffer_list.o
  __c30_signature
-                  0x000e45          0x6 build/default/production/_ext/526222337/openlcb_utilities.o
+                  0x000ca2          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt0_extendedep.o)
  __c30_signature
-                  0x000e4b          0x6 build/default/production/_ext/526222337/openlcb_buffer_list.o
+                  0x000ca8          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(data_init_extended.o)
  __c30_signature
-                  0x000e51          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(crt0_extendedep.o)
+                  0x000cae          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(delay32ep.Meo)
  __c30_signature
-                  0x000e57          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(data_init_extended.o)
+                  0x000cb4          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
  __c30_signature
-                  0x000e5d          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(delay32ep.Meo)
+                  0x000cba          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putchar.EP_o)
  __c30_signature
-                  0x000e63          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_0.EP_o)
+                  0x000cc0          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(puts.EP_o)
  __c30_signature
-                  0x000e69          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__sio_printf_doux.EP_o)
+                  0x000cc6          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
  __c30_signature
-                  0x000e6f          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putchar.EP_o)
+                  0x000ccc          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_d.EP_o)
  __c30_signature
-                  0x000e75          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(puts.EP_o)
+                  0x000cd2          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_o.EP_o)
  __c30_signature
-                  0x000e7b          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
+                  0x000cd8          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_s.EP_o)
  __c30_signature
-                  0x000e81          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_d.EP_o)
+                  0x000cde          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_u.EP_o)
  __c30_signature
-                  0x000e87          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_o.EP_o)
+                  0x000ce4          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_x.EP_o)
  __c30_signature
-                  0x000e8d          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_s.EP_o)
+                  0x000cea          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__int_vfprintf.EP_o)
  __c30_signature
-                  0x000e93          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_u.EP_o)
+                  0x000cf0          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__io_init_needed.EP_o)
  __c30_signature
-                  0x000e99          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__fmt_x.EP_o)
+                  0x000cf6          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
  __c30_signature
-                  0x000e9f          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__int_vfprintf.EP_o)
+                  0x000cfc          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_int.EP_o)
  __c30_signature
-                  0x000ea5          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__io_init_needed.EP_o)
+                  0x000d02          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_ptr.EP_o)
  __c30_signature
-                  0x000eab          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__out.EP_o)
+                  0x000d08          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
  __c30_signature
-                  0x000eb1          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_int.EP_o)
+                  0x000d0e          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__stdio_close.EP_o)
  __c30_signature
-                  0x000eb7          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_ptr.EP_o)
+                  0x000d14          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(atoi.EP_o)
  __c30_signature
-                  0x000ebd          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+                  0x000d1a          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fputs.EP_o)
  __c30_signature
-                  0x000ec3          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__stdio_close.EP_o)
+                  0x000d20          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fwrite.EP_o)
  __c30_signature
-                  0x000ec9          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(atoi.EP_o)
+                  0x000d26          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(lseek.EP_o)
  __c30_signature
-                  0x000ecf          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fputs.EP_o)
+                  0x000d2c          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memcpy.EP_o)
  __c30_signature
-                  0x000ed5          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(fwrite.EP_o)
+                  0x000d32          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memset.EP_o)
  __c30_signature
-                  0x000edb          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(lseek.EP_o)
+                  0x000d38          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putc.EP_o)
  __c30_signature
-                  0x000ee1          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memcpy.EP_o)
+                  0x000d3e          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(strlen.EP_o)
  __c30_signature
-                  0x000ee7          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(memset.EP_o)
+                  0x000d44          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(syscall_ret.EP_o)
  __c30_signature
-                  0x000eed          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(putc.EP_o)
+                  0x000d4a          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(tolower.EP_o)
  __c30_signature
-                  0x000ef3          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(strlen.EP_o)
+                  0x000d50          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(toupper.EP_o)
  __c30_signature
-                  0x000ef9          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(syscall_ret.EP_o)
+                  0x000d56          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__errno_location.EP_o)
  __c30_signature
-                  0x000eff          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(tolower.EP_o)
+                  0x000d5c          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__init_stdio.EP_o)
  __c30_signature
-                  0x000f05          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(toupper.EP_o)
+                  0x000d62          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__io_file_needed.EP_o)
  __c30_signature
-                  0x000f0b          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__errno_location.EP_o)
+                  0x000d68          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_float.EP_o)
  __c30_signature
-                  0x000f11          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__init_stdio.EP_o)
+                  0x000d6e          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(closeep.Meo)
  __c30_signature
-                  0x000f17          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__io_file_needed.EP_o)
+                  0x000d74          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(writeep.Meo)
  __c30_signature
-                  0x000f1d          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__pop_float.EP_o)
+                  0x000d7a          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(c30_uartep.Meo)
  __c30_signature
-                  0x000f23          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(closeep.Meo)
+                  0x000d80          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
  __c30_signature
-                  0x000f29          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(writeep.Meo)
+                  0x000d86          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
  __c30_signature
-                  0x000f2f          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(c30_uartep.Meo)
+                  0x000d8c          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
  __c30_signature
-                  0x000f35          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(extendsfdf.EP_o)
- __c30_signature
-                  0x000f3b          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(funpack.EP_o)
- __c30_signature
-                  0x000f41          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(mulsi3.EP_o)
- __c30_signature
-                  0x000f47          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
+                  0x000d92          0x6 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(divmoddi3.EP_o)
 
 __xc_reference_data
 
@@ -2371,45 +2283,43 @@ __xc_reference_data
  .nbss              0x100a          0x2 build/default/production/_ext/526222337/openlcb_buffer_store.o
                     0x100a                  __buffer_store_message_allocated
 
-_0x10df8bd20673d50dc
+_0x10f8c3d20673e8f23
                     0x1200        0x200
- _0x10df8bd20673d50dc
+ _0x10f8c3d20673e8f23
                     0x1200        0x200 build/default/production/_ext/585199093/mcu_driver.o
                     0x1200                  _ecan1msgBuf
 
-.bss                0x1400       0x1130
- .bss               0x1400       0x1130 build/default/production/_ext/526222337/openlcb_buffer_store.o
+.bss                0x1400        0x5c0
+ .bss               0x1400        0x5c0 build/default/production/_ext/526222337/openlcb_buffer_store.o
                     0x1400                  __message_buffer
 
-.bss                0x100c        0x182
+.bss                0x100c        0x140
  .bss               0x100c        0x140 build/default/production/_ext/216671855/can_buffer_store.o
                     0x100c                  __can_buffer_store
- .bss               0x114c         0x42 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
-                    0x114c                  _openlcb_msg_buffer_fifo
 
-.data               0x118e         0x42
- .data              0x118e         0x42 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
-                    0x118e                  __stdout
-                    0x1190                  ___stdout_used
+.data               0x114c         0x42
+ .data              0x114c         0x42 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(stdout.EP_o)
+                    0x114c                  __stdout
+                    0x114e                  ___stdout_used
 
-.bss                0x2530         0x3c
- .bss               0x2530         0x3c build/default/production/_ext/526222337/openlcb_buffer_list.o
-                    0x2530                  _openlcb_msg_buffer_list
+.bss                0x118e         0x72
+ .bss               0x118e         0x2c build/default/production/_ext/216671855/can_buffer_fifo.o
+                    0x118e                  _can_msg_buffer_fifo
+ .bss               0x11ba         0x26 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+                    0x11ba                  _openlcb_msg_buffer_fifo
+ .bss               0x11e0         0x20 build/default/production/_ext/526222337/openlcb_buffer_list.o
+                    0x11e0                  _openlcb_msg_buffer_list
 
-.bss                0x11d0         0x2c
- .bss               0x11d0         0x2c build/default/production/_ext/216671855/can_buffer_fifo.o
-                    0x11d0                  _can_msg_buffer_fifo
+.data               0x19c0         0x1e
+ .data              0x19c0         0x1e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
 
-.data               0x256c         0x1e
- .data              0x256c         0x1e /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__printf_core.EP_o)
+.bss                0x19de          0x2
+ .bss               0x19de          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__errno_location.EP_o)
+                    0x19de                  ___errno_val
 
-.bss                0x11fc          0x2
- .bss               0x11fc          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-elf.a(__errno_location.EP_o)
-                    0x11fc                  ___errno_val
-
-.data               0x11fe          0x2
- .data              0x11fe          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(c30_uartep.Meo)
-                    0x11fe                  ___C30_UART
+.data               0x19e0          0x2
+ .data              0x19e0          0x2 /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(c30_uartep.Meo)
+                    0x19e0                  ___C30_UART
 
 .ivt._OscillatorFail
                   0x000004          0x2
@@ -2484,154 +2394,126 @@ _0x10df8bd20673d50dc
  .ivt._DMA0Interrupt
                   0x00001c          0x2 build/default/production/_ext/585199093/mcu_driver.o
 
-.const              0x942c       0x1280 load address 0x00142c  
- .const             0x942c        0x9a0 build/default/production/debug.o
- .const             0x9dcc        0x6c0 build/default/production/openlcb_node_definition.o
-                    0x9dcc                  _USER_DEFINED_PROTOCOL_SUPPORT
-                    0x9dd0                  _MAX_CDI_ARRAY
-                    0x9dd2                  _CDI_ARRAY
- .const             0xa48c        0x178 build/default/production/_ext/216671855/can_rx_statemachine.o
- .const             0xa604         0x86 build/default/production/main.o
- .const             0xa68a         0x22 build/default/production/_ext/585199093/mcu_driver.o
-                    0xa68a                  _FIFO_RX_START_INDEX
-                    0xa68c                  _FIFO_FLAG_MASKS
+.const              0x9416       0x161e load address 0x001416  
+ .const             0x9416        0xc5c build/default/production/main.o
+ .const             0xa072        0x9a0 build/default/production/debug.o
+ .const             0xaa12         0x22 build/default/production/_ext/585199093/mcu_driver.o
+                    0xaa12                  _FIFO_RX_START_INDEX
+                    0xaa14                  _FIFO_FLAG_MASKS
 
-.text             0x0026ac       0x36cc
- .text            0x0026ac        0xf86 build/default/production/_ext/585199093/mcu_driver.o
-                  0x0026ac                  _Ecan1WriteRxAcptFilter
-                  0x002818                  _Ecan1WriteRxAcptMask
-                  0x002922                  _Ecan1TxBufferSetTransmit
-                  0x002970                  _Ecan1TxBufferClearTransmit
-                  0x0029be                  _Is_Ecan1_TxBuffer_Clear
-                  0x002a76                  _McuDriver_is_can_tx_buffer_clear
-                  0x002a82                  _Ecan1WriteTxMsgBufId
-                  0x002ca0                  _Ecan1WriteTxMsgBufData
-                  0x002e34                  _Ecan1WriteTxMsgBufDataWord
-                  0x002f86                  _Ecan1WriteTxMsgBufDataByte
-                  0x003102                  _Ecan1ReadRxMsgBufId
-                  0x003222                  _Ecan1ReadRxMsgBufData
-                  0x00342e                  _McuDriver_transmit_raw_can_frame
-                  0x003468                  _McuDriver_initialization
-                  0x0035e0                  _Ecan1DisableRXFilter
-                  0x003602                  _McuDriver_pause_can_rx
-                  0x00360a                  _McuDriver_resume_can_rx
-                  0x003612                  _McuDriver_pause_can_tx_complete_notify
-                  0x00361a                  _McuDriver_resume_can_tx_complete_notify
-                  0x003622                  _McuDriver_pause_100ms_timer
-                  0x00362a                  _McuDriver_resume_100ms_timer
- .text            0x003632        0x9b0 build/default/production/debug.o
-                  0x003632                  _PrintInt64
-                  0x00368a                  _PrintAlias
-                  0x00369c                  _PrintNodeID
-                  0x0036de                  _PrintAliasAndNodeID
-                  0x0036fc                  _PrintMtiName
-                  0x003a0e                  _PrintOpenLcbMsg
-                  0x003ac8                  _PrintCanMsg
-                  0x003b3c                  _PrintEventID
-                  0x003b94                  _PrintCanIdentifier
-                  0x003bba                  _PrintDWord
-                  0x003bc8                  _PrintCAN1Registers
-                  0x003dd4                  _PrintDMA0Registers
-                  0x003e42                  _PrintDMA1Registers
-                  0x003eb0                  _PrintDMA2Registers
-                  0x003f1e                  _PrintDMA3Registers
-                  0x003f8c                  _PrintDMACommonRegisters
- .text            0x003fe2        0x722 build/default/production/main.o
-                  0x003fe2                  _LegacySimpleSnipSequence
-                  0x004074                  _DatagramSequence
-                  0x004262                  _MultiFrameSnipSequence
-                  0x00455e                  _CanFrameLogin
-                  0x004670                  _main
- .text            0x004704        0x5aa build/default/production/_ext/216671855/can_rx_statemachine.o
-                  0x004704                  __handle_first_frame
-                  0x004782                  __handle_middle_frame
-                  0x0047cc                  __handle_last_frame
-                  0x004826                  __handle_single_frame
-                  0x00488a                  __handle_can_legacy_snip
-                  0x0048e0                  __handle_global_addressed_messages
-                  0x004994                  __flush_alias_node_id_mappings
-                  0x0049a0                  __test_can_message_for_alias_conflict
-                  0x0049aa                  __hard_alias_conflict_check
-                  0x004a1a                  __soft_alias_conflict_check
-                  0x004a64                  __reply_to_ame_control_frame
-                  0x004a6e                  __handle_rid_control_frame
-                  0x004a7a                  __handle_amd_control_frame
-                  0x004a86                  __handle_ame_control_frame
-                  0x004aa8                  __handle_amr_control_frame
-                  0x004ab4                  __handle_incoming_can_variable_field
-                  0x004b40                  __handle_incoming_cid
-                  0x004b4c                  __handle_incoming_can_frame_sequence_number
-                  0x004bb6                  __state_machine_incoming_can
-                  0x004ca4                  _CanRxStatemachine_statemachine_initialize
- .text            0x004cae        0x57c build/default/production/_ext/526222337/openlcb_utilities.o
-                  0x004cae                  _Utilities_load_openlcb_message
-                  0x004d06                  _Utilities_clear_openlcb_message_payload
-                  0x004d34                  _Utilities_copy_event_id_to_openlcb_payload
-                  0x004d8c                  _Utilities_copy_openlcb_message
-                  0x004e14                  _Utilities_copy_word_to_openlcb_payload
-                  0x004e48                  _Utilities_copy_dword_to_openlcb_payload
-                  0x004eb6                  _Utilities_copy_node_id_to_openlcb_payload
-                  0x004f0e                  _Utilities_copy_64_bit_to_openlcb_payload
-                  0x004f66                  _Utilities_extract_node_id_from_openlcb_payload
-                  0x00502e                  _Utilities_extract_event_id_from_openlcb_payload
-                  0x00512e                  _Utilities_extract_word_from_openlcb_payload
-                  0x00515a                  _Utilities_extract_dword_from_openlcb_payload
-                  0x0051c6                  _Utilities_set_multi_frame_flag
-                  0x0051dc                  _Utilities_is_addressed_openlcb_message
-                  0x0051f4                  _Utilities_count_nulls_in_openlcb_payload
- .text            0x00522a        0x4ea build/default/production/_ext/216671855/can_utilities.o
-                  0x00522a                  _CanUtilities_clear_can_message
-                  0x005258                  _CanUtilities_extract_source_alias_from_can_message
-                  0x00526c                  _CanUtilties_extract_dest_alias_from_can_message
-                  0x005324                  _CanUtilties_convert_can_mti_to_openlcb_mti
-                  0x0053b2                  _CanUtilities_append_can_payload_to_openlcb_payload
-                  0x005414                  _CanUtilities_copy_can_payload_to_openlcb_payload
-                  0x00542e                  _CanUtilities_count_nulls_in_can_payload
-                  0x005464                  _CanUtilities_count_nulls_in_payloads
-                  0x00547e                  _CanUtilities_is_openlcb_message
-                  0x0054ae                  _CanUtilities_extract_can_payload_as_node_id
-                  0x005560                  _CanUtilties_extract_can_mti_from_can_identifier
-                  0x0055a4                  _CanUtilities_is_dest_alias_in_can_payload
-                  0x005600                  _CanUtilties_load_can_message
-                  0x005656                  _CanUtilities_copy_node_id_to_payload
-                  0x0056c0                  _CanUtilities_copy_64_bit_to_can_message
- .text            0x005714        0x1dc build/default/production/_ext/526222337/openlcb_buffer_store.o
-                  0x005714                  _BufferStore_clear_openlcb_message
-                  0x005766                  _BufferStore_initialize
-                  0x00581c                  _BufferStore_allocateBuffer
-                  0x0058c8                  _BufferStore_freeBuffer
-                  0x0058e8                  _BufferStore_messages_allocated
- .text            0x0058f0        0x194 build/default/production/_ext/526222337/openlcb_buffer_list.o
-                  0x0058f0                  _BufferList_initialiaze
-                  0x005910                  _BufferList_allocate
-                  0x005956                  _BufferList_find
-                  0x0059c2                  _BufferList_free
-                  0x005a04                  _BufferList_release
-                  0x005a40                  _BufferList_index_of
-                  0x005a5c                  _BufferList_is_empty
- .text            0x005a84        0x114 build/default/production/_ext/216671855/can_buffer_fifo.o
-                  0x005a84                  _CanBufferFifo_initialiaze
-                  0x005ab0                  _CanBufferFifo_push
-                  0x005b00                  _CanBufferFifo_pop
-                  0x005b4e                  _CanBufferFifo_is_empty
-                  0x005b66                  _CanBufferFifo_get_allocated_count
- .text            0x005b98        0x100 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
-                  0x005b98                  _BufferFifo_initialiaze
-                  0x005bc0                  _BufferFifo_push
-                  0x005c02                  _BufferFifo_push_existing
-                  0x005c34                  _BufferFifo_pop
-                  0x005c62                  _BufferFifo_is_empty
-                  0x005c7a                  _BufferFifo_get_allocated_count
- .text            0x005c98         0xe0 build/default/production/_ext/216671855/can_buffer_store.o
-                  0x005c98                  _CanBufferStore_initialize
-                  0x005cf2                  _CanBufferStore_clear_can_message
-                  0x005d08                  _CanBufferStore_allocateBuffer
-                  0x005d52                  _CanBufferStore_freeBuffer
-                  0x005d70                  _CanBufferStore_messages_allocated
+.text             0x002a34       0x32e8
+ .text            0x002a34        0xf86 build/default/production/_ext/585199093/mcu_driver.o
+                  0x002a34                  _Ecan1WriteRxAcptFilter
+                  0x002ba0                  _Ecan1WriteRxAcptMask
+                  0x002caa                  _Ecan1TxBufferSetTransmit
+                  0x002cf8                  _Ecan1TxBufferClearTransmit
+                  0x002d46                  _Is_Ecan1_TxBuffer_Clear
+                  0x002dfe                  _McuDriver_is_can_tx_buffer_clear
+                  0x002e0a                  _Ecan1WriteTxMsgBufId
+                  0x003028                  _Ecan1WriteTxMsgBufData
+                  0x0031bc                  _Ecan1WriteTxMsgBufDataWord
+                  0x00330e                  _Ecan1WriteTxMsgBufDataByte
+                  0x00348a                  _Ecan1ReadRxMsgBufId
+                  0x0035aa                  _Ecan1ReadRxMsgBufData
+                  0x0037b6                  _McuDriver_transmit_raw_can_frame
+                  0x0037f0                  _McuDriver_initialization
+                  0x003968                  _Ecan1DisableRXFilter
+                  0x00398a                  _McuDriver_pause_can_rx
+                  0x003992                  _McuDriver_resume_can_rx
+                  0x00399a                  _McuDriver_pause_can_tx_complete_notify
+                  0x0039a2                  _McuDriver_resume_can_tx_complete_notify
+                  0x0039aa                  _McuDriver_pause_100ms_timer
+                  0x0039b2                  _McuDriver_resume_100ms_timer
+ .text            0x0039ba        0x9b0 build/default/production/debug.o
+                  0x0039ba                  _PrintInt64
+                  0x003a12                  _PrintAlias
+                  0x003a24                  _PrintNodeID
+                  0x003a66                  _PrintAliasAndNodeID
+                  0x003a84                  _PrintMtiName
+                  0x003d96                  _PrintOpenLcbMsg
+                  0x003e50                  _PrintCanMsg
+                  0x003ec4                  _PrintEventID
+                  0x003f1c                  _PrintCanIdentifier
+                  0x003f42                  _PrintDWord
+                  0x003f50                  _PrintCAN1Registers
+                  0x00415c                  _PrintDMA0Registers
+                  0x0041ca                  _PrintDMA1Registers
+                  0x004238                  _PrintDMA2Registers
+                  0x0042a6                  _PrintDMA3Registers
+                  0x004314                  _PrintDMACommonRegisters
+ .text            0x00436a        0x828 build/default/production/main.o
+                  0x00436a                  _main
+ .text            0x004b92        0x5ac build/default/production/_ext/216671855/can_utilities.o
+                  0x004b92                  _CanUtilities_clear_can_message
+                  0x004bc0                  _CanUtilities_extract_source_alias_from_can_message
+                  0x004bd4                  _CanUtilties_extract_dest_alias_from_can_message
+                  0x004c8c                  _CanUtilties_convert_can_mti_to_openlcb_mti
+                  0x004d1a                  _CanUtilities_append_can_payload_to_openlcb_payload
+                  0x004d7c                  _CanUtilities_copy_can_payload_to_openlcb_payload
+                  0x004d96                  _CanUtilities_count_nulls_in_can_payload
+                  0x004dcc                  _CanUtilities_count_nulls_in_payloads
+                  0x004de6                  _CanUtilities_is_openlcb_message
+                  0x004e16                  _CanUtilities_extract_can_payload_as_node_id
+                  0x004ec8                  _CanUtilties_extract_can_mti_from_can_identifier
+                  0x004f0c                  _CanUtilities_is_dest_alias_in_can_payload
+                  0x004f68                  _CanUtilities_copy_openlcb_payload_to_can_payload
+                  0x004ff0                  _CanUtilties_load_can_message
+                  0x005046                  _CanUtilities_copy_node_id_to_payload
+                  0x0050b0                  _CanUtilities_copy_64_bit_to_can_message
+                  0x005104                  _CanUtilities_copy_can_message
+ .text            0x00513e        0x57c build/default/production/_ext/526222337/openlcb_utilities.o
+                  0x00513e                  _Utilities_load_openlcb_message
+                  0x005196                  _Utilities_clear_openlcb_message_payload
+                  0x0051c4                  _Utilities_copy_event_id_to_openlcb_payload
+                  0x00521c                  _Utilities_copy_openlcb_message
+                  0x0052a4                  _Utilities_copy_word_to_openlcb_payload
+                  0x0052d8                  _Utilities_copy_dword_to_openlcb_payload
+                  0x005346                  _Utilities_copy_node_id_to_openlcb_payload
+                  0x00539e                  _Utilities_copy_64_bit_to_openlcb_payload
+                  0x0053f6                  _Utilities_extract_node_id_from_openlcb_payload
+                  0x0054be                  _Utilities_extract_event_id_from_openlcb_payload
+                  0x0055be                  _Utilities_extract_word_from_openlcb_payload
+                  0x0055ea                  _Utilities_extract_dword_from_openlcb_payload
+                  0x005656                  _Utilities_set_multi_frame_flag
+                  0x00566c                  _Utilities_is_addressed_openlcb_message
+                  0x005684                  _Utilities_count_nulls_in_openlcb_payload
+ .text            0x0056ba        0x1da build/default/production/_ext/526222337/openlcb_buffer_store.o
+                  0x0056ba                  _BufferStore_clear_openlcb_message
+                  0x00570c                  _BufferStore_initialize
+                  0x0057c2                  _BufferStore_allocateBuffer
+                  0x00586c                  _BufferStore_freeBuffer
+                  0x00588c                  _BufferStore_messages_allocated
+ .text            0x005894        0x194 build/default/production/_ext/526222337/openlcb_buffer_list.o
+                  0x005894                  _BufferList_initialiaze
+                  0x0058b4                  _BufferList_allocate
+                  0x0058fa                  _BufferList_find
+                  0x005966                  _BufferList_free
+                  0x0059a8                  _BufferList_release
+                  0x0059e4                  _BufferList_index_of
+                  0x005a00                  _BufferList_is_empty
+ .text            0x005a28        0x114 build/default/production/_ext/216671855/can_buffer_fifo.o
+                  0x005a28                  _CanBufferFifo_initialiaze
+                  0x005a54                  _CanBufferFifo_push
+                  0x005aa4                  _CanBufferFifo_pop
+                  0x005af2                  _CanBufferFifo_is_empty
+                  0x005b0a                  _CanBufferFifo_get_allocated_count
+ .text            0x005b3c        0x100 build/default/production/_ext/526222337/openlcb_buffer_fifo.o
+                  0x005b3c                  _BufferFifo_initialiaze
+                  0x005b64                  _BufferFifo_push
+                  0x005ba6                  _BufferFifo_push_existing
+                  0x005bd8                  _BufferFifo_pop
+                  0x005c06                  _BufferFifo_is_empty
+                  0x005c1e                  _BufferFifo_get_allocated_count
+ .text            0x005c3c         0xe0 build/default/production/_ext/216671855/can_buffer_store.o
+                  0x005c3c                  _CanBufferStore_initialize
+                  0x005c96                  _CanBufferStore_clear_can_message
+                  0x005cac                  _CanBufferStore_allocateBuffer
+                  0x005cf6                  _CanBufferStore_freeBuffer
+                  0x005d14                  _CanBufferStore_messages_allocated
 
-.dinit            0x005d78         0x92
- .dinit           0x005d78         0x92 data_init
+.dinit            0x005d1c         0x92
+ .dinit           0x005d1c         0x92 data_init
 
-.init.delay32     0x005e0a         0x1c
- .init.delay32    0x005e0a         0x1c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(delay32ep.Meo)
-                  0x005e0a                  ___delay32
+.init.delay32     0x005dae         0x1c
+ .init.delay32    0x005dae         0x1c /Applications/microchip/xc16/v2.10/bin/bin/../../lib/libc99-pic30-elf.a(delay32ep.Meo)
+                  0x005dae                  ___delay32

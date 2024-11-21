@@ -62,8 +62,6 @@
           <itemPath>traps.c</itemPath>
           <itemPath>debug.c</itemPath>
           <itemPath>main.c</itemPath>
-          <itemPath>openlcb_test_cases.c</itemPath>
-          <itemPath>openlcb_node_definition.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
@@ -1214,20 +1212,6 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
-      <item path="openlcb_test_cases.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>

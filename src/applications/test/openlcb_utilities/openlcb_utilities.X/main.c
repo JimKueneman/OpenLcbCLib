@@ -59,7 +59,6 @@
 #include "../../../../drivers/common/can_buffer_fifo.h"
 #include "../../../../drivers/common/can_utilities.h"
 
-#include "openlcb_node_definition.h"
 #include "debug.h"
 
 int main(void) {

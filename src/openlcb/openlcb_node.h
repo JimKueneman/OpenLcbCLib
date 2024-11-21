@@ -11,23 +11,37 @@
 #ifndef __OPENLCB_NODE__
 #define	__OPENLCB_NODE__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+#include <xc.h>
+
+#include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
 
-// ************************ USER DEFINED VARIABLES *****************************
+extern void Node_initialize();
 
-#define LEN_NODE_ARRAY                64  // USER DEFINED 
+extern openlcb_node_t* Node_allocate(uint64_t nodeid);
 
-// *********************END USER DEFINED VARIABLES *****************************
+extern openlcb_node_t* Node_get_first();
 
-typedef struct {
-    uint16_t alias;
-    uint64_t id;
-} alias_mapping_t;
+extern openlcb_node_t* Node_get_next();
 
-typedef alias_mapping_t alias_mapping_array_t[LEN_NODE_ARRAY];
+extern openlcb_node_t* Node_find_by_alias(uint16_t alias);
 
-typedef uint16_t alias_array_t[LEN_NODE_ARRAY];
+extern openlcb_node_t* Node_find_by_node_id(uint64_t nodeid);
+
+extern uint64_t Node_generate_seed(uint64_t start_seed);
+
+extern uint16_t Node_generate_alias(uint64_t seed);
+
+
+
+extern uint8_t Node_is_addressed_to(openlcb_msg_t* msg, openlcb_node_t* node);
+
+extern int Node_is_event_id_producer(openlcb_node_t* openlcb_node, uint64_t event_id);
+
+extern int Node_is_event_id_consumer(openlcb_node_t* openlcb_node, uint64_t event_id);
+
+extern void Node_100ms_timer_tick();
+
 
 
 #ifdef	__cplusplus

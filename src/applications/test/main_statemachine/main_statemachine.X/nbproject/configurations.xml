@@ -4,16 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="can_tx_statemachine.X"
-                     displayName="can_tx_statemachine.X"
-                     projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <itemPath>debug.h</itemPath>
-        <itemPath>openlcb_node_definition.h</itemPath>
-      </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_rx_statemachine.h</itemPath>
@@ -28,11 +18,22 @@
         </logicalFolder>
         <itemPath>../../../../drivers/mcu_driver.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="main_statemachine.X"
+                     displayName="main_statemachine.X"
+                     projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>debug.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../../openlcb/openlcb_buffer_list.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_types.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_utilities.h</itemPath>
+        <itemPath>../../../../openlcb/openlcb_main_statemachine.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_fifo.h</itemPath>
+        <itemPath>../../../../openlcb/openlcb_node.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_store.h</itemPath>
       </logicalFolder>
@@ -41,7 +42,7 @@
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
-      <itemPath>can_tx_statemachine.mc3</itemPath>
+      <itemPath>main_statemachine.mc3</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -50,8 +51,21 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="can_tx_statemachine.X"
-                     displayName="can_tx_statemachine.X"
+      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+        <logicalFolder name="common" displayName="common" projectFiles="true">
+          <itemPath>../../../../drivers/common/can_buffer_fifo.c</itemPath>
+          <itemPath>../../../../drivers/common/can_utilities.c</itemPath>
+          <itemPath>../../../../drivers/common/can_rx_statemachine.c</itemPath>
+          <itemPath>../../../../drivers/common/can_tx_statemachine.c</itemPath>
+          <itemPath>../../../../drivers/common/can_buffer_store.c</itemPath>
+          <itemPath>../../../../drivers/common/can_main_statemachine.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
+        </logicalFolder>
+        <itemPath>../../../../drivers/mcu_driver.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="main_statemachine.X"
+                     displayName="main_statemachine.X"
                      projectFiles="true">
         <logicalFolder name="debug" displayName="debug" projectFiles="true">
           <logicalFolder name="default" displayName="default" projectFiles="true">
@@ -61,30 +75,19 @@
         <itemPath>debug.c</itemPath>
         <itemPath>main.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="common" displayName="common" projectFiles="true">
-          <itemPath>../../../../drivers/common/can_buffer_fifo.c</itemPath>
-          <itemPath>../../../../drivers/common/can_utilities.c</itemPath>
-          <itemPath>../../../../drivers/common/can_rx_statemachine.c</itemPath>
-          <itemPath>../../../../drivers/common/can_buffer_store.c</itemPath>
-          <itemPath>../../../../drivers/common/can_tx_statemachine.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
-        </logicalFolder>
-        <itemPath>../../../../drivers/mcu_driver.c</itemPath>
-      </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../../openlcb/openlcb_buffer_fifo.c</itemPath>
+        <itemPath>../../../../openlcb/openlcb_node.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_store.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_utilities.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_list.c</itemPath>
+        <itemPath>../../../../openlcb/openlcb_main_statemachine.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>../../../../drivers</Elem>
     <Elem>../../../../openlcb</Elem>
-    <Elem>../../../../../../dsLccLib2/src/applications/test/can_tx_statemachine/can_tx_statemachine.X</Elem>
     <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -92,7 +95,7 @@
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>dsPIC33EP256GP502</targetDevice>
+        <targetDevice>dsPIC33EP64GP502</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
         <platformTool>Simulator</platformTool>
@@ -264,12 +267,6 @@
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
         <property key="codecoverage.outputfile" value=""/>
-        <property key="debugoptions.debug-startup" value="Use system settings"/>
-        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="event.recorder.debugger.behavior" value="Running"/>
-        <property key="event.recorder.enabled" value="false"/>
-        <property key="event.recorder.scvd.files" value=""/>
-        <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
         <property key="oscillator.frequency" value="1"/>
@@ -306,7 +303,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="true"/>
+        <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -739,12 +736,6 @@
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
         <property key="codecoverage.outputfile" value=""/>
-        <property key="debugoptions.debug-startup" value="Use system settings"/>
-        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="event.recorder.debugger.behavior" value="Running"/>
-        <property key="event.recorder.enabled" value="false"/>
-        <property key="event.recorder.scvd.files" value=""/>
-        <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
         <property key="oscillator.frequency" value="1"/>
@@ -781,7 +772,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="true"/>
+        <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>

@@ -33,6 +33,7 @@
         <itemPath>../../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_store.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_node.h</itemPath>
+        <itemPath>../../../../openlcb/openlcb_main_statemachine.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -68,14 +69,14 @@
         <itemPath>traps.c</itemPath>
         <itemPath>debug.c</itemPath>
         <itemPath>main.c</itemPath>
-        <itemPath>openlcb_node_definition.c</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../../openlcb/openlcb_buffer_fifo.c</itemPath>
+        <itemPath>../../../../openlcb/openlcb_node.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_store.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_utilities.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_list.c</itemPath>
-        <itemPath>../../../../openlcb/openlcb_node_buffer.c</itemPath>
+        <itemPath>../../../../openlcb/openlcb_main_statemachine.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

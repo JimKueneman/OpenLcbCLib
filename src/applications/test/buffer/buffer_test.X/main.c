@@ -65,7 +65,6 @@
 
 //#include "../../../../drivers/common/../mcu_driver.h"
 
-#include "openlcb_node_definition.h"
 //#include "debug.h"
 
 openlcb_msg_t* find_array[LEN_MESSAGE_BUFFER];
@@ -778,7 +777,7 @@ void _load_can_list_() {
 
     can_msg_t* can_msg;
 
-    for (int i = 0; i < LEN_CAN_CONTROL_FRAME_FIFO_BUFFER; i++) {
+    for (int i = 0; i < LEN_CAN_BUFFER; i++) {
 
         can_msg = CanBufferFifo_push();
 
@@ -786,7 +785,7 @@ void _load_can_list_() {
 
             can_msg->identifier = 0xAABBCCDD;
             can_msg->payload_count = 8;
-            for (int j = 0; j < LEN_CAN_DATA_ARRAY; j++)
+            for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++)
                 can_msg->payload[j] = 0xAA;
 
         }

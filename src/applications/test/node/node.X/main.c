@@ -66,6 +66,8 @@
 #include "../../../../openlcb/openlcb_defines.h"
 #include "../../../../openlcb/openlcb_types.h"
 #include "../../../../openlcb/openlcb_utilities.h"
+#include "../../../../openlcb/openlcb_node.h"
+
 
 #include "../../../../drivers/common/can_types.h"
 #include "../../../../drivers/common/can_buffer_store.h"
@@ -76,8 +78,6 @@
 #include "../../../../drivers/common/can_tx_statemachine.h"
 
 #include "../../../../drivers/common/../mcu_driver.h"
-
-#include "openlcb_node_definition.h"
 
 #include "debug.h"
 
@@ -93,6 +93,8 @@ int main(void) {
     BufferFifo_initialiaze();
     CanRxStatemachine_initialize();
     CanTxStatemachine_initialize();
+    
+    Node_initialize();
   
     
     
