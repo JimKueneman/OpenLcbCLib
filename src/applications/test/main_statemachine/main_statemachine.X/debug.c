@@ -164,7 +164,7 @@ void PrintMtiName(uint16_t mti) {
         case MTI_DATAGRAM_REJECTED_REPLY:
             printf("MTI_DATAGRAM_REJECTED_REPLY");
             break;
-        default: 
+        default:
             printf("[UNKNOWN MTI]");
             break;
     };
@@ -197,20 +197,20 @@ void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg) {
 }
 
 void PrintCanMsg(can_msg_t* can_msg) {
-    
+
     printf("Identifier: ");
     PrintCanIdentifier(can_msg->identifier);
     printf("[ ");
     for (int i = 0; i < can_msg->payload_count; i++) {
-        
+
         if (i < can_msg->payload_count - 1)
-          printf("%02X.", can_msg->payload[i]);
+            printf("%02X.", can_msg->payload[i]);
         else
-          printf("%02X", can_msg->payload[i]);  
-        
+            printf("%02X", can_msg->payload[i]);
+
     }
     printf(" ]");
-     
+
 }
 
 void PrintEventID(event_id_t event_id) {
@@ -222,17 +222,88 @@ void PrintEventID(event_id_t event_id) {
 
 }
 
+void PrintCanFrameIdentifierName(uint32_t identifier) {
+
+
+    if (identifier & 0xFF000000 & ~RESERVED_TOP_BIT) {
+
+        switch (identifier & 0xFF000000 & ~RESERVED_TOP_BIT) {
+
+            case CAN_CONTROL_FRAME_CID1:
+                printf("CAN_CONTROL_FRAME_CID1\n");
+                return;
+            case CAN_CONTROL_FRAME_CID2:
+                printf("CAN_CONTROL_FRAME_CID2\n");
+                return;
+            case CAN_CONTROL_FRAME_CID3:
+                printf("CAN_CONTROL_FRAME_CID3\n");
+                return;
+            case CAN_CONTROL_FRAME_CID4:
+                printf("CAN_CONTROL_FRAME_CID4\n");
+                return;
+            case CAN_CONTROL_FRAME_CID5:
+                printf("CAN_CONTROL_FRAME_CID5\n");
+                return;
+            case CAN_CONTROL_FRAME_CID6:
+                printf("CAN_CONTROL_FRAME_CID6\n");
+                return;
+            case CAN_CONTROL_FRAME_CID7:
+                printf("CAN_CONTROL_FRAME_CID7\n");
+                return;
+            default:
+                printf("[UNKNOWN]\n");
+                return;
+
+        }
+
+    }
+
+
+    switch (identifier & 0xFFFFF000 & ~RESERVED_TOP_BIT) {
+
+        case CAN_CONTROL_FRAME_AMD:
+            printf("CAN_CONTROL_FRAME_AMD\n");
+            return;
+        case CAN_CONTROL_FRAME_AME:
+            printf("CAN_CONTROL_FRAME_AME\n");
+            return;
+        case CAN_CONTROL_FRAME_AMR:
+            printf("CAN_CONTROL_FRAME_AMR\n");
+            return;
+        case CAN_CONTROL_FRAME_RID:
+            printf("CAN_CONTROL_FRAME_RID\n");
+            return;
+        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0:
+            printf("CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0\n");
+            return;
+        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
+            printf("CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1\n");
+            return;
+        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
+            printf("CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2\n");
+            return;
+        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
+            printf("CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3\n");
+            return;
+        default:
+            printf("[UNKNOWN]\n");
+            return;
+
+    }
+
+}
+
 void PrintCanIdentifier(uint32_t identifier) {
 
     printf("0x%04X", (uint16_t) (identifier >> 16));
     printf("%04X\n", (uint16_t) (identifier));
-    
+
 }
 
 void PrintDWord(uint32_t dword) {
-    
+
     PrintCanIdentifier(dword);
-    
+
 }
 
 

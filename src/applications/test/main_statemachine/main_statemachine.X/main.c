@@ -74,24 +74,27 @@
 
 int main(void) {
 
-    //   McuDriver_initialization();
-
+  
     CanBufferStore_initialize();
     CanBufferFifo_initialiaze();
     CanRxStatemachine_initialize();
     CanTxStatemachine_initialize();
     CanMainStatemachine_initialize();
-    
+
     BufferStore_initialize();
     BufferList_initialiaze();
     BufferFifo_initialiaze();
     MainStatemachine_initialize();
     Node_initialize();
     ClockDistribution_initialize();
+    
+     McuDriver_initialization();
 
 
+_TRISB4 = 0;
+_RB4 = 0;
 
-   
+
     // Setup the UART to send to the console in the simulator 
     //  https://developerhelp.microchip.com/xwiki/bin/view/software-tools/xc8/simulator-console/
 
@@ -100,11 +103,47 @@ int main(void) {
 
     printf("\n\nTest Start **********************************\n");
 
+   
+    
+
+    can_msg_t* can_msg;
+    openlcb_msg_t* openlcb_msg;
 
 
     while (1) {
-      
-        CanMainStateMachine_run();  // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
+
+        
+        McuDriver_pause_can_rx();
+        can_msg = CanBufferFifo_pop();
+        McuDriver_resume_can_rx();
+
+        if (can_msg) {
+            printf("\n");
+            PrintCanFrameIdentifierName(can_msg->identifier);
+            PrintCanMsg(can_msg);
+            printf("\n");
+            
+            CanBufferStore_freeBuffer(can_msg);
+
+        }
+
+        McuDriver_pause_can_rx();
+        openlcb_msg = BufferFifo_pop();
+        McuDriver_resume_can_rx();
+        
+
+        if (openlcb_msg) {
+            printf("\n");
+            PrintOpenLcbMsg(openlcb_msg);
+            printf("\n");
+            
+            BufferStore_freeBuffer(openlcb_msg);
+
+        }
+
+
+
+        CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 
     }
 

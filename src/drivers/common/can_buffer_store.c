@@ -7,6 +7,7 @@
 
 
 #include "xc.h"
+#include "stdio.h"  // printf
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
@@ -44,6 +45,8 @@ can_msg_t* CanBufferStore_allocateBuffer() {
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
             _can_buffer_store[i].allocated = TRUE;
             
+    //        printf("can allocate\n");
+            
             return &_can_buffer_store[i];
 
         }
@@ -58,6 +61,8 @@ void CanBufferStore_freeBuffer(can_msg_t* msg) {
 
     if (!msg) return;
 
+  //  printf("can deallocate\n");
+    
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->allocated = FALSE;
 

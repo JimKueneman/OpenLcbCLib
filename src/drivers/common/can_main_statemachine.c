@@ -297,6 +297,8 @@ void CanMainStateMachine_run() {
 
     while (next_node) {
 
+        _RB4 = !_RB4;
+        
         switch (next_node->state.run_state) {
 
             case RUNSTATE_INIT:

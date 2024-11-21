@@ -37,6 +37,8 @@ extern void PrintAliasAndNodeID(uint16_t alias, uint64_t node_id);
 
 extern void PrintCanIdentifier(uint32_t identifier);
 
+extern void PrintCanFrameIdentifierName(uint32_t identifier);
+
 extern void PrintAlias(uint16_t alias);
 
 extern void PrintNodeID(uint64_t node_id);

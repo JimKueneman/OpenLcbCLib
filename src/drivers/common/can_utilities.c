@@ -277,6 +277,8 @@ void CanUtilities_copy_can_message(can_msg_t* can_msg_source, can_msg_t* can_msg
     
     for (int i = 0; i < can_msg_source->payload_count; i++) 
         can_msg_target->payload[i] = can_msg_source->payload[i];
+    
+    can_msg_target->payload_count = can_msg_source->payload_count;
           
 }
 //

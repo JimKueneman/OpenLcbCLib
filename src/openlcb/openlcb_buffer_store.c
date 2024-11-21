@@ -7,6 +7,7 @@
 
 
 #include "xc.h"
+#include "stdio.h"  // printf
 #include "openlcb_types.h"
 
 message_buffer_t _message_buffer;
@@ -90,6 +91,9 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
             _buffer_store_message_allocated = _buffer_store_message_allocated + 1;
             BufferStore_clear_openlcb_message(&_message_buffer.messages[i]);
             _message_buffer.messages[i].state.allocated = TRUE;
+            
+        //    printf("olcb allocate\n");
+            
             return &_message_buffer.messages[i];
 
         }
@@ -103,6 +107,8 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
 void BufferStore_freeBuffer(openlcb_msg_t* msg) {
 
     if (!msg) return;
+    
+  //  printf("olcb deallocate\n");
 
     _buffer_store_message_allocated = _buffer_store_message_allocated - 1;
     msg->state.allocated = FALSE;
