@@ -89,6 +89,7 @@ int main(void) {
 
 
 
+   
     // Setup the UART to send to the console in the simulator 
     //  https://developerhelp.microchip.com/xwiki/bin/view/software-tools/xc8/simulator-console/
 
@@ -100,9 +101,11 @@ int main(void) {
 
 
     while (1) {
+        
 
-        CanMainStateMachine_run((void*) 0);
-        MainStatemachine_run();
+         
+        CanMainStateMachine_run();  // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
+        
 
     }
 

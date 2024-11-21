@@ -20,15 +20,27 @@ void MainStatemachine_initialize() {
     
 }
 
+void _main_statemachine(openlcb_node_t* openlcb_node) {
+    
+    
+    
+}
+
 void MainStatemachine_run() {
     
     openlcb_node_t* next_node = Node_get_first();   
     while (next_node) {
         
-      
+      _main_statemachine(next_node);
        next_node = Node_get_next();  
        
     }
+    
+}
+
+void MainStatemachine_run_with_node(openlcb_node_t* openlcb_node) {
+    
+    _main_statemachine(openlcb_node);
     
 }
 

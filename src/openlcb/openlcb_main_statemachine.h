@@ -16,9 +16,9 @@
 
 extern void MainStatemachine_initialize();
 
-extern void Mainxxx();
-
 extern void MainStatemachine_run();
+
+extern void MainStatemachine_run_with_node(openlcb_node_t* openlcb_node);
 
 #ifdef	__cplusplus
 extern "C" {
