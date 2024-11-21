@@ -14,30 +14,21 @@
 openlcb_nodes_t openlcb_nodes;
 uint16_t node_enum_index = 0;
 
-void _clear_msg_handlers(openlcb_node_t* openlcb_node) {
-    
-#ifdef CAN_ENABLED
-    openlcb_node->msg_handlers.can_msg_processing = (void*) 0;
-    openlcb_node->msg_handlers.can_msg_reply = (void*) 0;
-#endif
-    openlcb_node->msg_handlers.openlcb_msg_processing = (void*) 0;
-    openlcb_node->msg_handlers.openlcb_msg_reply = (void*) 0;
-    openlcb_node->msg_handlers.openlcb_msg_reply_index = 0;
-    
-}
 
 void _clear_node(openlcb_node_t* openlcb_node) {
 
     openlcb_node->alias = 0;
     openlcb_node->id = 0;
     openlcb_node->seed = 0;
-    openlcb_node->state.run = RUNSTATE_INIT;
+    openlcb_node->state.run_state = RUNSTATE_INIT;
     openlcb_node->state.allocated = FALSE;
     openlcb_node->state.duplicate_id_detected = FALSE;
     openlcb_node->state.initalized = FALSE;
     openlcb_node->state.permitted = FALSE;
+    openlcb_node->state.can_msg_handled = FALSE;
+    openlcb_node->state.openlcb_msg_handled = FALSE;
     openlcb_node->timerticks = 0;
-    _clear_msg_handlers(openlcb_node);
+    
  
     for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++)
         openlcb_node->consumers.list[i] = 0;
@@ -104,7 +95,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     openlcb_node->consumers.enumerator.running = FALSE;
     openlcb_node->producers.enumerator.flag = FALSE;
-    _clear_msg_handlers(openlcb_node);
+ 
 
 }
 

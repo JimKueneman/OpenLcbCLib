@@ -22,6 +22,8 @@ void MainStatemachine_initialize() {
 
 void _main_statemachine(openlcb_node_t* openlcb_node) {
     
+    // Pop OpenLcb Messages and start dispatching.
+    
     
     
 }

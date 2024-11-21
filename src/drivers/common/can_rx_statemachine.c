@@ -330,7 +330,7 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 //    //
 //    //        if (openlcb_nodes.node[iIndex].state.permitted) {
 //    //
-//    //            if ((msg->payload_count == 0) || (CanUtilities_extract_can_payload_as_node_id(&msg->payload) == openlcb_nodes.node[iIndex].id)) {
+//    //            if ((msg->payload_count == 0) || (CanUtilities_extract_can_payload_as_node_id(&msg) == openlcb_nodes.node[iIndex].id)) {
 //    //
 //    //                new_msg = CanBufferFifo_push();
 //    //

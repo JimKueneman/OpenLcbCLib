@@ -55,6 +55,7 @@
 #include "../../../../openlcb/openlcb_utilities.h"
 #include "../../../../openlcb/openlcb_node.h"
 #include "../../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../../openlcb/clock_distribution.h"
 
 
 
@@ -86,6 +87,7 @@ int main(void) {
     BufferFifo_initialiaze();
     MainStatemachine_initialize();
     Node_initialize();
+    ClockDistribution_initialize();
 
 
 
@@ -101,11 +103,8 @@ int main(void) {
 
 
     while (1) {
-        
-
-         
+      
         CanMainStateMachine_run();  // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
-        
 
     }
 

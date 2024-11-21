@@ -33,7 +33,7 @@ extern void CanUtilities_copy_64_bit_to_can_message(can_msg_t* can_msg, uint64_t
 extern void CanUtilities_copy_can_message(can_msg_t* can_msg_source, can_msg_t* can_msg_target);
 
 
-extern uint64_t CanUtilities_extract_can_payload_as_node_id(payload_bytes_can_t* payload);
+extern uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t* can_msg);
 
 extern uint16_t CanUtilities_extract_source_alias_from_can_message(can_msg_t* can_msg);
 

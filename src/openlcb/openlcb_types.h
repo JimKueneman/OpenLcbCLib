@@ -11,15 +11,7 @@
 #ifndef __OPENLCB_TYPES__
 #define	__OPENLCB_TYPES__
 
-#define CAN_ENABLED
-
 #include <xc.h> // include processor files - each processor file is guarded. 
-
-#ifdef CAN_ENABLED
-
-#include "../drivers/common/can_types.h"
-
-#endif
 
 // ************************ USER DEFINED VARIABLES *****************************
 
@@ -121,30 +113,14 @@ typedef struct {
 } event_id_producer_list_t;
 
 
-#ifdef CAN_ENABLED
-
-#include "../drivers/common/can_types.h"
-
-#endif
-
 typedef struct {
-    openlcb_msg_t* openlcb_msg_processing; // Holds the reference to the incoming openlcb message that is currently being processed by the loop.  Set to null to tell the main loop you are finished with the message
-    openlcb_msg_t* openlcb_msg_reply; // Once processed if an openlcb reply is created as a reply it is placed here so the mainloop and grab it and transmit it
-    uint16_t openlcb_msg_reply_index; // Keeps the current index of the openlcb message for the tx statemachine if it needs to break it up into can frames (SNIP, Datagram, Stream, Traction, PECR, etc...)
-
-#ifdef CAN_ENABLED
-    can_msg_t* can_msg_processing; // Holds the reference to the incoming can frame message that is currently being processed by the loop.  Set to null to tell the main loop you are finished with the message
-    can_msg_t* can_msg_reply; // Once processed if an openlcb reply is created as a reply it is placed here so the mainloop and grab it and transmit it
-#endif
-
-} message_handlers_t;
-
-typedef struct {
-    uint16_t run : 6; // Run state... limits the number to how many bits here.... 64 possible states.
-    uint16_t allocated : 1; // Allocated to be used
-    uint16_t permitted : 1; // Has the CAN alias been allocated and the network notified
-    uint16_t initalized : 1; // Has the node been logged into the the network
+    uint16_t run_state             : 6; // Run state... limits the number to how many bits here.... 64 possible states.
+    uint16_t allocated             : 1; // Allocated to be used
+    uint16_t permitted             : 1; // Has the CAN alias been allocated and the network notified
+    uint16_t initalized            : 1; // Has the node been logged into the the network
     uint16_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
+    uint16_t can_msg_handled       : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
+    uint16_t openlcb_msg_handled   : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
 } nodestateBITS;
 
 typedef struct {
@@ -155,7 +131,6 @@ typedef struct {
     event_id_consumer_list_t consumers;
     event_id_producer_list_t producers;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-    message_handlers_t msg_handlers;
 
 } openlcb_node_t;
 
