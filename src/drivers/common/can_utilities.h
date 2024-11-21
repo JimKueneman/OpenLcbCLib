@@ -54,10 +54,6 @@ extern uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t* openlcb_msg, 
 extern uint8_t CanUtilities_is_openlcb_message(can_msg_t* msg);
 
 
-//extern uint8_t IsCanMessageAddressedToNode(openlcb_nodes_t* openlcb_nodes, can_msg_t* msg);
-
-//extern openlcb_node_t* TestCanMessageForAliasConflict(openlcb_nodes_t* openlcb_nodes, can_msg_t* msg);
-
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

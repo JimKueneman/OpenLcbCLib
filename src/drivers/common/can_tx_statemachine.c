@@ -272,17 +272,15 @@ uint16_t CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg_t* openlcb_m
 }
 
 uint8_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
-    
-    uint8_t result = 0;
 
     if (McuDriver_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 
         McuDriver_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
 
-        return can_msg->payload_count;
+        return TRUE;
 
     }
 
-    return result;
+    return FALSE;
 
 }

@@ -474,7 +474,7 @@ void CanRxStatemachine_initialize() {
 
     // The mcu_driver.h file exports a function pointer that is used to hook into the incoming CAN message stream
     // This allows the mcu_driver to call into this unit with incoming CAN frames.
-    Incoming_CAN_Message_Callback_Func = &_state_machine_incoming_can;
+    McuDriver_can_rx_callback_func = &_state_machine_incoming_can;
 
 
 }

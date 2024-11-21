@@ -22,16 +22,25 @@
 #define LEN_SNIP_BUFFER      2  // USER DEFINED
 #define LEN_STREAM_BUFFER    0  // USER DEFINED
 
-#define USER_DEFINED_PRODUCER_COUNT     8   // The maximum number of events supported is 32
-#define USER_DEFINED_CONSUMER_COUNT     8   // The maximum number of events supported is 32
 
 #define LEN_NODE_ARRAY                16  // USER DEFINED 
+
+#define LEN_MAX_CDI                   1800
+
+#define LEN_PRODUCER_MAX_COUNT         10
+#define LEN_CONSUMER_MAX_COUNT         10
 
 // *********************END USER DEFINED VARIABLES *****************************
 
 
 #define FALSE 0;
 #define TRUE  1;
+
+// Per the SNIP specification
+#define LEN_SNIP_NAME              41
+#define LEN_SNIP_MODEL             41
+#define LEN_SNIP_HARDWARE_VERSION  21
+#define LEN_SNIP_SOFTWARE_VERSION  21
 
 
 #define LEN_MESSAGE_BYTES_BASIC        16     // most are 8 bytes but a few protocols take 2 frames like Traction
@@ -89,38 +98,57 @@ typedef struct {
 } message_buffer_t;
 
 
+// Defines a node
+
+typedef struct {
+    uint8_t mfg_version;
+    uint8_t name[LEN_SNIP_NAME];
+    uint8_t model[LEN_SNIP_MODEL];
+    uint8_t hardware_version[LEN_SNIP_HARDWARE_VERSION];
+    uint8_t software_version[LEN_SNIP_SOFTWARE_VERSION];
+    uint8_t user_version;
+
+} user_snip_struct_t;
+
+typedef struct {       user_snip_struct_t snip;
+    uint64_t protocol_support;
+    uint16_t consumer_count;
+    uint16_t producer_count;
+    uint8_t cdi[LEN_MAX_CDI];
+
+} node_parameters_t;
+
 
 // Event ID Structures
 
 typedef struct {
-    uint16_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
-    uint16_t flag : 1; // message so the next message starts in a known state
-
+    uint16_t running    : 1; // Alway, always, always reset these to FALSE when you have finished processing a
+    uint16_t flag       : 1; // message so the next message starts in a known state
+    uint8_t enum_index;      // allows a counter for enumerating the event ids
 } event_id_enum_t;
 
 typedef struct {
-    event_id_t list[USER_DEFINED_CONSUMER_COUNT];
+    event_id_t list[LEN_CONSUMER_MAX_COUNT];
     event_id_enum_t enumerator;
     uint64_t event_state; // 2 bits for each event limiting it to 32 events
 
 } event_id_consumer_list_t;
 
 typedef struct {
-    event_id_t list[USER_DEFINED_PRODUCER_COUNT];
+    event_id_t list[LEN_PRODUCER_MAX_COUNT];
     event_id_enum_t enumerator;
     uint64_t event_state; // 2 bits for each event limiting it to 32 events
 
 } event_id_producer_list_t;
 
-
 typedef struct {
-    uint16_t run_state             : 6; // Run state... limits the number to how many bits here.... 64 possible states.
-    uint16_t allocated             : 1; // Allocated to be used
-    uint16_t permitted             : 1; // Has the CAN alias been allocated and the network notified
-    uint16_t initalized            : 1; // Has the node been logged into the the network
+    uint16_t run_state : 6; // Run state... limits the number to how many bits here.... 64 possible states.
+    uint16_t allocated : 1; // Allocated to be used
+    uint16_t permitted : 1; // Has the CAN alias been allocated and the network notified
+    uint16_t initalized : 1; // Has the node been logged into the the network
     uint16_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
-    uint16_t can_msg_handled       : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
-    uint16_t openlcb_msg_handled   : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
+    uint16_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
+    uint16_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
 } nodestateBITS;
 
 typedef struct {
@@ -130,6 +158,7 @@ typedef struct {
     uint64_t seed; // Seed for generating the alias 
     event_id_consumer_list_t consumers;
     event_id_producer_list_t producers;
+    const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
 
 } openlcb_node_t;
@@ -137,9 +166,10 @@ typedef struct {
 typedef struct {
     openlcb_node_t node[LEN_NODE_ARRAY];
     uint16_t count; // How many have been allocated, you can not deallocate a node so one it is allocated it is there to the end (it can be not permitted)
-  //  openlcb_msg_t* working_msg; // When a OpenLcb message is sent on CAN it may need to be taken apart and sent in various frames.  Once popped it is stored here as the current working message that is being sent out
+    //  openlcb_msg_t* working_msg; // When a OpenLcb message is sent on CAN it may need to be taken apart and sent in various frames.  Once popped it is stored here as the current working message that is being sent out
 
 } openlcb_nodes_t;
+
 
 
 #ifdef	__cplusplus

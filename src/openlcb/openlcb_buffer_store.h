@@ -24,6 +24,8 @@ extern void BufferStore_clear_openlcb_message(openlcb_msg_t* msg);
 
 extern uint16_t BufferStore_messages_allocated();
 
+extern uint16_t BufferStore_messages_max_allocated();
+
 
 #ifdef	__cplusplus
 extern "C" {

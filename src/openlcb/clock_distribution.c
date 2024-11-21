@@ -23,7 +23,7 @@ void _100msTimeTickNode() {
 void ClockDistribution_initialize() {
     
     // Hook into the mcu driver to get the clock
-     _100ms_Timer_Callback_Func = &_100msTimeTickNode;
+     McuDriver_100ms_timer_callback_func = &_100msTimeTickNode;
     
 }
 

@@ -24,6 +24,8 @@ extern void CanBufferStore_clear_can_message(can_msg_t* msg);
 
 extern uint16_t CanBufferStore_messages_allocated();
 
+extern uint16_t CanBufferStore_messages_max_allocated();
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

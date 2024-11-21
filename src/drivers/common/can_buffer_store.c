@@ -14,6 +14,7 @@
 
 can_buffer_store_t _can_buffer_store;
 uint16_t _can_buffer_store_message_allocated = 0;
+uint16_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize() {
 
@@ -42,6 +43,11 @@ can_msg_t* CanBufferStore_allocateBuffer() {
         if (!_can_buffer_store[i].allocated) {
 
             _can_buffer_store_message_allocated = _can_buffer_store_message_allocated + 1;
+            
+            if (_can_buffer_store_message_allocated > _can_buffer_store_message_max_allocated)
+                _can_buffer_store_message_max_allocated = _can_buffer_store_message_allocated;
+            
+            
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
             _can_buffer_store[i].allocated = TRUE;
             
@@ -72,4 +78,10 @@ uint16_t CanBufferStore_messages_allocated() {
 
     return _can_buffer_store_message_allocated;
 
+}
+
+uint16_t CanBufferStore_messages_max_allocated() {
+    
+    return _can_buffer_store_message_max_allocated;
+    
 }

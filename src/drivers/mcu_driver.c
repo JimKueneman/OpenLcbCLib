@@ -92,9 +92,9 @@ __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(xmemory), aligned(ECAN
 #endif
 
 
-incoming_can_message_callback_func_t Incoming_CAN_Message_Callback_Func;
-_100ms_timer_callback_func_t _100ms_Timer_Callback_Func;
-uart_rx_callback_func_t Uart_Rx_Callback_Func;
+can_rx_callback_func_t McuDriver_can_rx_callback_func;
+_100ms_timer_callback_func_t McuDriver_100ms_timer_callback_func;
+uart_rx_callback_func_t McuDriver_uart_rx_callback_func;
 
 
 /******************************************************************************
@@ -620,8 +620,8 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
     IFS0bits.T2IF = 0; // Clear T2IF
 
     // Increment any timer counters assigned
-    if (_100ms_Timer_Callback_Func)
-        _100ms_Timer_Callback_Func();
+    if (McuDriver_100ms_timer_callback_func)
+        McuDriver_100ms_timer_callback_func();
     
     return;
 }
@@ -643,8 +643,8 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 
     if (U1STAbits.URXDA == 1) {
 
-        if (Uart_Rx_Callback_Func)
-            Uart_Rx_Callback_Func(U1RXREG);
+        if (McuDriver_uart_rx_callback_func)
+            McuDriver_uart_rx_callback_func(U1RXREG);
 
     }
     return;
@@ -678,8 +678,8 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
             Ecan1ReadRxMsgBufId(buffer_tail, &ecan_msg, &ide);
             Ecan1ReadRxMsgBufData(buffer_tail, &ecan_msg);
 
-            if ((ide) && (Incoming_CAN_Message_Callback_Func))
-                Incoming_CAN_Message_Callback_Func(buffer_tail, &ecan_msg);
+            if ((ide) && (McuDriver_can_rx_callback_func))
+                McuDriver_can_rx_callback_func(buffer_tail, &ecan_msg);
 
             // Clear Full/OV flags on any bit that is set, there is a race condition for this.  See the errata
             // You can only clear (set a 0) to the flags so if we write a 1 it won't do anything

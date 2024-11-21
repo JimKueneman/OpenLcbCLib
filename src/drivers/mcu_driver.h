@@ -41,21 +41,21 @@ extern uint8_t max_can_fifo_depth;
 // Assign the function pointer to where the incoming CAN messages should be dispatched to.
 // WARNING: Is in the context of the interrupt, be careful
 // void func(uint8_t channel, can_msg_t* can_msg)
-typedef void (*incoming_can_message_callback_func_t) (uint8_t, can_msg_t*);
-extern incoming_can_message_callback_func_t Incoming_CAN_Message_Callback_Func;
+typedef void (*can_rx_callback_func_t) (uint8_t, can_msg_t*);
+extern can_rx_callback_func_t McuDriver_can_rx_callback_func;
 
 
 // Assign the function pointer to where the timer tick should call out to
 // WARNING: Is in the context of the interrupt, be careful
 // void func()
 typedef void (*_100ms_timer_callback_func_t) ();
-extern _100ms_timer_callback_func_t _100ms_Timer_Callback_Func;
+extern _100ms_timer_callback_func_t McuDriver_100ms_timer_callback_func;
 
 // Assign the function pointer to where the UART Rx should call back with the byte it received
 // WARNING: Is in the context of the interrupt, be careful
 // void func(rx_data);
 typedef void (*uart_rx_callback_func_t) (uint16_t);
-extern uart_rx_callback_func_t Uart_Rx_Callback_Func;
+extern uart_rx_callback_func_t McuDriver_uart_rx_callback_func;
 
 
 #ifdef	__cplusplus

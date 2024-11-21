@@ -56,8 +56,7 @@
 #include "../../../../openlcb/openlcb_node.h"
 #include "../../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../../openlcb/clock_distribution.h"
-
-
+#include "../../../../openlcb/callback_hooks.h"
 
 #include "../../../../drivers/common/can_types.h"
 #include "../../../../drivers/common/can_buffer_store.h"
@@ -70,11 +69,40 @@
 
 #include "../../../../drivers/common/../mcu_driver.h"
 
+#include "node_parameters.h"
+
 #include "debug.h"
+
+void _uart_callback(uint16_t code) {
+
+    switch (code) {
+        case 'B':
+        case 'b':
+
+            printf("\nMax Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
+            printf("\nMax Buffers: %d\n", BufferStore_messages_max_allocated());
+            printf("\nMax CAN FIFO depth: %d\n", max_can_fifo_depth);
+
+            return;
+    }
+}
+
+void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
+
+    printf("Alias Allocation: %d  ", new_alias);
+    PrintNodeID(node_id);
+    printf("\n");
+
+}
+
+//#define  _SIMULATOR_
 
 int main(void) {
 
-  
+
+    McuDriver_uart_rx_callback_func = &_uart_callback;
+    CallbackHooks_alias_change = &_alias_change_callback;
+
     CanBufferStore_initialize();
     CanBufferFifo_initialiaze();
     CanRxStatemachine_initialize();
@@ -87,24 +115,29 @@ int main(void) {
     MainStatemachine_initialize();
     Node_initialize();
     ClockDistribution_initialize();
-    
-     McuDriver_initialization();
 
 
-_TRISB4 = 0;
-_RB4 = 0;
-
+#ifdef _SIMULATOR_
 
     // Setup the UART to send to the console in the simulator 
     //  https://developerhelp.microchip.com/xwiki/bin/view/software-tools/xc8/simulator-console/
 
-    //  U1MODEbits.UARTEN = 1; // Enable UART
-    // U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
+    U1MODEbits.UARTEN = 1; // Enable UART
+    U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
 
-    printf("\n\nTest Start **********************************\n");
+#else
 
-   
-    
+    _TRISB4 = 0;
+    _RB4 = 0;
+
+    McuDriver_initialization();
+
+#endif
+
+    printf("\n\nBooted\n");
+
+    Node_allocate(0x050101010007, &NodeParameters_main_node);
+
 
     can_msg_t* can_msg;
     openlcb_msg_t* openlcb_msg;
@@ -112,39 +145,55 @@ _RB4 = 0;
 
     while (1) {
 
-        
+
         McuDriver_pause_can_rx();
         can_msg = CanBufferFifo_pop();
         McuDriver_resume_can_rx();
 
         if (can_msg) {
-            printf("\n");
-            PrintCanFrameIdentifierName(can_msg->identifier);
-            PrintCanMsg(can_msg);
-            printf("\n");
-            
+
+            _RB4 = 1;
+
+            //            printf("\n");
+            //            PrintCanFrameIdentifierName(can_msg->identifier);
+            //            PrintCanMsg(can_msg);
+            //            printf("\n");
+
             CanBufferStore_freeBuffer(can_msg);
+
+            //    printf("\nCAN Buffer Count: %d", CanBufferStore_messages_allocated());
+
+            _RB4 = 0;
 
         }
 
         McuDriver_pause_can_rx();
         openlcb_msg = BufferFifo_pop();
         McuDriver_resume_can_rx();
-        
+
 
         if (openlcb_msg) {
-            printf("\n");
-            PrintOpenLcbMsg(openlcb_msg);
-            printf("\n");
-            
+
+
+
+            //            printf("\n");
+            //            PrintOpenLcbMsg(openlcb_msg);
+            //            printf("\n");
+
             BufferStore_freeBuffer(openlcb_msg);
+
+            //     printf("\nBuffer Count: %d", BufferStore_messages_allocated());
+
+
 
         }
 
 
-
+        _RB4 = 1;
+        
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 
+        _RB4 = 0;
     }
 
 }

@@ -27,6 +27,7 @@
           </logicalFolder>
         </logicalFolder>
         <itemPath>debug.h</itemPath>
+        <itemPath>node_parameters.h</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../../openlcb/openlcb_buffer_list.h</itemPath>
@@ -38,6 +39,9 @@
         <itemPath>../../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_buffer_store.h</itemPath>
         <itemPath>../../../../openlcb/clock_distribution.h</itemPath>
+        <itemPath>../../../../openlcb/callback_hooks.h</itemPath>
+        <itemPath>../../../../openlcb/protocol_event_transport.h</itemPath>
+        <itemPath>../../../../openlcb/protocol_message_network.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -77,6 +81,7 @@
         <itemPath>traps.c</itemPath>
         <itemPath>debug.c</itemPath>
         <itemPath>main.c</itemPath>
+        <itemPath>node_parameters.c</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../../openlcb/openlcb_buffer_fifo.c</itemPath>
@@ -86,6 +91,9 @@
         <itemPath>../../../../openlcb/openlcb_buffer_list.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_main_statemachine.c</itemPath>
         <itemPath>../../../../openlcb/clock_distribution.c</itemPath>
+        <itemPath>../../../../openlcb/callback_hooks.c</itemPath>
+        <itemPath>../../../../openlcb/protocol_event_transport.c</itemPath>
+        <itemPath>../../../../openlcb/protocol_message_network.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
