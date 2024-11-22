@@ -12,7 +12,9 @@
 #include "openlcb_defines.h"
 
 openlcb_nodes_t openlcb_nodes;
-uint16_t node_enum_index = 0;
+
+uint16_t node_enum_index_array[6];
+
 
 void _clear_node(openlcb_node_t* openlcb_node) {
 
@@ -58,26 +60,26 @@ void Node_initialize() {
 
 }
 
-openlcb_node_t* Node_get_first() {
+openlcb_node_t* Node_get_first(uint8_t key) {
 
-    node_enum_index = 0;
+    node_enum_index_array[key] = 0;
 
 
     if (openlcb_nodes.count == 0)
         return (void*) 0;
 
-    return (&openlcb_nodes.node[node_enum_index]);
+    return (&openlcb_nodes.node[ node_enum_index_array[key] ]);
 
 }
 
-openlcb_node_t* Node_get_next() {
+openlcb_node_t* Node_get_next(uint8_t key) {
 
-    node_enum_index = node_enum_index + 1;
+    node_enum_index_array[key] = node_enum_index_array[key] + 1;
 
-    if (node_enum_index >= openlcb_nodes.count)
+    if (node_enum_index_array[key] >= openlcb_nodes.count)
         return (void*) 0;
 
-    return (&openlcb_nodes.node[node_enum_index]);
+    return (&openlcb_nodes.node[node_enum_index_array[key]]);
 
 }
 

@@ -78,6 +78,9 @@ void _uart_callback(uint16_t code) {
     switch (code) {
         case 'B':
         case 'b':
+            
+            printf("\nCan Buffers: %d\n", CanBufferStore_messages_allocated());
+            printf("\nBuffers: %d\n", BufferStore_messages_allocated());
 
             printf("\nMax Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
             printf("\nMax Buffers: %d\n", BufferStore_messages_max_allocated());
@@ -99,6 +102,9 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 int main(void) {
 
+     MainStatemachine_initialize();
+     
+     
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
@@ -145,55 +151,9 @@ int main(void) {
 
     while (1) {
 
-
-        McuDriver_pause_can_rx();
-        can_msg = CanBufferFifo_pop();
-        McuDriver_resume_can_rx();
-
-        if (can_msg) {
-
-            _RB4 = 1;
-
-            //            printf("\n");
-            //            PrintCanFrameIdentifierName(can_msg->identifier);
-            //            PrintCanMsg(can_msg);
-            //            printf("\n");
-
-            CanBufferStore_freeBuffer(can_msg);
-
-            //    printf("\nCAN Buffer Count: %d", CanBufferStore_messages_allocated());
-
-            _RB4 = 0;
-
-        }
-
-        McuDriver_pause_can_rx();
-        openlcb_msg = BufferFifo_pop();
-        McuDriver_resume_can_rx();
-
-
-        if (openlcb_msg) {
-
-
-
-            //            printf("\n");
-            //            PrintOpenLcbMsg(openlcb_msg);
-            //            printf("\n");
-
-            BufferStore_freeBuffer(openlcb_msg);
-
-            //     printf("\nBuffer Count: %d", BufferStore_messages_allocated());
-
-
-
-        }
-
-
-        _RB4 = 1;
-        
+ 
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 
-        _RB4 = 0;
     }
 
 }

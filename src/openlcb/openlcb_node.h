@@ -20,9 +20,9 @@ extern void Node_initialize();
 
 extern openlcb_node_t* Node_allocate(uint64_t nodeid, const node_parameters_t* node_parameters);
 
-extern openlcb_node_t* Node_get_first();
+extern openlcb_node_t* Node_get_first(uint8_t key);
 
-extern openlcb_node_t* Node_get_next();
+extern openlcb_node_t* Node_get_next(uint8_t key);
 
 extern openlcb_node_t* Node_find_by_alias(uint16_t alias);
 

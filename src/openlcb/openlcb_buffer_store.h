@@ -20,8 +20,6 @@ extern openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size);
 
 extern void BufferStore_freeBuffer(openlcb_msg_t* msg);
 
-extern void BufferStore_clear_openlcb_message(openlcb_msg_t* msg);
-
 extern uint16_t BufferStore_messages_allocated();
 
 extern uint16_t BufferStore_messages_max_allocated();

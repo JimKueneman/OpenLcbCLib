@@ -24,6 +24,8 @@ void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_
         openlcb_msg->source_id = source_id;
         openlcb_msg->mti = mti;
         openlcb_msg->payload_count = payload_count;
+        openlcb_msg->retry_count = 0;
+        openlcb_msg->timerticks = 0;
 
     }
 

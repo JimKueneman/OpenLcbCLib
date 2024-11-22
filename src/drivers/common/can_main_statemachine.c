@@ -20,11 +20,13 @@
 #include "can_utilities.h"
 #include "can_buffer_fifo.h"
 #include "can_msg_handler.h"
+#include "../mcu_driver.h"
 
 typedef struct {
-    openlcb_msg_t openlcb_msg_worker;
-    payload_basic_t openlcb_basic_worker;
-    can_msg_t can_msg_worker;
+    
+    openlcb_msg_t openlcb_worker;
+    payload_basic_t worker_payload;
+    can_msg_t can_worker;
     can_msg_t* active_msg;
 
 } can_main_statemachine_t;
@@ -34,8 +36,9 @@ can_main_statemachine_t can_helper;
 
 void CanMainStatemachine_initialize() {
 
-    can_helper.openlcb_msg_worker.payload = (openlcb_payload_t*) & can_helper.openlcb_basic_worker;
-    can_helper.openlcb_msg_worker.payload_size = LEN_MESSAGE_BYTES_BASIC;
+    can_helper.openlcb_worker.payload = (openlcb_payload_t*) & can_helper.worker_payload;
+    can_helper.openlcb_worker.payload_size = LEN_MESSAGE_BYTES_BASIC;
+    can_helper.openlcb_worker.state.allocated = TRUE;
     can_helper.active_msg = (void*) 0;
 
 }
@@ -137,11 +140,11 @@ void handle_run_transmit_rid(openlcb_node_t* next_node) {
 
 void _handle_run_transmit_amd(openlcb_node_t* next_node) {
 
-    can_helper.can_msg_worker.identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | next_node->alias;
-    CanUtilities_copy_node_id_to_payload(&can_helper.can_msg_worker, next_node->id, 0);
+    can_helper.can_worker.identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | next_node->alias;
+    CanUtilities_copy_node_id_to_payload(&can_helper.can_worker, next_node->id, 0);
 
 
-    if (CanTxStatemachine_try_transmit_can_message(&can_helper.can_msg_worker)) {
+    if (CanTxStatemachine_try_transmit_can_message(&can_helper.can_worker)) {
 
         next_node->state.permitted = TRUE;
         next_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
@@ -152,29 +155,31 @@ void _handle_run_transmit_amd(openlcb_node_t* next_node) {
 
 void _handle_run_transmit_initialization_complete(openlcb_node_t* next_node) {
 
-    next_node->state.initalized = TRUE;
+    Utilities_load_openlcb_message(
+            &can_helper.openlcb_worker,
+            next_node->alias,
+            next_node->id,
+            0,
+            0,
+            MTI_INITIALIZATION_COMPLETE,
+            6
+            );
 
-    BufferStore_clear_openlcb_message(&can_helper.openlcb_msg_worker);
-    
-    can_helper.openlcb_msg_worker.source_id = next_node->id;
-    can_helper.openlcb_msg_worker.source_alias = next_node->alias;
 
     if (next_node->parameters->protocol_support & PSI_SIMPLE)
-        can_helper.openlcb_msg_worker.mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
-    else
-        can_helper.openlcb_msg_worker.mti = MTI_INITIALIZATION_COMPLETE;
+        can_helper.openlcb_worker.mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
 
-    Utilities_copy_node_id_to_openlcb_payload(&can_helper.openlcb_msg_worker, next_node->id);
-    
+    Utilities_copy_node_id_to_openlcb_payload(&can_helper.openlcb_worker, next_node->id);
 
-    if (CanTxStatemachine_try_transmit_openlcb_message(&can_helper.openlcb_msg_worker, &can_helper.can_msg_worker, 0)) {
+
+    if (CanTxStatemachine_try_transmit_openlcb_message(&can_helper.openlcb_worker, &can_helper.can_worker, 0)) {
 
         next_node->producers.enumerator.running = TRUE;
         next_node->producers.enumerator.enum_index = 0;
         next_node->state.run_state = RUNSTATE_TRANSMIT_PRODUCER_EVENTS;
 
     }
-    
+
 }
 
 void _handle_run_transmit_producer_events(openlcb_node_t* next_node) {
@@ -184,15 +189,20 @@ void _handle_run_transmit_producer_events(openlcb_node_t* next_node) {
 
         if (next_node->producers.enumerator.enum_index < next_node->parameters->producer_count) {
 
-            BufferStore_clear_openlcb_message(&can_helper.openlcb_msg_worker);
-            
-            can_helper.openlcb_msg_worker.source_alias = next_node->alias;
-            can_helper.openlcb_msg_worker.source_id = next_node->id;
-            can_helper.openlcb_msg_worker.mti = ProtocolEventTransport_extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index);
-            Utilities_copy_event_id_to_openlcb_payload(&can_helper.openlcb_msg_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
+            Utilities_load_openlcb_message(
+                    &can_helper.openlcb_worker,
+                    next_node->alias,
+                    next_node->id,
+                    0,
+                    0,
+                    ProtocolEventTransport_extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index),
+                    6
+                    );
 
-            
-            if (CanTxStatemachine_try_transmit_openlcb_message(&can_helper.openlcb_msg_worker, &can_helper.can_msg_worker, 0)) {
+            Utilities_copy_event_id_to_openlcb_payload(&can_helper.openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
+
+
+            if (CanTxStatemachine_try_transmit_openlcb_message(&can_helper.openlcb_worker, &can_helper.can_worker, 0)) {
 
                 next_node->producers.enumerator.enum_index = next_node->producers.enumerator.enum_index + 1;
 
@@ -215,22 +225,26 @@ void _handle_run_transmit_producer_events(openlcb_node_t* next_node) {
 
 }
 
-
 void _handle_run_transmit_consumer_events(openlcb_node_t* next_node) {
 
     if (next_node->consumers.enumerator.running) {
 
         if (next_node->consumers.enumerator.enum_index < next_node->parameters->producer_count) {
-
-            BufferStore_clear_openlcb_message(&can_helper.openlcb_msg_worker);
+    
+            Utilities_load_openlcb_message(
+                    &can_helper.openlcb_worker,
+                    next_node->alias,
+                    next_node->id,
+                    0,
+                    0,
+                    ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->producers.enumerator.enum_index),
+                    6
+                    );
             
-            can_helper.openlcb_msg_worker.source_alias = next_node->alias;
-            can_helper.openlcb_msg_worker.source_id = next_node->id;
-            can_helper.openlcb_msg_worker.mti = ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index);
-            Utilities_copy_event_id_to_openlcb_payload(&can_helper.openlcb_msg_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
+            Utilities_copy_event_id_to_openlcb_payload(&can_helper.openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
 
-            
-            if (CanTxStatemachine_try_transmit_openlcb_message(&can_helper.openlcb_msg_worker, &can_helper.can_msg_worker, 0)) {
+
+            if (CanTxStatemachine_try_transmit_openlcb_message(&can_helper.openlcb_worker, &can_helper.can_worker, 0)) {
 
                 next_node->consumers.enumerator.enum_index = next_node->consumers.enumerator.enum_index + 1;
 
@@ -238,7 +252,7 @@ void _handle_run_transmit_consumer_events(openlcb_node_t* next_node) {
 
                     next_node->consumers.enumerator.running = FALSE;
                     next_node->consumers.enumerator.enum_index = 0;
-                    
+
                     next_node->state.run_state = RUNSTATE_RUN;
 
                 }
@@ -256,8 +270,13 @@ void _handle_run_run(openlcb_node_t* next_node) {
 
     // Pop CAN messages and start dispatching....
 
-    if (!can_helper.active_msg)
+    if (!can_helper.active_msg) {
+
+        McuDriver_pause_can_rx();
         can_helper.active_msg = CanBufferFifo_pop();
+        McuDriver_resume_can_rx();
+
+    }
 
     if (can_helper.active_msg) {
 
@@ -266,7 +285,7 @@ void _handle_run_run(openlcb_node_t* next_node) {
 
     }
 
-    MainStatemachine_run_with_node(next_node);
+    MainStatemachine_run();
 
 }
 
@@ -277,11 +296,9 @@ void _handle_run_duplicate_id_detected(openlcb_node_t * next_node) {
 
 void CanMainStateMachine_run() {
 
-    openlcb_node_t* next_node = Node_get_first();
+    openlcb_node_t* next_node = Node_get_first(0);
 
     while (next_node) {
-
-        _RB4 = !_RB4;
 
         switch (next_node->state.run_state) {
 
@@ -331,7 +348,7 @@ void CanMainStateMachine_run() {
                 _handle_run_duplicate_id_detected(next_node);
                 return;
 
-                next_node = Node_get_next();
+                next_node = Node_get_next(0);
 
         }
 

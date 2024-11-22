@@ -8,16 +8,15 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __OPENLCB_MAIN_STATEMACHINE__
-#define	__OPENLCB_MAIN_STATEMACHINE__
+#ifndef __OPENLCB_TX_DRIVER__
+#define	__OPENLCB_TX_DRIVER__
+
+#include "openlcb_types.h"
+#include "openlcb_node.h"
+
+extern uint8_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
 #include <xc.h> // include processor files - each processor file is guarded.  
-
-
-extern void MainStatemachine_initialize();
-
-extern void MainStatemachine_run();
-
 
 #ifdef	__cplusplus
 extern "C" {
@@ -30,5 +29,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_MAIN_STATEMACHINE__ */
+#endif	/* __OPENLCB_TX_DRIVER__ */
 
