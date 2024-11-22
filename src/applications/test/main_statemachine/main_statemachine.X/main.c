@@ -78,7 +78,7 @@ void _uart_callback(uint16_t code) {
     switch (code) {
         case 'B':
         case 'b':
-            
+
             printf("\nCan Buffers: %d\n", CanBufferStore_messages_allocated());
             printf("\nBuffers: %d\n", BufferStore_messages_allocated());
 
@@ -102,9 +102,12 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 int main(void) {
 
-     MainStatemachine_initialize();
-     
-     
+    uint16_t payload_index_xx = 0;
+
+    payload_index_xx++;
+
+    ++payload_index_xx;
+
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
@@ -151,7 +154,7 @@ int main(void) {
 
     while (1) {
 
- 
+
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 
     }

@@ -16,18 +16,15 @@
 #include "openlcb_utilities.h"
 #include "protocol_event_transport.h"
 #include "protocol_message_network.h"
+#include "protocol_snip.h"
 #include "../drivers/mcu_driver.h"
 
 typedef struct {
     
-    openlcb_msg_t* active_msg;
+   
     openlcb_msg_t worker;
-    
-    // TODO:::::::::
-    // IF NOT LAST THE COMPILER PUTS 2 VARIABLES AT THE SAME ADDRESS...???????
-    //WHAT TO DO HERE????
-    openlcb_stream_data_buffer_t worker_buffer;
-    
+    payload_stream_t worker_buffer;
+    openlcb_msg_t* active_msg;
    
 } openlcb_statemachine_worker_t;
 
@@ -35,6 +32,9 @@ typedef struct {
 openlcb_statemachine_worker_t openlcb_helper;
 
 void MainStatemachine_initialize() {
+    
+    for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
+        openlcb_helper.worker_buffer[i] = 0x00;
     
     openlcb_helper.active_msg = (void*) 0;
     
@@ -58,10 +58,7 @@ void _main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
         {
-            //      HandleSimpleNodeInfoRequest(openlcb_node);
-            
-            openlcb_node->state.openlcb_msg_handled = TRUE;
-            
+            ProtocolSnip_handle_simple_node_info_request(openlcb_node, openlcb_msg, &openlcb_helper.worker);
             return;
         }
         case MTI_PROTOCOL_SUPPORT_INQUIRY:

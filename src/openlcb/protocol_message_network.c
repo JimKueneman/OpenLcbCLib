@@ -20,7 +20,6 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
         return; // finished with the message
 
 
-
     if (openlcb_node->state.duplicate_id_detected) { // Already handled this once
 
         openlcb_node->state.openlcb_msg_handled = TRUE; // Done with the message
