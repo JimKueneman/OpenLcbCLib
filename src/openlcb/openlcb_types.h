@@ -85,6 +85,8 @@ typedef struct {
     openlcb_payload_t* payload; // size depend of the buffer type and defined as payload_size
     uint8_t timerticks; // timeouts, etc
     uint8_t retry_count;
+    void* owner;  // Allows tracking of a node to what list currently contains it.  Allows handing off messages vs needing to create and copy.. especially for datagrams/streams on low resource mcus
+                  // WARNING:  Just because you take over the message the caller of the function may still reference it to see that it was taken over so don't free it before the function that took it returns
 } openlcb_msg_t;
 
 typedef openlcb_msg_t openlcb_msg_array_t[LEN_MESSAGE_BUFFER];
@@ -98,7 +100,7 @@ typedef struct {
 } message_buffer_t;
 
 
-// Defines a node
+// Defines a node for snip
 
 typedef struct {
     uint8_t mfg_version;
@@ -149,10 +151,10 @@ typedef struct {
     uint16_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
     uint16_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
     uint16_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
-} nodestateBITS;
+} openlcb_node_state_t;
 
 typedef struct {
-    nodestateBITS state;
+    openlcb_node_state_t state;
     uint64_t id;
     uint16_t alias;
     uint64_t seed; // Seed for generating the alias 
@@ -160,7 +162,7 @@ typedef struct {
     event_id_producer_list_t producers;
     const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-
+    
 } openlcb_node_t;
 
 typedef struct {

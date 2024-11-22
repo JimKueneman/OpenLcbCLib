@@ -15,6 +15,7 @@ uint16_t _buffer_store_message_allocated = 0;
 uint16_t _buffer_store_message_max_allocated = 0;
 
 void _clear_openlcb_message(openlcb_msg_t* msg) {
+    
 
     msg->dest_alias = 0;
     msg->dest_id = 0;
@@ -24,6 +25,7 @@ void _clear_openlcb_message(openlcb_msg_t* msg) {
     msg->payload_count = 0;
     msg->timerticks = 0;
     msg->retry_count = 0;
+    msg->owner = (void*) 0;
     msg->state.allocated = FALSE;
     msg->state.inprocess = FALSE;
     
@@ -96,6 +98,7 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
                 _buffer_store_message_max_allocated = _buffer_store_message_allocated;
             
             _clear_openlcb_message(&_message_buffer.messages[i]);
+            _message_buffer.messages[i].owner = &_message_buffer;
             _message_buffer.messages[i].state.allocated = TRUE;
             
             return &_message_buffer.messages[i];
@@ -113,6 +116,7 @@ void BufferStore_freeBuffer(openlcb_msg_t* msg) {
     if (!msg) return;
     
     _buffer_store_message_allocated = _buffer_store_message_allocated - 1;
+    msg->owner = (void*) 0;
     msg->state.allocated = FALSE;
 
 }

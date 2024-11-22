@@ -44,6 +44,7 @@ openlcb_msg_t* BufferFifo_push(uint16_t data_len) {
         if (!new_msg)
             return (void*) 0;
 
+        new_msg->owner = &openlcb_msg_buffer_fifo;
         openlcb_msg_buffer_fifo.list[openlcb_msg_buffer_fifo.head] = new_msg;
         openlcb_msg_buffer_fifo.head = next;
         
@@ -66,6 +67,8 @@ openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
         openlcb_msg_buffer_fifo.list[openlcb_msg_buffer_fifo.head] = existing_msg;
         openlcb_msg_buffer_fifo.head = next;
         
+        existing_msg->owner = &openlcb_msg_buffer_fifo;
+        
         return existing_msg;
 
     }
@@ -86,6 +89,8 @@ openlcb_msg_t* BufferFifo_pop() {
 
         if (openlcb_msg_buffer_fifo.tail >= LEN_MESSAGE_FIFO_BUFFER)
             openlcb_msg_buffer_fifo.tail = 0;
+        
+        result->owner = (void*) 0;
 
     }
 

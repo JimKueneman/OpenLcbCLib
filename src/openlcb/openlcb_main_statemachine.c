@@ -221,10 +221,23 @@ void MainStatemachine_run() {
 
     while (next_node) {
         
+        
+        
         if (reset)
             next_node->state.openlcb_msg_handled = FALSE;
       
         _main_statemachine(next_node, openlcb_helper.active_msg);
+       
+        // The Buffer_pop() clears the owner and it is a free agent.  
+        // If one of the handlers took the message it has set the owner to its own
+        // internal storage system
+        // WARNING: The only time the message should be taken is if it was addressed to the node!!!
+        if (openlcb_helper.active_msg->owner) {
+            
+             openlcb_helper.active_msg = (void*) 0;
+             break;
+            
+        }
        
         if (!next_node->state.openlcb_msg_handled) {
             

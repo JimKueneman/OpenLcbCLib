@@ -189,6 +189,17 @@ uint8_t Utilities_count_nulls_in_openlcb_payload(openlcb_msg_t* openlcb_msg) {
 
 }
 
+uint8_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+    
+    if ( (openlcb_node->alias == openlcb_msg->dest_alias) | (openlcb_node->id == openlcb_msg->dest_id) )
+        
+        return TRUE
+    
+    else
+        
+        return FALSE  
+}
+
 
 
 //openlcb_node_t* FindOpenLcbNodeByNodeId(openlcb_nodes_t* openlcb_nodes, uint64_t node_id) {

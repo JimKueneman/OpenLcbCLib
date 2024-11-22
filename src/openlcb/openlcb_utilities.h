@@ -49,6 +49,8 @@ extern uint8_t Utilities_is_addressed_openlcb_message(openlcb_msg_t* openlcb_msg
 
 extern void Utilities_set_multi_frame_flag( uint8_t* target,  uint8_t flag);  // MULTIFRAME_ONLY, MULTIFRAME_FIRST, MULTIFRAME_MIDDLE, MULTIFRAME_FINAL
 
+extern uint8_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
+
 
 // OpenLcb message helpers
 

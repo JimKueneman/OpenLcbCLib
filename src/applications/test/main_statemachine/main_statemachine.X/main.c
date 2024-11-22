@@ -57,6 +57,7 @@
 #include "../../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../../openlcb/clock_distribution.h"
 #include "../../../../openlcb/callback_hooks.h"
+#include "../../../../openlcb/protocol_datagram.h"
 
 #include "../../../../drivers/common/can_types.h"
 #include "../../../../drivers/common/can_buffer_store.h"
@@ -102,12 +103,6 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 int main(void) {
 
-    uint16_t payload_index_xx = 0;
-
-    payload_index_xx++;
-
-    ++payload_index_xx;
-
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
@@ -124,6 +119,8 @@ int main(void) {
     MainStatemachine_initialize();
     Node_initialize();
     ClockDistribution_initialize();
+    
+    ProtocolDatagram_initialize();
 
 
 #ifdef _SIMULATOR_

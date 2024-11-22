@@ -37,6 +37,7 @@ openlcb_msg_t* BufferList_allocate(uint16_t data_len) {
 
 
             openlcb_msg_buffer_list[i] = new_msg;
+            new_msg->owner = &openlcb_msg_buffer_list;
 
             return new_msg;
 
@@ -78,7 +79,7 @@ void BufferList_free(openlcb_msg_t * msg) {
         if (openlcb_msg_buffer_list[i] == msg) {
 
             openlcb_msg_buffer_list[i] = (void*) 0;
-
+            
             BufferStore_freeBuffer(msg);
 
             return;

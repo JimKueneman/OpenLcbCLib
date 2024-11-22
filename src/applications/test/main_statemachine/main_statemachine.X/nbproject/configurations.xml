@@ -44,6 +44,7 @@
         <itemPath>../../../../openlcb/protocol_message_network.h</itemPath>
         <itemPath>../../../../openlcb/openlcb_tx_driver.h</itemPath>
         <itemPath>../../../../openlcb/protocol_snip.h</itemPath>
+        <itemPath>../../../../openlcb/protocol_datagram.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -98,6 +99,7 @@
         <itemPath>../../../../openlcb/protocol_message_network.c</itemPath>
         <itemPath>../../../../openlcb/openlcb_tx_driver.c</itemPath>
         <itemPath>../../../../openlcb/protocol_snip.c</itemPath>
+        <itemPath>../../../../openlcb/protocol_datagram.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
