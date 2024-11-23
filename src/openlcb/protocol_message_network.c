@@ -38,7 +38,7 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
             3
             );
     Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id);
-    
+
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->state.duplicate_id_detected = TRUE;
@@ -91,15 +91,33 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
             6
             );
 
-    *worker_msg->payload[5] = (uint8_t)  openlcb_node->parameters->protocol_support & 0xFF;
-    *worker_msg->payload[4] = (uint8_t) (openlcb_node->parameters->protocol_support >> 8) & 0xFF;
-    *worker_msg->payload[3] = (uint8_t) (openlcb_node->parameters->protocol_support >> 16) & 0xFF;
-    *worker_msg->payload[2] = (uint8_t) (openlcb_node->parameters->protocol_support >> 24) & 0xFF;
-    *worker_msg->payload[1] = (uint8_t) (openlcb_node->parameters->protocol_support >> 32) & 0xFF;
-    *worker_msg->payload[0] = (uint8_t) (openlcb_node->parameters->protocol_support >> 40) & 0xFF;
+    uint64_t temp = openlcb_node->parameters->protocol_support;
+
+    if (temp > 0) {
+
+        uint16_t count = 0;
+
+        while ((temp & 0xFF00000000000000) == 0) {
+
+            temp = temp << 8;
+
+            count = count + 1;
+
+        }
+
+        temp = openlcb_node->parameters->protocol_support << (8 * (count - 2));
+
+    }
+
+    *worker_msg->payload[5] = (uint8_t) temp & 0xFF;
+    *worker_msg->payload[4] = (uint8_t) (temp >> 8) & 0xFF;
+    *worker_msg->payload[3] = (uint8_t) (temp >> 16) & 0xFF;
+    *worker_msg->payload[2] = (uint8_t) (temp >> 24) & 0xFF;
+    *worker_msg->payload[1] = (uint8_t) (temp >> 32) & 0xFF;
+    *worker_msg->payload[0] = (uint8_t) (temp >> 40) & 0xFF;
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
-       
+
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
     }

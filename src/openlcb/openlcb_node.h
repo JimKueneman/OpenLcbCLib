@@ -33,13 +33,6 @@ extern uint64_t Node_generate_seed(uint64_t start_seed);
 extern uint16_t Node_generate_alias(uint64_t seed);
 
 
-
-extern uint8_t Node_is_addressed_to(openlcb_msg_t* msg, openlcb_node_t* node);
-
-extern int Node_is_event_id_producer(openlcb_node_t* openlcb_node, uint64_t event_id);
-
-extern int Node_is_event_id_consumer(openlcb_node_t* openlcb_node, uint64_t event_id);
-
 extern void Node_100ms_timer_tick();
 
 

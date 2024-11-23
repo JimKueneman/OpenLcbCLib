@@ -125,7 +125,6 @@ typedef struct {       user_snip_struct_t snip;
 
 typedef struct {
     uint16_t running    : 1; // Alway, always, always reset these to FALSE when you have finished processing a
-    uint16_t flag       : 1; // message so the next message starts in a known state
     uint8_t enum_index;      // allows a counter for enumerating the event ids
 } event_id_enum_t;
 

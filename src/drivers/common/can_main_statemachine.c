@@ -281,7 +281,10 @@ void _handle_run_run(openlcb_node_t* next_node) {
     if (can_helper.active_msg) {
 
         if (!next_node->state.can_msg_handled)
+            
             CanMessageHandler_process(next_node, can_helper.active_msg);
+        
+        // TODO: NEVER FREEING THE CAN MESSAGES>>........................
 
     }
 

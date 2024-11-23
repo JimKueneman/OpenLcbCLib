@@ -19,14 +19,9 @@
 #include "protocol_snip.h"
 #include "../drivers/mcu_driver.h"
 
-typedef struct {
-    
-   
-    openlcb_msg_t worker;
-    payload_stream_t worker_buffer;
-    openlcb_msg_t* active_msg;
-   
-} openlcb_statemachine_worker_t;
+#include "openlcb_main_statemachine.h"
+
+
 
 
 openlcb_statemachine_worker_t openlcb_helper;
@@ -214,7 +209,6 @@ void MainStatemachine_run() {
     if (!openlcb_helper.active_msg)
         return;
 
-    _RB4 = 1;
 
     uint8_t done = TRUE;
     openlcb_node_t* next_node = Node_get_first(1);
@@ -257,7 +251,6 @@ void MainStatemachine_run() {
 
     }
 
-    _RB4 = 0;
 
 }
 

@@ -41,9 +41,6 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->producers.enumerator.running = FALSE;
     openlcb_node->consumers.enumerator.running = FALSE;
 
-    openlcb_node->producers.enumerator.flag = FALSE;
-    openlcb_node->consumers.enumerator.flag = FALSE;
-
     openlcb_node->producers.event_state = 0x00; // Unknown State
     openlcb_node->consumers.event_state = 0x00;
 
@@ -89,19 +86,23 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     for (int i = 0; i < openlcb_node->parameters->consumer_count; i++)
 
-        if (i < LEN_CONSUMER_MAX_COUNT)
+        if (i < LEN_CONSUMER_MAX_COUNT)  // safety net
 
             openlcb_node->consumers.list[i] = node_id + i;
 
     for (int i = 0; i < openlcb_node->parameters->producer_count; i++)
 
-        if (i < LEN_PRODUCER_MAX_COUNT)
+        if (i < LEN_PRODUCER_MAX_COUNT) // safety net
 
             openlcb_node->producers.list[i] = node_id + i;
 
 
     openlcb_node->consumers.enumerator.running = FALSE;
-    openlcb_node->producers.enumerator.flag = FALSE;
+    openlcb_node->consumers.enumerator.enum_index = 0;
+    
+    openlcb_node->producers.enumerator.running = FALSE;
+    openlcb_node->producers.enumerator.enum_index = 0;
+    
 
 
 }
@@ -201,51 +202,5 @@ void Node_100ms_timer_tick() {
         openlcb_nodes.node[i].timerticks = openlcb_nodes.node[i].timerticks + 1;
 
     };
-
-}
-
-int Node_is_event_id_producer(openlcb_node_t* openlcb_node, uint64_t event_id) {
-
-    for (int i = 0; i < openlcb_node->parameters->producer_count; i++) {
-
-        if (i < LEN_PRODUCER_MAX_COUNT)
-
-            if (openlcb_node->producers.list[i] == event_id)
-
-                return i;
-
-    }
-
-    return -1;
-
-}
-
-int Node_is_event_id_consumer(openlcb_node_t* openlcb_node, uint64_t event_id) {
-
-
-    for (int i = 0; i < openlcb_node->parameters->consumer_count; i++) {
-
-        if (i < LEN_CONSUMER_MAX_COUNT)
-
-            if (openlcb_node->consumers.list[i] == event_id)
-
-                return i;
-
-
-    }
-    return -1;
-}
-
-uint8_t Node_is_addressed_to(openlcb_msg_t* msg, openlcb_node_t* node) {
-
-    for (int i = 0; i < openlcb_nodes.count; i++) {
-
-        if (node->alias == msg->dest_alias)
-
-            return TRUE;
-
-    }
-
-    return FALSE;
 
 }

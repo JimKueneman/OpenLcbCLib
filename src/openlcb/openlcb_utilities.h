@@ -51,6 +51,9 @@ extern void Utilities_set_multi_frame_flag( uint8_t* target,  uint8_t flag);  //
 
 extern uint8_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
+extern int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id);
+
+extern int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id);
 
 // OpenLcb message helpers
 

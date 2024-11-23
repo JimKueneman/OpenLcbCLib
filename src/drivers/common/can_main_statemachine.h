@@ -18,6 +18,19 @@ extern void CanMainStatemachine_initialize();
 
 extern void CanMainStateMachine_run();
 
+
+typedef struct {
+    
+    openlcb_msg_t openlcb_worker;
+    payload_basic_t worker_payload;
+    can_msg_t can_worker;
+    can_msg_t* active_msg;
+
+} can_main_statemachine_t;
+
+
+extern can_main_statemachine_t can_helper;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

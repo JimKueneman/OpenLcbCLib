@@ -143,7 +143,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
 void DatagramProtocol_100ms_time_tick() {
 
-    _RB4 = 1;
+  //  _RB4 = 1;
 
     for (int i = 0; i < LEN_DATAGRAM_REPLY_WAITING_LIST; i++) {
 
@@ -175,7 +175,7 @@ void DatagramProtocol_100ms_time_tick() {
 
     }
 
-    _RB4 = 0;
+  //  _RB4 = 0;
 
 
 }

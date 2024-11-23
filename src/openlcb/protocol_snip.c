@@ -125,8 +125,14 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
         return; // finished with the message
 
 
-    if (openlcb_node->alias != openlcb_msg->dest_alias)
+    if (openlcb_node->alias != openlcb_msg->dest_alias) {
+
+        openlcb_node->state.openlcb_msg_handled = TRUE;
+
         return; // not for us
+
+    }
+
 
     Utilities_load_openlcb_message(
             worker_msg,
@@ -159,7 +165,6 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
-        openlcb_node->state.duplicate_id_detected = TRUE;
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
     }

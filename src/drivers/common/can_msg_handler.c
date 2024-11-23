@@ -25,7 +25,7 @@ void _flush_alias_node_id_mappings() {
 
 }
 
-void _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg) {
+uint8_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg) {
 
     can_msg_t out_msg;
 
@@ -34,20 +34,24 @@ void _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg
         out_msg.identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | can_node->alias;
         CanUtilities_copy_node_id_to_payload(&out_msg, can_node->id, 0);
 
-        if (!CanTxStatemachine_try_transmit_can_message(&out_msg))
-            return;
+        if (CanTxStatemachine_try_transmit_can_message(&out_msg)) {
 
-        can_node->state.permitted = 0;
-        can_node->state.initalized = 0;
-        can_node->state.run_state = RUNSTATE_GENERATE_SEED;
+            can_node->state.can_msg_handled = TRUE;
+            can_node->state.permitted = 0;
+            can_node->state.initalized = 0;
+            can_node->state.run_state = RUNSTATE_GENERATE_SEED;
 
-    }
+        }
 
-    can_node->state.can_msg_handled = TRUE;
+        return TRUE;
+
+    } else
+
+        return FALSE;
 
 }
 
-void _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg) {
+uint8_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg) {
 
 
     can_msg_t out_msg;
@@ -57,18 +61,23 @@ void _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg
         out_msg.payload_count = 0;
         out_msg.identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_node->alias;
 
-        if (!CanTxStatemachine_try_transmit_can_message(&out_msg))
-            return;
+        if (CanTxStatemachine_try_transmit_can_message(&out_msg))
+
+            can_node->state.can_msg_handled = TRUE;
+
+        return TRUE;
 
     }
 
-    can_node->state.can_msg_handled = TRUE;
+    return FALSE;
 
 }
 
 void Handle_Incoming_CID(openlcb_node_t* can_node, can_msg_t* can_msg) {
 
-    _check_for_soft_alias_conflict(can_node, can_msg);
+    if (!_check_for_soft_alias_conflict(can_node, can_msg))
+
+        can_node->state.can_msg_handled = TRUE;
 
 }
 
@@ -80,13 +89,17 @@ void Handle_AME_Message(openlcb_node_t* can_node, can_msg_t* msg) {
 
 void Handle_Incoming_RID(openlcb_node_t* can_node, can_msg_t* can_msg) {
 
-    _check_for_hard_alias_conflict(can_node, can_msg);
+    if (!_check_for_hard_alias_conflict(can_node, can_msg))
+
+        can_node->state.can_msg_handled = TRUE;
 
 }
 
 void Handle_Incoming_AMD(openlcb_node_t* can_node, can_msg_t* can_msg) {
 
-    _check_for_hard_alias_conflict(can_node, can_msg);
+    if (!_check_for_hard_alias_conflict(can_node, can_msg))
+
+        can_node->state.can_msg_handled = TRUE;
 
 }
 
@@ -98,31 +111,35 @@ void Handle_Incoming_AME(openlcb_node_t* can_node, can_msg_t* can_msg) {
     if (can_msg->payload_count == 0)
         _flush_alias_node_id_mappings;
 
-    _check_for_hard_alias_conflict(can_node, can_msg);
+    if (_check_for_hard_alias_conflict(can_node, can_msg))
 
-    if (can_node->state.can_msg_handled)
         return;
 
     can_msg_t out_msg;
 
-    if ((can_msg->payload_count == 0) || (can_node->id = CanUtilities_extract_can_payload_as_node_id(can_msg))) {
+    if ((can_msg->payload_count == 0) || (can_node->id == CanUtilities_extract_can_payload_as_node_id(can_msg))) {
 
         CanUtilities_copy_node_id_to_payload(&out_msg, can_node->id, 0);
         out_msg.identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_node->alias;
 
-        if (!CanTxStatemachine_try_transmit_can_message(&out_msg))
-            return;
-        
-    }
+        if (CanTxStatemachine_try_transmit_can_message(&out_msg)) {
 
-    can_node->state.can_msg_handled = TRUE;
+            can_node->state.can_msg_handled = TRUE;
+
+        }
+
+    } else {
+
+        can_node->state.can_msg_handled = TRUE;
+
+    }
 
 }
 
 void Handle_Incoming_AMR(openlcb_node_t* can_node, can_msg_t* can_msg) {
 
     // printf("AMR\n");
-    
+
     can_node->state.can_msg_handled = TRUE;
 
 }
@@ -139,11 +156,20 @@ void CanMessageHandler_process(openlcb_node_t* can_node, can_msg_t* can_msg) {
             case CAN_CONTROL_FRAME_CID4:
 
                 Handle_Incoming_CID(can_node, can_msg);
+
                 return;
 
             case CAN_CONTROL_FRAME_CID3:
             case CAN_CONTROL_FRAME_CID2:
             case CAN_CONTROL_FRAME_CID1:
+
+                can_node->state.can_msg_handled = TRUE;
+
+                return;
+
+            default:
+
+                can_node->state.can_msg_handled = TRUE;
 
                 return;
 
@@ -156,21 +182,25 @@ void CanMessageHandler_process(openlcb_node_t* can_node, can_msg_t* can_msg) {
             case CAN_CONTROL_FRAME_RID: // Reserve ID
 
                 Handle_Incoming_RID(can_node, can_msg);
+
                 return;
 
             case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
 
                 Handle_Incoming_AMD(can_node, can_msg);
+
                 return;
 
             case CAN_CONTROL_FRAME_AME:
 
                 Handle_Incoming_AME(can_node, can_msg);
+
                 return;
 
             case CAN_CONTROL_FRAME_AMR:
 
                 Handle_Incoming_AMR(can_node, can_msg);
+
                 return;
 
             case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0:
@@ -179,8 +209,15 @@ void CanMessageHandler_process(openlcb_node_t* can_node, can_msg_t* can_msg) {
             case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
                 // Advanced feature for gateways/routers/etc.
 
+                can_node->state.can_msg_handled = TRUE;
+
                 return;
 
+            default:
+
+                can_node->state.can_msg_handled = TRUE;
+
+                return;
 
         }
 

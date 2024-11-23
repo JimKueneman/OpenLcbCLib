@@ -88,6 +88,27 @@ void _uart_callback(uint16_t code) {
             printf("\nMax CAN FIFO depth: %d\n", max_can_fifo_depth);
 
             return;
+
+        case 'P':
+        case 'p':
+
+            if (openlcb_helper.active_msg)
+                PrintOpenLcbMsg(openlcb_helper.active_msg);
+
+            return;
+
+        case 'C':
+        case 'c':
+
+            if (can_helper.active_msg) {
+
+                PrintCanMsg(can_helper.active_msg);
+                PrintCanFrameIdentifierName(can_helper.active_msg->identifier);
+
+            }
+
+            return;
+
     }
 }
 
@@ -102,7 +123,6 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 //#define  _SIMULATOR_
 
 int main(void) {
-
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
@@ -119,7 +139,7 @@ int main(void) {
     MainStatemachine_initialize();
     Node_initialize();
     ClockDistribution_initialize();
-    
+
     ProtocolDatagram_initialize();
 
 
@@ -142,7 +162,7 @@ int main(void) {
 
     printf("\n\nBooted\n");
 
-    Node_allocate(0x050101010007, &NodeParameters_main_node);
+    Node_allocate(0x050101010700, &NodeParameters_main_node);
 
 
     can_msg_t* can_msg;
