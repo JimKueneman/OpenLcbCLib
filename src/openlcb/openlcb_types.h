@@ -171,6 +171,12 @@ typedef struct {
 
 } openlcb_nodes_t;
 
+typedef struct {
+    openlcb_msg_t worker;
+    payload_stream_t worker_buffer;
+    openlcb_msg_t* active_msg; 
+} openlcb_statemachine_worker_t;
+
 
 
 #ifdef	__cplusplus

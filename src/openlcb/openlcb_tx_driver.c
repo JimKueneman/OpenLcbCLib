@@ -26,7 +26,7 @@ uint8_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t
     //        the can driver files... maybe a callback function that connects this library to the desired TX driver... need to think about it.
     while (payload_index < openlcb_msg->payload_count) {
         
-        bytes_transmitted = CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg, &can_msg, payload_index);
+        bytes_transmitted = CanTxStatemachine_try_transmit_openlcb_message(&can_msg, openlcb_msg, payload_index);
         
         payload_index = payload_index + bytes_transmitted;
         

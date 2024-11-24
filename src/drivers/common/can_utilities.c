@@ -146,14 +146,17 @@ uint8_t CanUtilities_is_openlcb_message(can_msg_t* msg) {
     
 }
 
-uint64_t CanUtilities_extract_can_payload_as_node_id(payload_bytes_can_t* payload) {
+uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t* can_msg) {
 
-    return ((uint64_t) (*payload)[0] << 40) |
-            ((uint64_t) (*payload)[1] << 32) |
-            ((uint64_t) (*payload)[2] << 24) |
-            ((uint64_t) (*payload)[3] << 16) |
-            ((uint64_t) (*payload)[4] << 8) |
-            ((uint64_t) (*payload)[5]);
+    return (
+            ((uint64_t) can_msg->payload[0] << 40) |
+            ((uint64_t) can_msg->payload[1] << 32) |
+            ((uint64_t) can_msg->payload[2] << 24) |
+            ((uint64_t) can_msg->payload[3] << 16) |
+            ((uint64_t) can_msg->payload[4] << 8) |
+            ((uint64_t) can_msg->payload[5])
+            
+            );
 
 }
 

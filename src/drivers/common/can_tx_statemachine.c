@@ -223,7 +223,7 @@ uint16_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_ms
     return result;
 }
 
-uint16_t CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_t openlcb_start_index) {
 
     uint16_t result = 0;
     

@@ -13,16 +13,11 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
-typedef struct {
-    openlcb_msg_t worker;
-    payload_stream_t worker_buffer;
-    openlcb_msg_t* active_msg;
-   
-} openlcb_statemachine_worker_t;
-
 extern void MainStatemachine_initialize();
 
 extern void MainStatemachine_run();
+
+extern void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 extern openlcb_statemachine_worker_t openlcb_helper;
 

@@ -12,6 +12,7 @@
 #define	__CAN_TYPES__
 
 #include <xc.h> // include processor files - each processor file is guarded.  
+#include "../../openlcb/openlcb_types.h"
 
 // ************************ USER DEFINED VARIABLES *****************************
 
@@ -40,6 +41,12 @@ typedef struct {
 
 
 typedef can_msg_t can_buffer_store_t[LEN_CAN_BUFFER];
+
+typedef struct {
+    openlcb_statemachine_worker_t* openlcb_worker;
+    can_msg_t can_worker;
+    can_msg_t* active_msg;
+} can_main_statemachine_t;
 
 
 #ifdef	__cplusplus

@@ -19,7 +19,7 @@
 extern void CanTxStatemachine_initialize();
 
 // returns the number of bytes that were written to the CAN bus for this iteration (openlcb_start_index + 8 max)
-extern uint16_t CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index);
+extern uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_t openlcb_start_index);
 
 // returns the number of bytes that were written to the CAN bus
 extern uint8_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg);

@@ -40,8 +40,6 @@
 #define RUNSTATE_TRANSMIT_PRODUCER_EVENTS         12
 // Runs the message loop
 #define RUNSTATE_RUN                              13
-// Error state, detected someone is using our NodeID
-#define RUNSTATE_DUPLICATE_NODEID                 14
 
 
 #define RESERVED_TOP_BIT                 0x10000000

@@ -13,7 +13,8 @@
           <itemPath>../../../../drivers/common/can_buffer_store.h</itemPath>
           <itemPath>../../../../drivers/common/can_buffer_fifo.h</itemPath>
           <itemPath>../../../../drivers/common/can_main_statemachine.h</itemPath>
-          <itemPath>../../../../drivers/common/can_msg_handler.h</itemPath>
+          <itemPath>../../../../drivers/common/can_frame_message_handler.h</itemPath>
+          <itemPath>../../../../drivers/common/can_login_message_handler.h</itemPath>
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
         </logicalFolder>
@@ -68,7 +69,8 @@
           <itemPath>../../../../drivers/common/can_tx_statemachine.c</itemPath>
           <itemPath>../../../../drivers/common/can_buffer_store.c</itemPath>
           <itemPath>../../../../drivers/common/can_main_statemachine.c</itemPath>
-          <itemPath>../../../../drivers/common/can_msg_handler.c</itemPath>
+          <itemPath>../../../../drivers/common/can_login_message_handler.c</itemPath>
+          <itemPath>../../../../drivers/common/can_frame_message_handler.c</itemPath>
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
         </logicalFolder>

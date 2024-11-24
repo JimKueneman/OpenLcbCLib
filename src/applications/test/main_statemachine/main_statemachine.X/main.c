@@ -103,6 +103,7 @@ void _uart_callback(uint16_t code) {
             if (can_helper.active_msg) {
 
                 PrintCanMsg(can_helper.active_msg);
+                printf("\n");
                 PrintCanFrameIdentifierName(can_helper.active_msg->identifier);
 
             }
@@ -143,6 +144,8 @@ int main(void) {
     ProtocolDatagram_initialize();
 
 
+
+
 #ifdef _SIMULATOR_
 
     // Setup the UART to send to the console in the simulator 
@@ -162,17 +165,26 @@ int main(void) {
 
     printf("\n\nBooted\n");
 
-    Node_allocate(0x050101010700, &NodeParameters_main_node);
+    openlcb_node_t* node = Node_allocate(0x050101010700, &NodeParameters_main_node);
 
+#ifdef _SIMULATOR_
 
-    can_msg_t* can_msg;
-    openlcb_msg_t* openlcb_msg;
+    node->state.run_state = RUNSTATE_RUN;
+    can_msg_t* buff = CanBufferFifo_push();
 
+    buff->identifier = 0x10702031;
+    buff->payload_count = 0;
+
+#endif
 
     while (1) {
 
+        _RB4 = 1;
 
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
+
+        _RB4 = 0;
+
 
     }
 
