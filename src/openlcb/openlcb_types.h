@@ -85,8 +85,7 @@ typedef struct {
     openlcb_payload_t* payload; // size depend of the buffer type and defined as payload_size
     uint8_t timerticks; // timeouts, etc
     uint8_t retry_count;
-    void* owner;  // Allows tracking of a node to what list currently contains it.  Allows handing off messages vs needing to create and copy.. especially for datagrams/streams on low resource mcus
-                  // WARNING:  Just because you take over the message the caller of the function may still reference it to see that it was taken over so don't free it before the function that took it returns
+    uint8_t reference_count; // reference counted for garbage collection
 } openlcb_msg_t;
 
 typedef openlcb_msg_t openlcb_msg_array_t[LEN_MESSAGE_BUFFER];

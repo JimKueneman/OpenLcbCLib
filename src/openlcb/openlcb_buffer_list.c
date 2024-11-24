@@ -35,9 +35,7 @@ openlcb_msg_t* BufferList_allocate(uint16_t data_len) {
 
                 return (void*) 0;
 
-
             openlcb_msg_buffer_list[i] = new_msg;
-            new_msg->owner = &openlcb_msg_buffer_list;
 
             return new_msg;
 
@@ -79,7 +77,7 @@ void BufferList_free(openlcb_msg_t * msg) {
         if (openlcb_msg_buffer_list[i] == msg) {
 
             openlcb_msg_buffer_list[i] = (void*) 0;
-            
+
             BufferStore_freeBuffer(msg);
 
             return;
@@ -111,24 +109,24 @@ void BufferList_release(openlcb_msg_t* msg) {
 }
 
 openlcb_msg_t* BufferList_index_of(uint16_t index) {
-    
+
     if (index >= LEN_MESSAGE_BUFFER)
         return (void*) 0;
-    
-    return  openlcb_msg_buffer_list[index];
+
+    return openlcb_msg_buffer_list[index];
 
 }
 
 uint8_t BufferList_is_empty() {
-    
+
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
-        
+
         if (openlcb_msg_buffer_list[i] != (void*) 0)
-            
+
             return 1;
-        
+
     }
-    
+
     return 0;
-    
+
 }

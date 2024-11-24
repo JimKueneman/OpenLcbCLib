@@ -14,20 +14,20 @@ message_buffer_t _message_buffer;
 uint16_t _buffer_store_message_allocated = 0;
 uint16_t _buffer_store_message_max_allocated = 0;
 
-void _clear_openlcb_message(openlcb_msg_t* msg) {
+void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
     
 
-    msg->dest_alias = 0;
-    msg->dest_id = 0;
-    msg->source_alias = 0;
-    msg->source_id = 0;
-    msg->mti = 0;
-    msg->payload_count = 0;
-    msg->timerticks = 0;
-    msg->retry_count = 0;
-    msg->owner = (void*) 0;
-    msg->state.allocated = FALSE;
-    msg->state.inprocess = FALSE;
+    openlcb_msg->dest_alias = 0;
+    openlcb_msg->dest_id = 0;
+    openlcb_msg->source_alias = 0;
+    openlcb_msg->source_id = 0;
+    openlcb_msg->mti = 0;
+    openlcb_msg->payload_count = 0;
+    openlcb_msg->timerticks = 0;
+    openlcb_msg->retry_count = 0;
+    openlcb_msg->reference_count = 0;
+    openlcb_msg->state.allocated = FALSE;
+    openlcb_msg->state.inprocess = FALSE;
     
 }
 
@@ -98,7 +98,7 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
                 _buffer_store_message_max_allocated = _buffer_store_message_allocated;
             
             _clear_openlcb_message(&_message_buffer.messages[i]);
-            _message_buffer.messages[i].owner = &_message_buffer;
+            _message_buffer.messages[i].reference_count = 1;
             _message_buffer.messages[i].state.allocated = TRUE;
             
             return &_message_buffer.messages[i];
@@ -111,13 +111,19 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
 
 }
 
-void BufferStore_freeBuffer(openlcb_msg_t* msg) {
+void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg) {
 
-    if (!msg) return;
+    if (!openlcb_msg) 
+        return;
+    
+    openlcb_msg->reference_count = openlcb_msg->reference_count - 1;
+    
+    if (openlcb_msg->reference_count > 0)
+        return;
     
     _buffer_store_message_allocated = _buffer_store_message_allocated - 1;
-    msg->owner = (void*) 0;
-    msg->state.allocated = FALSE;
+    openlcb_msg->reference_count = 0;
+    openlcb_msg->state.allocated = FALSE;
 
 }
 
@@ -130,6 +136,12 @@ uint16_t BufferStore_messages_allocated() {
 uint16_t BufferStore_messages_max_allocated() {
     
     return _buffer_store_message_max_allocated;
+    
+}
+
+extern void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg) {
+    
+    openlcb_msg->reference_count = openlcb_msg->reference_count + 1;
     
 }
 

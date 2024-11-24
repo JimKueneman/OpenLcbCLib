@@ -18,11 +18,13 @@ extern void BufferStore_initialize();
 
 extern openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size);
 
-extern void BufferStore_freeBuffer(openlcb_msg_t* msg);
+extern void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg);
 
 extern uint16_t BufferStore_messages_allocated();
 
 extern uint16_t BufferStore_messages_max_allocated();
+
+extern void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg);
 
 
 #ifdef	__cplusplus

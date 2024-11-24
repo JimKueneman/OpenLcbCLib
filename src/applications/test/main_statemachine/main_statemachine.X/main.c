@@ -167,6 +167,7 @@ int main(void) {
 
     openlcb_node_t* node = Node_allocate(0x050101010700, &NodeParameters_main_node);
 
+
 #ifdef _SIMULATOR_
 
     node->state.run_state = RUNSTATE_RUN;

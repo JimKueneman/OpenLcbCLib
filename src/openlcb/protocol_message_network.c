@@ -35,7 +35,7 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
             openlcb_msg->source_alias,
             openlcb_msg->source_id,
             MTI_PC_EVENT_REPORT,
-            3
+            8
             );
     Utilities_copy_event_id_to_openlcb_payload(worker_msg, EVENT_ID_DUPLICATE_NODE_DETECTED);
 
@@ -101,30 +101,21 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     uint64_t temp = openlcb_node->parameters->protocol_support;
 
-    if (temp > 0) {
+    if (temp > 0) 
 
-        uint16_t count = 0;
-
-        while ((temp & 0xFF00000000000000) == 0) {
+        while ((temp & 0xFF00000000000000) == 0) 
 
             temp = temp << 8;
-            count = count + 1;
 
-        }
+    *worker_msg->payload[0] = (uint8_t) (temp >> 56) & 0xFF;
+    *worker_msg->payload[1] = (uint8_t) (temp >> 48) & 0xFF;
+    *worker_msg->payload[2] = (uint8_t) (temp >> 40) & 0xFF;
+    *worker_msg->payload[3] = (uint8_t) (temp >> 32) & 0xFF;
+    *worker_msg->payload[4] = (uint8_t) (temp >> 24) & 0xFF;
+    *worker_msg->payload[5] = (uint8_t) (temp >> 16) & 0xFF;
 
-        temp = openlcb_node->parameters->protocol_support << (8 * (count - 2));
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
-    }
-
-    *worker_msg->payload[5] = (uint8_t) temp & 0xFF;
-    *worker_msg->payload[4] = (uint8_t) (temp >> 8) & 0xFF;
-    *worker_msg->payload[3] = (uint8_t) (temp >> 16) & 0xFF;
-    *worker_msg->payload[2] = (uint8_t) (temp >> 24) & 0xFF;
-    *worker_msg->payload[1] = (uint8_t) (temp >> 32) & 0xFF;
-    *worker_msg->payload[0] = (uint8_t) (temp >> 40) & 0xFF;
-
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) 
-        
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
@@ -215,7 +206,7 @@ void ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node_t* openlc
     Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI, 0);
     Utilities_copy_word_to_openlcb_payload(worker_msg, openlcb_msg->mti, 2);
 
-    
+
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = TRUE;

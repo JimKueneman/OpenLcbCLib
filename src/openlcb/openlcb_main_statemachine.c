@@ -16,6 +16,7 @@
 #include "openlcb_utilities.h"
 #include "protocol_event_transport.h"
 #include "protocol_message_network.h"
+#include "protocol_datagram.h"
 #include "protocol_snip.h"
 #include "../drivers/mcu_driver.h"
 
@@ -163,20 +164,17 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
         }
         case MTI_DATAGRAM:
         {
-            //        HandleDatagram(openlcb_node);
-            openlcb_node->state.openlcb_msg_handled = TRUE;
+            ProtocolDatagram_handle_datagram(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
         case MTI_DATAGRAM_OK_REPLY:
         {
-            //        HandleDatagramOkReply(openlcb_node);
-            openlcb_node->state.openlcb_msg_handled = TRUE;
+            Protocol_Datagram_handle_datagram_ok_reply(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
         case MTI_DATAGRAM_REJECTED_REPLY:
         {
-            //       HandleDatagramRejectedReply(openlcb_node);
-            openlcb_node->state.openlcb_msg_handled = TRUE;
+            ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
         default:

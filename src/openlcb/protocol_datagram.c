@@ -7,11 +7,12 @@
 
 
 #include "xc.h"
+#include "stdio.h" // printf
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "openlcb_defines.h"
-#include "openlcb_buffer_store.h"
 #include "openlcb_buffer_fifo.h"
+#include "openlcb_buffer_store.h"
+#include "openlcb_tx_driver.h"
 
 
 // Little use having a buffer larger than the number of Datagram messages we can create;
@@ -37,9 +38,49 @@ void _send_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, op
 
 }
 
+void _send_datagram_rejected_unknown_command_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+    
+    Utilities_load_openlcb_message(
+            worker_msg,
+            openlcb_node->alias,
+            openlcb_node->id,
+            openlcb_msg->source_alias,
+            openlcb_msg->source_id,
+            MTI_DATAGRAM_REJECTED_REPLY,
+            2
+            );
+    Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND, 0);
+
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
+
+        openlcb_node->state.openlcb_msg_handled = TRUE;
+
+      
+}
+
+void _send_datagram_rejected_no_buffer_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+    
+    Utilities_load_openlcb_message(
+            worker_msg,
+            openlcb_node->alias,
+            openlcb_node->id,
+            openlcb_msg->source_alias,
+            openlcb_msg->source_id,
+            MTI_DATAGRAM_REJECTED_REPLY,
+            2
+            );
+    Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_TEMPORARY_BUFFER_UNAVAILABLE, 0);
+
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
+
+        openlcb_node->state.openlcb_msg_handled = TRUE;
+
+      
+}
+
 void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (!openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled)
         return;
 
     if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
@@ -49,51 +90,43 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
         return;
     }
     
-
-
     for (int i = 0; i < LEN_DATAGRAM_REPLY_WAITING_LIST; i++) {
 
         if (!reply_waiting_list[i]) {
-
-
+            
             // TODO: Need to try to do what is requested in the Datagram
             switch (*openlcb_msg->payload[0]) {
 
                 case 0x20:
-
-                    openlcb_msg->owner = &reply_waiting_list; 
+                    
                     openlcb_node->state.openlcb_msg_handled = TRUE;
 
+                    BufferStore_inc_reference_count(openlcb_msg);
                     reply_waiting_list[i] = openlcb_msg;
                     openlcb_node->timerticks = 0;
-                    // Do not reset retry as it may be a message we reinserted 
-                    // into the Buffer_push_existing to try again and need to keep track of the times we try
-                    // need to trust it was reset by the original allocation of this message in the BufferStore_allocate())
-                    
-                    // TODO:  Reply to this datagram and then wait for the ACK or NoACK
+                 
     
-                    break;
+                    return;
 
                 default:
-                {
-
-                    openlcb_node->state.openlcb_msg_handled = TRUE;
                     
-                    // TODO: Send unknown Datagram Type
-
-                }
+                    _send_datagram_rejected_unknown_command_reply(openlcb_node, openlcb_msg, worker_msg);
+                    
+                    return;
 
             }
 
         }
 
     }
-
+    
+    _send_datagram_rejected_no_buffer_reply(openlcb_node, openlcb_msg, worker_msg);
+            
 }
 
 void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (!openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled)
         return;
 
     for (int i = 0; i < LEN_DATAGRAM_REPLY_WAITING_LIST; i++) {
@@ -113,7 +146,7 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
 
 void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (!openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled)
         return;
 
     for (int i = 0; i < LEN_DATAGRAM_REPLY_WAITING_LIST; i++) {
@@ -157,16 +190,18 @@ void DatagramProtocol_100ms_time_tick() {
 
                 if (reply_waiting_list[i]->retry_count < MAX_RETRY_COUNT) {
 
-                    // Try it again
-                    // THIS WON'T WORK AS THE RETRY COUNT WILL GET SMASHED NEXT PASS THROUGH
-                    BufferFifo_push_existing(reply_waiting_list[i]);
+                    
+                    BufferFifo_push_existing(reply_waiting_list[i]);  // Try it again
 
                     reply_waiting_list[i]->retry_count = reply_waiting_list[i]->retry_count + 1;
 
                 }
+                
                 // Give up time to drop it
-                BufferStore_freeBuffer(reply_waiting_list[i]);
                 reply_waiting_list[i] = (void*) 0;
+                
+                BufferStore_freeBuffer(reply_waiting_list[i]);
+                   
 
             }
 
