@@ -5,6 +5,9 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+        <logicalFolder name="25AA1024" displayName="25AA1024" projectFiles="true">
+          <itemPath>../../../../drivers/25AA1024/25AA1024_driver.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_rx_statemachine.h</itemPath>
           <itemPath>../../../../drivers/common/can_utilities.h</itemPath>
@@ -62,6 +65,9 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+        <logicalFolder name="25AA1024" displayName="25AA1024" projectFiles="true">
+          <itemPath>../../../../drivers/25AA1024/25AA1024_driver.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_buffer_fifo.c</itemPath>
           <itemPath>../../../../drivers/common/can_utilities.c</itemPath>
@@ -79,10 +85,6 @@
       <logicalFolder name="main_statemachine.X"
                      displayName="main_statemachine.X"
                      projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
         <itemPath>traps.c</itemPath>
         <itemPath>debug.c</itemPath>
         <itemPath>main.c</itemPath>

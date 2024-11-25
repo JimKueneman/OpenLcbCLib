@@ -195,8 +195,8 @@ uint8_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_
     else
 
         return FALSE
-                
-}
+
+    }
 
 int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id) {
 
@@ -210,7 +210,7 @@ int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, u
 
 
     }
-    
+
     return -1;
 
 }

@@ -47,6 +47,7 @@
 #include "xc.h"
 #include "stdio.h"  // printf
 
+
 #include "../../../../openlcb/openlcb_buffer_fifo.h"
 #include "../../../../openlcb/openlcb_buffer_list.h"
 #include "../../../../openlcb/openlcb_buffer_store.h"
@@ -69,6 +70,10 @@
 #include "../../../../drivers/common/can_main_statemachine.h"
 
 #include "../../../../drivers/common/../mcu_driver.h"
+
+#include "../../../../drivers/25AA1024/25AA1024_driver.h"
+
+#include <libpic30.h> // Delay
 
 #include "node_parameters.h"
 
@@ -123,26 +128,14 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 //#define  _SIMULATOR_
 
-int main(void) {
-    
-    
-    uint16_t available_commands = 0x00;
-    
-    
-        available_commands = available_commands | 0x8000;
-   
-        available_commands = available_commands | 0x4000;
-    
-        available_commands = available_commands | 0x2000;
+void xxx(_eeprom_read_buffer_t* local) {
 
-        available_commands = available_commands | 0x0800;
-   
-        available_commands = available_commands | 0x0400;
- 
-        available_commands = available_commands | 0x0200;
-    
-    
-    
+    for (int i = 0; i < 32; i++)
+        printf("%02X.", (*local)[i]);
+
+}
+
+int main(void) {
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
@@ -197,13 +190,49 @@ int main(void) {
 
 #endif
 
+
+
+//    _eeprom_read_buffer_t buffer;
+//
+//    for (int i = 0; i < 64; i++)
+//        buffer[i] = i;
+//
+//
+//
+//    printf("writing eeprom\n");
+//
+//    _24AA1024_Driver_write_latch_enable();
+//
+//    _24AA1024_Driver_write(0x00, 64, &buffer);
+//
+//    _RB4 = 1;
+//    while (_24AA1024_Driver_write_in_progress()) {
+//        printf(".");
+//    }
+//    _RB4 = 0;
+//
+//    printf("Done writing\n\n");
+//
+//    printf("reading eeprom\n");
+//
+//
+//    _24AA1024_Driver_read(0, 64, &buffer);
+//
+//    for (int i = 0; i < 64; i++)
+//        printf("%02X", buffer[i]);
+//
+//
+//    printf("\nDone reading\n\n");
+
+
+
     while (1) {
 
-        _RB4 = 1;
+
 
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 
-        _RB4 = 0;
+
 
 
     }

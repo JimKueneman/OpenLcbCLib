@@ -96,7 +96,6 @@ can_rx_callback_func_t McuDriver_can_rx_callback_func;
 _100ms_timer_callback_func_t McuDriver_100ms_timer_callback_func;
 uart_rx_callback_func_t McuDriver_uart_rx_callback_func;
 
-
 /******************************************************************************
  * Function:     void Ecan1WriteRxAcptFilter(int16_t n, int32_t identifier,
  *               uint16_t exide,uint16_t bufPnt,uint16_t maskSel)
@@ -350,9 +349,9 @@ uint8_t Is_Ecan1_TxBuffer_Clear(uint16_t buf) {
 }
 
 uint8_t McuDriver_is_can_tx_buffer_clear(uint16_t Channel) {
-    
+
     return Is_Ecan1_TxBuffer_Clear(Channel);
-    
+
 }
 
 /******************************************************************************
@@ -597,18 +596,18 @@ uint8_t McuDriver_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
 
     if (Is_Ecan1_TxBuffer_Clear(channel)) {
-        
+
 #ifndef DEBUG
-        
+
         Ecan1WriteTxMsgBufId(channel, msg->identifier, 1, 0);
         Ecan1WriteTxMsgBufData(channel, msg->payload_count, &msg->payload);
         Ecan1TxBufferSetTransmit(channel);
-        
+
 #endif
-        
+
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -622,7 +621,7 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
     // Increment any timer counters assigned
     if (McuDriver_100ms_timer_callback_func)
         McuDriver_100ms_timer_callback_func();
-    
+
     return;
 }
 
@@ -738,6 +737,39 @@ void __attribute__((interrupt(no_auto_psv))) _DMA0Interrupt(void) {
 }
 
 void McuDriver_initialization(void) {
+
+    // SPI1 Initialize ---------------------------------------------------------
+    // -------------------------------------------------------------------------
+
+
+    _TRISB7 = 0; // CLK
+    _TRISB8 = 0; // SDO
+    _TRISB6 = 0; // CS
+
+    _RB7 = 0;
+    _RB8 = 0;
+    _RB6 = 1;
+
+    IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
+    IEC0bits.SPI1IE = 0; // Disable the interrupt
+
+    SPI1CON1bits.SPRE = 0b000;
+    SPI1CON1bits.PPRE = 0b10;
+    
+    SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
+    SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
+    SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
+    SPI1CON1bits.MSTEN = 1; // Master mode enabled
+    SPI1CON1bits.SMP = 0; // Input data is sampled at the middle of data output time
+    SPI1CON1bits.CKE = 1; // Serial output data changes on transition from
+    // Idle clock state to active clock state
+    SPI1CON1bits.CKP = 0; // Idle state for clock is a low level;
+    // active state is a high level
+    SPI1STATbits.SPIEN = 1; // Enable SPI module
+   
+
+    // -------------------------------------------------------------------------
+
 
     // UART Initialize ---------------------------------------------------------
     // -------------------------------------------------------------------------
@@ -997,38 +1029,55 @@ void Ecan1DisableRXFilter(int16_t n) {
 }
 
 void McuDriver_pause_can_rx() {
-    
-   C1INTEbits.RBIE = 0; // Enable CAN1 RX 
-   
+
+    C1INTEbits.RBIE = 0; // Enable CAN1 RX 
+
 };
 
 void McuDriver_resume_can_rx() {
-    
+
     C1INTEbits.RBIE = 1; // Enable CAN1 RX
-    
+
 };
 
 void McuDriver_pause_can_tx_complete_notify() {
-    
-   C1INTEbits.TBIE = 0; // Enable CAN1 TX
-   
+
+    C1INTEbits.TBIE = 0; // Enable CAN1 TX
+
 };
 
 void McuDriver_resume_can_tx_complete_notify() {
-    
+
     C1INTEbits.TBIE = 1; // Enable CAN1 TX
-    
+
 };
 
 void McuDriver_pause_100ms_timer() {
-    
-   IEC0bits.T2IE = 0; 
-    
+
+    IEC0bits.T2IE = 0;
+
 }
 
 void McuDriver_resume_100ms_timer() {
-    
+
     IEC0bits.T2IE = 1;
+
+}
+
+void McuDriver_read_eeprom(uint32_t address, uint16_t count, _eeprom_read_buffer_t* buffer) {
+    
+    _25AA1024_Driver_read(address, count, buffer);
+    
+}
+
+void McuDriver_write_eeprom(uint32_t address, uint16_t count, _eeprom_read_buffer_t* buffer) {
+    
+    _25AA1024_Driver_write_latch_enable();
+    _25AA1024_Driver_write(address, count, buffer);
+    
+    while (_25AA1024_Driver_write_in_progress()) {
+        
+    }
     
 }
 

@@ -9,15 +9,14 @@
 #include "xc.h"
 #include "openlcb_node.h"
 #include "../drivers/mcu_driver.h"
-//#include "protocol_handlers/protocol_datagram.h"
+#include "protocol_datagram.h"
 
 
 void _100msTimeTickNode() {
    
     Node_100ms_timer_tick();
+    DatagramProtocol_100ms_time_tick();
 
-   //  ProtocolDatagram100msTimeTickNode();
-     
 }
 
 void ClockDistribution_initialize() {

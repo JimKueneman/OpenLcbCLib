@@ -13,6 +13,8 @@
 
 #include <xc.h> // include processor files - each processor file is guarded. 
 #include "../drivers/common/can_types.h"
+#include "25AA1024/25AA1024_driver.h"
+
 
 
 // Timer -----------------------------------------------------------------------
@@ -23,15 +25,22 @@ extern void McuDriver_initialization(void);
 extern uint8_t McuDriver_is_can_tx_buffer_clear(uint16_t Channel);
 
 extern void McuDriver_pause_can_rx();
+
 extern void McuDriver_resume_can_rx();
 
 extern void McuDriver_pause_can_tx_complete_notify();
+
 extern void McuDriver_resume_can_tx_complete_notify();
 
 extern void McuDriver_pause_100ms_timer();
+
 extern void McuDriver_resume_100ms_timer();
 
 extern uint8_t McuDriver_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg);
+
+extern void McuDriver_read_eeprom(uint32_t address, uint16_t count, _eeprom_read_buffer_t* buffer);
+
+extern void McuDriver_write_eeprom(uint32_t address, uint16_t count, _eeprom_read_buffer_t* buffer);
 
 
 // How full the chips CAN fifo has gotten
