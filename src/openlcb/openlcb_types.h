@@ -183,6 +183,7 @@ typedef struct {
     uint16_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
     uint16_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
     uint16_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
+    uint16_t openlcb_datagram_ack_sent : 1;
 } openlcb_node_state_t;
 
 typedef struct {

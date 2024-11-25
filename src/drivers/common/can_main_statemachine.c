@@ -221,8 +221,12 @@ void CanMainStateMachine_run() {
         if (reset_can_active_msg)
             next_node->state.can_msg_handled = FALSE;
 
-        if (reset_openlcb_active_msg)
+        if (reset_openlcb_active_msg) {
+            
+            next_node->state.openlcb_datagram_ack_sent = FALSE;
             next_node->state.openlcb_msg_handled = FALSE;
+            
+        }
 
 
         // process any incoming messages that were popped if the node is initialized

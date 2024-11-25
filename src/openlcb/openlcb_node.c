@@ -28,6 +28,7 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.permitted = FALSE;
     openlcb_node->state.can_msg_handled = FALSE;
     openlcb_node->state.openlcb_msg_handled = FALSE;
+    openlcb_node->state.openlcb_datagram_ack_sent = FALSE;
     openlcb_node->timerticks = 0;
 
 

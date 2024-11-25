@@ -58,6 +58,28 @@ void _send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* 
 
 }
 
+void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t reply_pending_code) {
+
+    Utilities_load_openlcb_message(
+            worker_msg,
+            openlcb_node->alias,
+            openlcb_node->id,
+            openlcb_msg->source_alias,
+            openlcb_msg->source_id,
+            MTI_DATAGRAM_OK_REPLY,
+            2
+            );
+
+    *worker_msg->payload[0] = reply_pending_code;
+    worker_msg->payload_count = 1;
+
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
+
+        openlcb_node->state.openlcb_datagram_ack_sent = TRUE;
+
+
+}
+
 void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
 
@@ -113,6 +135,15 @@ void _handle_memory_write_reply_fail(openlcb_node_t* openlcb_node, openlcb_msg_t
 void _handle_memory_options_cmd(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
 
+    if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+
+        _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
+
+        return;
+
+    }
+
+
     Utilities_load_openlcb_message(
             worker_msg,
             openlcb_node->alias,
@@ -126,36 +157,36 @@ void _handle_memory_options_cmd(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
 
     *worker_msg->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
-    
+
     uint16_t available_commands = 0x00;
-    
-    if (openlcb_node->parameters->configuration_options.write_under_mask_supported) 
-        available_commands = available_commands | 0x8000;      
-    if (openlcb_node->parameters->configuration_options.unaligned_reads_supported)     
+
+    if (openlcb_node->parameters->configuration_options.write_under_mask_supported)
+        available_commands = available_commands | 0x8000;
+    if (openlcb_node->parameters->configuration_options.unaligned_reads_supported)
         available_commands = available_commands | 0x4000;
-    if (openlcb_node->parameters->configuration_options.unaligned_writes_supported)    
+    if (openlcb_node->parameters->configuration_options.unaligned_writes_supported)
         available_commands = available_commands | 0x2000;
-    if (openlcb_node->parameters->configuration_options.read_from_manufacturer_space_0xfc_supported) 
+    if (openlcb_node->parameters->configuration_options.read_from_manufacturer_space_0xfc_supported)
         available_commands = available_commands | 0x0800;
     if (openlcb_node->parameters->configuration_options.read_from_user_space_0xfb_supported)
         available_commands = available_commands | 0x0400;
-    if (openlcb_node->parameters->configuration_options.write_to_user_space_0xfb_supported) 
+    if (openlcb_node->parameters->configuration_options.write_to_user_space_0xfb_supported)
         available_commands = available_commands | 0x0200;
-    if (openlcb_node->parameters->configuration_options.stream_read_write_supported)   
+    if (openlcb_node->parameters->configuration_options.stream_read_write_supported)
         available_commands = available_commands | 0x0001;
     Utilities_copy_word_to_openlcb_payload(worker_msg, available_commands, 2);
-    
+
     uint8_t write_lengths = 0x80 | 0x40 | 0x020 | 0x02;
-    
-    if (openlcb_node->parameters->configuration_options.stream_read_write_supported) 
+
+    if (openlcb_node->parameters->configuration_options.stream_read_write_supported)
         write_lengths = write_lengths | 0x01;
 
-    *worker_msg->payload[4] = write_lengths;  
-    *worker_msg->payload[5] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;  
+    *worker_msg->payload[4] = write_lengths;
+    *worker_msg->payload[5] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
     *worker_msg->payload[6] = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
-    
+
     worker_msg->payload_count = 7;
-    
+
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
@@ -172,6 +203,14 @@ void _handle_memory_options_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 }
 
 void _handle_memory_get_address_space_info(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+
+        _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
+
+        return;
+
+    }
 
     const user_address_space_info_t* target_space;
 
