@@ -30,6 +30,8 @@
 #define LEN_PRODUCER_MAX_COUNT         10
 #define LEN_CONSUMER_MAX_COUNT         10
 
+#define CONFIG_MEM_DESCRIPTION_LEN     64
+
 // *********************END USER DEFINED VARIABLES *****************************
 
 
@@ -111,11 +113,43 @@ typedef struct {
 
 } user_snip_struct_t;
 
-typedef struct {       user_snip_struct_t snip;
+typedef struct {
+    uint8_t write_under_mask_supported : 1;
+    uint8_t unaligned_reads_supported : 1;
+    uint8_t unaligned_writes_supported : 1;
+    uint8_t read_from_manufacturer_space_0xfc_supported : 1;
+    uint8_t read_from_user_space_0xfb_supported : 1;
+    uint8_t write_to_user_space_0xfb_supported : 1;
+    uint8_t stream_read_write_supported : 1;
+    uint8_t high_address_space;
+    uint8_t low_address_space;
+    char description[CONFIG_MEM_DESCRIPTION_LEN];
+} user_configuration_options;
+
+typedef struct {
+    uint8_t present : 1;
+    uint8_t read_only : 1;
+    uint8_t low_address_valid : 1;
+    uint8_t address_space;
+    uint32_t highest_address;
+    uint32_t low_address;
+    char description[CONFIG_MEM_DESCRIPTION_LEN];
+} user_address_space_info_t;
+
+typedef struct {
+    user_snip_struct_t snip;
     uint64_t protocol_support;
     uint16_t consumer_count;
     uint16_t producer_count;
     uint8_t cdi[LEN_MAX_CDI];
+    user_address_space_info_t address_space_configuration_definition;
+    user_address_space_info_t address_space_all;
+    user_address_space_info_t address_space_config_memory;
+    user_address_space_info_t address_space_acdi_manufacturer;
+    user_address_space_info_t address_space_acdi_user;
+    user_address_space_info_t address_space_train_function_definition;
+    user_address_space_info_t address_space_train_function_config_memory;
+    user_configuration_options configuration_options;
 
 } node_parameters_t;
 
@@ -123,8 +157,8 @@ typedef struct {       user_snip_struct_t snip;
 // Event ID Structures
 
 typedef struct {
-    uint16_t running    : 1; // Alway, always, always reset these to FALSE when you have finished processing a
-    uint8_t enum_index;      // allows a counter for enumerating the event ids
+    uint16_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
+    uint8_t enum_index; // allows a counter for enumerating the event ids
 } event_id_enum_t;
 
 typedef struct {
@@ -160,7 +194,7 @@ typedef struct {
     event_id_producer_list_t producers;
     const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-    
+
 } openlcb_node_t;
 
 typedef struct {
@@ -173,7 +207,7 @@ typedef struct {
 typedef struct {
     openlcb_msg_t worker;
     payload_stream_t worker_buffer;
-    openlcb_msg_t* active_msg; 
+    openlcb_msg_t* active_msg;
 } openlcb_statemachine_worker_t;
 
 

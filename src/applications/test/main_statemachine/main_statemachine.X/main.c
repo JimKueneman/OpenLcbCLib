@@ -124,6 +124,25 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 //#define  _SIMULATOR_
 
 int main(void) {
+    
+    
+    uint16_t available_commands = 0x00;
+    
+    
+        available_commands = available_commands | 0x8000;
+   
+        available_commands = available_commands | 0x4000;
+    
+        available_commands = available_commands | 0x2000;
+
+        available_commands = available_commands | 0x0800;
+   
+        available_commands = available_commands | 0x0400;
+ 
+        available_commands = available_commands | 0x0200;
+    
+    
+    
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;

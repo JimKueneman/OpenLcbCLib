@@ -249,6 +249,97 @@
 #define ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END    0x2042
 
 
+#define DATAGRAM_MEMORY_CONFIGURATION                                0x20
+   
+#define DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6                         0x40
+#define DATAGRAM_MEMORY_READ_SPACE_FD                                0x41
+#define DATAGRAM_MEMORY_READ_SPACE_FE                                0x42
+#define DATAGRAM_MEMORY_READ_SPACE_FF                                0x43
+
+#define DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6                0x50
+#define DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD                       0x51
+#define DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FE                       0x52
+#define DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF                       0x53
+
+#define DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6              0x58
+#define DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD                     0x59
+#define DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FE                     0x5A
+#define DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF                     0x5B
+
+
+
+#define DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6                  0x60
+#define DATAGRAM_MEMORY_READ_STREAM_SPACE_FD                         0x61
+#define DATAGRAM_MEMORY_READ_STREAM_SPACE_FE                         0x62
+#define DATAGRAM_MEMORY_READ_STREAM_SPACE_FF                         0x63
+
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6         0x70
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FD                0x71
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FE                0x72
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FF                0x73
+
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6       0x78
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FD              0x79
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FE              0x7A
+#define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FF              0x7B
+
+
+
+#define DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6                        0x00
+#define DATAGRAM_MEMORY_WRITE_SPACE_FD                               0x01
+#define DATAGRAM_MEMORY_WRITE_SPACE_FE                               0x02
+#define DATAGRAM_MEMORY_WRITE_SPACE_FF                               0x03
+
+#define DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6               0x10
+#define DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD                      0x11
+#define DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FE                      0x12
+#define DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FF                      0x13
+
+#define DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6             0x18
+#define DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD                    0x19
+#define DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FE                    0x1A
+#define DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FF                    0x1B
+
+#define DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6             0x08
+#define DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FD                    0x09
+#define DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FE                    0x0A
+#define DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FF                    0x0B
+
+
+#define DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6                 0x20
+#define DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FD                        0x21
+#define DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FE                        0x22
+#define DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FF                        0x23
+
+#define DATAGRAM_MEMORY_WRITE_STREAM_REPLY_SPACE_IN_BYTE_6           0x30
+#define DATAGRAM_MEMORY_WRITE_STREAM_REPLY_SPACE_FD                  0x31
+#define DATAGRAM_MEMORY_WRITE_STREAM_REPLY_SPACE_FE                  0x32
+#define DATAGRAM_MEMORY_WRITE_STREAM_REPLY_SPACE_FF                  0x33
+
+
+#define DATAGRAM_MEMORY_OPTIONS_CMD                                  0x80
+#define DATAGRAM_MEMORY_OPTIONS_REPLY                                0x82
+#define DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_INFO_CMD           0x84
+#define DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT  0x86
+#define DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT      0x87
+#define DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK                   0x8A
+#define DATAGRAM_MEMORY_CONFIGURATION_GET_UNIQUE_ID                  0x8C
+#define DATAGRAM_MEMORY_CONFIGURATION_UNFREEZE                       0xA0
+#define DATAGRAM_MEMORY_CONFIGURATION_FREEZE                         0xA1
+#define DATAGRAM_MEMORY_CONFIGURATION_UPDATE_COMPLETE                0xA8
+#define DATAGRAM_MEMORY_CONFIGURATION_RESET_REBOOT                   0xA9
+#define DATAGRAM_MEMORY_CONFIGURATION_FACTORY_RESET                  0xAA
+
+
+#define ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO                  0xFF
+#define ADDRESS_SPACE_ALL                                            0xFE
+#define ADDRESS_SPACE_CONFIGURATION_MEMORY                           0xFD
+
+#define ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS                       0xFC
+#define ADDRESS_SPACE_ACDI_USER_ACCESS                               0xFB
+
+#define ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY            0xFA 
+#define ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO                 0xF9
 
 
 #ifdef	__cplusplus
