@@ -52,6 +52,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_all.address_space = ADDRESS_SPACE_ALL,
     .address_space_all.description = "All memory Info",
     
+    
     // Space 0xFD
     .address_space_config_memory.read_only = 0,
     .address_space_config_memory.present = 1,
@@ -60,6 +61,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_config_memory.highest_address = 1024,
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
+    
 
     // Space 0xFC
     .address_space_acdi_manufacturer.read_only = 1,
@@ -69,6 +71,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_manufacturer.highest_address = 1024,
     .address_space_acdi_manufacturer.address_space = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "ACDI access manufacturer",
+   
     
     // Space 0xFB
     .address_space_acdi_user.read_only = 0,
@@ -78,6 +81,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.highest_address = 1024,
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "Acdi access user storage",
+   
 
     // Space 0xFA
     .address_space_train_function_definition.read_only = 0,
@@ -87,6 +91,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_train_function_definition.highest_address = 0,
     .address_space_train_function_definition.address_space = ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
     .address_space_train_function_definition.description = "Train function definition info",
+    
     
     // Space 0xF9
     .address_space_train_function_config_memory.read_only = 0,
