@@ -86,25 +86,48 @@ void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_
 
 }
 
-uint16_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint8_t index) {
+uint16_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint8_t payload_index) {
 
     uint16_t i = 0;
 
     while (string[i] != 0x00) {
 
-        if (i < openlcb_msg->payload_size - 1 ) {   // leave room for a null
+        if ((i + payload_index) < openlcb_msg->payload_size - 1) { // leave room for a null
 
-            *openlcb_msg->payload[i + index] = (uint8_t) string[i];
+            *openlcb_msg->payload[i + payload_index] = (uint8_t) string[i];
             i++;
 
-        }
+        } else
+            break;
 
     }
-    
-    *openlcb_msg->payload[i + index] = 0x00;
+
+    *openlcb_msg->payload[i + payload_index] = 0x00;
     i++;
 
     return i;
+
+}
+
+uint16_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_t byte_array[], uint8_t payload_index, uint16_t data_count) {
+
+    uint16_t counter = 0;
+
+    for (int i = 0; i < data_count; i++) {
+
+        if ((i + payload_index) < openlcb_msg->payload_size) {
+
+            *openlcb_msg->payload[i + payload_index] = byte_array[i];
+            counter++;
+
+        } else 
+             break;
+
+           
+
+    }
+
+    return counter;
 
 }
 
