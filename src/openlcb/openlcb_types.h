@@ -30,7 +30,9 @@
 #define LEN_PRODUCER_MAX_COUNT         10
 #define LEN_CONSUMER_MAX_COUNT         10
 
-#define CONFIG_MEM_DESCRIPTION_LEN     64
+#define CONFIG_MEM_READ_WRITE_DESCRIPTION_LEN       63-1   // space for null
+#define CONFIG_MEM_OPTIONS_DESCRIPTION_LEN          64-1   // space for null
+#define CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
 // *********************END USER DEFINED VARIABLES *****************************
 
@@ -43,6 +45,9 @@
 #define LEN_SNIP_MODEL             41
 #define LEN_SNIP_HARDWARE_VERSION  21
 #define LEN_SNIP_SOFTWARE_VERSION  21
+
+#define LEN_SNIP_USER_NAME         64
+#define LEN_SNIP_USER_DESCRIPTION  64
 
 
 #define LEN_MESSAGE_BYTES_BASIC        16     // most are 8 bytes but a few protocols take 2 frames like Traction
@@ -105,10 +110,10 @@ typedef struct {
 
 typedef struct {
     uint8_t mfg_version;
-    uint8_t name[LEN_SNIP_NAME];
-    uint8_t model[LEN_SNIP_MODEL];
-    uint8_t hardware_version[LEN_SNIP_HARDWARE_VERSION];
-    uint8_t software_version[LEN_SNIP_SOFTWARE_VERSION];
+    char name[LEN_SNIP_NAME + 1];
+    char model[LEN_SNIP_MODEL + 1];
+    char hardware_version[LEN_SNIP_HARDWARE_VERSION + 1];
+    char software_version[LEN_SNIP_SOFTWARE_VERSION + 1];
     uint8_t user_version;
 
 } user_snip_struct_t;
@@ -123,7 +128,7 @@ typedef struct {
     uint8_t stream_read_write_supported : 1;
     uint8_t high_address_space;
     uint8_t low_address_space;
-    char description[CONFIG_MEM_DESCRIPTION_LEN];
+    char description[CONFIG_MEM_OPTIONS_DESCRIPTION_LEN];
 } user_configuration_options;
 
 typedef struct {
@@ -133,7 +138,7 @@ typedef struct {
     uint8_t address_space;
     uint32_t highest_address;
     uint32_t low_address;
-    char description[CONFIG_MEM_DESCRIPTION_LEN];
+    char description[CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN]; 
 } user_address_space_info_t;
 
 typedef struct {

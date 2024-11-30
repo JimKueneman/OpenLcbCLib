@@ -95,14 +95,14 @@ void _datagram_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker
 
     can_msg_worker->identifier = _construct_identfier_datagram_first_frame(openlcb_msg);
     _transmit_can_frame(can_msg_worker);
-
+    
 }
 
 void _datagram_middle_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
 
     can_msg_worker->identifier = _construct_identfier_datagram_middle_frame(openlcb_msg);
     _transmit_can_frame(can_msg_worker);
-
+    
 }
 
 void _datagram_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
@@ -151,15 +151,15 @@ uint16_t _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker,
 
     uint16_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
 
-    if (openlcb_msg->payload_count <= 8)
+    if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY)
 
         _datagram_only_frame(openlcb_msg, can_msg_worker);
 
-    else if (openlcb_start_index <= LEN_CAN_BYTE_ARRAY)
+    else if (openlcb_start_index < LEN_CAN_BYTE_ARRAY)
 
         _datagram_first_frame(openlcb_msg, can_msg_worker);
 
-    else if (openlcb_start_index < openlcb_msg->payload_count)
+    else if (openlcb_start_index + result < openlcb_msg->payload_count)
 
         _datagram_middle_frame(openlcb_msg, can_msg_worker);
 
@@ -205,16 +205,13 @@ uint16_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_ms
 
         _addressed_message_only_frame(openlcb_msg, can_msg_worker);
 
-
-    if (openlcb_start_index < 6) // Account for 2 bytes used for dest alias
+    else if (openlcb_start_index < 6) // Account for 2 bytes used for dest alias
 
         _addressed_message_first_frame(openlcb_msg, can_msg_worker);
-
 
     else if ((openlcb_start_index + result) < openlcb_msg->payload_count)
 
         _addressed_message_middle(can_msg_worker);
-
 
     else
 

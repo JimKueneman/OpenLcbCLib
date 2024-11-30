@@ -174,10 +174,18 @@ int main(void) {
     McuDriver_initialization();
 
 #endif
+    
+    
 
     printf("\n\nBooted\n");
 
     openlcb_node_t* node = Node_allocate(0x050101010700, &NodeParameters_main_node);
+    
+//    openlcb_msg_t* msg = BufferFifo_push( LEN_MESSAGE_BYTES_DATAGRAM);
+//    
+//    Utilities_copy_string_to_openlcb_payload(msg, node->parameters->address_space_configuration_definition.description, 0);
+//            
+//            
 
 
 #ifdef _SIMULATOR_

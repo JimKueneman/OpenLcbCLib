@@ -32,6 +32,7 @@ const node_parameters_t NodeParameters_main_node = {
     .configuration_options.unaligned_writes_supported = 1,
     .configuration_options.write_to_user_space_0xfb_supported = 1,
     .configuration_options.write_under_mask_supported = 1,
+    .configuration_options.description = "These are options that defined the memory space capabilities",
             
             
     // Space 0xFF
@@ -39,7 +40,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_configuration_definition.present = 1,
     .address_space_configuration_definition.low_address_valid = 0, // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,       // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 1721,
+    .address_space_configuration_definition.highest_address = 1721,  // this is the length of the .cdi file byte array in this initialization structure
     .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
@@ -80,7 +81,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.low_address = 0,       // ignored if low_address_valid is false
     .address_space_acdi_user.highest_address = 1024,
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
-    .address_space_acdi_user.description = "Acdi access user storage",
+    .address_space_acdi_user.description = "ACDI access user storage",
    
 
     // Space 0xFA

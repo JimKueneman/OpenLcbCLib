@@ -341,6 +341,19 @@
 #define ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO                 0xFA
 #define ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY            0xF9 
 
+#define ACDI_MANUFACTURER_VERSION_ADDRESS                            0x00
+
+#define ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS                        0x00   // 0
+#define ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS                   0x01   // 1
+#define ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS                          0x2A   // 42
+#define ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS               0x53   // 83
+#define ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS               0x68   // 104
+
+#define ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS                        0x00   // 0
+#define ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS                           0x01   // 1
+#define ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS                    0x40   // 64
+
+
 
 #ifdef	__cplusplus
 extern "C" {

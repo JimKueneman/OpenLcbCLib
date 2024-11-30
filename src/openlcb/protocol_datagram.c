@@ -13,6 +13,7 @@
 #include "openlcb_buffer_fifo.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_tx_driver.h"
+#include "protocol_snip.h"
 #include "../drivers/25AA1024/25AA1024_driver.h"
 
 
@@ -31,7 +32,7 @@ void ProtocolDatagram_initialize() {
 
 }
 
-uint8_t _address_space_enabled(openlcb_node_t* openlcb_node, uint8_t address_space) {
+uint8_t _address_space_present(openlcb_node_t* openlcb_node, uint8_t address_space) {
 
     switch (address_space) {
 
@@ -119,7 +120,120 @@ void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openl
 
 }
 
-void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
+uint8_t _memory_read_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t data_address, uint16_t* payload_data_start_index, uint8_t data_count) {
+
+    switch (data_address) {
+
+        case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
+        {
+            ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+        }
+
+        case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
+        {
+            ProtocolSnip_load_name(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+
+        }
+
+        case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
+        {
+            ProtocolSnip_load_model(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+
+        }
+
+        case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
+        {
+            ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+
+        }
+
+        case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
+        {
+            ProtocolSnip_load_software_version(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+
+        }
+
+        default:
+
+            return FALSE;
+
+    }
+
+}
+
+uint8_t _memory_read_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t* payload_data_start_index, uint8_t data_count) {
+
+    switch (data_address) {
+
+        case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
+        {
+            ProtocolSnip_load_user_version_id(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+        }
+
+        case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
+        {
+            ProtocolSnip_load_user_name(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+        }
+
+        case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
+        {
+            ProtocolSnip_load_user_description(openlcb_node, worker_msg, payload_data_start_index, data_count);
+            return TRUE;
+        }
+
+        default:
+
+            return FALSE;
+
+    }
+
+}
+
+uint8_t _memory_read_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t* payload_data_start_index, uint8_t data_count, uint8_t space) {
+
+    switch (space) {
+
+        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+
+            break;
+        case ADDRESS_SPACE_ALL:
+
+            break;
+        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+
+            _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (&worker_msg->payload[*payload_data_start_index]));
+
+            break;
+
+        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+            return _memory_read_space_acdi_manufacurer(openlcb_node, worker_msg, data_address, payload_data_start_index, data_count);
+
+        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+            return _memory_read_space_acdi_user(openlcb_node, worker_msg, data_address, payload_data_start_index, data_count);
+
+        case ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
+
+            break;
+        case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
+
+            _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (&worker_msg->payload[*payload_data_start_index]));
+
+            break;
+
+    }
+
+    return TRUE;
+
+}
+
+void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
@@ -129,6 +243,16 @@ void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
         return;
 
     }
+
+    uint16_t payload_data_start_index = 6;
+
+    if (*openlcb_msg->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6)
+        payload_data_start_index = 7;
+
+
+    uint32_t data_address = Utilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
+    uint16_t data_count = Utilities_extract_word_from_openlcb_payload(openlcb_msg, 6);
+
 
     Utilities_load_openlcb_message(
             worker_msg,
@@ -141,60 +265,38 @@ void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
             );
 
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-
-    uint32_t data_address = Utilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
-    uint16_t data_count = Utilities_extract_word_from_openlcb_payload(openlcb_msg, 6);
-
-    if (_address_space_enabled(openlcb_node, space)) {
-
-        *worker_msg->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    Utilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
+    if (payload_data_start_index == 7)
+        *worker_msg->payload[6] = space;
 
 
-        switch (space) {
+    if (_address_space_present(openlcb_node, space)) {
 
-            case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        if (_memory_read_space(openlcb_node, worker_msg, data_address, &payload_data_start_index, data_count, space)) {
 
-                break;
-            case ADDRESS_SPACE_ALL:
+            *worker_msg->payload[1] = return_msg_ok;
+            worker_msg->payload_count = payload_data_start_index;
 
-                break;
-            case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        } else {
 
-                _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (worker_msg->payload[0]));
-                break;
-            case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
-
-                break;
-            case ADDRESS_SPACE_ACDI_USER_ACCESS:
-
-                break;
-            case ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
-
-                break;
-            case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
-                _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (worker_msg->payload[0]));
-                break;
+            *worker_msg->payload[1] = return_msg_fail;
+            Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED, 7);
+            worker_msg->payload_count = payload_data_start_index + 2;
 
         }
 
     } else {
 
-        *worker_msg->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-
+        *worker_msg->payload[1] = return_msg_fail;
         Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED, 7);
-
-        worker_msg->payload_count = 8;
+        worker_msg->payload_count = payload_data_start_index + 2;
 
     }
-
-    Utilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
-
-    *worker_msg->payload[6] = space;
 
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
-        openlcb_node->state.openlcb_datagram_ack_sent = TRUE;
+        openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
 
@@ -212,7 +314,7 @@ void _handle_memory_read_reply_fail(openlcb_node_t* openlcb_node, openlcb_msg_t*
 
 }
 
-void _handle_memory_write(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
+void _handle_memory_write(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
@@ -313,6 +415,11 @@ void _handle_memory_options_cmd(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
     *worker_msg->payload[6] = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
 
     worker_msg->payload_count = 7;
+    
+    if (openlcb_node->parameters->configuration_options.description[0] != 0x00)
+        
+        worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, openlcb_node->parameters->configuration_options.description, worker_msg->payload_count);
+
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
@@ -329,7 +436,7 @@ void _handle_memory_options_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 
 }
 
-const user_address_space_info_t* _decode_space_definition(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
     switch (*openlcb_msg->payload[2]) {
 
@@ -379,7 +486,7 @@ void _handle_memory_get_address_space_info(openlcb_node_t* openlcb_node, openlcb
             0
             );
 
-    const user_address_space_info_t* target_space = _decode_space_definition(openlcb_node, openlcb_msg);
+    const user_address_space_info_t* target_space = _decode_to_space_definition(openlcb_node, openlcb_msg);
     uint8_t invalid_space;
 
     if (target_space)
@@ -387,9 +494,9 @@ void _handle_memory_get_address_space_info(openlcb_node_t* openlcb_node, openlcb
     else
         invalid_space = TRUE;
 
-  
+
     if (invalid_space) {
-        
+
         Utilities_clear_openlcb_message_payload(worker_msg);
 
         *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
@@ -399,12 +506,13 @@ void _handle_memory_get_address_space_info(openlcb_node_t* openlcb_node, openlcb
 
         worker_msg->payload_count = 8;
 
-        if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) 
+        if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
             openlcb_node->state.openlcb_msg_handled = TRUE;
 
         return;
 
     }
+
 
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
     *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT;
@@ -412,19 +520,23 @@ void _handle_memory_get_address_space_info(openlcb_node_t* openlcb_node, openlcb
     Utilities_copy_dword_to_openlcb_payload(worker_msg, target_space->highest_address, 3);
     *worker_msg->payload[7] = 0x00;
 
-    if (!target_space->read_only)
+    if (target_space->read_only)
         *worker_msg->payload[7] = *worker_msg->payload[7] | 0x01;
 
-    if (target_space->low_address_valid) {
+    if (target_space->low_address != 0) {
 
         *worker_msg->payload[7] = *worker_msg->payload[7] | 0x02;
-
         Utilities_copy_dword_to_openlcb_payload(worker_msg, target_space->low_address, 8);
 
         worker_msg->payload_count = 12;
 
     } else
+
         worker_msg->payload_count = 8;
+    
+    if (target_space->description[0] != 0x00)
+        
+        worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, target_space->description, worker_msg->payload_count);
 
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
@@ -523,16 +635,16 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                     switch (*openlcb_msg->payload[1]) {
 
                         case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
-                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6]);
+                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6, DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
                             return;
                         case DATAGRAM_MEMORY_READ_SPACE_FD:
-                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_ALL);
+                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_ALL, DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD, DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD);
                             return;
                         case DATAGRAM_MEMORY_READ_SPACE_FE:
-                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_MEMORY);
+                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_MEMORY, DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FE, DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FE);
                             return;
                         case DATAGRAM_MEMORY_READ_SPACE_FF:
-                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO);
+                            _handle_memory_read(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO, DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF, DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF);
                             return;
                         case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6:
                             _handle_memory_read_reply_ok(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6]);
@@ -559,16 +671,16 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                             _handle_memory_read_reply_fail(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO);
                             return;
                         case DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6:
-                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6]);
+                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6], DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6, DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
                             return;
                         case DATAGRAM_MEMORY_WRITE_SPACE_FD:
-                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_ALL);
+                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_ALL, DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD, DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD);
                             return;
                         case DATAGRAM_MEMORY_WRITE_SPACE_FE:
-                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_MEMORY);
+                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_MEMORY, DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FE, DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FE);
                             return;
                         case DATAGRAM_MEMORY_WRITE_SPACE_FF:
-                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO);
+                            _handle_memory_write(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO, DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FF, DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FF);
                             return;
                         case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
                             _handle_memory_write_reply_ok(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6]);

@@ -33,6 +33,8 @@ extern void Utilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, u
 
 extern void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_t doubleword, uint8_t index);
 
+extern uint16_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint8_t index);
+
 extern void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg); 
 
 extern node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg);

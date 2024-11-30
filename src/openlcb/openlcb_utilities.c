@@ -86,6 +86,28 @@ void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_
 
 }
 
+uint16_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint8_t index) {
+
+    uint16_t i = 0;
+
+    while (string[i] != 0x00) {
+
+        if (i < openlcb_msg->payload_size - 1 ) {   // leave room for a null
+
+            *openlcb_msg->payload[i + index] = (uint8_t) string[i];
+            i++;
+
+        }
+
+    }
+    
+    *openlcb_msg->payload[i + index] = 0x00;
+    i++;
+
+    return i;
+
+}
+
 void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id) {
 
     openlcb_msg->payload_count = 6;
