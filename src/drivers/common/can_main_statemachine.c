@@ -18,12 +18,19 @@
 #include "can_frame_message_handler.h"
 #include "can_buffer_store.h"
 #include "can_login_message_handler.h"
-#include "../mcu_driver.h"
+#include "can_tx_statemachine.h"
+#include "can_rx_statemachine.h"
+#include "../driver_can.h"
 
 
 can_main_statemachine_t can_helper;
 
 void CanMainStatemachine_initialize() {
+    
+    CanBufferStore_initialize();
+    CanBufferFifo_initialiaze();
+    CanRxStatemachine_initialize();
+    CanTxStatemachine_initialize();
 
     can_helper.openlcb_worker = &openlcb_helper;
     can_helper.active_msg = (void*) 0;
@@ -173,9 +180,9 @@ uint8_t _pop_next_can_message() {
     if (can_helper.active_msg)
         return FALSE;
 
-    McuDriver_pause_can_rx();
+    DriverCan_pause_can_rx();
     can_helper.active_msg = CanBufferFifo_pop();
-    McuDriver_resume_can_rx();
+    DriverCan_resume_can_rx();
 
     if (can_helper.active_msg)
 
@@ -192,9 +199,9 @@ uint8_t _pop_next_openlcb_message() {
     if (can_helper.openlcb_worker->active_msg)
         return FALSE;
 
-    McuDriver_pause_can_rx();
+    DriverCan_pause_can_rx();
     can_helper.openlcb_worker->active_msg = BufferFifo_pop();
-    McuDriver_resume_can_rx();
+    DriverCan_resume_can_rx();
 
     if (can_helper.openlcb_worker->active_msg)
 

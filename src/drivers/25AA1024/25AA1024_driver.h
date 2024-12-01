@@ -13,8 +13,7 @@
 #define	XC_HEADER_TEMPLATE_H
 
 #include <xc.h> // include processor files - each processor file is guarded.  
-
-typedef uint8_t _eeprom_read_buffer_t[64];
+#include "../driver_configuration_memory.h"
 
 extern uint8_t _25AA1024_Driver_read_status_register();
 
@@ -26,13 +25,13 @@ extern void _25AA1024_Driver_write_latch_disable();
 
 extern void _25AA1024_Driver_write_byte(uint32_t address, uint8_t byte);
 
-extern void _25AA1024_Driver_write(uint32_t address, uint8_t count, _eeprom_read_buffer_t* buffer);
+extern uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, DriverConfigurationMemory_buffer_t* buffer);
 
 extern uint8_t _25AA1024_Driver_write_in_progress();
 
 extern uint8_t _25AA1024_Driver_read_byte(uint32_t address);
 
-extern void _25AA1024_Driver_read(uint32_t address, uint8_t count, _eeprom_read_buffer_t* buffer);
+extern uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, DriverConfigurationMemory_buffer_t* buffer);
 
 
 

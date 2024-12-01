@@ -1,42 +1,13 @@
-
 /*
- * File:   mcu_drv.c
- * Author: Jim Kueneman
+ * File:   driver_can.c
+ * Author: jimkueneman
  *
- * Created on February 13, 2024, 6:01 PM
+ * Created on December 1, 2024, 9:04 AM
  */
 
-// Global that things like libpic30.h use to calculate delay functions and such.
-// MUST be before libpic30c.h
-
-#define FCY 40000000UL
 
 #include "xc.h"
-#include <libpic30.h>
-#include "mcu_driver.h"
-#include "common/can_buffer_fifo.h"
-#include "common/can_types.h"
-#include "../openlcb/openlcb_types.h"
-
-
-#include "stdio.h"  // printf
-
-
-// Oscillator ------------------------------------------------------------------
-// Fine tune to get exactly 40Mhz
-
-#define PLLDIV_OFFSET -2
-
-
-// UART ------------------------------------------------------------------------
-//#define FCY 40000000UL
-
-#define FP FCY
-#define BAUDRATE 333333
-#define BRGVAL_BRGH_L ((FP/BAUDRATE)/16)-1
-#define BRGVAL_BRGH_H ((FP/BAUDRATE)/4)-1
-
-#define BRG_OFFSET 0
+#include "driver_can.h"
 
 
 // ECAN1 ------------------------------------------------------------------------
@@ -92,10 +63,9 @@ __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(xmemory), aligned(ECAN
 #endif
 
 
-can_rx_callback_func_t McuDriver_can_rx_callback_func;
-_100ms_timer_callback_func_t McuDriver_100ms_timer_callback_func;
-uart_rx_callback_func_t McuDriver_uart_rx_callback_func;
+can_rx_callback_func_t internal_can_rx_callback_func;
 
+    
 /******************************************************************************
  * Function:     void Ecan1WriteRxAcptFilter(int16_t n, int32_t identifier,
  *               uint16_t exide,uint16_t bufPnt,uint16_t maskSel)
@@ -348,7 +318,7 @@ uint8_t Is_Ecan1_TxBuffer_Clear(uint16_t buf) {
 
 }
 
-uint8_t McuDriver_is_can_tx_buffer_clear(uint16_t Channel) {
+uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel) {
 
     return Is_Ecan1_TxBuffer_Clear(Channel);
 
@@ -592,7 +562,31 @@ void Ecan1ReadRxMsgBufData(uint16_t buf, can_msg_t *rxData) {
 
 }
 
-uint8_t McuDriver_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
+/******************************************************************************
+ * Function:     void Ecan1DisableRXFilter(int16_t n)
+ *
+ * PreCondition:  None
+ *
+ * Input:          n -> Filter number [0-15]
+ *
+ * Output:        None
+ *
+ * Side Effects:  None
+ *
+ * Overview:          Disables RX Acceptance Filter.
+ *****************************************************************************/
+void Ecan1DisableRXFilter(int16_t n) {
+    uint16_t *fltEnRegAddr;
+    C1CTRL1bits.WIN = 1;
+    fltEnRegAddr = (uint16_t *) (&C1FEN1);
+    *fltEnRegAddr = (*fltEnRegAddr) & (0xFFFF - (0x1 << n));
+    C1CTRL1bits.WIN = 0;
+
+    return;
+
+}
+
+uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
 
     if (Is_Ecan1_TxBuffer_Clear(channel)) {
@@ -612,46 +606,9 @@ uint8_t McuDriver_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 }
 
 
-// Timer 2 Interrupt 100ms timer
-
-void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
-
-    IFS0bits.T2IF = 0; // Clear T2IF
-
-    // Increment any timer counters assigned
-    if (McuDriver_100ms_timer_callback_func)
-        McuDriver_100ms_timer_callback_func();
-
-    return;
-}
-
-// UART1 Transmit Interrupt
-
-void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
-
-    IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
-
-    return;
-}
-
-// UART1 Receive Interrupt
-
-void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
-
-    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
-
-    if (U1STAbits.URXDA == 1) {
-
-        if (McuDriver_uart_rx_callback_func)
-            McuDriver_uart_rx_callback_func(U1RXREG);
-
-    }
-    return;
-}
-
 // CAN 1 Interrupt
 
-uint8_t max_can_fifo_depth = 0;
+uint8_t DriverCan_max_can_fifo_depth = 0;
 
 void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
@@ -659,7 +616,7 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
     IFS2bits.C1IF = 0; // clear interrupt flag
 
     if (C1INTFbits.RBIF) { // RX Interrupt
-
+   
         // Snag all the buffers that have data that are associated with this interrupt
         uint8_t buffer_tail = _FNRB;
         uint8_t buffer_head = _FBP;
@@ -677,8 +634,8 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
             Ecan1ReadRxMsgBufId(buffer_tail, &ecan_msg, &ide);
             Ecan1ReadRxMsgBufData(buffer_tail, &ecan_msg);
 
-            if ((ide) && (McuDriver_can_rx_callback_func))
-                McuDriver_can_rx_callback_func(buffer_tail, &ecan_msg);
+            if ((ide) && (internal_can_rx_callback_func))
+                internal_can_rx_callback_func(buffer_tail, &ecan_msg);
 
             // Clear Full/OV flags on any bit that is set, there is a race condition for this.  See the errata
             // You can only clear (set a 0) to the flags so if we write a 1 it won't do anything
@@ -697,8 +654,8 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
             fifo_size = fifo_size + 1;
 
-            if (fifo_size > max_can_fifo_depth)
-                max_can_fifo_depth = fifo_size;
+            if (fifo_size > DriverCan_max_can_fifo_depth)
+                DriverCan_max_can_fifo_depth = fifo_size;
 
         };
 
@@ -736,68 +693,36 @@ void __attribute__((interrupt(no_auto_psv))) _DMA0Interrupt(void) {
     return;
 }
 
-void McuDriver_initialization(void) {
+void DriverCan_pause_can_rx() {
 
-    // SPI1 Initialize ---------------------------------------------------------
-    // -------------------------------------------------------------------------
+    C1INTEbits.RBIE = 0; // Enable CAN1 RX 
 
+};
 
-    _TRISB7 = 0; // CLK
-    _TRISB8 = 0; // SDO
-    _TRISB6 = 0; // CS
+void DriverCan_resume_can_rx() {
 
-    _RB7 = 0;
-    _RB8 = 0;
-    _RB6 = 1;
+    C1INTEbits.RBIE = 1; // Enable CAN1 RX
 
-    IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
-    IEC0bits.SPI1IE = 0; // Disable the interrupt
+};
 
-    SPI1CON1bits.SPRE = 0b000;
-    SPI1CON1bits.PPRE = 0b10;
+void DriverCan_pause_can_tx_complete_notify() {
+
+    C1INTEbits.TBIE = 0; // Enable CAN1 TX
+
+};
+
+void DriverCan_resume_can_tx_complete_notify() {
+
+    C1INTEbits.TBIE = 1; // Enable CAN1 TX
+
+};
+
+void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func) {
     
-    SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
-    SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
-    SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
-    SPI1CON1bits.MSTEN = 1; // Master mode enabled
-    SPI1CON1bits.SMP = 0; // Input data is sampled at the middle of data output time
-    SPI1CON1bits.CKE = 1; // Serial output data changes on transition from
-    // Idle clock state to active clock state
-    SPI1CON1bits.CKP = 0; // Idle state for clock is a low level;
-    // active state is a high level
-    SPI1STATbits.SPIEN = 1; // Enable SPI module
-   
-
-    // -------------------------------------------------------------------------
-
-
-    // UART Initialize ---------------------------------------------------------
-    // -------------------------------------------------------------------------
-    U1MODEbits.STSEL = 0; // 1-Stop bit
-    U1MODEbits.PDSEL = 0; // No Parity, 8-Data bits
-    U1MODEbits.ABAUD = 0; // Auto-Baud disabled
-    U1MODEbits.BRGH = 1; //Speed mode 1 = High
-    U1BRG = BRGVAL_BRGH_H + BRG_OFFSET; // Baud Rate setting
-
-    U1STAbits.UTXISEL0 = 0; // Interrupt after one TX character is transmitted
-    U1STAbits.UTXISEL1 = 0;
-    IEC0bits.U1TXIE = 1; // Enable UART TX interrupt
-
-
-    IEC0bits.U1RXIE = 1; // Enable UART RX interrupt
-    U1STAbits.URXISEL0 = 0; // Interrupt after one RX character is received;
-    U1STAbits.URXISEL1 = 0;
-
-    U1MODEbits.UARTEN = 1; // Enable UART
-    U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
-
-    /* Wait at least 4.3 microseconds (1/230400) before sending first char */
-    __delay_us(10);
-    // -------------------------------------------------------------------------
-
-
     // ECAN1 Initialize --------------------------------------------------------
     // -------------------------------------------------------------------------
+    
+    internal_can_rx_callback_func = can_rx_callback_func;
 
     /* Request Configuration Mode */
     C1CTRL1bits.REQOP = 4;
@@ -881,67 +806,9 @@ void McuDriver_initialization(void) {
     //    C1INTEbits.IVRIE = 1;  // Enable General Error (like if the baud rates don't match) Interrupt
 
     // -------------------------------------------------------------------------
-
-
-    // Timer Initialize --------------------------------------------------------
-    // -------------------------------------------------------------------------
-
-    IPC1bits.T2IP0 = 1; // Timer 2 Interrupt Priority = 5   (1 means off)
-    IPC1bits.T2IP1 = 0;
-    IPC1bits.T2IP2 = 1;
-
-    T2CONbits.TCS = 0; // internal clock
-    T2CONbits.TCKPS0 = 1; // 256 Prescaler
-    T2CONbits.TCKPS1 = 1;
-    PR2 = 15625; // Clock ticks every (1/80MHz * 2 * 256 * 15625 = 100.00091ms interrupts
-
-    IFS0bits.T2IF = 0; // Clear T2IF
-    IEC0bits.T2IE = 1; // Enable the Interrupt
-
-    T2CONbits.TON = 1; // Turn on 100ms Timer
-
-    // -------------------------------------------------------------------------
-
-    // Oscillator Initialize ---------------------------------------------------
-    // -------------------------------------------------------------------------
-    // Make sure the Fuse bits are set to
-
-    //   011 = Primary Oscillator with PLL (XTPLL, HSPLL, ECPLL)
-
-    // Setting output frequency to 140MHz
-    PLLFBDbits.PLLDIV = 60 + PLLDIV_OFFSET; // This should be 60 for 80 Mhz.  Need 80 Mhz because the CAN module is limited to Fcy = 40 Mhz
-    CLKDIV = 0x0001; // PreScaler divide by 3; Post Scaler divide by 2
-
-    // PLLFBDbits.PLLDIV = 68;             // PLL multiplier M=68 140Mh
-    // CLKDIV = 0x0000;         // PLL prescaler N1=2, PLL postscaler N2=2
-    // -------------------------------------------------------------------------
-
-
-    // IO Pin Initialize -------------------------------------------------------
-    // -------------------------------------------------------------------------
-
-    ANSELA = 0x00; // Convert all I/O pins to digital
-    ANSELB = 0x00;
-    // -------------------------------------------------------------------------
-
-
-    // Peripheral Pin Select Initialize ----------------------------------------
-    // -------------------------------------------------------------------------
-
-    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
-
-    // CAN Pins
-    RPINR26bits.C1RXR = 45; // RPI45 CAN RX
-    RPOR4bits.RP43R = _RPOUT_C1TX; // RP43 CAN TX
-
-    // UART Pins
-    RPINR18bits.U1RXR = 44; // RPI44 UART RX
-    RPOR4bits.RP42R = _RPOUT_U1TX; // RP42  UART TX
-    // -------------------------------------------------------------------------
-
-
-
-    // DMA 2 Initialize (CAN RX) -----------------------------------------------
+    
+    
+        // DMA 2 Initialize (CAN RX) -----------------------------------------------
     // -------------------------------------------------------------------------
 
     //    DMA2CONbits.CHEN  = 0; // Disabled
@@ -1002,84 +869,4 @@ void McuDriver_initialization(void) {
 
     return;
 
-};
-
-/******************************************************************************
- * Function:     void Ecan1DisableRXFilter(int16_t n)
- *
- * PreCondition:  None
- *
- * Input:          n -> Filter number [0-15]
- *
- * Output:        None
- *
- * Side Effects:  None
- *
- * Overview:          Disables RX Acceptance Filter.
- *****************************************************************************/
-void Ecan1DisableRXFilter(int16_t n) {
-    uint16_t *fltEnRegAddr;
-    C1CTRL1bits.WIN = 1;
-    fltEnRegAddr = (uint16_t *) (&C1FEN1);
-    *fltEnRegAddr = (*fltEnRegAddr) & (0xFFFF - (0x1 << n));
-    C1CTRL1bits.WIN = 0;
-
-    return;
-
 }
-
-void McuDriver_pause_can_rx() {
-
-    C1INTEbits.RBIE = 0; // Enable CAN1 RX 
-
-};
-
-void McuDriver_resume_can_rx() {
-
-    C1INTEbits.RBIE = 1; // Enable CAN1 RX
-
-};
-
-void McuDriver_pause_can_tx_complete_notify() {
-
-    C1INTEbits.TBIE = 0; // Enable CAN1 TX
-
-};
-
-void McuDriver_resume_can_tx_complete_notify() {
-
-    C1INTEbits.TBIE = 1; // Enable CAN1 TX
-
-};
-
-void McuDriver_pause_100ms_timer() {
-
-    IEC0bits.T2IE = 0;
-
-}
-
-void McuDriver_resume_100ms_timer() {
-
-    IEC0bits.T2IE = 1;
-
-}
-
-void McuDriver_read_eeprom(uint32_t address, uint16_t count, _eeprom_read_buffer_t* buffer) {
-    
-    _25AA1024_Driver_read(address, count, buffer);
-    
-}
-
-void McuDriver_write_eeprom(uint32_t address, uint16_t count, _eeprom_read_buffer_t* buffer) {
-    
-    _25AA1024_Driver_write_latch_enable();
-    _25AA1024_Driver_write(address, count, buffer);
-    
-    while (_25AA1024_Driver_write_in_progress()) {
-        
-    }
-    
-}
-
-
-

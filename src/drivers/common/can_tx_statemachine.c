@@ -8,7 +8,7 @@
 
 #include "xc.h"
 #include "stdio.h" // printf
-#include "../../drivers/mcu_driver.h"
+#include "../../drivers/driver_mcu.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_buffer_store.h"
@@ -20,7 +20,7 @@
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
 #include "can_types.h"
-#include "../mcu_driver.h"
+#include "../driver_can.h"
 
 #include "../../applications/test/can_tx_statemachine/can_tx_statemachine.X/debug.h"
 
@@ -78,7 +78,7 @@ void _transmit_can_frame(can_msg_t* can_msg) {
     
 #else
     
-    McuDriver_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
+    DriverCan_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
     
 #endif
 
@@ -224,7 +224,7 @@ uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worke
 
     uint16_t result = 0;
     
-    if (!McuDriver_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL))
+    if (!DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL))
 
         return result;
 
@@ -270,9 +270,9 @@ uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worke
 
 uint8_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
 
-    if (McuDriver_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
+    if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 
-        McuDriver_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
+        DriverCan_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
 
         return TRUE;
 
