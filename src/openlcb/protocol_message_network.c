@@ -203,7 +203,7 @@ void ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node_t* openlc
             4
             );
 
-    Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI, 0);
+    Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);
     Utilities_copy_word_to_openlcb_payload(worker_msg, openlcb_msg->mti, 2);
 
 

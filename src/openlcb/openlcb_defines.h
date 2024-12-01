@@ -228,20 +228,19 @@
 
 #define EVENT_TRAIN_SEARCH_SPACE                     0x090099FF00000000
 
-#define ERROR_PERMANENT                                       0x1000
-#define ERROR_PERMANENT_SOURCE_NOT_PERMITTED                  0x1020
-#define ERROR_PERMANENT_NOT_IMPLEMENTED                       0x1040
-#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND    0x1041
-#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND       0x1042
-#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI           0x1043
-#define ERROR_PERMANENT_INVALID_ARGUMENTS                     0x1080
+#define ERROR_PERMANENT                                                   0x1000
+#define ERROR_PERMANENT_SOURCE_NOT_PERMITTED                              0x1020
+#define ERROR_PERMANENT_NOT_IMPLEMENTED                                   0x1040
+#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND                0x1041
+#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND                   0x1042
+#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL  0x1043
+#define ERROR_PERMANENT_INVALID_ARGUMENTS                                 0x1080
 
 #define ERROR_TEMPORARY                                       0x2000
 #define ERROR_TEMPORARY_TIMEOUT                               0x2010
 #define ERROR_TEMPORARY_BUFFER_UNAVAILABLE                    0x2020
 #define ERROR_TEMPORARY_NOT_EXPECTED_OUT_OF_ORDER             0x2040
 #define ERROR_TEMPORARY_TRANSFER_ERROR                        0x2080
-
 
 
 #define ERROR_TEMPORARY_TIME_OUT                              0x2011

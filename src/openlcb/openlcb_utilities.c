@@ -88,24 +88,24 @@ void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_
 
 uint16_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint8_t payload_index) {
 
-    uint16_t i = 0;
+    uint16_t counter = 0;
 
-    while (string[i] != 0x00) {
+    while (string[counter] != 0x00) {
 
-        if ((i + payload_index) < openlcb_msg->payload_size - 1) { // leave room for a null
+        if ((counter + payload_index) < openlcb_msg->payload_size - 1) { // leave room for a null
 
-            *openlcb_msg->payload[i + payload_index] = (uint8_t) string[i];
-            i++;
+            *openlcb_msg->payload[counter + payload_index] = (uint8_t) string[counter];
+            counter++;
 
         } else
             break;
 
     }
 
-    *openlcb_msg->payload[i + payload_index] = 0x00;
-    i++;
+    *openlcb_msg->payload[counter + payload_index] = 0x00;
+    counter++;
 
-    return i;
+    return counter;
 
 }
 
@@ -122,8 +122,6 @@ uint16_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg
 
         } else 
              break;
-
-           
 
     }
 
