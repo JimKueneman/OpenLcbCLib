@@ -72,7 +72,10 @@
 #include "../../../../drivers/common/../driver_mcu.h"
 #include "../../../../drivers/driver_100ms_clock.h"
 #include "../../../../drivers/driver_can.h"
+<<<<<<< HEAD
 #include "../../../../drivers/driver_mcu.h"
+=======
+>>>>>>> 2a6a2b511415e572cc6213ebfb8cf459e0640d9d
 
 #include "../../../../drivers/25AA1024/25AA1024_driver.h"
 
