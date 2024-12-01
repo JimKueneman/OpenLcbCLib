@@ -21,6 +21,7 @@
 #include "../drivers/driver_mcu.h"
 #include "../openlcb/clock_distribution.h"
 #include "../openlcb/openlcb_buffer_list.h"
+#include "../drivers/driver_configuration_memory.h"
 
 #include "openlcb_main_statemachine.h"
 
@@ -36,8 +37,9 @@ void MainStatemachine_initialize() {
     BufferFifo_initialiaze();
     
     Node_initialize();
-    ClockDistribution_initialize();
     ProtocolDatagram_initialize();
+    ClockDistribution_initialize();
+    DriverConfigurationMemory_initialization();
     
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
         openlcb_helper.worker_buffer[i] = 0x00;

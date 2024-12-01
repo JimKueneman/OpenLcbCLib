@@ -60,9 +60,7 @@ void McuDriver_initialization(void) {
     U1MODEbits.UARTEN = 1; // Enable UART
     U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
 
-    /* Wait at least 4.3 microseconds (1/230400) before sending first char */
-    __delay_us(10);
-    // -------------------------------------------------------------------------
+  // ------------------------------------------------------------
 
 
     // Oscillator Initialize ---------------------------------------------------
@@ -103,7 +101,34 @@ void McuDriver_initialization(void) {
     // -------------------------------------------------------------------------
 
 
+     /* Wait at least 4.3 microseconds (1/230400) before sending first char */
+    __delay_us(10);
+    // -------------
 }
+
+
+void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
+
+    IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
+
+    return;
+}
+
+// UART1 Receive Interrupt
+
+void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+
+    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
+
+    if (U1STAbits.URXDA == 1) {
+
+        if (McuDriver_uart_rx_callback_func)
+            McuDriver_uart_rx_callback_func(U1RXREG);
+
+    }
+    return;
+}
+
 
 
 

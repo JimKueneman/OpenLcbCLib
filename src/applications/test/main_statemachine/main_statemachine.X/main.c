@@ -72,10 +72,8 @@
 #include "../../../../drivers/common/../driver_mcu.h"
 #include "../../../../drivers/driver_100ms_clock.h"
 #include "../../../../drivers/driver_can.h"
-<<<<<<< HEAD
 #include "../../../../drivers/driver_mcu.h"
-=======
->>>>>>> 2a6a2b511415e572cc6213ebfb8cf459e0640d9d
+
 
 #include "../../../../drivers/25AA1024/25AA1024_driver.h"
 
@@ -134,20 +132,16 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 //#define  _SIMULATOR_
 
-void xxx(DriverConfigurationMemory_buffer_t* local) {
-
-    for (int i = 0; i < 32; i++)
-        printf("%02X.", (*local)[i]);
-
-}
 
 int main(void) {
+    
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
 
     CanMainStatemachine_initialize();
     MainStatemachine_initialize();
+    
 
 #ifdef _SIMULATOR_
 
@@ -158,80 +152,24 @@ int main(void) {
     U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
 
 #else
-
-    _TRISB4 = 0;
-    _RB4 = 0;
-
     McuDriver_initialization();
-
 #endif
-    
-    
 
     printf("\n\nBooted\n");
 
     openlcb_node_t* node = Node_allocate(0x050101010700, &NodeParameters_main_node);
     
-//    openlcb_msg_t* msg = BufferFifo_push( LEN_MESSAGE_BYTES_DATAGRAM);
-//    
-//    Utilities_copy_string_to_openlcb_payload(msg, node->parameters->address_space_configuration_definition.description, 0);
-//            
-//            
-
+    printf("Node Created\n");
 
 #ifdef _SIMULATOR_
 
-    node->state.run_state = RUNSTATE_RUN;
-    can_msg_t* buff = CanBufferFifo_push();
-
-    buff->identifier = 0x10702031;
-    buff->payload_count = 0;
 
 #endif
 
 
-
-//    _eeprom_read_buffer_t buffer;
-//
-//    for (int i = 0; i < 64; i++)
-//        buffer[i] = i;
-//
-//
-//
-//    printf("writing eeprom\n");
-//
-//    _24AA1024_Driver_write_latch_enable();
-//
-//    _24AA1024_Driver_write(0x00, 64, &buffer);
-//
-//    _RB4 = 1;
-//    while (_24AA1024_Driver_write_in_progress()) {
-//        printf(".");
-//    }
-//    _RB4 = 0;
-//
-//    printf("Done writing\n\n");
-//
-//    printf("reading eeprom\n");
-//
-//
-//    _24AA1024_Driver_read(0, 64, &buffer);
-//
-//    for (int i = 0; i < 64; i++)
-//        printf("%02X", buffer[i]);
-//
-//
-//    printf("\nDone reading\n\n");
-
-
-
     while (1) {
 
-
-
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
-
-
 
 
     }
