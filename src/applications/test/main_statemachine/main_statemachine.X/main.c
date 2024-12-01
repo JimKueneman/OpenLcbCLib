@@ -69,7 +69,10 @@
 #include "../../../../drivers/common/can_tx_statemachine.h"
 #include "../../../../drivers/common/can_main_statemachine.h"
 
-#include "../../../../drivers/common/../mcu_driver.h"
+#include "../../../../drivers/common/../driver_mcu.h"
+#include "../../../../drivers/driver_100ms_clock.h"
+#include "../../../../drivers/driver_can.h"
+#include "../../../../drivers/driver_mcu.h"
 
 #include "../../../../drivers/25AA1024/25AA1024_driver.h"
 
@@ -90,7 +93,7 @@ void _uart_callback(uint16_t code) {
 
             printf("\nMax Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
             printf("\nMax Buffers: %d\n", BufferStore_messages_max_allocated());
-            printf("\nMax CAN FIFO depth: %d\n", max_can_fifo_depth);
+            printf("\nMax CAN FIFO depth: %d\n", DriverCan_max_can_fifo_depth);
 
             return;
 
@@ -128,7 +131,7 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 //#define  _SIMULATOR_
 
-void xxx(_eeprom_read_buffer_t* local) {
+void xxx(DriverConfigurationMemory_buffer_t* local) {
 
     for (int i = 0; i < 32; i++)
         printf("%02X.", (*local)[i]);
@@ -140,23 +143,8 @@ int main(void) {
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
 
-    CanBufferStore_initialize();
-    CanBufferFifo_initialiaze();
-    CanRxStatemachine_initialize();
-    CanTxStatemachine_initialize();
     CanMainStatemachine_initialize();
-
-    BufferStore_initialize();
-    BufferList_initialiaze();
-    BufferFifo_initialiaze();
     MainStatemachine_initialize();
-    Node_initialize();
-    ClockDistribution_initialize();
-
-    ProtocolDatagram_initialize();
-
-
-
 
 #ifdef _SIMULATOR_
 

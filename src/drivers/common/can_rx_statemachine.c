@@ -16,7 +16,7 @@
 
 #include "xc.h"
 #include "stdio.h" // printf
-#include "../../drivers/mcu_driver.h"
+#include "../../drivers/driver_can.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_buffer_store.h"
@@ -414,6 +414,7 @@ void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
 }
 
 void _state_machine_incoming_can(uint8_t channel, can_msg_t* can_msg) {
+    
 
     if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
 
@@ -474,8 +475,9 @@ void CanRxStatemachine_initialize() {
 
     // The mcu_driver.h file exports a function pointer that is used to hook into the incoming CAN message stream
     // This allows the mcu_driver to call into this unit with incoming CAN frames.
-    McuDriver_can_rx_callback_func = &_state_machine_incoming_can;
-
+    
+    DriverCan_Initialization(&_state_machine_incoming_can);
+    
 
 }
 

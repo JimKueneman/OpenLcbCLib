@@ -14,7 +14,7 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_tx_driver.h"
 #include "protocol_snip.h"
-#include "../drivers/25AA1024/25AA1024_driver.h"
+#include "../drivers/driver_configuration_memory.h"
 
 
 // Little use having a buffer larger than the number of Datagram messages we can create;
@@ -116,6 +116,9 @@ uint16_t _validate_memory_read_space(const user_address_space_info_t* space_info
     if (data_address > space_info->highest_address)
         return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
     
+    if (*data_count > 64)
+    return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
+
     if ((data_address + *data_count) > space_info->highest_address)
         *data_count = space_info->highest_address - data_address;
     
@@ -137,15 +140,10 @@ uint16_t _memory_read_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* wor
 
     uint16_t invalid = _validate_memory_read_space(&openlcb_node->parameters->address_space_all, data_address, &data_count);
     if (invalid) {
-        
-        printf("IV: 0x%04X\n", invalid);
-        
-        
+
         return invalid;
     }
     
-     printf("V: 0x%04X\n", invalid);
-
     return ERROR_PERMANENT_NOT_IMPLEMENTED;
 
 }
@@ -156,9 +154,7 @@ uint16_t _memory_read_space_configuration_memory(openlcb_node_t* openlcb_node, o
     if (invalid) 
         return invalid;
 
-    _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (&worker_msg->payload[reply_payload_index]));
-
-    return reply_payload_index + data_count;
+    return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
 
@@ -233,9 +229,7 @@ uint16_t _memory_read_space_train_function_configuration_memory(openlcb_node_t* 
     if (invalid) 
         return invalid;
  
-    _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (&worker_msg->payload[reply_payload_index]));
-
-    return reply_payload_index + data_count;
+    return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));;
 
 }
 
@@ -312,9 +306,6 @@ void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
     uint16_t read_result_or_error_code = _memory_read_space(openlcb_node, worker_msg, data_address, reply_payload_index, data_count, space);
 
-    printf("0x%04X\n", read_result_or_error_code);
-    
-    
     if (read_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
         *worker_msg->payload[1] = return_msg_ok;                                          // read_result is the current payload index in this case

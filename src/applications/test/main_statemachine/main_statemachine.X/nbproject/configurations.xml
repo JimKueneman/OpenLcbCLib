@@ -21,7 +21,10 @@
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
         </logicalFolder>
-        <itemPath>../../../../drivers/mcu_driver.h</itemPath>
+        <itemPath>../../../../drivers/driver_configuration_memory.h</itemPath>
+        <itemPath>../../../../drivers/driver_100ms_clock.h</itemPath>
+        <itemPath>../../../../drivers/driver_can.h</itemPath>
+        <itemPath>../../../../drivers/driver_mcu.h</itemPath>
       </logicalFolder>
       <logicalFolder name="main_statemachine.X"
                      displayName="main_statemachine.X"
@@ -80,7 +83,10 @@
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
         </logicalFolder>
-        <itemPath>../../../../drivers/mcu_driver.c</itemPath>
+        <itemPath>../../../../drivers/driver_configuration_memory.c</itemPath>
+        <itemPath>../../../../drivers/driver_mcu.c</itemPath>
+        <itemPath>../../../../drivers/driver_100ms_clock.c</itemPath>
+        <itemPath>../../../../drivers/driver_can.c</itemPath>
       </logicalFolder>
       <logicalFolder name="main_statemachine.X"
                      displayName="main_statemachine.X"

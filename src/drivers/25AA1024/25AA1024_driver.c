@@ -7,7 +7,7 @@
 
 
 #include "xc.h"
-#include "25AA1024_driver.h"
+#include "../driver_configuration_memory.h"
 
 void _flush_buffers() {
 
@@ -149,7 +149,7 @@ uint8_t _25AA1024_Driver_read_byte(uint32_t address) {
 
 }
 
-void _25AA1024_Driver_read(uint32_t address, uint8_t count, _eeprom_read_buffer_t* buffer) {
+uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, DriverConfigurationMemory_buffer_t* buffer) {
 
     uint8_t temp;
 
@@ -186,6 +186,8 @@ void _25AA1024_Driver_read(uint32_t address, uint8_t count, _eeprom_read_buffer_
     }
 
     _RB6 = 1; // CS
+    
+    return count;
 
 }
 
@@ -223,7 +225,7 @@ void _25AA1024_Driver_write_byte(uint32_t address, uint8_t byte) {
 
 }
 
-void _25AA1024_Driver_write(uint32_t address, uint8_t count, _eeprom_read_buffer_t* buffer) {
+uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, DriverConfigurationMemory_buffer_t* buffer) {
 
     uint8_t temp;
 
@@ -258,6 +260,8 @@ void _25AA1024_Driver_write(uint32_t address, uint8_t count, _eeprom_read_buffer
     }
 
     _RB6 = 1; // CS
+    
+    return count;
 
 }
 

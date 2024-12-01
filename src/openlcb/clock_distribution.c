@@ -8,8 +8,8 @@
 
 #include "xc.h"
 #include "openlcb_node.h"
-#include "../drivers/mcu_driver.h"
 #include "protocol_datagram.h"
+#include "../drivers/driver_100ms_clock.h"
 
 
 void _100msTimeTickNode() {
@@ -21,8 +21,8 @@ void _100msTimeTickNode() {
 
 void ClockDistribution_initialize() {
     
-    // Hook into the mcu driver to get the clock
-     McuDriver_100ms_timer_callback_func = &_100msTimeTickNode;
+    Driver100msClock_Initialization(&_100msTimeTickNode);
+    
     
 }
 

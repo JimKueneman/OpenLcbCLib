@@ -18,7 +18,9 @@
 #include "protocol_message_network.h"
 #include "protocol_datagram.h"
 #include "protocol_snip.h"
-#include "../drivers/mcu_driver.h"
+#include "../drivers/driver_mcu.h"
+#include "../openlcb/clock_distribution.h"
+#include "../openlcb/openlcb_buffer_list.h"
 
 #include "openlcb_main_statemachine.h"
 
@@ -28,6 +30,14 @@ openlcb_statemachine_worker_t openlcb_helper;
 
 
 void MainStatemachine_initialize() {
+    
+    BufferStore_initialize();
+    BufferList_initialiaze();
+    BufferFifo_initialiaze();
+    
+    Node_initialize();
+    ClockDistribution_initialize();
+    ProtocolDatagram_initialize();
     
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
         openlcb_helper.worker_buffer[i] = 0x00;
