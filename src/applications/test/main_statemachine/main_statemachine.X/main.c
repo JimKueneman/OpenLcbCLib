@@ -46,40 +46,18 @@
 
 #include "xc.h"
 #include "stdio.h"  // printf
-
-
-#include "../../../../openlcb/openlcb_buffer_fifo.h"
-#include "../../../../openlcb/openlcb_buffer_list.h"
-#include "../../../../openlcb/openlcb_buffer_store.h"
-#include "../../../../openlcb/openlcb_defines.h"
-#include "../../../../openlcb/openlcb_types.h"
-#include "../../../../openlcb/openlcb_utilities.h"
-#include "../../../../openlcb/openlcb_node.h"
-#include "../../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../../openlcb/clock_distribution.h"
-#include "../../../../openlcb/callback_hooks.h"
-#include "../../../../openlcb/protocol_datagram.h"
-
-#include "../../../../drivers/common/can_types.h"
-#include "../../../../drivers/common/can_buffer_store.h"
-#include "../../../../drivers/common/can_buffer_fifo.h"
-#include "../../../../drivers/common/can_utilities.h"
-
-#include "../../../../drivers/common/can_rx_statemachine.h"
-#include "../../../../drivers/common/can_tx_statemachine.h"
-#include "../../../../drivers/common/can_main_statemachine.h"
-
-#include "../../../../drivers/common/../driver_mcu.h"
-#include "../../../../drivers/driver_100ms_clock.h"
-#include "../../../../drivers/driver_can.h"
-#include "../../../../drivers/driver_mcu.h"
-
-
-#include "../../../../drivers/25AA1024/25AA1024_driver.h"
-
 #include <libpic30.h> // Delay
 
+#include "../../../../drivers/common/can_buffer_store.h"
+#include "../../../../drivers/common/can_main_statemachine.h"
+#include "../../../../openlcb/openlcb_buffer_store.h"
+#include "../../../../drivers/common/../driver_mcu.h"
+#include "../../../../drivers/driver_can.h"
+#include "../../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../../openlcb/openlcb_node.h"
 #include "node_parameters.h"
+#include "../../../../openlcb/callback_hooks.h"
+
 
 #include "debug.h"
 

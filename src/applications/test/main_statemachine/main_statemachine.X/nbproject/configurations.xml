@@ -22,15 +22,9 @@
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
         </logicalFolder>
         <itemPath>../../../../drivers/driver_configuration_memory.h</itemPath>
-<<<<<<< HEAD
         <itemPath>../../../../drivers/driver_100ms_clock.h</itemPath>
         <itemPath>../../../../drivers/driver_can.h</itemPath>
         <itemPath>../../../../drivers/driver_mcu.h</itemPath>
-=======
-        <itemPath>../../../../drivers/driver_mcu.h</itemPath>
-        <itemPath>../../../../drivers/driver_100ms_clock.h</itemPath>
-        <itemPath>../../../../drivers/driver_can.h</itemPath>
->>>>>>> 2a6a2b511415e572cc6213ebfb8cf459e0640d9d
       </logicalFolder>
       <logicalFolder name="main_statemachine.X"
                      displayName="main_statemachine.X"

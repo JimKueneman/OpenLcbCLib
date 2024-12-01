@@ -26,6 +26,7 @@
 #define LEN_NODE_ARRAY                16  // USER DEFINED 
 
 #define LEN_MAX_CDI                   1800
+#define LEN_MAX_FDI                   820
 
 #define LEN_PRODUCER_MAX_COUNT         10
 #define LEN_CONSUMER_MAX_COUNT         10
@@ -147,6 +148,7 @@ typedef struct {
     uint16_t consumer_count;
     uint16_t producer_count;
     uint8_t cdi[LEN_MAX_CDI];
+    uint8_t fdi[LEN_MAX_FDI];
     user_address_space_info_t address_space_configuration_definition;
     user_address_space_info_t address_space_all;
     user_address_space_info_t address_space_config_memory;
