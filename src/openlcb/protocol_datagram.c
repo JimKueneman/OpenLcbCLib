@@ -106,36 +106,38 @@ void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openl
 
         openlcb_node->state.openlcb_datagram_ack_sent = TRUE;
 
+}
 
+uint16_t _validate_memory_read_space(const user_address_space_info_t* space_info, uint32_t data_address, uint8_t* data_count) {
+    
+    if (!space_info->present)
+        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
+
+    if (data_address > space_info->highest_address)
+        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
+    
+    if ((data_address + *data_count) > space_info->highest_address)
+        *data_count = space_info->highest_address - data_address;
+    
+    return 0;
 }
 
 uint16_t _memory_read_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
-    
-    
 
-    if (!openlcb_node->parameters->address_space_configuration_definition.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_configuration_definition.highest_address)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_configuration_definition.highest_address)
-        data_count = openlcb_node->parameters->address_space_configuration_definition.highest_address - data_address;
+    uint16_t invalid = _validate_memory_read_space(&openlcb_node->parameters->address_space_configuration_definition, data_address, &data_count);
     
+    if (invalid) 
+        return invalid;
+
     return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[data_address], reply_payload_index, data_count); 
 
 }
 
 uint16_t _memory_read_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
 
-    if (!openlcb_node->parameters->address_space_all.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_all.highest_address)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_all.highest_address)
-        data_count = openlcb_node->parameters->address_space_all.highest_address - data_address;
+    uint16_t valid = _validate_memory_read_space(&openlcb_node->parameters->address_space_all, data_address, &data_count);
+    if (!valid) 
+        return valid;
 
     return ERROR_PERMANENT_NOT_IMPLEMENTED;
 
@@ -143,17 +145,11 @@ uint16_t _memory_read_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* wor
 
 uint16_t _memory_read_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
 
-    if (!openlcb_node->parameters->address_space_config_memory.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_config_memory.highest_address)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_config_memory.highest_address)
-        data_count = openlcb_node->parameters->address_space_config_memory.highest_address - data_address;
+    uint16_t valid = _validate_memory_read_space(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
+    if (!valid) 
+        return valid;
 
     _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (&worker_msg->payload[reply_payload_index]));
-
 
     return reply_payload_index + data_count;
 
@@ -161,15 +157,10 @@ uint16_t _memory_read_space_configuration_memory(openlcb_node_t* openlcb_node, o
 
 uint16_t _memory_read_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
 
-    if (!openlcb_node->parameters->address_space_acdi_manufacturer.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_acdi_manufacturer.highest_address)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_acdi_manufacturer.highest_address)
-        data_count = openlcb_node->parameters->address_space_acdi_manufacturer.highest_address - data_address;
-
+    uint16_t valid = _validate_memory_read_space(&openlcb_node->parameters->address_space_acdi_manufacturer, data_address, &data_count);
+    if (!valid) 
+        return valid;
+    
     switch (data_address) {
 
         case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
@@ -197,14 +188,9 @@ uint16_t _memory_read_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openl
 
 uint16_t _memory_read_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
 
-    if (!openlcb_node->parameters->address_space_acdi_user.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_acdi_user.highest_address)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_acdi_user.highest_address)
-        data_count = openlcb_node->parameters->address_space_acdi_user.highest_address - data_address;
+     uint16_t valid = _validate_memory_read_space(&openlcb_node->parameters->address_space_acdi_user, data_address, &data_count);
+    if (!valid) 
+        return valid;
 
     switch (data_address) {
 
@@ -227,29 +213,19 @@ uint16_t _memory_read_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_
 
 uint16_t _memory_read_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
 
-    if (!openlcb_node->parameters->address_space_train_function_definition.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_train_function_definition.highest_address)
-        return ERROR_PERMANENT_INVALID_ARGUMENTS;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_train_function_definition.highest_address)
-        data_count = openlcb_node->parameters->address_space_train_function_definition.highest_address - data_address;
-
+    uint16_t valid = _validate_memory_read_space(&openlcb_node->parameters->address_space_train_function_definition, data_address, &data_count);
+    if (!valid) 
+        return valid;
+    
     return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
 }
 
 uint16_t _memory_read_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint8_t data_count) {
 
-    if (!openlcb_node->parameters->address_space_train_function_config_memory.present)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
-
-    if (data_address > openlcb_node->parameters->address_space_train_function_config_memory.highest_address)
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
-
-    if ((data_address + data_count) > openlcb_node->parameters->address_space_train_function_config_memory.highest_address)
-        data_count = openlcb_node->parameters->address_space_train_function_config_memory.highest_address - data_address;
-
+    uint16_t valid = _validate_memory_read_space(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
+    if (!valid) 
+        return valid;
+ 
     _25AA1024_Driver_read(data_address, data_count, (_eeprom_read_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
     return reply_payload_index + data_count;
@@ -335,9 +311,7 @@ void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
         worker_msg->payload_count = read_result_or_error_code;
         
     } else {
-        
-        printf("%d\n",  read_result_or_error_code);
-
+       
         *worker_msg->payload[1] = return_msg_fail;
         Utilities_copy_word_to_openlcb_payload(worker_msg, read_result_or_error_code, reply_payload_index); // read_result is the error code in this case
         worker_msg->payload_count = reply_payload_index + 2;
