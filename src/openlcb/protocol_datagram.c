@@ -178,20 +178,18 @@ uint16_t _memory_read_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openl
         case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
             return ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, data_count);
 
-        case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
+        case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:   
             return ProtocolSnip_load_name(openlcb_node, worker_msg, reply_payload_index, data_count);
 
-        case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
-            ProtocolSnip_load_model(openlcb_node, worker_msg, reply_payload_index, data_count);
-
-        case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
+        case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:         
+            return ProtocolSnip_load_model(openlcb_node, worker_msg, reply_payload_index, data_count);
+        case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:         
             return ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, data_count);
 
-        case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
+        case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:     
             return ProtocolSnip_load_software_version(openlcb_node, worker_msg, reply_payload_index, data_count);
 
         default:
-
             return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL;
 
     }
