@@ -129,12 +129,12 @@ uint16_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg
 
 }
 
-void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id) {
+void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint8_t index) {
 
-    openlcb_msg->payload_count = 6;
+    openlcb_msg->payload_count = 6 + index;
 
     for (int iIndex = 5; iIndex >= 0; iIndex--) {
-        *openlcb_msg->payload[iIndex] = node_id & 0xFF;
+        *openlcb_msg->payload[iIndex + index] = node_id & 0xFF;
         node_id = node_id >> 8;
 
     }
@@ -154,15 +154,15 @@ void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64
 
 }
 
-node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg) {
+node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_t index) {
 
     return (
-            ((uint64_t) * openlcb_msg->payload[0] << 40) |
-            ((uint64_t) * openlcb_msg->payload[1] << 32) |
-            ((uint64_t) * openlcb_msg->payload[2] << 24) |
-            ((uint64_t) * openlcb_msg->payload[3] << 16) |
-            ((uint64_t) * openlcb_msg->payload[4] << 8) |
-            ((uint64_t) * openlcb_msg->payload[5])
+            ((uint64_t) * openlcb_msg->payload[0+index] << 40) |
+            ((uint64_t) * openlcb_msg->payload[1+index] << 32) |
+            ((uint64_t) * openlcb_msg->payload[2+index] << 24) |
+            ((uint64_t) * openlcb_msg->payload[3+index] << 16) |
+            ((uint64_t) * openlcb_msg->payload[4+index] << 8) |
+            ((uint64_t) * openlcb_msg->payload[5+index])
             );
 
 }

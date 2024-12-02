@@ -30,6 +30,7 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.openlcb_msg_handled = FALSE;
     openlcb_node->state.openlcb_datagram_ack_sent = FALSE;
     openlcb_node->timerticks = 0;
+    openlcb_node->lock_node = 0;
 
 
     for (int i = 0; i < LEN_CONSUMER_MAX_COUNT; i++)

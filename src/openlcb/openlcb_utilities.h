@@ -27,7 +27,7 @@ extern void Utilities_copy_openlcb_message(openlcb_msg_t* source, openlcb_msg_t*
 
 extern void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64_t data);
 
-extern void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id);
+extern void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint8_t index);
 
 extern void Utilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t word, uint8_t index);
 
@@ -39,7 +39,7 @@ extern uint16_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* open
 
 extern void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg); 
 
-extern node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg);
+extern node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_t index);
 
 extern event_id_t Utilities_extract_event_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg);
 

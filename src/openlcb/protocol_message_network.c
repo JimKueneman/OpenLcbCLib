@@ -63,7 +63,7 @@ void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb
             3
             );
 
-    Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id);
+    Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
 
     if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
         worker_msg->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
@@ -128,7 +128,7 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t* openlcb
 
     if (openlcb_msg->payload_count > 0) {
 
-        uint64_t node_id = Utilities_extract_node_id_from_openlcb_payload(openlcb_msg);
+        uint64_t node_id = Utilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0);
 
         if (node_id == openlcb_node->id)
 
@@ -166,7 +166,7 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message
 
-    int64_t node_id = Utilities_extract_node_id_from_openlcb_payload(openlcb_msg);
+    int64_t node_id = Utilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0);
 
     if (node_id == openlcb_node->id)
 

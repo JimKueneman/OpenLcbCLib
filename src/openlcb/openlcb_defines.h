@@ -106,7 +106,7 @@
 #define MTI_DATAGRAM                         0x1C48
 #define MTI_DATAGRAM_OK_REPLY                0x0A28                            // Databytes = Destination Alias
 #define MTI_DATAGRAM_REJECTED_REPLY          0x0A48                            // Databytes = Destination Alias, Error Code 
-
+#define MTI_DATAGRAM_OK_REPLY_PENDING        0x80
 
 // Data field Masks
 #define MASK_MULTIFRAME_BITS             0xF0
@@ -323,7 +323,8 @@
 #define DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_INFO_CMD           0x84
 #define DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT  0x86
 #define DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT      0x87
-#define DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK                   0x8A
+#define DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK                   0x88
+#define DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY             0x8A
 #define DATAGRAM_MEMORY_CONFIGURATION_GET_UNIQUE_ID                  0x8C
 #define DATAGRAM_MEMORY_CONFIGURATION_UNFREEZE                       0xA0
 #define DATAGRAM_MEMORY_CONFIGURATION_FREEZE                         0xA1

@@ -143,7 +143,7 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
     if (next_node->parameters->protocol_support & PSI_SIMPLE)
         openlcb_worker->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
 
-    Utilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id);
+    Utilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
 
 
     if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {

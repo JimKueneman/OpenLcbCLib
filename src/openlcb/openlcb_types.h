@@ -202,7 +202,7 @@ typedef struct {
     event_id_producer_list_t producers;
     const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-
+    uint64_t lock_node;  // node that has this noded locked
 } openlcb_node_t;
 
 typedef struct {
