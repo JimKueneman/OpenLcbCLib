@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type='text/xsl' href='xslt/fdi.xsl'?>
+<fdi xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation=' https://openlcb.org/schema/fdi/1/0/fdi.xsd'>
+<segment space='249'><group><name/>
+<function size='1' kind='binary'>
+<name>Headlight</name>
+<number>0</number>
+</function>
+<function size='1' kind='binary'>
+<name>Bell</name>
+<number>1</number>
+</function>
+<function size='1' kind='momentary'>
+<name>Horn</name>
+<number>2</number>
+</function>
+<function size='1' kind='binary'><name>Directional F0</name>
+<number>100</number></function>
+<function size='1' kind='binary'><name>Blank F0 Forward</name>
+<number>101</number></function>
+<function size='1' kind='binary'><name>Blank F0 Reverse</name>
+<number>102</number></function>
+</group></segment></fdi>

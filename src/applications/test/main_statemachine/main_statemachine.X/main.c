@@ -102,7 +102,7 @@ void _uart_callback(uint16_t code) {
 
 void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
-    printf("Alias Allocation: %d  ", new_alias);
+    printf("Alias Allocation: %02X  ", new_alias);
     PrintNodeID(node_id);
     printf("\n");
 
@@ -113,6 +113,8 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 int main(void) {
     
+    _TRISB4 = 0;
+    _RB4 = 0;
 
     McuDriver_uart_rx_callback_func = &_uart_callback;
     CallbackHooks_alias_change = &_alias_change_callback;
