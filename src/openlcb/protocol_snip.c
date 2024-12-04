@@ -210,25 +210,15 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message
 
-
-    if (openlcb_node->alias != openlcb_msg->dest_alias) {
+    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
-        return; // not for us
-
+        return;
     }
+  
 
-
-    Utilities_load_openlcb_message(
-            worker_msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            openlcb_msg->source_alias,
-            openlcb_msg->source_id,
-            MTI_SIMPLE_NODE_INFO_REPLY,
-            0
-            );
+    Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_SIMPLE_NODE_INFO_REPLY,0);
 
     uint16_t payload_index = 0;
 

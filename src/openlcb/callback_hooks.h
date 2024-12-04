@@ -17,7 +17,10 @@
 // Node Alias and Node ID
 typedef void (*alias_change_callback_t) (uint16_t, uint64_t);
 
-
+/**
+* When a node is created and it allocates and alias ID (or if it detects a collision and 
+*        allocates a new alias ID this callback is called with the new value)
+*/
 extern alias_change_callback_t CallbackHooks_alias_change;
 
 

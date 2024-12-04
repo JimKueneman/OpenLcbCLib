@@ -28,15 +28,7 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
 
     }
 
-    Utilities_load_openlcb_message(
-            worker_msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            openlcb_msg->source_alias,
-            openlcb_msg->source_id,
-            MTI_PC_EVENT_REPORT,
-            8
-            );
+    Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_PC_EVENT_REPORT, 8);
     Utilities_copy_event_id_to_openlcb_payload(worker_msg, EVENT_ID_DUPLICATE_NODE_DETECTED);
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
@@ -53,16 +45,7 @@ void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message
 
-    Utilities_load_openlcb_message(
-            worker_msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            openlcb_msg->source_alias,
-            openlcb_msg->source_id,
-            MTI_VERIFIED_NODE_ID,
-            3
-            );
-
+    Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_VERIFIED_NODE_ID, 3);
     Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
 
     if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
@@ -89,15 +72,7 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     }
 
-    Utilities_load_openlcb_message(
-            worker_msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            openlcb_msg->source_alias,
-            openlcb_msg->source_id,
-            MTI_PROTOCOL_SUPPORT_REPLY,
-            6
-            );
+    Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_PROTOCOL_SUPPORT_REPLY, 6);
 
     uint64_t temp = openlcb_node->parameters->protocol_support;
 
@@ -193,16 +168,7 @@ void ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node_t* openlc
 
     }
 
-    Utilities_load_openlcb_message(
-            worker_msg,
-            openlcb_node->alias,
-            openlcb_node->id,
-            openlcb_msg->source_alias,
-            openlcb_msg->source_id,
-            MTI_OPTIONAL_INTERACTION_REJECTED,
-            4
-            );
-
+    Utilities_load_openlcb_message(worker_msg,openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias,openlcb_msg->source_id, MTI_OPTIONAL_INTERACTION_REJECTED, 4);
     Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);
     Utilities_copy_word_to_openlcb_payload(worker_msg, openlcb_msg->mti, 2);
 

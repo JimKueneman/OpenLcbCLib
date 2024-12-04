@@ -76,11 +76,6 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_t can_buffer_start
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    
-    printf("first:\n");
-    PrintCanMsg(can_msg);
-    printf("\n");
-    
     if (result) 
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
@@ -107,10 +102,6 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_t can_buffer_star
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    printf("middle:\n");
-    PrintCanMsg(can_msg);
-    printf("\n");
-    
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
     if (!result) 
@@ -130,10 +121,6 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_t can_buffer_start_
 
     openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
-    printf("last:\n");
-    PrintCanMsg(can_msg);
-    printf("\n");
-    
     if (!result) 
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
@@ -258,65 +245,38 @@ void _handle_rid_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) {
-
-        printf("Could not allocate a CAN buffer: _handle_rid_control_frame");
-
+    if (!new_can_msg) 
         return;
 
-    }
-
     CanUtilities_copy_can_message(can_msg, new_can_msg);
-
 }
 
 void _handle_amd_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) {
-
-        printf("Could not allocate a CAN buffer: _handle_amd_control_frame");
-
+    if (!new_can_msg) 
         return;
 
-    }
-
     CanUtilities_copy_can_message(can_msg, new_can_msg);
-
 }
 
 void _handle_ame_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) {
-
-        printf("Could not allocate a CAN buffer: _handle_ame_control_frame");
-
+    if (!new_can_msg) 
         return;
 
-    }
-
     CanUtilities_copy_can_message(can_msg, new_can_msg);
-
 }
 
 void _handle_amr_control_frame(can_msg_t* can_msg) {
 
-    // for now just copy and handle it in the main loop, may revisit but this is the 
-    // easiest to deal with crossing interrupt/processes
-
-
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) {
-
-        printf("Could not allocate a CAN buffer: _handle_amr_control_frame");
-
+    if (!new_can_msg) 
         return;
-
-    }
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
 
@@ -359,16 +319,10 @@ void _handle_incoming_can_variable_field(can_msg_t* can_msg) {
 
 void _handle_incoming_cid(can_msg_t* can_msg) {
 
-
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) {
-
-        printf("Could not allocate a CAN buffer: _handle_incoming_cid");
-
+    if (!new_can_msg) 
         return;
-
-    }
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
 
@@ -463,6 +417,8 @@ void CanRxStatemachine_initialize() {
 
 
 }
+
+// TODO: CREATE A TIMEOUT TO FLUSH OUT ABANDONDOED MESSAGES......
 
 
 

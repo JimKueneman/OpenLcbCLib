@@ -26,7 +26,7 @@
 can_main_statemachine_t can_helper;
 
 void CanMainStatemachine_initialize() {
-    
+
     CanBufferStore_initialize();
     CanBufferFifo_initialiaze();
     CanRxStatemachine_initialize();
@@ -45,7 +45,7 @@ void CanMainStatemachine_initialize() {
 
 void _run_can_frame_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    
+
     if (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
         switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
@@ -215,6 +215,29 @@ uint8_t _pop_next_openlcb_message() {
 
 }
 
+uint8_t _handle_direct_tx_message(uint8_t is_new_popped_message) {
+
+    if (is_new_popped_message && can_helper.active_msg->state.direct_tx) {
+
+        CanFrameMessageHandler_direct_tx(can_helper.active_msg);
+
+        if (!can_helper.active_msg->state.direct_tx) {
+
+            CanBufferStore_freeBuffer(can_helper.active_msg);
+            can_helper.active_msg = (void*) 0;
+            
+            return TRUE;
+
+        }
+
+        return TRUE; // still trying but did not make it yet.
+
+    }
+    
+    return FALSE;
+
+}
+
 void CanMainStateMachine_run() {
 
     uint8_t reset_can_active_msg = _pop_next_can_message();
@@ -222,22 +245,11 @@ void CanMainStateMachine_run() {
 
     uint8_t active_can_msg_done = TRUE;
     uint8_t active_openlcb_msg_done = TRUE;
+
+
+    if (_handle_direct_tx_message(reset_can_active_msg)) 
+        return;
     
-    
-      if (reset_can_active_msg && can_helper.active_msg->state.direct_tx) {
-        
-        CanFrameMessageHandler_direct_tx(can_helper.active_msg);
-        
-        if (!can_helper.active_msg->state.direct_tx) {
-            
-            CanBufferStore_freeBuffer(can_helper.active_msg);
-            can_helper.active_msg = (void*) 0;
-            
-        }
-        
-      return;   
-       
-    }
 
     openlcb_node_t* next_node = Node_get_first(0);
 
@@ -245,24 +257,14 @@ void CanMainStateMachine_run() {
 
         if (reset_can_active_msg) {
             next_node->state.can_msg_handled = FALSE;
-            
-            printf("\n");
-            printf("IN:\n");
-            PrintCanMsg(can_helper.active_msg);
-            printf("\n");
-            
+
         }
 
         if (reset_openlcb_active_msg) {
-            
+
             next_node->state.openlcb_datagram_ack_sent = FALSE;
             next_node->state.openlcb_msg_handled = FALSE;
-            
-            printf("\n");
-            printf("IN:\n");
-            PrintOpenLcbMsg(can_helper.openlcb_worker->active_msg);
-            printf("\n");
-            
+
         }
 
 

@@ -120,8 +120,8 @@ uint16_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg
             *openlcb_msg->payload[i + payload_index] = byte_array[i];
             counter++;
 
-        } else 
-             break;
+        } else
+            break;
 
     }
 
@@ -157,12 +157,12 @@ void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64
 node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_t index) {
 
     return (
-            ((uint64_t) * openlcb_msg->payload[0+index] << 40) |
-            ((uint64_t) * openlcb_msg->payload[1+index] << 32) |
-            ((uint64_t) * openlcb_msg->payload[2+index] << 24) |
-            ((uint64_t) * openlcb_msg->payload[3+index] << 16) |
-            ((uint64_t) * openlcb_msg->payload[4+index] << 8) |
-            ((uint64_t) * openlcb_msg->payload[5+index])
+            ((uint64_t) * openlcb_msg->payload[0 + index] << 40) |
+            ((uint64_t) * openlcb_msg->payload[1 + index] << 32) |
+            ((uint64_t) * openlcb_msg->payload[2 + index] << 24) |
+            ((uint64_t) * openlcb_msg->payload[3 + index] << 16) |
+            ((uint64_t) * openlcb_msg->payload[4 + index] << 8) |
+            ((uint64_t) * openlcb_msg->payload[5 + index])
             );
 
 }
@@ -271,6 +271,22 @@ int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, u
     }
 
     return -1;
+
+
+}
+
+uint8_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+
+    if (openlcb_node->state.openlcb_msg_handled)
+        return; // finished with the message
+
+    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+
+        openlcb_node->state.openlcb_msg_handled = TRUE;
+
+        return;
+
+    }
 
 
 }

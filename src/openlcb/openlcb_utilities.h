@@ -59,6 +59,8 @@ extern int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_
 
 extern int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id);
 
+extern uint8_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
+
 // OpenLcb message helpers
 
 
