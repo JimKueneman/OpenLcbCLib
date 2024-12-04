@@ -33,7 +33,12 @@
 typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
 typedef struct {
-    uint8_t allocated;
+    uint8_t allocated: 1;
+    uint8_t direct_tx: 1;  
+} can_msg_state_t;
+
+typedef struct {
+    can_msg_state_t state;
     uint32_t identifier;              // CAN 29 bit identifier (extended)
     uint8_t payload_count;            // How many bytes are valid
     payload_bytes_can_t payload;      // Payload bytes

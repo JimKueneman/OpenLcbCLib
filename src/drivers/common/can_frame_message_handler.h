@@ -17,6 +17,8 @@
 #include "../../openlcb/openlcb_node.h"
 
 
+extern void CanFrameMessageHandler_direct_tx(can_msg_t* can_msg);
+
 extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) ;
 
 extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 

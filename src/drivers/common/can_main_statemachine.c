@@ -34,7 +34,8 @@ void CanMainStatemachine_initialize() {
 
     can_helper.openlcb_worker = &openlcb_helper;
     can_helper.active_msg = (void*) 0;
-    can_helper.can_worker.allocated = TRUE;
+    can_helper.can_worker.state.allocated = TRUE;
+    can_helper.can_worker.state.direct_tx = FALSE;
     can_helper.can_worker.identifier = 0x0000000000;
     can_helper.can_worker.payload_count = 0;
     for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
@@ -44,6 +45,7 @@ void CanMainStatemachine_initialize() {
 
 void _run_can_frame_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
+    
     if (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
         switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
@@ -220,18 +222,46 @@ void CanMainStateMachine_run() {
 
     uint8_t active_can_msg_done = TRUE;
     uint8_t active_openlcb_msg_done = TRUE;
+    
+    
+      if (reset_can_active_msg && can_helper.active_msg->state.direct_tx) {
+        
+        CanFrameMessageHandler_direct_tx(can_helper.active_msg);
+        
+        if (!can_helper.active_msg->state.direct_tx) {
+            
+            CanBufferStore_freeBuffer(can_helper.active_msg);
+            can_helper.active_msg = (void*) 0;
+            
+        }
+        
+      return;   
+       
+    }
 
     openlcb_node_t* next_node = Node_get_first(0);
 
     while (next_node) {
 
-        if (reset_can_active_msg)
+        if (reset_can_active_msg) {
             next_node->state.can_msg_handled = FALSE;
+            
+            printf("\n");
+            printf("IN:\n");
+            PrintCanMsg(can_helper.active_msg);
+            printf("\n");
+            
+        }
 
         if (reset_openlcb_active_msg) {
             
             next_node->state.openlcb_datagram_ack_sent = FALSE;
             next_node->state.openlcb_msg_handled = FALSE;
+            
+            printf("\n");
+            printf("IN:\n");
+            PrintOpenLcbMsg(can_helper.openlcb_worker->active_msg);
+            printf("\n");
             
         }
 

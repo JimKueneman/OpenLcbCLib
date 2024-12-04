@@ -7,10 +7,6 @@
  * 
  */
 
-// BIG TODO:  Decide how to cross the boundry from and possible interrupt/thread driven incoming can message stream and if we reach into the node
-//            list from here to quickly reply to important messages or just put them in the buffer and let the main loop deal with it when
-//            it get a chance.....
-
 
 #include <libpic30.h>
 
@@ -33,37 +29,66 @@
 #define OFFSET_DEST_ID_IN_IDENTIFIER  0
 #define OFFSET_NO_DEST_ID             0
 
+uint32_t _ack_reject_identifier(uint16_t source_alias) {
 
-openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_t can_buffer_start_index, uint16_t data_size, openlcb_msg_t* prefetched_find) {
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12) | source_alias);
+
+}
+
+uint32_t _oir_identifier(uint16_t source_alias) {
+
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12) | source_alias);
+
+}
+
+openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
+
+    // Does not work... this is for incoming that need processed.  It will not get just sent out....
+    can_msg_t* can_msg_error = CanBufferFifo_push();
+
+    if (can_msg_error) {
+
+        if (mti == MTI_DATAGRAM)
+            can_msg_error->identifier = _ack_reject_identifier(source_alias);
+        else
+            can_msg_error->identifier = _oir_identifier(source_alias);
+
+        can_msg_error->payload[0] = (uint8_t) (dest_alias >> 8) & 0x00FF;
+        can_msg_error->payload[1] = (uint8_t) dest_alias & 0x00FF;
+        can_msg_error->payload[2] = (uint8_t) (error_code >> 8) & 0x00FF;
+        can_msg_error->payload[3] = (uint8_t) error_code & 0x00FF;
+        
+        can_msg_error->state.direct_tx = TRUE;
+        
+        can_msg_error->payload_count = 4;
+
+    }
+    
+    return (void*) 0;
+
+}
+
+openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_t can_buffer_start_index, uint16_t data_size) {
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* result = prefetched_find;
+    openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (!prefetched_find)
-        result = BufferList_find(source_alias, dest_alias, mti);
-
-    if (result) {
-
-        // TODO: Send error, can't interleave the same message from the same node.  No way to resolve them (Streams you can as it has an ID)
-        printf("Error: HandleIncoming_CAN_Datagram_FirstFrame found an existing queued message\n");
-
-        result = (void*) 0;
-
-    }
+    
+    printf("first:\n");
+    PrintCanMsg(can_msg);
+    printf("\n");
+    
+    if (result) 
+        return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
     result = BufferList_allocate(data_size);
 
-    if (!result) {
+    if (!result) 
+        return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
 
-        // TODO Send Error No Buffer
-        printf("Error: HandleIncoming_CAN_Datagram_FirstFrame failed to find a free buffer\n");
-
-        result = (void*) 0;
-
-    }
 
     result->mti = mti;
     result->source_alias = source_alias;
@@ -72,28 +97,24 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_t can_buffer_start
 
     CanUtilities_copy_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
 
-
     return result;
 
 }
 
-openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_t can_buffer_start_index, openlcb_msg_t* prefetched_find) {
+openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_t can_buffer_start_index) {
 
-    openlcb_msg_t* result = prefetched_find;
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
+    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    if (!prefetched_find)
-        result = BufferList_find(
-            CanUtilities_extract_source_alias_from_can_message(can_msg),
-            CanUtilties_extract_dest_alias_from_can_message(can_msg),
-            CanUtilties_convert_can_mti_to_openlcb_mti(can_msg)
-            );
+    printf("middle:\n");
+    PrintCanMsg(can_msg);
+    printf("\n");
+    
+    openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (!result) {
-
-        // TODO: Send error, can't interleave the same message from the same node.  No way to resolve them (Streams you can as it has an ID)
-        printf("Error: HandleIncoming_CAN_MiddleFrame got a middle frame but did not get a first\n");
-
-    }
+    if (!result) 
+        return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
 
@@ -101,24 +122,20 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_t can_buffer_star
 
 }
 
-openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_t can_buffer_start_index, openlcb_msg_t* prefetched_find) {
+openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_t can_buffer_start_index) {
 
-    openlcb_msg_t * result = prefetched_find;
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
+    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    if (!prefetched_find)
-        result = BufferList_find(
-            CanUtilities_extract_source_alias_from_can_message(can_msg),
-            CanUtilties_extract_dest_alias_from_can_message(can_msg),
-            CanUtilties_convert_can_mti_to_openlcb_mti(can_msg)
-            );
+    openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
-
-    if (!result) {
-
-        // TODO: Send error, can't interleave the same message from the same node.  No way to resolve them (Streams you can as it has an ID)
-        printf("Error: HandleIncoming_CAN_LastFrame got a last frame but did not get a first\n");
-
-    }
+    printf("last:\n");
+    PrintCanMsg(can_msg);
+    printf("\n");
+    
+    if (!result) 
+        return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
     result->state.inprocess = FALSE;
@@ -165,18 +182,18 @@ void _handle_can_legacy_snip(can_msg_t* can_msg, uint16_t can_buffer_start_index
 
     if (!openlcb_msg_inprocess) { // Do we have one in process?
 
-        _handle_first_frame(can_msg, can_buffer_start_index, data_size, openlcb_msg_inprocess);
+        _handle_first_frame(can_msg, can_buffer_start_index, data_size);
 
     } else { // Yes we have one in process   
 
 
         if (CanUtilities_count_nulls_in_payloads(openlcb_msg_inprocess, can_msg) < 6)
 
-            _handle_middle_frame(can_msg, can_buffer_start_index, openlcb_msg_inprocess);
+            _handle_middle_frame(can_msg, can_buffer_start_index);
 
         else
 
-            _handle_last_frame(can_msg, can_buffer_start_index, openlcb_msg_inprocess);
+            _handle_last_frame(can_msg, can_buffer_start_index);
 
     };
 
@@ -187,10 +204,6 @@ void _handle_can_legacy_snip(can_msg_t* can_msg, uint16_t can_buffer_start_index
 void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
     if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
-
-        // TODO:  Eventually we should only process this if the message is addressed to us to save bandwidth internally...
-        //     if (!IsCanMessageAddressedToNode(&openlcb_nodes, msg))
-        //         return;
 
         uint16_t can_mti = CanUtilties_extract_can_mti_from_can_identifier(can_msg);
 
@@ -212,24 +225,24 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
                 if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY)
 
-                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_SNIP, (void*) 0);
+                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_SNIP);
 
                 else
 
                     // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
-                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_BASIC, (void*) 0);
+                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_BASIC);
 
                 break;
 
             case MULTIFRAME_MIDDLE:
 
-                _handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, (void*) 0);
+                _handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
 
                 break;
 
             case MULTIFRAME_FINAL:
 
-                _handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, (void*) 0);
+                _handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
 
                 break;
         }
@@ -242,11 +255,6 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 }
 
 void _handle_rid_control_frame(can_msg_t* can_msg) {
-
-    //   _hard_alias_conflict_check(can_msg);
-
-    // for now just copy and handle it in the main loop, may revisit but this is the 
-    // easiest to deal with crossing interrupt/processes
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
@@ -264,11 +272,6 @@ void _handle_rid_control_frame(can_msg_t* can_msg) {
 
 void _handle_amd_control_frame(can_msg_t* can_msg) {
 
-    //    _hard_alias_conflict_check(can_msg);
-
-    // for now just copy and handle it in the main loop, may revisit but this is the 
-    // easiest to deal with crossing interrupt/processes
-
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
     if (!new_can_msg) {
@@ -279,24 +282,11 @@ void _handle_amd_control_frame(can_msg_t* can_msg) {
 
     }
 
-   CanUtilities_copy_can_message(can_msg, new_can_msg);
+    CanUtilities_copy_can_message(can_msg, new_can_msg);
 
 }
 
 void _handle_ame_control_frame(can_msg_t* can_msg) {
-
-    // Someone is requesting we reply with Alias Mapping Definitions for our Node(s)
-
-    //    if (can_msg->payload_count == 0)
-    //        _flush_alias_node_id_mappings();
-    //
-    //    if (_hard_alias_conflict_check(can_msg))
-    //        return;
-    //
-    //    _reply_to_ame_control_frame(can_msg);
-
-    // for now just copy and handle it in the main loop, may revisit but this is the 
-    // easiest to deal with crossing interrupt/processes
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
@@ -369,13 +359,6 @@ void _handle_incoming_can_variable_field(can_msg_t* can_msg) {
 
 void _handle_incoming_cid(can_msg_t* can_msg) {
 
-    // called in the context of a possible interrupt, make sure the main loop it protecting this with the 
-    // mcu_driver.h Pause_CAN_Receive and Resume_CAN_Receive when it needs to modify the Node Buffer.
-
-    //   _soft_alias_conflict_check(can_msg);
-    
-        // for now just copy and handle it in the main loop, may revisit but this is the 
-    // easiest to deal with crossing interrupt/processes
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
@@ -386,9 +369,9 @@ void _handle_incoming_cid(can_msg_t* can_msg) {
         return;
 
     }
-    
+
     CanUtilities_copy_can_message(can_msg, new_can_msg);
-    
+
 }
 
 void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
@@ -414,7 +397,7 @@ void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
 }
 
 void _state_machine_incoming_can(uint8_t channel, can_msg_t* can_msg) {
-    
+
 
     if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
 
@@ -432,17 +415,17 @@ void _state_machine_incoming_can(uint8_t channel, can_msg_t* can_msg) {
 
             case CAN_FRAME_TYPE_DATAGRAM_FIRST:
 
-                _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, LEN_MESSAGE_BYTES_DATAGRAM, (void*) 0);
+                _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, LEN_MESSAGE_BYTES_DATAGRAM);
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
 
-                _handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, (void*) 0);
+                _handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_FINAL:
 
-                _handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, (void*) 0);
+                _handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
                 break;
 
             case CAN_FRAME_TYPE_RESERVED:
@@ -475,9 +458,9 @@ void CanRxStatemachine_initialize() {
 
     // The mcu_driver.h file exports a function pointer that is used to hook into the incoming CAN message stream
     // This allows the mcu_driver to call into this unit with incoming CAN frames.
-    
+
     DriverCan_Initialization(&_state_machine_incoming_can);
-    
+
 
 }
 

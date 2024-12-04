@@ -6,6 +6,14 @@
  */
 
 
+/*
+ * Tests to implement
+ * 1) Request a datagram then reply with a NAK saying I can't 
+ 
+ 
+ */
+
+
 #include "xc.h"
 #include "stdio.h" // printf
 #include "openlcb_types.h"
@@ -288,6 +296,11 @@ void _handle_memory_read(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
         return;
 
     }
+    
+    // Need to put the message in the local list that waits for the ACK or trys to resend on a NACK
+    // 
+    
+    // BufferStore_inc_reference_count(openlcb_msg);
 
     uint16_t data_count = *openlcb_msg->payload[6];
     uint16_t reply_payload_index = 6;
@@ -607,8 +620,6 @@ void _handle_memory_options_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 }
 
 void _handle_memory_get_address_space_info(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
-    // TODO: CAN I MOVE ALL THESE TO THE CALLER OF ALL THESE??????
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
@@ -1025,6 +1036,8 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
 
         if (Utilities_is_message_for_node(openlcb_node, reply_waiting_list[i])) {
 
+            printf("DG: Free Buffer in Ok\n");
+            
             BufferStore_freeBuffer(reply_waiting_list[i]);
             openlcb_node->state.openlcb_msg_handled = TRUE;
 
@@ -1047,11 +1060,15 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
             if (openlcb_msg->retry_count < MAX_RETRY_COUNT) {
 
+                printf("DG: Retry Buffer in rejected\n");
+                
                 _send_datagram(openlcb_node, openlcb_msg, worker_msg);
 
                 openlcb_msg->retry_count = openlcb_msg->retry_count + 1;
 
             } else {
+                
+                printf("DG: Free Buffer in rejected\n");
 
                 BufferStore_freeBuffer(reply_waiting_list[i]);
                 openlcb_node->state.openlcb_msg_handled = TRUE;
@@ -1083,12 +1100,17 @@ void DatagramProtocol_100ms_time_tick() {
                 if (reply_waiting_list[i]->retry_count < MAX_RETRY_COUNT) {
 
 
+                    printf("DG: Retry in Timer\n");
+                    
                     BufferFifo_push_existing(reply_waiting_list[i]); // Try it again
 
                     reply_waiting_list[i]->retry_count = reply_waiting_list[i]->retry_count + 1;
 
                 }
 
+                printf("DG: Free Buffer in Timer\n");
+                
+                
                 // Give up time to drop it
                 reply_waiting_list[i] = (void*) 0;
 

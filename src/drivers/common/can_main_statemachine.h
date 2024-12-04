@@ -16,8 +16,6 @@
 
 extern void CanMainStatemachine_initialize();
 
-
-// TODO: TEMPORARY FOR TEST
 extern void CanMainStateMachine_run();
 
 

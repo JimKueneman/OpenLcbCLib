@@ -148,8 +148,6 @@ uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb
 
 uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
 
-    // TODO: Interface with the mcu_driver to access configuration memory for these use spaces
-
     if (data_count > LEN_SNIP_USER_NAME - 1)
         data_count = LEN_SNIP_USER_NAME - 1;
 
@@ -179,8 +177,6 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 }
 
 uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
-
-    // TODO: Interface with the mcu_driver to access configuration memory for these use spaces
 
     if (data_count > LEN_SNIP_USER_DESCRIPTION - 1)
         data_count = LEN_SNIP_USER_DESCRIPTION - 1;

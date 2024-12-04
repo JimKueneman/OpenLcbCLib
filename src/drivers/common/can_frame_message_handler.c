@@ -70,6 +70,16 @@ uint8_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_
 
 }
 
+void CanFrameMessageHandler_direct_tx(can_msg_t* can_msg) {
+
+    if (CanTxStatemachine_try_transmit_can_message(can_msg)) {
+
+        can_msg->state.direct_tx = FALSE;
+
+    }
+
+}
+
 void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
     if (!_check_for_soft_alias_conflict(can_node, can_msg, worker_msg))

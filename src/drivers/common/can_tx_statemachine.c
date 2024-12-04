@@ -55,7 +55,7 @@ uint32_t construct_identfier_datagram_last_frame(openlcb_msg_t* openlcb_msg) {
 
 }
 
-uint32_t Construct_Identfier_For_UnAddressMsg(openlcb_msg_t* openlcb_msg) {
+uint32_t Construct_Identfier_for_unaddress_msg(openlcb_msg_t* openlcb_msg) {
 
     return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
 
@@ -176,13 +176,13 @@ uint16_t _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_
 
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) { // single frame
 
-        can_msg_worker->identifier = Construct_Identfier_For_UnAddressMsg(openlcb_msg);
+        can_msg_worker->identifier = Construct_Identfier_for_unaddress_msg(openlcb_msg);
         result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
         _transmit_can_frame(can_msg_worker);
 
     } else { // multi frame
 
-        // TODO Is there such a thing as a unaddressed multi frame?
+        // TODO: Is there such a thing as a unaddressed multi frame?
 
     }
     

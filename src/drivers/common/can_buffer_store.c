@@ -20,7 +20,8 @@ void CanBufferStore_initialize() {
 
     for (int i = 0; i < LEN_CAN_BUFFER; i++) {
 
-        _can_buffer_store[i].allocated = FALSE;
+        _can_buffer_store[i].state.allocated = FALSE;
+        _can_buffer_store[i].state.direct_tx = FALSE;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
         for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++)
@@ -40,7 +41,7 @@ can_msg_t* CanBufferStore_allocateBuffer() {
 
     for (int i = 0; i < LEN_CAN_BUFFER; i++) {
 
-        if (!_can_buffer_store[i].allocated) {
+        if (!_can_buffer_store[i].state.allocated) {
 
             _can_buffer_store_message_allocated = _can_buffer_store_message_allocated + 1;
             
@@ -49,7 +50,8 @@ can_msg_t* CanBufferStore_allocateBuffer() {
             
             
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
-            _can_buffer_store[i].allocated = TRUE;
+            _can_buffer_store[i].state.allocated = TRUE;
+            _can_buffer_store[i].state.direct_tx = FALSE;
             
     //        printf("can allocate\n");
             
@@ -70,7 +72,8 @@ void CanBufferStore_freeBuffer(can_msg_t* msg) {
   //  printf("can deallocate\n");
     
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
-    msg->allocated = FALSE;
+    msg->state.allocated = FALSE;
+    msg->state.direct_tx = FALSE;
 
 }
 
