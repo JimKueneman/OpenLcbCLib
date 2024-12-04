@@ -277,16 +277,21 @@ int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, u
 
 uint8_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
-        return; // finished with the message
 
-    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+    if (Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        if (openlcb_node->state.openlcb_msg_handled)
 
-        return;
+            return FALSE
+
+        else
+
+            return TRUE;
 
     }
 
+    openlcb_node->state.openlcb_msg_handled  = TRUE;
+    
+    return FALSE;
 
 }

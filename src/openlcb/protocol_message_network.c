@@ -61,24 +61,17 @@ void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb
 
 void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
-        return; // finished with the message
 
-    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = TRUE;
-
+    if (!Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
         return;
-
-    }
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_PROTOCOL_SUPPORT_REPLY, 6);
 
     uint64_t temp = openlcb_node->parameters->protocol_support;
 
-    if (temp > 0) 
+    if (temp > 0)
 
-        while ((temp & 0xFF00000000000000) == 0) 
+        while ((temp & 0xFF00000000000000) == 0)
 
             temp = temp << 8;
 
@@ -103,9 +96,7 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t* openlcb
 
     if (openlcb_msg->payload_count > 0) {
 
-        uint64_t node_id = Utilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0);
-
-        if (node_id == openlcb_node->id)
+        if (Utilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0) == openlcb_node->id)
 
             _send_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
 
@@ -122,18 +113,15 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t* openlcb
 }
 
 void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
-    if (openlcb_node->state.openlcb_msg_handled)
-        return; // finished with the message
-
-    if (openlcb_node->alias == openlcb_msg->dest_alias) // Addressed always replies regardless if the payload NodeID matches or not but the alias much match
-
-        _send_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
+    
+    if (Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
+        
+       _send_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
 
     else
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
-
+    
 }
 
 void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
@@ -141,9 +129,7 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message
 
-    int64_t node_id = Utilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0);
-
-    if (node_id == openlcb_node->id)
+    if (Utilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0) == openlcb_node->id)
 
         _send_duplicate_node_id(openlcb_node, openlcb_msg, worker_msg);
 
@@ -155,20 +141,10 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
 
 void ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-
-    if (openlcb_node->state.openlcb_msg_handled)
-        return; // finished with the message
-
-
-    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = TRUE; // Done with the message 
-
+    if (!Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
         return;
 
-    }
-
-    Utilities_load_openlcb_message(worker_msg,openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias,openlcb_msg->source_id, MTI_OPTIONAL_INTERACTION_REJECTED, 4);
+    Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_OPTIONAL_INTERACTION_REJECTED, 4);
     Utilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);
     Utilities_copy_word_to_openlcb_payload(worker_msg, openlcb_msg->mti, 2);
 

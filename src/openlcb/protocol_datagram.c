@@ -817,16 +817,6 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
     if (!Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
         return;
-    
-    if (openlcb_node->state.openlcb_msg_handled)
-        return;
-
-    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = TRUE;
-
-        return;
-    }
 
     for (int i = 0; i < LEN_DATAGRAM_REPLY_WAITING_LIST; i++) {
 
