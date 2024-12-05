@@ -30,25 +30,46 @@ void ProtocolDatagram_initialize() {
 
 }
 
+void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openlcb_node) {
+
+    if (openlcb_node->last_received_datagram) {
+
+        BufferStore_freeBuffer(openlcb_node->last_received_datagram);
+
+        openlcb_node->last_received_datagram = (void*) 0;
+
+    }
+
+    openlcb_node->state.resend_datagram = FALSE;
+
+}
+
 void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
-
-    openlcb_msg_t* target_msg = BufferStore_allocateBuffer(openlcb_msg->payload_size);
     
-    if (target_msg) {
- 
-      Utilities_clone_openlcb_message(openlcb_msg, target_msg);  
-      
-      if (openlcb_node->sent_datagrams[0])
-          
-          BufferStore_freeBuffer(openlcb_node->sent_datagrams[0]);
+    ProtocolDatagram_clear_resend_datagram_message(openlcb_node);
 
-      openlcb_node->sent_datagrams[0] = target_msg;
+    // Take a reference and store the sent message in case we have to resend it
+    BufferStore_inc_reference_count(openlcb_msg);
 
+    openlcb_node->last_received_datagram = openlcb_msg;
+
+    openlcb_node->state.openlcb_msg_handled = TRUE;
+
+
+}
+
+void _try_transmist(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg,  openlcb_msg_t* worker_msg) {
+    
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+        
+        openlcb_node->state.openlcb_msg_handled = TRUE;
+        
+        if (!openlcb_node->state.resend_datagram) // if we are currently process a resend don't reload it
+
+          _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, openlcb_msg);
         
     }
     
-    openlcb_node->state.openlcb_msg_handled = TRUE;
-
 }
 
 const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
@@ -378,13 +399,10 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
     }
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
-
-        _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, worker_msg);
-
-
+    _try_transmist(openlcb_node, openlcb_msg, worker_msg); 
+    
 }
-
+        
 void _handle_memory_read_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
@@ -460,11 +478,8 @@ void _handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 
     }
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
-
-        _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, worker_msg);
-
-
+    _try_transmist(openlcb_node, openlcb_msg, worker_msg); 
+    
 }
 
 void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
@@ -564,9 +579,7 @@ void _handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_ms
         worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, openlcb_node->parameters->configuration_options.description, worker_msg->payload_count);
 
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
-
-        _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, worker_msg);
+    _try_transmist(openlcb_node, openlcb_msg, worker_msg); 
 
 }
 
@@ -650,9 +663,7 @@ void _handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node,
         worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, target_space->description, worker_msg->payload_count);
 
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
-
-        _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, worker_msg);
+    _try_transmist(openlcb_node, openlcb_msg, worker_msg); 
 
 }
 
@@ -714,9 +725,7 @@ void _handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_m
     *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
     Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->lock_node, 2);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
-
-        _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, worker_msg);
+    _try_transmist(openlcb_node, openlcb_msg, worker_msg); 
 
 }
 
@@ -961,10 +970,10 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
-    if (openlcb_node->sent_datagrams[0]) {
+    if (openlcb_node->last_received_datagram) {
 
-        BufferStore_freeBuffer(openlcb_node->sent_datagrams[0]);
-        openlcb_node->sent_datagrams[0] = (void*) 0;
+        BufferStore_freeBuffer(openlcb_node->last_received_datagram);
+        openlcb_node->last_received_datagram = (void*) 0;
 
     }
 
@@ -981,7 +990,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
     if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
 
-        if (openlcb_node->sent_datagrams[0]) {
+        if (openlcb_node->last_received_datagram) {
 
             openlcb_node->state.resend_datagram = TRUE; 
             
@@ -989,8 +998,8 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
     } else {
 
-        BufferStore_freeBuffer(openlcb_node->sent_datagrams[0]);
-        openlcb_node->sent_datagrams[0] = (void*) 0;
+        BufferStore_freeBuffer(openlcb_node->last_received_datagram);
+        openlcb_node->last_received_datagram = (void*) 0;
 
     }
     

@@ -13,6 +13,8 @@
 #include "openlcb_buffer_fifo.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_tx_driver.h"
+#include "../drivers/driver_100ms_clock.h"
+#include "../drivers/driver_can.h"
 
 void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -157,28 +159,28 @@ void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* openlcb_no
 
 }
 
-void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+void ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node_t* openlcb_node) {
 
-    openlcb_msg_t* target_msg = BufferStore_allocateBuffer(openlcb_msg->payload_size);
+    if (openlcb_node->last_received_optional_interaction) {
 
-    printf("optional\n");
-    printf("optional: %p\n", target_msg);
-    printf("optional: %d\n", openlcb_msg->payload_size);
-            
-    if (target_msg) {
+        BufferStore_freeBuffer(openlcb_node->last_received_optional_interaction);
 
-        Utilities_clone_openlcb_message(openlcb_msg, target_msg);
-        
-        if (openlcb_node->sent_optional_message[0])
-          
-          BufferStore_freeBuffer(openlcb_node->sent_optional_message[0]);
-
-        openlcb_node->sent_optional_message[0] = target_msg;
-        
-        printf("optional allocated\n");
-
+        openlcb_node->last_received_optional_interaction = (void*) 0;
 
     }
+
+    openlcb_node->state.resend_optional_message = FALSE;
+
+}
+
+void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+
+    ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node);
+
+    // Take a reference and store the sent message in case we have to resend it
+    BufferStore_inc_reference_count(openlcb_msg);
+
+    openlcb_node->last_received_optional_interaction = openlcb_msg;
 
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
@@ -190,24 +192,23 @@ void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t*
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
+    uint16_t should_resend = Utilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY;
 
-    if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
+    if (should_resend && openlcb_node->last_received_optional_interaction) {
 
-        if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 2) == openlcb_node->sent_optional_message[0]->mti) {
+        if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 2) == openlcb_node->last_received_optional_interaction->mti) {
 
             openlcb_node->state.resend_optional_message = TRUE;
 
         } else {
 
-            BufferStore_freeBuffer(openlcb_node->sent_optional_message[0]);
-            openlcb_node->sent_optional_message[0] = (void*) 0;
+            ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node);
 
         }
 
     } else {
 
-        BufferStore_freeBuffer(openlcb_node->sent_optional_message[0]);
-        openlcb_node->sent_optional_message[0] = (void*) 0;
+        ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node);
 
     }
 

@@ -15,7 +15,6 @@ openlcb_nodes_t openlcb_nodes;
 
 uint16_t node_enum_index_array[6];
 
-
 void _clear_node(openlcb_node_t* openlcb_node) {
 
     openlcb_node->alias = 0;
@@ -33,14 +32,9 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.resend_optional_message = FALSE;
     openlcb_node->timerticks = 0;
     openlcb_node->lock_node = 0;
-    
-    for (int i = 0; i < LEN_RESEND_BUFFERS; i++) {
-        
-        openlcb_node->sent_datagrams[i] = (void*) 0;
-        openlcb_node->sent_optional_message[i] = (void*) 0;
-        
-    }
 
+    openlcb_node->last_received_datagram = (void*) 0;
+    openlcb_node->last_received_optional_interaction = (void*) 0;
 
     for (int i = 0; i < LEN_CONSUMER_MAX_COUNT; i++)
         openlcb_node->consumers.list[i] = 0;
@@ -97,7 +91,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     for (int i = 0; i < openlcb_node->parameters->consumer_count; i++)
 
-        if (i < LEN_CONSUMER_MAX_COUNT)  // safety net
+        if (i < LEN_CONSUMER_MAX_COUNT) // safety net
 
             openlcb_node->consumers.list[i] = node_id + i;
 
@@ -110,10 +104,10 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     openlcb_node->consumers.enumerator.running = FALSE;
     openlcb_node->consumers.enumerator.enum_index = 0;
-    
+
     openlcb_node->producers.enumerator.running = FALSE;
     openlcb_node->producers.enumerator.enum_index = 0;
-    
+
 
 
 }

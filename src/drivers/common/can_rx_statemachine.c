@@ -43,7 +43,6 @@ uint32_t _oir_identifier(uint16_t source_alias) {
 
 openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
 
-    // Does not work... this is for incoming that need processed.  It will not get just sent out....
     can_msg_t* can_msg_error = CanBufferFifo_push();
 
     if (can_msg_error) {
@@ -58,6 +57,7 @@ openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t
         can_msg_error->payload[2] = (uint8_t) (error_code >> 8) & 0x00FF;
         can_msg_error->payload[3] = (uint8_t) error_code & 0x00FF;
         
+        // Flag so it is directly sent out and not processed by nodes
         can_msg_error->state.direct_tx = TRUE;
         
         can_msg_error->payload_count = 4;

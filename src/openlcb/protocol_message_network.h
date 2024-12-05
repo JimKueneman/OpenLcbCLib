@@ -29,6 +29,8 @@ extern void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* ope
 
 extern void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
+extern void ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node_t* openlcb_node);
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

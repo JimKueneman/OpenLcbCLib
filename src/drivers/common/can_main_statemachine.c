@@ -14,6 +14,8 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_main_statemachine.h"
 #include "../../openlcb/openlcb_tx_driver.h"
+#include "../../openlcb/protocol_message_network.h"
+#include "../../openlcb/protocol_datagram.h"
 #include "can_types.h"
 #include "can_buffer_fifo.h"
 #include "can_frame_message_handler.h"
@@ -211,6 +213,7 @@ uint8_t _pop_next_openlcb_worker_active_message() {
     DriverCan_resume_can_rx();
     Driver100msClock_resume_100ms_timer();
 
+
     if (can_helper.openlcb_worker->active_msg)
 
         return TRUE
@@ -249,7 +252,7 @@ uint8_t is_direct_tx_message(uint8_t is_new_popped_message) {
 
 }
 
-void _reset_message_handled_flags(openlcb_node_t* next_node, uint8_t newly_popped_can_active_msg, uint8_t newly_popped_openlcb_active_msg) {
+void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_t newly_popped_can_active_msg, uint8_t newly_popped_openlcb_active_msg) {
 
     if (newly_popped_can_active_msg) {
         next_node->state.can_msg_handled = FALSE;
@@ -293,20 +296,23 @@ void _process_login_statemachine(openlcb_node_t* next_node) {
 
 }
 
-uint8_t _resend_any_datagram_message_from_ack_failure_reply(openlcb_node_t* next_node) {
+uint8_t _resend_datagram_message_from_ack_failure_reply(openlcb_node_t* next_node) {
 
-    if (next_node->state.resend_datagram && next_node->sent_datagrams[0]) {
+    if (next_node->state.resend_datagram && next_node->last_received_datagram) {
 
-        if (OpenLcbTxDriver_try_transmit(next_node, next_node->sent_datagrams[0])) {
+        next_node->state.openlcb_msg_handled = FALSE;
 
+        MainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper.openlcb_worker->worker);
 
-            BufferStore_freeBuffer(next_node->sent_datagrams[0]);
-            next_node->state.resend_datagram = FALSE;
-            next_node->sent_datagrams[0] = (void*) 0;
+        if (next_node->state.openlcb_msg_handled) {
+
+            ProtocolDatagram_clear_resend_datagram_message(next_node);
+
+            return FALSE
 
         }
 
-        return TRUE;
+        return TRUE; // need to retry
 
     }
 
@@ -314,19 +320,23 @@ uint8_t _resend_any_datagram_message_from_ack_failure_reply(openlcb_node_t* next
 
 }
 
-uint8_t _resend_any_optional_message_from_oir_reply(openlcb_node_t* next_node) {
+uint8_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) {
 
-    if (next_node->state.resend_optional_message && next_node->sent_optional_message[0]) {
+    if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
 
-        if (OpenLcbTxDriver_try_transmit(next_node, next_node->sent_optional_message[0])) {
+        next_node->state.openlcb_msg_handled = FALSE;
 
-            BufferStore_freeBuffer(next_node->sent_optional_message[0]);
-            next_node->state.resend_optional_message = FALSE;
-            next_node->sent_optional_message[0] = (void*) 0;
+        MainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper.openlcb_worker->worker);
+
+        if (next_node->state.openlcb_msg_handled) {
+
+            ProtocolMessageNetwork_clear_resend_optional_message(next_node);
+
+            return FALSE
 
         }
 
-        return TRUE;
+        return TRUE; // need to retry
 
     }
 
@@ -341,11 +351,11 @@ uint8_t _dispatch_next_can_message_to_node(openlcb_node_t* next_node) {
         _run_can_frame_statemachine(next_node, can_helper.active_msg, &can_helper.can_worker);
 
         if (next_node->state.can_msg_handled)
-            
+
             return TRUE;
 
     }
-    
+
     return FALSE;
 }
 
@@ -356,17 +366,21 @@ uint8_t _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node) {
         MainStatemachine_run_single_node(next_node, can_helper.openlcb_worker->active_msg, &can_helper.openlcb_worker->worker);
 
         if (next_node->state.openlcb_msg_handled)
-            
+
             return TRUE;
 
     }
-    
+
     return FALSE;
 
 }
 
 void CanMainStateMachine_run() {
 
+
+    //    probably should have a separate loop to run the resends.....
+    //    the can get the buffer handled flags screwed up....        
+    //            
     uint8_t is_newly_popped_can_active_msg = _pop_next_can_helper_active_message();
     uint8_t is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message();
 
@@ -378,28 +392,28 @@ void CanMainStateMachine_run() {
     if (is_direct_tx_message(is_newly_popped_can_active_msg))
         return;
 
-   
-    
+
+
     openlcb_node_t* next_node = Node_get_first(0);
 
     while (next_node) {
 
-        _reset_message_handled_flags(next_node, is_newly_popped_can_active_msg, is_newly_popped_openlcb_active_msg);
+        _reset_message_handled_flags_if_required(next_node, is_newly_popped_can_active_msg, is_newly_popped_openlcb_active_msg);
 
 
         if (next_node->state.initalized) { // process any incoming messages that were popped if the node is initialized
 
             // these need to get out asap so don't waste time processing normal messages below until we can get these out
-            if (_resend_any_datagram_message_from_ack_failure_reply(next_node))
+            if (_resend_datagram_message_from_ack_failure_reply(next_node))
 
                 break;
 
             // these need to get out asap so don't waste time processing normal messages below until we can get these out
-            if (_resend_any_optional_message_from_oir_reply(next_node))
+            if (_resend_optional_message_from_oir_reply(next_node))
 
                 break;
 
-            
+
             is_active_can_msg_processiong_complete = _dispatch_next_can_message_to_node(next_node);
 
             is_active_openlcb_msg_processing_complete = _dispatch_next_openlcb_message_to_node(next_node);

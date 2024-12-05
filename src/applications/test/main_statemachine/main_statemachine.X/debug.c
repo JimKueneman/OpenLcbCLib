@@ -230,14 +230,14 @@ void PrintNode(openlcb_node_t* node) {
     PrintInt64(node->id);
     printf("Alias: %04X\n", node->alias);
     printf("Parameters: 0x%p\n", node->parameters);
-    printf("Sent Datagrams: 0x%p\n", &node->sent_datagrams[0]);
-    if (node->sent_datagrams[0])
-      PrintOpenLcbMsg(node->sent_datagrams[0]);
+    printf("Sent Datagrams: 0x%p\n", &node->last_received_datagram);
+    if (node->last_received_datagram)
+      PrintOpenLcbMsg(node->last_received_datagram);
     else
         printf("  null\n");
-    printf("Sent Optional Messages: 0x%p\n", &node->sent_optional_message[0]);
-    if (node->sent_optional_message[0])
-      PrintOpenLcbMsg(node->sent_optional_message[0]);
+    printf("Sent Optional Messages: 0x%p\n", &node->last_received_optional_interaction);
+    if (node->last_received_optional_interaction)
+      PrintOpenLcbMsg(node->last_received_optional_interaction);
     else
         printf("  null\n");
     printf("NodeLock ID: ");

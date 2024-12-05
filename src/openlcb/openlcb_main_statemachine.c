@@ -63,9 +63,10 @@ void MainStatemachine_initialize() {
 void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     switch (openlcb_msg->mti) {
-
+       
         case MTI_SIMPLE_NODE_INFO_REQUEST:
         {
+ 
             ProtocolSnip_handle_simple_node_info_request(openlcb_node, openlcb_msg, worker_msg);
             return;
         }

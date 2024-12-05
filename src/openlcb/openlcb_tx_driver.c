@@ -31,6 +31,7 @@ uint8_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t
         payload_index = payload_index + bytes_transmitted;
         
     }
+    
     return TRUE;
     
     

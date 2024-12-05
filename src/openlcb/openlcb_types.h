@@ -25,13 +25,11 @@
 
 #define LEN_NODE_ARRAY                16  // USER DEFINED 
 
-#define LEN_MAX_CDI                   1800
-#define LEN_MAX_FDI                   820
+#define LEN_MAX_CDI                   2000
+#define LEN_MAX_FDI                   1000
 
 #define LEN_PRODUCER_MAX_COUNT         8
 #define LEN_CONSUMER_MAX_COUNT         8
-
-#define LEN_RESEND_BUFFERS             1
 
 #define CONFIG_MEM_READ_WRITE_DESCRIPTION_LEN       63-1   // space for null
 #define CONFIG_MEM_OPTIONS_DESCRIPTION_LEN          64-1   // space for null
@@ -51,11 +49,16 @@
 #define LEN_SNIP_USER_NAME         63
 #define LEN_SNIP_USER_DESCRIPTION  64
 
+#define LEN_SNIP_VERSION            1
+#define LEN_SNIP_USER_VERSION       1
+
+#define LEN_SNIP_STRUCTURE        253
+
 
 #define LEN_MESSAGE_BYTES_BASIC        16     // most are 8 bytes but a few protocols take 2 frames like Traction
 #define LEN_MESSAGE_BYTES_DATAGRAM     72
-#define LEN_MESSAGE_BYTES_SNIP        256
-#define LEN_MESSAGE_BYTES_STREAM     1024
+#define LEN_MESSAGE_BYTES_SNIP        256     // will cover Event with Payload as well
+#define LEN_MESSAGE_BYTES_STREAM      512
 
 #define LEN_EVENT_ID                    8
 
@@ -94,6 +97,7 @@ typedef struct {
     openlcb_payload_t* payload; // size depend of the buffer type and defined as payload_size
     uint8_t timerticks; // timeouts, etc
     uint8_t retry_count;
+    uint8_t reference_count; // reference counted for garbage collection
 } openlcb_msg_t;
 
 typedef openlcb_msg_t openlcb_msg_array_t[LEN_MESSAGE_BUFFER];
@@ -205,8 +209,8 @@ typedef struct {
     const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
     uint64_t lock_node;  // node that has this node locked
-    openlcb_msg_t* sent_datagrams[LEN_RESEND_BUFFERS];
-    openlcb_msg_t* sent_optional_message[LEN_RESEND_BUFFERS];
+    openlcb_msg_t* last_received_datagram;
+    openlcb_msg_t* last_received_optional_interaction;
 } openlcb_node_t;
 
 typedef struct {
