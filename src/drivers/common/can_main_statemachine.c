@@ -344,34 +344,31 @@ uint8_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) {
 
 }
 
-uint8_t _dispatch_next_can_message_to_node(openlcb_node_t* next_node) {
+void _dispatch_next_can_message_to_node(openlcb_node_t* next_node, uint8_t* is_active_can_msg_processiong_complete) {
 
     if (can_helper.active_msg) {
 
         _run_can_frame_statemachine(next_node, can_helper.active_msg, &can_helper.can_worker);
 
-        if (next_node->state.can_msg_handled)
+        if (!next_node->state.can_msg_handled)
 
-            return TRUE;
+            *is_active_can_msg_processiong_complete = FALSE;
 
     }
 
-    return FALSE;
 }
 
-uint8_t _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node) {
+void _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node, uint8_t* is_active_openlcb_msg_processiong_complete) {
 
     if (can_helper.openlcb_worker->active_msg) {
 
         MainStatemachine_run_single_node(next_node, can_helper.openlcb_worker->active_msg, &can_helper.openlcb_worker->worker);
 
-        if (next_node->state.openlcb_msg_handled)
-
-            return TRUE;
+        if (!next_node->state.openlcb_msg_handled)
+            
+            *is_active_openlcb_msg_processiong_complete = FALSE;
 
     }
-
-    return FALSE;
 
 }
 
@@ -413,11 +410,9 @@ void CanMainStateMachine_run() {
 
                 break;
 
+             _dispatch_next_can_message_to_node(next_node, &is_active_can_msg_processiong_complete);
 
-            is_active_can_msg_processiong_complete = _dispatch_next_can_message_to_node(next_node);
-
-            is_active_openlcb_msg_processing_complete = _dispatch_next_openlcb_message_to_node(next_node);
-
+             _dispatch_next_openlcb_message_to_node(next_node, &is_active_openlcb_msg_processing_complete);
 
         }
 

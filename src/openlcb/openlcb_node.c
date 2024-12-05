@@ -32,6 +32,7 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.resend_optional_message = FALSE;
     openlcb_node->timerticks = 0;
     openlcb_node->lock_node = 0;
+    openlcb_node->index = 0;
 
     openlcb_node->last_received_datagram = (void*) 0;
     openlcb_node->last_received_optional_interaction = (void*) 0;
@@ -123,6 +124,7 @@ openlcb_node_t* Node_allocate(uint64_t node_id, const node_parameters_t* node_pa
             openlcb_nodes.node[i].parameters = node_parameters;
             openlcb_nodes.node[i].state.allocated = TRUE;
             openlcb_nodes.node[i].id = node_id;
+            openlcb_nodes.node[i].index = i;
 
             _generate_event_ids(&openlcb_nodes.node[i]);
 

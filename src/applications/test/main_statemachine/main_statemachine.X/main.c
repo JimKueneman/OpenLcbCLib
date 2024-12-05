@@ -61,6 +61,8 @@
 
 #include "debug.h"
 
+uint64_t node_id_base = 0x050101010700;
+
 void _uart_callback(uint16_t code) {
 
     switch (code) {
@@ -92,6 +94,8 @@ void _uart_callback(uint16_t code) {
                 PrintCanMsg(can_helper.active_msg);
                 printf("\n");
                 PrintCanFrameIdentifierName(can_helper.active_msg->identifier);
+                
+                return;
 
             }
         case 'N':
@@ -99,6 +103,27 @@ void _uart_callback(uint16_t code) {
 
             if (Node_get_first(0))
                 PrintNode(Node_get_first(0));
+            
+            return;
+            
+        case 'L':
+        case 'l':
+
+            node_id_base++;
+            Node_allocate(node_id_base, &NodeParameters_main_node);
+            
+            return;
+            
+        case 'H':
+        case 'h':
+            
+            printf("B - Print Buffer Storage state\n");
+            printf("P - Print the active message in the CanHelper\n");
+            printf("C - Print the active message in the OpenLcbHelper\n");
+            printf("N - Print the state of the first allocated Node\n");
+            printf("L - Allocate a new Node\n");
+            
+            return;
 
     }
 
@@ -121,12 +146,6 @@ int main(void) {
     _TRISB4 = 0;
     _RB4 = 0;
 
-    McuDriver_uart_rx_callback_func = &_uart_callback;
-    CallbackHooks_alias_change = &_alias_change_callback;
-
-    CanMainStatemachine_initialize();
-    MainStatemachine_initialize();
-
 
 #ifdef _SIMULATOR_
 
@@ -137,15 +156,22 @@ int main(void) {
     U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
 
 #else
+    McuDriver_uart_rx_callback_func = &_uart_callback;
+    CallbackHooks_alias_change = &_alias_change_callback;
+
+    CanMainStatemachine_initialize();
+    MainStatemachine_initialize();
+    
     McuDriver_initialization();
 #endif
 
     printf("\n\nBooted\n");
 
-    openlcb_node_t* node = Node_allocate(0x050101010700, &NodeParameters_main_node);
+    openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
 
     printf("Node Created\n");
 
+    uint16_t x = node->index * LEN_SNIP_USER_DATA;
 
 #ifdef _SIMULATOR_
 

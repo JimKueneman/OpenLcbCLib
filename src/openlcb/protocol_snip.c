@@ -156,7 +156,9 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
     uint32_t data_address = 0; // User Name is always the first 63 Bytes in the Configuration Space
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
         data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
-
+   
+    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
+   
     data_count = DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[payload_index]));
 
     uint8_t original_payload_index = payload_index;
@@ -166,6 +168,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
         if ( (payload_index - original_payload_index) >=  LEN_SNIP_USER_NAME) {
             
           *worker_msg->payload[payload_index] = 0x00;
+          
           break;
           
         }
@@ -177,15 +180,18 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 
 }
 
+
 uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
 
     if (data_count > LEN_SNIP_USER_DESCRIPTION - 1)
         data_count = LEN_SNIP_USER_DESCRIPTION - 1;
 
-    uint32_t data_address = LEN_SNIP_USER_NAME; // User Name is always the first 64 Bytes in the Configuration Space and Description next 64 bytes
+    uint32_t data_address = LEN_SNIP_USER_NAME; // User Name is always the first 63 Bytes in the Configuration Space and Description next 64 bytes
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
         data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
-
+    
+    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
+    
     data_count = DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[payload_index]));
 
     uint8_t original_payload_index = payload_index;
@@ -195,6 +201,7 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
         if ( (payload_index - original_payload_index) >=  LEN_SNIP_USER_DESCRIPTION) {
             
           *worker_msg->payload[payload_index] = 0x00;
+          
           break;
           
         }

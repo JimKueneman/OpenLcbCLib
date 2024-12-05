@@ -185,6 +185,8 @@ uint16_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, o
     uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
     if (invalid)
         return invalid;
+    
+    data_address = data_address + (openlcb_node->index * LEN_SNIP_USER_DATA);
 
     return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
@@ -357,7 +359,6 @@ uint16_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker
 
 void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
-
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
@@ -365,7 +366,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
         return;
 
     }
-
+    
     uint16_t data_count = *openlcb_msg->payload[6];
     uint16_t reply_payload_index = 6;
     uint32_t data_address = Utilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
@@ -599,7 +600,7 @@ void _handle_memory_options_reply_message(openlcb_node_t* openlcb_node, openlcb_
 }
 
 void _handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
@@ -819,7 +820,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
     if (!Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
         return;
-
+            
     switch (*openlcb_msg->payload[0]) {
 
         case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?

@@ -49,6 +49,8 @@
 #define LEN_SNIP_USER_NAME         63
 #define LEN_SNIP_USER_DESCRIPTION  64
 
+#define LEN_SNIP_USER_DATA         (LEN_SNIP_USER_NAME + LEN_SNIP_USER_DESCRIPTION)
+
 #define LEN_SNIP_VERSION            1
 #define LEN_SNIP_USER_VERSION       1
 
@@ -62,7 +64,7 @@
 
 #define LEN_EVENT_ID                    8
 
-#define LEN_MESSAGE_BUFFER  LEN_BASIC_BUFFER + LEN_DATAGRAM_BUFFER + LEN_SNIP_BUFFER + LEN_STREAM_BUFFER
+#define LEN_MESSAGE_BUFFER  (LEN_BASIC_BUFFER + LEN_DATAGRAM_BUFFER + LEN_SNIP_BUFFER + LEN_STREAM_BUFFER)
 
 typedef uint8_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
 typedef uint8_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
@@ -211,6 +213,7 @@ typedef struct {
     uint64_t lock_node;  // node that has this node locked
     openlcb_msg_t* last_received_datagram;
     openlcb_msg_t* last_received_optional_interaction;
+    uint8_t index; //what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
 } openlcb_node_t;
 
 typedef struct {

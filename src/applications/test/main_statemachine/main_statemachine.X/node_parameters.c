@@ -61,7 +61,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_config_memory.present = 1,
     .address_space_config_memory.low_address_valid = 0, // assume the low address starts at 0
     .address_space_config_memory.low_address = 0, // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0x200,
+    .address_space_config_memory.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -101,7 +101,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_train_function_config_memory.present = 1,
     .address_space_train_function_config_memory.low_address_valid = 0, // assume the low address starts at 0
     .address_space_train_function_config_memory.low_address = 0x100, // ignored if low_address_valid is false
-    .address_space_train_function_config_memory.highest_address = 0x200,
+    .address_space_train_function_config_memory.highest_address = 0x200, // This is important for multi node applications as the memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_train_function_config_memory.address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_train_function_config_memory.description = "Train function configuration memory storage",
 

@@ -63,6 +63,8 @@ extern uint8_t Utilities_addressed_message_needs_processing(openlcb_node_t* open
 
 extern void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target);
 
+extern uint32_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node);
+
 // OpenLcb message helpers
 
 
