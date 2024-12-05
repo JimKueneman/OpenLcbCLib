@@ -29,8 +29,17 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.can_msg_handled = FALSE;
     openlcb_node->state.openlcb_msg_handled = FALSE;
     openlcb_node->state.openlcb_datagram_ack_sent = FALSE;
+    openlcb_node->state.resend_datagram = FALSE;
+    openlcb_node->state.resend_optional_message = FALSE;
     openlcb_node->timerticks = 0;
     openlcb_node->lock_node = 0;
+    
+    for (int i = 0; i < LEN_RESEND_BUFFERS; i++) {
+        
+        openlcb_node->sent_datagrams[i] = (void*) 0;
+        openlcb_node->sent_optional_message[i] = (void*) 0;
+        
+    }
 
 
     for (int i = 0; i < LEN_CONSUMER_MAX_COUNT; i++)

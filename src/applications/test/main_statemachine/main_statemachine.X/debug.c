@@ -213,6 +213,39 @@ void PrintCanMsg(can_msg_t* can_msg) {
 
 }
 
+void PrintNode(openlcb_node_t* node) {
+    
+    printf("State Info\n");
+    printf("  allocated = 0x%02X\n", node->state.allocated);
+    printf("  permitted = 0x%02X\n", node->state.permitted);
+    printf("  initalized = 0x%02X\n", node->state.initalized);
+    printf("  duplicate_id_detected = 0x%02X\n", node->state.duplicate_id_detected);
+    printf("  can_msg_handled = 0x%02X\n", node->state.can_msg_handled);
+    printf("  openlcb_datagram_ack_sent = 0x%02X\n", node->state.openlcb_datagram_ack_sent);
+    printf("  resend_datagram = 0x%02X\n", node->state.resend_datagram);
+    printf("  resend_optional_message = 0x%02X\n", node->state.resend_optional_message);
+    printf("  State = %d\n", node->state.run_state);
+    
+    printf("ID: ");
+    PrintInt64(node->id);
+    printf("Alias: %04X\n", node->alias);
+    printf("Parameters: 0x%p\n", node->parameters);
+    printf("Sent Datagrams: 0x%p\n", &node->sent_datagrams[0]);
+    if (node->sent_datagrams[0])
+      PrintOpenLcbMsg(node->sent_datagrams[0]);
+    else
+        printf("  null\n");
+    printf("Sent Optional Messages: 0x%p\n", &node->sent_optional_message[0]);
+    if (node->sent_optional_message[0])
+      PrintOpenLcbMsg(node->sent_optional_message[0]);
+    else
+        printf("  null\n");
+    printf("NodeLock ID: ");
+    PrintInt64(node->lock_node);
+    printf("Timer Ticks: %d", node->timerticks);
+     
+}
+
 void PrintEventID(event_id_t event_id) {
 
     printf("EventID: 0x%04X", (uint16_t) (event_id >> 48));

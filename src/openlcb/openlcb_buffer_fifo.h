@@ -20,6 +20,8 @@ extern openlcb_msg_t* BufferFifo_push(uint16_t data_len);
 
 extern openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg);
 
+openlcb_msg_t* BufferFifo_push_existing_to_front(openlcb_msg_t* existing_msg);
+
 extern openlcb_msg_t* BufferFifo_pop();
 
 extern uint8_t BufferFifo_is_empty();

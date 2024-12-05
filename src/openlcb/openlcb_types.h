@@ -19,7 +19,7 @@
 
 #define LEN_BASIC_BUFFER     10  // USER DEFINED
 #define LEN_DATAGRAM_BUFFER  4  // USER DEFINED
-#define LEN_SNIP_BUFFER      2  // USER DEFINED
+#define LEN_SNIP_BUFFER      4  // USER DEFINED
 #define LEN_STREAM_BUFFER    0  // USER DEFINED
 
 
@@ -28,8 +28,10 @@
 #define LEN_MAX_CDI                   1800
 #define LEN_MAX_FDI                   820
 
-#define LEN_PRODUCER_MAX_COUNT         10
-#define LEN_CONSUMER_MAX_COUNT         10
+#define LEN_PRODUCER_MAX_COUNT         8
+#define LEN_CONSUMER_MAX_COUNT         8
+
+#define LEN_RESEND_BUFFERS             1
 
 #define CONFIG_MEM_READ_WRITE_DESCRIPTION_LEN       63-1   // space for null
 #define CONFIG_MEM_OPTIONS_DESCRIPTION_LEN          64-1   // space for null
@@ -77,7 +79,7 @@ typedef uint64_t node_id_t;
 
 typedef struct {
     uint8_t allocated : 1; // message has been allocated and is in use
-    uint8_t inprocess : 1; // message is being collected from multiple CAN frames
+    uint8_t inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
 } openlcb_msg_state;
 
 typedef struct {
@@ -92,7 +94,6 @@ typedef struct {
     openlcb_payload_t* payload; // size depend of the buffer type and defined as payload_size
     uint8_t timerticks; // timeouts, etc
     uint8_t retry_count;
-    uint8_t reference_count; // reference counted for garbage collection
 } openlcb_msg_t;
 
 typedef openlcb_msg_t openlcb_msg_array_t[LEN_MESSAGE_BUFFER];
@@ -190,6 +191,8 @@ typedef struct {
     uint16_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
     uint16_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
     uint16_t openlcb_datagram_ack_sent : 1;
+    uint16_t resend_datagram: 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+    uint16_t resend_optional_message: 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
 } openlcb_node_state_t;
 
 typedef struct {
@@ -201,7 +204,9 @@ typedef struct {
     event_id_producer_list_t producers;
     const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-    uint64_t lock_node;  // node that has this noded locked
+    uint64_t lock_node;  // node that has this node locked
+    openlcb_msg_t* sent_datagrams[LEN_RESEND_BUFFERS];
+    openlcb_msg_t* sent_optional_message[LEN_RESEND_BUFFERS];
 } openlcb_node_t;
 
 typedef struct {

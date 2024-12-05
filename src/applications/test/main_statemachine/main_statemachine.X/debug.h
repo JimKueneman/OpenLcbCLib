@@ -52,6 +52,8 @@ extern void PrintInt64(uint64_t n);
 extern void PrintDWord(uint32_t dword);
 
 extern void PrintCanMsg(can_msg_t* can_msg);
+
+extern void PrintNode(openlcb_node_t* node);
     
 
 extern uint8_t print_msg;

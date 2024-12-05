@@ -61,6 +61,8 @@ extern int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_
 
 extern uint8_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
+extern void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target);
+
 // OpenLcb message helpers
 
 

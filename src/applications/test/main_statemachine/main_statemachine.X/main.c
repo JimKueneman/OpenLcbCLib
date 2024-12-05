@@ -94,10 +94,16 @@ void _uart_callback(uint16_t code) {
                 PrintCanFrameIdentifierName(can_helper.active_msg->identifier);
 
             }
+        case 'N':
+        case 'n':
 
-            return;
+            if (Node_get_first(0))
+                PrintNode(Node_get_first(0));
 
     }
+
+    return;
+
 }
 
 void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
@@ -110,7 +116,6 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 //#define  _SIMULATOR_
 
-
 int main(void) {
 
     _TRISB4 = 0;
@@ -121,7 +126,7 @@ int main(void) {
 
     CanMainStatemachine_initialize();
     MainStatemachine_initialize();
-    
+
 
 #ifdef _SIMULATOR_
 
@@ -138,7 +143,7 @@ int main(void) {
     printf("\n\nBooted\n");
 
     openlcb_node_t* node = Node_allocate(0x050101010700, &NodeParameters_main_node);
-    
+
     printf("Node Created\n");
 
 

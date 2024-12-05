@@ -13,6 +13,25 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 
+void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target) {
+    
+    if (source && target) {
+        
+        target->dest_alias = source->dest_alias;
+        target->dest_id = source->dest_id;
+        target->mti = source->mti;
+        target->payload = source->payload;
+        target->payload_count = source->payload_count;
+        target->payload_size = source->payload_size;
+        target->retry_count = source->retry_count;
+        target->source_alias = source->source_alias;
+        target->source_id = source->source_id;
+        target->state = source->state;
+        target->timerticks = source->timerticks;
+    }
+      
+}
+
 void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti, uint16_t payload_count) {
 
     if (openlcb_msg) {

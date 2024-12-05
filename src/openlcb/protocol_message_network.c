@@ -113,15 +113,15 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t* openlcb
 }
 
 void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-    
+
     if (Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
-        
-       _send_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
+
+        _send_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
 
     else
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
-    
+
 }
 
 void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
@@ -139,7 +139,7 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
 
 }
 
-void ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (!Utilities_addressed_message_needs_processing(openlcb_node, openlcb_msg))
         return;
@@ -154,5 +154,64 @@ void ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node_t* openlc
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
     }
+
+}
+
+void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+
+    openlcb_msg_t* target_msg = BufferStore_allocateBuffer(openlcb_msg->payload_size);
+
+    printf("optional\n");
+    printf("optional: %p\n", target_msg);
+    printf("optional: %d\n", openlcb_msg->payload_size);
+            
+    if (target_msg) {
+
+        Utilities_clone_openlcb_message(openlcb_msg, target_msg);
+        
+        if (openlcb_node->sent_optional_message[0])
+          
+          BufferStore_freeBuffer(openlcb_node->sent_optional_message[0]);
+
+        openlcb_node->sent_optional_message[0] = target_msg;
+        
+        printf("optional allocated\n");
+
+
+    }
+
+    openlcb_node->state.openlcb_msg_handled = TRUE;
+
+}
+
+void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+
+    if (openlcb_node->state.openlcb_msg_handled)
+        return;
+
+
+    if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
+
+        if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 2) == openlcb_node->sent_optional_message[0]->mti) {
+
+            openlcb_node->state.resend_optional_message = TRUE;
+
+        } else {
+
+            BufferStore_freeBuffer(openlcb_node->sent_optional_message[0]);
+            openlcb_node->sent_optional_message[0] = (void*) 0;
+
+        }
+
+    } else {
+
+        BufferStore_freeBuffer(openlcb_node->sent_optional_message[0]);
+        openlcb_node->sent_optional_message[0] = (void*) 0;
+
+    }
+
+    openlcb_node->state.openlcb_msg_handled = TRUE;
+
 
 }

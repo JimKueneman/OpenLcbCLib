@@ -16,7 +16,7 @@
 
 // ************************ USER DEFINED VARIABLES *****************************
 
-#define LEN_CAN_BUFFER                    20   // USER DEFINED 
+#define LEN_CAN_BUFFER                    10   // USER DEFINED 
 
 // *********************END USER DEFINED VARIABLES *****************************
 

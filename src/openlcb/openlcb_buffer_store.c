@@ -25,7 +25,6 @@ void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
     openlcb_msg->payload_count = 0;
     openlcb_msg->timerticks = 0;
     openlcb_msg->retry_count = 0;
-    openlcb_msg->reference_count = 0;
     openlcb_msg->state.allocated = FALSE;
     openlcb_msg->state.inprocess = FALSE;
     
@@ -66,7 +65,7 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
 
     uint16_t offset_start = 0;
     uint16_t offset_end = 0;
-
+    
     switch (buffer_size) {
 
         case LEN_MESSAGE_BYTES_BASIC:
@@ -98,7 +97,6 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
                 _buffer_store_message_max_allocated = _buffer_store_message_allocated;
             
             _clear_openlcb_message(&_message_buffer.messages[i]);
-            _message_buffer.messages[i].reference_count = 1;
             _message_buffer.messages[i].state.allocated = TRUE;
             
             return &_message_buffer.messages[i];
@@ -115,14 +113,8 @@ void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg) {
 
     if (!openlcb_msg) 
         return;
-    
-    openlcb_msg->reference_count = openlcb_msg->reference_count - 1;
-    
-    if (openlcb_msg->reference_count > 0)
-        return;
-    
+ 
     _buffer_store_message_allocated = _buffer_store_message_allocated - 1;
-    openlcb_msg->reference_count = 0;
     openlcb_msg->state.allocated = FALSE;
 
 }
@@ -139,10 +131,5 @@ uint16_t BufferStore_messages_max_allocated() {
     
 }
 
-extern void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg) {
-    
-    openlcb_msg->reference_count = openlcb_msg->reference_count + 1;
-    
-}
 
 

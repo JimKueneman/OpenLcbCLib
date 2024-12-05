@@ -19,6 +19,7 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_tx_driver.h"
 #include "../drivers/driver_configuration_memory.h"
+#include "protocol_message_network.h"
 
 uint16_t _load_null(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index) {
 
@@ -206,7 +207,7 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
 }
 
 void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t data_count) {
-
+    
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message
 
@@ -240,11 +241,10 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
     worker_msg->payload_count = payload_index;
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) 
+        
+        ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node, worker_msg);
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
-
-    }
 
 
 }

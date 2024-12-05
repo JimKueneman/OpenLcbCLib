@@ -189,9 +189,14 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
             ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
+        case MTI_OPTIONAL_INTERACTION_REJECTED:
+        {
+            ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
+            return;
+        }
         default:
             
-            ProtocolMessageNetwork_optional_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
+            ProtocolMessageNetwork_send_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
 
             return;
 
