@@ -61,7 +61,7 @@ void _uart_callback(uint16_t code) {
         case 'P':
         case 'p':
 
-            if (openlcb_helper.active_msg)
+  //          if (openlcb_helper.active_msg)
              
 
             return;
@@ -69,13 +69,12 @@ void _uart_callback(uint16_t code) {
         case 'C':
         case 'c':
 
-            if (can_helper.active_msg) {
+   //         if (can_helper.active_msg) {
 
             
                 
-                return;
-
-            }
+            return;
+      
         case 'N':
         case 'n':
 
@@ -86,7 +85,7 @@ void _uart_callback(uint16_t code) {
         case 'l':
 
             node_id_base++;
-            Node_allocate(node_id_base, &NodeParameters_main_node);
+        //    Node_allocate(node_id_base, &NodeParameters_main_node);
             
             return;
             
@@ -117,16 +116,16 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 int main(void) {
 
-    McuDriver_uart_rx_callback_func = &_uart_callback;
-    CallbackHooks_alias_change = &_alias_change_callback;
+ //  McuDriver_uart_rx_callback_func = &_uart_callback;
+  //  CallbackHooks_alias_change = &_alias_change_callback;
 
-    CanMainStatemachine_initialize();
-    MainStatemachine_initialize(); 
-    McuDriver_initialization();
+  //  CanMainStatemachine_initialize();
+  //  MainStatemachine_initialize(); 
+  //  McuDriver_initialization();
 
     printf("\n\nBooted\n");
 
-    openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
+  //  openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
 
     printf("Node Created\n");
 

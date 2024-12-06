@@ -2,11 +2,18 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../openlcb"
+		},
+		{
+			"path": "../../../drivers"
 		}
 	],
 	"settings": {
 		"files.associations": {
-			"openlcb_main_statemachine.h": "c"
+			"openlcb_main_statemachine.h": "c",
+			"node_parameters.h": "c"
 		}
 	}
 }
