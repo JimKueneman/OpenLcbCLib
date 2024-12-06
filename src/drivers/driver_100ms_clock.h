@@ -41,12 +41,7 @@
 #define	__DRIVER_100MS_CLOCK__
 
 #include <xc.h> // include processor files - each processor file is guarded.
-
-
-// Assign the function pointer to where the timer tick should call out to
-// WARNING: Is in the context of the interrupt, be careful
-// void func()
-typedef void (*_100ms_timer_callback_func_t) ();
+#include "../openlcb/openlcb_types.h"
 
 extern void Driver100msClock_Initialization(_100ms_timer_callback_func_t _100ms_callback_func);
 

@@ -24,30 +24,58 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_mcu.h
+ * \file configuration_memory.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * to write/read configuration memory.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __MCU_DRV__
-#define	__MCU_DRV__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
+// Add any compiler specific includes
 
-
-// Timer -----------------------------------------------------------------------
-
-extern void McuDriver_initialization(void);
-
-extern uart_rx_callback_t McuDriver_uart_rx_callback_func;
+#include "../../../openlcb/openlcb_types.h"
+#include "../../25AA1024/25AA1024_driver.h"
 
 
-#endif	/* XC_HEADER_TEMPLATE_H */
+void DriverConfigurationMemory_initialization() {
+    
+    // SPI1 Initialize ---------------------------------------------------------
+    // -------------------------------------------------------------------------
+    
+    // Any SPI initialization or other Initialize functions
 
+    
+    
+}
+
+uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, DriverConfigurationMemory_buffer_t* buffer) {
+    
+    
+    // Implement your Configuration Memory Read Here:
+    
+// Example;
+//   return _25AA1024_Driver_read(address, count, buffer);
+
+    
+}
+
+uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, DriverConfigurationMemory_buffer_t* buffer) {
+    
+    
+    // Implement your Configuration Memory Write Here:
+
+// Example:
+//    _25AA1024_Driver_write_latch_enable();
+//    _25AA1024_Driver_write(address, count, buffer);
+//    
+//    while (_25AA1024_Driver_write_in_progress()) {
+//        
+//    }
+//    
+//    return count;
+    
+}

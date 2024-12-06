@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_mcu.h
+ * \file mcu.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * to initialize the device.  A new supported MCU/PC will create a file that handles the 
@@ -34,20 +34,55 @@
  * @date 5 Dec 2024
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __MCU_DRV__
-#define	__MCU_DRV__
+// Global that things like libpic30.h use to calculate delay functions and such.
+// MUST be before libpic30c.h
 
-#include <xc.h> // include processor files - each processor file is guarded. 
+// Add any compiler specific includes
 
-
-// Timer -----------------------------------------------------------------------
-
-extern void McuDriver_initialization(void);
-
-extern uart_rx_callback_t McuDriver_uart_rx_callback_func;
+#include "../openlcb/openlcb_types.h"
 
 
-#endif	/* XC_HEADER_TEMPLATE_H */
+void McuDriver_initialization(void) {
 
+    // UART Initialize ---------------------------------------------------------
+    
+    // ------------------------------------------------------------
+
+
+    // Oscillator Initialize ---------------------------------------------------
+    
+    // -------------------------------------------------------------------------
+
+    // IO Pin Initialize -------------------------------------------------------
+  
+    // -------------------------------------------------------------------------
+
+
+    // Peripheral Pin Select Initialize ----------------------------------------
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+
+
+}
+
+
+// This must be here and used if you want a UART callback in your main program for debugging and such
+uart_rx_callback_t McuDriver_uart_rx_callback_func;
+
+// UART1 Receive Interrupt
+
+// Example
+
+//void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+//
+//    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
+//
+//    if (U1STAbits.URXDA == 1) {
+//
+//        if (McuDriver_uart_rx_callback_func)
+//            McuDriver_uart_rx_callback_func(U1RXREG);
+//
+//    }
+//    return;
+//}

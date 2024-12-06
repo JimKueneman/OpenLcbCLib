@@ -40,9 +40,7 @@
 #define	__DRIVER_CONFIGURATION_MEMORY__
 
 #include <xc.h> // include processor files - each processor file is guarded.  
-#include "../drivers/common/can_types.h"
-
-typedef uint8_t DriverConfigurationMemory_buffer_t[64];
+#include "../openlcb/openlcb_types.h"
 
 extern void DriverConfigurationMemory_initialization();
 

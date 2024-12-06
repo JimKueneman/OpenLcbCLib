@@ -256,6 +256,19 @@ typedef struct {
 } openlcb_statemachine_worker_t;
 
 
+// Assign the function pointer to where the timer tick should call out to
+// WARNING: Is in the context of the interrupt, be careful
+// void func()
+typedef void (*_100ms_timer_callback_func_t) ();
+
+// Assign the function pointer to where the UART Rx should call back with the byte it received
+// WARNING: Is in the context of the interrupt, be careful
+// void func(rx_data);
+typedef void (*uart_rx_callback_t) (uint16_t);
+
+typedef uint8_t DriverConfigurationMemory_buffer_t[64];
+
+
 
 #ifdef	__cplusplus
 extern "C" {

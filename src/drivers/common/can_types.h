@@ -80,6 +80,11 @@ typedef struct {
     can_msg_t* active_msg;
 } can_main_statemachine_t;
 
+// Assign the function pointer to where the incoming CAN messages should be dispatched to.
+// WARNING: Is in the context of the interrupt, be careful
+// void func(uint8_t channel, can_msg_t* can_msg)
+typedef void (*can_rx_callback_func_t) (uint8_t, can_msg_t*);
+
 
 #ifdef	__cplusplus
 extern "C" {

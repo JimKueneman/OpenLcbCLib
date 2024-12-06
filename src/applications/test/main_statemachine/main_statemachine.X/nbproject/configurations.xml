@@ -10,13 +10,13 @@
         </logicalFolder>
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_rx_statemachine.h</itemPath>
+          <itemPath>../../../../drivers/common/can_frame_message_handler.h</itemPath>
           <itemPath>../../../../drivers/common/can_utilities.h</itemPath>
           <itemPath>../../../../drivers/common/can_types.h</itemPath>
           <itemPath>../../../../drivers/common/can_tx_statemachine.h</itemPath>
           <itemPath>../../../../drivers/common/can_buffer_store.h</itemPath>
           <itemPath>../../../../drivers/common/can_buffer_fifo.h</itemPath>
           <itemPath>../../../../drivers/common/can_main_statemachine.h</itemPath>
-          <itemPath>../../../../drivers/common/can_frame_message_handler.h</itemPath>
           <itemPath>../../../../drivers/common/can_login_message_handler.h</itemPath>
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
@@ -82,6 +82,14 @@
           <itemPath>../../../../drivers/common/can_frame_message_handler.c</itemPath>
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
+          <logicalFolder name="dsPIC33xxxGP5xx"
+                         displayName="dsPIC33xxxGP5xx"
+                         projectFiles="true">
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/clock.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/mcu.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/configuration_memory.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/can.c</itemPath>
+          </logicalFolder>
         </logicalFolder>
         <itemPath>../../../../drivers/driver_configuration_memory.c</itemPath>
         <itemPath>../../../../drivers/driver_mcu.c</itemPath>
@@ -161,6 +169,22 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/can.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/clock.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/configuration_memory.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/mcu.c"
+            ex="true"
+            overriding="false">
+      </item>
       <C30>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>
@@ -283,7 +307,7 @@
         <property key="generic-16-bit" value="false"/>
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
-        <property key="oXC16glb-macros" value=""/>
+        <property key="oXC16glb-macros" value="dsPIC33EPxxxGP50x"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>

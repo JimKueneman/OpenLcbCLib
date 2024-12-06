@@ -24,30 +24,81 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_mcu.h
+ * \file can.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __MCU_DRV__
-#define	__MCU_DRV__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
+// Add any compiler specific includes
+
+#include "../../common/can_types.h"
 
 
-// Timer -----------------------------------------------------------------------
 
-extern void McuDriver_initialization(void);
+uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel) {
+    
+    // Implement a way to return if the can transmitter is clear to take another frame to send
 
-extern uart_rx_callback_t McuDriver_uart_rx_callback_func;
+}
 
 
-#endif	/* XC_HEADER_TEMPLATE_H */
+uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
+    // Implement a way to send a can frame with the passed message structure
+    
+ }
+
+
+// This must be here and used to callback when a can frame is received
+can_rx_callback_func_t internal_can_rx_callback_func;
+
+// Implement a way to receive can frame and call the callback when a CAN frame arrives
+
+//  Example:
+
+//if (internal_can_rx_callback_func)
+//    internal_can_rx_callback_func(buffer_tail, &ecan_msg);
+//
+//    
+//}
+
+// DMA2 Interrupt = CAN Receive
+
+
+
+void DriverCan_pause_can_rx() {
+    
+// Implement a way to stop calling the rx callback function here
+    
+    
+// Example:
+    
+//  C1INTEbits.RBIE = 0; // Enable CAN1 RX 
+
+};
+
+void DriverCan_resume_can_rx() {
+    
+// Implement a way to restart calling the rx callback function here
+            
+// Example:
+    
+// C1INTEbits.RBIE = 1; // Enable CAN1 RX
+
+};
+
+void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func) {
+    
+    // This must be here
+    internal_can_rx_callback_func = can_rx_callback_func;
+    
+    // Do any other initialization here
+
+   
+}
