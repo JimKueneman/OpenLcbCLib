@@ -17,9 +17,9 @@
 
 // Total number of message buffers available for use
 
-#define LEN_BASIC_BUFFER     10  // USER DEFINED
-#define LEN_DATAGRAM_BUFFER  4  // USER DEFINED
-#define LEN_SNIP_BUFFER      4  // USER DEFINED
+#define LEN_BASIC_BUFFER     16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define LEN_DATAGRAM_BUFFER  16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define LEN_SNIP_BUFFER      20  // USER DEFINED
 #define LEN_STREAM_BUFFER    0  // USER DEFINED
 
 

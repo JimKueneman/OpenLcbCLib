@@ -417,9 +417,16 @@ void ProtocolEventTransport_handle_identify_dest(openlcb_node_t * openlcb_node, 
     if (openlcb_node->state.openlcb_msg_handled)
         return;
     
-    if (Utilities_is_message_for_node(openlcb_node, openlcb_msg))
+    if (Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+        
         ProtocolEventTransport_handle_identify(openlcb_node, openlcb_msg, worker_msg);
-
+        
+    } else {
+        
+        openlcb_node->state.openlcb_msg_handled = TRUE;
+        
+    }
+        
 }
 
 void ProtocolEventTransport_handle_event_learn(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {

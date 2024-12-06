@@ -186,7 +186,10 @@ uint16_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, o
     if (invalid)
         return invalid;
     
-    data_address = data_address + (openlcb_node->index * LEN_SNIP_USER_DATA);
+    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
+    
+    printf("address: ");
+    PrintDWord(data_address);
 
     return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
@@ -261,7 +264,12 @@ uint16_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* 
     uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
     if (invalid)
         return invalid;
+    
+    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
+    printf("address: ");
+    PrintDWord(data_address);
+    
     return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
@@ -302,6 +310,11 @@ uint16_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, 
     uint16_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
     if (invalid)
         return invalid;
+    
+    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
+    
+    printf("address: ");
+    PrintDWord(data_address);
 
     return DriverConfigurationMemory_write(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
@@ -330,6 +343,11 @@ uint16_t _write_memory_space_train_function_configuration_memory(openlcb_node_t*
     uint16_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
     if (invalid)
         return invalid;
+    
+    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
+    
+    printf("address: ");
+    PrintDWord(data_address);
 
     return DriverConfigurationMemory_write(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
