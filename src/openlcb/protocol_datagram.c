@@ -1,16 +1,37 @@
-/*
- * File:   protocol_datagram.c
- * Author: jimkueneman
+/** \copyright
+ * Copyright (c) 2024, Jim Kueneman
+ * All rights reserved.
  *
- * Created on November 15, 2024, 8:50 PM
- */
-
-
-/*
- * Tests to implement
- * 1) Request a datagram then reply with a NAK saying I can't 
- 
- 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \file protocol_datagram.c
+ *
+ * Implementation of the Openlcb Datagram Protocol.  Handlers are call from the 
+ * openlcb_main_statemachine.c processing when a datagram message is being processed
+ * from the FIFO buffer.
+ *
+ * @author Jim Kueneman
+ * @date 5 Dec 2024
  */
 
 
@@ -175,7 +196,6 @@ uint16_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* wor
     if (invalid)
         return invalid;
 
-
     return ERROR_PERMANENT_NOT_IMPLEMENTED;
 
 }
@@ -187,9 +207,6 @@ uint16_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, o
         return invalid;
     
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
-    
-    printf("address: ");
-    PrintDWord(data_address);
 
     return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
@@ -266,9 +283,6 @@ uint16_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* 
         return invalid;
     
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
-
-    printf("address: ");
-    PrintDWord(data_address);
     
     return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
@@ -312,9 +326,6 @@ uint16_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, 
         return invalid;
     
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
-    
-    printf("address: ");
-    PrintDWord(data_address);
 
     return DriverConfigurationMemory_write(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
@@ -346,9 +357,6 @@ uint16_t _write_memory_space_train_function_configuration_memory(openlcb_node_t*
     
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
     
-    printf("address: ");
-    PrintDWord(data_address);
-
     return DriverConfigurationMemory_write(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
