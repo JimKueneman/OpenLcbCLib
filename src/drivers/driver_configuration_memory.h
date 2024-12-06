@@ -38,8 +38,7 @@
 // more than once.  
 #ifndef __DRIVER_CONFIGURATION_MEMORY__
 #define	__DRIVER_CONFIGURATION_MEMORY__
-
-#include <xc.h> // include processor files - each processor file is guarded.  
+ 
 #include "../openlcb/openlcb_types.h"
 
 extern void DriverConfigurationMemory_initialization();

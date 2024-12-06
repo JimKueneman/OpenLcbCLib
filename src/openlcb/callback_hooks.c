@@ -34,7 +34,6 @@
  */
 
 
-#include "xc.h"
 #include "callback_hooks.h"
 
 

@@ -38,7 +38,6 @@
 #ifndef __OPENLCB_UTILITIES__
 #define	__OPENLCB_UTILITIES__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 

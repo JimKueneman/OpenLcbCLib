@@ -33,7 +33,6 @@
  * @date 5 Dec 2024
  */
 
-#include "xc.h"
 #include "stdio.h" // printf
 #include "openlcb_defines.h"
 #include "openlcb_types.h"

@@ -37,7 +37,7 @@
 #ifndef __OPENLCB_TYPES__
 #define	__OPENLCB_TYPES__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
+//#include <xc.h> // include processor files - each processor file is guarded. 
 
 // ************************ USER DEFINED VARIABLES *****************************
 
@@ -62,6 +62,12 @@
 #define CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
 // *********************END USER DEFINED VARIABLES *****************************
+
+typedef unsigned char          uint8_t;
+typedef unsigned long long int uint64_t;
+typedef unsigned int           uint16_t;
+typedef unsigned long int      uint32_t;
+
 
 #define FALSE 0;
 #define TRUE  1;

@@ -37,7 +37,6 @@
  */
 
 
-#include "xc.h"
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"

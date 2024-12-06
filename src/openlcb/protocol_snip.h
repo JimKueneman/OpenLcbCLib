@@ -40,7 +40,6 @@
 #ifndef __PROTOCOL_SNIP__
 #define	__PROTOCOL_SNIP__
 
-#include <xc.h> // include processor files - each processor file is guarded.
 #include "openlcb_types.h"
 
 extern void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);

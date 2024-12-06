@@ -39,8 +39,6 @@
 #ifndef __MCU_DRV__
 #define	__MCU_DRV__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
-
 
 // Timer -----------------------------------------------------------------------
 

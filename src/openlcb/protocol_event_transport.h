@@ -44,7 +44,6 @@
 #ifndef __PROTOCOL_EVENT_TRANSPORT__
 #define	__PROTOCOL_EVENT_TRANSPORT__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "openlcb_types.h"
 
 extern void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);

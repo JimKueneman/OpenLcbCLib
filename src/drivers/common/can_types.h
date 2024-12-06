@@ -37,8 +37,7 @@
 // more than once.  
 #ifndef __CAN_TYPES__
 #define	__CAN_TYPES__
-
-#include <xc.h> // include processor files - each processor file is guarded.  
+  
 #include "../../openlcb/openlcb_types.h"
 
 // ************************ USER DEFINED VARIABLES *****************************

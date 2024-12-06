@@ -38,7 +38,6 @@
 #ifndef __OPENLCB_LIST__
 #define	__OPENLCB_LIST__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
 #include "openlcb_types.h"
 
 extern void BufferList_initialiaze();

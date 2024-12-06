@@ -37,8 +37,7 @@
 // more than once.  
 #ifndef XC_HEADER_TEMPLATE_H
 #define	XC_HEADER_TEMPLATE_H
-
-#include <xc.h> // include processor files - each processor file is guarded.  
+ 
 #include "../driver_configuration_memory.h"
 
 extern uint8_t _25AA1024_Driver_read_status_register();

@@ -38,7 +38,6 @@
 #ifndef __CAN_MAIN_STATEMACHINE__
 #define	__CAN_MAIN_STATEMACHINE__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "../../openlcb/openlcb_types.h"
 
 extern void CanMainStatemachine_initialize();

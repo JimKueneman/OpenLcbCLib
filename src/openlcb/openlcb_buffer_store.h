@@ -42,7 +42,6 @@
 #ifndef __OPENLCB_BUFFER_STORE__
 #define	__OPENLCB_BUFFER_STORE__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "openlcb_types.h"
 
 extern void BufferStore_initialize();

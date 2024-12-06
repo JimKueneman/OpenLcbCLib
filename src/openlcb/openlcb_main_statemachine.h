@@ -39,8 +39,6 @@
 #ifndef __OPENLCB_MAIN_STATEMACHINE__
 #define	__OPENLCB_MAIN_STATEMACHINE__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
-
 extern void MainStatemachine_initialize();
 
 extern void MainStatemachine_run();

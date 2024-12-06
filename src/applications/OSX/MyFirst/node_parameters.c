@@ -32,8 +32,9 @@
  * @date 5 Dec 2024
  */
 
+
 #include "node_parameters.h"
-#include "../../../../openlcb/openlcb_defines.h"
+#include "../../../openlcb/openlcb_defines.h"
 
 const node_parameters_t NodeParameters_main_node = {
 

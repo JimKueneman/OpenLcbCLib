@@ -34,7 +34,6 @@
  */
 
 
-#include "xc.h"
 #include "openlcb_types.h"
 #include "openlcb_buffer_store.h"
 

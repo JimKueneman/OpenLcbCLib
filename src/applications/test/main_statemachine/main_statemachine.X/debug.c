@@ -32,7 +32,6 @@
  * @date 5 Dec 2024
  */
 
-
 #include "xc.h"
 #include "stdio.h"  // printf
 #include "../../../../openlcb/openlcb_buffer_fifo.h"

@@ -45,8 +45,6 @@
 
 extern uint8_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
-#include <xc.h> // include processor files - each processor file is guarded.  
-
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

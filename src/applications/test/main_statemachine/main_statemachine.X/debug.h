@@ -11,7 +11,6 @@
 #ifndef __Debug__
 #define	__Debug__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
 #include "../../../../openlcb/openlcb_defines.h"
 #include "../../../../openlcb/openlcb_types.h"
 #include "../../../../drivers/common/can_types.h"

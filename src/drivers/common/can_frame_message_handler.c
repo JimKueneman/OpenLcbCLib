@@ -35,7 +35,6 @@
  */
 
 
-#include "xc.h"
 #include "can_types.h"
 #include "can_buffer_store.h"
 #include "can_utilities.h"

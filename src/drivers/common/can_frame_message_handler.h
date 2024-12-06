@@ -38,7 +38,6 @@
 #ifndef __CAN_MSG_HANDLER__
 #define	__CAN_MSG_HANDLER__
 
-#include <xc.h> // include processor files - each processor file is guarded.
 #include "can_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_node.h"

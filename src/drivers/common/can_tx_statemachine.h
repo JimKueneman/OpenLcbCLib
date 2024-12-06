@@ -39,7 +39,6 @@
 #ifndef __CAN_TX_STATEMACHINE__
 #define	__CAN_TX_STATEMACHINE__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 

@@ -36,8 +36,7 @@
 // more than once.  
 #ifndef __CLOCK_DISTRIBUTION__
 #define	__CLOCK_DISTRIBUTION__
-
-#include <xc.h> // include processor files - each processor file is guarded.  
+ 
 
 extern void ClockDistribution_initialize();
 

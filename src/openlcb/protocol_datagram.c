@@ -35,7 +35,6 @@
  */
 
 
-#include "xc.h"
 #include "stdio.h" // printf
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -1036,11 +1035,6 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
 void DatagramProtocol_100ms_time_tick() {
 
-    _RB4 = 1;
-
-
-
-    _RB4 = 0;
 
 }
 

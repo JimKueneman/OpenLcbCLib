@@ -41,7 +41,6 @@
 #ifndef __CAN_BUFFERS__
 #define	__CAN_BUFFERS__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
 #include "can_types.h"
 
 extern void CanBufferFifo_initialiaze();

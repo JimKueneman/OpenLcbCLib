@@ -40,7 +40,6 @@
 #ifndef __DRIVER_100MS_CLOCK__
 #define	__DRIVER_100MS_CLOCK__
 
-#include <xc.h> // include processor files - each processor file is guarded.
 #include "../openlcb/openlcb_types.h"
 
 extern void Driver100msClock_Initialization(_100ms_timer_callback_func_t _100ms_callback_func);

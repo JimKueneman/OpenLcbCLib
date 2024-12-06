@@ -38,7 +38,7 @@
 #ifndef __CALLBACK_HOOKS__
 #define	__CALLBACK_HOOKS__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+#include "../openlcb/openlcb_types.h"
 
 // Node Alias and Node ID
 typedef void (*alias_change_callback_t) (uint16_t, uint64_t);

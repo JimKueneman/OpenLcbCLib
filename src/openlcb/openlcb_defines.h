@@ -37,7 +37,6 @@
 #ifndef __OPENLCB_DEFINES__
 #define	__OPENLCB_DEFINES__
 
-#include <xc.h> // include processor files - each processor file is guarded.
 
 // General boot initialization
 #define RUNSTATE_INIT                             0

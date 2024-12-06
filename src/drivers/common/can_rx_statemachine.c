@@ -37,9 +37,6 @@
  */
 
 
-#include <libpic30.h>
-
-#include "xc.h"
 #include "stdio.h" // printf
 #include "../../drivers/driver_can.h"
 #include "../../openlcb/openlcb_types.h"

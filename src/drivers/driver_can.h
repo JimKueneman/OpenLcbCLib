@@ -40,7 +40,6 @@
 #ifndef __DRIVER_CAN__
 #define	__DRIVER_CAN__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
 #include "../drivers/common/can_types.h"
 #include "../drivers/common/can_types.h"
 

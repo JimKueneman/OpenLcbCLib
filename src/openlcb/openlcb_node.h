@@ -37,8 +37,6 @@
 #ifndef __OPENLCB_NODE__
 #define	__OPENLCB_NODE__
 
-#include <xc.h>
-
 #include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
 

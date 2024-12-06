@@ -39,7 +39,6 @@
 #ifndef __PROTOCOL_DATAGRAM__
 #define	__PROTOCOL_DATAGRAM__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "openlcb_types.h"
 
 extern void ProtocolDatagram_initialize();

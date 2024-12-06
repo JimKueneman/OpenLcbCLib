@@ -40,8 +40,6 @@
 #ifndef __CAN_RX_STATEMACHINE__
 #define	__CAN_RX_STATEMACHINE__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
-
 
 extern void CanRxStatemachine_initialize();
 

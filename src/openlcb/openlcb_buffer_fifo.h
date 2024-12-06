@@ -42,7 +42,6 @@
 #ifndef __OPENLCB_FIFO__
 #define	__OPENLCB_FIFO__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
 #include "openlcb_types.h"
 
 extern void BufferFifo_initialiaze();

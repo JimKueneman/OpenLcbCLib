@@ -40,7 +40,6 @@
 #ifndef __CAN_BUFFER_STORE__
 #define	__CAN_BUFFER_STORE__
 
-#include <xc.h> // include processor files - each processor file is guarded. 
 #include "can_types.h"
 
 extern void CanBufferStore_initialize();

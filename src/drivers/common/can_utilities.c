@@ -32,9 +32,6 @@
  * @date 5 Dec 2024
  */
 
-
-#include "xc.h"
-
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "can_types.h"
