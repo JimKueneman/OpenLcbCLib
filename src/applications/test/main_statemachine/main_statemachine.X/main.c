@@ -166,9 +166,9 @@ void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
 
 }
 
-//#define  _SIMULATOR_
+ // #define  _SIMULATOR_
 
-int main(void) {
+int main(void) {       
 
     _TRISB4 = 0;
     _RB4 = 0;
