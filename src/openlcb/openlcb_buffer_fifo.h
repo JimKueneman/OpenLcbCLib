@@ -44,6 +44,10 @@
 
 #include "openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 extern void BufferFifo_initialiaze();
 
 extern openlcb_msg_t* BufferFifo_push(uint16_t data_len); 
@@ -58,13 +62,6 @@ extern uint8_t BufferFifo_is_empty();
 
 extern uint16_t BufferFifo_get_allocated_count();
 
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

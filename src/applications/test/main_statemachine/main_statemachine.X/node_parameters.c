@@ -35,17 +35,26 @@
 #include "node_parameters.h"
 #include "../../../../openlcb/openlcb_defines.h"
 
+//#define SUPPORT_TRACTION
+
 const node_parameters_t NodeParameters_main_node = {
 
     .consumer_count = 4,
     .producer_count = 4,
+
+
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = "Mustangpeak",
     .snip.model = "VT100",
     .snip.hardware_version = "1.0",
     .snip.software_version = "0.2",
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
+
+#ifdef SUPPORT_TRACTION
     .protocol_support = (PSI_DATAGRAM | PSI_MEMORY_CONFIGURATION | PSI_EVENT_EXCHANGE | PSI_EVENT_EXCHANGE | PSI_ABBREVIATED_DEFAULT_CDI | PSI_SIMPLE_NODE_INFORMATION | PSI_CONFIGURATION_DESCRIPTION_INFO | PSI_TRAIN_CONTROL | PSI_FUNCTION_DESCRIPTION | PSI_FUNCTION_CONFIGURATION),
+#else
+    .protocol_support = (PSI_DATAGRAM | PSI_MEMORY_CONFIGURATION | PSI_EVENT_EXCHANGE | PSI_EVENT_EXCHANGE | PSI_ABBREVIATED_DEFAULT_CDI | PSI_SIMPLE_NODE_INFORMATION | PSI_CONFIGURATION_DESCRIPTION_INFO),
+#endif
 
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
@@ -58,6 +67,13 @@ const node_parameters_t NodeParameters_main_node = {
     .configuration_options.write_to_user_space_0xfb_supported = 1,
     .configuration_options.write_under_mask_supported = 1,
     .configuration_options.description = "These are options that defined the memory space capabilities",
+
+    .high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+#ifdef SUPPORT_TRACTION
+    .low_address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+#else
+    .low_address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
+#endif
 
 
     // Space 0xFF 
@@ -110,7 +126,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ACDI access user storage",
 
-
+#ifdef SUPPORT_TRACTION
     // Space 0xFA
     .address_space_train_function_definition.read_only = 1,
     .address_space_train_function_definition.present = 1,
@@ -129,6 +145,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_train_function_config_memory.highest_address = 0x200, // This is important for multi node applications as the memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_train_function_config_memory.address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_train_function_config_memory.description = "Train function configuration memory storage",
+#endif
 
     .cdi =
     {
@@ -170,6 +187,8 @@ const node_parameters_t NodeParameters_main_node = {
 
     },
 
+#ifdef SUPPORT_TRACTION
+
     .fdi =
     {
 
@@ -198,5 +217,7 @@ const node_parameters_t NodeParameters_main_node = {
         0x3C, 0x2F, 0x67, 0x72, 0x6F, 0x75, 0x70, 0x3E, 0x3C, 0x2F, 0x73, 0x65, 0x67, 0x6D, 0x65, 0x6E, 0x74, 0x3E, 0x3C, 0x2F, 0x66, 0x64, 0x69, 0x3E, 0x00 // </group></segment></fdi>
 
     }
+
+#endif
 
 };

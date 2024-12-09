@@ -42,6 +42,11 @@
 
 #include "can_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 extern void CanBufferStore_initialize();
 
 extern can_msg_t* CanBufferStore_allocateBuffer();
@@ -53,13 +58,6 @@ extern void CanBufferStore_clear_can_message(can_msg_t* msg);
 extern uint16_t CanBufferStore_messages_allocated();
 
 extern uint16_t CanBufferStore_messages_max_allocated();
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

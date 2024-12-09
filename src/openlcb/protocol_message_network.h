@@ -41,6 +41,9 @@
 
 #include "openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 extern void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
@@ -58,12 +61,6 @@ extern void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resen
 
 extern void ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node_t* openlcb_node);
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

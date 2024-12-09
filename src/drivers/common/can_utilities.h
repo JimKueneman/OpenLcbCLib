@@ -40,6 +40,11 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 extern void CanUtilties_load_can_message(can_msg_t* can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2 , uint8_t byte3 , uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8);
 
 extern void CanUtilities_clear_can_message(can_msg_t* can_msg);
@@ -77,14 +82,6 @@ extern uint8_t CanUtilities_count_nulls_in_can_payload(can_msg_t* can_msg);
 extern uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg);
 
 extern uint8_t CanUtilities_is_openlcb_message(can_msg_t* msg);
-
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

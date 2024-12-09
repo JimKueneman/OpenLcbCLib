@@ -175,7 +175,7 @@ uint8_t _25AA1024_Driver_read_byte(uint32_t address) {
 
 }
 
-uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, DriverConfigurationMemory_buffer_t* buffer) {
+uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, configuration_memory_buffer_t* buffer) {
 
     uint8_t temp;
 
@@ -251,7 +251,7 @@ void _25AA1024_Driver_write_byte(uint32_t address, uint8_t byte) {
 
 }
 
-uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, DriverConfigurationMemory_buffer_t* buffer) {
+uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, configuration_memory_buffer_t* buffer) {
 
     uint8_t temp;
 

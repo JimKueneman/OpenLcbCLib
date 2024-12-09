@@ -40,6 +40,11 @@
   
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 // ************************ USER DEFINED VARIABLES *****************************
 
 #define LEN_CAN_BUFFER                    10   // USER DEFINED 
@@ -84,13 +89,6 @@ typedef struct {
 // void func(uint8_t channel, can_msg_t* can_msg)
 typedef void (*can_rx_callback_func_t) (uint8_t, can_msg_t*);
 
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

@@ -42,6 +42,11 @@
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_node.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) ;
 
 extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
@@ -52,13 +57,6 @@ extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_
 
 extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
 
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

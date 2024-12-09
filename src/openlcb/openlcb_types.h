@@ -37,7 +37,9 @@
 #ifndef __OPENLCB_TYPES__
 #define	__OPENLCB_TYPES__
 
-//#include <xc.h> // include processor files - each processor file is guarded. 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 // ************************ USER DEFINED VARIABLES *****************************
 
@@ -63,10 +65,10 @@
 
 // *********************END USER DEFINED VARIABLES *****************************
 
-typedef unsigned char          uint8_t;
+typedef unsigned char uint8_t;
 typedef unsigned long long int uint64_t;
-typedef unsigned int           uint16_t;
-typedef unsigned long int      uint32_t;
+typedef unsigned int uint16_t;
+typedef unsigned long int uint32_t;
 
 
 #define FALSE 0;
@@ -149,10 +151,10 @@ typedef struct {
 
 typedef struct {
     uint8_t mfg_version;
-    char name[LEN_SNIP_NAME + 1];
-    char model[LEN_SNIP_MODEL + 1];
-    char hardware_version[LEN_SNIP_HARDWARE_VERSION + 1];
-    char software_version[LEN_SNIP_SOFTWARE_VERSION + 1];
+    char name[LEN_SNIP_NAME];
+    char model[LEN_SNIP_MODEL];
+    char hardware_version[LEN_SNIP_HARDWARE_VERSION];
+    char software_version[LEN_SNIP_SOFTWARE_VERSION];
     uint8_t user_version;
 
 } user_snip_struct_t;
@@ -177,7 +179,7 @@ typedef struct {
     uint8_t address_space;
     uint32_t highest_address;
     uint32_t low_address;
-    char description[CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN]; 
+    char description[CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN];
 } user_address_space_info_t;
 
 typedef struct {
@@ -187,6 +189,8 @@ typedef struct {
     uint16_t producer_count;
     uint8_t cdi[LEN_MAX_CDI];
     uint8_t fdi[LEN_MAX_FDI];
+    uint8_t high_address_space;
+    uint8_t low_address_space;
     user_address_space_info_t address_space_configuration_definition;
     user_address_space_info_t address_space_all;
     user_address_space_info_t address_space_config_memory;
@@ -229,8 +233,8 @@ typedef struct {
     uint16_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
     uint16_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
     uint16_t openlcb_datagram_ack_sent : 1;
-    uint16_t resend_datagram: 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-    uint16_t resend_optional_message: 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+    uint16_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+    uint16_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
 } openlcb_node_state_t;
 
 typedef struct {
@@ -242,7 +246,7 @@ typedef struct {
     event_id_producer_list_t producers;
     const node_parameters_t* parameters;
     uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-    uint64_t lock_node;  // node that has this node locked
+    uint64_t lock_node; // node that has this node locked
     openlcb_msg_t* last_received_datagram;
     openlcb_msg_t* last_received_optional_interaction;
     uint8_t index; //what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
@@ -272,16 +276,8 @@ typedef void (*_100ms_timer_callback_func_t) ();
 // void func(rx_data);
 typedef void (*uart_rx_callback_t) (uint16_t);
 
-typedef uint8_t DriverConfigurationMemory_buffer_t[64];
+typedef uint8_t configuration_memory_buffer_t[64];
 
-
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

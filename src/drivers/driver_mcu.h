@@ -39,13 +39,18 @@
 #ifndef __MCU_DRV__
 #define	__MCU_DRV__
 
-
-// Timer -----------------------------------------------------------------------
-
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+    
 extern void McuDriver_initialization(void);
 
 extern uart_rx_callback_t McuDriver_uart_rx_callback_func;
 
+#ifdef	__cplusplus
+}
+#endif /* __cplusplus */
 
-#endif	/* XC_HEADER_TEMPLATE_H */
+
+#endif	/* __MCU_DRV__ */
 

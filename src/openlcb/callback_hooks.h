@@ -40,6 +40,10 @@
 
 #include "../openlcb/openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 // Node Alias and Node ID
 typedef void (*alias_change_callback_t) (uint16_t, uint64_t);
 
@@ -49,13 +53,6 @@ typedef void (*alias_change_callback_t) (uint16_t, uint64_t);
 */
 extern alias_change_callback_t CallbackHooks_alias_change;
 
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

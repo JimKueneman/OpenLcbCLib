@@ -42,6 +42,10 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 
 extern void CanTxStatemachine_initialize();
 
@@ -51,14 +55,6 @@ extern uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_ms
 // returns the number of bytes that were written to the CAN bus
 extern uint8_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg);
  
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
-
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

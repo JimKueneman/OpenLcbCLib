@@ -32,6 +32,10 @@
  * @date 5 Dec 2024
  */
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 // This is a guard condition so that contents of this file are not included
 // more than once.  
 #ifndef __OPENLCB_DEFINES__
@@ -293,7 +297,6 @@
 #define DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF                     0x5B
 
 
-
 #define DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6                  0x60
 #define DATAGRAM_MEMORY_READ_STREAM_SPACE_FD                         0x61
 #define DATAGRAM_MEMORY_READ_STREAM_SPACE_FE                         0x62
@@ -308,7 +311,6 @@
 #define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FD              0x79
 #define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FE              0x7A
 #define DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FF              0x7B
-
 
 
 #define DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6                        0x00
@@ -381,13 +383,6 @@
 #define ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS                    0x40   // 64
 
 
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

@@ -43,6 +43,11 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 extern void CanLoginMessageHandler_init(openlcb_node_t* next_node);
 
 extern void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node);
@@ -69,12 +74,6 @@ extern void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next
 
 extern void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker);
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

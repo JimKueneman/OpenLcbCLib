@@ -43,6 +43,10 @@
 #include "../drivers/common/can_types.h"
 #include "../drivers/common/can_types.h"
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 extern void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func);
 
 extern uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel);
@@ -56,12 +60,6 @@ extern uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg)
 // How full the chips CAN fifo has gotten
 extern uint8_t DriverCan_max_can_fifo_depth;
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

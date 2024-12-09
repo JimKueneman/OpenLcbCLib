@@ -42,8 +42,9 @@
 #include "openlcb_types.h"
 
 
-////extern uint64_t MessageDataToNodeID(openlcb_msg_t* msg);
-////extern uint8_t EqualBuffers(openlcb_msg_t* msg1, openlcb_msg_t* msg2);
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 extern void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti, uint16_t payload_count);
 
@@ -91,21 +92,6 @@ extern void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t
 
 extern uint32_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node);
 
-// OpenLcb message helpers
-
-
-
-//extern openlcb_node_t* FindOpenLcbNodeByNodeId(openlcb_nodes_t* openlcb_nodes, uint64_t node_id);
-
-// General helpers
-
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

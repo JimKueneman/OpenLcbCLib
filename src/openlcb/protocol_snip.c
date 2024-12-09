@@ -64,7 +64,7 @@ uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node,
 
 uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
 
-    if (data_count > LEN_SNIP_NAME - 1)
+    if (data_count > LEN_SNIP_NAME - 1)  // need a null at the end
         data_count = LEN_SNIP_NAME - 1;
 
     uint16_t string_index = 0;
@@ -88,8 +88,8 @@ uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* wor
 
 uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
 
-    if (data_count > LEN_SNIP_MODEL - 1)
-        data_count = LEN_SNIP_MODEL - 1;
+    if (data_count > LEN_SNIP_MODEL - 1)  // need a null at the end
+        data_count = LEN_SNIP_MODEL - 1;  
 
     uint16_t string_index = 0;
     while (openlcb_node->parameters->snip.model[string_index] != 0x00) {
@@ -112,8 +112,8 @@ uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* wo
 
 uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
 
-    if (data_count > LEN_SNIP_HARDWARE_VERSION - 1)
-        data_count = LEN_SNIP_HARDWARE_VERSION - 1;
+    if (data_count > LEN_SNIP_HARDWARE_VERSION - 1)  // need a null at the end
+        data_count = LEN_SNIP_HARDWARE_VERSION - 1; 
 
     uint16_t string_index = 0;
     while (openlcb_node->parameters->snip.hardware_version[string_index] != 0x00) {
@@ -136,7 +136,7 @@ uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlc
 
 uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint8_t data_count) {
 
-    if (data_count > LEN_SNIP_SOFTWARE_VERSION - 1)
+    if (data_count > LEN_SNIP_SOFTWARE_VERSION - 1)  // need a null at the end
         data_count = LEN_SNIP_SOFTWARE_VERSION - 1;
 
     uint16_t string_index = 0;
@@ -181,7 +181,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
    
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
    
-    data_count = DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[payload_index]));
+    data_count = DriverConfigurationMemory_read(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));
 
     uint8_t original_payload_index = payload_index;
   
@@ -214,7 +214,7 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
     
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
     
-    data_count = DriverConfigurationMemory_read(data_address, data_count, (DriverConfigurationMemory_buffer_t*) (&worker_msg->payload[payload_index]));
+    data_count = DriverConfigurationMemory_read(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));
 
     uint8_t original_payload_index = payload_index;
   
@@ -273,7 +273,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
         
         openlcb_node->state.openlcb_msg_handled = TRUE;
         
-        if (!openlcb_node->state.resend_optional_message) // if we are currently process a resend don't reload it
+        if (!openlcb_node->state.resend_optional_message) // if we are currently processing a resend don't reload it
         
           ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node, openlcb_msg);
         

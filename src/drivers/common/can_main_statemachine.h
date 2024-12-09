@@ -38,7 +38,12 @@
 #ifndef __CAN_MAIN_STATEMACHINE__
 #define	__CAN_MAIN_STATEMACHINE__
 
-#include "../../openlcb/openlcb_types.h"
+#include "../common/can_types.h"
+
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 
 extern void CanMainStatemachine_initialize();
 
@@ -46,13 +51,6 @@ extern void CanMainStateMachine_run();
 
 
 extern can_main_statemachine_t can_helper;
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

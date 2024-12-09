@@ -41,18 +41,17 @@
  
 #include "../openlcb/openlcb_types.h"
 
-extern void DriverConfigurationMemory_initialization();
-
-extern uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, DriverConfigurationMemory_buffer_t* buffer);
-
-extern uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, DriverConfigurationMemory_buffer_t* buffer);
-
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+extern void DriverConfigurationMemory_initialization();
 
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
+extern uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+
+extern uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+
+
 
 #ifdef	__cplusplus
 }
