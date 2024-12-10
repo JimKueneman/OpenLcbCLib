@@ -42,3 +42,7 @@
 #ifdef dsPIC33EPxxxGP50x
   #include "dspic/dsPIC33xxxGP5xx/configuration_memory.c"
 #endif
+
+#ifdef __TEMPLATE__
+  #include "template/configuration_memory.c"
+#endif

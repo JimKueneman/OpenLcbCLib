@@ -45,6 +45,10 @@
   #include "dspic/dsPIC33xxxGP5xx/mcu.c"
 #endif
 
+#ifdef __TEMPLATE__
+  #include "template/mcu.c"
+#endif
+
 
 
 

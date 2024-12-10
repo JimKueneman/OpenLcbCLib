@@ -45,7 +45,7 @@
 #endif
 
 
-#ifdef __USE_TEMPLATE__
+#ifdef __TEMPLATE__
   #include "template/clock.c"
 #endif
 

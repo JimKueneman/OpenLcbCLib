@@ -42,3 +42,7 @@
 #ifdef dsPIC33EPxxxGP50x
    #include "dspic/dsPIC33xxxGP5xx/can.c"
 #endif
+
+#ifdef __TEMPLATE__
+  #include "template/can.c"
+#endif
