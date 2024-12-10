@@ -44,3 +44,8 @@
   #include "dspic/dsPIC33xxxGP5xx/clock.c"
 #endif
 
+
+#ifdef __USE_TEMPLATE__
+  #include "template/clock.c"
+#endif
+

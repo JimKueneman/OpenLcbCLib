@@ -36,7 +36,7 @@
 
 // Add any compiler specific includes
 
-#include "../../../openlcb/openlcb_types.h"
+#include "../../openlcb/openlcb_types.h"
 
 
 // This must be here and assigned in Driver100msClock_Initialization

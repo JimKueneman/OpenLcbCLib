@@ -37,8 +37,7 @@
 
 // Add any compiler specific includes
 
-#include "../../../openlcb/openlcb_types.h"
-#include "../../25AA1024/25AA1024_driver.h"
+#include "../../openlcb/openlcb_types.h"
 
 
 void DriverConfigurationMemory_initialization() {
@@ -52,7 +51,7 @@ void DriverConfigurationMemory_initialization() {
     
 }
 
-uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, DriverConfigurationMemory_buffer_t* buffer) {
+uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
     
     
     // Implement your Configuration Memory Read Here:
@@ -60,10 +59,11 @@ uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, Driver
 // Example;
 //   return _25AA1024_Driver_read(address, count, buffer);
 
+    return 0;
     
 }
 
-uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, DriverConfigurationMemory_buffer_t* buffer) {
+uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
     
     
     // Implement your Configuration Memory Write Here:
@@ -77,5 +77,7 @@ uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, Drive
 //    }
 //    
 //    return count;
+    
+    return 0;
     
 }

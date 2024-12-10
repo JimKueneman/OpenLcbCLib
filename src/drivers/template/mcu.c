@@ -39,8 +39,12 @@
 
 // Add any compiler specific includes
 
-#include "../openlcb/openlcb_types.h"
+#include "../../openlcb/openlcb_types.h"
 
+void McuDriver_Reboot(void) {
+    
+    
+}
 
 void McuDriver_initialization(void) {
 
