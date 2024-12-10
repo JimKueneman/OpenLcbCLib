@@ -44,23 +44,23 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern uint8_t _25AA1024_Driver_read_status_register();
+extern uint8_olcb_t _25AA1024_Driver_read_status_register();
 
-extern void _25AA1024_Driver_write_status_register(uint8_t new_status);
+extern void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status);
 
 extern void _25AA1024_Driver_write_latch_enable();
 
 extern void _25AA1024_Driver_write_latch_disable();
 
-extern void _25AA1024_Driver_write_byte(uint32_t address, uint8_t byte);
+extern void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte);
 
-extern uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, configuration_memory_buffer_t* buffer);
+extern uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
 
-extern uint8_t _25AA1024_Driver_write_in_progress();
+extern uint8_olcb_t _25AA1024_Driver_write_in_progress();
 
-extern uint8_t _25AA1024_Driver_read_byte(uint32_t address);
+extern uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address);
 
-extern uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, configuration_memory_buffer_t* buffer);
+extern uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
 
 #ifdef	__cplusplus
 }

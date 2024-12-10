@@ -49,9 +49,9 @@ typedef enum {
 
 } event_enum_state_t;
 
-void _encode_event_state(uint64_t* state_container, uint8_t event_index, event_enum_state_t new_state) {
+void _encode_event_state(uint64_olcb_t* state_container, uint8_olcb_t event_index, event_enum_state_t new_state) {
 
-    uint64_t mask;
+    uint64_olcb_t mask;
 
     switch (new_state) {
 
@@ -70,19 +70,19 @@ void _encode_event_state(uint64_t* state_container, uint8_t event_index, event_e
 
 }
 
-void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_olcb_t event_index, event_enum_state_t new_state) {
 
     _encode_event_state(&openlcb_node->consumers.event_state, event_index, new_state);
 
 }
 
-void _encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+void _encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_olcb_t event_index, event_enum_state_t new_state) {
 
     _encode_event_state(&openlcb_node->producers.event_state, event_index, new_state);
 
 }
 
-event_enum_state_t _decode_event_state(uint64_t* state_container, uint8_t event_index) {
+event_enum_state_t _decode_event_state(uint64_olcb_t* state_container, uint8_olcb_t event_index) {
 
     switch ((*state_container >> (2 * event_index)) & 0x3) {
         
@@ -172,7 +172,7 @@ void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
 }
 
-uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint8_t event_index) {
+uint16_olcb_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint8_olcb_t event_index) {
 
     switch (_decode_event_state(&openlcb_node->consumers.event_state, event_index)) {
 
@@ -196,7 +196,7 @@ uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t*
 
 }
 
-uint16_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint8_t event_index) {
+uint16_olcb_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint8_olcb_t event_index) {
 
     switch (_decode_event_state(&openlcb_node->producers.event_state, event_index)) {
 

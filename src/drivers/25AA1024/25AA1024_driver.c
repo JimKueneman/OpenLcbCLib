@@ -39,7 +39,7 @@
 
 void _flush_buffers() {
 
-    uint8_t result;
+    uint8_olcb_t result;
 
     // Wait for any transmit to finish
     while (_SPITBF == 1) {
@@ -54,7 +54,7 @@ void _flush_buffers() {
 
 }
 
-uint8_t _wait_for_reply() {
+uint8_olcb_t _wait_for_reply() {
 
     // Wait for any transmit to finish
     while (_SPITBF == 1) {
@@ -69,7 +69,7 @@ uint8_t _wait_for_reply() {
 
 }
 
-uint8_t _25AA1024_Driver_read_status_register() {
+uint8_olcb_t _25AA1024_Driver_read_status_register() {
 
     _flush_buffers();
 
@@ -83,7 +83,7 @@ uint8_t _25AA1024_Driver_read_status_register() {
     // clock in the reply from the EEPROM
     SPI1BUF = 0b00000000;
 
-    uint8_t result = _wait_for_reply();
+    uint8_olcb_t result = _wait_for_reply();
 
     _RB6 = 1; // CS
 
@@ -92,7 +92,7 @@ uint8_t _25AA1024_Driver_read_status_register() {
 
 }
 
-void _25AA1024_Driver_write_status_register(uint8_t new_status) {
+void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status) {
 
     _flush_buffers();
 
@@ -143,7 +143,7 @@ void _25AA1024_Driver_write_latch_disable() {
 
 }
 
-uint8_t _25AA1024_Driver_read_byte(uint32_t address) {
+uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
 
     _flush_buffers();
 
@@ -169,7 +169,7 @@ uint8_t _25AA1024_Driver_read_byte(uint32_t address) {
     // Transmit
     SPI1BUF = 0b00000000;
 
-    uint8_t result = _wait_for_reply();
+    uint8_olcb_t result = _wait_for_reply();
 
     _RB6 = 1; // CS   
 
@@ -177,9 +177,9 @@ uint8_t _25AA1024_Driver_read_byte(uint32_t address) {
 
 }
 
-uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, configuration_memory_buffer_t* buffer) {
+uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer) {
 
-    uint8_t temp;
+    uint8_olcb_t temp;
 
     _flush_buffers();
 
@@ -219,9 +219,9 @@ uint16_t _25AA1024_Driver_read(uint32_t address, uint8_t count, configuration_me
 
 }
 
-void _25AA1024_Driver_write_byte(uint32_t address, uint8_t byte) {
+void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
 
-    uint8_t temp;
+    uint8_olcb_t temp;
 
     _flush_buffers();
 
@@ -253,9 +253,9 @@ void _25AA1024_Driver_write_byte(uint32_t address, uint8_t byte) {
 
 }
 
-uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, configuration_memory_buffer_t* buffer) {
+uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer) {
 
-    uint8_t temp;
+    uint8_olcb_t temp;
 
     _flush_buffers();
 
@@ -293,7 +293,7 @@ uint16_t _25AA1024_Driver_write(uint32_t address, uint8_t count, configuration_m
 
 }
 
- uint8_t _25AA1024_Driver_write_in_progress() {
+ uint8_olcb_t _25AA1024_Driver_write_in_progress() {
      
      if (_25AA1024_Driver_read_status_register() && 0x01 != 0)
          

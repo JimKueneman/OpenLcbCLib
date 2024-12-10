@@ -209,7 +209,7 @@ void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
 
 }
 
-uint8_t _pop_next_can_helper_active_message() {
+uint8_olcb_t _pop_next_can_helper_active_message() {
 
     if (can_helper.active_msg)
         return FALSE;
@@ -230,7 +230,7 @@ uint8_t _pop_next_can_helper_active_message() {
 
 }
 
-uint8_t _pop_next_openlcb_worker_active_message() {
+uint8_olcb_t _pop_next_openlcb_worker_active_message() {
 
     if (can_helper.openlcb_worker->active_msg)
         return FALSE;
@@ -252,7 +252,7 @@ uint8_t _pop_next_openlcb_worker_active_message() {
 
 }
 
-uint8_t is_direct_tx_message(uint8_t is_new_popped_message) {
+uint8_olcb_t is_direct_tx_message(uint8_olcb_t is_new_popped_message) {
 
     // Direct Tx messages are added in the CAN Rx statemachine but actually replies
     // that have already been dealt with, such as error messages created in response 
@@ -280,7 +280,7 @@ uint8_t is_direct_tx_message(uint8_t is_new_popped_message) {
 
 }
 
-void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_t newly_popped_can_active_msg, uint8_t newly_popped_openlcb_active_msg) {
+void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_olcb_t newly_popped_can_active_msg, uint8_olcb_t newly_popped_openlcb_active_msg) {
 
     if (newly_popped_can_active_msg) {
         next_node->state.can_msg_handled = FALSE;
@@ -296,7 +296,7 @@ void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_t
 
 }
 
-void _reset_active_message_buffers_if_done(uint8_t active_can_msg_processiong_complete, uint8_t active_openlcb_msg_processing_complete) {
+void _reset_active_message_buffers_if_done(uint8_olcb_t active_can_msg_processiong_complete, uint8_olcb_t active_openlcb_msg_processing_complete) {
 
     // Are all the nodes finished handling the incoming CAN message?
     if (active_can_msg_processiong_complete) {
@@ -324,7 +324,7 @@ void _process_login_statemachine(openlcb_node_t* next_node) {
 
 }
 
-uint8_t _resend_datagram_message_from_ack_failure_reply(openlcb_node_t* next_node) {
+uint8_olcb_t _resend_datagram_message_from_ack_failure_reply(openlcb_node_t* next_node) {
 
     if (next_node->state.resend_datagram && next_node->last_received_datagram) {
 
@@ -348,7 +348,7 @@ uint8_t _resend_datagram_message_from_ack_failure_reply(openlcb_node_t* next_nod
 
 }
 
-uint8_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) {
+uint8_olcb_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) {
 
     if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
 
@@ -372,7 +372,7 @@ uint8_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) {
 
 }
 
-void _dispatch_next_can_message_to_node(openlcb_node_t* next_node, uint8_t* is_active_can_msg_processiong_complete) {
+void _dispatch_next_can_message_to_node(openlcb_node_t* next_node, uint8_olcb_t* is_active_can_msg_processiong_complete) {
 
     if (can_helper.active_msg) {
 
@@ -386,7 +386,7 @@ void _dispatch_next_can_message_to_node(openlcb_node_t* next_node, uint8_t* is_a
 
 }
 
-void _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node, uint8_t* is_active_openlcb_msg_processiong_complete) {
+void _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node, uint8_olcb_t* is_active_openlcb_msg_processiong_complete) {
 
     if (can_helper.openlcb_worker->active_msg) {
 
@@ -406,12 +406,12 @@ void CanMainStateMachine_run() {
     //    probably should have a separate loop to run the resends.....
     //    the can get the buffer handled flags screwed up....        
     //            
-    uint8_t is_newly_popped_can_active_msg = _pop_next_can_helper_active_message();
-    uint8_t is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message();
+    uint8_olcb_t is_newly_popped_can_active_msg = _pop_next_can_helper_active_message();
+    uint8_olcb_t is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message();
 
     // optimistic from the beginning
-    uint8_t is_active_can_msg_processiong_complete = TRUE;
-    uint8_t is_active_openlcb_msg_processing_complete = TRUE;
+    uint8_olcb_t is_active_can_msg_processiong_complete = TRUE;
+    uint8_olcb_t is_active_openlcb_msg_processing_complete = TRUE;
 
     // handle the can message if it is a direct send (there is no node specific processing on it to do, it just needs to get sent)
     if (is_direct_tx_message(is_newly_popped_can_active_msg))

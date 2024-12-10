@@ -61,17 +61,17 @@ extern "C" {
 
 
 // Structure for a basic CAN payload
-typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
+typedef uint8_olcb_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
 typedef struct {
-    uint8_t allocated: 1;
-    uint8_t direct_tx: 1;    // If set the CAN statemachine will simply directly send it assuming all the source/dest/mti/data is all set up.  Mainly for sending error found during Can frame reception to allow for the rx thread/interrupt to not have to reach across boundries to send it.
+    uint8_olcb_t allocated: 1;
+    uint8_olcb_t direct_tx: 1;    // If set the CAN statemachine will simply directly send it assuming all the source/dest/mti/data is all set up.  Mainly for sending error found during Can frame reception to allow for the rx thread/interrupt to not have to reach across boundries to send it.
 } can_msg_state_t;
 
 typedef struct {
     can_msg_state_t state;
-    uint32_t identifier;              // CAN 29 bit identifier (extended)
-    uint8_t payload_count;            // How many bytes are valid
+    uint32_olcb_t identifier;              // CAN 29 bit identifier (extended)
+    uint8_olcb_t payload_count;            // How many bytes are valid
     payload_bytes_can_t payload;      // Payload bytes
 } can_msg_t;
 
@@ -86,8 +86,8 @@ typedef struct {
 
 // Assign the function pointer to where the incoming CAN messages should be dispatched to.
 // WARNING: Is in the context of the interrupt, be careful
-// void func(uint8_t channel, can_msg_t* can_msg)
-typedef void (*can_rx_callback_func_t) (uint8_t, can_msg_t*);
+// void func(uint8_olcb_t channel, can_msg_t* can_msg)
+typedef void (*can_rx_callback_func_t) (uint8_olcb_t, can_msg_t*);
 
 
 #ifdef	__cplusplus

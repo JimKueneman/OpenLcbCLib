@@ -59,39 +59,39 @@ void CanTxStatemachine_initialize() {
 
 }
 
-uint32_t _construct_identfier_datagram_only_frame(openlcb_msg_t* openlcb_msg) {
+uint32_olcb_t _construct_identfier_datagram_only_frame(openlcb_msg_t* openlcb_msg) {
 
-    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_ONLY | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
-
-}
-
-uint32_t _construct_identfier_datagram_first_frame(openlcb_msg_t* openlcb_msg) {
-
-    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FIRST | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_ONLY | ((uint32_olcb_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
-uint32_t _construct_identfier_datagram_middle_frame(openlcb_msg_t* openlcb_msg) {
+uint32_olcb_t _construct_identfier_datagram_first_frame(openlcb_msg_t* openlcb_msg) {
 
-    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_MIDDLE | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
-
-}
-
-uint32_t construct_identfier_datagram_last_frame(openlcb_msg_t* openlcb_msg) {
-
-    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FINAL | ((uint32_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FIRST | ((uint32_olcb_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
-uint32_t Construct_Identfier_for_unaddress_msg(openlcb_msg_t* openlcb_msg) {
+uint32_olcb_t _construct_identfier_datagram_middle_frame(openlcb_msg_t* openlcb_msg) {
 
-    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_MIDDLE | ((uint32_olcb_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
 
 }
 
-uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_msg) {
+uint32_olcb_t construct_identfier_datagram_last_frame(openlcb_msg_t* openlcb_msg) {
 
-    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_DATAGRAM_FINAL | ((uint32_olcb_t) (openlcb_msg->dest_alias) << 12) | openlcb_msg->source_alias);
+
+}
+
+uint32_olcb_t Construct_Identfier_for_unaddress_msg(openlcb_msg_t* openlcb_msg) {
+
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_olcb_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
+
+}
+
+uint32_olcb_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_msg) {
+
+    return (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED | ((uint32_olcb_t) (openlcb_msg->mti & 0x0FFF) << 12) | openlcb_msg->source_alias);
 
 }
 
@@ -174,9 +174,9 @@ void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can_msg_t*
 
 }
 
-uint16_t _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+uint16_olcb_t _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_olcb_t openlcb_start_index) {
 
-    uint16_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+    uint16_olcb_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
 
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY)
 
@@ -198,9 +198,9 @@ uint16_t _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker,
 
 }
 
-uint16_t _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+uint16_olcb_t _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_olcb_t openlcb_start_index) {
 
-    uint16_t result = 0;
+    uint16_olcb_t result = 0;
 
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) { // single frame
 
@@ -218,14 +218,14 @@ uint16_t _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_
 
 }
 
-uint16_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+uint16_olcb_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_olcb_t openlcb_start_index) {
 
     _load_destination_address_in_payload(openlcb_msg, can_msg_worker);
 
 
     can_msg_worker->identifier = _construct_addressed_message_identifier(openlcb_msg);
 
-    uint16_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
+    uint16_olcb_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
 
 
     if (openlcb_msg->payload_count <= 6) // Account for 2 bytes used for dest alias
@@ -247,9 +247,9 @@ uint16_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_ms
     return result;
 }
 
-uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_t openlcb_start_index) {
+uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_olcb_t openlcb_start_index) {
 
-    uint16_t result = 0;
+    uint16_olcb_t result = 0;
     
     if (!DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL))
 
@@ -295,7 +295,7 @@ uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worke
 
 }
 
-uint8_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
+uint8_olcb_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
 
     if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 

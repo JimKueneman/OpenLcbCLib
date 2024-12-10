@@ -55,9 +55,9 @@ extern void CanBufferStore_freeBuffer(can_msg_t* msg);
 
 extern void CanBufferStore_clear_can_message(can_msg_t* msg);
 
-extern uint16_t CanBufferStore_messages_allocated();
+extern uint16_olcb_t CanBufferStore_messages_allocated();
 
-extern uint16_t CanBufferStore_messages_max_allocated();
+extern uint16_olcb_t CanBufferStore_messages_max_allocated();
 
 #ifdef	__cplusplus
 }

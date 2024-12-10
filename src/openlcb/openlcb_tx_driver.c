@@ -43,12 +43,12 @@
 
 #include "../drivers/common/can_tx_statemachine.h"
 
-uint8_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+uint8_olcb_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
   
     can_msg_t can_msg;
     
-    uint16_t payload_index = 0;
-    uint16_t bytes_transmitted = 0;
+    uint16_olcb_t payload_index = 0;
+    uint16_olcb_t bytes_transmitted = 0;
     
     // TODO:  I don't like this coupling into the CAN drivers here... need to come up with a better way so this file does not need to access
     //        the can driver files... maybe a callback function that connects this library to the desired TX driver... need to think about it.

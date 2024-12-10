@@ -39,7 +39,7 @@
 
 openlcb_nodes_t openlcb_nodes;
 
-uint16_t node_enum_index_array[6];
+uint16_olcb_t node_enum_index_array[6];
 
 void _clear_node(openlcb_node_t* openlcb_node) {
 
@@ -89,7 +89,7 @@ void Node_initialize() {
 
 }
 
-openlcb_node_t* Node_get_first(uint8_t key) {
+openlcb_node_t* Node_get_first(uint8_olcb_t key) {
 
     node_enum_index_array[key] = 0;
 
@@ -101,7 +101,7 @@ openlcb_node_t* Node_get_first(uint8_t key) {
 
 }
 
-openlcb_node_t* Node_get_next(uint8_t key) {
+openlcb_node_t* Node_get_next(uint8_olcb_t key) {
 
     node_enum_index_array[key] = node_enum_index_array[key] + 1;
 
@@ -114,7 +114,7 @@ openlcb_node_t* Node_get_next(uint8_t key) {
 
 void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
-    uint64_t node_id = openlcb_node->id << 16;
+    uint64_olcb_t node_id = openlcb_node->id << 16;
 
     for (int i = 0; i < openlcb_node->parameters->consumer_count; i++)
 
@@ -139,7 +139,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
 }
 
-openlcb_node_t* Node_allocate(uint64_t node_id, const node_parameters_t* node_parameters) {
+openlcb_node_t* Node_allocate(uint64_olcb_t node_id, const node_parameters_t* node_parameters) {
 
     for (int i = 0; i < LEN_NODE_ARRAY; i++) {
 
@@ -166,7 +166,7 @@ openlcb_node_t* Node_allocate(uint64_t node_id, const node_parameters_t* node_pa
 
 }
 
-openlcb_node_t* Node_find_by_alias(uint16_t alias) {
+openlcb_node_t* Node_find_by_alias(uint16_olcb_t alias) {
 
     for (int i = 0; i < openlcb_nodes.count; i++) {
 
@@ -184,7 +184,7 @@ openlcb_node_t* Node_find_by_alias(uint16_t alias) {
 
 }
 
-openlcb_node_t* Node_find_by_node_id(uint64_t nodeid) {
+openlcb_node_t* Node_find_by_node_id(uint64_olcb_t nodeid) {
 
     for (int i = 0; i < openlcb_nodes.count; i++) {
 
@@ -201,13 +201,13 @@ openlcb_node_t* Node_find_by_node_id(uint64_t nodeid) {
     return (void*) 0;
 }
 
-uint64_t Node_generate_seed(uint64_t start_seed) {
+uint64_olcb_t Node_generate_seed(uint64_olcb_t start_seed) {
 
-    uint32_t lfsr1 = start_seed & 0xFFFFFF;
-    uint32_t lfsr2 = (start_seed >> 24) & 0xFFFFFF;
+    uint32_olcb_t lfsr1 = start_seed & 0xFFFFFF;
+    uint32_olcb_t lfsr2 = (start_seed >> 24) & 0xFFFFFF;
 
-    uint32_t temp1 = ((lfsr1 << 9) | ((lfsr2 >> 15) & 0x1FF)) & 0xFFFFFF;
-    uint32_t temp2 = (lfsr2 << 9) & 0xFFFFFF;
+    uint32_olcb_t temp1 = ((lfsr1 << 9) | ((lfsr2 >> 15) & 0x1FF)) & 0xFFFFFF;
+    uint32_olcb_t temp2 = (lfsr2 << 9) & 0xFFFFFF;
 
     lfsr1 = lfsr1 + temp1 + 0x1B0CA3L;
     lfsr2 = lfsr2 + temp2 + 0x7A4BA9L;
@@ -215,14 +215,14 @@ uint64_t Node_generate_seed(uint64_t start_seed) {
     lfsr1 = (lfsr1 & 0xFFFFFF) + ((lfsr2 & 0xFF000000) >> 24);
     lfsr2 = lfsr2 & 0xFFFFFF;
 
-    return ( (uint64_t) lfsr1 << 24) | lfsr2;
+    return ( (uint64_olcb_t) lfsr1 << 24) | lfsr2;
 
 }
 
-uint16_t Node_generate_alias(uint64_t seed) {
+uint16_olcb_t Node_generate_alias(uint64_olcb_t seed) {
 
-    uint32_t lfsr2 = seed & 0xFFFFFF;
-    uint32_t lfsr1 = (seed >> 24) & 0xFFFFFF;
+    uint32_olcb_t lfsr2 = seed & 0xFFFFFF;
+    uint32_olcb_t lfsr1 = (seed >> 24) & 0xFFFFFF;
 
     return ( lfsr1 ^ lfsr2 ^ (lfsr1 >> 12) ^ (lfsr2 >> 12)) & 0x0FFF;
 

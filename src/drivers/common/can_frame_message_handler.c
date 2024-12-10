@@ -54,7 +54,7 @@ void _flush_alias_node_id_mappings() {
 
 }
 
-uint8_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+uint8_olcb_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
     if (can_node->alias == CanUtilities_extract_source_alias_from_can_message(can_msg)) {
 
@@ -78,7 +78,7 @@ uint8_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_
 
 }
 
-uint8_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+uint8_olcb_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
     if (can_node->alias == CanUtilities_extract_source_alias_from_can_message(can_msg)) {
 

@@ -38,37 +38,37 @@
 #include "../../../../openlcb/openlcb_defines.h"
 #include "debug.h"
 
-void PrintInt64(uint64_t n) {
+void PrintInt64(uint64_olcb_t n) {
 
-    printf("0x%04X", (uint16_t) ((n >> 48) & 0xFFFF));
-    printf("%04X", (uint16_t) ((n >> 32) & 0xFFFF));
-    printf("%04X", (uint16_t) ((n >> 16) & 0xFFFF));
-    printf("%04X\n", (uint16_t) ((n >> 0) & 0xFFFF));
+    printf("0x%04X", (uint16_olcb_t) ((n >> 48) & 0xFFFF));
+    printf("%04X", (uint16_olcb_t) ((n >> 32) & 0xFFFF));
+    printf("%04X", (uint16_olcb_t) ((n >> 16) & 0xFFFF));
+    printf("%04X\n", (uint16_olcb_t) ((n >> 0) & 0xFFFF));
 
 }
 
-void PrintAlias(uint16_t alias) {
+void PrintAlias(uint16_olcb_t alias) {
 
     printf("Alias: %04X\n", alias);
 
 }
 
-void PrintNodeID(uint64_t node_id) {
+void PrintNodeID(uint64_olcb_t node_id) {
 
-    printf("NodeID: 0x%04X", (uint16_t) (node_id >> 32));
-    printf("%04X", (uint16_t) (node_id >> 16));
-    printf("%04X\n", (uint16_t) (node_id >> 0));
+    printf("NodeID: 0x%04X", (uint16_olcb_t) (node_id >> 32));
+    printf("%04X", (uint16_olcb_t) (node_id >> 16));
+    printf("%04X\n", (uint16_olcb_t) (node_id >> 0));
 
 }
 
-void PrintAliasAndNodeID(uint16_t alias, uint64_t node_id) {
+void PrintAliasAndNodeID(uint16_olcb_t alias, uint64_olcb_t node_id) {
 
     PrintAlias(alias);
     PrintNodeID(node_id);
 
 }
 
-void PrintMtiName(uint16_t mti) {
+void PrintMtiName(uint16_olcb_t mti) {
     switch (mti) {
         case MTI_INITIALIZATION_COMPLETE:
             printf("MTI_INITIALIZATION_COMPLETE");
@@ -211,7 +211,7 @@ void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg) {
         printf("Payload Count: %d = ", openlcb_msg->payload_count);
         printf("0x");
         for (int i = 0; i < openlcb_msg->payload_count; i++)
-            printf("%02X", ((uint8_t*) openlcb_msg->payload)[i]);
+            printf("%02X", ((uint8_olcb_t*) openlcb_msg->payload)[i]);
         printf("\n");
         if (openlcb_msg->state.allocated)
             printf("Allocated: True\n");
@@ -274,14 +274,14 @@ void PrintNode(openlcb_node_t* node) {
 
 void PrintEventID(event_id_t event_id) {
 
-    printf("EventID: 0x%04X", (uint16_t) (event_id >> 48));
-    printf("%04X", (uint16_t) (event_id >> 32));
-    printf("%04X", (uint16_t) (event_id >> 16));
-    printf("%04X\n", (uint16_t) (event_id >> 0));
+    printf("EventID: 0x%04X", (uint16_olcb_t) (event_id >> 48));
+    printf("%04X", (uint16_olcb_t) (event_id >> 32));
+    printf("%04X", (uint16_olcb_t) (event_id >> 16));
+    printf("%04X\n", (uint16_olcb_t) (event_id >> 0));
 
 }
 
-void PrintCanFrameIdentifierName(uint32_t identifier) {
+void PrintCanFrameIdentifierName(uint32_olcb_t identifier) {
 
 
     if (identifier & 0xFF000000 & ~RESERVED_TOP_BIT) {
@@ -352,97 +352,19 @@ void PrintCanFrameIdentifierName(uint32_t identifier) {
 
 }
 
-void PrintCanIdentifier(uint32_t identifier) {
+void PrintCanIdentifier(uint32_olcb_t identifier) {
 
-    printf("0x%04X", (uint16_t) (identifier >> 16));
-    printf("%04X\n", (uint16_t) (identifier));
+    printf("0x%04X", (uint16_olcb_t) (identifier >> 16));
+    printf("%04X\n", (uint16_olcb_t) (identifier));
 
 }
 
-void PrintDWord(uint32_t dword) {
+void PrintDWord(uint32_olcb_t dword) {
 
     PrintCanIdentifier(dword);
 
 }
 
-
-//void PrintContentsFIFO(openlcb_msg_buffer_t* fifo) {
-//    
-//    for ( int i = 0; i < LEN_OPENLCB_MSG_FIFO; i++) {
-//        
-//        if ( fifo->list[i] ) {
-//            
-//            printf("index: %d, mti: %04x, source alias: %04x, dest alias: %04x\n", i, fifo->list[i]->mti, fifo->list[i]->source_alias, fifo->list[i]->dest_alias);
-//           
-//        }
-//
-//    }
-//    
-//};
-//
-//void ForceFlushAndFreeFIFO(openlcb_msg_buffer_t* fifo) {
-//    
-//    for ( int i = 0; i < LEN_OPENLCB_MSG_FIFO; i++) {
-//        
-//        if ( fifo->list[i] ) {
-//            
-//            Release_OpenLcb_Msg(fifo->list[i], TRUE);
-//            
-//            fifo->list[i] = (void*) 0;
-//                  
-//        }
-//
-//    }
-//    
-//}
-//
-//uint16_t CountFIFO(openlcb_msg_buffer_t* fifo) {
-//    
-//    int count = 0;
-//    for (int i = 0; i < LEN_OPENLCB_MSG_FIFO; i++) {
-//      if (fifo->list[i]) 
-//          count = count + 1;
-//    };
-//    
-//    return count;
-//    
-//};
-//
-//
-//void PrintBufferStats() {
-//          
-//    printf("OpenLcb Msg Pool: %d\n", pool_openlcb_msg_allocated);
-//    printf("OpenLcb Msg Pool Max Depth: %d\n\n", max_pool_openlcb_msg_allocated);
-//    
-//    printf("CAN Msg Pool: %d\n", pool_can_msg_allocated);
-//    printf("CAN Msg Pool Max Depth: %d\n\n", max_pool_can_msg_allocated);
-//    
-//    
-//    printf("dsPIC CAN FIFO Buffer Max Depth: %d\n\n", max_can_fifo_depth);
-//    
-//   
-//    printf("Incoming Msg FIFO: %d\n", CountFIFO(&incoming_openlcb_msg_fifo));
-//    printf("Outgoing Msg FIFO: %d\n\n", CountFIFO(&outgoing_openlcb_msg_fifo));
-//    
-//    uint16_t count = 0;
-//    for (int iIndex = 0; iIndex < LEN_OPENLCB_MSG_INPROCESS_BUFFER; iIndex++) {
-//        if (incoming_openlcb_inprocess_msg_list.list[iIndex]) 
-//            count = count + 1;
-//    
-//    }
-//    
-//    printf("Incoming Inprocess Msg Buffer: %d\n\n", count);
-//    
-//    
-//    
-//    printf("Incoming Pushes: %d\n", total_incoming_fifo_pushes);
-//    printf("Incoming Pops: %d\n", total_incoming_fifo_pushes);
-//    printf("Outgoing Pushes: %d\n", total_outgoing_fifo_pushes);
-//    printf("Outgoing Pops: %d\n", total_outgoing_fifo_pops);
-//    
-//  //  printf("Incoming Msg In-process FIFO: %d\n", CountFIFO(&incoming_openlcb_inprocess_msg_list));
-//    
-//};
 
 void PrintCAN1Registers(void) {
 

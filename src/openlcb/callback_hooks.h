@@ -45,7 +45,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 // Node Alias and Node ID
-typedef void (*alias_change_callback_t) (uint16_t, uint64_t);
+typedef void (*alias_change_callback_t) (uint16_olcb_t, uint64_olcb_t);
 
 /**
 * When a node is created and it allocates and alias ID (or if it detects a collision and 

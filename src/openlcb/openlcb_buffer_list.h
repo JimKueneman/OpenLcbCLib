@@ -46,17 +46,17 @@ extern "C" {
 
 extern void BufferList_initialiaze();
 
-extern openlcb_msg_t* BufferList_allocate(uint16_t data_len);  
+extern openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len);  
 
-extern openlcb_msg_t* BufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti); 
+extern openlcb_msg_t* BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti); 
 
 extern void BufferList_free(openlcb_msg_t* msg);
 
 extern void BufferList_release(openlcb_msg_t* msg); 
 
-extern openlcb_msg_t* BufferList_index_of(uint16_t index);
+extern openlcb_msg_t* BufferList_index_of(uint16_olcb_t index);
 
-extern uint8_t BufferList_is_empty();
+extern uint8_olcb_t BufferList_is_empty();
 
 
 #ifdef	__cplusplus

@@ -47,9 +47,9 @@ extern "C" {
     
 extern void DriverConfigurationMemory_initialization();
 
-extern uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+extern uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
 
-extern uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+extern uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
 
 
 

@@ -42,8 +42,8 @@
 #include "openlcb_types.h"
 
 message_buffer_t _message_buffer;
-uint16_t _buffer_store_message_allocated = 0;
-uint16_t _buffer_store_message_max_allocated = 0;
+uint16_olcb_t _buffer_store_message_allocated = 0;
+uint16_olcb_t _buffer_store_message_max_allocated = 0;
 
 void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
@@ -93,10 +93,10 @@ void BufferStore_initialize() {
     }
 }
 
-openlcb_msg_t* BufferStore_allocateBuffer(uint16_t buffer_size) {
+openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
-    uint16_t offset_start = 0;
-    uint16_t offset_end = 0;
+    uint16_olcb_t offset_start = 0;
+    uint16_olcb_t offset_end = 0;
 
     if (buffer_size <= LEN_MESSAGE_BYTES_BASIC) {
         
@@ -177,13 +177,13 @@ void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg) {
 
 }
 
-uint16_t BufferStore_messages_allocated() {
+uint16_olcb_t BufferStore_messages_allocated() {
 
     return _buffer_store_message_allocated;
 
 }
 
-uint16_t BufferStore_messages_max_allocated() {
+uint16_olcb_t BufferStore_messages_max_allocated() {
 
     return _buffer_store_message_max_allocated;
 

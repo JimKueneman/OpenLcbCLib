@@ -41,10 +41,10 @@
 
 
 // How full the chips CAN fifo has gotten if supported
-uint8_t DriverCan_max_can_fifo_depth = 0;
+uint8_olcb_t DriverCan_max_can_fifo_depth = 0;
 
 
-uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel) {
+uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t Channel) {
     
     // Implement a way to return if the can transmitter is clear to take another frame to send
     
@@ -53,7 +53,7 @@ uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel) {
 }
 
 
-uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
+uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
 
     // Implement a way to send a can frame with the passed message structure
     

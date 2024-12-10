@@ -51,7 +51,7 @@ void DriverConfigurationMemory_initialization() {
     
 }
 
-uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
+uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
     
     
     // Implement your Configuration Memory Read Here:
@@ -63,7 +63,7 @@ uint16_t DriverConfigurationMemory_read(uint32_t address, uint16_t count, config
     
 }
 
-uint16_t DriverConfigurationMemory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
+uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
     
     
     // Implement your Configuration Memory Write Here:

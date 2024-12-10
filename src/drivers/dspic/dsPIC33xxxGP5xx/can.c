@@ -43,7 +43,7 @@ can_rx_callback_func_t internal_can_rx_callback_func;
 
 // ECAN1 ------------------------------------------------------------------------
 // First buffer index that is a RX buffer
-const uint8_t FIFO_RX_START_INDEX = 8; // (8-31)
+const uint8_olcb_t FIFO_RX_START_INDEX = 8; // (8-31)
 
 // ECAN 80 Mhz oscillator
 #define   ECAN_SWJ 2-1
@@ -65,7 +65,7 @@ const uint8_t FIFO_RX_START_INDEX = 8; // (8-31)
 
 #define X 0b0000000000000000;
 
-const uint16_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
+const uint16_olcb_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
     0b1111111111111101,
     0b1111111111111011,
     0b1111111111110111,
@@ -83,7 +83,7 @@ const uint16_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
     0b0111111111111111};
 
 // Internal Types
-typedef uint16_t ECAN1MSGBUF[ECAN1_MSG_BUF_LENGTH][ECAN1_MSG_LENGTH_BYTES];
+typedef uint16_olcb_t ECAN1MSGBUF[ECAN1_MSG_BUF_LENGTH][ECAN1_MSG_LENGTH_BYTES];
 
 
 // Internal Variables depending on chip capabilities
@@ -122,25 +122,25 @@ __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(xmemory), aligned(ECAN
  *
  * Overview:      Configures Acceptance filter "n" for ECAN1.
  *****************************************************************************/
-void Ecan1WriteRxAcptFilter(int16_t n, int32_t identifier, uint16_t exide, uint16_t bufPnt, uint16_t maskSel) {
+void Ecan1WriteRxAcptFilter(int16_t n, int32_t identifier, uint16_olcb_t exide, uint16_olcb_t bufPnt, uint16_olcb_t maskSel) {
 
-    uint32_t sid10_0 = 0;
+    uint32_olcb_t sid10_0 = 0;
 
-    uint32_t eid15_0 = 0;
+    uint32_olcb_t eid15_0 = 0;
 
-    uint32_t eid17_16 = 0;
-    uint16_t *sidRegAddr;
-    uint16_t *bufPntRegAddr;
-    uint16_t *maskSelRegAddr;
-    uint16_t *fltEnRegAddr;
+    uint32_olcb_t eid17_16 = 0;
+    uint16_olcb_t *sidRegAddr;
+    uint16_olcb_t *bufPntRegAddr;
+    uint16_olcb_t *maskSelRegAddr;
+    uint16_olcb_t *fltEnRegAddr;
 
     C1CTRL1bits.WIN = 1;
 
     // Obtain the Address of CiRXFnSID, CiBUFPNTn, CiFMSKSELn and CiFEN register for a given filter number "n"
-    sidRegAddr = (uint16_t *) (&C1RXF0SID + (n << 1));
-    bufPntRegAddr = (uint16_t *) (&C1BUFPNT1 + (n >> 2));
-    maskSelRegAddr = (uint16_t *) (&C1FMSKSEL1 + (n >> 3));
-    fltEnRegAddr = (uint16_t *) (&C1FEN1);
+    sidRegAddr = (uint16_olcb_t *) (&C1RXF0SID + (n << 1));
+    bufPntRegAddr = (uint16_olcb_t *) (&C1BUFPNT1 + (n >> 2));
+    maskSelRegAddr = (uint16_olcb_t *) (&C1FMSKSEL1 + (n >> 3));
+    fltEnRegAddr = (uint16_olcb_t *) (&C1FEN1);
 
     // Bit-filed manipulation to write to Filter identifier register
     if (exide == 1) { // Filter Extended Identifier
@@ -196,18 +196,18 @@ void Ecan1WriteRxAcptFilter(int16_t n, int32_t identifier, uint16_t exide, uint1
  *
  * Overview:      Configures Acceptance filter "n" for ECAN1.
  *****************************************************************************/
-void Ecan1WriteRxAcptMask(int16_t m, int32_t identifier, uint16_t mide, uint16_t exide) {
-    uint32_t sid10_0 = 0;
+void Ecan1WriteRxAcptMask(int16_t m, int32_t identifier, uint16_olcb_t mide, uint16_olcb_t exide) {
+    uint32_olcb_t sid10_0 = 0;
 
-    uint32_t eid15_0 = 0;
+    uint32_olcb_t eid15_0 = 0;
 
-    uint32_t eid17_16 = 0;
-    uint16_t *maskRegAddr;
+    uint32_olcb_t eid17_16 = 0;
+    uint16_olcb_t *maskRegAddr;
 
     C1CTRL1bits.WIN = 1;
 
     // Obtain the Address of CiRXMmSID register for given Mask number "m"
-    maskRegAddr = (uint16_t *) (&C1RXM0SID + (m << 1));
+    maskRegAddr = (uint16_olcb_t *) (&C1RXM0SID + (m << 1));
 
     // Bit-filed manipulation to write to Filter Mask register
     if (exide == 1) { // Filter Extended Identifier
@@ -238,7 +238,7 @@ void Ecan1WriteRxAcptMask(int16_t m, int32_t identifier, uint16_t mide, uint16_t
     return;
 }
 
-void Ecan1TxBufferSetTransmit(uint16_t buf) {
+void Ecan1TxBufferSetTransmit(uint16_olcb_t buf) {
 
     switch (buf) {
         case 0:
@@ -284,7 +284,7 @@ void Ecan1TxBufferSetTransmit(uint16_t buf) {
     }
 }
 
-void Ecan1TxBufferClearTransmit(uint16_t buf) {
+void Ecan1TxBufferClearTransmit(uint16_olcb_t buf) {
 
     switch (buf) {
         case 0:
@@ -330,7 +330,7 @@ void Ecan1TxBufferClearTransmit(uint16_t buf) {
     }
 }
 
-uint8_t Is_Ecan1_TxBuffer_Clear(uint16_t buf) {
+uint8_olcb_t Is_Ecan1_TxBuffer_Clear(uint16_olcb_t buf) {
 
     switch (buf) {
         case 0: return (C1TR01CONbits.TXREQ0 == 0);
@@ -346,7 +346,7 @@ uint8_t Is_Ecan1_TxBuffer_Clear(uint16_t buf) {
 
 }
 
-uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel) {
+uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t Channel) {
 
     return Is_Ecan1_TxBuffer_Clear(Channel);
 
@@ -422,15 +422,15 @@ uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t Channel) {
  *
  * Overview:      This function configures ECAN1 message buffer.
  *****************************************************************************/
-void Ecan1WriteTxMsgBufId(uint16_t buf, int32_t txIdentifier, uint16_t ide, uint16_t remoteTransmit) {
-    uint32_t word0 = 0;
+void Ecan1WriteTxMsgBufId(uint16_olcb_t buf, int32_t txIdentifier, uint16_olcb_t ide, uint16_olcb_t remoteTransmit) {
+    uint32_olcb_t word0 = 0;
 
-    uint32_t word1 = 0;
+    uint32_olcb_t word1 = 0;
 
-    uint32_t word2 = 0;
-    uint32_t sid10_0 = 0;
-    uint32_t eid5_0 = 0;
-    uint32_t eid17_6 = 0;
+    uint32_olcb_t word2 = 0;
+    uint32_olcb_t sid10_0 = 0;
+    uint32_olcb_t eid5_0 = 0;
+    uint32_olcb_t eid17_6 = 0;
 
     if (ide) {
         eid5_0 = (txIdentifier & 0x3F);
@@ -479,7 +479,7 @@ void Ecan1WriteTxMsgBufId(uint16_t buf, int32_t txIdentifier, uint16_t ide, uint
  *
  * Overview:      This function transmits ECAN data.
  *****************************************************************************/
-void Ecan1WriteTxMsgBufData(uint16_t buf, uint16_t data_length, payload_bytes_can_t* data) {
+void Ecan1WriteTxMsgBufData(uint16_olcb_t buf, uint16_olcb_t data_length, payload_bytes_can_t* data) {
 
 
     ecan1msgBuf[buf][2] = ((ecan1msgBuf[buf][2] & 0xFFF0) + data_length); // DCL = number of valid data bytes
@@ -510,7 +510,7 @@ void Ecan1WriteTxMsgBufData(uint16_t buf, uint16_t data_length, payload_bytes_ca
  *
  * Overview:      This function transmits ECAN data.
  *****************************************************************************/
-void Ecan1WriteTxMsgBufDataWord(uint16_t buf, uint16_t data_length, uint16_t data1, uint16_t data2, uint16_t data3, uint16_t data4) {
+void Ecan1WriteTxMsgBufDataWord(uint16_olcb_t buf, uint16_olcb_t data_length, uint16_olcb_t data1, uint16_olcb_t data2, uint16_olcb_t data3, uint16_olcb_t data4) {
 
     ecan1msgBuf[buf][2] = ((ecan1msgBuf[buf][2] & 0xFFF0) + data_length); // DCL = number of valid data bytes
 
@@ -521,7 +521,7 @@ void Ecan1WriteTxMsgBufDataWord(uint16_t buf, uint16_t data_length, uint16_t dat
 
 }
 
-void Ecan1WriteTxMsgBufDataByte(uint16_t buf, uint16_t data_length, uint16_t data1, uint16_t data2, uint16_t data3, uint16_t data4, uint16_t data5, uint16_t data6, uint16_t data7, uint16_t data8) {
+void Ecan1WriteTxMsgBufDataByte(uint16_olcb_t buf, uint16_olcb_t data_length, uint16_olcb_t data1, uint16_olcb_t data2, uint16_olcb_t data3, uint16_olcb_t data4, uint16_olcb_t data5, uint16_olcb_t data6, uint16_olcb_t data7, uint16_olcb_t data8) {
 
     ecan1msgBuf[buf][2] = ((ecan1msgBuf[buf][2] & 0xFFF0) + data_length); // DCL = number of valid data bytes
 
@@ -541,9 +541,9 @@ void Ecan1WriteTxMsgBufDataByte(uint16_t buf, uint16_t data_length, uint16_t dat
  * *rxData: [OUT] A pointer to the Data payload for the CAN message
  * *ide:    [OUT} A pointer to a boolean that indicates if the message is extended or not
  */
-void Ecan1ReadRxMsgBufId(uint16_t buf, can_msg_t *rxData, uint16_t *ide) {
+void Ecan1ReadRxMsgBufId(uint16_olcb_t buf, can_msg_t *rxData, uint16_olcb_t *ide) {
 
-    uint32_t sid, eid_17_6, eid_5_0;
+    uint32_olcb_t sid, eid_17_6, eid_5_0;
 
     sid = (0x1FFC & ecan1msgBuf[buf][0]) >> 2; // 0b0001111111111100 ;
     eid_17_6 = ecan1msgBuf[buf][1];
@@ -570,21 +570,21 @@ void Ecan1ReadRxMsgBufId(uint16_t buf, can_msg_t *rxData, uint16_t *ide) {
  * buf:     [IN] The buffer index to read
  * *rxData: [OUT] A pointer to the Data payload for the CAN message
  */
-void Ecan1ReadRxMsgBufData(uint16_t buf, can_msg_t *rxData) {
+void Ecan1ReadRxMsgBufData(uint16_olcb_t buf, can_msg_t *rxData) {
 
     rxData->payload_count = ecan1msgBuf[buf][2] & 0x000F;
 
-    rxData->payload[0] = (uint8_t) ecan1msgBuf[buf][3];
-    rxData->payload[1] = (uint8_t) (ecan1msgBuf[buf][3] >> 8);
+    rxData->payload[0] = (uint8_olcb_t) ecan1msgBuf[buf][3];
+    rxData->payload[1] = (uint8_olcb_t) (ecan1msgBuf[buf][3] >> 8);
 
-    rxData->payload[2] = (uint8_t) ecan1msgBuf[buf][4];
-    rxData->payload[3] = (uint8_t) (ecan1msgBuf[buf][4] >> 8);
+    rxData->payload[2] = (uint8_olcb_t) ecan1msgBuf[buf][4];
+    rxData->payload[3] = (uint8_olcb_t) (ecan1msgBuf[buf][4] >> 8);
 
-    rxData->payload[4] = (uint8_t) ecan1msgBuf[buf][5];
-    rxData->payload[5] = (uint8_t) (ecan1msgBuf[buf][5] >> 8);
+    rxData->payload[4] = (uint8_olcb_t) ecan1msgBuf[buf][5];
+    rxData->payload[5] = (uint8_olcb_t) (ecan1msgBuf[buf][5] >> 8);
 
-    rxData->payload[6] = (uint8_t) ecan1msgBuf[buf][6];
-    rxData->payload[7] = (uint8_t) (ecan1msgBuf[buf][6] >> 8);
+    rxData->payload[6] = (uint8_olcb_t) ecan1msgBuf[buf][6];
+    rxData->payload[7] = (uint8_olcb_t) (ecan1msgBuf[buf][6] >> 8);
 
     return;
 
@@ -604,9 +604,9 @@ void Ecan1ReadRxMsgBufData(uint16_t buf, can_msg_t *rxData) {
  * Overview:          Disables RX Acceptance Filter.
  *****************************************************************************/
 void Ecan1DisableRXFilter(int16_t n) {
-    uint16_t *fltEnRegAddr;
+    uint16_olcb_t *fltEnRegAddr;
     C1CTRL1bits.WIN = 1;
-    fltEnRegAddr = (uint16_t *) (&C1FEN1);
+    fltEnRegAddr = (uint16_olcb_t *) (&C1FEN1);
     *fltEnRegAddr = (*fltEnRegAddr) & (0xFFFF - (0x1 << n));
     C1CTRL1bits.WIN = 0;
 
@@ -614,7 +614,7 @@ void Ecan1DisableRXFilter(int16_t n) {
 
 }
 
-uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
+uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
 
 
     if (Is_Ecan1_TxBuffer_Clear(channel)) {
@@ -636,7 +636,7 @@ uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
 // CAN 1 Interrupt
 
-uint8_t DriverCan_max_can_fifo_depth = 0;
+uint8_olcb_t DriverCan_max_can_fifo_depth = 0;
 
 void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
@@ -646,15 +646,15 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
     if (C1INTFbits.RBIF) { // RX Interrupt
    
         // Snag all the buffers that have data that are associated with this interrupt
-        uint8_t buffer_tail = _FNRB;
-        uint8_t buffer_head = _FBP;
+        uint8_olcb_t buffer_tail = _FNRB;
+        uint8_olcb_t buffer_head = _FBP;
 
         // Now reset the interrupt so anything that comes in from here on will reset the interrupt.  
         // Believe this will keep from missing a message
         C1INTFbits.RBIF = 0;
 
-        uint8_t fifo_size = 0;
-        uint16_t ide = 0;
+        uint8_olcb_t fifo_size = 0;
+        uint16_olcb_t ide = 0;
         can_msg_t ecan_msg;
 
         while (buffer_tail != buffer_head) {
@@ -835,7 +835,7 @@ void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func) {
     //    DMA2CONbits.AMODE = 2; // Peripheral Indirect Addressing mode
     //    DMA2CONbits.MODE  = 0; // Continuous, Ping-Pong modes disabled
     DMA2CON = 0x0020;
-    DMA2PAD = (uint16_t) & C1RXD; // (C1RXD) associate this DMA Channel to the peripheral data register associated with CAN1 RX
+    DMA2PAD = (uint16_olcb_t) & C1RXD; // (C1RXD) associate this DMA Channel to the peripheral data register associated with CAN1 RX
     DMA2CNT = 0x0007; // 7 data bytes
     DMA2REQ = 0x0022; // associate this DMA Channel to the peripheral interrupt associated with CAN1 RX, DMAxREQ.IRQSEL
 
@@ -843,7 +843,7 @@ void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func) {
     DMA2STAL = __builtin_dmaoffset(ecan1msgBuf);
     DMA2STAH = __builtin_dmapage(ecan1msgBuf);
 #else
-    DMA2STAL = (uint16_t) (int_least24_t) (&ecan1msgBuf);
+    DMA2STAL = (uint16_olcb_t) (int_least24_t) (&ecan1msgBuf);
     DMA2STAH = 0; // 32k of RAM in any chip being used for this project
 #endif
 
@@ -865,7 +865,7 @@ void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func) {
     //    DMA0CONbits.AMODE = 2; // Peripheral Indirect Addressing mode
     //    DMA0CONbits.MODE  = 0; // Continuous, Ping-Pong modes disabled
     DMA0CON = 0x2020;
-    DMA0PAD = (uint16_t) & C1TXD; // ECAN 1 (C1TXD) associate this DMA Channel to the peripheral data interrupt associated with CAN1 TX
+    DMA0PAD = (uint16_olcb_t) & C1TXD; // ECAN 1 (C1TXD) associate this DMA Channel to the peripheral data interrupt associated with CAN1 TX
     DMA0CNT = 0x0007; // 7 data bytes
     DMA0REQ = 0x0046; // associate this DMA Channel to the peripheral interrupt associated with CAN1 TX, DMAxREQ.IRQSEL
 
@@ -873,7 +873,7 @@ void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func) {
     DMA0STAL = __builtin_dmaoffset(ecan1msgBuf);
     DMA0STAH = __builtin_dmapage(ecan1msgBuf);
 #else
-    DMA0STAL = (uint16_t) (int_least24_t) (&ecan1msgBuf);
+    DMA0STAL = (uint16_olcb_t) (int_least24_t) (&ecan1msgBuf);
     DMA0STAH = 0; // 32k of RAM in any chip being used for this project
 #endif
 

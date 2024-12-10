@@ -88,9 +88,9 @@
 
 #include "debug.h"
 
-uint64_t node_id_base = 0x050101010700;
+uint64_olcb_t node_id_base = 0x050101010700;
 
-void _uart_callback(uint16_t code) {
+void _uart_callback(uint16_olcb_t code) {
 
     switch (code) {
         case 'B':
@@ -158,7 +158,7 @@ void _uart_callback(uint16_t code) {
 
 }
 
-void _alias_change_callback(uint16_t new_alias, uint64_t node_id) {
+void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
     PrintNodeID(node_id);
@@ -198,7 +198,7 @@ int main(void) {
 
     printf("Node Created\n");
 
-    uint16_t x = node->index * LEN_SNIP_USER_DATA;
+    uint16_olcb_t x = node->index * LEN_SNIP_USER_DATA;
 
 #ifdef _SIMULATOR_
 
