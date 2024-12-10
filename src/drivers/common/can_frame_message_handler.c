@@ -44,8 +44,6 @@
 #include "../../openlcb/openlcb_utilities.h"
 #include "can_tx_statemachine.h"
 
-#include "../../applications/test/main_statemachine/main_statemachine.X/debug.h"
-
 void _flush_alias_node_id_mappings() {
 
     int i = 0;

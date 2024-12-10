@@ -51,8 +51,6 @@
 #include "can_types.h"
 #include "../driver_can.h"
 
-#include "../../applications/test/can_tx_statemachine/can_tx_statemachine.X/debug.h"
-
 
 // #define CAN_TX_TEST
 

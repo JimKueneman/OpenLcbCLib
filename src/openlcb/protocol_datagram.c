@@ -43,6 +43,7 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_tx_driver.h"
 #include "protocol_snip.h"
+#include "../drivers/driver_mcu.h"
 #include "../drivers/driver_configuration_memory.h"
 
 void ProtocolDatagram_initialize() {
@@ -905,7 +906,7 @@ void _handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_m
 
     }
 
-    asm("RESET ");
+    McuDriver_Reboot();
 
     openlcb_node->state.openlcb_msg_handled = TRUE;
 

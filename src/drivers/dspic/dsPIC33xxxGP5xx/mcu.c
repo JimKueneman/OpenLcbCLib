@@ -62,6 +62,12 @@ uart_rx_callback_t McuDriver_uart_rx_callback_func;
 #define BRG_OFFSET 0
 
 
+void McuDriver_Reboot(void) {
+    
+    asm("RESET ");
+    
+}
+
 void McuDriver_initialization(void) {
 
     // UART Initialize ---------------------------------------------------------

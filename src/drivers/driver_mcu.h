@@ -45,6 +45,8 @@ extern "C" {
     
 extern void McuDriver_initialization(void);
 
+extern void McuDriver_Reboot(void);
+
 extern uart_rx_callback_t McuDriver_uart_rx_callback_func;
 
 #ifdef	__cplusplus

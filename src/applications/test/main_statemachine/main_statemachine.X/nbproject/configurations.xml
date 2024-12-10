@@ -71,6 +71,8 @@
         <logicalFolder name="25AA1024" displayName="25AA1024" projectFiles="true">
           <itemPath>../../../../drivers/25AA1024/25AA1024_driver.c</itemPath>
         </logicalFolder>
+        <logicalFolder name="arm" displayName="arm" projectFiles="true">
+        </logicalFolder>
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_buffer_fifo.c</itemPath>
           <itemPath>../../../../drivers/common/can_utilities.c</itemPath>
@@ -90,6 +92,14 @@
             <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/configuration_memory.c</itemPath>
             <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/can.c</itemPath>
           </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="pic32" displayName="pic32" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="template" displayName="template" projectFiles="true">
+          <itemPath>../../../../drivers/template/clock.c</itemPath>
+          <itemPath>../../../../drivers/template/configuration_memory.c</itemPath>
+          <itemPath>../../../../drivers/template/can.c</itemPath>
+          <itemPath>../../../../drivers/template/mcu.c</itemPath>
         </logicalFolder>
         <itemPath>../../../../drivers/driver_configuration_memory.c</itemPath>
         <itemPath>../../../../drivers/driver_mcu.c</itemPath>
@@ -169,69 +179,15 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/can.c"
-            ex="true"
-            overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
+      <item path="../../../../drivers/template/can.c" ex="true" overriding="false">
       </item>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/clock.c"
-            ex="true"
-            overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
+      <item path="../../../../drivers/template/clock.c" ex="true" overriding="false">
       </item>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/configuration_memory.c"
+      <item path="../../../../drivers/template/configuration_memory.c"
             ex="true"
             overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
       </item>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/mcu.c"
-            ex="true"
-            overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
+      <item path="../../../../drivers/template/mcu.c" ex="true" overriding="false">
       </item>
       <C30>
         <property key="cast-align" value="false"/>
@@ -355,7 +311,7 @@
         <property key="generic-16-bit" value="false"/>
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
-        <property key="oXC16glb-macros" value="dsPIC33EPxxxGP50x"/>
+        <property key="oXC16glb-macros" value="_USE_TEMPLATES_"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>
