@@ -37,6 +37,9 @@
 
 // When a new set of drivers is developed add a conditional define here pointing to the can.c file
 
+#include "driver_100ms_clock.h"
+
+
 #ifdef dsPIC33EPxxxGP50x
   #include "dspic/dsPIC33xxxGP5xx/clock.c"
 #endif

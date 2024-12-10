@@ -34,6 +34,7 @@
  * @date 5 Dec 2024
  */
 
+#include "can_frame_message_handler.h"
 
 #include "can_types.h"
 #include "can_buffer_store.h"

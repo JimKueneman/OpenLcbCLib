@@ -34,6 +34,7 @@
  * @date 5 Dec 2024
  */
 
+#include "protocol_datagram.h"
 
 #include "stdio.h" // printf
 #include "openlcb_types.h"

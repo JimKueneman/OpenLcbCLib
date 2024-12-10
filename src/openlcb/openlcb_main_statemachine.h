@@ -39,6 +39,8 @@
 #ifndef __OPENLCB_MAIN_STATEMACHINE__
 #define	__OPENLCB_MAIN_STATEMACHINE__
 
+#include "openlcb_types.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

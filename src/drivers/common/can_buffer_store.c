@@ -36,6 +36,7 @@
  */
 
 
+#include "can_buffer_store.h"
 
 #include "stdio.h"  // printf
 #include "can_types.h"

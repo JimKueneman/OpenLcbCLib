@@ -33,10 +33,12 @@
  * @date 5 Dec 2024
  */
 
+#include "openlcb_utilities.h"
+
 #include "stdio.h" // printf
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
-#include "openlcb_utilities.h"
+
 
 uint32_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node) {
     

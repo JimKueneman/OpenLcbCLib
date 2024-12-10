@@ -32,6 +32,8 @@
  * @date 5 Dec 2024
  */
 
+#include "25AA1024_driver.h"
+
 #include "xc.h"
 #include "../driver_configuration_memory.h"
 

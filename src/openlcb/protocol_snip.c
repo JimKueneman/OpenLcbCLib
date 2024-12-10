@@ -34,6 +34,8 @@
  * @date 5 Dec 2024
  */
 
+#include "protocol_snip.h"
+
 #include "stdio.h" // printf
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -235,7 +237,7 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
 
 }
 
-void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t data_count) {
+void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
  
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message

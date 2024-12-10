@@ -32,6 +32,8 @@
  * @date 5 Dec 2024
  */
 
+#include "clock_distribution.h"
+
 #include "openlcb_node.h"
 #include "protocol_datagram.h"
 #include "../drivers/driver_100ms_clock.h"

@@ -37,6 +37,8 @@
  * @date 5 Dec 2024
  */
 
+#include "openlcb_buffer_fifo.h"
+
 #include "openlcb_buffer_store.h"
 #include "openlcb_types.h"
 

@@ -36,6 +36,7 @@
  * @date 5 Dec 2024
  */
 
+#include "can_rx_statemachine.h"
 
 #include "stdio.h" // printf
 #include "../../drivers/driver_can.h"

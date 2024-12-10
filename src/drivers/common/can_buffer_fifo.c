@@ -36,6 +36,7 @@
  * @date 5 Dec 2024
  */
 
+#include "can_buffer_fifo.h"
 
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"

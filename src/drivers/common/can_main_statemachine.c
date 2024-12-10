@@ -33,6 +33,7 @@
  * @date 5 Dec 2024
  */
 
+#include "can_main_statemachine.h"
 
 #include "stdio.h"  // printf
 #include "../../openlcb/openlcb_types.h"

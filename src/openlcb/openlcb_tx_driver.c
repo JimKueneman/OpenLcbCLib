@@ -35,6 +35,8 @@
  * @date 5 Dec 2024
  */
 
+#include "openlcb_tx_driver.h"
+
 #include "stdio.h"  // printf
 #include "openlcb_types.h"
 #include "openlcb_node.h"

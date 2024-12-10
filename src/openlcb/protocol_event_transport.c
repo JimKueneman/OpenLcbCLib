@@ -34,9 +34,9 @@
  * @date 5 Dec 2024
  */
 
+#include "protocol_event_transport.h"
 
 #include "stdio.h" // printf
-
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_tx_driver.h"

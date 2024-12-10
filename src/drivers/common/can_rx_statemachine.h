@@ -44,13 +44,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-
 extern void CanRxStatemachine_initialize();
-
-
-// TODO: THIS IS TEMPORARY TO ALLOW SIMULATOR TESTING OF THE RX CHANNEL
-extern void _state_machine_incoming_can(uint8_t channel, can_msg_t* msg); 
-
+ 
 
 #ifdef	__cplusplus
 }

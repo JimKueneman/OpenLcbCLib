@@ -36,5 +36,7 @@
 
 #include "callback_hooks.h"
 
+#include "openlcb_types.h"
+
 
 alias_change_callback_t CallbackHooks_alias_change = (void*) 0;

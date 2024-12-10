@@ -37,6 +37,10 @@
 // Global that things like libpic30.h use to calculate delay functions and such.
 // MUST be before libpic30c.h
 
+//#include "driver_mcu.h"
+
+#include "../openlcb/openlcb_types.h"
+
 #ifdef dsPIC33EPxxxGP50x
   #include "dspic/dsPIC33xxxGP5xx/mcu.c"
 #endif

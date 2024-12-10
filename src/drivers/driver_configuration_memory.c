@@ -36,6 +36,9 @@
 
 // When a new set of drivers is developed add a conditional define here pointing to the configuration_memory.c file
 
+#include "driver_configuration_memory.h"
+
+
 #ifdef dsPIC33EPxxxGP50x
   #include "dspic/dsPIC33xxxGP5xx/configuration_memory.c"
 #endif
