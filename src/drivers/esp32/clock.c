@@ -24,30 +24,72 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_mcu.c
+ * \file clock.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-//#include "driver_mcu.h"
+// Add any compiler specific includes
 
-#include "../openlcb/openlcb_types.h"
-
-#ifdef dsPIC33EPxxxGP50x
-  #include "dspic/dsPIC33xxxGP5xx/mcu.c"
-#endif
-
-#ifdef __TEMPLATE__
-  #include "template/mcu.c"
-#endif
+#include "../../openlcb/openlcb_types.h"
 
 
+// This must be here and assigned in Driver100msClock_Initialization
+
+_100ms_timer_callback_func_t Driver100msClock_callback_func;
 
 
+void Driver100msClock_Initialization(_100ms_timer_callback_func_t _100ms_callback_func) {
+    
+    // Must be here.....
+    Driver100msClock_callback_func = _100ms_callback_func;
+    
+    // Timer Initialize --------------------------------------------------------
+    // -------------------------------------------------------------------------
 
+
+    // -------------------------------------------------------------------------
+    
+    
+}
+
+
+// Implement a way to call the Driver100msClock_callback_func at 100ms intervals here
+
+// Example:
+
+//void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+//
+//    IFS0bits.T2IF = 0; // Clear T2IF
+//
+//    // Increment any timer counters assigned
+//    if (Driver100msClock_callback_func)
+//        Driver100msClock_callback_func();
+//
+//    return;
+//}
+
+
+void Driver100msClock_pause_100ms_timer() {
+  
+    // Implement a way to stop the timer here
+    
+// Example
+//    T2CONbits.TON = 0; // Turn off 100ms Timer
+    
+}
+
+extern void Driver100msClock_resume_100ms_timer() {
+    
+    // Implement a way to stop the timer here
+    
+// Example
+//    T2CONbits.TON = 1; // Turn on 100ms Timer
+    
+}
 

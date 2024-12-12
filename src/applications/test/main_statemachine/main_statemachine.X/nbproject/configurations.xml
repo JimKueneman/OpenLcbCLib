@@ -8,6 +8,8 @@
         <logicalFolder name="25AA1024" displayName="25AA1024" projectFiles="true">
           <itemPath>../../../../drivers/25AA1024/25AA1024_driver.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="arm" displayName="arm" projectFiles="true">
+        </logicalFolder>
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_rx_statemachine.h</itemPath>
           <itemPath>../../../../drivers/common/can_frame_message_handler.h</itemPath>
@@ -20,11 +22,21 @@
           <itemPath>../../../../drivers/common/can_login_message_handler.h</itemPath>
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
+          <logicalFolder name="dsPIC33xxxGP5xx"
+                         displayName="dsPIC33xxxGP5xx"
+                         projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="esp32" displayName="esp32" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="pic32" displayName="pic32" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="template" displayName="template" projectFiles="true">
         </logicalFolder>
         <itemPath>../../../../drivers/driver_configuration_memory.h</itemPath>
-        <itemPath>../../../../drivers/driver_100ms_clock.h</itemPath>
         <itemPath>../../../../drivers/driver_can.h</itemPath>
         <itemPath>../../../../drivers/driver_mcu.h</itemPath>
+        <itemPath>../../../../drivers/driver_100ms_clock.h</itemPath>
       </logicalFolder>
       <logicalFolder name="main_statemachine.X"
                      displayName="main_statemachine.X"
@@ -52,6 +64,7 @@
         <itemPath>../../../../openlcb/openlcb_tx_driver.h</itemPath>
         <itemPath>../../../../openlcb/protocol_snip.h</itemPath>
         <itemPath>../../../../openlcb/protocol_datagram.h</itemPath>
+        <itemPath>../../../../openlcb/openlcb_gridconnect.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -128,6 +141,7 @@
         <itemPath>../../../../openlcb/openlcb_tx_driver.c</itemPath>
         <itemPath>../../../../openlcb/protocol_snip.c</itemPath>
         <itemPath>../../../../openlcb/protocol_datagram.c</itemPath>
+        <itemPath>../../../../openlcb/openlcb_gridconnect.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

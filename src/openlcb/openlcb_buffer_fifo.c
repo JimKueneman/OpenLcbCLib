@@ -125,7 +125,7 @@ openlcb_msg_t* BufferFifo_pop() {
 
 }
 
-uint8_olcb_t BufferFifo_is_empty(openlcb_msg_fifo_t* fifo) {
+uint8_olcb_t BufferFifo_is_empty() {
 
     return (openlcb_msg_buffer_fifo.head == openlcb_msg_buffer_fifo.tail);
 

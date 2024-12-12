@@ -24,30 +24,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_mcu.c
+ * \file openlcb_buffer_store.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implements the core buffers for normal, snip, datagram, and stream length buffers.
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are 
+ * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
+ * so care must be taken to Pause and Resume those calls if the main loop needs to 
+ * access the buffers.  
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-//#include "driver_mcu.h"
 
-#include "../openlcb/openlcb_types.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.  
 
-#ifdef dsPIC33EPxxxGP50x
-  #include "dspic/dsPIC33xxxGP5xx/mcu.c"
-#endif
+#ifndef __OPENLCB_GRIDCONNECT__
+#define	__OPENLCB_GRIDCONNECT__
 
-#ifdef __TEMPLATE__
-  #include "template/mcu.c"
-#endif
+#include "openlcb_types.h"
+
+#define GRIDCONNECT_STATE_SYNC_START 0
+#define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2
+#define GRIDCONNECT_STATE_SYNC_FIND_DATA 4
+
+// :X19170640N0501010107015555;#0  Example.....
+// ^         ^                  ^
+// 0         10                28
+#define MAX_GRID_CONNECT_LEN 29
+
+typedef uint8_olcb_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
 
 
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
+    extern uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next_byte, gridconnect_buffer_t* buffer);
+    
 
+#ifdef	__cplusplus
+}
+#endif /* __cplusplus */
 
-
+#endif	/* __OPENLCB_BUFFER_STORE__ */

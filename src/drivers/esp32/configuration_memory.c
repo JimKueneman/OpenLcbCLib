@@ -24,30 +24,60 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_mcu.c
+ * \file configuration_memory.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * to write/read configuration memory.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-//#include "driver_mcu.h"
 
-#include "../openlcb/openlcb_types.h"
+// Add any compiler specific includes
 
-#ifdef dsPIC33EPxxxGP50x
-  #include "dspic/dsPIC33xxxGP5xx/mcu.c"
-#endif
-
-#ifdef __TEMPLATE__
-  #include "template/mcu.c"
-#endif
+#include "../../openlcb/openlcb_types.h"
 
 
+void DriverConfigurationMemory_initialization() {
+    
+    // SPI1 Initialize ---------------------------------------------------------
+    // -------------------------------------------------------------------------
+    
+    // Any SPI initialization or other Initialize functions
 
+    
+    
+}
 
+uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+    
+    
+    // Implement your Configuration Memory Read Here:
+    
+// Example;
+//   return _25AA1024_Driver_read(address, count, buffer);
 
+    return 0;
+    
+}
 
+uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+    
+    
+    // Implement your Configuration Memory Write Here:
+
+// Example:
+//    _25AA1024_Driver_write_latch_enable();
+//    _25AA1024_Driver_write(address, count, buffer);
+//    
+//    while (_25AA1024_Driver_write_in_progress()) {
+//        
+//    }
+//    
+//    return count;
+    
+    return 0;
+    
+}

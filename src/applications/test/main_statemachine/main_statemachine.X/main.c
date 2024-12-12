@@ -166,10 +166,36 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
- // #define  _SIMULATOR_
+  #define  _SIMULATOR_
 
-int main(void) {       
-
+#include "../../../../openlcb/openlcb_gridconnect.h"
+    
+    gridconnect_buffer_t main_buffer;
+    
+    gridconnect_buffer_t* main_buffer_ptr = &main_buffer;
+    
+int main(void) {  
+    
+    char str[MAX_GRID_CONNECT_LEN] = ":X19170640N0501010107015555;";
+    
+   // for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++)
+   //   test[i] = str[i];
+    
+    printf("Buffer Address: %p\n", main_buffer);
+    printf("Buffer Address: %p\n", &main_buffer);
+    
+    uint8_olcb_t i = 0;
+    while (!OpenLcbGridConnect_copy_out_gridconnect_when_done(str[i], &main_buffer)) {
+        
+        i++;
+         
+    }
+    
+    
+    
+    printf("buffer: %s\n", (char*) &main_buffer[0]);
+ 
+    
     _TRISB4 = 0;
     _RB4 = 0;
 
