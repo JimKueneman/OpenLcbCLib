@@ -45,9 +45,9 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-extern void CanMainStatemachine_initialize();
+extern void CanMainStatemachine_initialize(void);
 
-extern void CanMainStateMachine_run();
+extern void CanMainStateMachine_run(void);
 
 
 extern can_main_statemachine_t can_helper;

@@ -299,8 +299,9 @@ if (!_rx_paused) {
 }
             result = read(socket_fd, &next_byte, sizeof(next_byte));
 
-            if (result == 0)
-                usleep(1000);
+//sleep (1);
+      //      if (result == 0)
+                usleep(100000);
 
             if (result > 0)
             {

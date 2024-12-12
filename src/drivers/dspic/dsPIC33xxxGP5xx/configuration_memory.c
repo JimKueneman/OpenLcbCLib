@@ -41,7 +41,7 @@
 #include "../../25AA1024/25AA1024_driver.h"
 
 
-void DriverConfigurationMemory_initialization() {
+void DriverConfigurationMemory_initialization(void) {
     
         // SPI1 Initialize ---------------------------------------------------------
     // -------------------------------------------------------------------------

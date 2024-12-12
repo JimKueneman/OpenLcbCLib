@@ -48,7 +48,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void BufferFifo_initialiaze();
+extern void BufferFifo_initialiaze(void);
 
 extern openlcb_msg_t* BufferFifo_push(uint16_olcb_t data_len); 
 
@@ -56,11 +56,11 @@ extern openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg);
 
 openlcb_msg_t* BufferFifo_push_existing_to_front(openlcb_msg_t* existing_msg);
 
-extern openlcb_msg_t* BufferFifo_pop();
+extern openlcb_msg_t* BufferFifo_pop(void);
 
-extern uint8_olcb_t BufferFifo_is_empty();
+extern uint8_olcb_t BufferFifo_is_empty(void);
 
-extern uint16_olcb_t BufferFifo_get_allocated_count();
+extern uint16_olcb_t BufferFifo_get_allocated_count(void);
 
 
 #ifdef	__cplusplus

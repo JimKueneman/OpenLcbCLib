@@ -45,7 +45,7 @@
 extern "C" {
 #endif /* __cplusplus */
     
-extern void DriverConfigurationMemory_initialization();
+extern void DriverConfigurationMemory_initialization(void);
 
 extern uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
 

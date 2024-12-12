@@ -47,7 +47,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-extern void CanTxStatemachine_initialize();
+extern void CanTxStatemachine_initialize(void);
 
 // returns the number of bytes that were written to the CAN bus for this iteration (openlcb_start_index + 8 max)
 extern uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_olcb_t openlcb_start_index);

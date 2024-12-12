@@ -54,7 +54,7 @@
 
 // #define CAN_TX_TEST
 
-void CanTxStatemachine_initialize() {
+void CanTxStatemachine_initialize(void) {
 
 
 }

@@ -47,15 +47,15 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void CanBufferFifo_initialiaze();
+extern void CanBufferFifo_initialiaze(void);
 
-extern can_msg_t* CanBufferFifo_push(); 
+extern can_msg_t* CanBufferFifo_push(void);
 
-extern can_msg_t* CanBufferFifo_pop();
+extern can_msg_t* CanBufferFifo_pop(void);
 
-extern uint8_olcb_t CanBufferFifo_is_empty();
+extern uint8_olcb_t CanBufferFifo_is_empty(void);
 
-extern uint16_olcb_t CanBufferFifo_get_allocated_count();
+extern uint16_olcb_t CanBufferFifo_get_allocated_count(void);
 
 #ifdef	__cplusplus
 }

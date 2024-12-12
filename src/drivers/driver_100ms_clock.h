@@ -49,11 +49,11 @@ extern "C" {
 
 extern void Driver100msClock_Initialization(_100ms_timer_callback_func_t _100ms_callback_func);
 
-extern void Driver100msClock_pause_100ms_timer();
+extern void Driver100msClock_pause_100ms_timer(void);
 
-extern void Driver100msClock_resume_100ms_timer();
+extern void Driver100msClock_resume_100ms_timer(void);
 
-extern uint8_olcb_t Driver100ms_is_connected();
+extern uint8_olcb_t Driver100ms_is_connected(void);
 
 #ifdef	__cplusplus
 }

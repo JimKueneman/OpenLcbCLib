@@ -43,7 +43,7 @@
 extern "C" {
 #endif /* __cplusplus */
     
-extern void Node_initialize();
+extern void Node_initialize(void);
 
 extern openlcb_node_t* Node_allocate(uint64_olcb_t nodeid, const node_parameters_t* node_parameters);
 
@@ -60,7 +60,7 @@ extern uint64_olcb_t Node_generate_seed(uint64_olcb_t start_seed);
 extern uint16_olcb_t Node_generate_alias(uint64_olcb_t seed);
 
 
-extern void Node_100ms_timer_tick();
+extern void Node_100ms_timer_tick(void);
 
 
 #ifdef	__cplusplus

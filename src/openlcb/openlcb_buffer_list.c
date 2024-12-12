@@ -146,7 +146,7 @@ openlcb_msg_t* BufferList_index_of(uint16_olcb_t index) {
 
 }
 
-uint8_olcb_t BufferList_is_empty() {
+uint8_olcb_t BufferList_is_empty(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 

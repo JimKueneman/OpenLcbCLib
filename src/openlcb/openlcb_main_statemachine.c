@@ -59,7 +59,7 @@ openlcb_statemachine_worker_t openlcb_helper;
 
 
 
-void MainStatemachine_initialize() {
+void MainStatemachine_initialize(void) {
     
     BufferStore_initialize();
     BufferList_initialiaze();
@@ -234,7 +234,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
 }
 
-void MainStatemachine_run() {
+void MainStatemachine_run(void) {
     //
     //    uint8_olcb_t reset = FALSE;
     //    

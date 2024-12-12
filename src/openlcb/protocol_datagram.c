@@ -46,7 +46,7 @@
 #include "../drivers/driver_mcu.h"
 #include "../drivers/driver_configuration_memory.h"
 
-void ProtocolDatagram_initialize() {
+void ProtocolDatagram_initialize(void) {
 
 
 
@@ -1118,7 +1118,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
 }
 
-void DatagramProtocol_100ms_time_tick() {
+void DatagramProtocol_100ms_time_tick(void) {
 
 
 }

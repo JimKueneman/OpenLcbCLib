@@ -45,7 +45,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void ProtocolDatagram_initialize();
+extern void ProtocolDatagram_initialize(void);
 
 extern void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
    
@@ -55,7 +55,7 @@ extern void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* open
 
 extern void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
     
-extern void DatagramProtocol_100ms_time_tick();
+extern void DatagramProtocol_100ms_time_tick(void);
 
 #ifdef	__cplusplus
 }

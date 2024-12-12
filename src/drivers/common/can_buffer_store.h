@@ -47,17 +47,17 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-extern void CanBufferStore_initialize();
+extern void CanBufferStore_initialize(void);
 
-extern can_msg_t* CanBufferStore_allocateBuffer();
+extern can_msg_t* CanBufferStore_allocateBuffer(void);
 
 extern void CanBufferStore_freeBuffer(can_msg_t* msg);
 
 extern void CanBufferStore_clear_can_message(can_msg_t* msg);
 
-extern uint16_olcb_t CanBufferStore_messages_allocated();
+extern uint16_olcb_t CanBufferStore_messages_allocated(void);
 
-extern uint16_olcb_t CanBufferStore_messages_max_allocated();
+extern uint16_olcb_t CanBufferStore_messages_max_allocated(void);
 
 #ifdef	__cplusplus
 }

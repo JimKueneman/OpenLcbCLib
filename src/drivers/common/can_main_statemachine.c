@@ -57,7 +57,7 @@
 
 can_main_statemachine_t can_helper;
 
-void CanMainStatemachine_initialize() {
+void CanMainStatemachine_initialize(void) {
 
     CanBufferStore_initialize();
     CanBufferFifo_initialiaze();
@@ -209,7 +209,7 @@ void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
 
 }
 
-uint8_olcb_t _pop_next_can_helper_active_message() {
+uint8_olcb_t _pop_next_can_helper_active_message(void) {
 
     if (can_helper.active_msg)
         return FALSE;
@@ -230,7 +230,7 @@ uint8_olcb_t _pop_next_can_helper_active_message() {
 
 }
 
-uint8_olcb_t _pop_next_openlcb_worker_active_message() {
+uint8_olcb_t _pop_next_openlcb_worker_active_message(void) {
 
     if (can_helper.openlcb_worker->active_msg)
         return FALSE;
@@ -400,7 +400,7 @@ void _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node, uint8_olc
 
 }
 
-void CanMainStateMachine_run() {
+void CanMainStateMachine_run(void) {
 
 
     //    probably should have a separate loop to run the resends.....

@@ -81,13 +81,13 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 }
 
 
-void Driver100msClock_pause_100ms_timer() {
+void Driver100msClock_pause_100ms_timer(void) {
   
     T2CONbits.TON = 0; // Turn off 100ms Timer
     
 }
 
-extern void Driver100msClock_resume_100ms_timer() {
+extern void Driver100msClock_resume_100ms_timer(void) {
     
     T2CONbits.TON = 1; // Turn on 100ms Timer
     

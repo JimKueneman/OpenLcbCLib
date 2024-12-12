@@ -435,7 +435,7 @@ void _state_machine_incoming_can(uint8_olcb_t channel, can_msg_t* can_msg) {
 
 // Call on startup to initialize variables and callbacks
 
-void CanRxStatemachine_initialize() {
+void CanRxStatemachine_initialize(void) {
 
     // The mcu_driver.h file exports a function pointer that is used to hook into the incoming CAN message stream
     // This allows the mcu_driver to call into this unit with incoming CAN frames.

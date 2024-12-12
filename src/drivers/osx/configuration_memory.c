@@ -53,15 +53,10 @@ void DriverConfigurationMemory_initialization() {
 
 uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
     
-    
-    // Implement your Configuration Memory Read Here:
-    
-// Example;
-//   return _25AA1024_Driver_read(address, count, buffer);
+  for (int i = 0; i < count; i++)
+     (*buffer)[i] = i;
 
-    (*buffer)[0] = 0;
-
-    return 0;
+    return count;
     
 }
 

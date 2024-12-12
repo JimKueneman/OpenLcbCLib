@@ -41,7 +41,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void ClockDistribution_initialize();
+extern void ClockDistribution_initialize(void);
 
 
 #ifdef	__cplusplus

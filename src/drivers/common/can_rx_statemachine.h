@@ -44,7 +44,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void CanRxStatemachine_initialize();
+extern void CanRxStatemachine_initialize(void);
  
 
 #ifdef	__cplusplus

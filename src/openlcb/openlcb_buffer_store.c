@@ -62,7 +62,7 @@ void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
 }
 
-void BufferStore_initialize() {
+void BufferStore_initialize(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
@@ -177,13 +177,13 @@ void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg) {
 
 }
 
-uint16_olcb_t BufferStore_messages_allocated() {
+uint16_olcb_t BufferStore_messages_allocated(void) {
 
     return _buffer_store_message_allocated;
 
 }
 
-uint16_olcb_t BufferStore_messages_max_allocated() {
+uint16_olcb_t BufferStore_messages_max_allocated(void) {
 
     return _buffer_store_message_max_allocated;
 

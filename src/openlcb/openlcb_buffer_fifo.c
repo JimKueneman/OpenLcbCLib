@@ -106,7 +106,7 @@ openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
 
 }
 
-openlcb_msg_t* BufferFifo_pop() {
+openlcb_msg_t* BufferFifo_pop(void) {
 
     openlcb_msg_t* result = (void*) 0;
 
@@ -125,13 +125,13 @@ openlcb_msg_t* BufferFifo_pop() {
 
 }
 
-uint8_olcb_t BufferFifo_is_empty() {
+uint8_olcb_t BufferFifo_is_empty(void) {
 
     return (openlcb_msg_buffer_fifo.head == openlcb_msg_buffer_fifo.tail);
 
 }
 
-uint16_olcb_t BufferFifo_get_allocated_count() {
+uint16_olcb_t BufferFifo_get_allocated_count(void) {
 
     if (openlcb_msg_buffer_fifo.tail > openlcb_msg_buffer_fifo.head) {
 

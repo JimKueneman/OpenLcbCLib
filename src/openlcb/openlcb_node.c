@@ -78,7 +78,7 @@ void _clear_node(openlcb_node_t* openlcb_node) {
 
 }
 
-void Node_initialize() {
+void Node_initialize(void) {
 
     for (int i = 0; i < LEN_NODE_ARRAY; i++)
 
@@ -228,7 +228,7 @@ uint16_olcb_t Node_generate_alias(uint64_olcb_t seed) {
 
 }
 
-void Node_100ms_timer_tick() {
+void Node_100ms_timer_tick(void) {
 
     for (int i = 0; i < openlcb_nodes.count; i++) {
 

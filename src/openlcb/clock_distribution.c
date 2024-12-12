@@ -39,14 +39,14 @@
 #include "../drivers/driver_100ms_clock.h"
 
 
-void _100msTimeTickNode() {
+void _100msTimeTickNode(void) {
    
     Node_100ms_timer_tick();
     DatagramProtocol_100ms_time_tick();
 
 }
 
-void ClockDistribution_initialize() {
+void ClockDistribution_initialize(void) {
     
     Driver100msClock_Initialization(&_100msTimeTickNode);
     
