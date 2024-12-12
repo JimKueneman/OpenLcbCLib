@@ -27,49 +27,66 @@
  * \file openlcb_buffer_store.h
  *
  * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are 
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are
  * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to 
- * access the buffers.  
+ * so care must be taken to Pause and Resume those calls if the main loop needs to
+ * access the buffers.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 
-#ifndef __OPENLCB_GRIDCONNECT__
-#define	__OPENLCB_GRIDCONNECT__
+#ifndef __THREADSAFE_STRINGLIST_
+#define __THREADSAFE_STRINGLIST_
 
-#include "openlcb_types.h"
-#include "../drivers/common/can_types.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
 
-#define GRIDCONNECT_STATE_SYNC_START 0
-#define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2
-#define GRIDCONNECT_STATE_SYNC_FIND_DATA 4
+#include "../../openlcb/openlcb_types.h"
 
-// :X19170640N0501010107015555;#0  Example.....
-// ^         ^                  ^
-// 0         10                28
-#define MAX_GRID_CONNECT_LEN 29
+#define MAX_STRINGS 100
 
-typedef uint8_olcb_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
-
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-    extern uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next_byte, gridconnect_buffer_t* buffer);
-    
-    extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
+    typedef struct
+    {
+        char *strings[MAX_STRINGS];
+        int count;
+        int head, tail;
+        pthread_mutex_t mutex;
+    } StringList;
 
-    extern void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
+    // Initialize the string list
+    extern void ThreadSafeStringList_init(StringList *list);
 
-#ifdef	__cplusplus
+    // Add a string to the list
+    extern void ThreadSafeStringList_add(StringList *list, const char *string);
+
+    // Remove string from list
+    extern void ThreadSafeStringList_remove(StringList *list, const char *str);
+
+    // Add a string to the list
+    extern uint8_olcb_t ThreadSafeStringList_push(StringList *list, const char *string);
+
+    // Remove string from list; dont for get to free() the popped string
+    extern char *ThreadSafeStringList_pop(StringList *list);
+
+    // Print the list
+    extern void ThreadSafeStringList_print(StringList *list);
+
+    // Cleanup the list
+    extern void ThreadSafeStringList_destroy(StringList *list);
+
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_BUFFER_STORE__ */
+#endif /* __THREADSAFE_STRINGLIST_ */

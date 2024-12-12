@@ -24,52 +24,60 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_buffer_store.h
+ * \file configuration_memory.c
  *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are 
- * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to 
- * access the buffers.  
+ * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
+ * to write/read configuration memory.  A new supported MCU/PC will create a file that handles the 
+ * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
 
-// This is a guard condition so that contents of this file are not included
-// more than once.  
+// Add any compiler specific includes
 
-#ifndef __OPENLCB_GRIDCONNECT__
-#define	__OPENLCB_GRIDCONNECT__
-
-#include "openlcb_types.h"
-#include "../drivers/common/can_types.h"
-
-#define GRIDCONNECT_STATE_SYNC_START 0
-#define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2
-#define GRIDCONNECT_STATE_SYNC_FIND_DATA 4
-
-// :X19170640N0501010107015555;#0  Example.....
-// ^         ^                  ^
-// 0         10                28
-#define MAX_GRID_CONNECT_LEN 29
-
-typedef uint8_olcb_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
+#include "../../openlcb/openlcb_types.h"
 
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    extern uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next_byte, gridconnect_buffer_t* buffer);
+void DriverConfigurationMemory_initialization() {
     
-    extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
+    // SPI1 Initialize ---------------------------------------------------------
+    // -------------------------------------------------------------------------
+    
+    // Any SPI initialization or other Initialize functions
 
-    extern void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
-
-#ifdef	__cplusplus
+    
+    
 }
-#endif /* __cplusplus */
 
-#endif	/* __OPENLCB_BUFFER_STORE__ */
+uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+    
+    
+    // Implement your Configuration Memory Read Here:
+    
+// Example;
+//   return _25AA1024_Driver_read(address, count, buffer);
+
+    return 0;
+    
+}
+
+uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+    
+    
+    // Implement your Configuration Memory Write Here:
+
+// Example:
+//    _25AA1024_Driver_write_latch_enable();
+//    _25AA1024_Driver_write(address, count, buffer);
+//    
+//    while (_25AA1024_Driver_write_in_progress()) {
+//        
+//    }
+//    
+//    return count;
+    
+    return 0;
+    
+}
