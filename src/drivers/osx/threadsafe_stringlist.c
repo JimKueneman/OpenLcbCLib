@@ -65,6 +65,8 @@ uint8_olcb_t ThreadSafeStringList_push(StringList *list, const char *string)
     if (next != list->tail)
     {
 
+        printf("push %s\n", string);
+
         list->strings[list->head] = strdup(string);
         list->head = next;
         result = TRUE;
@@ -85,6 +87,9 @@ char *ThreadSafeStringList_pop(StringList *list)
     {
 
         result = list->strings[list->tail];
+
+        printf("pop: %s\n", result);
+
         list->tail = list->tail + 1;
         if (list->tail >= MAX_STRINGS)
             list->tail = 0;

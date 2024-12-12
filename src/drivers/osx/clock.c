@@ -42,6 +42,8 @@
 #include <pthread.h>
 #include <unistd.h> // read(), write(), close()
 
+uint8_olcb_t _is_clock_running = FALSE;
+
 // This must be here and assigned in Driver100msClock_Initialization
 
 _100ms_timer_callback_func_t Driver100msClock_callback_func;
@@ -54,16 +56,25 @@ void *thread_function_timer(void *arg)
 
     printf("Thread %d started\n", thread_id);
 
+    _is_clock_running = TRUE;
+
     while (1)
     {
 
-        if (_timer_pause == 0) {
+        if (_timer_pause == 0)
+        {
             if (Driver100msClock_callback_func)
                 Driver100msClock_callback_func();
         }
 
         usleep(100000);
     }
+}
+
+uint8_olcb_t Driver100ms_is_connected() {
+
+    return _is_clock_running;
+    
 }
 
 void Driver100msClock_Initialization(_100ms_timer_callback_func_t _100ms_callback_func)

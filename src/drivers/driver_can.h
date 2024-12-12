@@ -57,6 +57,8 @@ extern void DriverCan_resume_can_rx();
 
 extern uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
 
+extern uint8_olcb_t DriverCan_is_connected();
+
 // How full the chips CAN fifo has gotten
 extern uint8_olcb_t DriverCan_max_can_fifo_depth;
 

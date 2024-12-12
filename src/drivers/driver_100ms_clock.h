@@ -53,6 +53,8 @@ extern void Driver100msClock_pause_100ms_timer();
 
 extern void Driver100msClock_resume_100ms_timer();
 
+extern uint8_olcb_t Driver100ms_is_connected();
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

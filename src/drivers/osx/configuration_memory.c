@@ -59,6 +59,8 @@ uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_
 // Example;
 //   return _25AA1024_Driver_read(address, count, buffer);
 
+    (*buffer)[0] = 0;
+
     return 0;
     
 }
@@ -68,16 +70,7 @@ uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb
     
     // Implement your Configuration Memory Write Here:
 
-// Example:
-//    _25AA1024_Driver_write_latch_enable();
-//    _25AA1024_Driver_write(address, count, buffer);
-//    
-//    while (_25AA1024_Driver_write_in_progress()) {
-//        
-//    }
-//    
-//    return count;
-    
-    return 0;
+
+    return count;
     
 }
