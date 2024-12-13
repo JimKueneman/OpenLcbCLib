@@ -38,6 +38,7 @@
 
 #include "../common/can_types.h"
 #include "../../openlcb/openlcb_gridconnect.h"
+//#include "../../utilities/mustangpeak_string_helper.h"
 
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
@@ -78,11 +79,26 @@ void _print_can_msg(can_msg_t *can_msg)
     printf("]\n");
 }
 
-uint8_olcb_t DriverCan_is_connected()
+char *strnew(int char_count)
 {
-    pthread_mutex_lock(&can_mutex);
+    return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+}
+
+char *strcatnew(char *str1, char *str2)
+{
+    int len = strlen(str1) + strlen(str2);
+    char *temp1 = strnew(len);
+    strcpy(temp1, str1);
+    strcat(temp1, str2);
+    temp1[len] = '\0';
+    return temp1;
+}
+
+uint8_olcb_t DriverCan_is_connected(void)
+{
+  //  pthread_mutex_lock(&can_mutex);
     return _is_connected;
-    pthread_mutex_unlock(&can_mutex);
+  //  pthread_mutex_unlock(&can_mutex);
 }
 
 uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t Channel)
@@ -105,18 +121,18 @@ uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *m
 // This must be here and used to callback when a can frame is received
 can_rx_callback_func_t internal_can_rx_callback_func;
 
-void DriverCan_pause_can_rx()
+void DriverCan_pause_can_rx(void)
 {
-  //  pthread_mutex_lock(&can_mutex);
+    //  pthread_mutex_lock(&can_mutex);
     _rx_paused = TRUE;
-  //  pthread_mutex_unlock(&can_mutex);
+    //  pthread_mutex_unlock(&can_mutex);
 };
 
-void DriverCan_resume_can_rx()
+void DriverCan_resume_can_rx(void)
 {
- //   pthread_mutex_lock(&can_mutex);
+    //   pthread_mutex_lock(&can_mutex);
     _rx_paused = FALSE;
-  //  pthread_mutex_unlock(&can_mutex);
+    //  pthread_mutex_unlock(&can_mutex);
 };
 
 /** Returns true on success, or false if there was an error */
@@ -238,6 +254,9 @@ void *thread_function_can(void *arg)
     int result = 0;
     int socket_fd = -1;
     can_msg_t can_message;
+    uint64_olcb_t timer = 0;
+    char *logging[MAX_GRID_CONNECT_LEN + 10];
+    char *msg = (void *)0;
 
     can_message.state.allocated = 1;
     can_message.state.direct_tx = 0;
@@ -251,7 +270,12 @@ void *thread_function_can(void *arg)
 
     while (1)
     {
-  //      pthread_mutex_lock(&can_mutex);
+
+      //  if (timer % 5000 == 0)
+      //      printf("thread 1 heartbeat\n");
+        timer++;
+
+        //      pthread_mutex_lock(&can_mutex);
         if (!_rx_paused)
         {
             result = read(socket_fd, &next_byte, sizeof(next_byte));
@@ -261,6 +285,10 @@ void *thread_function_can(void *arg)
                 if (OpenLcbGridConnect_copy_out_gridconnect_when_done(next_byte, &gridconnect_buffer))
                 {
                     OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
+
+                    msg = strcatnew("R", (char*)&gridconnect_buffer);
+                    printf("%s\n", msg);
+                    free(msg);
 
                     if (internal_can_rx_callback_func)
                         internal_can_rx_callback_func(0, &can_message);
@@ -275,9 +303,15 @@ void *thread_function_can(void *arg)
                     {
                         usleep(500);
 
-                        strcat(gridconnect_buffer_ptr, "\r"); // new line \n and carrage return \r;
-                        write(socket_fd, gridconnect_buffer_ptr, strlen(gridconnect_buffer_ptr));
+                        msg = strcatnew("S", gridconnect_buffer_ptr);
+                        printf("%s\n", msg);
+                        free(msg);
+
+                        msg = strcatnew(gridconnect_buffer_ptr, "\n\r");
+                        write(socket_fd, msg, strlen(msg));
+                        free(msg);
                         free(gridconnect_buffer_ptr);
+
                         gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
                     }
 
@@ -294,7 +328,7 @@ void *thread_function_can(void *arg)
                 }
             }
         }
- //       pthread_mutex_unlock(&can_mutex);
+        //       pthread_mutex_unlock(&can_mutex);
     }
 }
 

@@ -73,6 +73,8 @@
 
 #include "xc.h"
 #include "stdio.h"  // printf
+#include "string.h"
+#include "stdlib.h"
 #include <libpic30.h> // Delay
 
 #include "../../../../drivers/common/can_buffer_store.h"
@@ -166,6 +168,21 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
+char *strnew(uint8_t char_count)
+{
+    return (char *)(malloc(char_count) + 1); // always add a null
+}
+
+char *strcatnew(char *dest, char *source)
+{
+    uint16_olcb_t len = strlen(dest) + strlen(source);
+    char *temp1 = strnew(len);
+    strcpy(temp1, dest);
+    strcat(temp1, source);
+    temp1[len] = '\0';
+    return temp1;
+}
+
   #define  _SIMULATOR_
 
 #include "../../../../openlcb/openlcb_gridconnect.h"
@@ -175,6 +192,8 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
     gridconnect_buffer_t* main_buffer_ptr = &main_buffer;
     
 int main(void) {  
+    
+    char *happy = strcatnew("Hi", " there");
     
     char str[MAX_GRID_CONNECT_LEN] = ":X19170640N0501010107015555;";
     
