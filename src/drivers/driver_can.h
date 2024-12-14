@@ -41,7 +41,6 @@
 #define	__DRIVER_CAN__
 
 #include "../drivers/common/can_types.h"
-#include "../drivers/common/can_types.h"
 
 #ifdef	__cplusplus
 extern "C" {

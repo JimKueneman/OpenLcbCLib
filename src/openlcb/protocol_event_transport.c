@@ -64,6 +64,8 @@ void _encode_event_state(uint64_olcb_t* state_container, uint8_olcb_t event_inde
         case EVENT_STATE_CLEAR: // Set bit is what will be cleared gives 0b10)
             mask = 0b01;
             break;
+        default:
+          mask = 0b00;
     }
 
     *state_container = *state_container & ~(mask << (event_index * 2));

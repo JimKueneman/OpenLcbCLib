@@ -43,7 +43,6 @@
 
 _100ms_timer_callback_func_t Driver100msClock_callback_func;
 
-
 void Driver100msClock_Initialization(_100ms_timer_callback_func_t _100ms_callback_func) {
     
     // Must be here.....
