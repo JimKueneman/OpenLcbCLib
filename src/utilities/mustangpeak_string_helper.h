@@ -49,6 +49,8 @@ extern "C"
 
 extern char *strnew(int char_count);
 
+extern char *strnew_initialized(int char_count);
+
 extern char *strcatnew(char *str1, char *str2);
 
 #ifdef __cplusplus

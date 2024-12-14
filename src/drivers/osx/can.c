@@ -38,7 +38,7 @@
 
 #include "../common/can_types.h"
 #include "../../openlcb/openlcb_gridconnect.h"
-//#include "../../utilities/mustangpeak_string_helper.h"
+ #include "../../utilities/mustangpeak_string_helper.h"
 
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
@@ -67,9 +67,9 @@ uint8_olcb_t _rx_paused = FALSE;
 
 pthread_mutex_t can_mutex;
 
+
 void _print_can_msg(can_msg_t *can_msg)
 {
-
     printf("Identifier: 0x%04X", (int16_t)(can_msg->identifier >> 16) & 0xFFFF);
     printf("%04X", (int16_t)can_msg->identifier & 0xFFFF);
     printf("   Payload Count: %d\n", can_msg->payload_count);
@@ -79,26 +79,12 @@ void _print_can_msg(can_msg_t *can_msg)
     printf("]\n");
 }
 
-char *strnew(int char_count)
-{
-    return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
-}
-
-char *strcatnew(char *str1, char *str2)
-{
-    int len = strlen(str1) + strlen(str2);
-    char *temp1 = strnew(len);
-    strcpy(temp1, str1);
-    strcat(temp1, str2);
-    temp1[len] = '\0';
-    return temp1;
-}
-
 uint8_olcb_t DriverCan_is_connected(void)
 {
-  //  pthread_mutex_lock(&can_mutex);
-    return _is_connected;
-  //  pthread_mutex_unlock(&can_mutex);
+    pthread_mutex_lock(&can_mutex);
+    uint8_olcb_t result = _is_connected;
+    pthread_mutex_unlock(&can_mutex);
+    return result;
 }
 
 uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t Channel)
@@ -123,17 +109,17 @@ can_rx_callback_func_t internal_can_rx_callback_func;
 
 void DriverCan_pause_can_rx(void)
 {
-    //  pthread_mutex_lock(&can_mutex);
+    pthread_mutex_lock(&can_mutex);
     _rx_paused = TRUE;
-    //  pthread_mutex_unlock(&can_mutex);
-};
+    pthread_mutex_unlock(&can_mutex);
+}
 
 void DriverCan_resume_can_rx(void)
 {
-    //   pthread_mutex_lock(&can_mutex);
+    pthread_mutex_lock(&can_mutex);
     _rx_paused = FALSE;
-    //  pthread_mutex_unlock(&can_mutex);
-};
+    pthread_mutex_unlock(&can_mutex);
+}
 
 /** Returns true on success, or false if there was an error */
 uint8_olcb_t _set_blocking_socket_enabled(int fd, uint8_olcb_t blocking)
@@ -271,11 +257,11 @@ void *thread_function_can(void *arg)
     while (1)
     {
 
-      //  if (timer % 5000 == 0)
-      //      printf("thread 1 heartbeat\n");
+        //  if (timer % 5000 == 0)
+        //      printf("thread 1 heartbeat\n");
         timer++;
 
-        //      pthread_mutex_lock(&can_mutex);
+        pthread_mutex_lock(&can_mutex);
         if (!_rx_paused)
         {
             result = read(socket_fd, &next_byte, sizeof(next_byte));
@@ -286,7 +272,7 @@ void *thread_function_can(void *arg)
                 {
                     OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
 
-                    msg = strcatnew("R", (char*)&gridconnect_buffer);
+                    msg = strcatnew("R", (char *)&gridconnect_buffer);
                     printf("%s\n", msg);
                     free(msg);
 
@@ -301,8 +287,6 @@ void *thread_function_can(void *arg)
                     gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
                     while (gridconnect_buffer_ptr)
                     {
-                        usleep(500);
-
                         msg = strcatnew("S", gridconnect_buffer_ptr);
                         printf("%s\n", msg);
                         free(msg);
@@ -328,7 +312,8 @@ void *thread_function_can(void *arg)
                 }
             }
         }
-        //       pthread_mutex_unlock(&can_mutex);
+        pthread_mutex_unlock(&can_mutex);
+        usleep(50);
     }
 }
 
@@ -338,7 +323,7 @@ void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func)
     // This must be here
     internal_can_rx_callback_func = can_rx_callback_func;
 
-    pthread_mutex_init(&can_mutex, NULL);
+    printf("Mutex creating code: %d\n", pthread_mutex_init(&can_mutex, NULL));
 
     ThreadSafeStringList_init(&_outgoing_gridconnect_strings);
 

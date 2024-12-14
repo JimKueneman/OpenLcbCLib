@@ -37,10 +37,22 @@
  * @date 5 Dec 2024
  */
 
+#include "string.h"
+#include "stdio.h"
+#include "stdlib.h"
+
 
 char *strnew(int char_count)
 {
     return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+}
+
+char *strnew_initialized(int char_count)
+{
+    char *result = (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+    for (int i = 0; i < char_count + 1; i++)
+      result[i] = '\0';
+    return result;
 }
 
 char *strcatnew(char *str1, char *str2)

@@ -27,45 +27,64 @@
  * \file configuration_memory.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to write/read configuration memory.  A new supported MCU/PC will create a file that handles the 
+ * to write/read configuration memory.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-
 // Add any compiler specific includes
 
 #include "../../openlcb/openlcb_types.h"
+#include "../../utilities/mustangpeak_string_helper.h"
+#include "string.h"
+#include "stdio.h"
 
+char *user_data;
 
-void DriverConfigurationMemory_initialization() {
-    
-    // SPI1 Initialize ---------------------------------------------------------
-    // -------------------------------------------------------------------------
-    
-    // Any SPI initialization or other Initialize functions
-
-    
-    
+void DriverConfigurationMemory_initialization()
+{
+    user_data = strnew_initialized(LEN_SNIP_USER_NAME + LEN_SNIP_USER_DESCRIPTION + 1);  // add extra null since these are 2 null terminated strings
 }
 
-uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-    
-  for (int i = 0; i < count; i++)
-     (*buffer)[i] = i;
+uint16_olcb_t DriverConfigurationMemory_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
+{
+    printf("configmem read count: %d\n", count);
+    printf("configmem read address: %08lX\n", address);
 
+    printf("configmem read address: %02X\n", (*buffer)[0]);
+
+
+    uint32_olcb_t buffer_index = 0;
+
+    for (int i = address; i < (address + count); i++)
+    {
+    //    (*buffer)[buffer_index] = user_data[i];
+
+         (*buffer)[buffer_index] = '\0';
+        buffer_index++;
+    }
     return count;
-    
 }
 
-uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-    
-    
-    // Implement your Configuration Memory Write Here:
+uint16_olcb_t DriverConfigurationMemory_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
+{
+    printf("configmem write\n");
 
+    if (count == 0)
+      return 0;
+
+    uint32_olcb_t buffer_index = 0;
+
+    for (int i = address; i < (address + count); i++)
+    {
+  //      user_data[i] = (*buffer)[buffer_index];
+        buffer_index++;
+    }
+    // the caller may or may not have added the null to the string
+   // if (user_data[address + count - 1] != '\0')
+   //   user_data[address + count] = '\0';
 
     return count;
-    
 }
