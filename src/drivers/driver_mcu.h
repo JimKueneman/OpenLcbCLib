@@ -43,9 +43,9 @@
 extern "C" {
 #endif /* __cplusplus */
     
-extern void McuDriver_initialization(void);
+extern void McuDriver_initialization(parameterless_callback_t pin_assign_callback);
 
-extern void McuDriver_Reboot(void);
+extern void McuDriver_reboot(void);
 
 extern uart_rx_callback_t McuDriver_uart_rx_callback_func;
 

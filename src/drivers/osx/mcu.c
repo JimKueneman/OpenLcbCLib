@@ -27,7 +27,7 @@
  * \file mcu.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * to initialize the device.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
@@ -41,18 +41,13 @@
 
 #include "../../openlcb/openlcb_types.h"
 
-void McuDriver_Reboot(void) {
-    
-    
+void McuDriver_reboot(void)
+{
 }
 
-void McuDriver_initialization(void) {
-
-
+void McuDriver_initialization(void)
+{
 }
-
 
 // This must be here and used if you want a UART callback in your main program for debugging and such
 uart_rx_callback_t McuDriver_uart_rx_callback_func;
-
-

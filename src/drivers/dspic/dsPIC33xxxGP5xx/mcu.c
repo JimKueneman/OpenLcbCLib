@@ -62,13 +62,13 @@ uart_rx_callback_t McuDriver_uart_rx_callback_func;
 #define BRG_OFFSET 0
 
 
-void McuDriver_Reboot(void) {
+void McuDriver_reboot(void) {
     
     asm("RESET ");
     
 }
 
-void McuDriver_initialization(void) {
+void McuDriver_initialization(parameterless_callback_t pin_assign_callback) {
 
     // UART Initialize ---------------------------------------------------------
     // -------------------------------------------------------------------------
@@ -95,7 +95,7 @@ void McuDriver_initialization(void) {
 
     // Oscillator Initialize ---------------------------------------------------
     // -------------------------------------------------------------------------
-    // Make sure the Fuse bits are set to
+    // Make sure the Fuse bits are set too
 
     //   011 = Primary Oscillator with PLL (XTPLL, HSPLL, ECPLL)
 
@@ -115,20 +115,9 @@ void McuDriver_initialization(void) {
     ANSELB = 0x00;
     // -------------------------------------------------------------------------
 
-
-    // Peripheral Pin Select Initialize ----------------------------------------
-    // -------------------------------------------------------------------------
-
-    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
-
-    // CAN Pins
-    RPINR26bits.C1RXR = 45; // RPI45 CAN RX
-    RPOR4bits.RP43R = _RPOUT_C1TX; // RP43 CAN TX
-
-    // UART Pins
-    RPINR18bits.U1RXR = 44; // RPI44 UART RX
-    RPOR4bits.RP42R = _RPOUT_U1TX; // RP42  UART TX
-    // -------------------------------------------------------------------------
+    
+    if (pin_assign_callback)
+        pin_assign_callback();
 
 
      /* Wait at least 4.3 microseconds (1/230400) before sending first char */

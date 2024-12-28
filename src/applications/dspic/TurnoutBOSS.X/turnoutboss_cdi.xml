@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>
+<cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/3/cdi.xsd">
+  <identification>
+    <manufacturer>Mustangpeak Engineering</manufacturer>
+    <model>TurnoutBOSS</model>
+    <hardwareVersion>Ver A</hardwareVersion>
+    <softwareVersion>0.1</softwareVersion>
+    <map>
+      <relation>
+        <property>Description</property>
+        <value>Mustangpeak Test Node</value>
+      </relation>
+      <relation>
+        <property>Status</property>
+        <value>Prototype</value>
+      </relation>
+    </map>
+  </identification>
+  <acdi/>
+  <segment origin="128" space="253">
+    <name>Track Detector Gain</name>
+    <description>Adjusts the gain of the track detectors for detection sensitivity</description>
+    <int size="2">
+      <name>Approach Track</name>
+      <min> 0</min>
+      <max>63</max>
+      <default>31</default>
+    </int>
+    <int size="2">
+      <name>Through Track</name>
+      <min> 0</min>
+      <max>63</max>
+      <default>31</default>
+    </int>
+    <int size="2">
+      <name>Diverging Track</name>
+      <min> 0</min>
+      <max>63</max>
+      <default>31</default>
+    </int>
+  </segment>
+  <segment space="253">
+    <name>Next Blocks</name>
+    <group>
+      <name>Approach Track</name>
+      <eventid>
+        <name>Next block occupied event</name>
+        <description>Enter the Event ID that is fired when the next block is occupied</description>
+      </eventid>
+      <eventid>
+        <name>Next block unoccupied event</name>
+        <description>Enter the Event ID that is fired when the next block is unoccupied</description>
+      </eventid>
+    </group>
+    <group>
+      <name>Straight Track</name>
+      <eventid>
+        <name>Next block occupied event</name>
+        <description>Enter the Event ID that is fired when the next block is occupied</description>
+      </eventid>
+      <eventid>
+        <name>Next block unoccupied event</name>
+        <description>Enter the Event ID that is fired when the next block is unoccupied</description>
+      </eventid>
+    </group>
+    <group>
+      <name>Diverging Track</name>
+      <eventid>
+        <name>Next block occupied event</name>
+        <description>Enter the Event ID that is fired when the next block is occupied</description>
+      </eventid>
+      <eventid>
+        <name>Next block unoccupied event</name>
+        <description>Enter the Event ID that is fired when the next block is unoccupied</description>
+      </eventid>
+    </group>
+  </segment>
+  <segment origin="0" space="253">
+    <name>Options</name>
+    <description>User defined node information</description>
+    <string size="63">
+      <name>User Name</name>
+    </string>
+    <string size="64">
+      <name>User Description</name>
+    </string>
+  </segment>
+</cdi>

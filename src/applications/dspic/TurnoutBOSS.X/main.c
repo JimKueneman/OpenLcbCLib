@@ -77,20 +77,75 @@
 #include "stdlib.h"
 #include <libpic30.h> // Delay
 
-#include "../../../../drivers/common/can_buffer_store.h"
-#include "../../../../drivers/common/can_main_statemachine.h"
-#include "../../../../openlcb/openlcb_buffer_store.h"
-#include "../../../../drivers/common/../driver_mcu.h"
-#include "../../../../drivers/driver_can.h"
-#include "../../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../../openlcb/openlcb_node.h"
+#include "../../../drivers/common/can_buffer_store.h"
+#include "../../../drivers/common/can_main_statemachine.h"
+#include "../../../openlcb/openlcb_buffer_store.h"
+#include "../../../drivers/common/../driver_mcu.h"
+#include "../../../drivers/driver_can.h"
+#include "../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../openlcb/openlcb_node.h"
 #include "node_parameters.h"
-#include "../../../../openlcb/callback_hooks.h"
+#include "../../../openlcb/callback_hooks.h"
 
 
 #include "debug.h"
 
 uint64_olcb_t node_id_base = 0x050101010700;
+
+
+#define PORT_EXPANDER_CS _RC4
+#define PORT_EXPANDER_CS_TRIS _TRISC4 
+#define PORT_EXPANDER_RESET _RB4
+#define PORT_EXPANDER_RESET_TRIS _TRISB4
+
+#define TRACK_DETECT_GAIN_1_CS _RB14
+#define TRACK_DETECT_GAIN_1_CS_TRIS _TRISB14
+#define TRACK_DETECT_GAIN_2_CS _RA1
+#define TRACK_DETECT_GAIN_2_CS_TRIS _TRISA1
+#define TRACK_DETECT_GAIN_3_CS _RB1
+#define TRACK_DETECT_GAIN_3_CS_TRIS _TRISB1
+#define TRACK_DETECT_GAIN _RB15
+#define TRACK_DETECT_GAIN_TRIS _TRISB15
+#define TRACK_DETECT_1 _RA7
+#define TRACK_DETECT_1_TRIS _TRISA7
+#define TRACK_DETECT_2 _RA0
+#define TRACK_DETECT_2_TRIS _TRISA0
+#define TRACK_DETECT_3 _RB0
+#define TRACK_DETECT_3_TRIS _TRISB0
+
+#define TURNOUT_POSITION_STRAIGHT _RB13
+#define TURNOUT_POSITION_STRAIGHT_TRIS _TRISB13
+#define TURNOUT_POSITION_DIVERGING _RA10
+#define TURNOUT_POSITION_DIVERGING_TRIS _TRISA10
+
+#define TURNOUT_DRIVER _RC6
+#define TURNOUT_DRIVER_TRIS _TRISC6
+
+#define TURNOUT_PUSHBUTTON_STRAIGHT _RC7
+#define TURNOUT_PUSHBUTTON_STRAIGHT_TRIS _TRISC7
+#define TURNOUT_PUSHBUTTON_DIVERGING _RC8
+#define TURNOUT_PUSHBUTTON_DIVERGING_TRIS _TRISC8
+
+#define UART_TX _RB10
+#define UART_RX _RB11
+#define CTS _RC9
+#define CTS_TRIS _TRISC9
+#define RTS _RB12
+#define RTS_TRIS _TRISB12
+
+#define CAN_TX _RB6
+#define CAN_RX _RB5
+
+#define SPI_CLK _RC3
+#define SPI_CLK_TRIS _TRISC3
+#define SPI_SDI _RA9
+#define SPI_SDI_TRIS _TRISA9
+#define SPI_SDO _RA4
+#define SPI_SDO_TRIS _TRISA4
+
+#define LED _RB9
+#define LED_TRIS _TRISB9
+
 
 void _uart_callback(uint16_olcb_t code) {
 
@@ -123,7 +178,7 @@ void _uart_callback(uint16_olcb_t code) {
                 PrintCanMsg(can_helper.active_msg);
                 printf("\n");
                 PrintCanFrameIdentifierName(can_helper.active_msg->identifier);
-                
+
                 return;
 
             }
@@ -132,26 +187,26 @@ void _uart_callback(uint16_olcb_t code) {
 
             if (Node_get_first(0))
                 PrintNode(Node_get_first(0));
-            
+
             return;
-            
+
         case 'L':
         case 'l':
 
             node_id_base++;
             Node_allocate(node_id_base, &NodeParameters_main_node);
-            
+
             return;
-            
+
         case 'H':
         case 'h':
-            
+
             printf("B - Print Buffer Storage state\n");
             printf("P - Print the active message in the CanHelper\n");
             printf("C - Print the active message in the OpenLcbHelper\n");
             printf("N - Print the state of the first allocated Node\n");
             printf("L - Allocate a new Node\n");
-            
+
             return;
 
     }
@@ -170,32 +225,67 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 void _pin_assignment_callback(void) {
     
-    // Peripheral Pin Select Initialize ----------------------------------------
-    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
+        // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
 
-    // CAN Pins
-    RPINR26bits.C1RXR = 45; // RPI45 CAN RX
-    RPOR4bits.RP43R = _RPOUT_C1TX; // RP43 CAN TX
+    // CAN Pin Mapping
+    RPINR26bits.C1RXR = 38; // RP38 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
+    RPOR1bits.RP37R = _RPOUT_C1TX; // RP37 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
 
-    // UART Pins
-    RPINR18bits.U1RXR = 44; // RPI44 UART RX
-    RPOR4bits.RP42R = _RPOUT_U1TX; // RP42  UART TX
+    // UART Pin Mapping
+    RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
+    RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
+
+    PORT_EXPANDER_CS_TRIS = 0;
+    PORT_EXPANDER_CS = 0;
+
+    PORT_EXPANDER_RESET_TRIS = 0;
+    PORT_EXPANDER_RESET = 0;
+
+    TRACK_DETECT_GAIN_1_CS_TRIS = 0;
+    TRACK_DETECT_GAIN_1_CS = 0;
+    TRACK_DETECT_GAIN_2_CS_TRIS = 0;
+    TRACK_DETECT_GAIN_2_CS = 0;
+    TRACK_DETECT_GAIN_3_CS_TRIS = 0;
+    TRACK_DETECT_GAIN_3_CS = 0;
+    TRACK_DETECT_GAIN_TRIS = 0;
+    TRACK_DETECT_GAIN = 0;
+    TRACK_DETECT_1_TRIS = 1;
+    TRACK_DETECT_2_TRIS = 1;
+    TRACK_DETECT_3_TRIS = 1;
+
+    TURNOUT_POSITION_STRAIGHT_TRIS = 1;
+    TURNOUT_POSITION_DIVERGING_TRIS = 1;
+
+    TURNOUT_DRIVER_TRIS = 0;
+    TURNOUT_DRIVER = 0;
+
+    TURNOUT_PUSHBUTTON_STRAIGHT_TRIS = 1;
+    TURNOUT_PUSHBUTTON_DIVERGING_TRIS = 1;
+
+    //UART_TX auto-set by the PPS 
+    //UART_RX
+    CTS_TRIS = 0;
+    CTS = 0;
+    RTS_TRIS = 1;
+
+    //CAN_TX auto-set by the PPS 
+    //CAN_RX 
     
-    // SPI1 for the 25AAxxx EEProm access
-    _TRISB7 = 0; // CLK
-    _TRISB8 = 0; // SDO
-    _TRISB6 = 0; // CS
+    LED_TRIS = 0;
+    LED = 0;
 
-    _RB7 = 0;
-    _RB8 = 0;
-    _RB6 = 1;
+    SPI_CLK_TRIS = 0;
+    SPI_CLK = 0;
+    SPI_SDO_TRIS = 0;
+    SPI_SDO = 0;
+    SPI_SDI_TRIS = 1;
 
     IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
     IEC0bits.SPI1IE = 0; // Disable the interrupt
 
     SPI1CON1bits.SPRE = 0b000;
     SPI1CON1bits.PPRE = 0b10;
-    
+
     SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
     SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
     SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
@@ -207,41 +297,14 @@ void _pin_assignment_callback(void) {
     // active state is a high level
     SPI1STATbits.SPIEN = 1; // Enable SPI module
    
-
 }
 
 
- // #define  _SIMULATOR_
 
-#include "../../../../openlcb/openlcb_gridconnect.h"
-    
-    gridconnect_buffer_t main_buffer;
-    
-    gridconnect_buffer_t* main_buffer_ptr = &main_buffer;
-    
-int main(void) {  
-    
-    
-    char str[MAX_GRID_CONNECT_LEN] = ":X19170640N0501010107015555;";
-    
-   // for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++)
-   //   test[i] = str[i];
-    
-    printf("Buffer Address: %p\n", main_buffer);
-    printf("Buffer Address: %p\n", &main_buffer);
-    
-    uint8_olcb_t i = 0;
-    while (!OpenLcbGridConnect_copy_out_gridconnect_when_done(str[i], &main_buffer)) {
-        
-        i++;
-         
-    }
-    
-    
-    
-    printf("buffer: %s\n", (char*) &main_buffer[0]);
- 
-    
+// #define  _SIMULATOR_
+
+int main(void) {
+
     _TRISB4 = 0;
     _RB4 = 0;
 
@@ -260,8 +323,9 @@ int main(void) {
 
     CanMainStatemachine_initialize();
     MainStatemachine_initialize();
-    
+
     McuDriver_initialization(&_pin_assignment_callback);
+
 #endif
 
     printf("\n\nBooted\n");
@@ -280,7 +344,7 @@ int main(void) {
 
     while (1) {
 
-        CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
+        CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 
 
     }

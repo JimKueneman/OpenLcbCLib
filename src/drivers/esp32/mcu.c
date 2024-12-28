@@ -27,7 +27,7 @@
  * \file mcu.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * to initialize the device.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
@@ -41,35 +41,30 @@
 
 #include "../../openlcb/openlcb_types.h"
 
-void McuDriver_Reboot(void) {
-    
-    
+void McuDriver_reboot(void)
+{
 }
 
-void McuDriver_initialization(void) {
+void McuDriver_initialization(void)
+{
 
     // UART Initialize ---------------------------------------------------------
-    
+
     // ------------------------------------------------------------
 
-
     // Oscillator Initialize ---------------------------------------------------
-    
+
     // -------------------------------------------------------------------------
 
     // IO Pin Initialize -------------------------------------------------------
-  
-    // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
 
     // Peripheral Pin Select Initialize ----------------------------------------
     // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
-
-
 }
-
 
 // This must be here and used if you want a UART callback in your main program for debugging and such
 uart_rx_callback_t McuDriver_uart_rx_callback_func;
@@ -78,15 +73,15 @@ uart_rx_callback_t McuDriver_uart_rx_callback_func;
 
 // Example
 
-//void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+// void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 //
-//    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
+//     IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag
 //
-//    if (U1STAbits.URXDA == 1) {
+//     if (U1STAbits.URXDA == 1) {
 //
-//        if (McuDriver_uart_rx_callback_func)
-//            McuDriver_uart_rx_callback_func(U1RXREG);
+//         if (McuDriver_uart_rx_callback_func)
+//             McuDriver_uart_rx_callback_func(U1RXREG);
 //
-//    }
-//    return;
-//}
+//     }
+//     return;
+// }

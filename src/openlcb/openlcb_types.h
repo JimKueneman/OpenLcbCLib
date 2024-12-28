@@ -53,7 +53,7 @@ extern "C" {
 
 #define LEN_NODE_ARRAY                16  // USER DEFINED 
 
-#define LEN_MAX_CDI                   2000
+#define LEN_MAX_CDI                   3000
 #define LEN_MAX_FDI                   1000
 
 #define LEN_PRODUCER_MAX_COUNT         8
@@ -276,6 +276,8 @@ typedef void (*_100ms_timer_callback_func_t) (void);
 // WARNING: Is in the context of the interrupt, be careful
 // void func(rx_data);
 typedef void (*uart_rx_callback_t) (uint16_olcb_t);
+
+typedef void(*parameterless_callback_t) (void);
 
 typedef uint8_olcb_t configuration_memory_buffer_t[64];
 

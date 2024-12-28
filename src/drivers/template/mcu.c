@@ -41,12 +41,12 @@
 
 #include "../../openlcb/openlcb_types.h"
 
-void McuDriver_Reboot(void) {
+void McuDriver_reboot(void) {
     
     
 }
 
-void McuDriver_initialization(void) {
+void McuDriver_initialization(parameterless_callback_t pin_assign_callback) {
 
     // UART Initialize ---------------------------------------------------------
     

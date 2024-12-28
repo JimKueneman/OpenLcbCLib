@@ -906,7 +906,7 @@ void _handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_m
 
     }
 
-    McuDriver_Reboot();
+    McuDriver_reboot();
 
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
