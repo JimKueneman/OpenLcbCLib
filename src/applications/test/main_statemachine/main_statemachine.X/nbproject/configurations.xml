@@ -88,36 +88,45 @@
         </logicalFolder>
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../../drivers/common/can_buffer_fifo.c</itemPath>
+          <itemPath>../../../../drivers/common/can_main_statemachine.c</itemPath>
+          <itemPath>../../../../drivers/common/can_login_message_handler.c</itemPath>
           <itemPath>../../../../drivers/common/can_utilities.c</itemPath>
+          <itemPath>../../../../drivers/common/can_frame_message_handler.c</itemPath>
           <itemPath>../../../../drivers/common/can_rx_statemachine.c</itemPath>
           <itemPath>../../../../drivers/common/can_tx_statemachine.c</itemPath>
           <itemPath>../../../../drivers/common/can_buffer_store.c</itemPath>
-          <itemPath>../../../../drivers/common/can_main_statemachine.c</itemPath>
-          <itemPath>../../../../drivers/common/can_login_message_handler.c</itemPath>
-          <itemPath>../../../../drivers/common/can_frame_message_handler.c</itemPath>
         </logicalFolder>
         <logicalFolder name="dspic" displayName="dspic" projectFiles="true">
           <logicalFolder name="dsPIC33xxxGP5xx"
                          displayName="dsPIC33xxxGP5xx"
                          projectFiles="true">
-            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/clock.c</itemPath>
-            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/mcu.c</itemPath>
-            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/configuration_memory.c</itemPath>
-            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/can.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c</itemPath>
+            <itemPath>../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c</itemPath>
           </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="esp32" displayName="esp32" projectFiles="true">
+          <itemPath>../../../../drivers/esp32/driver_mcu.c</itemPath>
+          <itemPath>../../../../drivers/esp32/driver_can.c</itemPath>
+          <itemPath>../../../../drivers/esp32/driver_100ms_clock.c</itemPath>
+          <itemPath>../../../../drivers/esp32/driver_configuration_memory.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="osx" displayName="osx" projectFiles="true">
+          <itemPath>../../../../drivers/osx/driver_mcu.c</itemPath>
+          <itemPath>../../../../drivers/osx/driver_can.c</itemPath>
+          <itemPath>../../../../drivers/osx/driver_100ms_clock.c</itemPath>
+          <itemPath>../../../../drivers/osx/driver_configuration_memory.c</itemPath>
+          <itemPath>../../../../drivers/osx/threadsafe_stringlist.c</itemPath>
         </logicalFolder>
         <logicalFolder name="pic32" displayName="pic32" projectFiles="true">
         </logicalFolder>
         <logicalFolder name="template" displayName="template" projectFiles="true">
-          <itemPath>../../../../drivers/template/clock.c</itemPath>
-          <itemPath>../../../../drivers/template/configuration_memory.c</itemPath>
-          <itemPath>../../../../drivers/template/can.c</itemPath>
-          <itemPath>../../../../drivers/template/mcu.c</itemPath>
+          <itemPath>../../../../drivers/template/driver_mcu.c</itemPath>
+          <itemPath>../../../../drivers/template/driver_can.c</itemPath>
+          <itemPath>../../../../drivers/template/driver_100ms_clock.c</itemPath>
+          <itemPath>../../../../drivers/template/driver_configuration_memory.c</itemPath>
         </logicalFolder>
-        <itemPath>../../../../drivers/driver_configuration_memory.c</itemPath>
-        <itemPath>../../../../drivers/driver_mcu.c</itemPath>
-        <itemPath>../../../../drivers/driver_100ms_clock.c</itemPath>
-        <itemPath>../../../../drivers/driver_can.c</itemPath>
       </logicalFolder>
       <logicalFolder name="main_statemachine.X"
                      displayName="main_statemachine.X"
@@ -193,127 +202,53 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/can.c"
+      <item path="../../../../drivers/esp32/driver_100ms_clock.c"
             ex="true"
             overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
       </item>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/clock.c"
+      <item path="../../../../drivers/esp32/driver_can.c"
             ex="true"
             overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
       </item>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/configuration_memory.c"
+      <item path="../../../../drivers/esp32/driver_configuration_memory.c"
             ex="true"
             overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
       </item>
-      <item path="../../../../drivers/dspic/dsPIC33xxxGP5xx/mcu.c"
+      <item path="../../../../drivers/esp32/driver_mcu.c"
             ex="true"
             overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
       </item>
-      <item path="../../../../drivers/template/can.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
-      <item path="../../../../drivers/template/clock.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
-      <item path="../../../../drivers/template/configuration_memory.c"
+      <item path="../../../../drivers/osx/driver_100ms_clock.c"
             ex="true"
             overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
       </item>
-      <item path="../../../../drivers/template/mcu.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
+      <item path="../../../../drivers/osx/driver_can.c" ex="true" overriding="false">
+      </item>
+      <item path="../../../../drivers/osx/driver_configuration_memory.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/osx/driver_mcu.c" ex="true" overriding="false">
+      </item>
+      <item path="../../../../drivers/osx/threadsafe_stringlist.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/template/driver_100ms_clock.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/template/driver_can.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/template/driver_configuration_memory.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../../drivers/template/driver_mcu.c"
+            ex="true"
+            overriding="false">
       </item>
       <C30>
         <property key="cast-align" value="false"/>

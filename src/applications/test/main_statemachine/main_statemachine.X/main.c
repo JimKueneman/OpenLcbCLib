@@ -181,7 +181,7 @@ void _pin_assignment_callback(void) {
     RPINR18bits.U1RXR = 44; // RPI44 UART RX
     RPOR4bits.RP42R = _RPOUT_U1TX; // RP42  UART TX
     
-    // SPI1 for the 25AAxxx EEProm access
+    // SPI1 for the 25AAxxx EEProm access are on the default SPI1 pins
     _TRISB7 = 0; // CLK
     _TRISB8 = 0; // SDO
     _TRISB6 = 0; // CS
