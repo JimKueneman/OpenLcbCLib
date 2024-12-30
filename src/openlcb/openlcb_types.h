@@ -190,8 +190,6 @@ typedef struct {
     uint16_olcb_t producer_count;
     uint8_olcb_t cdi[LEN_MAX_CDI];
     uint8_olcb_t fdi[LEN_MAX_FDI];
-    uint8_olcb_t high_address_space;
-    uint8_olcb_t low_address_space;
     user_address_space_info_t address_space_configuration_definition;
     user_address_space_info_t address_space_all;
     user_address_space_info_t address_space_config_memory;
@@ -199,7 +197,9 @@ typedef struct {
     user_address_space_info_t address_space_acdi_user;
     user_address_space_info_t address_space_train_function_definition;
     user_address_space_info_t address_space_train_function_config_memory;
+    user_address_space_info_t address_space_firmware;
     user_configuration_options configuration_options;
+    uint32_olcb_t firmware_image_offset;  // where in the EEPROM the image is stuffed
 
 } node_parameters_t;
 
@@ -236,6 +236,7 @@ typedef struct {
     uint16_olcb_t openlcb_datagram_ack_sent : 1;
     uint16_olcb_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
     uint16_olcb_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+    uint16_olcb_t firmware_upgrade : 1;  // Set if the node is in firmware upgrade mode
 } openlcb_node_state_t;
 
 typedef struct {

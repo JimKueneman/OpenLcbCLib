@@ -80,7 +80,7 @@ void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node_t* op
 
 }
 
-void _try_transmist(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+void _try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
@@ -118,6 +118,9 @@ const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* ope
 
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
             return &openlcb_node->parameters->address_space_train_function_config_memory;
+
+        case ADDRESS_SPACE_FIRMWARE:
+            return &openlcb_node->parameters->address_space_firmware;
 
         default:
 
@@ -362,6 +365,25 @@ uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_no
 
 }
 
+uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+
+    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_firmware, data_address, &data_count);
+    if (invalid)
+        return invalid;
+
+    
+
+     data_address = data_address + openlcb_node->parameters->firmware_image_offset;
+     
+     printf("address: 0x%04X", (uint16_olcb_t) ((data_address >> 16) & 0xFFFF));
+    printf("%04X\n", (uint16_olcb_t) (data_address & 0xFFFF));
+
+
+  //  return data_count;
+     return DriverConfigurationMemory_write(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+
+}
+
 uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count, uint8_olcb_t space) {
 
     switch (space) {
@@ -374,6 +396,11 @@ uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* w
 
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
             return _write_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+
+        case ADDRESS_SPACE_FIRMWARE:
+            return _write_memory_space_firmware(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+
+
 
         default:
             return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
@@ -427,7 +454,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
     }
 
-    _try_transmist(openlcb_node, openlcb_msg, worker_msg);
+    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -510,7 +537,7 @@ void _handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 
     }
 
-    _try_transmist(openlcb_node, openlcb_msg, worker_msg);
+    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -595,7 +622,7 @@ void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openl
 
     }
 
-    _try_transmist(openlcb_node, openlcb_msg, worker_msg);
+    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -674,8 +701,8 @@ void _handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_ms
         write_lengths = write_lengths | 0x01;
 
     *worker_msg->payload[4] = write_lengths;
-    *worker_msg->payload[5] = openlcb_node->parameters->high_address_space;
-    *worker_msg->payload[6] = openlcb_node->parameters->low_address_space;
+    *worker_msg->payload[5] = openlcb_node->parameters->configuration_options.high_address_space;
+    *worker_msg->payload[6] = openlcb_node->parameters->configuration_options.low_address_space;
 
     worker_msg->payload_count = 7;
 
@@ -684,7 +711,7 @@ void _handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_ms
         worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, openlcb_node->parameters->configuration_options.description, worker_msg->payload_count);
 
 
-    _try_transmist(openlcb_node, openlcb_msg, worker_msg);
+    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -770,7 +797,7 @@ void _handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node,
         worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, target_space->description, worker_msg->payload_count);
 
 
-    _try_transmist(openlcb_node, openlcb_msg, worker_msg);
+    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -836,7 +863,7 @@ void _handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_m
     *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
     Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->lock_node, 2);
 
-    _try_transmist(openlcb_node, openlcb_msg, worker_msg);
+    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -856,29 +883,83 @@ void _handle_memory_get_unique_id_message(openlcb_node_t* openlcb_node, openlcb_
 
 void _handle_memory_unfreeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-    if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+    if (*openlcb_msg->payload[2] != ADDRESS_SPACE_FIRMWARE) {
 
-        _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED);
+        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
-        return;
+            _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+
+            return;
+
+        } else
+
+            openlcb_node->state.openlcb_msg_handled = TRUE;
+
+    } else {
+
+        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+
+            _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
+
+            return;
+
+        }
+
+        Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
+
+        if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
+            worker_msg->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+
+        Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
+
+        _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+        
+        if (openlcb_node->state.openlcb_msg_handled)
+            
+            openlcb_node->state.firmware_upgrade = FALSE;
 
     }
-
-    openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
 
 void _handle_memory_freeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-    if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+    if (*openlcb_msg->payload[2] != ADDRESS_SPACE_FIRMWARE) {
 
-        _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED);
+        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
-        return;
+            _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+
+            return;
+
+        } else
+
+            openlcb_node->state.openlcb_msg_handled = TRUE;
+
+    } else {
+
+        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+
+            _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
+
+            return;
+
+        }
+
+        Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
+
+        if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
+            worker_msg->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+
+        Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
+
+        
+         _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+         
+         if (openlcb_node->state.openlcb_msg_handled)
+            openlcb_node->state.firmware_upgrade = TRUE;
 
     }
-
-    openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
 

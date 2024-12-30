@@ -82,7 +82,9 @@
 #include "../../../../openlcb/openlcb_buffer_store.h"
 #include "../../../../drivers/common/../driver_mcu.h"
 #include "../../../../drivers/driver_can.h"
+#include "../../../../drivers/driver_configuration_memory.h"
 #include "../../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../../drivers/25AA1024/25AA1024_driver.h"
 #include "../../../../openlcb/openlcb_node.h"
 #include "node_parameters.h"
 #include "../../../../openlcb/callback_hooks.h"
@@ -93,6 +95,8 @@
 uint64_olcb_t node_id_base = 0x050101010700;
 
 void _uart_callback(uint16_olcb_t code) {
+    
+    configuration_memory_buffer_t buffer;
 
     switch (code) {
         case 'B':
@@ -123,7 +127,7 @@ void _uart_callback(uint16_olcb_t code) {
                 PrintCanMsg(can_helper.active_msg);
                 printf("\n");
                 PrintCanFrameIdentifierName(can_helper.active_msg->identifier);
-                
+
                 return;
 
             }
@@ -132,26 +136,56 @@ void _uart_callback(uint16_olcb_t code) {
 
             if (Node_get_first(0))
                 PrintNode(Node_get_first(0));
-            
+
             return;
-            
+
         case 'L':
         case 'l':
 
             node_id_base++;
             Node_allocate(node_id_base, &NodeParameters_main_node);
+
+            return;
+            
+        case 'W':
+        case 'w':
+                       
+            DriverConfigurationMemory_read(0x7D000, 64, &buffer);
+            
+            
+            printf("Address 0x400\n");
+            for (int i = 0; i < 64; i++)
+                printf("%c", buffer[i]);
+            
+            printf("\n");
+            
+            DriverConfigurationMemory_read(0x00, 64, &buffer);
+            
+            printf("Address 0x000000\n");
+            for (int i = 0; i < 64; i++)
+                printf("%c", buffer[i]);
+            
+            printf("\n");
             
             return;
             
+        case 'E':
+        case 'e':
+            
+            _25AA1024_Driver_write_latch_enable();
+            _25AA1024_Driver_erase_chip();
+            
+            return;
+
         case 'H':
         case 'h':
-            
+
             printf("B - Print Buffer Storage state\n");
             printf("P - Print the active message in the CanHelper\n");
             printf("C - Print the active message in the OpenLcbHelper\n");
             printf("N - Print the state of the first allocated Node\n");
             printf("L - Allocate a new Node\n");
-            
+
             return;
 
     }
@@ -169,7 +203,7 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 }
 
 void _pin_assignment_callback(void) {
-    
+
     // Peripheral Pin Select Initialize ----------------------------------------
     // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
 
@@ -180,7 +214,7 @@ void _pin_assignment_callback(void) {
     // UART Pins
     RPINR18bits.U1RXR = 44; // RPI44 UART RX
     RPOR4bits.RP42R = _RPOUT_U1TX; // RP42  UART TX
-    
+
     // SPI1 for the 25AAxxx EEProm access are on the default SPI1 pins
     _TRISB7 = 0; // CLK
     _TRISB8 = 0; // SDO
@@ -195,7 +229,7 @@ void _pin_assignment_callback(void) {
 
     SPI1CON1bits.SPRE = 0b000;
     SPI1CON1bits.PPRE = 0b10;
-    
+
     SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
     SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
     SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
@@ -206,44 +240,28 @@ void _pin_assignment_callback(void) {
     SPI1CON1bits.CKP = 0; // Idle state for clock is a low level;
     // active state is a high level
     SPI1STATbits.SPIEN = 1; // Enable SPI module
-   
+
 
 }
 
 
- // #define  _SIMULATOR_
+unsigned int __attribute__((space(prog), aligned(_FLASH_PAGE * 2))) dat[_FLASH_PAGE] = {
+        0xDEAD, 0xBEEF, 0xAAAA, 0xBBBB, 0xCCCC, 0xDDDD
+    };
 
-#include "../../../../openlcb/openlcb_gridconnect.h"
-    
-    gridconnect_buffer_t main_buffer;
-    
-    gridconnect_buffer_t* main_buffer_ptr = &main_buffer;
-    
-int main(void) {  
-    
-    
-    char str[MAX_GRID_CONNECT_LEN] = ":X19170640N0501010107015555;";
-    
-   // for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++)
-   //   test[i] = str[i];
-    
-    printf("Buffer Address: %p\n", main_buffer);
-    printf("Buffer Address: %p\n", &main_buffer);
-    
-    uint8_olcb_t i = 0;
-    while (!OpenLcbGridConnect_copy_out_gridconnect_when_done(str[i], &main_buffer)) {
-        
-        i++;
-         
-    }
-    
-    
-    
-    printf("buffer: %s\n", (char*) &main_buffer[0]);
- 
-    
+
+    _prog_addressT p;
+
+
+// #define  _SIMULATOR_
+
+int main(void) {
+
+
     _TRISB4 = 0;
     _RB4 = 0;
+    
+     _init_prog_address(p, dat);
 
 
 #ifdef _SIMULATOR_
@@ -260,7 +278,7 @@ int main(void) {
 
     CanMainStatemachine_initialize();
     MainStatemachine_initialize();
-    
+
     McuDriver_initialization(&_pin_assignment_callback);
 #endif
 
@@ -277,11 +295,11 @@ int main(void) {
 
 #endif
 
+   
 
     while (1) {
 
         CanMainStateMachine_run(); // Runnning a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
-
 
     }
 

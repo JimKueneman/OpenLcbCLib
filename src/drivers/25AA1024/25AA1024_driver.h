@@ -44,6 +44,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+extern void _25AA1024_Driver_erase_chip();
+    
 extern uint8_olcb_t _25AA1024_Driver_read_status_register();
 
 extern void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status);

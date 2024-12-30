@@ -369,6 +369,8 @@ extern "C" {
 
 #define ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO                 0xFA
 #define ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY            0xF9 
+    
+#define ADDRESS_SPACE_FIRMWARE                                       0xEF
 
 #define ACDI_MANUFACTURER_VERSION_ADDRESS                            0x00
 

@@ -51,14 +51,14 @@ const node_parameters_t NodeParameters_main_node = {
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
 
 #ifdef SUPPORT_TRACTION
-    .protocol_support = (PSI_DATAGRAM | PSI_MEMORY_CONFIGURATION | PSI_EVENT_EXCHANGE | PSI_EVENT_EXCHANGE | PSI_ABBREVIATED_DEFAULT_CDI | PSI_SIMPLE_NODE_INFORMATION | PSI_CONFIGURATION_DESCRIPTION_INFO | PSI_TRAIN_CONTROL | PSI_FUNCTION_DESCRIPTION | PSI_FUNCTION_CONFIGURATION),
+    .protocol_support = (PSI_DATAGRAM | PSI_MEMORY_CONFIGURATION | PSI_EVENT_EXCHANGE | PSI_EVENT_EXCHANGE | PSI_ABBREVIATED_DEFAULT_CDI | PSI_SIMPLE_NODE_INFORMATION | PSI_CONFIGURATION_DESCRIPTION_INFO | PSI_FIRMWARE_UPGRADE | PSI_TRAIN_CONTROL | PSI_FUNCTION_DESCRIPTION | PSI_FUNCTION_CONFIGURATION),
 #else
-    .protocol_support = (PSI_DATAGRAM | PSI_MEMORY_CONFIGURATION | PSI_EVENT_EXCHANGE | PSI_EVENT_EXCHANGE | PSI_ABBREVIATED_DEFAULT_CDI | PSI_SIMPLE_NODE_INFORMATION | PSI_CONFIGURATION_DESCRIPTION_INFO),
+    .protocol_support = (PSI_DATAGRAM | PSI_MEMORY_CONFIGURATION | PSI_EVENT_EXCHANGE | PSI_EVENT_EXCHANGE | PSI_ABBREVIATED_DEFAULT_CDI | PSI_SIMPLE_NODE_INFORMATION | PSI_CONFIGURATION_DESCRIPTION_INFO |PSI_FIRMWARE_UPGRADE),
 #endif
 
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+    .configuration_options.low_address_space = ADDRESS_SPACE_FIRMWARE,
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
     .configuration_options.stream_read_write_supported = 0,
@@ -67,14 +67,6 @@ const node_parameters_t NodeParameters_main_node = {
     .configuration_options.write_to_user_space_0xfb_supported = 1,
     .configuration_options.write_under_mask_supported = 1,
     .configuration_options.description = "These are options that defined the memory space capabilities",
-
-    .high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-#ifdef SUPPORT_TRACTION
-    .low_address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
-#else
-    .low_address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
-#endif
-
 
     // Space 0xFF 
     // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so 
@@ -146,6 +138,18 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_train_function_config_memory.address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_train_function_config_memory.description = "Train function configuration memory storage",
 #endif
+    
+    // Space 0xEF
+    .address_space_firmware.read_only = 0,
+    .address_space_firmware.present = 1,
+    .address_space_firmware.low_address_valid = 0, // assume the low address starts at 0
+    .address_space_firmware.low_address = 0, // Firmware ALWAYS assumes it starts at 0
+    .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
+    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.description = "Firmware update address space",
+    
+    
+    .firmware_image_offset = 0x400,  // start at 1024 mark
 
     .cdi =
     {

@@ -214,7 +214,7 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
     }
 
     _RB6 = 1; // CS
-    
+
     return count;
 
 }
@@ -253,6 +253,26 @@ void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
 
 }
 
+void _25AA1024_Driver_erase_chip() {
+
+    _flush_buffers();
+
+    _RB6 = 0; // CS
+
+    SPI1BUF = 0b11000111;
+
+    _wait_for_reply();
+    
+    _RB6 = 1;
+    
+    
+    while (_25AA1024_Driver_write_in_progress()) {
+        
+        
+    }
+    
+}
+
 uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     uint8_olcb_t temp;
@@ -288,21 +308,21 @@ uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, 
     }
 
     _RB6 = 1; // CS
-    
+
     return count;
 
 }
 
- uint8_olcb_t _25AA1024_Driver_write_in_progress() {
-     
-     if (_25AA1024_Driver_read_status_register() && 0x01 != 0)
-         
-       return 1;
-               
-     else
-         
-         return 0;
-     
- }
+uint8_olcb_t _25AA1024_Driver_write_in_progress() {
+
+    if (_25AA1024_Driver_read_status_register() && 0x01 != 0)
+
+        return 1;
+
+    else
+
+        return 0;
+
+}
 
 

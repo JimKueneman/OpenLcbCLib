@@ -68,13 +68,6 @@ const node_parameters_t NodeParameters_main_node = {
     .configuration_options.write_under_mask_supported = 1,
     .configuration_options.description = "These are options that defined the memory space capabilities",
 
-    .high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-#ifdef SUPPORT_TRACTION
-    .low_address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
-#else
-    .low_address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
-#endif
-
 
     // Space 0xFF 
     // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so 

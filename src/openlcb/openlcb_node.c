@@ -56,6 +56,7 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.openlcb_datagram_ack_sent = FALSE;
     openlcb_node->state.resend_datagram = FALSE;
     openlcb_node->state.resend_optional_message = FALSE;
+    openlcb_node->state.firmware_upgrade = FALSE;
     openlcb_node->timerticks = 0;
     openlcb_node->lock_node = 0;
     openlcb_node->index = 0;
