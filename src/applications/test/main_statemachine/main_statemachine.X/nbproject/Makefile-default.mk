@@ -89,378 +89,378 @@ MP_LINKER_FILE_OPTION=,--script=p33EP256GP502.gld
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o: ../../../../drivers/25AA1024/25AA1024_driver.c  .generated_files/flags/default/f0766942e8c4970e78ceb5dfaa208125ce12606 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o: ../../../../drivers/25AA1024/25AA1024_driver.c  .generated_files/flags/default/e78882f1f56bd9b2cc42cc6a7deb4b3342eb9450 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1327033416" 
 	@${RM} ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o: ../../../../drivers/common/can_buffer_fifo.c  .generated_files/flags/default/4d378ce42bdd78881dd466f7b6daa8ab5c0d71cf .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o: ../../../../drivers/common/can_buffer_fifo.c  .generated_files/flags/default/a97f6d3d065c153becc9ac3c8e7661985a75b35c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_fifo.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_fifo.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_main_statemachine.o: ../../../../drivers/common/can_main_statemachine.c  .generated_files/flags/default/c3fd1926929e1a13e2516b3ba58cff515a6839b6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_main_statemachine.o: ../../../../drivers/common/can_main_statemachine.c  .generated_files/flags/default/e68eb52aa1831e07db46aa13d550e7937b2e7b71 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_main_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_main_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_main_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_main_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_login_message_handler.o: ../../../../drivers/common/can_login_message_handler.c  .generated_files/flags/default/651157aaf8ee0ff870f86525f63c7036846435a9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_login_message_handler.o: ../../../../drivers/common/can_login_message_handler.c  .generated_files/flags/default/d2fdce58932b0911d0f82ef5b39357a6401139c2 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_login_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_login_message_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_login_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_login_message_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_utilities.o: ../../../../drivers/common/can_utilities.c  .generated_files/flags/default/5842c7085f622ff520fc639d830803d152507fb2 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_utilities.o: ../../../../drivers/common/can_utilities.c  .generated_files/flags/default/f1cb53ff71f74e0653ea5846d4fd977da60fc8f6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_utilities.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_utilities.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_utilities.c  -o ${OBJECTDIR}/_ext/216671855/can_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_utilities.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_utilities.c  -o ${OBJECTDIR}/_ext/216671855/can_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_utilities.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o: ../../../../drivers/common/can_frame_message_handler.c  .generated_files/flags/default/fd45db8e75c407db0b5acb26303223d29b7a212d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o: ../../../../drivers/common/can_frame_message_handler.c  .generated_files/flags/default/91dc6178f6f1482136e563b76817fa4957b0889c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_frame_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_frame_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o: ../../../../drivers/common/can_rx_statemachine.c  .generated_files/flags/default/a26e6b4fd6be86339f052b1cd8dd6367dc4a035c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o: ../../../../drivers/common/can_rx_statemachine.c  .generated_files/flags/default/512018a2f698d005e4956c9183fbab2cb8d3bfa1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_rx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_rx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o: ../../../../drivers/common/can_tx_statemachine.c  .generated_files/flags/default/74ef4716418a6f7e2087ce3a6fdf3d71fab67679 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o: ../../../../drivers/common/can_tx_statemachine.c  .generated_files/flags/default/950fc99c93cac1eaa4f44ef645cd160a3fc06613 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_tx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_tx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_buffer_store.o: ../../../../drivers/common/can_buffer_store.c  .generated_files/flags/default/6561edfb1a1319ae14f327d7f20424b029ed0d98 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_buffer_store.o: ../../../../drivers/common/can_buffer_store.c  .generated_files/flags/default/d1a0ddfc95286504ae5fde4516aebeec146b5358 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_store.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_store.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_store.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_store.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_store.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_store.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_mcu.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  .generated_files/flags/default/9591e32f7ab10c287ec29f1c163d0694bdd6d74a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_mcu.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  .generated_files/flags/default/c1592d31b9a8048d4ea23ef378275a0f38fd63ec .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_mcu.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_mcu.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  -o ${OBJECTDIR}/_ext/861666455/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_mcu.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  -o ${OBJECTDIR}/_ext/861666455/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_mcu.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_can.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  .generated_files/flags/default/6d09a293d5047a11a66e3b1ced0a59bf47a03d0a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_can.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  .generated_files/flags/default/17e81418c27370b78e0236afbb7d4983b8d4272f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_can.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_can.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  -o ${OBJECTDIR}/_ext/861666455/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_can.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  -o ${OBJECTDIR}/_ext/861666455/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_can.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  .generated_files/flags/default/78fdaf277a2dbb0026a9f790e024a79363554ac0 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  .generated_files/flags/default/aae1718e5227f87896f2a961fabb2d2657b75992 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  -o ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  -o ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  .generated_files/flags/default/8103ded4472a8c6f680b7bcdd30b2dcfd32e3425 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  .generated_files/flags/default/b15f10e5f3067bd30dba42e5447e7633dec63a7f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  -o ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  -o ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/342022b7853b985ae67cda5a046bd5ac846a9c83 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/6fad1a06df16abc2575d9ba78c4be4e35c971409 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/traps.o.d 
 	@${RM} ${OBJECTDIR}/traps.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/debug.o: debug.c  .generated_files/flags/default/407bba20a272d4412f933a06e253a269f402ef2c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/debug.o: debug.c  .generated_files/flags/default/c089d57148ddb8382b8b09276ab85a86426ce624 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/debug.o.d 
 	@${RM} ${OBJECTDIR}/debug.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  debug.c  -o ${OBJECTDIR}/debug.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/debug.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  debug.c  -o ${OBJECTDIR}/debug.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/debug.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/2dee31badc74ebcb1be09ff02c1a8cb0f0934f6b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/a5d8d6b495133e540d645dad889dfd84dc25c91 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/19bbbe9afbd7d5948f48c7c12a089dfd96cca367 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/c29ed27dc1b567a4a07e40c229d8a7b954566865 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/node_parameters.o.d 
 	@${RM} ${OBJECTDIR}/node_parameters.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o: ../../../../openlcb/openlcb_buffer_fifo.c  .generated_files/flags/default/50365ab6fc178705e409cd4d0353fd3438fba074 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o: ../../../../openlcb/openlcb_buffer_fifo.c  .generated_files/flags/default/c8023467e79f9196defadd208a5fe1727c205e8b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_fifo.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_fifo.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_node.o: ../../../../openlcb/openlcb_node.c  .generated_files/flags/default/6dfda5565519afdc78803a1b06017568d0fdda3a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_node.o: ../../../../openlcb/openlcb_node.c  .generated_files/flags/default/4c4d6979796533320dc5977b51d238fc6bfc2abe .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_node.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_node.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_node.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_node.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_node.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_node.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_node.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_node.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o: ../../../../openlcb/openlcb_buffer_store.c  .generated_files/flags/default/11fe9b9cc563fe82891b22227b8bd7657dced7f5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o: ../../../../openlcb/openlcb_buffer_store.c  .generated_files/flags/default/b0f604359d0eb2bed40d586852f194534b801591 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_store.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_store.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_utilities.o: ../../../../openlcb/openlcb_utilities.c  .generated_files/flags/default/e65a06294195913970082fbebfb0d33b8cae0f59 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_utilities.o: ../../../../openlcb/openlcb_utilities.c  .generated_files/flags/default/f8e767d4d52ef3789a653361ab5ead733eb7e90e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_utilities.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_utilities.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_utilities.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_utilities.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o: ../../../../openlcb/openlcb_buffer_list.c  .generated_files/flags/default/e71a6646b74672d830905a41bb75f9b11b02a220 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o: ../../../../openlcb/openlcb_buffer_list.c  .generated_files/flags/default/f392a0581ea7799da4ea414a590d760f99f81e4f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_list.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_list.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o: ../../../../openlcb/openlcb_main_statemachine.c  .generated_files/flags/default/e8bcf6166df3367a68df4a2c3f3336ce1cb76a72 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o: ../../../../openlcb/openlcb_main_statemachine.c  .generated_files/flags/default/273ae659d8d4bb7914b9708d66d4a619dbe71c51 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_main_statemachine.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_main_statemachine.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/clock_distribution.o: ../../../../openlcb/clock_distribution.c  .generated_files/flags/default/2f295e50f69c8bc723fcc466de6b23be6c7c547 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/clock_distribution.o: ../../../../openlcb/clock_distribution.c  .generated_files/flags/default/f94580e035d8c7a8ca7b6a1f3624aa3f9fe9e61c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/clock_distribution.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/clock_distribution.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/clock_distribution.c  -o ${OBJECTDIR}/_ext/526222337/clock_distribution.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/clock_distribution.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/clock_distribution.c  -o ${OBJECTDIR}/_ext/526222337/clock_distribution.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/clock_distribution.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/callback_hooks.o: ../../../../openlcb/callback_hooks.c  .generated_files/flags/default/a28058b2b1e17e67f6020288b9a3b88c3d92e71a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/callback_hooks.o: ../../../../openlcb/callback_hooks.c  .generated_files/flags/default/a2a42bae557db94fb54d9576a305fd1a95fb2b6f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/callback_hooks.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/callback_hooks.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/callback_hooks.c  -o ${OBJECTDIR}/_ext/526222337/callback_hooks.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/callback_hooks.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/callback_hooks.c  -o ${OBJECTDIR}/_ext/526222337/callback_hooks.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/callback_hooks.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_event_transport.o: ../../../../openlcb/protocol_event_transport.c  .generated_files/flags/default/af809fb3d27feb67296d25a39cb1eed4197a8546 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_event_transport.o: ../../../../openlcb/protocol_event_transport.c  .generated_files/flags/default/cf559131a723a50362e8089fa2626ad88483f9c1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_event_transport.c  -o ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_event_transport.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_event_transport.c  -o ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_event_transport.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_message_network.o: ../../../../openlcb/protocol_message_network.c  .generated_files/flags/default/166b893d7da280ccb8d0541fcdd133e6b2b29589 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_message_network.o: ../../../../openlcb/protocol_message_network.c  .generated_files/flags/default/32dda6c34d1c63ed5156ffaf8ec71cf4a8c31cb5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_message_network.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_message_network.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_message_network.c  -o ${OBJECTDIR}/_ext/526222337/protocol_message_network.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_message_network.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_message_network.c  -o ${OBJECTDIR}/_ext/526222337/protocol_message_network.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_message_network.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o: ../../../../openlcb/openlcb_tx_driver.c  .generated_files/flags/default/5a3a2dfdf65af00606f27e6fe33656f2d70a9d87 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o: ../../../../openlcb/openlcb_tx_driver.c  .generated_files/flags/default/7ef8b4d1e5656428202d6ce09f7b9bb933a20f24 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_tx_driver.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_tx_driver.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_snip.o: ../../../../openlcb/protocol_snip.c  .generated_files/flags/default/c1a27b1b365eb26b2e90d3cc3b5b448f8bd526e3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_snip.o: ../../../../openlcb/protocol_snip.c  .generated_files/flags/default/372bf8039e62c7402acdd14c9bec025a4f19cf5b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_snip.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_snip.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_snip.c  -o ${OBJECTDIR}/_ext/526222337/protocol_snip.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_snip.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_snip.c  -o ${OBJECTDIR}/_ext/526222337/protocol_snip.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_snip.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_datagram.o: ../../../../openlcb/protocol_datagram.c  .generated_files/flags/default/50de6ad1ab1dd4f571555ba0ac7f0617d0b268d0 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_datagram.o: ../../../../openlcb/protocol_datagram.c  .generated_files/flags/default/6d102478400e64ca99f2e5acb7d3bfcadd1ca2b6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_datagram.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_datagram.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_datagram.c  -o ${OBJECTDIR}/_ext/526222337/protocol_datagram.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_datagram.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_datagram.c  -o ${OBJECTDIR}/_ext/526222337/protocol_datagram.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_datagram.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o: ../../../../openlcb/openlcb_gridconnect.c  .generated_files/flags/default/1fdc4dcbe222aa68901d710a129718687e41e522 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o: ../../../../openlcb/openlcb_gridconnect.c  .generated_files/flags/default/cb170d3f1bb73b02260b2401a6926501e7155634 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_gridconnect.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_gridconnect.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 else
-${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o: ../../../../drivers/25AA1024/25AA1024_driver.c  .generated_files/flags/default/deb4984ff702471503c815f1bc789a18a7e45e91 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o: ../../../../drivers/25AA1024/25AA1024_driver.c  .generated_files/flags/default/772e1cd0b8b0b366d9d471d2c185768e58d082c4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/1327033416" 
 	@${RM} ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1327033416/25AA1024_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o: ../../../../drivers/common/can_buffer_fifo.c  .generated_files/flags/default/3a95e6d19ba78a235cf130d5acdca0945beca0b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o: ../../../../drivers/common/can_buffer_fifo.c  .generated_files/flags/default/5c512fd4be24a10bd18c98ca3b7b7534c492b09c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_fifo.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_fifo.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_fifo.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_main_statemachine.o: ../../../../drivers/common/can_main_statemachine.c  .generated_files/flags/default/b7c7c4ce74a514439f67e55b4af9eafde0b38f91 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_main_statemachine.o: ../../../../drivers/common/can_main_statemachine.c  .generated_files/flags/default/19aab6664855b903730b62b5ff9ada05bfe987f6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_main_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_main_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_main_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_main_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_login_message_handler.o: ../../../../drivers/common/can_login_message_handler.c  .generated_files/flags/default/7b9713645f54faf717e5163c8f5cd8387473fb71 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_login_message_handler.o: ../../../../drivers/common/can_login_message_handler.c  .generated_files/flags/default/1ad19b8ec01987a2ba5940a8c7845fdad81e0743 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_login_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_login_message_handler.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_login_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_login_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_login_message_handler.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_utilities.o: ../../../../drivers/common/can_utilities.c  .generated_files/flags/default/50829b5e9fa2a06d8b870379bbae95d55673baa9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_utilities.o: ../../../../drivers/common/can_utilities.c  .generated_files/flags/default/187b631405595f5b26aea0a8d643e4d30cd4246a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_utilities.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_utilities.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_utilities.c  -o ${OBJECTDIR}/_ext/216671855/can_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_utilities.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_utilities.c  -o ${OBJECTDIR}/_ext/216671855/can_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_utilities.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o: ../../../../drivers/common/can_frame_message_handler.c  .generated_files/flags/default/6d23648cd3f7b138d498abbd0236476a006c060a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o: ../../../../drivers/common/can_frame_message_handler.c  .generated_files/flags/default/f028fd1a1ea69b8fa65c9ff719d2a90eb7206b95 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_frame_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_frame_message_handler.c  -o ${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_frame_message_handler.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o: ../../../../drivers/common/can_rx_statemachine.c  .generated_files/flags/default/cbd6cfd21f7fb81a5a0cf2de0837afcdd20b033c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o: ../../../../drivers/common/can_rx_statemachine.c  .generated_files/flags/default/3265c597f882e957df972e9e9e6b9eda4dfa400c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_rx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_rx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_rx_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o: ../../../../drivers/common/can_tx_statemachine.c  .generated_files/flags/default/c268729e8f963754991f66dc43bca8f6a7c1824a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o: ../../../../drivers/common/can_tx_statemachine.c  .generated_files/flags/default/2f7ce40913f496df3abd74b155613ab2a12fd623 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_tx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_tx_statemachine.c  -o ${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_tx_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/216671855/can_buffer_store.o: ../../../../drivers/common/can_buffer_store.c  .generated_files/flags/default/b267be88bccbd68466130aee6177f62ffb3beaf3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/216671855/can_buffer_store.o: ../../../../drivers/common/can_buffer_store.c  .generated_files/flags/default/762c065873e464704870dd68ba0b37b22bf5c843 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/216671855" 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_store.o.d 
 	@${RM} ${OBJECTDIR}/_ext/216671855/can_buffer_store.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_store.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_store.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/common/can_buffer_store.c  -o ${OBJECTDIR}/_ext/216671855/can_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/216671855/can_buffer_store.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_mcu.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  .generated_files/flags/default/a2979a0786359564de9707efaa7d0299271641ac .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_mcu.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  .generated_files/flags/default/ce94fb150b729bca5ae58f671706d66d37ea1e70 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_mcu.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_mcu.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  -o ${OBJECTDIR}/_ext/861666455/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_mcu.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_mcu.c  -o ${OBJECTDIR}/_ext/861666455/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_mcu.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_can.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  .generated_files/flags/default/83f3c78f6c73565f86428e6650221d6feb5fb2dc .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_can.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  .generated_files/flags/default/b8adb4ff7684fba954fe86eb35424dcaa57fca1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_can.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_can.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  -o ${OBJECTDIR}/_ext/861666455/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_can.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_can.c  -o ${OBJECTDIR}/_ext/861666455/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_can.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  .generated_files/flags/default/6b03df01dd828aa184c244ee3cb0a5431d95395e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  .generated_files/flags/default/191b654488cdc5137a354bff4356fa00a31b5924 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  -o ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_100ms_clock.c  -o ${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_100ms_clock.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  .generated_files/flags/default/b5335ac7c540283ba199444c92802a18fbaace25 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o: ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  .generated_files/flags/default/cb85580f6a3f483695a387a237c7b53dd414beb4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/861666455" 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o.d 
 	@${RM} ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  -o ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../drivers/dspic/dsPIC33xxxGP5xx/driver_configuration_memory.c  -o ${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/861666455/driver_configuration_memory.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/ec915f8ff4f593973c3f7619b2f52c98ec87cca5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/5a04d03536b83c81e9184c15b910af7a53c944f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/traps.o.d 
 	@${RM} ${OBJECTDIR}/traps.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/debug.o: debug.c  .generated_files/flags/default/e855117e42c637434062b98ec935bead165d2dc4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/debug.o: debug.c  .generated_files/flags/default/559d2d44e1aa7453dedb5ad890c8d8da45b3f438 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/debug.o.d 
 	@${RM} ${OBJECTDIR}/debug.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  debug.c  -o ${OBJECTDIR}/debug.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/debug.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  debug.c  -o ${OBJECTDIR}/debug.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/debug.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/d64c1b1694fc984d2701acaeba194758e8868bd9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/a8c5f98f5ef2f152ca55f0f43047d4c7f9f01f9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/902322e5ceece3b0c02f7442a194e7cdeb69b93 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/e409e0057b921a0cd4d0dbd585c5c467be810dc7 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/node_parameters.o.d 
 	@${RM} ${OBJECTDIR}/node_parameters.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o: ../../../../openlcb/openlcb_buffer_fifo.c  .generated_files/flags/default/88b2a9d5add0ee6824c6ff6b4e9813202de56c30 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o: ../../../../openlcb/openlcb_buffer_fifo.c  .generated_files/flags/default/10ff2ba59653302d1502f6801fe22372f975fb7e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_fifo.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_fifo.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_fifo.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_node.o: ../../../../openlcb/openlcb_node.c  .generated_files/flags/default/ede233ea29978040408c9ea61561997d52226cfb .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_node.o: ../../../../openlcb/openlcb_node.c  .generated_files/flags/default/dd0d3c248dea6663c6a3f83065d688d80d1a4605 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_node.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_node.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_node.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_node.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_node.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_node.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_node.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_node.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o: ../../../../openlcb/openlcb_buffer_store.c  .generated_files/flags/default/8c6c70ed9de2e1b349081d0422c6893430019e54 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o: ../../../../openlcb/openlcb_buffer_store.c  .generated_files/flags/default/68f5157e9f1ebbb32e33989754626038b51f7021 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_store.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_store.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_store.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_utilities.o: ../../../../openlcb/openlcb_utilities.c  .generated_files/flags/default/2f1bf6d1dc2e53922efa027b1306356b805babbe .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_utilities.o: ../../../../openlcb/openlcb_utilities.c  .generated_files/flags/default/2ca574c85d40220e4b5aba25816961a1b095bb26 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_utilities.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_utilities.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_utilities.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_utilities.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_utilities.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o: ../../../../openlcb/openlcb_buffer_list.c  .generated_files/flags/default/3b741439721d5f27beb1d366bcef34a595956e07 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o: ../../../../openlcb/openlcb_buffer_list.c  .generated_files/flags/default/d352e91873b1dd1093ede0828dca9a7f4e9222e9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_list.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_buffer_list.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_buffer_list.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o: ../../../../openlcb/openlcb_main_statemachine.c  .generated_files/flags/default/f08928c8522aff0975b0fa3691094987bd307ec .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o: ../../../../openlcb/openlcb_main_statemachine.c  .generated_files/flags/default/88c15561a438471a3e6b03e3bd4bfaf99bd8264 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_main_statemachine.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_main_statemachine.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_main_statemachine.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/clock_distribution.o: ../../../../openlcb/clock_distribution.c  .generated_files/flags/default/be2ce7f8230a9fcc2a3358c9706b6c93a2419221 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/clock_distribution.o: ../../../../openlcb/clock_distribution.c  .generated_files/flags/default/44a614b50782cac2a05b7b54cd650cfda7fc8880 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/clock_distribution.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/clock_distribution.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/clock_distribution.c  -o ${OBJECTDIR}/_ext/526222337/clock_distribution.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/clock_distribution.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/clock_distribution.c  -o ${OBJECTDIR}/_ext/526222337/clock_distribution.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/clock_distribution.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/callback_hooks.o: ../../../../openlcb/callback_hooks.c  .generated_files/flags/default/bcdaf821e7a1ca6d8d3e1f22945ce8cb8738612a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/callback_hooks.o: ../../../../openlcb/callback_hooks.c  .generated_files/flags/default/5ce23613c64b4862394f3d9ad8c62dad04dfe922 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/callback_hooks.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/callback_hooks.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/callback_hooks.c  -o ${OBJECTDIR}/_ext/526222337/callback_hooks.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/callback_hooks.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/callback_hooks.c  -o ${OBJECTDIR}/_ext/526222337/callback_hooks.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/callback_hooks.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_event_transport.o: ../../../../openlcb/protocol_event_transport.c  .generated_files/flags/default/5a528d7ec65bca2c77c48ed547ce86a286421929 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_event_transport.o: ../../../../openlcb/protocol_event_transport.c  .generated_files/flags/default/95fd4888012a2fade436b40bc6bf8c0e4f4c8d18 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_event_transport.c  -o ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_event_transport.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_event_transport.c  -o ${OBJECTDIR}/_ext/526222337/protocol_event_transport.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_event_transport.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_message_network.o: ../../../../openlcb/protocol_message_network.c  .generated_files/flags/default/8b0d64e700b0977d7adc40ac5b6141d33f5ceec4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_message_network.o: ../../../../openlcb/protocol_message_network.c  .generated_files/flags/default/7fd46892377e6a36066ddeef9ff0a570d3c6550 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_message_network.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_message_network.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_message_network.c  -o ${OBJECTDIR}/_ext/526222337/protocol_message_network.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_message_network.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_message_network.c  -o ${OBJECTDIR}/_ext/526222337/protocol_message_network.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_message_network.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o: ../../../../openlcb/openlcb_tx_driver.c  .generated_files/flags/default/115e145b327cb304e355567720f4bed69d4405b4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o: ../../../../openlcb/openlcb_tx_driver.c  .generated_files/flags/default/997a90619bfd7271281720af6e7eac254c0615b6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_tx_driver.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_tx_driver.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_tx_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_snip.o: ../../../../openlcb/protocol_snip.c  .generated_files/flags/default/6e1e4dd3675cef00280a8e52f335f5f59c064459 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_snip.o: ../../../../openlcb/protocol_snip.c  .generated_files/flags/default/6fd14d11a8dae4bcc9b62b4b87b1df5a13e7b939 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_snip.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_snip.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_snip.c  -o ${OBJECTDIR}/_ext/526222337/protocol_snip.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_snip.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_snip.c  -o ${OBJECTDIR}/_ext/526222337/protocol_snip.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_snip.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/protocol_datagram.o: ../../../../openlcb/protocol_datagram.c  .generated_files/flags/default/77631220c4807334ab035f559a7e7623e5a8e517 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/protocol_datagram.o: ../../../../openlcb/protocol_datagram.c  .generated_files/flags/default/5c6f1bc35cd331dc6a5bb28cd6a4c00c8aaeff00 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_datagram.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/protocol_datagram.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_datagram.c  -o ${OBJECTDIR}/_ext/526222337/protocol_datagram.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_datagram.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/protocol_datagram.c  -o ${OBJECTDIR}/_ext/526222337/protocol_datagram.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/protocol_datagram.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o: ../../../../openlcb/openlcb_gridconnect.c  .generated_files/flags/default/b383308583c4bc3c85fcfc8d553c0a1c389d7cfd .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o: ../../../../openlcb/openlcb_gridconnect.c  .generated_files/flags/default/7d1eb1de2f0709d4f5f587c5f892485a97531fc9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/526222337" 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o.d 
 	@${RM} ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_gridconnect.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o.d"      -mno-eds-warn  -g -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../../openlcb/openlcb_gridconnect.c  -o ${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/526222337/openlcb_gridconnect.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 endif
 
@@ -481,12 +481,12 @@ endif
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
 	@${MKDIR} ${DISTDIR} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG=__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)      -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D__DEBUG=__DEBUG,--defsym=__MPLAB_DEBUGGER_SIMULATOR=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG=__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)      -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D__DEBUG=__DEBUG,--defsym=__MPLAB_DEBUGGER_SIMULATOR=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
 	
 else
 ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
 	@${MKDIR} ${DISTDIR} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -DdsPIC33EPxxxGP50x -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
 	${MP_CC_DIR}/xc16-bin2hex ${DISTDIR}/main_statemachine.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} -a  -omf=elf   -mdfp="${DFP_DIR}/xc16" 
 	
 endif

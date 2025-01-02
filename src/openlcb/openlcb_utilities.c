@@ -307,7 +307,7 @@ int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, u
 
     for (int i = 0; i < openlcb_node->parameters->producer_count; i++) {
 
-        if (i < LEN_CONSUMER_MAX_COUNT)
+        if (i < USER_DEFINED_CONSUMER_COUNT)
 
             if (openlcb_node->producers.list[i] == event_id)
 
@@ -324,7 +324,7 @@ int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, u
 
     for (int i = 0; i < openlcb_node->parameters->consumer_count; i++) {
 
-        if (i < LEN_CONSUMER_MAX_COUNT)
+        if (i < USER_DEFINED_CONSUMER_COUNT)
 
             if (openlcb_node->consumers.list[i] == event_id)
 

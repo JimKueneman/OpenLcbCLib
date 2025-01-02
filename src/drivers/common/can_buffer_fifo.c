@@ -44,7 +44,7 @@
 #include "can_buffer_store.h"
 
 
-#define LEN_CAN_FIFO_BUFFER  LEN_CAN_BUFFER + 1  // add one slot to the fifo so it can be full without head == tail
+#define LEN_CAN_FIFO_BUFFER  USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1  // add one slot to the fifo so it can be full without head == tail
 
 typedef struct {
     can_msg_t* list[LEN_CAN_FIFO_BUFFER];  

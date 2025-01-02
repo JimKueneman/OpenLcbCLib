@@ -18,72 +18,170 @@
     </map>
   </identification>
   <acdi/>
-  <segment origin="128" space="253">
+  <segment origin="0" space="253">
+    <name>Layout Configuration Setup</name>
+    <description>
+      The basic information required to get your TurnoutBOSS up and operational creating a fully signaled CTC layout.
+    </description>
+    <group>
+      <name>User Info</name>
+      <description>Enter a name and description to help uniquely identify this TurnoutBOSS.</description>
+      <string size="63">
+        <name>User Name</name>
+      </string>
+      <string size="64">
+        <name>User Description</name>
+      </string>
+    </group>
+    <group>
+      <name>How this TurnoutBOSS is used on your layout.</name>
+      <description>Select configuration of the TurnoutBOSS.        </description>
+      <int size="1">
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Three Blocks (mainline before + turnout + mainline after)</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Two Blocks (turnout + siding)</value>
+          </relation>
+        </map>
+      </int>
+    </group>
+    <group>
+      <name>Layout Connections</name>
+      <description>TurnoutBoss Node IDs adjacent to this unit. </description>
+      <eventid>
+        <name>Left</name>
+        <description>NodeID of the TurnoutBOSS to immediate left of this unit.</description>
+      </eventid>
+      <eventid>
+        <name>Right</name>
+        <description>NodeID of the TurnoutBOSS to immediate right of this unit.</description>
+      </eventid>
+    </group>
+  </segment>
+  <segment origin="256" space="253">
+    <name>Hardware Configuration</name>
+    <description>
+      Information about the hardware connected to your TurnoutBOSS
+    </description>
+    <group>
+      <name>Signalhead Options</name>
+      <description>Information on the signal heads for this TurnoutBOSS.</description>
+      <int size="1">
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Signal at turnout points is a double head</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Signal at turnout points is a single head</value>
+          </relation>
+        </map>
+      </int>
+    </group>
+    <group>
+      <name>Signalhead light configuration</name>
+      <description>Define the signal head LED configuration</description>
+      <int size="1">
+        <name> Signal "A"</name>
+        <description>The straight through path signal</description>
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Three outputs (individual LED outputs)</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Two outputs (bi-directional LED with multiplexed yellow)</value>
+          </relation>
+        </map>
+      </int>
+      <int size="1">
+        <name> Signal "B"</name>
+        <description>The diverging path signal</description>
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Three outputs (individual LED outputs)</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Two outputs (bi-directional LED with multiplexed yellow)</value>
+          </relation>
+        </map>
+      </int>
+      <int size="1">
+        <name> Signal "C"</name>
+        <description>The straight through path signal at the points</description>
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Three outputs (individual LED outputs)</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Two outputs (bi-directional LED with multiplexed yellow)</value>
+          </relation>
+        </map>
+      </int>
+      <int size="1">
+        <name> Signal "D"</name>
+        <description>The diverging path signal at the points</description>
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Three outputs (individual LED outputs)</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Two outputs (bi-directional LED with multiplexed yellow)</value>
+          </relation>
+        </map>
+      </int>
+    </group>
+  </segment>
+  <segment origin="260" space="253">
     <name>Track Detector Gain</name>
     <description>Adjusts the gain of the track detectors for detection sensitivity</description>
-    <int size="2">
+    <int size="1">
       <name>Approach Track</name>
       <min> 0</min>
       <max>63</max>
       <default>31</default>
     </int>
-    <int size="2">
+    <int size="1">
       <name>Through Track</name>
       <min> 0</min>
       <max>63</max>
       <default>31</default>
     </int>
-    <int size="2">
+    <int size="1">
       <name>Diverging Track</name>
       <min> 0</min>
       <max>63</max>
       <default>31</default>
     </int>
-  </segment>
-  <segment space="253">
-    <name>Next Blocks</name>
-    <group>
-      <name>Approach Track</name>
-      <eventid>
-        <name>Next block occupied event</name>
-        <description>Enter the Event ID that is fired when the next block is occupied</description>
-      </eventid>
-      <eventid>
-        <name>Next block unoccupied event</name>
-        <description>Enter the Event ID that is fired when the next block is unoccupied</description>
-      </eventid>
-    </group>
-    <group>
-      <name>Straight Track</name>
-      <eventid>
-        <name>Next block occupied event</name>
-        <description>Enter the Event ID that is fired when the next block is occupied</description>
-      </eventid>
-      <eventid>
-        <name>Next block unoccupied event</name>
-        <description>Enter the Event ID that is fired when the next block is unoccupied</description>
-      </eventid>
-    </group>
-    <group>
-      <name>Diverging Track</name>
-      <eventid>
-        <name>Next block occupied event</name>
-        <description>Enter the Event ID that is fired when the next block is occupied</description>
-      </eventid>
-      <eventid>
-        <name>Next block unoccupied event</name>
-        <description>Enter the Event ID that is fired when the next block is unoccupied</description>
-      </eventid>
-    </group>
-  </segment>
-  <segment origin="0" space="253">
-    <name>Options</name>
-    <description>User defined node information</description>
-    <string size="63">
-      <name>User Name</name>
-    </string>
-    <string size="64">
-      <name>User Description</name>
-    </string>
   </segment>
 </cdi>

@@ -245,7 +245,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
                     0,
                     ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->producers.enumerator.enum_index),
                     6
-                    );
+);
 
             Utilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
 

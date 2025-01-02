@@ -22,6 +22,8 @@
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
+      <itemPath>lnk/p33EP256GP502_bootloader.gld</itemPath>
+      <itemPath>lnk/p33EP256GP502_bootloader_app.gld</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -1151,6 +1153,10 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
+      <item path="lnk/p33EP256GP502_bootloader.gld" ex="true" overriding="false">
+      </item>
+      <item path="lnk/p33EP256GP502_bootloader_app.gld" ex="true" overriding="false">
+      </item>
       <item path="mcc_generated_files/memory/flash_demo.c"
             ex="true"
             overriding="false">

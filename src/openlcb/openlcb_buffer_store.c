@@ -68,25 +68,25 @@ void BufferStore_initialize(void) {
 
         _clear_openlcb_message(&_message_buffer.messages[i]);
 
-        if (i < LEN_BASIC_BUFFER) {
+        if (i < USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
             _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_BASIC;
             _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.basic[i];
 
-        } else if (i < LEN_DATAGRAM_BUFFER + LEN_BASIC_BUFFER) {
+        } else if (i < USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
             _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_DATAGRAM;
-            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.datagram[i - LEN_BASIC_BUFFER];
+            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.datagram[i - USER_DEFINED_BASIC_BUFFER_DEPTH];
 
-        } else if (i < LEN_SNIP_BUFFER + LEN_DATAGRAM_BUFFER + LEN_BASIC_BUFFER) {
+        } else if (i < USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
             _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_SNIP;
-            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.snip[i - (LEN_BASIC_BUFFER + LEN_DATAGRAM_BUFFER)];
+            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.snip[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH)];
 
         } else {
 
             _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_STREAM;
-            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.stream[i - (LEN_BASIC_BUFFER + LEN_DATAGRAM_BUFFER + LEN_SNIP_BUFFER)];
+            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.stream[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH)];
 
         }
 
@@ -118,19 +118,19 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
         case LEN_MESSAGE_BYTES_BASIC:
             offset_start = 0;
-            offset_end = LEN_BASIC_BUFFER;
+            offset_end = USER_DEFINED_BASIC_BUFFER_DEPTH;
             break;
         case LEN_MESSAGE_BYTES_DATAGRAM:
-            offset_start = LEN_BASIC_BUFFER;
-            offset_end = offset_start + LEN_DATAGRAM_BUFFER;
+            offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH;
+            offset_end = offset_start + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
             break;
         case LEN_MESSAGE_BYTES_SNIP:
-            offset_start = LEN_BASIC_BUFFER + LEN_DATAGRAM_BUFFER;
-            offset_end = offset_start + LEN_SNIP_BUFFER;
+            offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
+            offset_end = offset_start + USER_DEFINED_SNIP_BUFFER_DEPTH;
             break;
         case LEN_MESSAGE_BYTES_STREAM:
-            offset_start = LEN_BASIC_BUFFER + LEN_DATAGRAM_BUFFER + LEN_SNIP_BUFFER;
-            offset_end = offset_start + LEN_STREAM_BUFFER;
+            offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH;
+            offset_end = offset_start + USER_DEFINED_STREAM_BUFFER_DEPTH;
             break;
 
     }

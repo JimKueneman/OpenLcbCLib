@@ -47,7 +47,7 @@ extern "C" {
 
 // ************************ USER DEFINED VARIABLES *****************************
 
-#define LEN_CAN_BUFFER                    10   // USER DEFINED 
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH                    10   // USER DEFINED 
 
 // *********************END USER DEFINED VARIABLES *****************************
 
@@ -76,7 +76,7 @@ typedef struct {
 } can_msg_t;
 
 
-typedef can_msg_t can_buffer_store_t[LEN_CAN_BUFFER];
+typedef can_msg_t can_buffer_store_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
 
 typedef struct {
     openlcb_statemachine_worker_t* openlcb_worker;

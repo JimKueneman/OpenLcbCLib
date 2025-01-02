@@ -49,7 +49,7 @@ uint16_olcb_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize(void) {
 
-    for (int i = 0; i < LEN_CAN_BUFFER; i++) {
+    for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         _can_buffer_store[i].state.allocated = FALSE;
         _can_buffer_store[i].state.direct_tx = FALSE;
@@ -70,7 +70,7 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
 can_msg_t* CanBufferStore_allocateBuffer(void) {
 
-    for (int i = 0; i < LEN_CAN_BUFFER; i++) {
+    for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         if (!_can_buffer_store[i].state.allocated) {
 

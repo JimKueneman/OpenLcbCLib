@@ -261,9 +261,6 @@ int main(void) {
     _TRISB4 = 0;
     _RB4 = 0;
     
-     _init_prog_address(p, dat);
-
-
 #ifdef _SIMULATOR_
 
     // Setup the UART to send to the console in the simulator 

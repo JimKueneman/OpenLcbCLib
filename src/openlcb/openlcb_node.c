@@ -64,10 +64,10 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->last_received_datagram = (void*) 0;
     openlcb_node->last_received_optional_interaction = (void*) 0;
 
-    for (int i = 0; i < LEN_CONSUMER_MAX_COUNT; i++)
+    for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++)
         openlcb_node->consumers.list[i] = 0;
 
-    for (int i = 0; i < LEN_PRODUCER_MAX_COUNT; i++)
+    for (int i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++)
         openlcb_node->producers.list[i] = 0;
 
 
@@ -81,7 +81,7 @@ void _clear_node(openlcb_node_t* openlcb_node) {
 
 void Node_initialize(void) {
 
-    for (int i = 0; i < LEN_NODE_ARRAY; i++)
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++)
 
         _clear_node(&openlcb_nodes.node[i]);
 
@@ -119,13 +119,13 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     for (int i = 0; i < openlcb_node->parameters->consumer_count; i++)
 
-        if (i < LEN_CONSUMER_MAX_COUNT) // safety net
+        if (i < USER_DEFINED_CONSUMER_COUNT) // safety net
 
             openlcb_node->consumers.list[i] = node_id + i;
 
     for (int i = 0; i < openlcb_node->parameters->producer_count; i++)
 
-        if (i < LEN_PRODUCER_MAX_COUNT) // safety net
+        if (i < USER_DEFINED_PRODUCER_COUNT) // safety net
 
             openlcb_node->producers.list[i] = node_id + i;
 
@@ -142,7 +142,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
 openlcb_node_t* Node_allocate(uint64_olcb_t node_id, const node_parameters_t* node_parameters) {
 
-    for (int i = 0; i < LEN_NODE_ARRAY; i++) {
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
         if (!openlcb_nodes.node[i].state.allocated) {
 
