@@ -60,8 +60,8 @@ extern "C" {
 #define USER_DEFINED_PRODUCER_COUNT         8
 #define USER_DEFINED_CONSUMER_COUNT         8
 
-#define CONFIG_MEM_OPTIONS_DESCRIPTION_LEN          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
-#define CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
+#define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
+#define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
     // *********************END USER DEFINED VARIABLES *****************************
 
@@ -100,6 +100,8 @@ extern "C" {
 #define LEN_EVENT_ID                    8
 
 #define LEN_MESSAGE_BUFFER  (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)
+    
+#define LEN_DATAGRAM_MAX_PAYLOAD       64   // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
     typedef uint8_olcb_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_olcb_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
@@ -131,9 +133,8 @@ extern "C" {
         node_id_t dest_id;
         uint16_olcb_t payload_size; // How many bytes the payload can hold
         uint16_olcb_t payload_count; // valid bytes in payload
-        openlcb_payload_t* payload; // size depend of the buffer type and defined as payload_size
+        openlcb_payload_t* payload; // pointer to one of the data structures in the message_buffer_t type.  Size depend of the buffer type and defined as payload_size
         uint8_olcb_t timerticks; // timeouts, etc
-        uint8_olcb_t retry_count;
         uint8_olcb_t reference_count; // reference counted for garbage collection
     } openlcb_msg_t;
 
@@ -170,7 +171,7 @@ extern "C" {
         uint8_olcb_t stream_read_write_supported : 1;
         uint8_olcb_t high_address_space;
         uint8_olcb_t low_address_space;
-        char description[CONFIG_MEM_OPTIONS_DESCRIPTION_LEN];
+        char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];
     } user_configuration_options;
 
     typedef struct {
@@ -180,7 +181,7 @@ extern "C" {
         uint8_olcb_t address_space;
         uint32_olcb_t highest_address;
         uint32_olcb_t low_address;
-        char description[CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION_LEN];
+        char description[LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION];
     } user_address_space_info_t;
 
     typedef struct {
@@ -286,7 +287,7 @@ extern "C" {
 
     typedef void(*parameterless_callback_t) (void);
 
-    typedef uint8_olcb_t configuration_memory_buffer_t[64];
+    typedef uint8_olcb_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
 
 #ifdef	__cplusplus

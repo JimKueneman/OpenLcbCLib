@@ -55,7 +55,6 @@ void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
     openlcb_msg->mti = 0;
     openlcb_msg->payload_count = 0;
     openlcb_msg->timerticks = 0;
-    openlcb_msg->retry_count = 0;
     openlcb_msg->reference_count = 0;
     openlcb_msg->state.allocated = FALSE;
     openlcb_msg->state.inprocess = FALSE;

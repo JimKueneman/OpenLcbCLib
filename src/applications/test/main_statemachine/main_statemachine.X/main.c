@@ -102,12 +102,12 @@ void _uart_callback(uint16_olcb_t code) {
         case 'B':
         case 'b':
 
-            printf("\nCan Buffers: %d\n", CanBufferStore_messages_allocated());
-            printf("\nBuffers: %d\n", BufferStore_messages_allocated());
+            printf("\nCan Buffers Currently Allocated: %d\n", CanBufferStore_messages_allocated());
+            printf("Openlcb Buffers Currently Allocated: %d\n", BufferStore_messages_allocated());
 
-            printf("\nMax Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
-            printf("\nMax Buffers: %d\n", BufferStore_messages_max_allocated());
-            printf("\nMax CAN FIFO depth: %d\n", DriverCan_max_can_fifo_depth);
+            printf("\nMax Can Buffers Allocated: %d\n", CanBufferStore_messages_max_allocated());
+            printf("Max OpenLCB Buffers Allocated: %d\n", BufferStore_messages_max_allocated());
+            printf("Max CAN FIFO depth: %d\n", DriverCan_max_can_fifo_depth);
 
             return;
 
@@ -150,18 +150,16 @@ void _uart_callback(uint16_olcb_t code) {
         case 'W':
         case 'w':
                        
-            DriverConfigurationMemory_read(0x7D000, 64, &buffer);
+               
+            DriverConfigurationMemory_read(0x00, 64, &buffer);
             
-            
-            printf("Address 0x400\n");
+            printf("Address 0x00 (0)\n");
             for (int i = 0; i < 64; i++)
                 printf("%c", buffer[i]);
             
-            printf("\n");
+            DriverConfigurationMemory_read(0x40, 64, &buffer);
             
-            DriverConfigurationMemory_read(0x00, 64, &buffer);
-            
-            printf("Address 0x000000\n");
+            printf("Address 0x40 (64)\n");
             for (int i = 0; i < 64; i++)
                 printf("%c", buffer[i]);
             
@@ -185,6 +183,10 @@ void _uart_callback(uint16_olcb_t code) {
             printf("C - Print the active message in the OpenLcbHelper\n");
             printf("N - Print the state of the first allocated Node\n");
             printf("L - Allocate a new Node\n");
+            printf("P - Print address of the current OpenLcb Buffer being processed");
+            printf("C - Print address of the current CAN Buffer being processed");
+            printf("E = Erase the EEPROM chip");
+            printf("W - Print contents of EEPROM at 0x00 and 0x40 (User Name/Description) for Node 0");
 
             return;
 

@@ -81,7 +81,6 @@ void MainStatemachine_initialize(void) {
     openlcb_helper.worker.dest_id = 0;
     openlcb_helper.worker.mti = 0;
     openlcb_helper.worker.timerticks = 0;
-    openlcb_helper.worker.retry_count = 0;
     openlcb_helper.worker.state.inprocess = FALSE;
     openlcb_helper.worker.payload = (openlcb_payload_t*) &openlcb_helper.worker_buffer;
     openlcb_helper.worker.payload_size = LEN_MESSAGE_BYTES_STREAM;

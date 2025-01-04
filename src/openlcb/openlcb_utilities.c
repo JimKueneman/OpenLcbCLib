@@ -63,7 +63,6 @@ void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* targe
             target->payload = source->payload;
             target->payload_count = source->payload_count;
             target->payload_size = source->payload_size;
-            target->retry_count = source->retry_count;
             target->source_alias = source->source_alias;
             target->source_id = source->source_id;
             target->state = source->state;
@@ -85,7 +84,6 @@ void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t so
         openlcb_msg->source_id = source_id;
         openlcb_msg->mti = mti;
         openlcb_msg->payload_count = payload_count;
-        openlcb_msg->retry_count = 0;
         openlcb_msg->timerticks = 0;
 
     }
