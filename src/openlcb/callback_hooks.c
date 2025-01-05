@@ -39,4 +39,16 @@
 #include "openlcb_types.h"
 
 
-alias_change_callback_t CallbackHooks_alias_change = (void*) 0;
+alias_change_callback_t _alias_change_callback_func = (void*) 0;
+
+void CallbackHooks_set_alias_change(alias_change_callback_t alias_change_callback) {
+    
+  _alias_change_callback_func = alias_change_callback;
+  
+}
+
+alias_change_callback_t CallbackHooks_get_alias_change(void) {
+    
+    return _alias_change_callback_func;
+    
+}

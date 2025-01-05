@@ -36,7 +36,7 @@
 
 #include "xc.h"
 #include "../../../../../openlcb/openlcb_types.h"
-#include "../../io_pinout.h"
+#include "../../turnoutboss_drivers.h"
 
 void _mcp23s17_flush_buffers() {
 

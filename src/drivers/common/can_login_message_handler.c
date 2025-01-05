@@ -77,9 +77,11 @@ void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node) {
 void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = Node_generate_alias(next_node->seed);
+    
+    alias_change_callback_t alias_change_callback = CallbackHooks_get_alias_change();
 
-    if (CallbackHooks_alias_change)
-        CallbackHooks_alias_change(next_node->alias, next_node->id);
+    if (alias_change_callback)
+        alias_change_callback(next_node->alias, next_node->id);
 
     next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_07;
 

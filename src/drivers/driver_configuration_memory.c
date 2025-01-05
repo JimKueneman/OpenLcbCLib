@@ -24,40 +24,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_100ms_clock.h
+ * \file configuration_memory.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
+ * to write/read configuration memory.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-
-// This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __DRIVER_100MS_CLOCK__
-#define	__DRIVER_100MS_CLOCK__
-
-#include "../openlcb/openlcb_types.h"
-
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#include "driver_configuration_memory.h"
 
 
-extern void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback);
+configuration_mem_callback_t _configuration_mem_read_callback_func = (void*) 0;
+configuration_mem_callback_t _configuration_mem_write_callback_func = (void*) 0;
 
-extern void Driver100msClock_pause_100ms_timer(void);
+void DriverConfigurationMemory_initialization(configuration_mem_callback_t configuration_mem_read_callback, configuration_mem_callback_t configuration_mem_write_callback) {
 
-extern void Driver100msClock_resume_100ms_timer(void);
+    _configuration_mem_read_callback_func = configuration_mem_read_callback;
+    _configuration_mem_write_callback_func = configuration_mem_write_callback;
 
-extern parameterless_callback_t Driver100msClock_get_sink(void);
-
-#ifdef	__cplusplus
 }
-#endif /* __cplusplus */
 
-#endif	/* __DRIVER_100MS_CLOCK__ */
+configuration_mem_callback_t DriverConfigurationMemory_get_read_callback(void) {
 
+    return _configuration_mem_read_callback_func;
+
+}
+
+configuration_mem_callback_t DriverConfigurationMemory_get_write_callback(void) {
+
+    return _configuration_mem_write_callback_func;
+
+}

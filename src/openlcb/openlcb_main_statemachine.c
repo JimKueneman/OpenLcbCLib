@@ -48,9 +48,9 @@
 #include "protocol_datagram.h"
 #include "protocol_snip.h"
 #include "../drivers/driver_mcu.h"
-#include "../openlcb/clock_distribution.h"
 #include "../openlcb/openlcb_buffer_list.h"
 #include "../drivers/driver_configuration_memory.h"
+#include "../drivers/driver_100ms_clock.h"
 
 #include "openlcb_main_statemachine.h"
 
@@ -58,8 +58,15 @@
 openlcb_statemachine_worker_t openlcb_helper;
 
 
-
-void MainStatemachine_initialize(void) {
+void MainStatemachine_initialize(
+        mcu_driver_callback_t mcu_setup_callback,
+        parameterless_callback_t reboot_callback,
+        configuration_mem_callback_t configuration_mem_read_callback,
+        configuration_mem_callback_t configuration_mem_write_callback,
+        parameterless_callback_t _100ms_clock_pause_callback,
+        parameterless_callback_t _100ms_clock_resume_callback
+        )
+{
     
     BufferStore_initialize();
     BufferList_initialiaze();
@@ -67,8 +74,10 @@ void MainStatemachine_initialize(void) {
     
     Node_initialize();
     ProtocolDatagram_initialize();
-    ClockDistribution_initialize();
-    DriverConfigurationMemory_initialization();
+    
+    Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
+    DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback);
+    DriverMcu_initialization(mcu_setup_callback, reboot_callback);
     
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
         openlcb_helper.worker_buffer[i] = 0x00;

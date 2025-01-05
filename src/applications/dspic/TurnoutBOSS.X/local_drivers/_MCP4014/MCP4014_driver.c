@@ -40,7 +40,7 @@
 #include "MCP4014_driver.h"
 
 #include "../../../../../openlcb/openlcb_types.h"
-#include "../../io_pinout.h"
+#include "../../turnoutboss_drivers.h"
 
 void MCP4014Driver_set_gain(uint8_olcb_t detector_id, uint8_olcb_t gain) {
 

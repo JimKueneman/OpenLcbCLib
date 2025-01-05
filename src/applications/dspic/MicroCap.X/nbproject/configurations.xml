@@ -21,6 +21,22 @@
         <itemPath>../../../drivers/driver_configuration_memory.h</itemPath>
         <itemPath>../../../drivers/driver_can.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="MicroCap.X" displayName="MicroCap.X" projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="local_drivers"
+                       displayName="local_drivers"
+                       projectFiles="true">
+          <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
+            <itemPath>local_drivers/_25AA1024/25AA1024_driver.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>debug.h</itemPath>
+        <itemPath>node_parameters.h</itemPath>
+        <itemPath>microcap_drivers.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/protocol_snip.h</itemPath>
         <itemPath>../../../openlcb/callback_hooks.h</itemPath>
@@ -38,43 +54,11 @@
         <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="TurnoutBOSS.X"
-                     displayName="TurnoutBOSS.X"
-                     projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="local_drivers"
-                       displayName="local_drivers"
-                       projectFiles="true">
-          <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
-            <itemPath>local_drivers/_25AA1024/25AA1024_driver.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP23S17" displayName="_MCP23S17" projectFiles="true">
-            <itemPath>local_drivers/_MCP23S17/MCP23S17_driver.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP4014" displayName="_MCP4014" projectFiles="true">
-            <itemPath>local_drivers/_MCP4014/MCP4014_driver.h</itemPath>
-          </logicalFolder>
-        </logicalFolder>
-        <itemPath>debug.h</itemPath>
-        <itemPath>node_parameters.h</itemPath>
-        <itemPath>uart_handler.h</itemPath>
-        <itemPath>turnoutboss_drivers.h</itemPath>
-      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
-      <itemPath>TurnoutBOSS.mc3</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -99,6 +83,24 @@
         <itemPath>../../../drivers/driver_100ms_clock.c</itemPath>
         <itemPath>../../../drivers/driver_configuration_memory.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="MicroCap.X" displayName="MicroCap.X" projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="local_drivers"
+                       displayName="local_drivers"
+                       projectFiles="true">
+          <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
+            <itemPath>local_drivers/_25AA1024/25AA1024_driver.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>traps.c</itemPath>
+        <itemPath>debug.c</itemPath>
+        <itemPath>main.c</itemPath>
+        <itemPath>node_parameters.c</itemPath>
+        <itemPath>microcap_drivers.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/openlcb_buffer_fifo.c</itemPath>
         <itemPath>../../../openlcb/openlcb_node.c</itemPath>
@@ -114,53 +116,19 @@
         <itemPath>../../../openlcb/protocol_message_network.c</itemPath>
         <itemPath>../../../openlcb/openlcb_tx_driver.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="TurnoutBOSS.X"
-                     displayName="TurnoutBOSS.X"
-                     projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="local_drivers"
-                       displayName="local_drivers"
-                       projectFiles="true">
-          <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
-            <itemPath>local_drivers/_25AA1024/25AA1024_driver.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP23S17" displayName="_MCP23S17" projectFiles="true">
-            <itemPath>local_drivers/_MCP23S17/MCP23S17_driver.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP4014" displayName="_MCP4014" projectFiles="true">
-            <itemPath>local_drivers/_MCP4014/MCP4014_driver.c</itemPath>
-          </logicalFolder>
-        </logicalFolder>
-        <itemPath>traps.c</itemPath>
-        <itemPath>debug.c</itemPath>
-        <itemPath>main.c</itemPath>
-        <itemPath>node_parameters.c</itemPath>
-        <itemPath>uart_handler.c</itemPath>
-        <itemPath>turnoutboss_drivers.c</itemPath>
-      </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>.</Elem>
     <Elem>../../../openlcb</Elem>
     <Elem>../../../drivers</Elem>
-    <Elem>../../test/main_statemachine/main_statemachine.X</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>dsPIC33EP512GP504</targetDevice>
+        <targetDevice>dsPIC33EP256GP504</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
         <platformTool>Simulator</platformTool>
@@ -196,7 +164,7 @@
         <makeCustomizationPostStep></makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
-        <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <C30>
         <property key="cast-align" value="false"/>
@@ -321,7 +289,7 @@
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
         <property key="oXC16glb-macros"
-                  value="SUPPORT_FIRMWARE_BOOTLOADER;FCY=40000000UL"/>
+                  value="FCY=40000000UL;SUPPORT_FIRMWARE_BOOTLOADER"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>
@@ -375,7 +343,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="true"/>
+        <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -850,7 +818,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="true"/>
+        <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>

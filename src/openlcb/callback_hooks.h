@@ -51,7 +51,10 @@ typedef void (*alias_change_callback_t) (uint16_olcb_t, uint64_olcb_t);
 * When a node is created and it allocates and alias ID (or if it detects a collision and 
 *        allocates a new alias ID this callback is called with the new value)
 */
-extern alias_change_callback_t CallbackHooks_alias_change;
+
+extern void CallbackHooks_set_alias_change(alias_change_callback_t alias_change_callback);
+
+extern alias_change_callback_t CallbackHooks_get_alias_change(void);
 
 
 #ifdef	__cplusplus

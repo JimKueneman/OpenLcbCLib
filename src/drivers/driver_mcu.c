@@ -24,40 +24,40 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_100ms_clock.h
+ * \file mcu.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
+ * to initialize the device.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
+// Global that things like libpic30.h use to calculate delay functions and such.
+// MUST be before libpic30c.h
 
-// This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __DRIVER_100MS_CLOCK__
-#define	__DRIVER_100MS_CLOCK__
+// define FCY=40000000UL in the compiler macros so the delay, UART, etc calculations are correct  
 
 #include "../openlcb/openlcb_types.h"
+#include "driver_100ms_clock.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
+parameterless_callback_t reboot_callback_func  = (void*) 0;;
 
 
-extern void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback);
-
-extern void Driver100msClock_pause_100ms_timer(void);
-
-extern void Driver100msClock_resume_100ms_timer(void);
-
-extern parameterless_callback_t Driver100msClock_get_sink(void);
-
-#ifdef	__cplusplus
+void DriverMcu_reboot(void) {
+    
+    if (reboot_callback_func)
+        reboot_callback_func();
+     
 }
-#endif /* __cplusplus */
 
-#endif	/* __DRIVER_100MS_CLOCK__ */
+void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback) {
+
+    reboot_callback_func = reboot_callback;
+    
+    if (mcu_setup_callback)
+        mcu_setup_callback(Driver100msClock_get_sink());
+    
+}
 

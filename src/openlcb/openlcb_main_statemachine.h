@@ -40,18 +40,27 @@
 #define	__OPENLCB_MAIN_STATEMACHINE__
 
 #include "openlcb_types.h"
+#include "../drivers/driver_configuration_memory.h"
+#include "../drivers/driver_100ms_clock.h"
+#include "../drivers/driver_can.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-extern void MainStatemachine_initialize(void);
+    extern void MainStatemachine_initialize(
+            mcu_driver_callback_t mcu_setup_callback,
+            parameterless_callback_t reboot_callback,
+            configuration_mem_callback_t configuration_mem_read_callback,
+            configuration_mem_callback_t configuration_mem_write_callback,
+            parameterless_callback_t _100ms_clock_pause_callback,
+            parameterless_callback_t _100ms_clock_resume_callback);
 
-extern void MainStatemachine_run(void);
+    extern void MainStatemachine_run(void);
 
-extern void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern openlcb_statemachine_worker_t openlcb_helper;
+    extern openlcb_statemachine_worker_t openlcb_helper;
 
 
 #ifdef	__cplusplus

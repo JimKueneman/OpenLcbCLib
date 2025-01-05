@@ -24,32 +24,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock_distribution.c
+ * \file clock.c
  *
- * Connects to the 100ms Clock Driver and distributes it to the modules that need it.
+ * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
+ * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
+ * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "clock_distribution.h"
+#include "xc.h"
+#include "../openlcb/openlcb_types.h"
+#include "../openlcb/openlcb_node.h"
+#include "../openlcb/protocol_datagram.h"
 
-#include "openlcb_node.h"
-#include "protocol_datagram.h"
-#include "../drivers/driver_100ms_clock.h"
+
+parameterless_callback_t _pause_timer_callback_func = (void*) 0;
+parameterless_callback_t _resume_timer_callback_func = (void*) 0;
 
 
-void _100msTimeTickNode(void) {
+void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
+    
+    _pause_timer_callback_func = pause_timer_callback;
+    _resume_timer_callback_func = resume_timer_callback;
+       
+}
+
+void _100ms_clock_sink() {
+    
    
     Node_100ms_timer_tick();
     DatagramProtocol_100ms_time_tick();
-
+    
+    
 }
 
-void ClockDistribution_initialize(void) {
+parameterless_callback_t Driver100msClock_get_sink(void) {
     
-    Driver100msClock_Initialization(&_100msTimeTickNode);
+    return &_100ms_clock_sink;
     
+}
+
+void Driver100msClock_pause_100ms_timer(void) {
+  
+    if (_pause_timer_callback_func)
+        _pause_timer_callback_func();
+   
+}
+
+extern void Driver100msClock_resume_100ms_timer(void) {
+    
+    if (_resume_timer_callback_func)
+        _resume_timer_callback_func();
     
 }
 

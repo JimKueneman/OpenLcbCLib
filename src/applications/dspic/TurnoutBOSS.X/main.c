@@ -83,8 +83,8 @@
 #include "../../../openlcb/openlcb_node.h"
 #include "../../../openlcb/callback_hooks.h"
 #include "node_parameters.h"
-#include "io_pinout.h"
 #include "uart_handler.h"
+#include "turnoutboss_drivers.h"
 
 
 #include "debug.h"
@@ -93,12 +93,6 @@ uint64_olcb_t node_id_base = 0x050101010700;
 
 
 
-void _uart_callback(uint16_olcb_t code) {
-    
-    UartHandler_handle_rx(code);
-    
-}
-
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
@@ -106,14 +100,6 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
     printf("\n");
 
 }
-
-void _pin_assignment_callback(void) {
-    
-    IO_PINOUT_intialize();
-   
-}
-
-
 
 
 // #define  _SIMULATOR_
@@ -133,13 +119,20 @@ int main(void) {
     U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
 
 #else
-    McuDriver_uart_rx_callback_func = &_uart_callback;
-    CallbackHooks_alias_change = &_alias_change_callback;
 
     CanMainStatemachine_initialize();
-    MainStatemachine_initialize();
+    MainStatemachine_initialize(
+            &TurnoutBossDrivers_setup,
+            &TurnoutBossDrivers_reboot,
+            &TurnoutBossDrivers_config_mem_read,
+            &TurnoutBossDrivers_config_mem_write,
+            &TurnoutBossDrivers_pause_100ms_timer,
+            &TurnoutBossDrivers_resume_100ms_timer
+            );
 
-    McuDriver_initialization(&_pin_assignment_callback);
+    TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
+
+    CallbackHooks_set_alias_change(&_alias_change_callback);
 
 #endif
 

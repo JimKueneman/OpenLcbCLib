@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../../drivers/common/can_buffer_fifo.c ../../../drivers/common/can_main_statemachine.c ../../../drivers/common/can_login_message_handler.c ../../../drivers/common/can_utilities.c ../../../drivers/common/can_frame_message_handler.c ../../../drivers/common/can_rx_statemachine.c ../../../drivers/common/can_tx_statemachine.c ../../../drivers/common/can_buffer_store.c ../../../openlcb/openlcb_buffer_fifo.c ../../../openlcb/openlcb_node.c ../../../openlcb/protocol_datagram.c ../../../openlcb/openlcb_buffer_store.c ../../../openlcb/openlcb_utilities.c ../../../openlcb/protocol_event_transport.c ../../../openlcb/openlcb_buffer_list.c ../../../openlcb/callback_hooks.c ../../../openlcb/protocol_snip.c ../../../openlcb/clock_distribution.c ../../../openlcb/openlcb_gridconnect.c ../../../openlcb/openlcb_main_statemachine.c ../../../openlcb/protocol_message_network.c ../../../openlcb/openlcb_tx_driver.c debug.c main.c node_parameters.c traps.c local_drivers/_25AA1024/25AA1024_driver.c local_drivers/_dsPIC33EP512GP504/driver_mcu.c local_drivers/_dsPIC33EP512GP504/driver_can.c local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.c local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.c local_drivers/_MCP23S17/MCP23S17_driver.c io_pinout.c uart_handler.c local_drivers/_MCP4014/MCP4014_driver.c
+SOURCEFILES_QUOTED_IF_SPACED=../../../drivers/common/can_buffer_fifo.c ../../../drivers/common/can_main_statemachine.c ../../../drivers/common/can_login_message_handler.c ../../../drivers/common/can_utilities.c ../../../drivers/common/can_frame_message_handler.c ../../../drivers/common/can_rx_statemachine.c ../../../drivers/common/can_tx_statemachine.c ../../../drivers/common/can_buffer_store.c ../../../drivers/driver_mcu.c ../../../drivers/driver_can.c ../../../drivers/driver_100ms_clock.c ../../../drivers/driver_configuration_memory.c ../../../openlcb/openlcb_buffer_fifo.c ../../../openlcb/openlcb_node.c ../../../openlcb/protocol_datagram.c ../../../openlcb/openlcb_buffer_store.c ../../../openlcb/openlcb_utilities.c ../../../openlcb/protocol_event_transport.c ../../../openlcb/openlcb_buffer_list.c ../../../openlcb/callback_hooks.c ../../../openlcb/protocol_snip.c ../../../openlcb/openlcb_gridconnect.c ../../../openlcb/openlcb_main_statemachine.c ../../../openlcb/protocol_message_network.c ../../../openlcb/openlcb_tx_driver.c local_drivers/_25AA1024/25AA1024_driver.c local_drivers/_MCP23S17/MCP23S17_driver.c local_drivers/_MCP4014/MCP4014_driver.c traps.c debug.c main.c node_parameters.c uart_handler.c turnoutboss_drivers.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o ${OBJECTDIR}/_ext/1293539906/can_main_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_login_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_utilities.o ${OBJECTDIR}/_ext/1293539906/can_frame_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_rx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_tx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o ${OBJECTDIR}/_ext/156864402/openlcb_node.o ${OBJECTDIR}/_ext/156864402/protocol_datagram.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_store.o ${OBJECTDIR}/_ext/156864402/openlcb_utilities.o ${OBJECTDIR}/_ext/156864402/protocol_event_transport.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_list.o ${OBJECTDIR}/_ext/156864402/callback_hooks.o ${OBJECTDIR}/_ext/156864402/protocol_snip.o ${OBJECTDIR}/_ext/156864402/clock_distribution.o ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o ${OBJECTDIR}/_ext/156864402/openlcb_main_statemachine.o ${OBJECTDIR}/_ext/156864402/protocol_message_network.o ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/main.o ${OBJECTDIR}/node_parameters.o ${OBJECTDIR}/traps.o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o ${OBJECTDIR}/io_pinout.o ${OBJECTDIR}/uart_handler.o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o.d ${OBJECTDIR}/_ext/1293539906/can_main_statemachine.o.d ${OBJECTDIR}/_ext/1293539906/can_login_message_handler.o.d ${OBJECTDIR}/_ext/1293539906/can_utilities.o.d ${OBJECTDIR}/_ext/1293539906/can_frame_message_handler.o.d ${OBJECTDIR}/_ext/1293539906/can_rx_statemachine.o.d ${OBJECTDIR}/_ext/1293539906/can_tx_statemachine.o.d ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o.d ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o.d ${OBJECTDIR}/_ext/156864402/openlcb_node.o.d ${OBJECTDIR}/_ext/156864402/protocol_datagram.o.d ${OBJECTDIR}/_ext/156864402/openlcb_buffer_store.o.d ${OBJECTDIR}/_ext/156864402/openlcb_utilities.o.d ${OBJECTDIR}/_ext/156864402/protocol_event_transport.o.d ${OBJECTDIR}/_ext/156864402/openlcb_buffer_list.o.d ${OBJECTDIR}/_ext/156864402/callback_hooks.o.d ${OBJECTDIR}/_ext/156864402/protocol_snip.o.d ${OBJECTDIR}/_ext/156864402/clock_distribution.o.d ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o.d ${OBJECTDIR}/_ext/156864402/openlcb_main_statemachine.o.d ${OBJECTDIR}/_ext/156864402/protocol_message_network.o.d ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o.d ${OBJECTDIR}/debug.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/node_parameters.o.d ${OBJECTDIR}/traps.o.d ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o.d ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o.d ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o.d ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o.d ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d ${OBJECTDIR}/io_pinout.o.d ${OBJECTDIR}/uart_handler.o.d ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o ${OBJECTDIR}/_ext/1293539906/can_main_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_login_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_utilities.o ${OBJECTDIR}/_ext/1293539906/can_frame_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_rx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_tx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o ${OBJECTDIR}/_ext/954557028/driver_mcu.o ${OBJECTDIR}/_ext/954557028/driver_can.o ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o ${OBJECTDIR}/_ext/156864402/openlcb_node.o ${OBJECTDIR}/_ext/156864402/protocol_datagram.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_store.o ${OBJECTDIR}/_ext/156864402/openlcb_utilities.o ${OBJECTDIR}/_ext/156864402/protocol_event_transport.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_list.o ${OBJECTDIR}/_ext/156864402/callback_hooks.o ${OBJECTDIR}/_ext/156864402/protocol_snip.o ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o ${OBJECTDIR}/_ext/156864402/openlcb_main_statemachine.o ${OBJECTDIR}/_ext/156864402/protocol_message_network.o ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o ${OBJECTDIR}/traps.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/main.o ${OBJECTDIR}/node_parameters.o ${OBJECTDIR}/uart_handler.o ${OBJECTDIR}/turnoutboss_drivers.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o.d ${OBJECTDIR}/_ext/1293539906/can_main_statemachine.o.d ${OBJECTDIR}/_ext/1293539906/can_login_message_handler.o.d ${OBJECTDIR}/_ext/1293539906/can_utilities.o.d ${OBJECTDIR}/_ext/1293539906/can_frame_message_handler.o.d ${OBJECTDIR}/_ext/1293539906/can_rx_statemachine.o.d ${OBJECTDIR}/_ext/1293539906/can_tx_statemachine.o.d ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o.d ${OBJECTDIR}/_ext/954557028/driver_mcu.o.d ${OBJECTDIR}/_ext/954557028/driver_can.o.d ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o.d ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o.d ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o.d ${OBJECTDIR}/_ext/156864402/openlcb_node.o.d ${OBJECTDIR}/_ext/156864402/protocol_datagram.o.d ${OBJECTDIR}/_ext/156864402/openlcb_buffer_store.o.d ${OBJECTDIR}/_ext/156864402/openlcb_utilities.o.d ${OBJECTDIR}/_ext/156864402/protocol_event_transport.o.d ${OBJECTDIR}/_ext/156864402/openlcb_buffer_list.o.d ${OBJECTDIR}/_ext/156864402/callback_hooks.o.d ${OBJECTDIR}/_ext/156864402/protocol_snip.o.d ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o.d ${OBJECTDIR}/_ext/156864402/openlcb_main_statemachine.o.d ${OBJECTDIR}/_ext/156864402/protocol_message_network.o.d ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o.d ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d ${OBJECTDIR}/traps.o.d ${OBJECTDIR}/debug.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/node_parameters.o.d ${OBJECTDIR}/uart_handler.o.d ${OBJECTDIR}/turnoutboss_drivers.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o ${OBJECTDIR}/_ext/1293539906/can_main_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_login_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_utilities.o ${OBJECTDIR}/_ext/1293539906/can_frame_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_rx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_tx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o ${OBJECTDIR}/_ext/156864402/openlcb_node.o ${OBJECTDIR}/_ext/156864402/protocol_datagram.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_store.o ${OBJECTDIR}/_ext/156864402/openlcb_utilities.o ${OBJECTDIR}/_ext/156864402/protocol_event_transport.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_list.o ${OBJECTDIR}/_ext/156864402/callback_hooks.o ${OBJECTDIR}/_ext/156864402/protocol_snip.o ${OBJECTDIR}/_ext/156864402/clock_distribution.o ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o ${OBJECTDIR}/_ext/156864402/openlcb_main_statemachine.o ${OBJECTDIR}/_ext/156864402/protocol_message_network.o ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/main.o ${OBJECTDIR}/node_parameters.o ${OBJECTDIR}/traps.o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o ${OBJECTDIR}/io_pinout.o ${OBJECTDIR}/uart_handler.o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o
+OBJECTFILES=${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o ${OBJECTDIR}/_ext/1293539906/can_main_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_login_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_utilities.o ${OBJECTDIR}/_ext/1293539906/can_frame_message_handler.o ${OBJECTDIR}/_ext/1293539906/can_rx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_tx_statemachine.o ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o ${OBJECTDIR}/_ext/954557028/driver_mcu.o ${OBJECTDIR}/_ext/954557028/driver_can.o ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o ${OBJECTDIR}/_ext/156864402/openlcb_node.o ${OBJECTDIR}/_ext/156864402/protocol_datagram.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_store.o ${OBJECTDIR}/_ext/156864402/openlcb_utilities.o ${OBJECTDIR}/_ext/156864402/protocol_event_transport.o ${OBJECTDIR}/_ext/156864402/openlcb_buffer_list.o ${OBJECTDIR}/_ext/156864402/callback_hooks.o ${OBJECTDIR}/_ext/156864402/protocol_snip.o ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o ${OBJECTDIR}/_ext/156864402/openlcb_main_statemachine.o ${OBJECTDIR}/_ext/156864402/protocol_message_network.o ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o ${OBJECTDIR}/traps.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/main.o ${OBJECTDIR}/node_parameters.o ${OBJECTDIR}/uart_handler.o ${OBJECTDIR}/turnoutboss_drivers.o
 
 # Source Files
-SOURCEFILES=../../../drivers/common/can_buffer_fifo.c ../../../drivers/common/can_main_statemachine.c ../../../drivers/common/can_login_message_handler.c ../../../drivers/common/can_utilities.c ../../../drivers/common/can_frame_message_handler.c ../../../drivers/common/can_rx_statemachine.c ../../../drivers/common/can_tx_statemachine.c ../../../drivers/common/can_buffer_store.c ../../../openlcb/openlcb_buffer_fifo.c ../../../openlcb/openlcb_node.c ../../../openlcb/protocol_datagram.c ../../../openlcb/openlcb_buffer_store.c ../../../openlcb/openlcb_utilities.c ../../../openlcb/protocol_event_transport.c ../../../openlcb/openlcb_buffer_list.c ../../../openlcb/callback_hooks.c ../../../openlcb/protocol_snip.c ../../../openlcb/clock_distribution.c ../../../openlcb/openlcb_gridconnect.c ../../../openlcb/openlcb_main_statemachine.c ../../../openlcb/protocol_message_network.c ../../../openlcb/openlcb_tx_driver.c debug.c main.c node_parameters.c traps.c local_drivers/_25AA1024/25AA1024_driver.c local_drivers/_dsPIC33EP512GP504/driver_mcu.c local_drivers/_dsPIC33EP512GP504/driver_can.c local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.c local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.c local_drivers/_MCP23S17/MCP23S17_driver.c io_pinout.c uart_handler.c local_drivers/_MCP4014/MCP4014_driver.c
+SOURCEFILES=../../../drivers/common/can_buffer_fifo.c ../../../drivers/common/can_main_statemachine.c ../../../drivers/common/can_login_message_handler.c ../../../drivers/common/can_utilities.c ../../../drivers/common/can_frame_message_handler.c ../../../drivers/common/can_rx_statemachine.c ../../../drivers/common/can_tx_statemachine.c ../../../drivers/common/can_buffer_store.c ../../../drivers/driver_mcu.c ../../../drivers/driver_can.c ../../../drivers/driver_100ms_clock.c ../../../drivers/driver_configuration_memory.c ../../../openlcb/openlcb_buffer_fifo.c ../../../openlcb/openlcb_node.c ../../../openlcb/protocol_datagram.c ../../../openlcb/openlcb_buffer_store.c ../../../openlcb/openlcb_utilities.c ../../../openlcb/protocol_event_transport.c ../../../openlcb/openlcb_buffer_list.c ../../../openlcb/callback_hooks.c ../../../openlcb/protocol_snip.c ../../../openlcb/openlcb_gridconnect.c ../../../openlcb/openlcb_main_statemachine.c ../../../openlcb/protocol_message_network.c ../../../openlcb/openlcb_tx_driver.c local_drivers/_25AA1024/25AA1024_driver.c local_drivers/_MCP23S17/MCP23S17_driver.c local_drivers/_MCP4014/MCP4014_driver.c traps.c debug.c main.c node_parameters.c uart_handler.c turnoutboss_drivers.c
 
 
 
@@ -137,6 +137,30 @@ ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o: ../../../drivers/common/can_buf
 	@${RM} ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/common/can_buffer_store.c  -o ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1293539906/can_buffer_store.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
+${OBJECTDIR}/_ext/954557028/driver_mcu.o: ../../../drivers/driver_mcu.c  .generated_files/flags/default/1b0621aa977aa976faae3ec8b84d71f8bde68305 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_mcu.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_mcu.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_mcu.c  -o ${OBJECTDIR}/_ext/954557028/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_mcu.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_can.o: ../../../drivers/driver_can.c  .generated_files/flags/default/d99fe332460f300c42a5edd73db684a7c02f0a07 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_can.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_can.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_can.c  -o ${OBJECTDIR}/_ext/954557028/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_can.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o: ../../../drivers/driver_100ms_clock.c  .generated_files/flags/default/9bbf6279a674e11a5a246f95c5602210693c7dbc .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_100ms_clock.c  -o ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o: ../../../drivers/driver_configuration_memory.c  .generated_files/flags/default/bfda1692189f04b602a8fb1c7e7cf1e1acef7612 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_configuration_memory.c  -o ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
 ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o: ../../../openlcb/openlcb_buffer_fifo.c  .generated_files/flags/default/c7ad4e3c3aa9d78ec974b2984987699e5958eddc .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/156864402" 
 	@${RM} ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o.d 
@@ -191,12 +215,6 @@ ${OBJECTDIR}/_ext/156864402/protocol_snip.o: ../../../openlcb/protocol_snip.c  .
 	@${RM} ${OBJECTDIR}/_ext/156864402/protocol_snip.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/protocol_snip.c  -o ${OBJECTDIR}/_ext/156864402/protocol_snip.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/protocol_snip.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/156864402/clock_distribution.o: ../../../openlcb/clock_distribution.c  .generated_files/flags/default/1511e5d9e488758f955ecd29aab529212f70cd7e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/156864402" 
-	@${RM} ${OBJECTDIR}/_ext/156864402/clock_distribution.o.d 
-	@${RM} ${OBJECTDIR}/_ext/156864402/clock_distribution.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/clock_distribution.c  -o ${OBJECTDIR}/_ext/156864402/clock_distribution.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/clock_distribution.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o: ../../../openlcb/openlcb_gridconnect.c  .generated_files/flags/default/75432e6547e869529b8625f931cdb3a57501e71e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/156864402" 
 	@${RM} ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o.d 
@@ -221,6 +239,30 @@ ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o: ../../../openlcb/openlcb_tx_dri
 	@${RM} ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/openlcb_tx_driver.c  -o ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
+${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o: local_drivers/_25AA1024/25AA1024_driver.c  .generated_files/flags/default/48375d39151003065011933e66568457320a43cb .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/local_drivers/_25AA1024" 
+	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d 
+	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o: local_drivers/_MCP23S17/MCP23S17_driver.c  .generated_files/flags/default/4ffdfcaad7e830c62df1ef5cff2678fbc8e70f00 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP23S17" 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP23S17/MCP23S17_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o: local_drivers/_MCP4014/MCP4014_driver.c  .generated_files/flags/default/6b5b5f622cade95b4b9e079c8e78307566816ed4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP4014" 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP4014/MCP4014_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/5beccba4a620787f426277dbb92112528b99d449 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/traps.o.d 
+	@${RM} ${OBJECTDIR}/traps.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
 ${OBJECTDIR}/debug.o: debug.c  .generated_files/flags/default/fd6f1e350e6b1356c852bdc173720027a10ba4e1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/debug.o.d 
@@ -239,65 +281,17 @@ ${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/defaul
 	@${RM} ${OBJECTDIR}/node_parameters.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/5beccba4a620787f426277dbb92112528b99d449 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/traps.o.d 
-	@${RM} ${OBJECTDIR}/traps.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o: local_drivers/_25AA1024/25AA1024_driver.c  .generated_files/flags/default/48375d39151003065011933e66568457320a43cb .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_25AA1024" 
-	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o: local_drivers/_dsPIC33EP512GP504/driver_mcu.c  .generated_files/flags/default/d5763dfcb9b74ad27d4afc65fea2df706ddbb7a3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_mcu.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o: local_drivers/_dsPIC33EP512GP504/driver_can.c  .generated_files/flags/default/3e7ab04380e5d8c2bd5dcc6acff5905bbb1c58d4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_can.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o: local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.c  .generated_files/flags/default/54d76b00ae03efaad4706301f71315f5b4e3e80a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o: local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.c  .generated_files/flags/default/25ec695d1555a83d381da8cc9655c010236e3e5a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o: local_drivers/_MCP23S17/MCP23S17_driver.c  .generated_files/flags/default/4ffdfcaad7e830c62df1ef5cff2678fbc8e70f00 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP23S17" 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP23S17/MCP23S17_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/io_pinout.o: io_pinout.c  .generated_files/flags/default/4d28e348369a830e931ecc72f1419664b6c504b4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/io_pinout.o.d 
-	@${RM} ${OBJECTDIR}/io_pinout.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  io_pinout.c  -o ${OBJECTDIR}/io_pinout.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/io_pinout.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/uart_handler.o: uart_handler.c  .generated_files/flags/default/bfab127868a9bde5a22ccec922cdb88d6883699a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/uart_handler.o.d 
 	@${RM} ${OBJECTDIR}/uart_handler.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  uart_handler.c  -o ${OBJECTDIR}/uart_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/uart_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o: local_drivers/_MCP4014/MCP4014_driver.c  .generated_files/flags/default/6b5b5f622cade95b4b9e079c8e78307566816ed4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP4014" 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP4014/MCP4014_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+${OBJECTDIR}/turnoutboss_drivers.o: turnoutboss_drivers.c  .generated_files/flags/default/7a9e4f62ba6f0503c6e9356f42d4622163f351fa .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/turnoutboss_drivers.o.d 
+	@${RM} ${OBJECTDIR}/turnoutboss_drivers.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  turnoutboss_drivers.c  -o ${OBJECTDIR}/turnoutboss_drivers.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/turnoutboss_drivers.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 else
 ${OBJECTDIR}/_ext/1293539906/can_buffer_fifo.o: ../../../drivers/common/can_buffer_fifo.c  .generated_files/flags/default/a1125c978bef126967094a82d01b165c0f63cbd .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
@@ -347,6 +341,30 @@ ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o: ../../../drivers/common/can_buf
 	@${RM} ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/common/can_buffer_store.c  -o ${OBJECTDIR}/_ext/1293539906/can_buffer_store.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/1293539906/can_buffer_store.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_mcu.o: ../../../drivers/driver_mcu.c  .generated_files/flags/default/c6964566a2ee6f5da4ffa32df99ed3711f4172ef .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_mcu.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_mcu.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_mcu.c  -o ${OBJECTDIR}/_ext/954557028/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_mcu.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_can.o: ../../../drivers/driver_can.c  .generated_files/flags/default/fd681d2cc8cc2b0a6f6edd67f4ef5079cb072ab0 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_can.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_can.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_can.c  -o ${OBJECTDIR}/_ext/954557028/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_can.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o: ../../../drivers/driver_100ms_clock.c  .generated_files/flags/default/beada370887f9dbdd59379c9523352f85bb85ae .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_100ms_clock.c  -o ${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_100ms_clock.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o: ../../../drivers/driver_configuration_memory.c  .generated_files/flags/default/df9f2065ad0c7b3436f35796ed6137977f9af94 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/_ext/954557028" 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o.d 
+	@${RM} ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../drivers/driver_configuration_memory.c  -o ${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/954557028/driver_configuration_memory.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 ${OBJECTDIR}/_ext/156864402/openlcb_buffer_fifo.o: ../../../openlcb/openlcb_buffer_fifo.c  .generated_files/flags/default/95e7101a47cdcd84c746c4b4d1a54f4717c870b3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/156864402" 
@@ -402,12 +420,6 @@ ${OBJECTDIR}/_ext/156864402/protocol_snip.o: ../../../openlcb/protocol_snip.c  .
 	@${RM} ${OBJECTDIR}/_ext/156864402/protocol_snip.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/protocol_snip.c  -o ${OBJECTDIR}/_ext/156864402/protocol_snip.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/protocol_snip.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/_ext/156864402/clock_distribution.o: ../../../openlcb/clock_distribution.c  .generated_files/flags/default/93c5f1f4fb6a50faf0744275d782d94edff95034 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/_ext/156864402" 
-	@${RM} ${OBJECTDIR}/_ext/156864402/clock_distribution.o.d 
-	@${RM} ${OBJECTDIR}/_ext/156864402/clock_distribution.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/clock_distribution.c  -o ${OBJECTDIR}/_ext/156864402/clock_distribution.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/clock_distribution.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o: ../../../openlcb/openlcb_gridconnect.c  .generated_files/flags/default/5bbbe4391585836d09466e03ea73ec3d75e15d35 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}/_ext/156864402" 
 	@${RM} ${OBJECTDIR}/_ext/156864402/openlcb_gridconnect.o.d 
@@ -432,6 +444,30 @@ ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o: ../../../openlcb/openlcb_tx_dri
 	@${RM} ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/openlcb_tx_driver.c  -o ${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/openlcb_tx_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
+${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o: local_drivers/_25AA1024/25AA1024_driver.c  .generated_files/flags/default/13b709a6747347d597fbed492d52ae3368f87b38 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/local_drivers/_25AA1024" 
+	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d 
+	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o: local_drivers/_MCP23S17/MCP23S17_driver.c  .generated_files/flags/default/a7cfda0665c4dbd3e076dd8913540df959aaf6da .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP23S17" 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP23S17/MCP23S17_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o: local_drivers/_MCP4014/MCP4014_driver.c  .generated_files/flags/default/934c1bfb778a974b45a77aec55f66ecef0f49c05 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP4014" 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d 
+	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP4014/MCP4014_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/86827f695ecfd059be05f487564f0626d6735a41 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/traps.o.d 
+	@${RM} ${OBJECTDIR}/traps.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
 ${OBJECTDIR}/debug.o: debug.c  .generated_files/flags/default/44573e5bb09d32c6c4842cebbcb0c0161ab6b6ae .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/debug.o.d 
@@ -450,65 +486,17 @@ ${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/defaul
 	@${RM} ${OBJECTDIR}/node_parameters.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/86827f695ecfd059be05f487564f0626d6735a41 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/traps.o.d 
-	@${RM} ${OBJECTDIR}/traps.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o: local_drivers/_25AA1024/25AA1024_driver.c  .generated_files/flags/default/13b709a6747347d597fbed492d52ae3368f87b38 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_25AA1024" 
-	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_25AA1024/25AA1024_driver.c  -o ${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_25AA1024/25AA1024_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o: local_drivers/_dsPIC33EP512GP504/driver_mcu.c  .generated_files/flags/default/96fe5f8516ff1d2eef34aed803f6ffae67291f13 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_mcu.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_mcu.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o: local_drivers/_dsPIC33EP512GP504/driver_can.c  .generated_files/flags/default/3df54c5e4f1743434fbe465d587aa9f9c9a6baf0 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_can.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_can.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o: local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.c  .generated_files/flags/default/cc409414e61112852c39a699a7c94e5eb68aae0f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_100ms_clock.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o: local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.c  .generated_files/flags/default/58bade387119cc7080acea401ee2f0d83a834ed5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504" 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.c  -o ${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_dsPIC33EP512GP504/driver_configuration_memory.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o: local_drivers/_MCP23S17/MCP23S17_driver.c  .generated_files/flags/default/a7cfda0665c4dbd3e076dd8913540df959aaf6da .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP23S17" 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP23S17/MCP23S17_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP23S17/MCP23S17_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
-${OBJECTDIR}/io_pinout.o: io_pinout.c  .generated_files/flags/default/e070deec0679e78c9143b8c126415584d81658bb .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/io_pinout.o.d 
-	@${RM} ${OBJECTDIR}/io_pinout.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  io_pinout.c  -o ${OBJECTDIR}/io_pinout.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/io_pinout.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/uart_handler.o: uart_handler.c  .generated_files/flags/default/716353c5963f5c8857f947324931e852935e617a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/uart_handler.o.d 
 	@${RM} ${OBJECTDIR}/uart_handler.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  uart_handler.c  -o ${OBJECTDIR}/uart_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/uart_handler.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o: local_drivers/_MCP4014/MCP4014_driver.c  .generated_files/flags/default/934c1bfb778a974b45a77aec55f66ecef0f49c05 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}/local_drivers/_MCP4014" 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d 
-	@${RM} ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  local_drivers/_MCP4014/MCP4014_driver.c  -o ${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/local_drivers/_MCP4014/MCP4014_driver.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+${OBJECTDIR}/turnoutboss_drivers.o: turnoutboss_drivers.c  .generated_files/flags/default/cc2a6bc50173b09ee9c61e5d14a5e72fbc378b1c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/turnoutboss_drivers.o.d 
+	@${RM} ${OBJECTDIR}/turnoutboss_drivers.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  turnoutboss_drivers.c  -o ${OBJECTDIR}/turnoutboss_drivers.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/turnoutboss_drivers.o.d"      -mno-eds-warn  -g -omf=elf -DSUPPORT_FIRMWARE_BOOTLOADER -DFCY=40000000UL -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 endif
 

@@ -275,17 +275,9 @@ extern "C" {
     } openlcb_statemachine_worker_t;
 
 
-    // Assign the function pointer to where the timer tick should call out to
-    // WARNING: Is in the context of the interrupt, be careful
-    // void func()
-    typedef void (*_100ms_timer_callback_func_t) (void);
-
-    // Assign the function pointer to where the UART Rx should call back with the byte it received
-    // WARNING: Is in the context of the interrupt, be careful
-    // void func(rx_data);
-    typedef void (*uart_rx_callback_t) (uint16_olcb_t);
-
     typedef void(*parameterless_callback_t) (void);
+    
+    typedef void(*mcu_driver_callback_t) (parameterless_callback_t);
 
     typedef uint8_olcb_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
