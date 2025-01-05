@@ -40,12 +40,13 @@
 #ifndef __CAN_RX_STATEMACHINE__
 #define	__CAN_RX_STATEMACHINE__
 
+#include "can_types.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-extern void CanRxStatemachine_initialize(void);
- 
+    extern void CanRxStatemachine_initialize(can_rx_driver_callback_t can_rx_driver_callback);
 
 #ifdef	__cplusplus
 }

@@ -38,20 +38,23 @@
 // more than once.  
 #ifndef __DRIVER_CONFIGURATION_MEMORY__
 #define	__DRIVER_CONFIGURATION_MEMORY__
- 
+
 #include "../openlcb/openlcb_types.h"
 
-typedef uint16_olcb_t (*configuration_mem_callback_t) (uint32_olcb_t, uint16_olcb_t, configuration_memory_buffer_t*);
+typedef uint16_olcb_t(*configuration_mem_callback_t) (uint32_olcb_t, uint16_olcb_t, configuration_memory_buffer_t*);
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
-extern void DriverConfigurationMemory_initialization(configuration_mem_callback_t configuration_mem_read_callback, configuration_mem_callback_t configuration_mem_write_callback);
 
-extern configuration_mem_callback_t DriverConfigurationMemory_get_read_callback(void);
+    extern void DriverConfigurationMemory_initialization(
+            configuration_mem_callback_t configuration_mem_read_callback,
+            configuration_mem_callback_t configuration_mem_write_callback
+            );
 
-extern configuration_mem_callback_t DriverConfigurationMemory_get_write_callback(void);
+    extern configuration_mem_callback_t DriverConfigurationMemory_get_read_callback(void);
+
+    extern configuration_mem_callback_t DriverConfigurationMemory_get_write_callback(void);
 
 
 #ifdef	__cplusplus

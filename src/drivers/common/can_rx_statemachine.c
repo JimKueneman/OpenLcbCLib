@@ -83,14 +83,14 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
         can_msg_error->payload[1] = (uint8_olcb_t) dest_alias & 0x00FF;
         can_msg_error->payload[2] = (uint8_olcb_t) (error_code >> 8) & 0x00FF;
         can_msg_error->payload[3] = (uint8_olcb_t) error_code & 0x00FF;
-        
+
         // Flag so it is directly sent out and not processed by nodes
         can_msg_error->state.direct_tx = TRUE;
-        
+
         can_msg_error->payload_count = 4;
 
     }
-    
+
     return (void*) 0;
 
 }
@@ -103,12 +103,12 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (result) 
+    if (result)
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
     result = BufferList_allocate(data_size);
 
-    if (!result) 
+    if (!result)
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
 
 
@@ -131,7 +131,7 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (!result) 
+    if (!result)
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
@@ -148,7 +148,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_s
 
     openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (!result) 
+    if (!result)
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
@@ -272,7 +272,7 @@ void _handle_rid_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) 
+    if (!new_can_msg)
         return;
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
@@ -282,7 +282,7 @@ void _handle_amd_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) 
+    if (!new_can_msg)
         return;
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
@@ -292,7 +292,7 @@ void _handle_ame_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) 
+    if (!new_can_msg)
         return;
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
@@ -302,7 +302,7 @@ void _handle_amr_control_frame(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) 
+    if (!new_can_msg)
         return;
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
@@ -348,7 +348,7 @@ void _handle_incoming_cid(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferFifo_push();
 
-    if (!new_can_msg) 
+    if (!new_can_msg)
         return;
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
@@ -435,18 +435,11 @@ void _state_machine_incoming_can(uint8_olcb_t channel, can_msg_t* can_msg) {
 
 // Call on startup to initialize variables and callbacks
 
-void CanRxStatemachine_initialize(void) {
+void CanRxStatemachine_initialize(can_rx_driver_callback_t can_rx_driver_callback) {
 
-    // The mcu_driver.h file exports a function pointer that is used to hook into the incoming CAN message stream
-    // This allows the mcu_driver to call into this unit with incoming CAN frames.
-
-    DriverCan_Initialization(&_state_machine_incoming_can);
-
+    can_rx_driver_callback(&_state_machine_incoming_can); 
 
 }
-
-// TODO: CREATE A TIMEOUT TO FLUSH OUT ABANDONDOED MESSAGES......
-
 
 
 

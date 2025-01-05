@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,68 +24,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can.c
+ * \file driver_can.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+* @date 5 Jan 2025
  */
 
 
-#include "xc.h"
-#include "../drivers/common/can_types.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __ECAN1_HELPER__
+#define	__ECAN1_HELPER__
 
-can_rx_callback_func_t can_rx_callback_func = (void*) 0;
-transmit_raw_can_frame_func_t transmit_raw_can_frame_func = (void*) 0;
-is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_func = (void*) 0;
-parameterless_callback_t pause_can_rx_func = (void*) 0;
-parameterless_callback_t resume_can_rx_func = (void*) 0;
+#include "../../../openlcb/openlcb_types.h"
+#include "../../../drivers/common/can_types.h"
 
-void DriverCan_initialization(
-        transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
-        is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
-        parameterless_callback_t pause_can_rx_callback,
-        parameterless_callback_t resume_can_rx_callback
-        ) {
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-    transmit_raw_can_frame_func = transmit_raw_can_frame_callback;
-    is_can_tx_buffer_clear_func = is_can_tx_buffer_clear_callback;
-    pause_can_rx_func = pause_can_rx_callback;
-    resume_can_rx_func = resume_can_rx_callback;
+extern void Ecan1Helper_initialization();
 
+extern void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback);
+
+extern uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+
+extern void Ecan1Helper_pause_can_rx(void);
+
+extern void Ecan1Helper_resume_can_rx(void);
+
+extern uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
+
+
+// How full the chips CAN fifo has gotten
+extern uint8_olcb_t Ecan1Helper_max_can_fifo_depth;
+
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
+#endif	/* __ECAN1_HELPER__ */
 
-uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t channel) {
-
-    if (is_can_tx_buffer_clear_func)
-        return is_can_tx_buffer_clear_func(channel);
-
-    return FALSE;
-}
-
-void DriverCan_pause_can_rx(void) {
-
-    if (pause_can_rx_func)
-        pause_can_rx_func();
-
-}
-
-void DriverCan_resume_can_rx(void) {
-
-    if (resume_can_rx_func)
-        resume_can_rx_func();
-
-}
-
-uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
-
-    if (transmit_raw_can_frame_func)
-        return transmit_raw_can_frame_func(channel, msg);
-
-    return FALSE;
-
-}

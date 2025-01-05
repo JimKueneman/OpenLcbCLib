@@ -12,6 +12,8 @@
                 <sourceRootElem>.</sourceRootElem>
                 <sourceRootElem>../../../openlcb</sourceRootElem>
                 <sourceRootElem>../../../drivers</sourceRootElem>
+                <sourceRootElem>../Common</sourceRootElem>
+                <sourceRootElem>../dsPIC_Common</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

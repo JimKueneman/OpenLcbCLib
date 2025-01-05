@@ -44,6 +44,7 @@
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/openlcb_node.h"
 #include "debug.h"
+#include "../dsPIC_Common/ecan1_helper.h"
 
 void UartHandler_handle_rx(uint16_olcb_t code) {
 
@@ -56,7 +57,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("\nMax Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
             printf("\nMax Buffers: %d\n", BufferStore_messages_max_allocated());
-            printf("\nMax CAN FIFO depth: %d\n", DriverCan_max_can_fifo_depth);
+            printf("\nMax CAN FIFO depth: %d\n", Ecan1Helper_max_can_fifo_depth);
 
             return;
 

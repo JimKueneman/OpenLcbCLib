@@ -89,6 +89,12 @@ typedef struct {
 // void func(uint8_olcb_t channel, can_msg_t* can_msg)
 typedef void (*can_rx_callback_func_t) (uint8_olcb_t, can_msg_t*);
 
+typedef uint8_olcb_t (*transmit_raw_can_frame_func_t) (uint8_olcb_t, can_msg_t*);
+
+typedef uint8_olcb_t (*is_can_tx_buffer_clear_func_t) (uint16_olcb_t); 
+
+typedef void(*can_rx_driver_callback_t) (can_rx_callback_func_t);
+
 
 #ifdef	__cplusplus
 }

@@ -13,6 +13,7 @@
                 <sourceRootElem>../../../openlcb</sourceRootElem>
                 <sourceRootElem>../../../drivers</sourceRootElem>
                 <sourceRootElem>../../test/main_statemachine/main_statemachine.X</sourceRootElem>
+                <sourceRootElem>../dsPIC_Common</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

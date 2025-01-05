@@ -183,12 +183,8 @@ uint16_olcb_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
-    configuration_mem_callback_t read_callback = DriverConfigurationMemory_get_read_callback();
-    if (read_callback)
-        data_count = read_callback(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));
-    else
-        data_count = 0;
-
+    data_count = DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));  
+      
     uint8_olcb_t original_payload_index = payload_index;
 
     while ((*worker_msg->payload[payload_index] != 0x00)) {
@@ -219,13 +215,8 @@ uint16_olcb_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, o
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
-    configuration_mem_callback_t read_callback = DriverConfigurationMemory_get_read_callback();
-    if (read_callback)
-        data_count = read_callback(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));
-    else
-        data_count = 0;
-
-
+    data_count = DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index])); 
+   
     uint8_olcb_t original_payload_index = payload_index;
 
     while ((*worker_msg->payload[payload_index] != 0x00)) {

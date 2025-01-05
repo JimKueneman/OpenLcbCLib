@@ -57,11 +57,19 @@
 
 can_main_statemachine_t can_helper;
 
-void CanMainStatemachine_initialize(void) {
+void CanMainStatemachine_initialize(
+        can_rx_driver_callback_t can_rx_driver_callback,
+        transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
+        is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
+        parameterless_callback_t pause_can_rx_callback,
+        parameterless_callback_t resume_can_rx_callback
+        ) {
+
+    DriverCan_initialization(transmit_raw_can_frame_callback, is_can_tx_buffer_clear_callback, pause_can_rx_callback, resume_can_rx_callback);
 
     CanBufferStore_initialize();
     CanBufferFifo_initialiaze();
-    CanRxStatemachine_initialize();
+    CanRxStatemachine_initialize(can_rx_driver_callback);
     CanTxStatemachine_initialize();
 
     can_helper.openlcb_worker = &openlcb_helper;
@@ -393,7 +401,7 @@ void _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node, uint8_olc
         MainStatemachine_run_single_node(next_node, can_helper.openlcb_worker->active_msg, &can_helper.openlcb_worker->worker);
 
         if (!next_node->state.openlcb_msg_handled)
-            
+
             *is_active_openlcb_msg_processiong_complete = FALSE;
 
     }
@@ -438,9 +446,9 @@ void CanMainStateMachine_run(void) {
 
                 break;
 
-             _dispatch_next_can_message_to_node(next_node, &is_active_can_msg_processiong_complete);
+            _dispatch_next_can_message_to_node(next_node, &is_active_can_msg_processiong_complete);
 
-             _dispatch_next_openlcb_message_to_node(next_node, &is_active_openlcb_msg_processing_complete);
+            _dispatch_next_openlcb_message_to_node(next_node, &is_active_openlcb_msg_processing_complete);
 
         }
 

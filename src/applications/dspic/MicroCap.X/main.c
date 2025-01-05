@@ -88,6 +88,7 @@
 
 #include "node_parameters.h"
 #include "microcap_drivers.h"
+#include "../dsPIC_Common/ecan1_helper.h"
 #include "debug.h"
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 
@@ -106,7 +107,7 @@ void _uart_callback(uint16_olcb_t code) {
 
             printf("\nMax Can Buffers Allocated: %d\n", CanBufferStore_messages_max_allocated());
             printf("Max OpenLCB Buffers Allocated: %d\n", BufferStore_messages_max_allocated());
-            printf("Max CAN FIFO depth: %d\n", DriverCan_max_can_fifo_depth);
+            printf("Max CAN FIFO depth: %d\n", Ecan1Helper_max_can_fifo_depth);
 
             return;
 
@@ -150,15 +151,16 @@ void _uart_callback(uint16_olcb_t code) {
         case 'w':
                        
                
-    //        DriverConfigurationMemory_read(0x00, 64, &buffer);
+            DriverConfigurationMemory_get_read_callback()(0x00, 63, &buffer);
             
             printf("Address 0x00 (0)\n");
             for (int i = 0; i < 64; i++)
                 printf("%c", buffer[i]);
+            printf("\n");
             
-      //      DriverConfigurationMemory_read(0x40, 64, &buffer);
+            DriverConfigurationMemory_get_read_callback()(0x3F, 64, &buffer);
             
-            printf("Address 0x40 (64)\n");
+            printf("Address 0x3F (63)\n");
             for (int i = 0; i < 64; i++)
                 printf("%c", buffer[i]);
             
@@ -203,56 +205,10 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
-void _pin_assignment_callback(void) {
-
-    // Peripheral Pin Select Initialize ----------------------------------------
-    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
-
-    // CAN Pins
-    RPINR26bits.C1RXR = 45; // RPI45 CAN RX
-    RPOR4bits.RP43R = _RPOUT_C1TX; // RP43 CAN TX
-
-    // UART Pins
-    RPINR18bits.U1RXR = 44; // RPI44 UART RX
-    RPOR4bits.RP42R = _RPOUT_U1TX; // RP42  UART TX
-
-    // SPI1 for the 25AAxxx EEProm access are on the default SPI1 pins
-    _TRISB7 = 0; // CLK
-    _TRISB8 = 0; // SDO
-    _TRISB6 = 0; // CS
-
-    _RB7 = 0;
-    _RB8 = 0;
-    _RB6 = 1;
-
-    IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
-    IEC0bits.SPI1IE = 0; // Disable the interrupt
-
-    SPI1CON1bits.SPRE = 0b000;
-    SPI1CON1bits.PPRE = 0b10;
-
-    SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
-    SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
-    SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
-    SPI1CON1bits.MSTEN = 1; // Master mode enabled
-    SPI1CON1bits.SMP = 0; // Input data is sampled at the middle of data output time
-    SPI1CON1bits.CKE = 1; // Serial output data changes on transition from
-    // Idle clock state to active clock state
-    SPI1CON1bits.CKP = 0; // Idle state for clock is a low level;
-    // active state is a high level
-    SPI1STATbits.SPIEN = 1; // Enable SPI module
-
-
-}
-
-
+// Allocates a place in program Flash and writes these values to the first 6 dwords
 unsigned int __attribute__((space(prog), aligned(_FLASH_PAGE * 2))) dat[_FLASH_PAGE] = {
         0xDEAD, 0xBEEF, 0xAAAA, 0xBBBB, 0xCCCC, 0xDDDD
     };
-
-
-    _prog_addressT p;
-
 
 // #define  _SIMULATOR_
 
@@ -272,7 +228,13 @@ int main(void) {
 
 #else
     
-    CanMainStatemachine_initialize();
+    CanMainStatemachine_initialize(
+            &Ecan1Helper_setup,
+            &Ecan1Helper_transmit_raw_can_frame,
+            &Ecan1Helper_is_can_tx_buffer_clear,
+            &Ecan1Helper_pause_can_rx,
+            &Ecan1Helper_resume_can_rx
+            );
     MainStatemachine_initialize(
             &MicrocapDrivers_setup,
             &MicrocapDrivers_reboot,

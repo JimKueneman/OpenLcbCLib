@@ -46,20 +46,20 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void DriverCan_Initialization(can_rx_callback_func_t can_rx_callback_func);
+    extern void DriverCan_initialization(
+            transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
+            is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
+            parameterless_callback_t pause_can_rx_callback,
+            parameterless_callback_t resume_can_rx_callback
+            );
 
-extern uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+    extern uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t channel);
 
-extern void DriverCan_pause_can_rx(void);
+    extern void DriverCan_pause_can_rx(void);
 
-extern void DriverCan_resume_can_rx(void);
+    extern void DriverCan_resume_can_rx(void);
 
-extern uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
-
-extern uint8_olcb_t DriverCan_is_connected(void);
-
-// How full the chips CAN fifo has gotten
-extern uint8_olcb_t DriverCan_max_can_fifo_depth;
+    extern uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
 
 
 #ifdef	__cplusplus

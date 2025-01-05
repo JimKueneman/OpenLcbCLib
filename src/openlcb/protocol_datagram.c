@@ -216,11 +216,7 @@ uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_no
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    configuration_mem_callback_t read_callback = DriverConfigurationMemory_get_read_callback();
-    if (read_callback)
-        return reply_payload_index + read_callback(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
-    else
-        return 0;
+    return reply_payload_index + DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
 
@@ -343,11 +339,7 @@ uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_n
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    configuration_mem_callback_t write_callback = DriverConfigurationMemory_get_write_callback();
-    if (write_callback)
-        return write_callback(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
-    else
-        return 0;
+    return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
 
@@ -392,20 +384,9 @@ uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb
     if (invalid)
         return invalid;
 
-
-
     data_address = data_address + openlcb_node->parameters->firmware_image_offset;
 
-    printf("address: 0x%04X", (uint16_olcb_t) ((data_address >> 16) & 0xFFFF));
-    printf("%04X\n", (uint16_olcb_t) (data_address & 0xFFFF));
-
-
-    //  return data_count;
-    configuration_mem_callback_t write_callback = DriverConfigurationMemory_get_write_callback();
-    if (write_callback)
-        return write_callback(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
-    else
-        return 0;
+    return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
 #endif

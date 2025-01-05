@@ -37,6 +37,7 @@
 #include "xc.h"
 #include "stdio.h"  // printf
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
+#include "../dsPIC_Common/ecan1_helper.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
@@ -135,6 +136,8 @@ void MicrocapDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     IEC0bits.T2IE = 1; // Enable the Interrupt
 
     T2CONbits.TON = 1; // Turn on 100ms Timer
+    
+    Ecan1Helper_initialization();
     
 }
 

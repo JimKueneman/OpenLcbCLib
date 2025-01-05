@@ -40,7 +40,11 @@
 configuration_mem_callback_t _configuration_mem_read_callback_func = (void*) 0;
 configuration_mem_callback_t _configuration_mem_write_callback_func = (void*) 0;
 
-void DriverConfigurationMemory_initialization(configuration_mem_callback_t configuration_mem_read_callback, configuration_mem_callback_t configuration_mem_write_callback) {
+void DriverConfigurationMemory_initialization(
+        configuration_mem_callback_t configuration_mem_read_callback,
+        configuration_mem_callback_t configuration_mem_write_callback
+        ) 
+{
 
     _configuration_mem_read_callback_func = configuration_mem_read_callback;
     _configuration_mem_write_callback_func = configuration_mem_write_callback;

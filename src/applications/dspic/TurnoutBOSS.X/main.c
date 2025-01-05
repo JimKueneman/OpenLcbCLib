@@ -83,6 +83,7 @@
 #include "../../../openlcb/openlcb_node.h"
 #include "../../../openlcb/callback_hooks.h"
 #include "node_parameters.h"
+#include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
 #include "turnoutboss_drivers.h"
 
@@ -120,7 +121,13 @@ int main(void) {
 
 #else
 
-    CanMainStatemachine_initialize();
+    CanMainStatemachine_initialize(
+            &Ecan1Helper_setup,
+            &Ecan1Helper_transmit_raw_can_frame,
+            &Ecan1Helper_is_can_tx_buffer_clear,
+            &Ecan1Helper_pause_can_rx,
+            &Ecan1Helper_resume_can_rx
+            );
     MainStatemachine_initialize(
             &TurnoutBossDrivers_setup,
             &TurnoutBossDrivers_reboot,

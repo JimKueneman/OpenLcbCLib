@@ -45,12 +45,18 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-extern void CanMainStatemachine_initialize(void);
+    extern void CanMainStatemachine_initialize(
+            can_rx_driver_callback_t can_rx_driver_callback,
+            transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
+            is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
+            parameterless_callback_t pause_can_rx_callback,
+            parameterless_callback_t resume_can_rx_callback
+            );
 
-extern void CanMainStateMachine_run(void);
+    extern void CanMainStateMachine_run(void);
 
 
-extern can_main_statemachine_t can_helper;
+    extern can_main_statemachine_t can_helper;
 
 #ifdef	__cplusplus
 }
