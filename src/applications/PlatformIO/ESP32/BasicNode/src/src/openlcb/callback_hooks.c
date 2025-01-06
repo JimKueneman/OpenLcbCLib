@@ -24,58 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file callback_hooks.c
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Where most of the application layer code will hook into in order to respond to
+ * messages that an app will need.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+
+#include "callback_hooks.h"
+
+#include "openlcb_types.h"
 
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+alias_change_callback_t _alias_change_callback_func = (void*) 0;
 
-
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
+void CallbackHooks_set_alias_change(alias_change_callback_t alias_change_callback) {
     
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
-}
-
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
+  _alias_change_callback_func = alias_change_callback;
   
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
 }
 
-extern void Driver100msClock_resume_100ms_timer(void) {
+alias_change_callback_t CallbackHooks_get_alias_change(void) {
     
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
+    return _alias_change_callback_func;
     
 }
-

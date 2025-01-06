@@ -24,58 +24,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file openlcb_buffer_store.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implements the core buffers for normal, snip, datagram, and stream length buffers.
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are 
+ * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
+ * so care must be taken to Pause and Resume those calls if the main loop needs to 
+ * access the buffers.  
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+
+#ifndef __OPENLCB_GRIDCONNECT__
+#define	__OPENLCB_GRIDCONNECT__
+
+#include "openlcb_types.h"
+#include "../drivers/common/can_types.h"
+
+#define GRIDCONNECT_STATE_SYNC_START 0
+#define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2
+#define GRIDCONNECT_STATE_SYNC_FIND_DATA 4
+
+// :X19170640N0501010107015555;#0  Example.....
+// ^         ^                  ^
+// 0         10                28
+#define MAX_GRID_CONNECT_LEN 29
+
+typedef uint8_olcb_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
 
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
+    extern uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next_byte, gridconnect_buffer_t* buffer);
     
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+    extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
+
+    extern void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
-
+#endif	/* __OPENLCB_BUFFER_STORE__ */

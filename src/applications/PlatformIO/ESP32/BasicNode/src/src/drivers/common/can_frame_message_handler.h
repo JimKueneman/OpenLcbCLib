@@ -24,58 +24,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file can_frame_message_hander.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * As CAN only frame messages come in they need to be processed by the node(s) to see
+ * if there is a response required.  These are the handlers called by the CAN main
+ * statemachine to accomplish that.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __CAN_MSG_HANDLER__
+#define	__CAN_MSG_HANDLER__
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+#include "can_types.h"
+#include "../../openlcb/openlcb_defines.h"
+#include "../../openlcb/openlcb_node.h"
+
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) ;
+
+extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+
+extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+
+extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+
+extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
 
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
+#endif	/* __CAN_MSG_HANDLER__ */
 

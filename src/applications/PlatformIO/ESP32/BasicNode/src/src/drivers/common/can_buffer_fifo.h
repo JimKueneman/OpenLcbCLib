@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -24,58 +25,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file can_buffer_fifo.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages 
+ * that need to be passed on to the nodes.  This buffer is accessed in the CAN Rx
+ * statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms
+ * timer when accessing it is critical.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __CAN_BUFFERS__
+#define	__CAN_BUFFERS__
 
+#include "can_types.h"
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
+extern void CanBufferFifo_initialiaze(void);
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+extern can_msg_t* CanBufferFifo_push(void);
+
+extern can_msg_t* CanBufferFifo_pop(void);
+
+extern uint8_olcb_t CanBufferFifo_is_empty(void);
+
+extern uint16_olcb_t CanBufferFifo_get_allocated_count(void);
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
 
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
+#endif	/* __CAN_BUFFERS__ */
 

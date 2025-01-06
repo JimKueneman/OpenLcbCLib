@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,58 +24,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file esp32_can_drivers.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
+ * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 5 Jan 2025
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+#include "esp32_can_drivers.h"
 
+#include "src/drivers/common/can_types.h"
+#include "src/openlcb/openlcb_gridconnect.h"
+#include "src/utilities/mustangpeak_string_helper.h"
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+can_rx_callback_func_t internal_can_rx_callback_func;
 
+uint8_olcb_t _is_connected = FALSE;
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+uint8_olcb_t Esp32CanDriver_is_connected(void)
+{
+
+    uint8_olcb_t result = _is_connected;
 }
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
+uint8_olcb_t Esp32CanDriver_is_can_tx_buffer_clear(uint16_olcb_t channel)
+{
+
+    return FALSE;
 }
 
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
+uint8_olcb_t Esp32CanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *msg)
+{
+
+    return FALSE;
 }
 
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
+void Esp32CanDriver_pause_can_rx()
+{
 }
 
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
+void Esp32CanDriver_resume_can_rx()
+{
 }
 
+void Esp32CanDriver_setup(can_rx_callback_func_t can_rx_callback)
+{
+
+    internal_can_rx_callback_func = can_rx_callback;
+}

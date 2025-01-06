@@ -24,58 +24,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file protocol_datagram.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implementation of the Openlcb Datagram Protocol.  Handlers are call from the 
+ * openlcb_main_statemachine.c processing when a datagram message is being processed
+ * from the FIFO buffer.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __PROTOCOL_DATAGRAM__
+#define	__PROTOCOL_DATAGRAM__
 
+#include "openlcb_types.h"
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
+extern void ProtocolDatagram_initialize(void);
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
-}
-
-void _100ms_clock_sink() {
-    
+extern void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
    
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
+extern void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
+extern void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
+extern void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
+    
+extern void DatagramProtocol_100ms_time_tick(void);
 
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
+
+#endif	/* __PROTOCOL_DATAGRAM__ */
 

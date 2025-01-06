@@ -24,58 +24,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file openlcb_node.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implementation of the OpenLcb node structures and buffers with functions to manipulate them
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __OPENLCB_NODE__
+#define	__OPENLCB_NODE__
 
+#include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
-
-
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
     
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+extern void Node_initialize(void);
+
+extern openlcb_node_t* Node_allocate(uint64_olcb_t nodeid, const node_parameters_t* node_parameters);
+
+extern openlcb_node_t* Node_get_first(uint8_olcb_t key);
+
+extern openlcb_node_t* Node_get_next(uint8_olcb_t key);
+
+extern openlcb_node_t* Node_find_by_alias(uint16_olcb_t alias);
+
+extern openlcb_node_t* Node_find_by_node_id(uint64_olcb_t nodeid);
+
+extern uint64_olcb_t Node_generate_seed(uint64_olcb_t start_seed);
+
+extern uint16_olcb_t Node_generate_alias(uint64_olcb_t seed);
+
+
+extern void Node_100ms_timer_tick(void);
+
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
+#endif	/* XC_HEADER_TEMPLATE_H */
 

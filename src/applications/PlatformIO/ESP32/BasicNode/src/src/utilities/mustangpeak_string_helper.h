@@ -24,58 +24,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file mustangpeak_string_helper.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implements the core buffers for normal, snip, datagram, and stream length buffers.
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are
+ * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
+ * so care must be taken to Pause and Resume those calls if the main loop needs to
+ * access the buffers.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.
 
+#ifndef __MUSTANGPEAK_STRING_HELPER__
+#define __MUSTANGPEAK_STRING_HELPER__
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
 
+extern char *strnew(int char_count);
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+extern char *strnew_initialized(int char_count);
+
+extern char *strcatnew(char *str1, char *str2);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
-
+#endif /* __MUSTANGPEAK_STRING_HELPER__ */

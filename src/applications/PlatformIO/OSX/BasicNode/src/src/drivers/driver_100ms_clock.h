@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file driver_100ms_clock.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
@@ -34,48 +34,30 @@
  * @date 5 Dec 2024
  */
 
+
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __DRIVER_100MS_CLOCK__
+#define	__DRIVER_100MS_CLOCK__
+
 #include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+extern void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback);
 
+extern void Driver100msClock_pause_100ms_timer(void);
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+extern void Driver100msClock_resume_100ms_timer(void);
+
+extern parameterless_callback_t Driver100msClock_get_sink(void);
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
+#endif	/* __DRIVER_100MS_CLOCK__ */
 

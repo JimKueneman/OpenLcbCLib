@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -24,58 +25,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file mustangpeak_string_helper.c
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implements the core buffers for normal, snip, datagram, and stream length buffers.
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are 
+ * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
+ * so care must be taken to Pause and Resume those calls if the main loop needs to 
+ * access the buffers.  
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+#include "string.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
-
-
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
+char *strnew(int char_count)
+{
+    return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
 }
 
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
+char *strnew_initialized(int char_count)
+{
+    char *result = (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+    for (int i = 0; i < char_count + 1; i++)
+      result[i] = '\0';
+    return result;
 }
 
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
+char *strcatnew(char *str1, char *str2)
+{
+    int len = strlen(str1) + strlen(str2);
+    char *temp1 = strnew(len);
+    strcpy(temp1, str1);
+    strcat(temp1, str2);
+    temp1[len] = '\0';
+    return temp1;
 }
 
-void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
-    
-}
 

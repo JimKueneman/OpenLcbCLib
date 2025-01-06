@@ -24,58 +24,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file openlcb_tx_driver.c
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Implementation of the Openlcb message transmit engine.  It calls the CAN Tx Driver
+ * to send the message and blocks until the entire message is sent (on CAN that could 
+ * be many CAN frames.  If the transmitter is busy it skips by and lets the main loop 
+ * run until it finds an open transmit channel. 
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
+#include "openlcb_tx_driver.h"
 
+#include "stdio.h"  // printf
+#include "openlcb_types.h"
+#include "openlcb_node.h"
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+#include "../drivers/common/can_tx_statemachine.h"
 
-
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
-       
-}
-
-void _100ms_clock_sink() {
-    
-   
-    Node_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-    
-    
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-    
-    return &_100ms_clock_sink;
-    
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
+uint8_olcb_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
   
-    if (_pause_timer_callback_func)
-        _pause_timer_callback_func();
-   
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
+    can_msg_t can_msg;
     
-    if (_resume_timer_callback_func)
-        _resume_timer_callback_func();
+    uint16_olcb_t payload_index = 0;
+    uint16_olcb_t bytes_transmitted = 0;
+    
+    // TODO:  I don't like this coupling into the CAN drivers here... need to come up with a better way so this file does not need to access
+    //        the can driver files... maybe a callback function that connects this library to the desired TX driver... need to think about it.
+    while (payload_index < openlcb_msg->payload_count) {
+        
+        bytes_transmitted = CanTxStatemachine_try_transmit_openlcb_message(&can_msg, openlcb_msg, payload_index);
+        
+        payload_index = payload_index + bytes_transmitted;
+        
+    }
+    
+    return TRUE;
+    
     
 }
-
