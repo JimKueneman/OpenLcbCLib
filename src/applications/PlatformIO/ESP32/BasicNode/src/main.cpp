@@ -16,7 +16,6 @@
 
 // put function declarations here:
 
-#if NATIVE == 0
 void setup()
 {
   CanMainStatemachine_initialize(
@@ -32,13 +31,13 @@ void setup()
       &Esp32Drivers_config_mem_write,
       &Esp32Drivers_pause_100ms_timer,
       &Esp32Drivers_resume_100ms_timer);
+
+  Node_allocate(0x0501010107FF, &NodeParameters_main_node);
 }
 
 void test()
 {
 }
-
-#endif
 
 void loop()
 {

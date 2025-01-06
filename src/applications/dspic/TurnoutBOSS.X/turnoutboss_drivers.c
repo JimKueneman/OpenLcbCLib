@@ -69,17 +69,17 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
     RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
 
-    PORT_EXPANDER_CS_TRIS = 0;  // Output
-    PORT_EXPANDER_CS = 0;
+    _MCP23S17_CS_TRIS = 0;  // Output
+    _MCP23S17_CS = 0;
 
-    PORT_EXPANDER_RESET_TRIS = 0;  // Output
-    PORT_EXPANDER_RESET = 0;
+    _MCP23S17_RESET_TRIS = 0;  // Output
+    _MCP23S17_RESET = 0;
     
-    EEPROM_CS_TRIS = 0;  // Output
-    EEPROM_CS = 0;
+    _25AAxxx_CS_TRIS = 0;  // Output
+    _25AAxxx_CS = 0;
     
-    EEPROM_HOLD_TRIS = 0;  // Output
-    EEPROM_HOLD = 1;
+    _25AAxxx_HOLD_TRIS = 0;  // Output
+    _25AAxxx_HOLD = 1;
 
     TRACK_DETECT_GAIN_1_CS_TRIS = 0;  // Output
     TRACK_DETECT_GAIN_1_CS = 0;
@@ -139,7 +139,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     // active state is a high level
     SPI1STATbits.SPIEN = 1; // Enable SPI module
     
-     // Setup UART 1 SFRs
+     // Setup UART 1 SFRs to 333,333 baud
     
     U1MODEbits.STSEL = 0; // 1-Stop bit
     U1MODEbits.PDSEL = 0; // No Parity, 8-Data bits

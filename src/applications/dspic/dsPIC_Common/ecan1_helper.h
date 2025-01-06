@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file driver_can.h
+ * \file ecan1_driver.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
@@ -47,6 +47,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+ // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
+    
 extern void Ecan1Helper_initialization();
 
 extern void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback);
@@ -60,8 +62,10 @@ extern void Ecan1Helper_resume_can_rx(void);
 extern uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
 
 
+// Custom Driver functions
+
 // How full the chips CAN fifo has gotten
-extern uint8_olcb_t Ecan1Helper_max_can_fifo_depth;
+extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void);
 
 
 #ifdef	__cplusplus

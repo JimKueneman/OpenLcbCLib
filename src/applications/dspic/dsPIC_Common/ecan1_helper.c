@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can.c
+ * \file ecan1_driver.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
@@ -49,6 +49,8 @@ uint8_olcb_t Ecan1Helper_max_can_fifo_depth = 0;
 const uint8_olcb_t FIFO_RX_START_INDEX = 8; // (8-31)
 
 // ECAN 80 Mhz oscillator
+// Make sure FCY is defined in the compiler macros and set to 40000000UL (80Mhz/2)
+
 #define   ECAN_SWJ 2-1
 #define   ECAN_BRP 15
 // These are 0 indexed so need to subtract one from the value in the ECAN Bit Rate Calculator Tool
@@ -551,4 +553,10 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
     return;
 
+}
+
+extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void) {
+    
+    return Ecan1Helper_max_can_fifo_depth;
+    
 }

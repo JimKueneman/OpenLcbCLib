@@ -74,7 +74,7 @@ uint8_olcb_t _25AA1024_Driver_read_status_register() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000101;
@@ -86,7 +86,7 @@ uint8_olcb_t _25AA1024_Driver_read_status_register() {
 
     uint8_olcb_t result = _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
     return result;
 
@@ -97,7 +97,7 @@ void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status) {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000101;
@@ -109,7 +109,7 @@ void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status) {
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 }
 
@@ -117,14 +117,14 @@ void _25AA1024_Driver_write_latch_enable() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000110;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 
 }
@@ -133,14 +133,14 @@ void _25AA1024_Driver_write_latch_disable() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000100;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 }
 
@@ -148,7 +148,7 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000011;
@@ -172,7 +172,7 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
 
     uint8_olcb_t result = _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS   
+    _25AAxxx_CS = 1; // CS   
 
     return result;
 
@@ -184,7 +184,7 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000011;
@@ -214,7 +214,7 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
     }
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
     return count;
 
@@ -226,7 +226,7 @@ void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000010;
@@ -250,7 +250,7 @@ void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
 
     temp = _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 }
 
@@ -258,13 +258,13 @@ void _25AA1024_Driver_erase_chip() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     SPI_BUFFER = 0b11000111;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1;
+    _25AAxxx_CS = 1;
 
 
     while (_25AA1024_Driver_write_in_progress()) {
@@ -280,7 +280,7 @@ uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, 
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
     SPI_BUFFER = 0b00000010;
@@ -308,7 +308,7 @@ uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, 
 
     }
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
     return count;
 

@@ -107,9 +107,13 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 int main(void) {
 
-    _TRISB4 = 0;
-    _RB4 = 0;
-
+    // RB7 and RB8 are test outputs
+    // we also have the LED variable for RB9 and the LED output
+    _TRISB7 = 0;
+    _RB7 = 0;
+    _TRISB8 = 0;
+    _RB8 = 0;
+    
 
 #ifdef _SIMULATOR_
 
@@ -149,13 +153,10 @@ int main(void) {
 
     printf("Node Created\n");
 
-    uint16_olcb_t x = node->index * LEN_SNIP_USER_DATA;
-
 #ifdef _SIMULATOR_
 
 
 #endif
-
 
     while (1) {
 

@@ -106,15 +106,15 @@
 #define SPI_RX_BUFFER_EMPTY_FLAG _SPIRBF
 #define SPI_BUFFER SPI1BUF
 
-#define EEPROM_CS _RC2
-#define EEPROM_CS_TRIS _TRISC2
-#define EEPROM_HOLD _RC1
-#define EEPROM_HOLD_TRIS _TRISC1
+#define _25AAxxx_CS _RC2
+#define _25AAxxx_CS_TRIS _TRISC2
+#define _25AAxxx_HOLD _RC1
+#define _25AAxxx_HOLD_TRIS _TRISC1
 
-#define PORT_EXPANDER_CS _RC4
-#define PORT_EXPANDER_CS_TRIS _TRISC4 
-#define PORT_EXPANDER_RESET _RB4
-#define PORT_EXPANDER_RESET_TRIS _TRISB4
+#define _MCP23S17_CS _RC4
+#define _MCP23S17_CS_TRIS _TRISC4 
+#define _MCP23S17_RESET _RB4
+#define _MCP23S17_RESET_TRIS _TRISB4
 
 #define LED _RB9
 #define LED_TRIS _TRISB9
@@ -128,11 +128,11 @@ typedef void (*uart_rx_callback_t) (uint16_olcb_t);
 extern "C" {
 #endif /* __cplusplus */
 
+    // OpenLcbCLib defined callback functions that much be defined
+    
     extern void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink);
 
     extern void TurnoutBossDrivers_reboot(void);
-
-    extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
     
     extern uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
     
@@ -141,6 +141,10 @@ extern "C" {
     extern void TurnoutBossDrivers_pause_100ms_timer();
     
     extern void TurnoutBossDrivers_resume_100ms_timer();
+    
+    // Custom Driver functions
+    
+    extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
 
 #endif	/* __TURNOUTBOSS_DRIVERS__ */
 

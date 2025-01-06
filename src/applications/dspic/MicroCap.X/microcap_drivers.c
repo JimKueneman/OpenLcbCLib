@@ -77,11 +77,11 @@ void MicrocapDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     // SPI1 for the 25AAxxx EEProm access are on the default SPI1 pins
     SPI_CLK_TRIS = 0; // CLK
     SPI_SDO_TRIS = 0; // SDO
-    EEPROM_CS_TRIS = 0; // CS
+    _25AAxxx_CS_TRIS = 0; // CS
 
     SPI_CLK = 0;
     SPI_SDO = 0;
-    EEPROM_CS = 1;
+    _25AAxxx_CS = 1;
 
     // Setup the SPI 1 SFRs
     IFS0bits.SPI1IF = 0; // Clear the Interrupt flag

@@ -47,7 +47,7 @@ uint8_olcb_t _is_connected = FALSE;
 uint8_olcb_t Esp32CanDriver_is_connected(void)
 {
 
-    uint8_olcb_t result = _is_connected;
+  return _is_connected;
 }
 
 uint8_olcb_t Esp32CanDriver_is_can_tx_buffer_clear(uint16_olcb_t channel)

@@ -72,12 +72,13 @@
 #define SPI_SDO _RB8
 #define SPI_SDO_TRIS _TRISB8
 
-#define SPI_TX_BUFFER_EMPTY_FLAG _SPITBF
-#define SPI_RX_BUFFER_EMPTY_FLAG _SPIRBF
-#define SPI_BUFFER SPI1BUF
+#define _25AAxxx_SPI_TX_BUFFER_EMPTY_FLAG _SPITBF
+#define _25AAxxx_SPI_RX_BUFFER_EMPTY_FLAG _SPIRBF
 
-#define EEPROM_CS _RB6
-#define EEPROM_CS_TRIS _TRISB6
+#define _25AAxxx_SPI_BUFFER SPI1BUF
+
+#define _25AAxxx_CS _RB6
+#define _25AAxxx_CS_TRIS _TRISB6
 
 
 // Assign the function pointer to where the UART Rx should call back with the byte it received

@@ -43,13 +43,13 @@ void _25aa1024_flush_buffers() {
     uint8_olcb_t result;
 
     // Wait for any transmit to finish
-    while (SPI_TX_BUFFER_EMPTY_FLAG == 1) {
+    while (_25AAxxx_SPI_TX_BUFFER_EMPTY_FLAG == 1) {
     }
 
     // Clear the Rx Buffer
-    if (SPI_RX_BUFFER_EMPTY_FLAG == 1) {
+    if (_25AAxxx_SPI_RX_BUFFER_EMPTY_FLAG == 1) {
 
-        result = SPI_BUFFER;
+        result = _25AAxxx_SPI_BUFFER;
 
     }
 
@@ -58,15 +58,15 @@ void _25aa1024_flush_buffers() {
 uint8_olcb_t _25aa1024_wait_for_reply() {
 
     // Wait for any transmit to finish
-    while (SPI_TX_BUFFER_EMPTY_FLAG == 1) {
+    while (_25AAxxx_SPI_TX_BUFFER_EMPTY_FLAG == 1) {
     }
 
     // Clear the Rx Buffer
-    while (SPI_RX_BUFFER_EMPTY_FLAG == 0) {
+    while (_25AAxxx_SPI_RX_BUFFER_EMPTY_FLAG == 0) {
 
     }
 
-    return SPI_BUFFER;
+    return _25AAxxx_SPI_BUFFER;
 
 }
 
@@ -74,19 +74,19 @@ uint8_olcb_t _25AA1024_Driver_read_status_register() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000101;
+    _25AAxxx_SPI_BUFFER = 0b00000101;
 
     _25aa1024_wait_for_reply();
 
     // clock in the reply from the EEPROM
-    SPI_BUFFER = 0b00000000;
+    _25AAxxx_SPI_BUFFER = 0b00000000;
 
     uint8_olcb_t result = _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
     return result;
 
@@ -97,19 +97,19 @@ void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status) {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000101;
+    _25AAxxx_SPI_BUFFER = 0b00000101;
 
     _25aa1024_wait_for_reply();
 
     // write the next status
-    SPI_BUFFER = new_status;
+    _25AAxxx_SPI_BUFFER = new_status;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 }
 
@@ -117,14 +117,14 @@ void _25AA1024_Driver_write_latch_enable() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000110;
+    _25AAxxx_SPI_BUFFER = 0b00000110;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 
 }
@@ -133,14 +133,14 @@ void _25AA1024_Driver_write_latch_disable() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000100;
+    _25AAxxx_SPI_BUFFER = 0b00000100;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 }
 
@@ -148,31 +148,31 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000011;
+    _25AAxxx_SPI_BUFFER = 0b00000011;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 16) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 8) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 8) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = address & 0xFF;
+    _25AAxxx_SPI_BUFFER = address & 0xFF;
 
     _25aa1024_wait_for_reply();
 
     // Transmit
-    SPI_BUFFER = 0b00000000;
+    _25AAxxx_SPI_BUFFER = 0b00000000;
 
     uint8_olcb_t result = _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS   
+    _25AAxxx_CS = 1; // CS   
 
     return result;
 
@@ -184,29 +184,29 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000011;
+    _25AAxxx_SPI_BUFFER = 0b00000011;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 16) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 8) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 8) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = address & 0xFF;
+    _25AAxxx_SPI_BUFFER = address & 0xFF;
 
     _25aa1024_wait_for_reply();
 
     for (int i = 0; i < count; i++) {
 
         // Transmit
-        SPI_BUFFER = 0b00000000;
+        _25AAxxx_SPI_BUFFER = 0b00000000;
 
         temp = _25aa1024_wait_for_reply();
 
@@ -214,7 +214,7 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
     }
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
     return count;
 
@@ -226,31 +226,31 @@ void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000010;
+    _25AAxxx_SPI_BUFFER = 0b00000010;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 16) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 8) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 8) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = address & 0xFF;
+    _25AAxxx_SPI_BUFFER = address & 0xFF;
 
     _25aa1024_wait_for_reply();
 
     // Transmit
-    SPI_BUFFER = byte;
+    _25AAxxx_SPI_BUFFER = byte;
 
     temp = _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
 }
 
@@ -258,13 +258,13 @@ void _25AA1024_Driver_erase_chip() {
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
-    SPI_BUFFER = 0b11000111;
+    _25AAxxx_SPI_BUFFER = 0b11000111;
 
     _25aa1024_wait_for_reply();
 
-    EEPROM_CS = 1;
+    _25AAxxx_CS = 1;
 
 
     while (_25AA1024_Driver_write_in_progress()) {
@@ -280,35 +280,35 @@ uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, 
 
     _25aa1024_flush_buffers();
 
-    EEPROM_CS = 0; // CS
+    _25AAxxx_CS = 0; // CS
 
     // Transmit
-    SPI_BUFFER = 0b00000010;
+    _25AAxxx_SPI_BUFFER = 0b00000010;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 16) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 8) & 0xFF;
+    _25AAxxx_SPI_BUFFER = (address >> 8) & 0xFF;
 
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = address & 0xFF;
+    _25AAxxx_SPI_BUFFER = address & 0xFF;
 
     _25aa1024_wait_for_reply();
 
     for (int i = 0; i < count; i++) {
 
         // Transmit
-        SPI_BUFFER = (*buffer)[i];
+        _25AAxxx_SPI_BUFFER = (*buffer)[i];
 
         temp = _25aa1024_wait_for_reply();
 
     }
 
-    EEPROM_CS = 1; // CS
+    _25AAxxx_CS = 1; // CS
 
     return count;
 

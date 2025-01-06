@@ -74,7 +74,7 @@ void _access_register(uint8_olcb_t access_type, uint8_olcb_t _register, uint8_ol
 
     _mcp23s17_flush_buffers();
 
-    PORT_EXPANDER_CS = 0;
+    _MCP23S17_CS = 0;
 
     SPI_BUFFER = access_type;
 
@@ -88,7 +88,7 @@ void _access_register(uint8_olcb_t access_type, uint8_olcb_t _register, uint8_ol
 
     _mcp23s17_wait_for_reply();
 
-    PORT_EXPANDER_CS = 1;
+    _MCP23S17_CS = 1;
 
 }
 
