@@ -87,10 +87,10 @@
 
 #define UART_TX _RB10
 #define UART_RX _RB11
-#define CTS _RC9
-#define CTS_TRIS _TRISC9
+#define UART_CTS _RC9
+#define UART_CTS_TRIS _TRISC9
 #define RTS _RB12
-#define RTS_TRIS _TRISB12
+#define UART_RTS_TRIS _TRISB12
 
 #define CAN_TX _RB6
 #define CAN_RX _RB5

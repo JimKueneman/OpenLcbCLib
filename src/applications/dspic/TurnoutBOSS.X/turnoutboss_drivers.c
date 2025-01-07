@@ -102,14 +102,10 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     TURNOUT_PUSHBUTTON_STRAIGHT_TRIS = 1;  // Input
     TURNOUT_PUSHBUTTON_DIVERGING_TRIS = 1;  // Input
 
-    //UART_TX auto-set by the PPS 
-    //UART_RX
-    CTS_TRIS = 0;  // Output
-    CTS = 0;
-    RTS_TRIS = 1;  // Input
-
-    //CAN_TX auto-set by the PPS 
-    //CAN_RX 
+    //UART_TX/RX auto-set by the PPS 
+    UART_CTS_TRIS = 0;  // Output
+    UART_RTS_TRIS = 1;  // Input
+    UART_CTS = 0;       // Set to Clear to Send (low)
     
     LED_TRIS = 0;
     LED = 0;
