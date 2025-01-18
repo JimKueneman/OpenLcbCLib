@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,31 +24,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file callback_hooks.c
+ * \file turnoutboss_event_handler.h
  *
- * Where most of the application layer code will hook into in order to respond to
- * messages that an app will need.
+ * Typedefs and various constants for the library.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2025
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __TURNOUTOBOSS_EVENT_HANDLER__
+#define	__TURNOUTOBOSS_EVENT_HANDLER__
 
-#include "callback_hooks.h"
 
-#include "openlcb_types.h"
+#ifdef PLATFORMIO
+#include "src/openlcb/openlcb_types.h"
+#else
+#include "../../../openlcb/openlcb_types.h"
+#endif
 
 
-alias_change_callback_t _alias_change_callback_func = (void*) 0;
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-void CallbackHooks_set_alias_change(alias_change_callback_t alias_change_callback) {
-    
-  _alias_change_callback_func = alias_change_callback;
-  
+    extern void TurnoutBoss_Event_Handler_register_events(openlcb_node_t *_node);
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-alias_change_callback_t CallbackHooks_get_alias_change(void) {
-    
-    return _alias_change_callback_func;
-    
-}
+#endif	/* __TURNOUTOBOSS_EVENT_HANDLER__ */
+

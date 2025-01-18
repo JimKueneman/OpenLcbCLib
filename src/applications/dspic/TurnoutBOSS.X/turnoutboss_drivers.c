@@ -35,7 +35,14 @@
 #include "turnoutboss_drivers.h"
 
 #include "xc.h"
+#include "stdio.h"  // printf
+#include <libpic30.h> // delay
+
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
+#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
+#include "local_drivers/_MCP4014/MCP4014_driver.h"
+#include "../dsPIC_Common/ecan1_helper.h"
+#include "debug.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
@@ -49,6 +56,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
     ANSELA = 0x00; // Convert all I/O pins to digital
     ANSELB = 0x00;
+    ANSELC = 0x00;
     // -------------------------------------------------------------------------
     
     // Oscillator Initialize --------------------------------------------------- 
@@ -62,9 +70,9 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
      // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
     // CAN Pin Mapping
-    RPINR26bits.C1RXR = 38; // RP38 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
-    RPOR1bits.RP37R = _RPOUT_C1TX; // RP37 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
-
+     RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
+     RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
+ 
     // UART Pin Mapping
     RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
     RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
@@ -74,6 +82,8 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
     _MCP23S17_RESET_TRIS = 0;  // Output
     _MCP23S17_RESET = 0;
+    __delay32(100); // 1us min setup and hold
+    _MCP23S17_RESET = 1;
     
     _25AAxxx_CS_TRIS = 0;  // Output
     _25AAxxx_CS = 0;
@@ -82,11 +92,27 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     _25AAxxx_HOLD = 1;
 
     TRACK_DETECT_GAIN_1_CS_TRIS = 0;  // Output
+    TRACK_DETECT_GAIN_1_CS = 1;
+    __delay32(100); // strobe CS
     TRACK_DETECT_GAIN_1_CS = 0;
+    __delay32(100); // 1us min setup and hold
+    TRACK_DETECT_GAIN_1_CS = 1;
+    
+\
     TRACK_DETECT_GAIN_2_CS_TRIS = 0;  // Output
+    TRACK_DETECT_GAIN_2_CS = 1;
+    __delay32(100); // strobe CS
     TRACK_DETECT_GAIN_2_CS = 0;
+    __delay32(100); // 1us min setup and hold
+    TRACK_DETECT_GAIN_2_CS = 1;
+    
     TRACK_DETECT_GAIN_3_CS_TRIS = 0;  // Output
+    TRACK_DETECT_GAIN_3_CS = 1;
+    __delay32(100); // strobe CS
     TRACK_DETECT_GAIN_3_CS = 0;
+    __delay32(100); // 1us min setup and hold
+    TRACK_DETECT_GAIN_3_CS = 1;
+    
     TRACK_DETECT_GAIN_TRIS = 0;  // Output
     TRACK_DETECT_GAIN = 0;
     TRACK_DETECT_1_TRIS = 1;  // Input
@@ -121,18 +147,16 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
     IEC0bits.SPI1IE = 0; // Disable the interrupt
 
-    SPI1CON1bits.SPRE = 0b000;
-    SPI1CON1bits.PPRE = 0b10;
+    SPI1CON1bits.SPRE = 0b011;  // ~8Mhz
+    SPI1CON1bits.PPRE = 0b11;
 
     SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
     SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
     SPI1CON1bits.MODE16 = 0; // Communication is byte-wide (8 bits)
     SPI1CON1bits.MSTEN = 1; // Master mode enabled
     SPI1CON1bits.SMP = 0; // Input data is sampled at the middle of data output time
-    SPI1CON1bits.CKE = 1; // Serial output data changes on transition from
-    // Idle clock state to active clock state
-    SPI1CON1bits.CKP = 0; // Idle state for clock is a low level;
-    // active state is a high level
+    SPI1CON1bits.CKE = 1; // Serial output data changes on transition from Idle clock state to active clock state
+    SPI1CON1bits.CKP = 0; // Idle state for clock is a low level; active state is a high level
     SPI1STATbits.SPIEN = 1; // Enable SPI module
     
      // Setup UART 1 SFRs to 333,333 baud
@@ -170,6 +194,11 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     IEC0bits.T2IE = 1; // Enable the Interrupt
 
     T2CONbits.TON = 1; // Turn on 100ms Timer
+    
+    
+    Ecan1Helper_initialization();
+    MCP23S17Driver_initialize();
+    _25AA1024_Driver_initialize();
     
 }
 
@@ -248,6 +277,8 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
 
+    _RB7 = !_RB7;
+    
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)
         _100ms_timer_sink_func();

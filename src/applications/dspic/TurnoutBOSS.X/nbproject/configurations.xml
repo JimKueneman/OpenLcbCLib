@@ -28,7 +28,6 @@
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/protocol_snip.h</itemPath>
-        <itemPath>../../../openlcb/callback_hooks.h</itemPath>
         <itemPath>../../../openlcb/protocol_event_transport.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_list.h</itemPath>
         <itemPath>../../../openlcb/openlcb_types.h</itemPath>
@@ -42,6 +41,8 @@
         <itemPath>../../../openlcb/openlcb_node.h</itemPath>
         <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
+        <itemPath>../../../openlcb/application.h</itemPath>
+        <itemPath>../../../openlcb/application_callbacks.h</itemPath>
       </logicalFolder>
       <logicalFolder name="TurnoutBOSS.X"
                      displayName="TurnoutBOSS.X"
@@ -63,6 +64,7 @@
         <itemPath>debug.h</itemPath>
         <itemPath>node_parameters.h</itemPath>
         <itemPath>uart_handler.h</itemPath>
+        <itemPath>turnoutboss_event_handler.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -107,12 +109,13 @@
         <itemPath>../../../openlcb/openlcb_utilities.c</itemPath>
         <itemPath>../../../openlcb/protocol_event_transport.c</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_list.c</itemPath>
-        <itemPath>../../../openlcb/callback_hooks.c</itemPath>
         <itemPath>../../../openlcb/protocol_snip.c</itemPath>
         <itemPath>../../../openlcb/openlcb_gridconnect.c</itemPath>
         <itemPath>../../../openlcb/openlcb_main_statemachine.c</itemPath>
         <itemPath>../../../openlcb/protocol_message_network.c</itemPath>
         <itemPath>../../../openlcb/openlcb_tx_driver.c</itemPath>
+        <itemPath>../../../openlcb/application.c</itemPath>
+        <itemPath>../../../openlcb/application_callbacks.c</itemPath>
       </logicalFolder>
       <logicalFolder name="TurnoutBOSS.X"
                      displayName="TurnoutBOSS.X"
@@ -136,6 +139,7 @@
         <itemPath>main.c</itemPath>
         <itemPath>node_parameters.c</itemPath>
         <itemPath>uart_handler.c</itemPath>
+        <itemPath>turnoutboss_event_handler.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

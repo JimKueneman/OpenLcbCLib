@@ -230,7 +230,7 @@ uint8_olcb_t _pop_next_can_helper_active_message(void) {
 
     if (can_helper.active_msg)
 
-        return TRUE
+        return TRUE;
 
     else
 
@@ -252,7 +252,7 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(void) {
 
     if (can_helper.openlcb_worker->active_msg)
 
-        return TRUE
+        return TRUE;
 
     else
 
@@ -344,8 +344,7 @@ uint8_olcb_t _resend_datagram_message_from_ack_failure_reply(openlcb_node_t* nex
 
             ProtocolDatagram_clear_resend_datagram_message(next_node);
 
-            return FALSE
-
+            return FALSE;
         }
 
         return TRUE; // need to retry
@@ -368,8 +367,7 @@ uint8_olcb_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) 
 
             ProtocolMessageNetwork_clear_resend_optional_message(next_node);
 
-            return FALSE
-
+            return FALSE;
         }
 
         return TRUE; // need to retry

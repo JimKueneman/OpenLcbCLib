@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,43 +24,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file osx_can_drivers.h
+ * \file application.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
- * specifics then hook them into this file through #ifdefs
+ * Where most of the application layer code interfaces with the library
  *
  * @author Jim Kueneman
- * @date 5 Jan 2025
+ * @date 16 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.
-#ifndef __TEMPLATE_CAN_DRIVERS__
-#define __TEMPLATE_CAN_DRIVERS__
+// more than once.  
+#ifndef __APPLICATION__
+#define	__APPLICATION__
 
-#include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
 
-#ifdef __cplusplus
-extern "C"
-{
+#include "openlcb_types.h"
+
+#ifdef	__cplusplus
+extern "C" {
 #endif /* __cplusplus */
 
-    extern void TemplateCan_initialization();
+// Event ID helpers
+extern void Application_clear_consumer_eventids(openlcb_node_t* node);
 
-    extern void TemplateCan_setup(can_rx_callback_func_t can_rx_callback);
+extern void Application_clear_producer_eventids(openlcb_node_t* node);
 
-    extern uint8_olcb_t TemplateCan_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+extern uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t* node, event_id_t eventid);
 
-    extern void TemplateCan_pause_can_rx(void);
+extern uint16_olcb_t Application_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
 
-    extern void TemplateCan_resume_can_rx(void);
 
-    extern uint8_olcb_t TemplateCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *msg);
+// Configuration Memory helpers
+extern uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
 
-#ifdef __cplusplus
+#ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __TEMPLATE_CAN_DRIVERS__ */
+#endif	/* __APPLICATION__ */
+

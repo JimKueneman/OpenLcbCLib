@@ -308,7 +308,6 @@ uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t channel) {
 
 uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
 
-
     if (Ecan1Helper_is_can_tx_buffer_clear(channel)) {
 
 #ifndef DEBUG
@@ -318,6 +317,8 @@ uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t*
         _ecan1_tx_buffer_set_transmit(channel);
 
 #endif
+        
+        _RB8 = 0;
 
         return 1;
     }
@@ -497,6 +498,8 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
     /* clear interrupt flag */
     IFS2bits.C1IF = 0; // clear interrupt flag
+    
+    _RB8 = !_RB8;
 
     if (C1INTFbits.RBIF) { // RX Interrupt
 
@@ -516,7 +519,7 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
             _ecan1_read_rx_msg_buf_id(buffer_tail, &ecan_msg, &ide);
             _ecan1_read_rx_msg_buf_data(buffer_tail, &ecan_msg);
-
+            
             if ((ide) && (internal_can_rx_callback_func))
                 internal_can_rx_callback_func(buffer_tail, &ecan_msg);
 

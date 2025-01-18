@@ -83,9 +83,7 @@ can_msg_t* CanBufferStore_allocateBuffer(void) {
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
             _can_buffer_store[i].state.allocated = TRUE;
             _can_buffer_store[i].state.direct_tx = FALSE;
-            
-    //        printf("can allocate\n");
-            
+      
             return &_can_buffer_store[i];
 
         }
@@ -100,8 +98,6 @@ void CanBufferStore_freeBuffer(can_msg_t* msg) {
 
     if (!msg) return;
 
-  //  printf("can deallocate\n");
-    
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->state.allocated = FALSE;
     msg->state.direct_tx = FALSE;

@@ -57,8 +57,8 @@ extern "C" {
 #define USER_DEFINED_CDI_LENGTH                   5000
 #define USER_DEFINED_FDI_LENGTH                   1000
 
-#define USER_DEFINED_PRODUCER_COUNT         8
-#define USER_DEFINED_CONSUMER_COUNT         8
+#define USER_DEFINED_PRODUCER_COUNT         48
+#define USER_DEFINED_CONSUMER_COUNT         32
 
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
 #define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
@@ -72,8 +72,11 @@ extern "C" {
     typedef unsigned long int uint32_olcb_t;
 
 
-#define FALSE 0;
-#define TRUE  1;
+#define FALSE 0
+#define TRUE  1
+
+#define NULL_NODE_ID 0x000000000000
+#define NULL_EVENT_ID 0x0000000000000000
 
     // Per the SNIP specification
 #define LEN_SNIP_NAME              41
@@ -118,6 +121,8 @@ extern "C" {
 
     typedef uint64_olcb_t event_id_t;
     typedef uint64_olcb_t node_id_t;
+    
+    typedef uint8_olcb_t event_payload_t[255];
 
     typedef struct {
         uint8_olcb_t allocated : 1; // message has been allocated and is in use
@@ -187,8 +192,8 @@ extern "C" {
     typedef struct {
         user_snip_struct_t snip;
         uint64_olcb_t protocol_support;
-        uint16_olcb_t consumer_count;
-        uint16_olcb_t producer_count;
+        uint8_olcb_t consumer_count_autocreate;
+        uint8_olcb_t producer_count_autocreate;
         uint8_olcb_t cdi[USER_DEFINED_CDI_LENGTH];
 #ifdef SUPPORT_TRACTION
         uint8_olcb_t fdi[USER_DEFINED_FDI_LENGTH];
@@ -212,6 +217,8 @@ extern "C" {
 
 
     // Event ID Structures
+    
+#define EVENTS_ENCODED_IN_BYTE 4
 
     typedef struct {
         uint16_olcb_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
@@ -219,16 +226,18 @@ extern "C" {
     } event_id_enum_t;
 
     typedef struct {
+        uint16_olcb_t count;
         event_id_t list[USER_DEFINED_CONSUMER_COUNT];
         event_id_enum_t enumerator;
-        uint64_olcb_t event_state; // 2 bits for each event limiting it to 32 events
+        uint8_olcb_t event_state_array[USER_DEFINED_CONSUMER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
 
     } event_id_consumer_list_t;
 
     typedef struct {
+        uint16_olcb_t count;
         event_id_t list[USER_DEFINED_PRODUCER_COUNT];
         event_id_enum_t enumerator;
-        uint64_olcb_t event_state; // 2 bits for each event limiting it to 32 events
+        uint8_olcb_t event_state_array[USER_DEFINED_PRODUCER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
 
     } event_id_producer_list_t;
 

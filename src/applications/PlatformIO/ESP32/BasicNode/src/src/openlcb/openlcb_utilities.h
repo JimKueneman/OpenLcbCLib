@@ -92,6 +92,7 @@ extern void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t
 
 extern uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node);
 
+extern node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
 
 #ifdef	__cplusplus
 }

@@ -92,9 +92,6 @@
 #define RTS _RB12
 #define UART_RTS_TRIS _TRISB12
 
-#define CAN_TX _RB6
-#define CAN_RX _RB5
-
 #define SPI_CLK _RC3
 #define SPI_CLK_TRIS _TRISC3
 #define SPI_SDI _RA9
@@ -145,6 +142,7 @@ extern "C" {
     // Custom Driver functions
     
     extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
+   
 
 #endif	/* __TURNOUTBOSS_DRIVERS__ */
 

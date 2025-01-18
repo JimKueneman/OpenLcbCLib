@@ -44,7 +44,7 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_utilities.h"
 #include "../../openlcb/openlcb_main_statemachine.h"
-#include "../../openlcb/callback_hooks.h"
+#include "../../openlcb/application_callbacks.h"
 #include "../../openlcb/protocol_event_transport.h"
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "can_tx_statemachine.h"
@@ -78,7 +78,7 @@ void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = Node_generate_alias(next_node->seed);
     
-    alias_change_callback_t alias_change_callback = CallbackHooks_get_alias_change();
+    callback_alias_change_t alias_change_callback = Application_Callbacks_get_alias_change();
 
     if (alias_change_callback)
         alias_change_callback(next_node->alias, next_node->id);
@@ -195,7 +195,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
     if (next_node->producers.enumerator.running) {
 
-        if (next_node->producers.enumerator.enum_index < next_node->parameters->producer_count) {
+        if (next_node->producers.enumerator.enum_index < next_node->producers.count) {
 
             Utilities_load_openlcb_message(
                     openlcb_worker,
@@ -214,7 +214,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
                 next_node->producers.enumerator.enum_index = next_node->producers.enumerator.enum_index + 1;
 
-                if (next_node->producers.enumerator.enum_index >= next_node->parameters->producer_count) {
+                if (next_node->producers.enumerator.enum_index >= next_node->producers.count) {
 
                     next_node->producers.enumerator.enum_index = 0;
                     next_node->producers.enumerator.running = FALSE;
@@ -237,7 +237,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
     if (next_node->consumers.enumerator.running) {
 
-        if (next_node->consumers.enumerator.enum_index < next_node->parameters->producer_count) {
+        if (next_node->consumers.enumerator.enum_index < next_node->consumers.count) {
 
             Utilities_load_openlcb_message(
                     openlcb_worker,
@@ -245,7 +245,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
                     next_node->id,
                     0,
                     0,
-                    ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->producers.enumerator.enum_index),
+                    ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index),
                     6
 );
 
@@ -256,7 +256,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
                 next_node->consumers.enumerator.enum_index = next_node->consumers.enumerator.enum_index + 1;
 
-                if (next_node->consumers.enumerator.enum_index >= next_node->parameters->producer_count) {
+                if (next_node->consumers.enumerator.enum_index >= next_node->consumers.count) {
 
                     next_node->consumers.enumerator.running = FALSE;
                     next_node->consumers.enumerator.enum_index = 0;

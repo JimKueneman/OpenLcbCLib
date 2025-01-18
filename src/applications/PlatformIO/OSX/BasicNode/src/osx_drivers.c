@@ -102,14 +102,33 @@ uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t co
 
     uint32_olcb_t buffer_index = 0;
 
-    for (int i = address; i < (address + count); i++)
-    {
-        //    (*buffer)[buffer_index] = user_data[i];
+    // Null out the buffer in case we have no data
+    for (int i = 0; i < sizeof(*buffer); i++)
+        (*buffer)[i] = '\0';
 
-        (*buffer)[buffer_index] = '\0';
-        buffer_index++;
+
+    FILE *_file;
+
+    _file = fopen("../config_mem.dat", "rb"); // read binary
+
+    if (_file)
+    {
+
+        if (fseek(_file, address, SEEK_SET) == 0)
+        {
+
+            if (fread(buffer, 1, count, _file) == count)
+            {
+
+                fclose(_file);
+                return count;
+            }
+        }
+
+        fclose(_file);
     }
-    return count;
+
+    return count; // just returning 0's
 }
 
 uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
@@ -120,18 +139,30 @@ uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t c
     if (count == 0)
         return 0;
 
-    uint32_olcb_t buffer_index = 0;
+    FILE *_file;
 
-    for (int i = address; i < (address + count); i++)
+    _file = fopen("../config_mem.dat", "r+b"); // append will ONLY add to the EOF not past it but r+ will fail if the file does not exist
+    if (!_file)
+        _file = fopen("../config_mem.dat", "w+b"); // append binary
+
+    if (_file)
     {
-        //      user_data[i] = (*buffer)[buffer_index];
-        buffer_index++;
-    }
-    // the caller may or may not have added the null to the string
-    // if (user_data[address + count - 1] != '\0')
-    //   user_data[address + count] = '\0';
 
-    return count;
+        if (fseek(_file, address, SEEK_SET) == 0)
+        {
+
+            if (fwrite(buffer, 1, count, _file) == count)
+            {
+
+                fclose(_file);
+                return count;
+            }
+        }
+
+        fclose(_file);
+    }
+
+    return 0;
 }
 
 void OSxDrivers_pause_100ms_timer()

@@ -42,124 +42,87 @@
 #include "../../../../../openlcb/openlcb_types.h"
 #include "../../turnoutboss_drivers.h"
 
-void MCP4014Driver_set_gain(uint8_olcb_t detector_id, uint8_olcb_t gain) {
+void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channel2, uint8_olcb_t gain_channel3) {
 
-    switch (detector_id) {
-        case 0:
-            TRACK_DETECT_GAIN = 0; // set to 0 before CS is lower = decrement mode
-            __delay_us(1);
-            TRACK_DETECT_GAIN_1_CS = 0;
-            __delay_us(1);
+    // We can count them all down at the same time 
 
-            // Countdown to 0;
-            for (int i = 0; i < 64; i++) {
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 1;
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 0;  // Wiper decrements on this edge
+    TRACK_DETECT_GAIN = 0; // set to 0 before CS is lower = decrement mode
+    __delay_us(1);
+    TRACK_DETECT_GAIN_1_CS = 0;
+    TRACK_DETECT_GAIN_2_CS = 0;
+    TRACK_DETECT_GAIN_3_CS = 0;
+    __delay_us(1);
 
-            }
-            __delay_us(1);
-            TRACK_DETECT_GAIN_1_CS = 1;
-            __delay_us(1);
+    // Countdown to 0;
+    for (int i = 0; i < 64; i++) {
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 1;
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 0; // Wiper decrements on this edge
+    }
+    __delay_us(1);
+    TRACK_DETECT_GAIN = 1;
 
-            // Now set the gain from 0
-            TRACK_DETECT_GAIN = 1; // set to 0 before CS is lower = increment mode
-            __delay_us(1);
-            TRACK_DETECT_GAIN_1_CS = 0;
-            __delay_us(1);
-
-            // Count up to gain
-            for (int i = 0; i < gain; i++) {
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 0;
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 1; // Wiper increments on this edge
-
-            }
-            __delay_us(1);
-            TRACK_DETECT_GAIN_1_CS = 1;
-
-            return;
-
-        case 1:
-            TRACK_DETECT_GAIN = 0; // set to 0 before CS is lower = decrement mode
-            __delay_us(1);
-            TRACK_DETECT_GAIN_2_CS = 0;
-            __delay_us(1);
-
-            // Countdown to 0;
-            for (int i = 0; i < 64; i++) {
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 1;
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 0;  // Wiper decrements on this edge
-
-            }
-            __delay_us(1);
-            TRACK_DETECT_GAIN_2_CS = 1;
-            __delay_us(1);
-
-            // Now set the gain from 0
-            TRACK_DETECT_GAIN = 1; // set to 0 before CS is lower = increment mode
-            __delay_us(1);
-            TRACK_DETECT_GAIN_2_CS = 0;
-            __delay_us(1);
-
-            // Count up to gain
-            for (int i = 0; i < gain; i++) {
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 0;
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 1; // Wiper increments on this edge
-
-            }
-            __delay_us(1);
-            TRACK_DETECT_GAIN_2_CS = 1;
-
-            return;
+    __delay_us(1);
+    TRACK_DETECT_GAIN_1_CS = 1;
+    TRACK_DETECT_GAIN_2_CS = 1;
+    TRACK_DETECT_GAIN_3_CS = 1;
+    __delay_us(1);
 
 
-        case 2:
-            TRACK_DETECT_GAIN = 0; // set to 0 before CS is lower = decrement mode
-            __delay_us(1);
-            TRACK_DETECT_GAIN_3_CS = 0;
-            __delay_us(1);
+    // Now set the gain from 0
 
-            // Countdown to 0;
-            for (int i = 0; i < 64; i++) {
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 1;
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 0;  // Wiper decrements on this edge
+    TRACK_DETECT_GAIN_1_CS = 0;
+    __delay_us(1);
 
-            }
-            __delay_us(1);
-            TRACK_DETECT_GAIN_3_CS = 1;
-            __delay_us(1);
-
-            // Now set the gain from 0
-            TRACK_DETECT_GAIN = 1; // set to 0 before CS is lower = increment mode
-            __delay_us(1);
-            TRACK_DETECT_GAIN_3_CS = 0;
-            __delay_us(1);
-
-            // Count up to gain
-            for (int i = 0; i < gain; i++) {
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 0;
-                __delay_us(1);
-                TRACK_DETECT_GAIN = 1; // Wiper increments on this edge
-
-            }
-            __delay_us(1);
-            TRACK_DETECT_GAIN_3_CS = 1;
-
-            return;
-
-
+    // Count up to gain
+    for (int i = 0; i < gain_channel1; i++) {
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 0;
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 1; // Wiper increments on this edge
 
     }
+    __delay_us(1);
+    TRACK_DETECT_GAIN_1_CS = 1;
+    __delay_us(1);
+
+
+
+    // Now set the gain from 0
+    TRACK_DETECT_GAIN_2_CS = 0;
+    __delay_us(1);
+
+    // Count up to gain
+    for (int i = 0; i < gain_channel2; i++) {
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 0;
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 1; // Wiper increments on this edge
+
+    }
+    __delay_us(1);
+    TRACK_DETECT_GAIN_2_CS = 1;
+    __delay_us(1);
+
+
+    // Now set the gain from 0
+    TRACK_DETECT_GAIN_3_CS = 0;
+    __delay_us(1);
+
+    // Count up to gain
+    for (int i = 0; i < gain_channel3; i++) {
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 0;
+        __delay_us(1);
+        TRACK_DETECT_GAIN = 1; // Wiper increments on this edge
+
+    }
+    __delay_us(1);
+    TRACK_DETECT_GAIN_3_CS = 1;
+
+
+
 
 }
 

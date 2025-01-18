@@ -293,17 +293,17 @@ uint8_olcb_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb
 
     if ((openlcb_node->alias == openlcb_msg->dest_alias) | (openlcb_node->id == openlcb_msg->dest_id))
 
-        return TRUE
+        return TRUE;
 
     else
 
-        return FALSE
+        return FALSE;
 
     }
 
 int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id) {
 
-    for (int i = 0; i < openlcb_node->parameters->producer_count; i++) {
+    for (int i = 0; i < openlcb_node->producers.count; i++) {
 
         if (i < USER_DEFINED_CONSUMER_COUNT)
 
@@ -320,7 +320,7 @@ int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, u
 
 int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id) {
 
-    for (int i = 0; i < openlcb_node->parameters->consumer_count; i++) {
+    for (int i = 0; i < openlcb_node->consumers.count; i++) {
 
         if (i < USER_DEFINED_CONSUMER_COUNT)
 
@@ -342,7 +342,7 @@ uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlc
 
         if (openlcb_node->state.openlcb_msg_handled)
 
-            return FALSE
+            return FALSE; 
 
         else
 
@@ -354,4 +354,16 @@ uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlc
 
     return FALSE;
 
+}
+
+node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index)
+{
+
+    return (
+        ((uint64_olcb_t)(*buffer)[0 + index] << 40) |
+        ((uint64_olcb_t)(*buffer)[1 + index] << 32) |
+        ((uint64_olcb_t)(*buffer)[2 + index] << 24) |
+        ((uint64_olcb_t)(*buffer)[3 + index] << 16) |
+        ((uint64_olcb_t)(*buffer)[4 + index] << 8) |
+        ((uint64_olcb_t)(*buffer)[5 + index]));
 }

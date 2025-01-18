@@ -1,6 +1,5 @@
-
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,44 +24,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dsPIC33EPxxxGP50x_drivers.h
+ * \file application.h
  *
+ * Where most of the application layer code interfaces with the library
  *
  * @author Jim Kueneman
- * @date 3 Jan 2025
+ * @date 16 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.
-#ifndef __TEMPLATE_DRIVERS__
-#define __TEMPLATE_DRIVERS__
+// more than once.  
+#ifndef __APPLICATION__
+#define	__APPLICATION__
 
-#include "src/openlcb/openlcb_types.h"
 
-// Assign the function pointer to where the UART Rx should call back with the byte it received
-// WARNING: Is in the context of the interrupt, be careful
-// void func(rx_data);
-typedef void (*uart_rx_callback_t)(uint16_olcb_t);
+#include "openlcb_types.h"
 
-#ifdef __cplusplus
-extern "C"
-{
+#ifdef	__cplusplus
+extern "C" {
 #endif /* __cplusplus */
 
-    extern void TemplateDrivers_setup(parameterless_callback_t _100ms_timer_sink);
+// Event ID helpers
+extern void Application_clear_consumer_eventids(openlcb_node_t* node);
 
-    extern void TemplateDrivers_reboot(void);
+extern void Application_clear_producer_eventids(openlcb_node_t* node);
 
-    extern uint16_olcb_t TemplateDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+extern uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t* node, event_id_t eventid);
 
-    extern uint16_olcb_t TemplateDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+extern uint16_olcb_t Application_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
 
-    extern void TemplateDrivers_pause_100ms_timer();
 
-    extern void TemplateDrivers_resume_100ms_timer();
+// Configuration Memory helpers
+extern uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
 
-#ifdef __cplusplus
+#ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __TEMPLATE_DRIVERS__ */
+#endif	/* __APPLICATION__ */
+

@@ -44,15 +44,17 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void _25AA1024_Driver_erase_chip();
+    extern void _25AA1024_Driver_initialize(void);
+    
+    extern void _25AA1024_Driver_erase_chip(void);
 
-    extern uint8_olcb_t _25AA1024_Driver_read_status_register();
+    extern uint8_olcb_t _25AA1024_Driver_read_status_register(void);
 
     extern void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status);
 
-    extern void _25AA1024_Driver_write_latch_enable();
+    extern void _25AA1024_Driver_write_latch_enable(void);
 
-    extern void _25AA1024_Driver_write_latch_disable();
+    extern void _25AA1024_Driver_write_latch_disable(void);
 
     extern void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte);
 

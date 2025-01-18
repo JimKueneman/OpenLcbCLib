@@ -71,6 +71,8 @@
 // Use project enums instead of #define for ON and OFF.
 
 
+#include <libpic30.h>
+
 #include "xc.h"
 #include "stdio.h"  // printf
 #include "string.h"
@@ -81,18 +83,21 @@
 #include "../../../drivers/driver_can.h"
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/openlcb_node.h"
-#include "../../../openlcb/callback_hooks.h"
+#include "../../../openlcb/application_callbacks.h"
 #include "node_parameters.h"
+#include "turnoutboss_event_handler.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
 #include "turnoutboss_drivers.h"
+#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
+#include "../../../openlcb/application.h"
+#include "../../../openlcb/openlcb_utilities.h"
+#include "debug.h"
 
 
 #include "debug.h"
 
-uint64_olcb_t node_id_base = 0x050101010700;
-
-
+uint64_olcb_t node_id_base = 0x0507010100AA;
 
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
@@ -103,7 +108,10 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 }
 
 
+
 // #define  _SIMULATOR_
+
+int button_latch = 0;
 
 int main(void) {
 
@@ -113,7 +121,7 @@ int main(void) {
     _RB7 = 0;
     _TRISB8 = 0;
     _RB8 = 0;
-    
+
 
 #ifdef _SIMULATOR_
 
@@ -143,22 +151,59 @@ int main(void) {
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
 
-    CallbackHooks_set_alias_change(&_alias_change_callback);
+    Application_Callbacks_set_alias_change(&_alias_change_callback);
+
 
 #endif
 
-    printf("\n\nBooted\n");
-
+    printf("\nBooted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
-
     printf("Node Created\n");
+    
+    TurnoutBoss_Event_Handler_register_events(node);
 
 #ifdef _SIMULATOR_
 
 
 #endif
 
+
     while (1) {
+
+
+        if (!TURNOUT_PUSHBUTTON_STRAIGHT && !button_latch) {
+
+            button_latch = 1;
+            TURNOUT_DRIVER = !TURNOUT_DRIVER;
+
+
+        } else {
+
+            if (TURNOUT_PUSHBUTTON_STRAIGHT) {
+
+                button_latch = 0;
+
+            }
+        }
+
+        switch (track_detector_to_led) {
+            case 1:
+
+                LED = TRACK_DETECT_1;
+                break;
+
+            case 2:
+
+                LED = TRACK_DETECT_2;
+                break;
+
+            case 3:
+
+                LED = TRACK_DETECT_3;
+                break;
+        }
+
+
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
 

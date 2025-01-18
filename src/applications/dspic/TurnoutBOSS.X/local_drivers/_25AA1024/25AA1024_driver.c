@@ -38,6 +38,15 @@
 #include "../../../../../drivers/driver_configuration_memory.h"
 #include "../../turnoutboss_drivers.h"
 
+void _25AA1024_Driver_initialize() {
+    
+    configuration_memory_buffer_t buffer;
+    
+    // Needs to be clocked a few times to get initialized
+    _25AA1024_Driver_read(0, 64, &buffer);
+    
+}
+
 void _25aa1024_flush_buffers() {
 
     uint8_olcb_t result;

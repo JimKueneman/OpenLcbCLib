@@ -46,6 +46,13 @@ extern "C" {
 
     extern void UartHandler_handle_rx(uint16_olcb_t code);
 
+    extern uint8_olcb_t signalA; // All off
+    extern uint8_olcb_t signalB;
+    extern uint8_olcb_t signalC;
+    extern uint8_olcb_t signalD;
+    
+    extern uint8_olcb_t track_detector_to_led;
+
 
 #ifdef	__cplusplus
 }

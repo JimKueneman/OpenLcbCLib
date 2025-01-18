@@ -16,6 +16,14 @@
 #include "node_parameters.h"
 #include "osx_drivers.h"
 #include "osx_can_drivers.h"
+#include "src/openlcb/openlcb_utilities.h"
+#include "src/openlcb/application.h"
+#include "src/openlcb/callback_hooks.h"
+#include "turnoutboss_event_handler.h"
+
+#define BOARD_USAGE_CONFIG_MEM_ADDRESS 0x7F
+#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS 0x80
+#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS 0x88
 
 
 int main(void)
@@ -48,9 +56,15 @@ int main(void)
     sleep(2);
   }
 
-  printf("Creating Node\n");
-  Node_allocate(0x0501010107FF, &NodeParameters_main_node);
-  printf("Logging in.....\n");
+  printf("Allocating Node\n");
+  uint64_olcb_t _nodeid = 0x0501010107FF;
+  openlcb_node_t *_node = Node_allocate(_nodeid, &NodeParameters_main_node);
+  printf("Allocated.....\n");
+
+  printf("Registering Events\n");
+  TurnoutBoss_Event_Handler_register_events(_node);
+  printf("Events Allocated.....\n");
+
 
   while (1)
   {

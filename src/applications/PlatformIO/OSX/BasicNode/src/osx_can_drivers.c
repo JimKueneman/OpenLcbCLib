@@ -321,7 +321,7 @@ void OSxCanDriver_setup(can_rx_callback_func_t can_rx_callback)
 
     internal_can_rx_callback_func = can_rx_callback;
 
-    printf("Mutex initiaization - Result Code: %d\n", pthread_mutex_init(&can_mutex, NULL));
+    printf("Mutex initialization - Result Code: %d\n", pthread_mutex_init(&can_mutex, NULL));
 
     ThreadSafeStringList_init(&_outgoing_gridconnect_strings);
 

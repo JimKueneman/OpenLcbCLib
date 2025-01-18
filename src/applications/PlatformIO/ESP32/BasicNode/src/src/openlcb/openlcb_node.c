@@ -64,19 +64,24 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->last_received_datagram = (void*) 0;
     openlcb_node->last_received_optional_interaction = (void*) 0;
 
+    openlcb_node->consumers.count = 0;
     for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++)
         openlcb_node->consumers.list[i] = 0;
 
+    openlcb_node->producers.count = 0;
     for (int i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++)
         openlcb_node->producers.list[i] = 0;
 
 
     openlcb_node->producers.enumerator.running = FALSE;
     openlcb_node->consumers.enumerator.running = FALSE;
-
-    openlcb_node->producers.event_state = 0x00; // Unknown State
-    openlcb_node->consumers.event_state = 0x00;
-
+    
+    for (int i = 0; i < sizeof(openlcb_node->producers.event_state_array); i++) // Unknown State
+        openlcb_node->producers.event_state_array[i] = 0;
+    
+    for (int i = 0; i < sizeof(openlcb_node->consumers.event_state_array); i++)
+        openlcb_node->consumers.event_state_array[i] = 0;
+    
 }
 
 void Node_initialize(void) {
@@ -117,17 +122,25 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     uint64_olcb_t node_id = openlcb_node->id << 16;
 
-    for (int i = 0; i < openlcb_node->parameters->consumer_count; i++)
+    openlcb_node->consumers.count = 0;
+    for (int i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++)
 
-        if (i < USER_DEFINED_CONSUMER_COUNT) // safety net
+        if (i < USER_DEFINED_CONSUMER_COUNT) { // safety net
 
             openlcb_node->consumers.list[i] = node_id + i;
+            openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
+            
+        }
 
-    for (int i = 0; i < openlcb_node->parameters->producer_count; i++)
+    openlcb_node->producers.count = 0;
+    for (int i = 0; i < openlcb_node->parameters->producer_count_autocreate; i++)
 
-        if (i < USER_DEFINED_PRODUCER_COUNT) // safety net
+        if (i < USER_DEFINED_PRODUCER_COUNT) { // safety net
 
             openlcb_node->producers.list[i] = node_id + i;
+            openlcb_node->producers.count = openlcb_node->producers.count + 1;
+            
+        }
 
 
     openlcb_node->consumers.enumerator.running = FALSE;
