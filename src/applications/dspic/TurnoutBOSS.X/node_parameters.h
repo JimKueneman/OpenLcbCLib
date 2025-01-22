@@ -12,7 +12,11 @@
 #ifndef __NODE_DEFINITION__
 #define	__NODE_DEFINITION__
 
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#endif
 
 // nice reply for multiple ways of defining constant structures
 // https://stackoverflow.com/questions/60375529/c-how-to-initialize-a-constant-structure

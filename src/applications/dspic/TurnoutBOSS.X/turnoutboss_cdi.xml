@@ -20,8 +20,8 @@
   <acdi/>
   <segment origin="0" space="253">
     <name>Layout Configuration Setup</name>
-    <description>
-      The basic information required to get your TurnoutBOSS up and operational creating a fully signaled CTC layout.
+    <description>&#13;
+      The basic information required to get your TurnoutBOSS up and operational creating a fully signaled CTC layout.&#13;
     </description>
     <group>
       <name>User Info</name>
@@ -67,11 +67,51 @@
         <description>NodeID of the TurnoutBOSS to immediate right of this unit.</description>
       </eventid>
     </group>
+    <group>
+      <name>Turnout control</name>
+      <description>Define how this TurnoutBoss's turnout control/feedback is connected to the layout</description>
+      <int size="1">
+        <name>Control Buttons</name>
+        <min>0</min>
+        <max>1</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Two turnout control buttons</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>One turnout control button</value>
+          </relation>
+        </map>
+      </int>
+      <int size="1">
+        <name>Feedback Sensors</name>
+        <min>0</min>
+        <max>2</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Unused</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>One turnout position sensor</value>
+          </relation>
+          <relation>
+            <property>2</property>
+            <value>Two turnout feedback sensors</value>
+          </relation>
+        </map>
+      </int>
+    </group>
   </segment>
   <segment origin="256" space="253">
     <name>Hardware Configuration</name>
     <description>
-      Information about the hardware connected to your TurnoutBOSS
+      Information about the hardware connected to your TurnoutBOSS.
     </description>
     <group>
       <name>Signalhead Options</name>
@@ -169,7 +209,7 @@
     <name>Track Detector Gain</name>
     <description>Adjusts the gain of the track detectors for detection sensitivity</description>
     <int size="1">
-      <name>Approach Track</name>
+      <name>Detector A</name>
       <min> 0</min>
       <max>63</max>
       <default>31</default>
@@ -178,7 +218,7 @@
       </hints>
     </int>
     <int size="1">
-      <name>Through Track</name>
+      <name>Detector B</name>
       <min> 0</min>
       <max>63</max>
       <default>31</default>
@@ -187,7 +227,7 @@
       </hints>
     </int>
     <int size="1">
-      <name>Diverging Track</name>
+      <name>Detector C</name>
       <min> 0</min>
       <max>63</max>
       <default>31</default>

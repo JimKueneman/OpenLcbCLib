@@ -26,7 +26,9 @@
  *
  * \file turnoutboss_event_handler.h
  *
- * Typedefs and various constants for the library.
+ * Registers event IDs required by the board type.
+ * It also registers an Event callback and updates the TurnoutBoss_Signaling_States with
+ * any received events from nodes of interest (BAL/BAR/BL/BR).
  *
  * @author Jim Kueneman
  * @date 17 Jan 2025
@@ -34,14 +36,15 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTOBOSS_EVENT_HANDLER__
-#define	__TURNOUTOBOSS_EVENT_HANDLER__
+#ifndef __TURNOUTBOSS_EVENT_HANDLER__
+#define	__TURNOUTBOSS_EVENT_HANDLER__
 
+#include "turnoutboss_signaling_states.h"
 
-#ifdef PLATFORMIO
-#include "src/openlcb/openlcb_types.h"
-#else
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
 #endif
 
 
@@ -49,11 +52,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void TurnoutBoss_Event_Handler_register_events(openlcb_node_t *_node);
+    extern void TurnoutBoss_Event_Handler_initialize(openlcb_node_t *node, board_type_enum_t board_location, node_id_t bl, node_id_t br);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TURNOUTOBOSS_EVENT_HANDLER__ */
+#endif	/* __TURNOUTBOSS_EVENT_HANDLER__ */
 

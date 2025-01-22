@@ -68,7 +68,7 @@ void *thread_function_timer(void *arg)
     }
 }
 
-uint8_olcb_t OSxDrivers_100ms_is_connected()
+uint8_olcb_t OSxDrivers_100ms_is_connected(void)
 {
 
     return _is_clock_running;
@@ -165,12 +165,12 @@ uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t c
     return 0;
 }
 
-void OSxDrivers_pause_100ms_timer()
+void OSxDrivers_pause_100ms_timer(void)
 {
     _timer_pause = TRUE;
 }
 
-void OSxDrivers_resume_100ms_timer()
+void OSxDrivers_resume_100ms_timer(void)
 {
     _timer_pause = FALSE;
 }

@@ -92,29 +92,29 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     _25AAxxx_HOLD = 1;
 
     TRACK_DETECT_GAIN_1_CS_TRIS = 0;  // Output
-    TRACK_DETECT_GAIN_1_CS = 1;
+    TRACK_DETECT_GAIN_1_CS_PIN = 1;
     __delay32(100); // strobe CS
-    TRACK_DETECT_GAIN_1_CS = 0;
+    TRACK_DETECT_GAIN_1_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
-    TRACK_DETECT_GAIN_1_CS = 1;
+    TRACK_DETECT_GAIN_1_CS_PIN = 1;
     
 \
     TRACK_DETECT_GAIN_2_CS_TRIS = 0;  // Output
-    TRACK_DETECT_GAIN_2_CS = 1;
+    TRACK_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
-    TRACK_DETECT_GAIN_2_CS = 0;
+    TRACK_DETECT_GAIN_2_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
-    TRACK_DETECT_GAIN_2_CS = 1;
+    TRACK_DETECT_GAIN_2_CS_PIN = 1;
     
     TRACK_DETECT_GAIN_3_CS_TRIS = 0;  // Output
-    TRACK_DETECT_GAIN_3_CS = 1;
+    TRACK_DETECT_GAIN_3_CS_PIN = 1;
     __delay32(100); // strobe CS
-    TRACK_DETECT_GAIN_3_CS = 0;
+    TRACK_DETECT_GAIN_3_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
-    TRACK_DETECT_GAIN_3_CS = 1;
+    TRACK_DETECT_GAIN_3_CS_PIN = 1;
     
     TRACK_DETECT_GAIN_TRIS = 0;  // Output
-    TRACK_DETECT_GAIN = 0;
+    TRACK_DETECT_GAIN_PIN = 0;
     TRACK_DETECT_1_TRIS = 1;  // Input
     TRACK_DETECT_2_TRIS = 1;  // Input
     TRACK_DETECT_3_TRIS = 1;  // Input
@@ -123,7 +123,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     TURNOUT_POSITION_DIVERGING_TRIS = 1;  // Input
 
     TURNOUT_DRIVER_TRIS = 0;  // Output
-    TURNOUT_DRIVER = 0;
+    TURNOUT_DRIVER_PIN = 0;
 
     TURNOUT_PUSHBUTTON_STRAIGHT_TRIS = 1;  // Input
     TURNOUT_PUSHBUTTON_DIVERGING_TRIS = 1;  // Input

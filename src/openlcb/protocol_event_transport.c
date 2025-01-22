@@ -564,9 +564,9 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
         
         int payload_index = sizeof(eventid);
         
-        for (int i = 0; i < local_payload; i++) {
+        for (int i = 0; i < local_payload_count; i++) {
             
-            local_payload[i] = openlcb_msg->payload[payload_index];
+            local_payload[i] = *openlcb_msg->payload[payload_index];
             payload_index = payload_index + 1;
             
         }

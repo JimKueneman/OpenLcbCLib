@@ -37,9 +37,11 @@
 #ifndef __TURNOUTBOSS_DRIVERS__
 #define	__TURNOUTBOSS_DRIVERS__
 
-#include <xc.h> // include processor files - each processor file is guarded.  
-
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#endif
 
 // UART ------------------------------------------------------------------------
 // with FCY = 40000000UL
@@ -57,32 +59,32 @@
 #define PLLDIV_OFFSET -2
 
 
-#define TRACK_DETECT_GAIN_1_CS _RB14
+#define TRACK_DETECT_GAIN_1_CS_PIN _RB14
 #define TRACK_DETECT_GAIN_1_CS_TRIS _TRISB14
-#define TRACK_DETECT_GAIN_2_CS _RA1
+#define TRACK_DETECT_GAIN_2_CS_PIN _RA1
 #define TRACK_DETECT_GAIN_2_CS_TRIS _TRISA1
-#define TRACK_DETECT_GAIN_3_CS _RB1
+#define TRACK_DETECT_GAIN_3_CS_PIN _RB1
 #define TRACK_DETECT_GAIN_3_CS_TRIS _TRISB1
-#define TRACK_DETECT_GAIN _RB15
+#define TRACK_DETECT_GAIN_PIN _RB15
 #define TRACK_DETECT_GAIN_TRIS _TRISB15
-#define TRACK_DETECT_1 _RA7
+#define TRACK_DETECT_1_PIN !_RA7 // hardware logic inverted
 #define TRACK_DETECT_1_TRIS _TRISA7
-#define TRACK_DETECT_2 _RA0
+#define TRACK_DETECT_2_PIN !_RA0 // hardware logic inverted
 #define TRACK_DETECT_2_TRIS _TRISA0
-#define TRACK_DETECT_3 _RB0
+#define TRACK_DETECT_3_PIN !_RB0 // hardware logic inverted
 #define TRACK_DETECT_3_TRIS _TRISB0
 
-#define TURNOUT_POSITION_STRAIGHT _RB13
+#define TURNOUT_POSITION_NORMAL_PIN !_RB13 // hardware logic inverted
 #define TURNOUT_POSITION_STRAIGHT_TRIS _TRISB13
-#define TURNOUT_POSITION_DIVERGING _RA10
+#define TURNOUT_POSITION_DIVERGING_PIN !_RA10 // hardware logic inverted
 #define TURNOUT_POSITION_DIVERGING_TRIS _TRISA10
 
-#define TURNOUT_DRIVER _RC6
+#define TURNOUT_DRIVER_PIN _RC6
 #define TURNOUT_DRIVER_TRIS _TRISC6
 
-#define TURNOUT_PUSHBUTTON_STRAIGHT _RC7
+#define TURNOUT_PUSHBUTTON_NORMAL_PIN !_RC7 // hardware logic inverted
 #define TURNOUT_PUSHBUTTON_STRAIGHT_TRIS _TRISC7
-#define TURNOUT_PUSHBUTTON_DIVERGING _RC8
+#define TURNOUT_PUSHBUTTON_DIVERGING_PIN !_RC8 // hardware logic inverted
 #define TURNOUT_PUSHBUTTON_DIVERGING_TRIS _TRISC8
 
 #define UART_TX _RB10

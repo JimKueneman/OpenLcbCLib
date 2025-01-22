@@ -46,6 +46,7 @@
 
 #include "../drivers/driver_mcu.h"
 #include "../drivers/driver_configuration_memory.h"
+#include "application_callbacks.h"
 
 void ProtocolDatagram_initialize(void) {
 
@@ -339,8 +340,14 @@ uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_n
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    uint16_olcb_t write_count = DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
+    if (Application_Callbacks_get_config_mem_write()) {
+        
+        Application_Callbacks_get_config_mem_write()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+        
+    }
+    return write_count;
 }
 
 uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {

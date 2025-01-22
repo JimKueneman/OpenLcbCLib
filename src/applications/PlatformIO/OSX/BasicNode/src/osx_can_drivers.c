@@ -300,7 +300,7 @@ uint8_olcb_t OSxCanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t
     return 0;
 }
 
-void OSxCanDriver_pause_can_rx()
+void OSxCanDriver_pause_can_rx(void)
 {
 
     pthread_mutex_lock(&can_mutex);
@@ -308,7 +308,7 @@ void OSxCanDriver_pause_can_rx()
     pthread_mutex_unlock(&can_mutex);
 }
 
-void OSxCanDriver_resume_can_rx()
+void OSxCanDriver_resume_can_rx(void)
 {
 
     pthread_mutex_lock(&can_mutex);

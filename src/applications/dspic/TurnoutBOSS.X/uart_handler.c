@@ -208,7 +208,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
         case 'M':
         case 'm':
 
-            TURNOUT_DRIVER = !TURNOUT_DRIVER;
+            TURNOUT_DRIVER_PIN = !TURNOUT_DRIVER_PIN;
 
             return;
 

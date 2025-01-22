@@ -25,284 +25,361 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * \turnoutboss_event_hander.c
+ * 
+ * Module pulls the linked board NodeID (if available) and the board type (BL/BR) from
+ * the configuration memory and then registers event IDs required by the board type.
+ * It also registers an Event callback and updates the TurnoutBoss_Signaling_States with
+ * any received events from nodes of interest (BAL/BAR/BL/BR).
  *
  * @author Jim Kueneman
  * @date 17 Jan 2025
  */
 
+#include <string.h>
+
 #include "turnoutboss_event_handler.h"
 
-#ifdef PLATFORMIO
-#include "src/openlcb/openlcb_utilities.h"
-#include "src/openlcb/openlcb_types.h"
-#include "src/openlcb/application.h"
-#else
+#include "turnoutboss_event_engine.h"
+
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_utilities.h"
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../openlcb/application.h"
+#include "../../../openlcb/application.h"
+#include "../../../openlcb/application_callbacks.h"
+#else
+#include "src/openlcb/openlcb_utilities.h"
+#include "src/openlcb/openlcb_types.h"
+#include "src/openlcb/application.h"
+#include "src/openlcb/application.h"
+#include "src/openlcb/application_callbacks.h"
 #endif
 
-#define BOARD_USAGE_CONFIG_MEM_ADDRESS 0x7F
-#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS 0x80
-#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS 0x88
 
-#define EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED 0x0000
-#define EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED 0x0001
-#define EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_OCCUPIED 0x0002
-#define EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_UNOCCUPIED 0x0003
-#define EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED 0x0004
-#define EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED 0x0005
-#define EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED 0x0006
-#define EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED 0x0007
-#define EVENT_SUFFIX_OCCUPANCY_TURNOUT_RIGHT_OCCUPIED 0x0008
-#define EVENT_SUFFIX_OCCUPANCY_TURNOUT_RIGHT_UNOCCUPIED 0x0009
-//#define EVENT_SUFFIX_OCCUPANCY_MAIN_RIGHT_OCCUPIED 0x0000
-//#define EVENT_SUFFIX_OCCUPANCY_MAIN_RIGHT_UNOCCUPIED 0x0001
+board_type_enum_t _board_location = BL;
+node_id_t _board_to_the_left = NULL_NODE_ID;
+node_id_t _board_to_the_right = NULL_EVENT_ID;
 
-#define EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL 0x0100
-#define EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING 0x0101
-#define EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_ACTIVE 0x0102
-#define EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_INACTIVE 0x0103
-#define EVENT_SUFFIX_TURNOUT_FEEDBACK_DIVERGING_ACTIVE 0x0104
-#define EVENT_SUFFIX_TURNOUT_FEEDBACK_DIVERGING_INACTIVE 0x0105
-#define EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_OPEN 0x0106
-#define EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_CLOSED 0x0107
-#define EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_OPEN 0x0108
-#define EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_CLOSED 0x0109
+void _handle_event_from_board_adjecent_left_for_bl(uint16_olcb_t suffix) {
 
-#define EVENT_SUFFIX_SIGNAL_A_RED 0x2000
-#define EVENT_SUFFIX_SIGNAL_A_YELLOW 0x2001
-#define EVENT_SUFFIX_SIGNAL_A_GREEN 0x2002
-#define EVENT_SUFFIX_SIGNAL_A_DARK 0x2003
+    switch (suffix) {
+        case EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED:
+        {
 
-#define EVENT_SUFFIX_SIGNAL_B_RED 0x2004
-#define EVENT_SUFFIX_SIGNAL_B_YELLOW 0x2005
-#define EVENT_SUFFIX_SIGNAL_B_GREEN 0x2006
-#define EVENT_SUFFIX_SIGNAL_B_DARK 0x2007
+            TurnoutBoss_Signaling_States.occupancy.OML = ACTIVE;
+            break;
 
-#define EVENT_SUFFIX_SIGNAL_C_RED 0x2008
-#define EVENT_SUFFIX_SIGNAL_C_YELLOW 0x2009
-#define EVENT_SUFFIX_SIGNAL_C_GREEN 0x200A
-#define EVENT_SUFFIX_SIGNAL_C_DARK 0x200B
+        }
+        case EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED:
+        {
 
-#define EVENT_SUFFIX_SIGNAL_D_RED 0x200C
-#define EVENT_SUFFIX_SIGNAL_D_YELLOW 0x200D
-#define EVENT_SUFFIX_SIGNAL_D_GREEN 0x200E
-#define EVENT_SUFFIX_SIGNAL_D_DARK 0x200F
+            TurnoutBoss_Signaling_States.occupancy.OML = INACTIVE;
+            break;
 
-#define EVENT_SUFFIX_SIGNAL_STATE_A_STOP 0x0300
-#define EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP 0x0301
-#define EVENT_SUFFIX_SIGNAL_STATE_B_STOP 0x0304
-#define EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP 0x0305
-#define EVENT_SUFFIX_SIGNAL_STATE_CD_STOP 0x0308
-#define EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP 0x0309
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_CD_STOP:
+        {
 
-#define EVENT_SUFFIX_VITAL_LOGIC_STATE_HELD 0x0500
-#define EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_LEFT 0x0501
-#define EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_RIGHT 0x0502
-#define EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_BOTH 0x0503
+            TurnoutBoss_Signaling_States.stop.ScdBALstop = ACTIVE;
+            break;
 
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP:
+        {
 
+            TurnoutBoss_Signaling_States.stop.ScdBALstop = INACTIVE;
+            break;
 
-node_id_t _extract_board_adjecent_node_id_from_config_mem(openlcb_node_t *_node, configuration_memory_buffer_t *_eventid_buffer, uint32_olcb_t _config_mem_address) {
-
-    node_id_t board_adjacent = NULL_NODE_ID;
-
-    // Read configuration memory to see if the Adjacent Left Board is available, it so create these Events
-    if (Application_read_configuration_memory(_node, _config_mem_address, LEN_EVENT_ID, _eventid_buffer) == LEN_EVENT_ID) {
-         
-        board_adjacent = Utilities_extract_node_id_from_config_mem_buffer(_eventid_buffer, 0);
-                
-        if ((board_adjacent > 0x00) && (board_adjacent < 0x1000000000000)) {
-
-            return board_adjacent;
         }
     }
 
-    return NULL_NODE_ID;
 }
 
-void _register_common_local_board_events(openlcb_node_t *_node) {
+void _handle_event_from_board_to_the_right_for_bl(uint16_olcb_t suffix) {
 
-    event_id_t _event_id_base = _node->id << 16;
+    switch (suffix) {
+
+        case EVENT_SUFFIX_SIGNAL_STATE_A_STOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SaBRstop = ACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SaBRstop = INACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SbBRstop = ACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SbBRstop = INACTIVE;
+            break;
+
+        }
+    }
+
+}
+
+void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
+
+    switch (suffix) {
+
+        case EVENT_SUFFIX_SIGNAL_STATE_A_STOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SaBLstop = ACTIVE;
+            break;
+
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SaBLstop = INACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
+        {
+            TurnoutBoss_Signaling_States.stop.SbBLstop = INACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.SbBLstop = INACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED:
+        {
+
+            TurnoutBoss_Signaling_States.occupancy.OMC = ACTIVE;
+            break;
+
+        }
+
+
+        case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED:
+        {
+
+            TurnoutBoss_Signaling_States.occupancy.OMC = INACTIVE;
+            break;
+
+        }
+
+        case EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED:
+        {
+
+            TurnoutBoss_Signaling_States.occupancy.OSC = ACTIVE;
+            break;
+        }
+
+        case EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED:
+        {
+
+            TurnoutBoss_Signaling_States.occupancy.OSC = INACTIVE;
+            break;
+
+        }
+    }
+
+}
+
+void _handle_event_from_board_adjecent_right_for_rb(uint16_olcb_t suffix) {
+
+    switch (suffix) {
+
+        case EVENT_SUFFIX_SIGNAL_STATE_CD_STOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.ScdBARstop = ACTIVE;
+            break;
+
+        }
+        case EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP:
+        {
+
+            TurnoutBoss_Signaling_States.stop.ScdBARstop = INACTIVE;
+            break;
+
+        }
+
+    }
+
+}
+
+void _event_pc_report_callback(openlcb_node_t* node, event_id_t* event_id) {
+
+    // Start the filtering of the events to find one we care about
+
+    node_id_t local_node_id = (node_id_t) (*event_id >> 16);
+    uint16_olcb_t event_id_suffix = (uint16_olcb_t) (*event_id);
+
+    if (local_node_id == _board_to_the_left) {
+
+        if (_board_location == BL) {
+
+            _handle_event_from_board_adjecent_left_for_bl(event_id_suffix);
+
+        } else {
+
+            _handle_event_from_board_left_for_rb(event_id_suffix);
+
+        }
+
+    } else if (local_node_id == _board_to_the_right) {
+
+        if (_board_location == BL) {
+
+            _handle_event_from_board_to_the_right_for_bl(event_id_suffix);
+
+        } else {
+
+            _handle_event_from_board_adjecent_right_for_rb(event_id_suffix);
+
+
+        }
+
+    }
+
+}
+
+
+void _register_producer(openlcb_node_t *node, event_id_t event, uint8_olcb_t offset, uint8_olcb_t core_signaling_event) {
     
-   
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL); // Turnout Command Normal
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING); // Turnout Command Diverging
+    Application_register_producer_eventid(node, event);
+    TurnoutBoss_Event_Engine.events[offset].state.valid_producer = TRUE;
+    TurnoutBoss_Event_Engine.events[offset].state.core_signaling = core_signaling_event;
+    
+}
 
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_ACTIVE); // Turnout Feedback Normal Active
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_INACTIVE); // Turnout Feedback Normal Inactive
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_DIVERGING_ACTIVE); // Turnout Feedback Diverging Active
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_DIVERGING_INACTIVE); // Turnout Feedback Diverging Inactive
-
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_OPEN); // Turnout Button Normal Closed
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_CLOSED); // Turnout Button Normal Open
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_OPEN); // Turnout Button Diverging Closed
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_CLOSED); // Turnout Button Diverging Open
+void _register_consumer(openlcb_node_t *node, event_id_t event, uint8_olcb_t offset, uint8_olcb_t core_signaling_event) {
   
+    Application_register_consumer_eventid(node, event);
+    TurnoutBoss_Event_Engine.events[offset].state.valid_consumer = TRUE;
+    TurnoutBoss_Event_Engine.events[offset].state.core_signaling = core_signaling_event;
     
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED); // Signal A Red
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW); // Signal A Yellow
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN); // Signal A Green
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_DARK); // Signal A Dark
-
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED); // Signal B Red
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW); // Signal B Yellow
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN); // Signal B Green
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_DARK); // Signal B Dark
-
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED); // Signal C Red
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW); // Signal C Yellow
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN); // Signal C Green
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_DARK); // Signal C Dark
-
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED); // Signal D Red
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW); // Signal D Yellow
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN); // Signal D Green
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_DARK); // Signal D Dark
-    
-
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP); // Signal A Stop
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP); // Signal A NonStop
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP); // Signal B Stop
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP); // Signal B NonStop
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP); // Signal CD Stop
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP); // Signal CD NonStop
-
-    // TODO:  Question out to Bob
-//    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_VITAL_LOGIC_STATE_HELD); // Held
-//    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_LEFT); // Cleared Left
-//    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_RIGHT); // Cleared Right
-//    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_BOTH); // Cleared Both
 }
 
-void _register_as_board_usage_left_events(openlcb_node_t *_node, node_id_t board_left, node_id_t board_right) {
+void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t board_adjacent_left, node_id_t board_right) {
 
-    event_id_t _event_id_base;
+        
+    if (board_adjacent_left) {
 
-    if (board_left) {
-        
-        _event_id_base = board_left << 16;
-        
-        // EventID that will come from the TurnoutBoss to the left of this one
-        
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED); // Mainline Occupied
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED); // Mainline Unoccupied
-        
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL); // Turnout Command Normal
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING); // Turnout Command Diverging
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_OPEN); // Button Normal Closed
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_CLOSED); // Button Normal Open
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_OPEN); // Button Diverging Closed
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_CLOSED); // Button Diverging Open
-        
-      
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED); // Signal A Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW); // Signal A Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN); // Signal A Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_DARK); // Signal A Dark
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED); // Signal B Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW); // Signal B Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN); // Signal B Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_DARK); // Signal B Dark
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED); // Signal C Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW); // Signal C Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN); // Signal C Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_DARK); // Signal C Dark
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED); // Signal D Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW); // Signal D Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN); // Signal D Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_DARK); // Signal D Dark
+        event_id_t _event_id_base_board_adjacent_left = board_adjacent_left << 16;
+
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE);
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE);   
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE);
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE);
+       
+    }
+
+    if (board_right) {
+
+        event_id_t _event_id_base_board_right = board_right << 16;
+
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE); 
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE);       
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE);     
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE);
+
     }
 
     // LH Defined Node Only specific Producers
-    _event_id_base = _node->id << 16;
-    
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_OCCUPIED); // Turnout Occupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_UNOCCUPIED); // Turnout UnOccupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED); // Center Main Occupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED); // Center Main UnOccupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED); // Center Siding Occupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED); // Center Siding UnOccupied
+    event_id_t _event_id_base = node->id << 16;
 
-    _register_common_local_board_events(_node);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, TRUE);
+ 
 }
 
-void _register_as_board_usage_right_events(openlcb_node_t *_node, node_id_t board_left, node_id_t board_right) {
+void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t board_left, node_id_t board_adjacent_right) {
 
-    event_id_t _event_id_base;
+
+
+    if (board_adjacent_right) {
+
+        event_id_t _event_id_base_board_adjacent_right = board_adjacent_right << 16;
+
+        _register_consumer(node, _event_id_base_board_adjacent_right + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE);
+        _register_consumer(node, _event_id_base_board_adjacent_right + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE);
+
+    }
 
     if (board_left) {
 
-        _event_id_base = board_left << 16;
-        
-        // EventID that will come from the TurnoutBoss to the left of this one
-        
+        event_id_t _event_id_base_board_left = board_left << 16;
 
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED); // Center Main Occupied
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED); // Center Unoccupied
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED); // Center Siding Occupied
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED); // Center Siding Unoccupied
-        
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL); // Turnout Command Normal
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING); // Turnout Command Diverging
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_OPEN); // Button Normal Closed
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_CLOSED); // Button Normal Open
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_OPEN); // Button Diverging Closed
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_CLOSED); // Button Diverging Open
-        
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED); // Signal A Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW); // Signal A Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN); // Signal A Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_DARK); // Signal A Dark
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED); // Signal B Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW); // Signal B Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN); // Signal B Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_DARK); // Signal B Dark
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED); // Signal C Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW); // Signal C Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN); // Signal C Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_DARK); // Signal C Dark
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED); // Signal D Red
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW); // Signal D Yellow
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN); // Signal D Green
-        Application_register_consumer_eventid(_node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_DARK); // Signal D Dark
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED, TRUE);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, TRUE);
+
     }
 
     // RH Defined Node ONLY specific Producers
-    _event_id_base = _node->id << 16;
-    
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED); // Turnout Occupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED); // Turnout UnOccupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_RIGHT_OCCUPIED); // Mainline Occupied
-    Application_register_producer_eventid(_node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_RIGHT_UNOCCUPIED); // Mainline UnOccupied
 
-    _register_common_local_board_events(_node);
+    event_id_t _event_id_base = node->id << 16;
+
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE);
+
 }
 
-void TurnoutBoss_Event_Handler_register_events(openlcb_node_t *_node) {
-
-    configuration_memory_buffer_t _eventid_buffer;
+void _board_register_general_events(openlcb_node_t *node) {
     
-    node_id_t board_adjacent_left = _extract_board_adjecent_node_id_from_config_mem(_node, &_eventid_buffer, BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS);
-    node_id_t board_adjacent_right = _extract_board_adjecent_node_id_from_config_mem(_node, &_eventid_buffer, BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS);
+    
+}
+
+void TurnoutBoss_Event_Handler_initialize(openlcb_node_t *node, board_type_enum_t board_location, node_id_t bl, node_id_t br) {
+
+    _board_location = board_location;
+    _board_to_the_left = bl;
+    _board_to_the_right = br;
     
     // Clear the events just in case
-    Application_clear_consumer_eventids(_node);
-    Application_clear_producer_eventids(_node);
+    Application_clear_consumer_eventids(node);
+    Application_clear_producer_eventids(node);
 
-    if (Application_read_configuration_memory(_node, BOARD_USAGE_CONFIG_MEM_ADDRESS, 1, &_eventid_buffer) == 1) {
-        switch (_eventid_buffer[0]) {
-            case 0:
-            {
-                _register_as_board_usage_left_events(_node, board_adjacent_left, board_adjacent_right);
-                break;
-            }
-            case 1:
-            {
-                _register_as_board_usage_right_events(_node, board_adjacent_left, board_adjacent_right);
-                break;
-            }
-        }
+    if (_board_location == BL) {
+
+        _board_left_register_core_signaling_events(node, _board_to_the_left, _board_to_the_right);
+
+    } else {
+
+        _board_right_register_core_signaling_events(node, _board_to_the_left, _board_to_the_right);
+
     }
+    
+    _board_register_general_events(node);
+
+    Application_Callbacks_set_event_pc_report(&_event_pc_report_callback);
+
 }
+

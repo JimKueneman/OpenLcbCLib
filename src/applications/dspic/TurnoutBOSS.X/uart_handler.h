@@ -38,7 +38,11 @@
 #ifndef __UART_HANDLER__
 #define	__UART_HANDLER__
 
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#endif
 
 #ifdef	__cplusplus
 extern "C" {

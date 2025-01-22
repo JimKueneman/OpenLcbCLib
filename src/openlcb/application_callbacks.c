@@ -48,6 +48,7 @@ callback_event_identified_t callback_event_producer_identified_clear_func = (voi
 callback_event_identified_t callback_event_producer_identified_set_func = (void*) 0;
 callback_event_pc_report_t callback_event_pc_report_func = (void*) 0;
 callback_event_pc_report_with_payload_t callback_event_pc_report_with_payload_func = (void*) 0;
+callback_config_mem_write_t callback_config_mem_write_func = (void*) 0;
 
 void Application_Callbacks_set_alias_change(callback_alias_change_t alias_change_callback) {
 
@@ -155,4 +156,16 @@ callback_event_pc_report_with_payload_t Application_Callbacks_get_event_pc_repor
 
     return callback_event_pc_report_with_payload_func;
 
+}
+
+void Application_Callbacks_set_config_mem_write(callback_config_mem_write_t config_mem_write_callback) {
+    
+    callback_config_mem_write_func = config_mem_write_callback;
+    
+}
+
+callback_config_mem_write_t Application_Callbacks_get_config_mem_write(void) {
+    
+    return callback_config_mem_write_func;
+    
 }

@@ -58,6 +58,9 @@ typedef void (*callback_event_pc_report_t)(openlcb_node_t*, event_id_t*);
 // Incoming PCR Event with Payload
 typedef void (*callback_event_pc_report_with_payload_t)(openlcb_node_t*, event_id_t*, uint8_olcb_t count, event_payload_t* payload);
 
+// Configuration Memory Write occured
+typedef void (*callback_config_mem_write_t)(uint32_olcb_t address, uint8_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer);
+
 /**
 * When a node is created and it allocates and alias ID (or if it detects a collision and 
 *        allocates a new alias ID this callback is called with the new value)
@@ -91,6 +94,9 @@ extern callback_event_pc_report_t Application_Callbacks_get_event_pc_report(void
 
 extern void Application_Callbacks_set_event_pc_report_with_payload(callback_event_pc_report_with_payload_t event_pc_report_callback);
 extern callback_event_pc_report_with_payload_t Application_Callbacks_get_event_pc_report_with_payload(void);
+
+extern void Application_Callbacks_set_config_mem_write(callback_config_mem_write_t config_mem_write_callback);
+extern callback_config_mem_write_t Application_Callbacks_get_config_mem_write(void);
 
 #ifdef	__cplusplus
 }

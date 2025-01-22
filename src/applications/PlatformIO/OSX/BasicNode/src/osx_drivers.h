@@ -57,9 +57,9 @@ extern "C"
 
     extern uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
 
-    extern void OSxDrivers_pause_100ms_timer();
+    extern void OSxDrivers_pause_100ms_timer(void);
 
-    extern void OSxDrivers_resume_100ms_timer();
+    extern void OSxDrivers_resume_100ms_timer(void);
 
     extern uint8_olcb_t OSxDrivers_100ms_is_connected(void);
 

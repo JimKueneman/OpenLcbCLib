@@ -53,9 +53,13 @@ extern uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t* node,
 
 extern uint16_olcb_t Application_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
 
+extern uint8_olcb_t Application_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
+
 
 // Configuration Memory helpers
 extern uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
+
+
 
 #ifdef	__cplusplus
 }

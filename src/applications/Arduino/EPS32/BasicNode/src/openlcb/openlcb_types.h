@@ -54,7 +54,7 @@ extern "C" {
 #define USER_DEFINED_NODE_BUFFER_DEPTH                16  // USER DEFINED 
 
 
-#define USER_DEFINED_CDI_LENGTH                   5000
+#define USER_DEFINED_CDI_LENGTH                   6000
 #define USER_DEFINED_FDI_LENGTH                   1000
 
 #define USER_DEFINED_PRODUCER_COUNT         48
@@ -74,6 +74,9 @@ extern "C" {
 
 #define FALSE 0
 #define TRUE  1
+    
+#define NORMAL TRUE
+#define DIVERGING FALSE
 
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
@@ -127,10 +130,10 @@ extern "C" {
     typedef struct {
         uint8_olcb_t allocated : 1; // message has been allocated and is in use
         uint8_olcb_t inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
-    } openlcb_msg_state;
+    } openlcb_msg_state_t;
 
     typedef struct {
-        openlcb_msg_state state;
+        openlcb_msg_state_t state;
         uint16_olcb_t mti;
         uint16_olcb_t source_alias;
         uint16_olcb_t dest_alias;

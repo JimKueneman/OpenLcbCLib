@@ -86,6 +86,9 @@
 #include "../../../openlcb/application_callbacks.h"
 #include "node_parameters.h"
 #include "turnoutboss_event_handler.h"
+#include "turnoutboss_hardware_handler.h"
+#include "turnoutboss_signaling_states.h"
+#include "turnoutboss_event_engine.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
 #include "turnoutboss_drivers.h"
@@ -114,7 +117,7 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 int button_latch = 0;
 
 int main(void) {
-
+    
     // RB7 and RB8 are test outputs
     // we also have the LED variable for RB9 and the LED output
     _TRISB7 = 0;
@@ -152,16 +155,23 @@ int main(void) {
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
 
     Application_Callbacks_set_alias_change(&_alias_change_callback);
-
-
+    
+ 
 #endif
 
     printf("\nBooted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
     
-    TurnoutBoss_Event_Handler_register_events(node);
-
+    TurnoutBoss_Signaling_States_initialize(node);  
+    TurnoutBoss_Event_Handler_initialize(node, 
+            TurnoutBoss_Signaling_States_board_location, 
+            TurnoutBoss_Signaling_States_board_to_the_left, 
+            TurnoutBoss_Signaling_States_board_to_the_right); 
+    TurnoutBoss_Hardware_Handler_initalize();
+    TurnoutBoss_Event_Engine_initialize();
+   
+   
 #ifdef _SIMULATOR_
 
 
@@ -171,15 +181,15 @@ int main(void) {
     while (1) {
 
 
-        if (!TURNOUT_PUSHBUTTON_STRAIGHT && !button_latch) {
+        if (!TURNOUT_PUSHBUTTON_NORMAL_PIN && !button_latch) {
 
             button_latch = 1;
-            TURNOUT_DRIVER = !TURNOUT_DRIVER;
+            TURNOUT_DRIVER_PIN = !TURNOUT_DRIVER_PIN;
 
 
         } else {
 
-            if (TURNOUT_PUSHBUTTON_STRAIGHT) {
+            if (TURNOUT_PUSHBUTTON_NORMAL_PIN) {
 
                 button_latch = 0;
 
@@ -189,24 +199,28 @@ int main(void) {
         switch (track_detector_to_led) {
             case 1:
 
-                LED = TRACK_DETECT_1;
+                LED = TRACK_DETECT_1_PIN;
                 break;
 
             case 2:
 
-                LED = TRACK_DETECT_2;
+                LED = TRACK_DETECT_2_PIN;
                 break;
 
             case 3:
 
-                LED = TRACK_DETECT_3;
+                LED = TRACK_DETECT_3_PIN;
                 break;
         }
 
 
 
-        CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();)
+        CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
+        
 
+        TurnoutBoss_Hardware_Handler_scan_for_changes();
+        
+        TurnoutBoss_Event_Engine_run(node);
 
     }
 

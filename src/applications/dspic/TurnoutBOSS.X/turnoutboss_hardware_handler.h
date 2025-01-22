@@ -24,36 +24,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_event_handler.h
+ * \file turnoutboss_hardware_handler.h
  *
- * Typedefs and various constants for the library.
+ * Scans the TurnoutBoss Hardware States and updates the TurnoutBoss_Signaling_States
+ * 
  *
  * @author Jim Kueneman
- * @date 17 Jan 2025
+ * @date 19 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTOBOSS_EVENT_HANDLER__
-#define	__TURNOUTOBOSS_EVENT_HANDLER__
+#ifndef __TURNOUTBOSS_HARDWARE_SIGNALING_HANDLER__
+#define	__TURNOUTBOSS_HARDWARE_SIGNALING_HANDLER__
 
-
-#ifdef PLATFORMIO
-#include "src/openlcb/openlcb_types.h"
-#else
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
-#endif
-
+#include "../../../openlcb/openlcb_node.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_node.h"
+#endif 
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void TurnoutBoss_Event_Handler_initialize(openlcb_node_t *node);
+    extern void TurnoutBoss_Hardware_Handler_initalize(void);
+    
+    extern void TurnoutBoss_Hardware_Handler_scan_for_changes(void);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TURNOUTOBOSS_EVENT_HANDLER__ */
+#endif	/* __TURNOUTBOSS_HARDWARE_SIGNALING_HANDLER__ */
 
