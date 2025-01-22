@@ -130,41 +130,12 @@ typedef struct {
 } signaling_state_t;
 
 
-typedef enum {
-    BL,
-    BR
-
-} board_type_enum_t;
-
-typedef enum {
-    dualPushbuttons,
-    singlePushbutton
-
-} pushbutton_type_enum_t;
-
-typedef enum {
-    unusedTurnoutFeedback,
-    singleTurnoutFeedback,
-    dualTurnoutFeedback
-
-} turnout_feedback_type_enum_t;
-
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     extern signaling_state_t TurnoutBoss_Signaling_States;
-
-    extern board_type_enum_t TurnoutBoss_Signaling_States_board_location;
-
-    extern pushbutton_type_enum_t TurnoutBoss_Turnout_Pushbutton_Type;
-
-    extern turnout_feedback_type_enum_t TurnoutBoss_Turnout_Feedback_Type;
-
-    extern node_id_t TurnoutBoss_Signaling_States_board_to_the_left;
-
-    extern node_id_t TurnoutBoss_Signaling_States_board_to_the_right;
     
     extern void TurnoutBoss_Signaling_States_initialize(openlcb_node_t *node);
     

@@ -89,6 +89,7 @@
 #include "turnoutboss_hardware_handler.h"
 #include "turnoutboss_signaling_states.h"
 #include "turnoutboss_event_engine.h"
+#include "turnoutboss_board_configuration.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
 #include "turnoutboss_drivers.h"
@@ -97,8 +98,6 @@
 #include "../../../openlcb/openlcb_utilities.h"
 #include "debug.h"
 
-
-#include "debug.h"
 
 uint64_olcb_t node_id_base = 0x0507010100AA;
 
@@ -163,13 +162,21 @@ int main(void) {
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
     
+    // Set the default value for the Signal State structure
     TurnoutBoss_Signaling_States_initialize(node);  
-    TurnoutBoss_Event_Handler_initialize(node, 
-            TurnoutBoss_Signaling_States_board_location, 
-            TurnoutBoss_Signaling_States_board_to_the_left, 
-            TurnoutBoss_Signaling_States_board_to_the_right); 
+    // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
+    TurnoutBoss_Board_Configuration_initialize(node);
+    // Set the hardware interface structures (input filters, etc)
     TurnoutBoss_Hardware_Handler_initalize();
+    // Set the event engine so when states change any outgoing events can be flags to send
     TurnoutBoss_Event_Engine_initialize();
+    
+    // Build the dynamic events and the callback to handle incoming events
+    TurnoutBoss_Event_Handler_initialize(node, 
+            TurnoutBoss_Board_Configuration_board_location, 
+            TurnoutBoss_Board_Configuration_board_to_the_left, 
+            TurnoutBoss_Board_Configuration_board_to_the_right); 
+    
    
    
 #ifdef _SIMULATOR_

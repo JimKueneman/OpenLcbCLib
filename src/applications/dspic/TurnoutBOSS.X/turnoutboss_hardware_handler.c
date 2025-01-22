@@ -40,6 +40,7 @@
 #include "turnoutboss_drivers.h"
 #include "turnoutboss_signaling_states.h"
 #include "turnoutboss_event_engine.h"
+#include "turnoutboss_board_configuration.h"
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -47,11 +48,11 @@
 #include "src/openlcb/openlcb_types.h"
 #endif
 
-#define PRINT_DEBUG
+//#define PRINT_DEBUG
 
 typedef struct {
-    uint8_olcb_t state : 1;
-    uint8_olcb_t filter : 4;
+    uint8_olcb_t state : 1; // State is set or not
+    uint8_olcb_t filter : 4; // counter for the digital filter while reading IO pins
 
 } input_filter_t;
 
@@ -132,7 +133,7 @@ void _check_occupancy_state_changes(void) {
         if (_increment_filter(&_input_filters.occupancy_1)) {
             // State has changed to high
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Event_Engine.events[OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_OCCUPIED].state.send = TRUE;
                 TurnoutBoss_Signaling_States.occupancy.OTL = TRUE;
@@ -157,7 +158,7 @@ void _check_occupancy_state_changes(void) {
         if (_decrement_filter(&_input_filters.occupancy_1)) {
 
             // State has changed to low
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Event_Engine.events[OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_UNOCCUPIED].state.send = TRUE;
                 TurnoutBoss_Signaling_States.occupancy.OTL = FALSE;
@@ -184,7 +185,7 @@ void _check_occupancy_state_changes(void) {
         if (_increment_filter(&_input_filters.occupancy_2)) {
             // State has changed to high
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Event_Engine.events[OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED].state.send = TRUE;
                 TurnoutBoss_Signaling_States.occupancy.OMC = TRUE;
@@ -209,7 +210,7 @@ void _check_occupancy_state_changes(void) {
         if (_decrement_filter(&_input_filters.occupancy_2)) {
             // State has changed to low
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Event_Engine.events[OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED].state.send = TRUE;
                 TurnoutBoss_Signaling_States.occupancy.OMC = FALSE;
@@ -237,7 +238,7 @@ void _check_occupancy_state_changes(void) {
         if (_increment_filter(&_input_filters.occupancy_3)) {
             // State has changed to high
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Event_Engine.events[OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED].state.send = TRUE;
                 TurnoutBoss_Signaling_States.occupancy.OSC = TRUE;
@@ -261,7 +262,7 @@ void _check_occupancy_state_changes(void) {
         if (_decrement_filter(&_input_filters.occupancy_3)) {
             // State has changed to low
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Event_Engine.events[OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_UNOCCUPIED].state.send = TRUE;
                 TurnoutBoss_Signaling_States.occupancy.OSC = FALSE;
@@ -294,7 +295,7 @@ void _check_pushbutton_state_changes_dualpushbuttons(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_CLOSED].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLC = NORMAL;
 
@@ -316,7 +317,7 @@ void _check_pushbutton_state_changes_dualpushbuttons(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_OPEN].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
             } else {
 
@@ -336,7 +337,7 @@ void _check_pushbutton_state_changes_dualpushbuttons(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_CLOSED].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLC = DIVERGING;
 
@@ -358,7 +359,7 @@ void _check_pushbutton_state_changes_dualpushbuttons(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_OPEN].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
             } else {
 
@@ -375,7 +376,7 @@ void _check_pushbutton_state_changes_dualpushbuttons(void) {
 
 void _toggle_turnout_command_state(void) {
 
-    if (TurnoutBoss_Signaling_States_board_location == BL) {
+    if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
         if (TurnoutBoss_Signaling_States.turnout.TLC == NORMAL) {
 
@@ -469,7 +470,7 @@ void _check_pushbutton_state_changes_singlepushbutton(void) {
 
 void _check_pushbutton_state_changes(void) {
 
-    switch (TurnoutBoss_Turnout_Pushbutton_Type) {
+    switch (TurnoutBoss_Board_Configuration_pushbutton_type) {
 
         case dualPushbuttons:
             _check_pushbutton_state_changes_dualpushbuttons();
@@ -490,7 +491,7 @@ void _check_turnout_position_state_changes_dualfeedback(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLO = NORMAL;
 
@@ -528,7 +529,7 @@ void _check_turnout_position_state_changes_dualfeedback(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLO = DIVERGING;
 
@@ -570,7 +571,7 @@ void _check_turnout_position_state_changes_singlefeedback(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLO = NORMAL;
 
@@ -593,7 +594,7 @@ void _check_turnout_position_state_changes_singlefeedback(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_INACTIVE].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLO = DIVERGING;
 
@@ -618,7 +619,7 @@ void _check_turnout_position_state_changes_singlefeedback(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLO = NORMAL;
 
@@ -640,7 +641,7 @@ void _check_turnout_position_state_changes_singlefeedback(void) {
 
             TurnoutBoss_Event_Engine.events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_INACTIVE].state.send = TRUE;
 
-            if (TurnoutBoss_Signaling_States_board_location == BL) {
+            if (TurnoutBoss_Board_Configuration_board_location == BL) {
 
                 TurnoutBoss_Signaling_States.turnout.TLO = DIVERGING;
 
@@ -662,7 +663,7 @@ void _check_turnout_position_state_changes_singlefeedback(void) {
 
 void _check_turnout_position_state_changes(void) {
 
-    switch (TurnoutBoss_Turnout_Feedback_Type) {
+    switch (TurnoutBoss_Board_Configuration_feedback_type) {
 
         case unusedTurnoutFeedback:
             return;

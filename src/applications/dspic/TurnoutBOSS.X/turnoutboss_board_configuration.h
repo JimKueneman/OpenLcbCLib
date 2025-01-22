@@ -24,24 +24,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_event_handler.h
+ * \file turnoutboss_board_configuration.h
  *
- * Registers event IDs required by the board type.
- * It also registers an Event callback and updates the TurnoutBoss_Signaling_States with
- * any received events from nodes of interest (BAL/BAR/BL/BR).
+ * Module pulls the linked board NodeID (if available) and the board type (BL/BR) from
+ * the configuration memory.  It also maintains the state of the signals that are updated
+ * from the TurnoutBoss_Event_Handler module for incoming events from linked Left and 
+ * Right TurnoutBosses
  *
  * @author Jim Kueneman
- * @date 17 Jan 2025
+ * @date 22 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_EVENT_HANDLER__
-#define	__TURNOUTBOSS_EVENT_HANDLER__
-
-#include "turnoutboss_signaling_states.h"
-
-#include "turnoutboss_board_configuration.h"
+#ifndef __TURNOUTBOSS_BOARD_CONFIGURATION__
+#define	__TURNOUTBOSS_BOARD_CONFIGURATION__
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -50,15 +47,47 @@
 #endif
 
 
+typedef enum {
+    BL,
+    BR
+
+} board_type_enum_t;
+
+typedef enum {
+    dualPushbuttons,
+    singlePushbutton
+
+} pushbutton_type_enum_t;
+
+typedef enum {
+    unusedTurnoutFeedback,
+    singleTurnoutFeedback,
+    dualTurnoutFeedback
+
+} turnout_feedback_type_enum_t;
+
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void TurnoutBoss_Event_Handler_initialize(openlcb_node_t *node, board_type_enum_t board_location, node_id_t bl, node_id_t br);
+    extern board_type_enum_t TurnoutBoss_Board_Configuration_board_location;
+
+    extern pushbutton_type_enum_t TurnoutBoss_Board_Configuration_pushbutton_type;
+
+    extern turnout_feedback_type_enum_t TurnoutBoss_Board_Configuration_feedback_type;
+
+    extern node_id_t TurnoutBoss_Board_Configuration_board_to_the_left;
+
+    extern node_id_t TurnoutBoss_Board_Configuration_board_to_the_right;
+    
+    extern void TurnoutBoss_Board_Configuration_initialize(openlcb_node_t *node);
+    
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TURNOUTBOSS_EVENT_HANDLER__ */
+#endif	/* __TURNOUTBOSS_BOARD_CONFIGURATION__ */
 

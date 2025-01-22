@@ -134,7 +134,6 @@ void TurnoutBoss_Event_Engine_initialize() {
 
     }
 
-
 }
 
 void _next_event(void) {

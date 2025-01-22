@@ -68,6 +68,7 @@
         <itemPath>turnoutboss_signaling_states.h</itemPath>
         <itemPath>turnoutboss_hardware_handler.h</itemPath>
         <itemPath>turnoutboss_event_engine.h</itemPath>
+        <itemPath>turnoutboss_board_configuration.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -146,6 +147,7 @@
         <itemPath>turnoutboss_signaling_states.c</itemPath>
         <itemPath>turnoutboss_hardware_handler.c</itemPath>
         <itemPath>turnoutboss_event_engine.c</itemPath>
+        <itemPath>turnoutboss_board_configuration.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
