@@ -163,19 +163,19 @@ int main(void) {
     printf("Node Created\n");
     
     // Set the default value for the Signal State structure
-    TurnoutBoss_Signaling_States_initialize(node);  
+    TurnoutBossSignalingStates_initialize(node);  
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBoss_Board_Configuration_initialize(node);
     // Set the hardware interface structures (input filters, etc)
-    TurnoutBoss_Hardware_Handler_initalize();
+    TurnoutBossHardwareHandler_initalize();
     // Set the event engine so when states change any outgoing events can be flags to send
-    TurnoutBoss_Event_Engine_initialize();
+    TurnoutBossEventEngine_initialize();
     
     // Build the dynamic events and the callback to handle incoming events
     TurnoutBoss_Event_Handler_initialize(node, 
-            TurnoutBoss_Board_Configuration_board_location, 
-            TurnoutBoss_Board_Configuration_board_to_the_left, 
-            TurnoutBoss_Board_Configuration_board_to_the_right); 
+            TurnoutBossBoardConfiguration_board_location, 
+            TurnoutBossBoardConfiguration_board_to_the_left, 
+            TurnoutBossBoardConfiguration_board_to_the_right); 
     
    
    
@@ -225,9 +225,9 @@ int main(void) {
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
         
 
-        TurnoutBoss_Hardware_Handler_scan_for_changes();
+        TurnoutBossHardwareHandler_scan_for_changes();
         
-        TurnoutBoss_Event_Engine_run(node);
+        TurnoutBossEventEngine_run(node);
 
     }
 

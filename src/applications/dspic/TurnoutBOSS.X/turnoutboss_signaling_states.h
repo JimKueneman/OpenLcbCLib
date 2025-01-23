@@ -135,9 +135,9 @@ typedef struct {
 extern "C" {
 #endif /* __cplusplus */
 
-    extern signaling_state_t TurnoutBoss_Signaling_States;
+    extern signaling_state_t TurnoutBossSignalingStates;
     
-    extern void TurnoutBoss_Signaling_States_initialize(openlcb_node_t *node);
+    extern void TurnoutBossSignalingStates_initialize(openlcb_node_t *node);
     
     
 

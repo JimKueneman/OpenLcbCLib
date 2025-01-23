@@ -46,10 +46,11 @@
 #endif
 
 
-send_event_engine_t TurnoutBoss_Event_Engine = {
+send_event_engine_t TurnoutBossEventEngine = {
 
     .current_index = 0,
 
+    // 12
     .events[OFFSET_EVENT_OCCUPANCY_MAIN_LEFT_OCCUPIED].suffix = EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED,
     .events[OFFSET_EVENT_OCCUPANCY_MAIN_LEFT_UNOCCUPIED].suffix = EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED,
     .events[OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_OCCUPIED].suffix = EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_OCCUPIED,
@@ -63,6 +64,7 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_OCCUPANCY_MAIN_RIGHT_OCCUPIED].suffix = EVENT_SUFFIX_OCCUPANCY_MAIN_RIGHT_OCCUPIED,
     .events[OFFSET_EVENT_OCCUPANCY_MAIN_RIGHT_UNOCCUPIED].suffix = EVENT_SUFFIX_OCCUPANCY_MAIN_RIGHT_UNOCCUPIED,
 
+    // 13
     .events[OFFSET_EVENT_TURNOUT_COMMAND_NORMAL].suffix = EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL,
     .events[OFFSET_EVENT_TURNOUT_COMMAND_DIVERGING].suffix = EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING,
     .events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE].suffix = EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_ACTIVE,
@@ -73,7 +75,11 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_CLOSED].suffix = EVENT_SUFFIX_TURNOUT_BUTTON_NORMAL_CLOSED,
     .events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_OPEN].suffix = EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_OPEN,
     .events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_CLOSED].suffix = EVENT_SUFFIX_TURNOUT_BUTTON_DIVERGING_CLOSED,
-
+    .events[OFFSET_EVENT_TURNOUT_IS_SET_NORMAL].suffix = EVENT_SUFFIX_TURNOUT_IS_SET_NORMAL,
+    .events[OFFSET_EVENT_TURNOUT_IS_SET_DIVERGING].suffix = EVENT_SUFFIX_TURNOUT_IS_SET_DIVERGING,
+    .events[OFFSET_EVENT_TURNOUT_IS_SET_IN_MOTION].suffix = EVENT_SUFFIX_TURNOUT_IS_SET_IN_MOTION,
+    
+    // 8
     .events[OFFSET_EVENT_SIGNAL_A_RED].suffix = EVENT_SUFFIX_SIGNAL_A_RED,
     .events[OFFSET_EVENT_SIGNAL_A_YELLOW].suffix = EVENT_SUFFIX_SIGNAL_A_YELLOW,
     .events[OFFSET_EVENT_SIGNAL_A_GREEN].suffix = EVENT_SUFFIX_SIGNAL_A_GREEN,
@@ -83,6 +89,7 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_SIGNAL_A_HELD].suffix = EVENT_SUFFIX_SIGNAL_A_HELD,
     .events[OFFSET_EVENT_SIGNAL_A_NOT_HELD].suffix = EVENT_SUFFIX_SIGNAL_A_NOT_HELD,
 
+    // 8
     .events[OFFSET_EVENT_SIGNAL_B_RED].suffix = EVENT_SUFFIX_SIGNAL_B_RED,
     .events[OFFSET_EVENT_SIGNAL_B_YELLOW].suffix = EVENT_SUFFIX_SIGNAL_B_YELLOW,
     .events[OFFSET_EVENT_SIGNAL_B_GREEN].suffix = EVENT_SUFFIX_SIGNAL_B_GREEN,
@@ -92,6 +99,7 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_SIGNAL_B_HELD].suffix = EVENT_SUFFIX_SIGNAL_B_HELD,
     .events[OFFSET_EVENT_SIGNAL_B_NOT_HELD].suffix = EVENT_SUFFIX_SIGNAL_B_NOT_HELD,
 
+    // 8
     .events[OFFSET_EVENT_SIGNAL_C_RED].suffix = EVENT_SUFFIX_SIGNAL_C_RED,
     .events[OFFSET_EVENT_SIGNAL_C_YELLOW].suffix = EVENT_SUFFIX_SIGNAL_C_YELLOW,
     .events[OFFSET_EVENT_SIGNAL_C_GREEN].suffix = EVENT_SUFFIX_SIGNAL_C_GREEN,
@@ -101,7 +109,7 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_SIGNAL_C_HELD].suffix = EVENT_SUFFIX_SIGNAL_C_HELD,
     .events[OFFSET_EVENT_SIGNAL_C_NOT_HELD].suffix = EVENT_SUFFIX_SIGNAL_C_NOT_HELD,
 
-
+     // 8
     .events[OFFSET_EVENT_SIGNAL_D_RED].suffix = EVENT_SUFFIX_SIGNAL_D_RED,
     .events[OFFSET_EVENT_SIGNAL_D_YELLOW].suffix = EVENT_SUFFIX_SIGNAL_D_YELLOW,
     .events[OFFSET_EVENT_SIGNAL_D_GREEN].suffix = EVENT_SUFFIX_SIGNAL_D_GREEN,
@@ -111,6 +119,7 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_SIGNAL_D_HELD].suffix = EVENT_SUFFIX_SIGNAL_D_HELD,
     .events[OFFSET_EVENT_SIGNAL_D_NOT_HELD].suffix = EVENT_SUFFIX_SIGNAL_D_NOT_HELD,
 
+    // 6
     .events[OFFSET_EVENT_SIGNAL_STATE_A_STOP].suffix = EVENT_SUFFIX_SIGNAL_STATE_A_STOP,
     .events[OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP].suffix = EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP,
     .events[OFFSET_EVENT_SIGNAL_STATE_B_STOP].suffix = EVENT_SUFFIX_SIGNAL_STATE_B_STOP,
@@ -118,6 +127,7 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
     .events[OFFSET_EVENT_SIGNAL_STATE_CD_STOP].suffix = EVENT_SUFFIX_SIGNAL_STATE_CD_STOP,
     .events[OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP].suffix = EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP,
 
+    // 4
     .events[OFFSET_EVENT_VITAL_LOGIC_STATE_HELD].suffix = EVENT_SUFFIX_VITAL_LOGIC_STATE_HELD,
     .events[OFFSET_EVENT_VITAL_LOGIC_STATE_CLEARED_LEFT].suffix = EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_LEFT,
     .events[OFFSET_EVENT_VITAL_LOGIC_STATE_CLEARED_RIGHT].suffix = EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_RIGHT,
@@ -125,12 +135,12 @@ send_event_engine_t TurnoutBoss_Event_Engine = {
 
 };
 
-void TurnoutBoss_Event_Engine_initialize() {
+void TurnoutBossEventEngine_initialize() {
 
     for (int i = 0; i < MAX_EVENT_SUFFIX; i++) {
 
-        TurnoutBoss_Event_Engine.events[i].state.send = FALSE;
-        TurnoutBoss_Event_Engine.events[i].state.valid_producer = FALSE;
+        TurnoutBossEventEngine.events[i].state.send = FALSE;
+        TurnoutBossEventEngine.events[i].state.valid_producer = FALSE;
 
     }
 
@@ -138,23 +148,23 @@ void TurnoutBoss_Event_Engine_initialize() {
 
 void _next_event(void) {
 
-    TurnoutBoss_Event_Engine.current_index = TurnoutBoss_Event_Engine.current_index + 1;
-    if (TurnoutBoss_Event_Engine.current_index >= MAX_EVENT_SUFFIX)
-        TurnoutBoss_Event_Engine.current_index = 0;
+    TurnoutBossEventEngine.current_index = TurnoutBossEventEngine.current_index + 1;
+    if (TurnoutBossEventEngine.current_index >= MAX_EVENT_SUFFIX)
+        TurnoutBossEventEngine.current_index = 0;
 
 }
 
-void TurnoutBoss_Event_Engine_run(openlcb_node_t *node) {
+void TurnoutBossEventEngine_run(openlcb_node_t *node) {
 
     event_id_t event_id;
 
-    if (TurnoutBoss_Event_Engine.events[TurnoutBoss_Event_Engine.current_index].state.send) {
+    if (TurnoutBossEventEngine.events[TurnoutBossEventEngine.current_index].state.send) {
 
-        event_id = (node->id << 16) + TurnoutBoss_Event_Engine.events[TurnoutBoss_Event_Engine.current_index].suffix;
+        event_id = (node->id << 16) + TurnoutBossEventEngine.events[TurnoutBossEventEngine.current_index].suffix;
 
         if (Application_send_event_pc_report(node, event_id)) {
 
-            TurnoutBoss_Event_Engine.events[TurnoutBoss_Event_Engine.current_index].state.send = FALSE;
+            TurnoutBossEventEngine.events[TurnoutBossEventEngine.current_index].state.send = FALSE;
 
             _next_event();
 

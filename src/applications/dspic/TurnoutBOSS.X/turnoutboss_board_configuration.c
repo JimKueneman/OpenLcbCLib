@@ -66,11 +66,11 @@
 
 //#define PRINT_DEBUG
 
-node_id_t TurnoutBoss_Board_Configuration_board_to_the_left = NULL_NODE_ID;
-node_id_t TurnoutBoss_Board_Configuration_board_to_the_right = NULL_NODE_ID;
-board_type_enum_t TurnoutBoss_Board_Configuration_board_location = BL;
-pushbutton_type_enum_t TurnoutBoss_Board_Configuration_pushbutton_type = dualPushbuttons; // 2 pushbuttons
-turnout_feedback_type_enum_t TurnoutBoss_Board_Configuration_feedback_type = singleTurnoutFeedback; // 
+node_id_t TurnoutBossBoardConfiguration_board_to_the_left = NULL_NODE_ID;
+node_id_t TurnoutBossBoardConfiguration_board_to_the_right = NULL_NODE_ID;
+board_type_enum_t TurnoutBossBoardConfiguration_board_location = BL;
+pushbutton_type_enum_t TurnoutBossBoardConfiguration_pushbutton_type = dualPushbuttons; // 2 pushbuttons
+turnout_feedback_type_enum_t TurnoutBossBoardConfiguration_feedback_type = singleTurnoutFeedback; // 
 
 uint8_olcb_t _detector_gain_a = 0;
 uint8_olcb_t _detector_gain_b = 0;
@@ -86,7 +86,7 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 #ifdef PRINT_DEBUG
             printf("TurnoutBoss_Signaling_States_board_to_the_left\n");
 #endif
-            TurnoutBoss_Board_Configuration_board_to_the_left = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
+            TurnoutBossBoardConfiguration_board_to_the_left = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
             return;
 
         case BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS:
@@ -94,7 +94,7 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 #ifdef PRINT_DEBUG
             printf("TurnoutBoss_Signaling_States_board_to_the_right\n");
 #endif         
-            TurnoutBoss_Board_Configuration_board_to_the_right = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
+            TurnoutBossBoardConfiguration_board_to_the_right = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
             return;
 
         case BOARD_LOCATION_CONFIG_MEM_ADDRESS:
@@ -103,13 +103,13 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 #ifdef PRINT_DEBUG
                 printf("BOARD_LOCATION_CONFIG_MEM_ADDRESS: BR\n");
 #endif
-                TurnoutBoss_Board_Configuration_board_location = BR;
+                TurnoutBossBoardConfiguration_board_location = BR;
 
             } else {
 #ifdef PRINT_DEBUG
                 printf("BOARD_LOCATION_CONFIG_MEM_ADDRESS: BL\n");
 #endif
-                TurnoutBoss_Board_Configuration_board_location = BL;
+                TurnoutBossBoardConfiguration_board_location = BL;
 
             }
 
@@ -122,13 +122,13 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 #ifdef PRINT_DEBUG
                 printf("BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS: single\n");
 #endif
-                TurnoutBoss_Board_Configuration_pushbutton_type = singlePushbutton;
+                TurnoutBossBoardConfiguration_pushbutton_type = singlePushbutton;
 
             } else {
 #ifdef PRINT_DEBUG
                 printf("BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS: dual\n");
 #endif
-                TurnoutBoss_Board_Configuration_pushbutton_type = dualPushbuttons;
+                TurnoutBossBoardConfiguration_pushbutton_type = dualPushbuttons;
 
             }
 
@@ -142,21 +142,21 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 #ifdef PRINT_DEBUG                    
                     printf("BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS: single\n");
 #endif
-                    TurnoutBoss_Board_Configuration_feedback_type = singleTurnoutFeedback;
+                    TurnoutBossBoardConfiguration_feedback_type = singleTurnoutFeedback;
 
                     return;
                 case 2:
 #ifdef PRINT_DEBUG
                     printf("BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS: dual\n");
 #endif
-                    TurnoutBoss_Board_Configuration_feedback_type = dualTurnoutFeedback;
+                    TurnoutBossBoardConfiguration_feedback_type = dualTurnoutFeedback;
 
                     return;
                 default:
 #ifdef PRINT_DEBUG
                     printf("BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS: unused\n");
 #endif
-                    TurnoutBoss_Board_Configuration_feedback_type = unusedTurnoutFeedback;
+                    TurnoutBossBoardConfiguration_feedback_type = unusedTurnoutFeedback;
 
                     return;
 
@@ -284,12 +284,12 @@ void TurnoutBoss_Board_Configuration_initialize(openlcb_node_t *node) {
 
     configuration_memory_buffer_t config_mem_buffer;
 
-    TurnoutBoss_Board_Configuration_board_to_the_left = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    TurnoutBoss_Board_Configuration_board_to_the_right = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    TurnoutBossBoardConfiguration_board_to_the_left = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    TurnoutBossBoardConfiguration_board_to_the_right = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
 
-    TurnoutBoss_Board_Configuration_board_location = _extract_boardtype_from_config_mem(node, BOARD_LOCATION_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    TurnoutBoss_Board_Configuration_pushbutton_type = _extract_pushbutton_type_from_config_mem(node, BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    TurnoutBoss_Board_Configuration_feedback_type = _extract_turnoutfeedback_type_from_config_mem(node, BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    TurnoutBossBoardConfiguration_board_location = _extract_boardtype_from_config_mem(node, BOARD_LOCATION_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    TurnoutBossBoardConfiguration_pushbutton_type = _extract_pushbutton_type_from_config_mem(node, BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    TurnoutBossBoardConfiguration_feedback_type = _extract_turnoutfeedback_type_from_config_mem(node, BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
 
     _detector_gain_a = _extract_detector_gain_from_config_mem(node, DETECTOR_A_GAIN_ADDRESS, &config_mem_buffer);
     _detector_gain_b = _extract_detector_gain_from_config_mem(node, DETECTOR_B_GAIN_ADDRESS, &config_mem_buffer);

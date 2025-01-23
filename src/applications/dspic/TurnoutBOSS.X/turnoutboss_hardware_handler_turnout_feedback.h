@@ -24,73 +24,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_hardware_handler.h
+ * \file turnoutboss_hardware_handler_turnout_feedback.h
  *
  * Scans the TurnoutBoss Hardware States and updates the TurnoutBoss_Signaling_States
  * 
  *
  * @author Jim Kueneman
- * @date 19 Jan 2025
+ * @date 23 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_HARDWARE_SIGNALING_HANDLER__
-#define	__TURNOUTBOSS_HARDWARE_SIGNALING_HANDLER__
+#ifndef __TURNOUTBOSS_HARDWARE_HANDLER_TURNOUT_FEEDBACK__
+#define	__TURNOUTBOSS_HARDWARE_HANDLER_TURNOUT_FEEDBACK__
 
-#ifndef PLATFORMIO
-#include "../../../openlcb/openlcb_types.h"
-#include "../../../openlcb/openlcb_node.h"
-#else
-#include "src/openlcb/openlcb_types.h"
-#include "src/openlcb/openlcb_node.h"
-#endif 
-
-
-
-typedef struct {
-    uint8_olcb_t state : 1; // State is set or not
-    uint8_olcb_t filter : 4; // counter for the digital filter while reading IO pins
-
-} input_filter_t;
-
-typedef uint8_olcb_t (*filter_func_t)(input_filter_t* filter);
-
-typedef struct {
-    input_filter_t turnout_normal;
-    input_filter_t turnout_diverging;
-    input_filter_t pushbutton_normal;
-    input_filter_t pushbutton_diverging;
-    input_filter_t occupancy_1;
-    input_filter_t occupancy_2;
-    input_filter_t occupancy_3;
-    
-    filter_func_t inc_filter;
-    filter_func_t dec_filter;
-
-} input_filters_t;
-
-typedef struct {
-    uint8_olcb_t turnout : 1;
-    uint8_olcb_t signal_a;
-    uint8_olcb_t signal_b;
-    uint8_olcb_t signal_c;
-    uint8_olcb_t signal_d;
-
-} outputs_t;
+#include "turnoutboss_hardware_handler.h"
+#include "turnoutboss_signaling_states.h"
+#include "turnoutboss_event_engine.h"
+#include "turnoutboss_board_configuration.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
     
+    extern void TurnoutBossHardwareHandlerTurnoutFeedback_check_state_changes(input_filters_t* filters, signaling_state_t* signaling_state, send_event_engine_t* event_engine, board_type_enum_t board_location, turnout_feedback_type_enum_t feedback_type);
 
-    extern void TurnoutBossHardwareHandler_initalize(void);
-    
-    extern void TurnoutBossHardwareHandler_scan_for_changes(void);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TURNOUTBOSS_HARDWARE_SIGNALING_HANDLER__ */
+#endif	/* __TURNOUTBOSS_HARDWARE_HANDLER_TURNOUT_FEEDBACK__ */
 

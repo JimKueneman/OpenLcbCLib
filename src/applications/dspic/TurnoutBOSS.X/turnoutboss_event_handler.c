@@ -66,28 +66,28 @@ void _handle_event_from_board_adjecent_left_for_bl(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED:
         {
 
-            TurnoutBoss_Signaling_States.occupancy.OML = ACTIVE;
+            TurnoutBossSignalingStates.occupancy.OML = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED:
         {
 
-            TurnoutBoss_Signaling_States.occupancy.OML = INACTIVE;
+            TurnoutBossSignalingStates.occupancy.OML = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_CD_STOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.ScdBALstop = ACTIVE;
+            TurnoutBossSignalingStates.stop.ScdBALstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.ScdBALstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.ScdBALstop = INACTIVE;
             break;
 
         }
@@ -102,28 +102,28 @@ void _handle_event_from_board_to_the_right_for_bl(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_A_STOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SaBRstop = ACTIVE;
+            TurnoutBossSignalingStates.stop.SaBRstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SaBRstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.SaBRstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SbBRstop = ACTIVE;
+            TurnoutBossSignalingStates.stop.SbBRstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SbBRstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.SbBRstop = INACTIVE;
             break;
 
         }
@@ -138,7 +138,7 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_A_STOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SaBLstop = ACTIVE;
+            TurnoutBossSignalingStates.stop.SaBLstop = ACTIVE;
             break;
 
 
@@ -146,27 +146,27 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SaBLstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.SaBLstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
         {
-            TurnoutBoss_Signaling_States.stop.SbBLstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.SbBLstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.SbBLstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.SbBLstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED:
         {
 
-            TurnoutBoss_Signaling_States.occupancy.OMC = ACTIVE;
+            TurnoutBossSignalingStates.occupancy.OMC = ACTIVE;
             break;
 
         }
@@ -175,7 +175,7 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED:
         {
 
-            TurnoutBoss_Signaling_States.occupancy.OMC = INACTIVE;
+            TurnoutBossSignalingStates.occupancy.OMC = INACTIVE;
             break;
 
         }
@@ -183,14 +183,14 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED:
         {
 
-            TurnoutBoss_Signaling_States.occupancy.OSC = ACTIVE;
+            TurnoutBossSignalingStates.occupancy.OSC = ACTIVE;
             break;
         }
 
         case EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED:
         {
 
-            TurnoutBoss_Signaling_States.occupancy.OSC = INACTIVE;
+            TurnoutBossSignalingStates.occupancy.OSC = INACTIVE;
             break;
 
         }
@@ -205,14 +205,14 @@ void _handle_event_from_board_adjecent_right_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_CD_STOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.ScdBARstop = ACTIVE;
+            TurnoutBossSignalingStates.stop.ScdBARstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP:
         {
 
-            TurnoutBoss_Signaling_States.stop.ScdBARstop = INACTIVE;
+            TurnoutBossSignalingStates.stop.ScdBARstop = INACTIVE;
             break;
 
         }
@@ -261,16 +261,16 @@ void _event_pc_report_callback(openlcb_node_t* node, event_id_t* event_id) {
 void _register_producer(openlcb_node_t *node, event_id_t event, uint8_olcb_t offset, uint8_olcb_t core_signaling_event) {
     
     Application_register_producer_eventid(node, event);
-    TurnoutBoss_Event_Engine.events[offset].state.valid_producer = TRUE;
-    TurnoutBoss_Event_Engine.events[offset].state.core_signaling = core_signaling_event;
+    TurnoutBossEventEngine.events[offset].state.valid_producer = TRUE;
+    TurnoutBossEventEngine.events[offset].state.core_signaling = core_signaling_event;
     
 }
 
 void _register_consumer(openlcb_node_t *node, event_id_t event, uint8_olcb_t offset, uint8_olcb_t core_signaling_event) {
   
     Application_register_consumer_eventid(node, event);
-    TurnoutBoss_Event_Engine.events[offset].state.valid_consumer = TRUE;
-    TurnoutBoss_Event_Engine.events[offset].state.core_signaling = core_signaling_event;
+    TurnoutBossEventEngine.events[offset].state.valid_consumer = TRUE;
+    TurnoutBossEventEngine.events[offset].state.core_signaling = core_signaling_event;
     
 }
 

@@ -47,16 +47,16 @@
 #endif
 
 
-signaling_state_t TurnoutBoss_Signaling_States;
+signaling_state_t TurnoutBossSignalingStates;
 
 
 
-void TurnoutBoss_Signaling_States_initialize(openlcb_node_t *node) {
+void TurnoutBossSignalingStates_initialize(openlcb_node_t *node) {
 
-    memset(&TurnoutBoss_Signaling_States, 0x00, sizeof ( TurnoutBoss_Signaling_States));
+    memset(&TurnoutBossSignalingStates, 0x00, sizeof ( TurnoutBossSignalingStates));
 
 
-    TurnoutBoss_Signaling_States.ctc_control.SCB = ACTIVE; // CTC Clear for both is default
+    TurnoutBossSignalingStates.ctc_control.SCB = ACTIVE; // CTC Clear for both is default
 
 }
 

@@ -72,15 +72,15 @@ typedef enum {
 extern "C" {
 #endif /* __cplusplus */
 
-    extern board_type_enum_t TurnoutBoss_Board_Configuration_board_location;
+    extern board_type_enum_t TurnoutBossBoardConfiguration_board_location;
 
-    extern pushbutton_type_enum_t TurnoutBoss_Board_Configuration_pushbutton_type;
+    extern pushbutton_type_enum_t TurnoutBossBoardConfiguration_pushbutton_type;
 
-    extern turnout_feedback_type_enum_t TurnoutBoss_Board_Configuration_feedback_type;
+    extern turnout_feedback_type_enum_t TurnoutBossBoardConfiguration_feedback_type;
 
-    extern node_id_t TurnoutBoss_Board_Configuration_board_to_the_left;
+    extern node_id_t TurnoutBossBoardConfiguration_board_to_the_left;
 
-    extern node_id_t TurnoutBoss_Board_Configuration_board_to_the_right;
+    extern node_id_t TurnoutBossBoardConfiguration_board_to_the_right;
     
     extern void TurnoutBoss_Board_Configuration_initialize(openlcb_node_t *node);
     
