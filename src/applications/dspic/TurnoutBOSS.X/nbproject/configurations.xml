@@ -65,13 +65,11 @@
         <itemPath>node_parameters.h</itemPath>
         <itemPath>uart_handler.h</itemPath>
         <itemPath>turnoutboss_event_handler.h</itemPath>
-        <itemPath>turnoutboss_signaling_states.h</itemPath>
         <itemPath>turnoutboss_hardware_handler.h</itemPath>
         <itemPath>turnoutboss_event_engine.h</itemPath>
         <itemPath>turnoutboss_board_configuration.h</itemPath>
-        <itemPath>turnoutboss_hardware_handler_occupancy.h</itemPath>
-        <itemPath>turnoutboss_hardware_handler_turnout_feedback.h</itemPath>
-        <itemPath>turnoutboss_hardware_handler_pushbuttons.h</itemPath>
+        <itemPath>turnoutboss_signal_calculations.h</itemPath>
+        <itemPath>turnoutboss_types.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -147,13 +145,10 @@
         <itemPath>node_parameters.c</itemPath>
         <itemPath>uart_handler.c</itemPath>
         <itemPath>turnoutboss_event_handler.c</itemPath>
-        <itemPath>turnoutboss_signaling_states.c</itemPath>
         <itemPath>turnoutboss_hardware_handler.c</itemPath>
         <itemPath>turnoutboss_event_engine.c</itemPath>
         <itemPath>turnoutboss_board_configuration.c</itemPath>
-        <itemPath>turnoutboss_hardware_handler_occupancy.c</itemPath>
-        <itemPath>turnoutboss_hardware_handler_pushbuttons.c</itemPath>
-        <itemPath>turnoutboss_hardware_handler_turnout_feedback.c</itemPath>
+        <itemPath>turnoutboss_signal_calculations.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

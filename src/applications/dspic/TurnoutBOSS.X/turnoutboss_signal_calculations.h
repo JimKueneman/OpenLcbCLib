@@ -24,34 +24,58 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_hardware_handler_pushbuttons.h
+ * \file turnoutboss_signal_calculations.h
  *
- * Scans the TurnoutBoss Hardware States and updates the TurnoutBoss_Signaling_States
- * 
+ * Module pulls the linked board NodeID (if available) and the board type (BL/BR) from
+ * the configuration memory.  It also maintains the state of the signals that are updated
+ * from the TurnoutBoss_Event_Handler module for incoming events from linked Left and 
+ * Right TurnoutBosses
  *
  * @author Jim Kueneman
- * @date 23 Jan 2025
+ * @date 20 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_HARDWARE_HANDLER_PUSHBUTTONS__
-#define	__TURNOUTBOSS_HARDWARE_HANDLER_PUSHBUTTONS__
+#ifndef __SIGNALING_STATES__
+#define	__SIGNALING_STATES__
 
-#include "turnoutboss_hardware_handler.h"
-#include "turnoutboss_signaling_states.h"
-#include "turnoutboss_event_engine.h"
-#include "turnoutboss_board_configuration.h"
+#ifndef PLATFORMIO
+#include "../../../openlcb/openlcb_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#endif
+
+#include "turnoutboss_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    void TurnoutBossHardwareHandler_Pushbuttons_check_state_changes(input_filters_t* filters, signaling_state_t* signaling_state, send_event_engine_t* event_engine, board_type_enum_t board_location, pushbutton_type_enum_t pushbutton_type);
+
+    extern void TurnoutBossSignalCalculations_initialize(signaling_state_t* states, signaling_state_t* states_next);
+
+    extern void TurnoutBossSignalCalculations_run_board_left(
+            signaling_state_t* states,
+            signaling_state_t* states_next,
+            hardware_input_states_t* states_hardware,
+            hardware_input_states_t* states_hardware_next,
+            send_event_engine_t* event_engine,
+            board_configuration_t* _board_configuration
+    );
+    
+    extern void TurnoutBossSignalCalculations_run_board_right(
+            signaling_state_t* states,
+            signaling_state_t* states_next,
+            hardware_input_states_t* states_hardware,
+            hardware_input_states_t* states_hardware_next,
+            send_event_engine_t* event_engine,
+            board_configuration_t* _board_configuration
+    );
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TURNOUTBOSS_HARDWARE_HANDLER_PUSHBUTTONS__ */
+#endif	/* __SIGNALING_STATES__ */
 

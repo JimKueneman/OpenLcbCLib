@@ -47,24 +47,7 @@
 #endif
 
 
-typedef enum {
-    BL,
-    BR
-
-} board_type_enum_t;
-
-typedef enum {
-    dualPushbuttons,
-    singlePushbutton
-
-} pushbutton_type_enum_t;
-
-typedef enum {
-    unusedTurnoutFeedback,
-    singleTurnoutFeedback,
-    dualTurnoutFeedback
-
-} turnout_feedback_type_enum_t;
+#include "turnoutboss_types.h"
 
 
 
@@ -72,17 +55,8 @@ typedef enum {
 extern "C" {
 #endif /* __cplusplus */
 
-    extern board_type_enum_t TurnoutBossBoardConfiguration_board_location;
-
-    extern pushbutton_type_enum_t TurnoutBossBoardConfiguration_pushbutton_type;
-
-    extern turnout_feedback_type_enum_t TurnoutBossBoardConfiguration_feedback_type;
-
-    extern node_id_t TurnoutBossBoardConfiguration_board_to_the_left;
-
-    extern node_id_t TurnoutBossBoardConfiguration_board_to_the_right;
     
-    extern void TurnoutBoss_Board_Configuration_initialize(openlcb_node_t *node);
+    extern void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_configuration_t* board_configuration);
     
 
 #ifdef	__cplusplus

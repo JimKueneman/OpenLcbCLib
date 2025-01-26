@@ -39,9 +39,6 @@
 #ifndef __TURNOUTBOSS_EVENT_HANDLER__
 #define	__TURNOUTBOSS_EVENT_HANDLER__
 
-#include "turnoutboss_signaling_states.h"
-
-#include "turnoutboss_board_configuration.h"
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -49,12 +46,14 @@
 #include "src/openlcb/openlcb_types.h"
 #endif
 
+#include "turnoutboss_types.h"
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void TurnoutBoss_Event_Handler_initialize(openlcb_node_t *node, board_type_enum_t board_location, node_id_t bl, node_id_t br);
+    extern void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuration_t* board_configuration, signaling_state_t* signaling_state, send_event_engine_t* send_event_engine);
 
 #ifdef	__cplusplus
 }

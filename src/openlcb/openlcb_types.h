@@ -77,6 +77,7 @@ extern "C" {
     
 #define NORMAL TRUE
 #define DIVERGING FALSE
+#define IN_MOTION 0b10
 
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000

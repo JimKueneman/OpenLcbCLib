@@ -38,13 +38,6 @@
 
 #include "turnoutboss_hardware_handler.h"
 
-#include "turnoutboss_hardware_handler_occupancy.h"
-#include "turnoutboss_hardware_handler_pushbuttons.h"
-#include "turnoutboss_hardware_handler_turnout_feedback.h"
-#include "turnoutboss_drivers.h"
-#include "turnoutboss_signaling_states.h"
-#include "turnoutboss_event_engine.h"
-#include "turnoutboss_board_configuration.h"
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -52,86 +45,156 @@
 #include "src/openlcb/openlcb_types.h"
 #endif
 
-//#define PRINT_DEBUG
+#include "turnoutboss_types.h"
+#include "turnoutboss_drivers.h"
 
 
-input_filters_t _input_filters;
-outputs_t _outputs;
+#define INPUT_FILTER_COUNT 10
 
 
-// Returns True if the state was changed 
 
-uint8_olcb_t _increment_filter(input_filter_t* filter) {
+uint8_olcb_t _run_filter_inc(uint8_olcb_t filter) {
 
-    if (filter->state == 1) // is the state already 1? If so done.
-        return FALSE;
+    if (filter >= INPUT_FILTER_COUNT)
 
-    if (filter->filter < 5)
-        filter->filter = filter->filter + 1;
+        return INPUT_FILTER_COUNT;
 
-    if (filter->filter < 5)
-        return FALSE;
-
-    // Change State
-    filter->state = 1;
-
-    return TRUE;
+    return filter + 1;
 
 }
 
-// Returns True if the state was changed 
+uint8_olcb_t _run_filter_dec(uint8_olcb_t filter) {
 
-uint8_olcb_t _decrement_filter(input_filter_t* filter) {
+    if (filter == 0)
 
-    if (filter->state == 0) // is the state already 0? If so done.
-        return FALSE;
+        return 0;
 
-    if (filter->filter > 0)
-        filter->filter = filter->filter - 1;
-
-    if (filter->filter > 0)
-        return FALSE;
-
-    // Change State
-    filter->state = 0;
-
-    return TRUE;
+    return filter - 1;
 
 }
 
-void TurnoutBossHardwareHandler_initalize(void) {
+void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardware_states) {
 
-    memset(&_input_filters, 0x00, sizeof (_input_filters));
-    _input_filters.dec_filter = &_decrement_filter;
-    _input_filters.inc_filter = &_increment_filter;
+    // *******************
+    uint8_olcb_t filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (OCCUPANCY_DETECT_1_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->occupany_1 = (filter > INPUT_FILTER_COUNT / 2);
+
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (OCCUPANCY_DETECT_2_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->occupany_2 = (filter > INPUT_FILTER_COUNT / 2);
+
+
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (OCCUPANCY_DETECT_3_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->occupany_3 = (filter > INPUT_FILTER_COUNT / 2);
+
     
-    memset(&_outputs, 0x00, sizeof (_outputs));
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
 
-}
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
 
+        if (TURNOUT_POSITION_NORMAL_PIN) {
 
+            filter = _run_filter_inc(filter);
 
-void TurnoutBossHardwareHandler_scan_for_changes(void) {
+        } else
 
-    TurnoutBossHardwareHandlerOccupancy_check_state_changes(
-            &_input_filters, 
-            &TurnoutBossSignalingStates, 
-            &TurnoutBossEventEngine, 
-            TurnoutBossBoardConfiguration_board_location
-            );
-    TurnoutBossHardwareHandler_Pushbuttons_check_state_changes(
-            &_input_filters, 
-            &TurnoutBossSignalingStates, 
-            &TurnoutBossEventEngine, 
-            TurnoutBossBoardConfiguration_board_location, 
-            TurnoutBossBoardConfiguration_pushbutton_type
-            );
-    TurnoutBossHardwareHandlerTurnoutFeedback_check_state_changes(
-            &_input_filters,
-            &TurnoutBossSignalingStates, 
-            &TurnoutBossEventEngine, 
-            TurnoutBossBoardConfiguration_board_location, 
-            TurnoutBossBoardConfiguration_feedback_type
-            );
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->turnout_normal_feedback = (filter > INPUT_FILTER_COUNT / 2);
+    
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (TURNOUT_POSITION_DIVERGING_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->turnout_diverging_feedback = (filter > INPUT_FILTER_COUNT / 2);
+    
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (TURNOUT_PUSHBUTTON_NORMAL_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->turnout_pushbutton_normal = (filter > INPUT_FILTER_COUNT / 2);
+    
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (TURNOUT_PUSHBUTTON_DIVERGING_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    hardware_states->turnout_pushbutton_diverging = (filter > INPUT_FILTER_COUNT / 2);
+
 
 }

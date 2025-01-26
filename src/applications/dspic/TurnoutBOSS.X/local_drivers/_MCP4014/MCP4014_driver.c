@@ -46,80 +46,80 @@ void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channe
 
     // We can count them all down at the same time 
 
-    TRACK_DETECT_GAIN_PIN = 0; // set to 0 before CS is lower = decrement mode
+    OCCUPANCY_DETECT_GAIN_PIN = 0; // set to 0 before CS is lower = decrement mode
     __delay_us(1);
-    TRACK_DETECT_GAIN_1_CS_PIN = 0;
-    TRACK_DETECT_GAIN_2_CS_PIN = 0;
-    TRACK_DETECT_GAIN_3_CS_PIN = 0;
+    OCCUPANCY_DETECT_GAIN_1_CS_PIN = 0;
+    OCCUPANCY_DETECT_GAIN_2_CS_PIN = 0;
+    OCCUPANCY_DETECT_GAIN_3_CS_PIN = 0;
     __delay_us(1);
 
     // Countdown to 0;
     for (int i = 0; i < 64; i++) {
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 1;
+        OCCUPANCY_DETECT_GAIN_PIN = 1;
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 0; // Wiper decrements on this edge
+        OCCUPANCY_DETECT_GAIN_PIN = 0; // Wiper decrements on this edge
     }
     __delay_us(1);
-    TRACK_DETECT_GAIN_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_PIN = 1;
 
     __delay_us(1);
-    TRACK_DETECT_GAIN_1_CS_PIN = 1;
-    TRACK_DETECT_GAIN_2_CS_PIN = 1;
-    TRACK_DETECT_GAIN_3_CS_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_3_CS_PIN = 1;
     __delay_us(1);
 
 
     // Now set the gain from 0
 
-    TRACK_DETECT_GAIN_1_CS_PIN = 0;
+    OCCUPANCY_DETECT_GAIN_1_CS_PIN = 0;
     __delay_us(1);
 
     // Count up to gain
     for (int i = 0; i < gain_channel1; i++) {
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 0;
+        OCCUPANCY_DETECT_GAIN_PIN = 0;
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
+        OCCUPANCY_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
 
     }
     __delay_us(1);
-    TRACK_DETECT_GAIN_1_CS_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
     __delay_us(1);
 
 
 
     // Now set the gain from 0
-    TRACK_DETECT_GAIN_2_CS_PIN = 0;
+    OCCUPANCY_DETECT_GAIN_2_CS_PIN = 0;
     __delay_us(1);
 
     // Count up to gain
     for (int i = 0; i < gain_channel2; i++) {
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 0;
+        OCCUPANCY_DETECT_GAIN_PIN = 0;
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
+        OCCUPANCY_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
 
     }
     __delay_us(1);
-    TRACK_DETECT_GAIN_2_CS_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay_us(1);
 
 
     // Now set the gain from 0
-    TRACK_DETECT_GAIN_3_CS_PIN = 0;
+    OCCUPANCY_DETECT_GAIN_3_CS_PIN = 0;
     __delay_us(1);
 
     // Count up to gain
     for (int i = 0; i < gain_channel3; i++) {
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 0;
+        OCCUPANCY_DETECT_GAIN_PIN = 0;
         __delay_us(1);
-        TRACK_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
+        OCCUPANCY_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
 
     }
     __delay_us(1);
-    TRACK_DETECT_GAIN_3_CS_PIN = 1;
+    OCCUPANCY_DETECT_GAIN_3_CS_PIN = 1;
 
 
 

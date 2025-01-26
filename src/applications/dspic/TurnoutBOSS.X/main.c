@@ -84,19 +84,22 @@
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/openlcb_node.h"
 #include "../../../openlcb/application_callbacks.h"
+#include "../../../openlcb/application.h"
+#include "../../../openlcb/openlcb_utilities.h"
+
+#include "debug.h"
+#include "uart_handler.h"
+#include "turnoutboss_drivers.h"
 #include "node_parameters.h"
 #include "turnoutboss_event_handler.h"
 #include "turnoutboss_hardware_handler.h"
-#include "turnoutboss_signaling_states.h"
+#include "turnoutboss_signal_calculations.h"
 #include "turnoutboss_event_engine.h"
 #include "turnoutboss_board_configuration.h"
+#include "turnoutboss_types.h"
 #include "../dsPIC_Common/ecan1_helper.h"
-#include "uart_handler.h"
-#include "turnoutboss_drivers.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
-#include "../../../openlcb/application.h"
-#include "../../../openlcb/openlcb_utilities.h"
-#include "debug.h"
+
 
 
 uint64_olcb_t node_id_base = 0x0507010100AA;
@@ -115,8 +118,26 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 int button_latch = 0;
 
+board_configuration_t _turnoutboss_board_configuration;
+
+signaling_state_t _turnoutboss_signal_calculation_states;
+signaling_state_t _turnoutboss_signal_calculation_states_next;
+
+hardware_input_states_t _turnoutboss_signal_calculation_hardware_states;
+hardware_input_states_t _turnoutboss_signal_calculation_hardware_states_next;
+
+send_event_engine_t _turnoutboss_event_engine;
+
 int main(void) {
-    
+
+    memset(&_turnoutboss_board_configuration, 0x00, sizeof ( _turnoutboss_board_configuration));
+    memset(&_turnoutboss_signal_calculation_states, 0x00, sizeof ( _turnoutboss_signal_calculation_states));
+    memset(&_turnoutboss_signal_calculation_states_next, 0x00, sizeof ( _turnoutboss_signal_calculation_states_next));
+    memset(&_turnoutboss_signal_calculation_hardware_states, 0x00, sizeof ( _turnoutboss_signal_calculation_hardware_states));
+    memset(&_turnoutboss_signal_calculation_hardware_states_next, 0x00, sizeof ( _turnoutboss_signal_calculation_hardware_states_next));
+    memset(&_turnoutboss_event_engine, 0x00, sizeof ( _turnoutboss_event_engine));
+
+
     // RB7 and RB8 are test outputs
     // we also have the LED variable for RB9 and the LED output
     _TRISB7 = 0;
@@ -154,31 +175,40 @@ int main(void) {
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
 
     Application_Callbacks_set_alias_change(&_alias_change_callback);
-    
- 
+
+
 #endif
 
     printf("\nBooted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
-    
-    // Set the default value for the Signal State structure
-    TurnoutBossSignalingStates_initialize(node);  
+
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
-    TurnoutBoss_Board_Configuration_initialize(node);
-    // Set the hardware interface structures (input filters, etc)
-    TurnoutBossHardwareHandler_initalize();
-    // Set the event engine so when states change any outgoing events can be flags to send
-    TurnoutBossEventEngine_initialize();
-    
+    TurnoutBossBoardConfiguration_initialize(
+            node,
+            &_turnoutboss_board_configuration
+            );
+
+    // Initialize Calculation data structures
+    TurnoutBossSignalCalculations_initialize(
+            &_turnoutboss_signal_calculation_states,
+            &_turnoutboss_signal_calculation_states_next
+            );
+
+    // Setup the event engine so when states change any outgoing events can be flags to send
+    TurnoutBossEventEngine_initialize(
+            &_turnoutboss_event_engine
+            );
+
     // Build the dynamic events and the callback to handle incoming events
-    TurnoutBoss_Event_Handler_initialize(node, 
-            TurnoutBossBoardConfiguration_board_location, 
-            TurnoutBossBoardConfiguration_board_to_the_left, 
-            TurnoutBossBoardConfiguration_board_to_the_right); 
-    
-   
-   
+    TurnoutBossEventHandler_initialize(
+            node,
+            &_turnoutboss_board_configuration,
+            &_turnoutboss_signal_calculation_states,
+            &_turnoutboss_event_engine
+            );
+
+
 #ifdef _SIMULATOR_
 
 
@@ -188,46 +218,60 @@ int main(void) {
     while (1) {
 
 
-        if (!TURNOUT_PUSHBUTTON_NORMAL_PIN && !button_latch) {
-
-            button_latch = 1;
-            TURNOUT_DRIVER_PIN = !TURNOUT_DRIVER_PIN;
-
-
-        } else {
-
-            if (TURNOUT_PUSHBUTTON_NORMAL_PIN) {
-
-                button_latch = 0;
-
-            }
-        }
 
         switch (track_detector_to_led) {
             case 1:
 
-                LED = TRACK_DETECT_1_PIN;
+                LED = OCCUPANCY_DETECT_1_PIN;
                 break;
 
             case 2:
 
-                LED = TRACK_DETECT_2_PIN;
+                LED = OCCUPANCY_DETECT_2_PIN;
                 break;
 
             case 3:
 
-                LED = TRACK_DETECT_3_PIN;
+                LED = OCCUPANCY_DETECT_3_PIN;
                 break;
         }
 
 
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
-        
 
-        TurnoutBossHardwareHandler_scan_for_changes();
+        TurnoutBossHardwareHandler_scan_for_changes(&_turnoutboss_signal_calculation_hardware_states_next);
         
-        TurnoutBossEventEngine_run(node);
+        // Note that that turnoutboss_event_handler.c is capturing PCER events in the background and updating
+        //  _turnoutboss_signal_calculation_states_next where necessary
+
+        if (_turnoutboss_board_configuration.board_location == BL) {
+
+            TurnoutBossSignalCalculations_run_board_left(
+                    &_turnoutboss_signal_calculation_states,
+                    &_turnoutboss_signal_calculation_states_next,
+                    &_turnoutboss_signal_calculation_hardware_states,
+                    &_turnoutboss_signal_calculation_hardware_states_next,
+                    &_turnoutboss_event_engine,
+                    &_turnoutboss_board_configuration
+                    );
+
+        } else {
+
+            TurnoutBossSignalCalculations_run_board_right(
+                    &_turnoutboss_signal_calculation_states,
+                    &_turnoutboss_signal_calculation_states_next,
+                    &_turnoutboss_signal_calculation_hardware_states,
+                    &_turnoutboss_signal_calculation_hardware_states_next,
+                    &_turnoutboss_event_engine,
+                    &_turnoutboss_board_configuration
+                    );
+
+        }
+
+        TurnoutBossEventEngine_run(
+                node,
+                &_turnoutboss_event_engine);
 
     }
 
