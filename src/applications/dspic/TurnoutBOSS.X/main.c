@@ -78,6 +78,8 @@
 #include "string.h"
 #include "stdlib.h"
 
+#if defined(MPLAB)
+
 #include "../../../drivers/common/can_main_statemachine.h"
 #include "../../../drivers/common/../driver_mcu.h"
 #include "../../../drivers/driver_can.h"
@@ -86,21 +88,37 @@
 #include "../../../openlcb/application_callbacks.h"
 #include "../../../openlcb/application.h"
 #include "../../../openlcb/openlcb_utilities.h"
-
+#include "../dsPIC_Common/ecan1_helper.h"
+#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
+#include "turnoutboss_drivers.h"
 #include "debug.h"
 #include "uart_handler.h"
-#include "turnoutboss_drivers.h"
+
+#else 
+
+#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/common/../driver_mcu.h"
+#include "src/drivers/driver_can.h"
+#include "src/openlcb/openlcb_main_statemachine.h"
+#include "src/openlcb/openlcb_node.h"
+#include "src/openlcb/application_callbacks.h"
+#include "src/openlcb/application.h"
+#include "src/openlcb/openlcb_utilities.h"
+
+#endif
+
 #include "node_parameters.h"
 #include "turnoutboss_event_handler.h"
 #include "turnoutboss_hardware_handler.h"
-#include "turnoutboss_signal_calculations.h"
+#include "turnoutboss_signal_calculations_board_left.h"
+#include "turnoutboss_signal_calculations_board_right.h"
 #include "turnoutboss_event_engine.h"
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
-#include "../dsPIC_Common/ecan1_helper.h"
-#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 
-
+board_configuration_t _board_configuration;
+signaling_state_t _signal_calculation_states;
+send_event_engine_t _event_engine;
 
 uint64_olcb_t node_id_base = 0x0507010100AA;
 
@@ -112,30 +130,11 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
-
-
-// #define  _SIMULATOR_
-
-int button_latch = 0;
-
-board_configuration_t _turnoutboss_board_configuration;
-
-signaling_state_t _turnoutboss_signal_calculation_states;
-signaling_state_t _turnoutboss_signal_calculation_states_next;
-
-hardware_input_states_t _turnoutboss_signal_calculation_hardware_states;
-hardware_input_states_t _turnoutboss_signal_calculation_hardware_states_next;
-
-send_event_engine_t _turnoutboss_event_engine;
-
 int main(void) {
 
-    memset(&_turnoutboss_board_configuration, 0x00, sizeof ( _turnoutboss_board_configuration));
-    memset(&_turnoutboss_signal_calculation_states, 0x00, sizeof ( _turnoutboss_signal_calculation_states));
-    memset(&_turnoutboss_signal_calculation_states_next, 0x00, sizeof ( _turnoutboss_signal_calculation_states_next));
-    memset(&_turnoutboss_signal_calculation_hardware_states, 0x00, sizeof ( _turnoutboss_signal_calculation_hardware_states));
-    memset(&_turnoutboss_signal_calculation_hardware_states_next, 0x00, sizeof ( _turnoutboss_signal_calculation_hardware_states_next));
-    memset(&_turnoutboss_event_engine, 0x00, sizeof ( _turnoutboss_event_engine));
+    memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
+    memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
+    memset(&_event_engine, 0x00, sizeof ( _event_engine));
 
 
     // RB7 and RB8 are test outputs
@@ -145,16 +144,6 @@ int main(void) {
     _TRISB8 = 0;
     _RB8 = 0;
 
-
-#ifdef _SIMULATOR_
-
-    // Setup the UART to send to the console in the simulator 
-    //  https://developerhelp.microchip.com/xwiki/bin/view/software-tools/xc8/simulator-console/
-
-    U1MODEbits.UARTEN = 1; // Enable UART
-    U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
-
-#else
 
     CanMainStatemachine_initialize(
             &Ecan1Helper_setup,
@@ -177,101 +166,43 @@ int main(void) {
     Application_Callbacks_set_alias_change(&_alias_change_callback);
 
 
-#endif
-
     printf("\nBooted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
 
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
-    TurnoutBossBoardConfiguration_initialize(
-            node,
-            &_turnoutboss_board_configuration
-            );
+    TurnoutBossBoardConfiguration_initialize(node, &_board_configuration);
 
     // Initialize Calculation data structures
-    TurnoutBossSignalCalculations_initialize(
-            &_turnoutboss_signal_calculation_states,
-            &_turnoutboss_signal_calculation_states_next
-            );
+    if (_board_configuration.board_location == BL) {
+        TurnoutBossSignalCalculationsBoardLeft_initialize(&_signal_calculation_states);
+    } else {
+        TurnoutBossSignalCalculationsBoardRight_initialize(&_signal_calculation_states);
+    }
 
     // Setup the event engine so when states change any outgoing events can be flags to send
-    TurnoutBossEventEngine_initialize(
-            &_turnoutboss_event_engine
-            );
+    TurnoutBossEventEngine_initialize(&_event_engine);
 
     // Build the dynamic events and the callback to handle incoming events
-    TurnoutBossEventHandler_initialize(
-            node,
-            &_turnoutboss_board_configuration,
-            &_turnoutboss_signal_calculation_states,
-            &_turnoutboss_event_engine
-            );
-
-
-#ifdef _SIMULATOR_
-
-
-#endif
-
+    TurnoutBossEventHandler_initialize(node, &_board_configuration, &_signal_calculation_states, &_event_engine);
 
     while (1) {
 
-
-
-        switch (track_detector_to_led) {
-            case 1:
-
-                LED = OCCUPANCY_DETECT_1_PIN;
-                break;
-
-            case 2:
-
-                LED = OCCUPANCY_DETECT_2_PIN;
-                break;
-
-            case 3:
-
-                LED = OCCUPANCY_DETECT_3_PIN;
-                break;
-        }
-
-
-
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
-        TurnoutBossHardwareHandler_scan_for_changes(&_turnoutboss_signal_calculation_hardware_states_next);
-        
-        // Note that that turnoutboss_event_handler.c is capturing PCER events in the background and updating
-        //  _turnoutboss_signal_calculation_states_next where necessary
+        TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states.next.hardware);
 
-        if (_turnoutboss_board_configuration.board_location == BL) {
+        if (_board_configuration.board_location == BL) {
 
-            TurnoutBossSignalCalculations_run_board_left(
-                    &_turnoutboss_signal_calculation_states,
-                    &_turnoutboss_signal_calculation_states_next,
-                    &_turnoutboss_signal_calculation_hardware_states,
-                    &_turnoutboss_signal_calculation_hardware_states_next,
-                    &_turnoutboss_event_engine,
-                    &_turnoutboss_board_configuration
-                    );
+            TurnoutBossSignalCalculationsBoardLeft_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
         } else {
 
-            TurnoutBossSignalCalculations_run_board_right(
-                    &_turnoutboss_signal_calculation_states,
-                    &_turnoutboss_signal_calculation_states_next,
-                    &_turnoutboss_signal_calculation_hardware_states,
-                    &_turnoutboss_signal_calculation_hardware_states_next,
-                    &_turnoutboss_event_engine,
-                    &_turnoutboss_board_configuration
-                    );
+            TurnoutBossSignalCalculationsBoardRight_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
         }
 
-        TurnoutBossEventEngine_run(
-                node,
-                &_turnoutboss_event_engine);
+        TurnoutBossEventEngine_run(node, &_event_engine);
 
     }
 

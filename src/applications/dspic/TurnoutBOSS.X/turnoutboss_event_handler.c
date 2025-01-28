@@ -39,7 +39,7 @@
 
 #include "turnoutboss_event_handler.h"
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_utilities.h"
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../openlcb/application.h"
@@ -56,36 +56,37 @@
 #include "turnoutboss_types.h"
 
 board_configuration_t* _event_handler_board_configuration;
-signaling_state_t* _event_handler_signaling_state_next;
+signaling_state_t* _event_handler_signaling_state;
 
 void _handle_event_from_board_adjecent_left_for_bl(uint16_olcb_t suffix) {
 
     switch (suffix) {
+        
         case EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED:
         {
 
-            _event_handler_signaling_state_next->occupancy.OML = ACTIVE;
+            _event_handler_signaling_state->next.occupancy.OML = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED:
         {
 
-            _event_handler_signaling_state_next->occupancy.OML = INACTIVE;
+            _event_handler_signaling_state->next.occupancy.OML = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_CD_STOP:
         {
 
-            _event_handler_signaling_state_next->stop.ScdBALstop = ACTIVE;
+            _event_handler_signaling_state->next.stop.ScdBALstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP:
         {
 
-            _event_handler_signaling_state_next->stop.ScdBALstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.ScdBALstop = INACTIVE;
             break;
 
         }
@@ -100,28 +101,28 @@ void _handle_event_from_board_to_the_right_for_bl(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_A_STOP:
         {
 
-            _event_handler_signaling_state_next->stop.SaBRstop = ACTIVE;
+            _event_handler_signaling_state->next.stop.SaBRstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP:
         {
 
-            _event_handler_signaling_state_next->stop.SaBRstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.SaBRstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
         {
 
-            _event_handler_signaling_state_next->stop.SbBRstop = ACTIVE;
+            _event_handler_signaling_state->next.stop.SbBRstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP:
         {
 
-            _event_handler_signaling_state_next->stop.SbBRstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.SbBRstop = INACTIVE;
             break;
 
         }
@@ -136,7 +137,7 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_A_STOP:
         {
 
-            _event_handler_signaling_state_next->stop.SaBLstop = ACTIVE;
+            _event_handler_signaling_state->next.stop.SaBLstop = ACTIVE;
             break;
 
 
@@ -144,27 +145,27 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP:
         {
 
-            _event_handler_signaling_state_next->stop.SaBLstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.SaBLstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
         {
-            _event_handler_signaling_state_next->stop.SbBLstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.SbBLstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP:
         {
 
-            _event_handler_signaling_state_next->stop.SbBLstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.SbBLstop = INACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED:
         {
 
-            _event_handler_signaling_state_next->occupancy.OMC = ACTIVE;
+            _event_handler_signaling_state->next.occupancy.OMC = ACTIVE;
             break;
 
         }
@@ -173,7 +174,7 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED:
         {
 
-            _event_handler_signaling_state_next->occupancy.OMC = INACTIVE;
+            _event_handler_signaling_state->next.occupancy.OMC = INACTIVE;
             break;
 
         }
@@ -181,14 +182,14 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED:
         {
 
-            _event_handler_signaling_state_next->occupancy.OSC = ACTIVE;
+            _event_handler_signaling_state->next.occupancy.OSC = ACTIVE;
             break;
         }
 
         case EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED:
         {
 
-            _event_handler_signaling_state_next->occupancy.OSC = INACTIVE;
+            _event_handler_signaling_state->next.occupancy.OSC = INACTIVE;
             break;
 
         }
@@ -203,14 +204,14 @@ void _handle_event_from_board_adjecent_right_for_rb(uint16_olcb_t suffix) {
         case EVENT_SUFFIX_SIGNAL_STATE_CD_STOP:
         {
 
-            _event_handler_signaling_state_next->stop.ScdBARstop = ACTIVE;
+            _event_handler_signaling_state->next.stop.ScdBARstop = ACTIVE;
             break;
 
         }
         case EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP:
         {
 
-            _event_handler_signaling_state_next->stop.ScdBARstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.ScdBARstop = INACTIVE;
             break;
 
         }
@@ -221,24 +222,24 @@ void _handle_event_from_board_adjecent_right_for_rb(uint16_olcb_t suffix) {
 
 void _handle_event_for_this_board(uint16_olcb_t suffix) {
 
-//    switch (suffix) {
-//
-//        case :
-//        {
-//
-//           
-//            break;
-//
-//        }
-//        case :
-//        {
-//
-//           
-//            break;
-//
-//        }
-//
-//    }
+    switch (suffix) {
+
+        case EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL:
+        {
+
+            _event_handler_signaling_state->next.remote_control.turnout_normal = TRUE;
+            break;
+
+        }
+        case EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING:
+        {
+
+            _event_handler_signaling_state->next.remote_control.turnout_diverging = TRUE;
+            break;
+
+        }
+
+    }
 
 }
 
@@ -274,7 +275,7 @@ void _event_pc_report_callback(openlcb_node_t* node, event_id_t* event_id) {
 
         }
 
-    } else if (local_node_id == node.id) {
+    } else if (local_node_id == node->id) {
 
         _handle_event_for_this_board(event_id_suffix);
 
@@ -382,11 +383,10 @@ void _board_register_general_events(openlcb_node_t *node) {
 
 }
 
-void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuration_t* board_configuration,
-        signaling_state_t* signaling_state, send_event_engine_t* event_engine) {
+void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuration_t* board_configuration, signaling_state_t* signaling_state, send_event_engine_t* event_engine) {
 
     _event_handler_board_configuration = board_configuration;
-    _event_handler_signaling_state_next = signaling_state;
+    _event_handler_signaling_state = signaling_state;
 
     // Clear the events just in case
     Application_clear_consumer_eventids(node);

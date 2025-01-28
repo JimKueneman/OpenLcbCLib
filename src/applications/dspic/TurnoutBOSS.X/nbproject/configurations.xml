@@ -68,8 +68,10 @@
         <itemPath>turnoutboss_hardware_handler.h</itemPath>
         <itemPath>turnoutboss_event_engine.h</itemPath>
         <itemPath>turnoutboss_board_configuration.h</itemPath>
-        <itemPath>turnoutboss_signal_calculations.h</itemPath>
         <itemPath>turnoutboss_types.h</itemPath>
+        <itemPath>turnoutboss_signal_calculations_board_left.h</itemPath>
+        <itemPath>turnoutboss_signal_calculations_board_right.h</itemPath>
+        <itemPath>turnoutboss_signal_calculations.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -148,6 +150,8 @@
         <itemPath>turnoutboss_hardware_handler.c</itemPath>
         <itemPath>turnoutboss_event_engine.c</itemPath>
         <itemPath>turnoutboss_board_configuration.c</itemPath>
+        <itemPath>turnoutboss_signal_calculations_board_right.c</itemPath>
+        <itemPath>turnoutboss_signal_calculations_board_left.c</itemPath>
         <itemPath>turnoutboss_signal_calculations.c</itemPath>
       </logicalFolder>
     </logicalFolder>
@@ -325,7 +329,7 @@
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
         <property key="oXC16glb-macros"
-                  value="SUPPORT_FIRMWARE_BOOTLOADER;FCY=40000000UL"/>
+                  value="SUPPORT_FIRMWARE_BOOTLOADER;FCY=40000000UL;MPLAB"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>

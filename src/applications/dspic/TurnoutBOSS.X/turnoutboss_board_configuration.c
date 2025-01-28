@@ -38,14 +38,14 @@
 
 #include "turnoutboss_board_configuration.h"
 
-#include "local_drivers/_MCP4014/MCP4014_driver.h"
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_utilities.h"
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../openlcb/application.h"
 #include "../../../openlcb/application_callbacks.h"
 #include "../../../openlcb/openlcb_tx_driver.h"
+#include "local_drivers/_MCP4014/MCP4014_driver.h"
 #else
 #include "src/openlcb/openlcb_utilities.h"
 #include "src/openlcb/openlcb_types.h"
@@ -67,14 +67,15 @@
 #define DETECTOR_C_GAIN_ADDRESS 0x182
 #define LED_BRIGHTNESS_GAIN_ADDRESS 0x183
 
-board_configuration_t* _board_configuration;
+board_configuration_t* _turnoutboss_board_configuration;
 
 void _set_detector_gains(void) {
 
     // TODO LED BRIGHTNESS GAIN
 
-    MCP4014Driver_set_gain(_board_configuration->detector_gain_a, _board_configuration->detector_gain_b, _board_configuration->detector_gain_c);
-
+#ifdef MPLAB
+    MCP4014Driver_set_gain(_turnoutboss_board_configuration->detector_gain_a, _turnoutboss_board_configuration->detector_gain_b, _turnoutboss_board_configuration->detector_gain_c);
+#endif
 }
 
 void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer) {
@@ -83,23 +84,23 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 
         case BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS:
 
-            _board_configuration->board_to_the_left = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
+            _turnoutboss_board_configuration->board_to_the_left = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
             return;
 
         case BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS:
 
-            _board_configuration->board_to_the_right = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
+            _turnoutboss_board_configuration->board_to_the_right = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
             return;
 
         case BOARD_LOCATION_CONFIG_MEM_ADDRESS:
 
             if (*config_mem_buffer[0] == 1) {
 
-                _board_configuration->board_location = BR;
+                _turnoutboss_board_configuration->board_location = BR;
 
             } else {
 
-                _board_configuration->board_location = BL;
+                _turnoutboss_board_configuration->board_location = BL;
 
             }
 
@@ -109,11 +110,11 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 
             if (*config_mem_buffer[0] == 1) {
 
-                _board_configuration->pushbutton_type = Pushbutton_Single;
+                _turnoutboss_board_configuration->pushbutton_type = Pushbutton_Single;
 
             } else {
 
-                _board_configuration->pushbutton_type = Pushbutton_Dual;
+                _turnoutboss_board_configuration->pushbutton_type = Pushbutton_Dual;
 
             }
 
@@ -125,17 +126,17 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 
                 case 1:
 
-                    _board_configuration->turnout_feedback_type = TurnoutFeedbackSingle;
+                    _turnoutboss_board_configuration->turnout_feedback_type = TurnoutFeedbackSingle;
 
                     return;
                 case 2:
 
-                    _board_configuration->turnout_feedback_type = TurnoutFeedbackDual;
+                    _turnoutboss_board_configuration->turnout_feedback_type = TurnoutFeedbackDual;
 
                     return;
                 default:
 
-                    _board_configuration->turnout_feedback_type = TurnoutFeedbackUnused;
+                    _turnoutboss_board_configuration->turnout_feedback_type = TurnoutFeedbackUnused;
 
                     return;
 
@@ -143,28 +144,28 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 
         case DETECTOR_A_GAIN_ADDRESS:
 
-            _board_configuration->detector_gain_a = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->detector_gain_a = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
 
         case DETECTOR_B_GAIN_ADDRESS:
 
-            _board_configuration->detector_gain_b = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->detector_gain_b = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
 
         case DETECTOR_C_GAIN_ADDRESS:
 
-            _board_configuration->detector_gain_c = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->detector_gain_c = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
 
         case LED_BRIGHTNESS_GAIN_ADDRESS:
 
-            _board_configuration->led_brightness_gain = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->led_brightness_gain = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
@@ -279,18 +280,18 @@ void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_config
     Application_Callbacks_set_config_mem_write(&_config_mem_write_callback);
 
     configuration_memory_buffer_t config_mem_buffer;
-    _board_configuration = board_configuration;
+    _turnoutboss_board_configuration = board_configuration;
 
-    _board_configuration->board_location = _extract_boardtype_from_config_mem(node, BOARD_LOCATION_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _board_configuration->board_to_the_left = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _board_configuration->board_to_the_right = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _board_configuration->turnout_feedback_type = _extract_turnoutfeedback_type_from_config_mem(node, BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _board_configuration->point_signalhead_type = _extract_point_signalhead_type_from_config_mem(node, BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _board_configuration->pushbutton_type = _extract_pushbutton_type_from_config_mem(node, BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _board_configuration->detector_gain_a = _extract_detector_gain_from_config_mem(node, DETECTOR_A_GAIN_ADDRESS, &config_mem_buffer);
-    _board_configuration->detector_gain_b = _extract_detector_gain_from_config_mem(node, DETECTOR_B_GAIN_ADDRESS, &config_mem_buffer);
-    _board_configuration->detector_gain_c = _extract_detector_gain_from_config_mem(node, DETECTOR_C_GAIN_ADDRESS, &config_mem_buffer);
-    _board_configuration->led_brightness_gain = _extract_detector_gain_from_config_mem(node, LED_BRIGHTNESS_GAIN_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->board_location = _extract_boardtype_from_config_mem(node, BOARD_LOCATION_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->board_to_the_left = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->board_to_the_right = _extract_event_id_from_config_mem(node, BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->turnout_feedback_type = _extract_turnoutfeedback_type_from_config_mem(node, BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->point_signalhead_type = _extract_point_signalhead_type_from_config_mem(node, BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->pushbutton_type = _extract_pushbutton_type_from_config_mem(node, BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->detector_gain_a = _extract_detector_gain_from_config_mem(node, DETECTOR_A_GAIN_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->detector_gain_b = _extract_detector_gain_from_config_mem(node, DETECTOR_B_GAIN_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->detector_gain_c = _extract_detector_gain_from_config_mem(node, DETECTOR_C_GAIN_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->led_brightness_gain = _extract_detector_gain_from_config_mem(node, LED_BRIGHTNESS_GAIN_ADDRESS, &config_mem_buffer);
 
     _set_detector_gains();
 

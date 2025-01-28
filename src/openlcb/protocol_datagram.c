@@ -1194,9 +1194,6 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
     } // switch command
 
-
-    _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
-
 }
 
 void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {

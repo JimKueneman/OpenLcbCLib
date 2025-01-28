@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_signal_calculations.h
+ * \file turnoutboss_signal_calculations_board_right.h
  *
  * Module pulls the linked board NodeID (if available) and the board type (BL/BR) from
  * the configuration memory.  It also maintains the state of the signals that are updated
@@ -32,13 +32,13 @@
  * Right TurnoutBosses
  *
  * @author Jim Kueneman
- * @date 20 Jan 2025
+ * @date 28 Jan 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_SIGNAL_CALCULATIONS__
-#define	__TURNOUTBOSS_SIGNAL_CALCULATIONS__
+#ifndef __TURNOUTBOSS_SIGNAL_CALCULATIONS_BOARD_RIGHT__
+#define	__TURNOUTBOSS_SIGNAL_CALCULATIONS_BOARD_RIGHT__
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -53,13 +53,14 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-    extern void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signaling_state_t* states, board_configuration_t* board_configuration, send_event_engine_t* event_engine);
+    extern void TurnoutBossSignalCalculationsBoardRight_initialize(signaling_state_t* states);
+
+    extern void TurnoutBossSignalCalculationsBoardRight_run(signaling_state_t* states, board_configuration_t* _board_configuration, send_event_engine_t* event_engine);
     
-    extern void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(signaling_state_t* states, board_configuration_t* board_configuration, send_event_engine_t* event_engine);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TURNOUTBOSS_SIGNAL_CALCULATIONS__ */
+#endif	/* __TURNOUTBOSS_SIGNAL_CALCULATIONS_BOARD_RIGHT__ */
 

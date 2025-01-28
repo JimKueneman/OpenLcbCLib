@@ -32,11 +32,24 @@
  * @date 5 Dec 2024
  */
 
-#include "xc.h"
 #include "stdio.h"  // printf
+#include "debug.h"
+
+#ifdef MPLAB
+#include "xc.h"
+#include "../../../openlcb/openlcb_defines.h"
+#include "../../../openlcb/openlcb_types.h"
+#include "../../../drivers/common/can_types.h"
 #include "../../../openlcb/openlcb_buffer_fifo.h"
 #include "../../../openlcb/openlcb_defines.h"
-#include "debug.h"
+#else
+#include "src/openlcb/openlcb_defines.h"
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/common/can_types.h"
+#include "src/openlcb/openlcb_buffer_fifo.h"
+#include "src/openlcb/openlcb_defines.h"
+#endif
+
 
 void PrintInt64(uint64_olcb_t n) {
 

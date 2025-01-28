@@ -40,7 +40,7 @@
 #include <string.h>
 
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
 #else
 #include "src/openlcb/openlcb_types.h"
@@ -48,254 +48,101 @@
 
 #include "turnoutboss_types.h"
 
-void TurnoutBossSignalCalculations_initialize(signaling_state_t* states, signaling_state_t* states_next) {
 
-    states->ctc_control.SCB = ACTIVE; // CTC Clear for both is default
+void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signaling_state_t* states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
 
-    states_next->ctc_control.SCB = ACTIVE; // CTC Clear for both is default
+    if (states->hardware.turnout_pushbutton_normal != states->next.hardware.turnout_pushbutton_normal) {
 
-}
+        switch (states->next.hardware.turnout_pushbutton_normal) {
 
-void _board_left_occupancy_handle_hardware_change_events(signaling_state_t* states, signaling_state_t* states_next,
-        hardware_input_states_t* states_hardware, hardware_input_states_t* states_hardware_next, send_event_engine_t* event_engine) {
+            case CLOSED:
 
-    if (states_hardware->occupany_1 != states_hardware_next->occupany_1) {
+                event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_CLOSED].state.send = TRUE;
+                return;
+            case OPEN:
 
-        if (states_hardware_next->occupany_1) {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_OCCUPIED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_UNOCCUPIED].state.send = TRUE;
+                event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_OPEN].state.send = TRUE;
+                return;
 
         }
 
-    }
+        states->pushbutton_normal_toggled = TRUE;
+        states->hardware.turnout_pushbutton_normal = states->next.hardware.turnout_pushbutton_normal;
 
-    if (states_hardware->occupany_2 != states_hardware_next->occupany_2) {
-
-        if (states_hardware_next->occupany_2) {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED].state.send = TRUE;
-
-        }
-
-    }
-
-    if (states_hardware->occupany_3 != states_hardware_next->occupany_3) {
-
-        if (states_hardware_next->occupany_3) {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_UNOCCUPIED].state.send = TRUE;
-
-        }
-
-    }
-
-}
-
-void _board_right_occupancy_handle_hardware_change_events(signaling_state_t* states, signaling_state_t* states_next,
-        hardware_input_states_t* states_hardware, hardware_input_states_t* states_hardware_next, send_event_engine_t* event_engine) {
-
-    if (states_hardware->occupany_1 != states_hardware_next->occupany_1) {
-
-        if (states_hardware_next->occupany_1) {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_TURNOUT_RIGHT_OCCUPIED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_TURNOUT_RIGHT_UNOCCUPIED].state.send = TRUE;
-
-        }
-
-    }
-
-    if (states_hardware->occupany_2 != states_hardware_next->occupany_2) {
-
-        if (states_hardware_next->occupany_2) {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_MAIN_RIGHT_OCCUPIED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_OCCUPANCY_MAIN_RIGHT_OCCUPIED].state.send = TRUE;
-
-        }
-
-    }
-
-}
-
-void _pushbutton_handle_hardware_change_events(signaling_state_t* states, signaling_state_t* states_next,
-        hardware_input_states_t* states_hardware, hardware_input_states_t* states_hardware_next, send_event_engine_t* event_engine) {
-
-    if (states_hardware->turnout_pushbutton_normal != states_hardware_next->turnout_pushbutton_normal) {
-
-        if (states_hardware_next->turnout_pushbutton_normal) {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_CLOSED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_OPEN].state.send = TRUE;
-
-        }
-
-    }
-
-    if (states_hardware->turnout_pushbutton_diverging != states_hardware_next->turnout_pushbutton_diverging) {
-
-        if (states_hardware_next->turnout_pushbutton_diverging) {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_CLOSED].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_OPEN].state.send = TRUE;
-
-        }
-
-    }
-
-}
-
-void _feedback_handle_hardware_change_events(signaling_state_t* states, signaling_state_t* states_next,
-        hardware_input_states_t* states_hardware, hardware_input_states_t* states_hardware_next, send_event_engine_t* event_engine) {
-
-    if (states_hardware->turnout_normal_feedback != states_hardware_next->turnout_normal_feedback) {
-
-        if (states_hardware_next->turnout_normal_feedback) {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_INACTIVE].state.send = TRUE;
-
-        }
-
-    }
-
-    if (states_hardware->turnout_diverging_feedback != states_hardware_next->turnout_diverging_feedback) {
-
-        if (states_hardware_next->turnout_diverging_feedback) {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE].state.send = TRUE;
-
-        } else {
-
-            event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_INACTIVE].state.send = TRUE;
-
-        }
-
-    }
-
-}
-
-void TurnoutBossSignalCalculations_run_board_left(signaling_state_t* states, signaling_state_t* states_next, hardware_input_states_t* states_hardware,
-        hardware_input_states_t* states_hardware_next, send_event_engine_t * event_engine, board_configuration_t* _board_configuration) {
-
-    // Initialize so we can see if something is different
-
-    _board_left_occupancy_handle_hardware_change_events(states, states_next, states_hardware, states_hardware_next, event_engine);
-    _pushbutton_handle_hardware_change_events(states, states_next, states_hardware, states_hardware_next, event_engine);
-    _feedback_handle_hardware_change_events(states, states_next, states_hardware, states_hardware_next, event_engine);
-
-    // states_next->occupancy.OML comes from events sent by the Board Adjacent Left
-    states_next->occupancy.OTL = states_hardware_next->occupany_1;
-    states_next->occupancy.OMC = states_hardware_next->occupany_2;
-    states_next->occupancy.OSC = states_hardware_next->occupany_3;
-
-    switch (_board_configuration->pushbutton_type) {
-
-        case Pushbutton_Dual:
-            
-            return;
-        case Pushbutton_Single:
-            
-            return;
-    }
-
-    switch (_board_configuration->turnout_feedback_type) {
-
-        case TurnoutFeedbackUnused:
-            
-            return;
-        case TurnoutFeedbackSingle:
-            
-            return;
-        case TurnoutFeedbackDual:
-            
-            return;
-    }
-    
-    switch (_board_configuration->point_signalhead_type) {
+    } else {
         
-        case PointSignalHeadSingle:
-            
-            return;
-        case PointSignalHeadDual:
-            
-            return;
-                    
+        states->pushbutton_normal_toggled = FALSE;
+        
     }
-    
+
+
+    if (states->hardware.turnout_pushbutton_diverging != states->next.hardware.turnout_pushbutton_diverging) {
+
+        switch (states->next.hardware.turnout_pushbutton_diverging) {
+
+            case CLOSED:
+
+                event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_CLOSED].state.send = TRUE;
+                return;
+
+            case OPEN:
+
+                event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_OPEN].state.send = TRUE;
+                return;
+
+        }
+
+        states->pushbutton_diverging_toggled = TRUE;
+        states->hardware.turnout_pushbutton_diverging = states->next.hardware.turnout_pushbutton_diverging;
+
+    }  {
+        
+        states->pushbutton_diverging_toggled = FALSE;
+        
+    }
+
 }
 
-void TurnoutBossSignalCalculations_run_board_right(signaling_state_t* states, signaling_state_t* states_next, hardware_input_states_t* states_hardware,
-        hardware_input_states_t* states_hardware_next, send_event_engine_t * event_engine, board_configuration_t* _board_configuration) {
+void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(signaling_state_t* states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
 
-    // Initialize so we can see if something is different
+    if (states->hardware.turnout_feedback_normal != states->next.hardware.turnout_feedback_normal) {
 
-    _board_right_occupancy_handle_hardware_change_events(states, states_next, states_hardware, states_hardware_next, event_engine);
-    _pushbutton_handle_hardware_change_events(states, states_next, states_hardware, states_hardware_next, event_engine);
-    _feedback_handle_hardware_change_events(states, states_next, states_hardware, states_hardware_next, event_engine);
+        switch (states->next.hardware.turnout_feedback_normal) {
 
-    states_next->occupancy.OTR = states_hardware_next->occupany_1;
-    states_next->occupancy.OMR = states_hardware_next->occupany_2;
+            case ACTIVE:
 
-    switch (_board_configuration->pushbutton_type) {
+                event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE].state.send = TRUE;
+                return;
 
-        case Pushbutton_Dual:
-            
-            return;
-        case Pushbutton_Single:
-            
-            return;
-    }
+            case INACTIVE:
 
-    switch (_board_configuration->turnout_feedback_type) {
+                event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_INACTIVE].state.send = TRUE;
+                return;
 
-        case TurnoutFeedbackUnused:
-            
-            return;
-        case TurnoutFeedbackSingle:
-            
-            return;
-        case TurnoutFeedbackDual:
-            
-            return;
-    }
-    
-    switch (_board_configuration->point_signalhead_type) {
+        }
+   
+        states->hardware.turnout_feedback_normal = states->next.hardware.turnout_feedback_normal;
         
-        case PointSignalHeadSingle:
-            
-            return;
-        case PointSignalHeadDual:
-            
-            return;
-                    
+    }
+
+    if (states->hardware.turnout_feedback_diverging != states->next.hardware.turnout_feedback_diverging) {
+
+        switch (states->next.hardware.turnout_feedback_diverging) {
+
+            case ACTIVE:
+
+                event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE].state.send = TRUE;
+                return;
+
+            case INACTIVE:
+
+                event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_INACTIVE].state.send = TRUE;
+                return;
+
+        }
+
+        states->hardware.turnout_feedback_diverging = states->next.hardware.turnout_feedback_diverging;
+        
     }
 
 }

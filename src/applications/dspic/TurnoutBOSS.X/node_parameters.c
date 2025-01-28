@@ -32,15 +32,13 @@
  * @date 5 Dec 2024
  */
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "node_parameters.h"
 #include "../../../openlcb/openlcb_defines.h"
 #else
 #include "node_parameters.h"
 #include "src/openlcb/openlcb_defines.h"
 #endif
-
-
 
 
 const node_parameters_t NodeParameters_main_node = {
