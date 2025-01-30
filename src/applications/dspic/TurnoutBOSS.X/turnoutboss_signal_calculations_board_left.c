@@ -506,6 +506,9 @@ void _send_change_events_occupancy_left(signaling_state_t* states, board_configu
         }
         states->occupancy.OSC = states->next.occupancy.OSC;
     }
+    
+    // updated through consumed events from the BAL
+    states->occupancy.OML = states->next.occupancy.OML;
 
 }
 

@@ -89,7 +89,6 @@
 #include "../../../openlcb/application.h"
 #include "../../../openlcb/openlcb_utilities.h"
 #include "../dsPIC_Common/ecan1_helper.h"
-#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #include "turnoutboss_drivers.h"
 #include "debug.h"
 #include "uart_handler.h"
@@ -190,7 +189,7 @@ int main(void) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
-        TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states.next.hardware);
+        TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
         if (_board_configuration.board_location == BL) {
 

@@ -133,6 +133,9 @@ void _next_event(send_event_engine_t* event_engine) {
 void TurnoutBossEventEngine_run(openlcb_node_t *node, send_event_engine_t* event_engine) {
 
     event_id_t event_id;
+    
+    if (!(node->state.permitted || node->state.initalized))
+        return;
 
     if (event_engine->events[event_engine->current_index].state.send) {
 

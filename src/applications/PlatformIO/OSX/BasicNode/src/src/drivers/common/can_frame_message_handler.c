@@ -44,7 +44,7 @@
 #include "../../openlcb/openlcb_utilities.h"
 #include "can_tx_statemachine.h"
 
-void _flush_alias_node_id_mappings() {
+void _flush_alias_node_id_mappings(void) {
 
     int i = 0;
 
@@ -127,7 +127,7 @@ void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, ca
     // Someone is requesting we reply with Alias Mapping Definitions for our Node(s)
 
     if (can_msg->payload_count == 0)
-        _flush_alias_node_id_mappings;
+        _flush_alias_node_id_mappings();
 
     if (_check_for_hard_alias_conflict(can_node, can_msg, worker_msg))
 

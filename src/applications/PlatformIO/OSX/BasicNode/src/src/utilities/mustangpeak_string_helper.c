@@ -42,7 +42,7 @@
 #include "stdlib.h"
 
 
-char *strnew(int char_count)
+char *strnew(unsigned long char_count)
 {
     return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
 }
@@ -57,7 +57,7 @@ char *strnew_initialized(int char_count)
 
 char *strcatnew(char *str1, char *str2)
 {
-    int len = strlen(str1) + strlen(str2);
+    unsigned long len = strlen(str1) + strlen(str2);
     char *temp1 = strnew(len);
     strcpy(temp1, str1);
     strcat(temp1, str2);

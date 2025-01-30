@@ -71,7 +71,7 @@ uint8_olcb_t _run_filter_dec(uint8_olcb_t filter) {
 
 }
 
-void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardware_states) {
+void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calculation_states) {
 
     // *******************
     uint8_olcb_t filter = INPUT_FILTER_COUNT / 2;
@@ -90,11 +90,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->occupany_1 = UNOCCUPIED;
+        signal_calculation_states->next.hardware.occupany_1 = UNOCCUPIED;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->occupany_1 = OCCUPIED;
+        signal_calculation_states->next.hardware.occupany_1 = OCCUPIED;
 
     }
 
@@ -116,11 +116,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->occupany_2 = UNOCCUPIED;
+        signal_calculation_states->next.hardware.occupany_2 = UNOCCUPIED;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->occupany_2 = OCCUPIED;
+        signal_calculation_states->next.hardware.occupany_2 = OCCUPIED;
 
     }
 
@@ -142,11 +142,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->occupany_3 = UNOCCUPIED;
+        signal_calculation_states->next.hardware.occupany_3 = UNOCCUPIED;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->occupany_3 = OCCUPIED;
+        signal_calculation_states->next.hardware.occupany_3 = OCCUPIED;
 
     }
 
@@ -168,11 +168,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->turnout_feedback_normal = INACTIVE;
+        signal_calculation_states->next.hardware.turnout_feedback_normal = INACTIVE;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->turnout_feedback_normal = ACTIVE;
+        signal_calculation_states->next.hardware.turnout_feedback_normal = ACTIVE;
 
     }
 
@@ -194,11 +194,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->turnout_feedback_diverging = INACTIVE;
+        signal_calculation_states->next.hardware.turnout_feedback_diverging = INACTIVE;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->turnout_feedback_diverging = ACTIVE;
+        signal_calculation_states->next.hardware.turnout_feedback_diverging = ACTIVE;
 
     }
 
@@ -219,11 +219,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->turnout_pushbutton_normal = OPEN;
+        signal_calculation_states->next.hardware.turnout_pushbutton_normal = OPEN;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->turnout_pushbutton_normal = CLOSED;
+        signal_calculation_states->next.hardware.turnout_pushbutton_normal = CLOSED;
 
     }
 
@@ -244,11 +244,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardwa
 
     if (filter == 0) {
 
-        hardware_states->turnout_pushbutton_diverging = OPEN;
+        signal_calculation_states->next.hardware.turnout_pushbutton_diverging = OPEN;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        hardware_states->turnout_pushbutton_diverging = CLOSED;
+        signal_calculation_states->next.hardware.turnout_pushbutton_diverging = CLOSED;
 
     }
 

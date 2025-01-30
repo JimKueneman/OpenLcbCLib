@@ -50,7 +50,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void TurnoutBossHardwareHandler_scan_for_changes(hardware_input_states_t* hardware_states);
+    extern void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calculation_states);
 
 #ifdef	__cplusplus
 }

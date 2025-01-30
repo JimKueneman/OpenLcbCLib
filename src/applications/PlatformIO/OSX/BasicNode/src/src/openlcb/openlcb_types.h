@@ -75,9 +75,9 @@ extern "C" {
 #define FALSE 0
 #define TRUE  1
     
-#define NORMAL TRUE
-#define DIVERGING FALSE
-
+#define LOW 0
+#define HIGH 1
+    
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
 
