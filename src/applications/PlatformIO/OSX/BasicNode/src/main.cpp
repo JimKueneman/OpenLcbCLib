@@ -21,9 +21,6 @@
 #include "src/openlcb/application_callbacks.h"
 #include "turnoutboss_event_handler.h"
 
-#define BOARD_USAGE_CONFIG_MEM_ADDRESS 0x7F
-#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS 0x80
-#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS 0x88
 
 
 int main(void)
@@ -48,7 +45,7 @@ int main(void)
 
   printf("Waiting for CAN and 100ms Timer Drivers to connect\n");
 
-  while (!OSxDrivers_100ms_is_connected() || !OSxCanDriver_is_connected())
+  while (!OSxDrivers_100ms_is_connected() || !OSxCanDriver_is_connected() || !OSxDrivers_input_is_connected())
   {
 
     printf("sleeping\n");

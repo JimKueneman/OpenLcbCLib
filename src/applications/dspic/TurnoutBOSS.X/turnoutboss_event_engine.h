@@ -41,7 +41,7 @@
 #define	__TURNOUTBOSS_EVENT_ENGINE__
 
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
 #else
 #include "src/openlcb/openlcb_types.h"
@@ -56,7 +56,9 @@ extern "C" {
 
     extern void TurnoutBossEventEngine_initialize(send_event_engine_t* _event_engine);
 
-    extern void TurnoutBossEventEngine_run(openlcb_node_t *node, send_event_engine_t* event_engine);
+    extern  void TurnoutBossEventEngine_run(openlcb_node_t *node, send_event_engine_t* event_engine);
+
+    extern uint8_olcb_t TurnoutBossEventEngine_is_flushed(send_event_engine_t *event_engine);
 
 #ifdef	__cplusplus
 }

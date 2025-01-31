@@ -39,6 +39,8 @@
 
 #include "src/openlcb/openlcb_types.h"
 
+#include "pthread.h"
+
 // Assign the function pointer to where the UART Rx should call back with the byte it received
 // WARNING: Is in the context of the interrupt, be careful
 // void func(rx_data);
@@ -62,6 +64,10 @@ extern "C"
     extern void OSxDrivers_resume_100ms_timer(void);
 
     extern uint8_olcb_t OSxDrivers_100ms_is_connected(void);
+
+    extern uint8_olcb_t OSxDrivers_input_is_connected(void);
+
+    extern pthread_mutex_t OSxDdrivers_input_mutex;
 
 #ifdef __cplusplus
 }

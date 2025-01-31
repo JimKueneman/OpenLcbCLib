@@ -130,11 +130,28 @@ void _next_event(send_event_engine_t* event_engine) {
 
 }
 
-void TurnoutBossEventEngine_run(openlcb_node_t *node, send_event_engine_t* event_engine) {
+
+ uint8_olcb_t TurnoutBossEventEngine_is_flushed(send_event_engine_t *event_engine) {
+
+     for (int i = 0; i < MAX_EVENT_SUFFIX; i++)
+     {
+
+         if (event_engine->events[event_engine->current_index].state.send)
+
+             return FALSE;
+     }
+
+     return TRUE;
+
+ }
+
+void TurnoutBossEventEngine_run(openlcb_node_t *node, send_event_engine_t *event_engine)
+{
 
     event_id_t event_id;
-    
+
     if (!(node->state.permitted || node->state.initalized))
+
         return;
 
     if (event_engine->events[event_engine->current_index].state.send) {
@@ -157,5 +174,3 @@ void TurnoutBossEventEngine_run(openlcb_node_t *node, send_event_engine_t* event
     }
 
 }
-
-

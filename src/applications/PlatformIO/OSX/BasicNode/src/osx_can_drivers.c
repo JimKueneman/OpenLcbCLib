@@ -105,7 +105,7 @@ uint16_olcb_t _wait_for_connect_non_blocking(int socket_fd)
 
     // TODO: Get this working, this MAY have to do with using the local host address in testing... it likely always return true....
 
-    fd_set writefds, exceptfds;
+    fd_set writefds;
 
     FD_ZERO(&writefds);
     FD_SET(socket_fd, &writefds);
@@ -193,11 +193,10 @@ void *thread_function_can(void *arg)
     gridconnect_buffer_t gridconnect_buffer;
     char *gridconnect_buffer_ptr;
     uint8_olcb_t next_byte;
-    int result = 0;
+    long result = 0;
     int socket_fd = -1;
     can_msg_t can_message;
     uint64_olcb_t timer = 0;
-    char *logging[MAX_GRID_CONNECT_LEN + 10];
     char *msg = (void *)0;
 
     can_message.state.allocated = 1;
@@ -321,7 +320,7 @@ void OSxCanDriver_setup(can_rx_callback_func_t can_rx_callback)
 
     internal_can_rx_callback_func = can_rx_callback;
 
-    printf("Mutex initialization - Result Code: %d\n", pthread_mutex_init(&can_mutex, NULL));
+    printf("Mutex initialization for CAN - Result Code: %d\n", pthread_mutex_init(&can_mutex, NULL));
 
     ThreadSafeStringList_init(&_outgoing_gridconnect_strings);
 

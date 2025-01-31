@@ -184,7 +184,7 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
 
     char hex_it[64] = "0x";
     strcat(hex_it, identifier_str);
-    can_msg->identifier = strtoul(hex_it, NULL, 0);
+    can_msg->identifier = (uint32_olcb_t) strtoul(hex_it, NULL, 0);
 
     unsigned long data_char_count = strlen((char *)gridconnect) - (12);
     can_msg->payload_count = data_char_count / 2;
@@ -216,7 +216,7 @@ void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_
     strcat((char *)gridconnect, ":");
     strcat((char *)gridconnect, "X");
 
-    sprintf((char *)&temp_str, "%08lX", can_msg->identifier);
+    sprintf((char *)&temp_str, "%08X", can_msg->identifier);
     strcat((char *)gridconnect, (char *)&temp_str);
     strcat((char *)gridconnect, "N");
     for (int i = 0; i < can_msg->payload_count; i++)

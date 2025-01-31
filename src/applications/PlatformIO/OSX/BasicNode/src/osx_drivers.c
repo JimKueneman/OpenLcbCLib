@@ -44,8 +44,46 @@
 uint8_olcb_t _is_clock_running = FALSE;
 uint8_olcb_t _timer_pause = FALSE;
 char *user_data;
+uint8_olcb_t _is_input_running = FALSE;
+
+pthread_mutex_t OSxDdrivers_input_mutex;
 
 parameterless_callback_t _100ms_timer_sink_func = (void *)0;
+
+uint8_olcb_t OSxDrivers_input_is_connected(void)
+{
+
+    return _is_input_running;
+}
+
+void *thread_function_input(void *arg)
+{
+
+    int thread_id = *((int *)arg); // Access argument passed to thread
+
+    char key;
+
+    printf("Input Thread %d started\n", thread_id);
+
+    _is_input_running = TRUE;
+
+    while (1)
+    {
+        scanf("%c", &key);
+
+        pthread_mutex_lock(&OSxDdrivers_input_mutex);
+
+        switch (key)
+        {
+
+            // use this to handle any keyboard input
+        }
+
+        pthread_mutex_unlock(&OSxDdrivers_input_mutex);
+
+        usleep(100000);
+    }
+}
 
 void *thread_function_timer(void *arg)
 {
@@ -86,6 +124,14 @@ void OSxDrivers_setup(parameterless_callback_t _100ms_timer_sink)
     int thread_num2 = 2;
 
     pthread_create(&thread2, NULL, thread_function_timer, &thread_num2);
+
+    printf("Mutex initialization for Input - Result Code: %d\n", pthread_mutex_init(&OSxDdrivers_input_mutex, NULL));
+
+    pthread_t thread3;
+
+    int thread_num3 = 3;
+
+    pthread_create(&thread3, NULL, thread_function_input, &thread_num3);
 }
 
 void OSxDrivers_reboot(void)
@@ -95,17 +141,14 @@ void OSxDrivers_reboot(void)
 uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
 {
 
-    printf("configmem read count: %d\n", count);
-    printf("configmem read address: %08lX\n", address);
+    //  printf("configmem read count: %d\n", count);
+    //  printf("configmem read address: %08lX\n", address);
 
-    printf("configmem read address: %02X\n", (*buffer)[0]);
-
-    uint32_olcb_t buffer_index = 0;
+    // printf("configmem read address: %02X\n", (*buffer)[0]);
 
     // Null out the buffer in case we have no data
     for (int i = 0; i < sizeof(*buffer); i++)
         (*buffer)[i] = '\0';
-
 
     FILE *_file;
 
@@ -134,7 +177,7 @@ uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t co
 uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
 {
 
-    printf("configmem write\n");
+    //  printf("configmem write\n");
 
     if (count == 0)
         return 0;

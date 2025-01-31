@@ -189,15 +189,19 @@ int main(void) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
-        TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
+        if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
 
-        if (_board_configuration.board_location == BL) {
+            TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
-            TurnoutBossSignalCalculationsBoardLeft_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
+            if (_board_configuration.board_location == BL) {
 
-        } else {
+                TurnoutBossSignalCalculationsBoardLeft_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
-            TurnoutBossSignalCalculationsBoardRight_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
+            } else {
+
+                TurnoutBossSignalCalculationsBoardRight_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
+
+            }
 
         }
 

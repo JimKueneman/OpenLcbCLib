@@ -12,7 +12,7 @@
 #ifndef __NODE_DEFINITION__
 #define	__NODE_DEFINITION__
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
 #else
 #include "src/openlcb/openlcb_types.h"

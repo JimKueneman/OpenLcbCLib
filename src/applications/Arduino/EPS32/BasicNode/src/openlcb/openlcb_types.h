@@ -37,6 +37,9 @@
 #ifndef __OPENLCB_TYPES__
 #define	__OPENLCB_TYPES__
 
+
+#include "stdint.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -66,18 +69,18 @@ extern "C" {
     // *********************END USER DEFINED VARIABLES *****************************
 
     // Had to make these types unique as some compilers have uintXX_t defined and some don't so it causes duplicate definition errors
-    typedef unsigned char uint8_olcb_t;
-    typedef unsigned long long int uint64_olcb_t;
-    typedef unsigned int uint16_olcb_t;
-    typedef unsigned long int uint32_olcb_t;
+    typedef uint8_t uint8_olcb_t;
+    typedef uint64_t uint64_olcb_t;
+    typedef uint16_t uint16_olcb_t;
+    typedef uint32_t uint32_olcb_t;
 
 
 #define FALSE 0
 #define TRUE  1
     
-#define NORMAL TRUE
-#define DIVERGING FALSE
-
+#define LOW 0
+#define HIGH 1
+    
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
 

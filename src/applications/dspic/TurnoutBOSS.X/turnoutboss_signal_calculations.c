@@ -58,11 +58,11 @@ void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signal
             case CLOSED:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_CLOSED].state.send = TRUE;
-                return;
+                break;
             case OPEN:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_NORMAL_OPEN].state.send = TRUE;
-                return;
+                break;
 
         }
 
@@ -83,19 +83,19 @@ void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signal
             case CLOSED:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_CLOSED].state.send = TRUE;
-                return;
+                break;
 
             case OPEN:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_BUTTON_DIVERGING_OPEN].state.send = TRUE;
-                return;
+                break;
 
         }
 
         states->pushbutton_diverging_toggled = TRUE;
         states->hardware.turnout_pushbutton_diverging = states->next.hardware.turnout_pushbutton_diverging;
 
-    }  {
+    }  else {
         
         states->pushbutton_diverging_toggled = FALSE;
         
@@ -112,12 +112,12 @@ void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(
             case ACTIVE:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE].state.send = TRUE;
-                return;
+                break;
 
             case INACTIVE:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_INACTIVE].state.send = TRUE;
-                return;
+                break;
 
         }
    
@@ -132,12 +132,12 @@ void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(
             case ACTIVE:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE].state.send = TRUE;
-                return;
+                break;
 
             case INACTIVE:
 
                 event_engine->events[OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_INACTIVE].state.send = TRUE;
-                return;
+                break;
 
         }
 

@@ -170,7 +170,6 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
 
         }
 
-
         case EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED:
         {
 
@@ -238,9 +237,32 @@ void _handle_event_for_this_board(uint16_olcb_t suffix) {
             break;
 
         }
+        case EVENT_SUFFIX_VITAL_LOGIC_STATE_HELD:
+        {
+
+            _event_handler_signaling_state->next.ctc_control.SHD = TRUE;
+            break;
+        }
+        case EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_LEFT:
+        {
+
+            _event_handler_signaling_state->next.ctc_control.SCL = TRUE;
+            break;
+        }
+        case EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_RIGHT:
+        {
+
+            _event_handler_signaling_state->next.ctc_control.SCR = TRUE;
+            break;
+        }
+        case EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_BOTH:
+        {
+
+            _event_handler_signaling_state->next.ctc_control.SCB = TRUE;
+            break;
+        }
 
     }
-
 }
 
 void _event_pc_report_callback(openlcb_node_t* node, event_id_t* event_id) {
@@ -307,8 +329,8 @@ void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t 
 
         event_id_t _event_id_base_board_adjacent_left = board_adjacent_left << 16;
 
-        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE, event_engine);
         _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE, event_engine);
         _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE, event_engine);
 
@@ -337,6 +359,22 @@ void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t 
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, TRUE, event_engine);
 
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED,    OFFSET_EVENT_SIGNAL_A_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW, OFFSET_EVENT_SIGNAL_A_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN,  OFFSET_EVENT_SIGNAL_A_GREEN,  TRUE, event_engine);
+    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED,    OFFSET_EVENT_SIGNAL_B_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW, OFFSET_EVENT_SIGNAL_B_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN,  OFFSET_EVENT_SIGNAL_B_GREEN,  TRUE, event_engine);
+    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED,    OFFSET_EVENT_SIGNAL_C_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW, OFFSET_EVENT_SIGNAL_C_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN,  OFFSET_EVENT_SIGNAL_C_GREEN,  TRUE, event_engine);
+    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED,    OFFSET_EVENT_SIGNAL_D_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW, OFFSET_EVENT_SIGNAL_D_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN,  OFFSET_EVENT_SIGNAL_D_GREEN,  TRUE, event_engine);
+    
 }
 
 void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t board_left, node_id_t board_adjacent_right, send_event_engine_t* event_engine) {
@@ -376,6 +414,22 @@ void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE, event_engine);
 
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED,    OFFSET_EVENT_SIGNAL_A_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW, OFFSET_EVENT_SIGNAL_A_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN,  OFFSET_EVENT_SIGNAL_A_GREEN,  TRUE, event_engine);
+    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED,    OFFSET_EVENT_SIGNAL_B_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW, OFFSET_EVENT_SIGNAL_B_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN,  OFFSET_EVENT_SIGNAL_B_GREEN,  TRUE, event_engine);
+    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED,    OFFSET_EVENT_SIGNAL_C_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW, OFFSET_EVENT_SIGNAL_C_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN,  OFFSET_EVENT_SIGNAL_C_GREEN,  TRUE, event_engine);
+    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED,    OFFSET_EVENT_SIGNAL_D_RED,    TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW, OFFSET_EVENT_SIGNAL_D_YELLOW, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN,  OFFSET_EVENT_SIGNAL_D_GREEN,  TRUE, event_engine);
+    
 }
 
 void _board_register_general_events(openlcb_node_t *node) {
@@ -407,4 +461,3 @@ void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuratio
     Application_Callbacks_set_event_pc_report(&_event_pc_report_callback);
 
 }
-

@@ -40,7 +40,7 @@
 #ifndef __TURNOUTBOSS_BOARD_CONFIGURATION__
 #define	__TURNOUTBOSS_BOARD_CONFIGURATION__
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
 #else
 #include "src/openlcb/openlcb_types.h"

@@ -40,7 +40,7 @@
 #define	__TURNOUTBOSS_EVENT_HANDLER__
 
 
-#ifndef PLATFORMIO
+#ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
 #else
 #include "src/openlcb/openlcb_types.h"
