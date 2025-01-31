@@ -107,7 +107,7 @@ void _calculate_occupancy_state_board_right(signaling_state_t *states, board_con
 void _calculate_turnout_commanded_state_board_right(signaling_state_t *states, board_configuration_t *board_configuration, send_event_engine_t *event_engine)
 {
 
-    uint8_olcb_t tlc_updated = FALSE;
+    uint8_olcb_t trc_updated = FALSE;
 
     switch (board_configuration->pushbutton_type)
     {
@@ -121,13 +121,13 @@ void _calculate_turnout_commanded_state_board_right(signaling_state_t *states, b
         { // Has the normal button toggled to the CLOSED?
 
             states->next.turnout.TRC = ACTIVE;
-            tlc_updated = TRUE;
+            trc_updated = TRUE;
         }
         else if (states->pushbutton_diverging_toggled && (states->next.hardware.turnout_pushbutton_diverging == CLOSED))
         { // Has the diverging button toggled to the CLOSED?
 
             states->next.turnout.TRC = INACTIVE;
-            tlc_updated = TRUE;
+            trc_updated = TRUE;
         }
         break;
 
@@ -136,8 +136,8 @@ void _calculate_turnout_commanded_state_board_right(signaling_state_t *states, b
         if (states->pushbutton_normal_toggled)
         {
 
-            states->next.turnout.TLC = !states->turnout.TLC;
-            tlc_updated = TRUE;
+            states->next.turnout.TRC = !states->turnout.TRC;
+            trc_updated = TRUE;
         }
         break;
     }
@@ -148,7 +148,7 @@ void _calculate_turnout_commanded_state_board_right(signaling_state_t *states, b
 
         states->next.turnout.TRC = ACTIVE;
         states->next.remote_control.turnout_normal = FALSE;
-        tlc_updated = TRUE;
+        trc_updated = TRUE;
     }
 
     if (states->next.remote_control.turnout_diverging)
@@ -156,10 +156,10 @@ void _calculate_turnout_commanded_state_board_right(signaling_state_t *states, b
 
         states->next.turnout.TRC = INACTIVE;
         states->next.remote_control.turnout_diverging = FALSE;
-        tlc_updated = TRUE;
+        trc_updated = TRUE;
     }
 
-    if (!tlc_updated)
+    if (!trc_updated)
         states->next.turnout.TRC = states->turnout.TRC;
 }
 
@@ -516,6 +516,14 @@ void _send_change_events_turnout_right(signaling_state_t *states, board_configur
         }
 
         states->turnout.TRO = states->next.turnout.TRO;
+    }
+    
+    // don't need to test but it may be useful someday.
+    if (states->turnout.TRC != states->next.turnout.TRC)
+    {
+        
+        states->turnout.TRC = states->next.turnout.TRC;
+        
     }
 }
 

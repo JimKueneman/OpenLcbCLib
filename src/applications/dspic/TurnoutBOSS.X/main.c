@@ -92,6 +92,7 @@
 #include "turnoutboss_drivers.h"
 #include "debug.h"
 #include "uart_handler.h"
+#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 
 #else 
 
@@ -143,6 +144,9 @@ int main(void) {
     _TRISB8 = 0;
     _RB8 = 0;
 
+    uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
+    uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
+
 
     CanMainStatemachine_initialize(
             &Ecan1Helper_setup,
@@ -191,6 +195,8 @@ int main(void) {
 
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
 
+            _RB8 = 1;
+
             TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
             if (_board_configuration.board_location == BL) {
@@ -202,6 +208,88 @@ int main(void) {
                 TurnoutBossSignalCalculationsBoardRight_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
             }
+
+            switch (_signal_calculation_states.lamps.SaBL) {
+                case DARK:
+                    signal_a = 0b00000000;
+                    break;
+                case GREEN:
+                    signal_a = 0b00000010;
+                    break;
+                case YELLOW:
+                    signal_a = 0b00000001;
+                    break;
+                case RED:
+                    signal_a = 0b00000100;
+                    break;
+            }
+
+            switch (_signal_calculation_states.lamps.SbBL) {
+                case DARK:
+                    signal_b = 0b00000000;
+                    break;
+                case GREEN:
+                    signal_b = 0b00000010;
+                    break;
+                case YELLOW:
+                    signal_b = 0b00000001;
+                    break;
+                case RED:
+                    signal_b = 0b00000100;
+                    break;
+            }
+
+            switch (_signal_calculation_states.lamps.ScBL) {
+                case DARK:
+                    signal_c = 0b00000000;
+                    break;
+                case GREEN:
+                    signal_c = 0b00000010;
+                    break;
+                case YELLOW:
+                    signal_c = 0b00000001;
+                    break;
+                case RED:
+                    signal_c = 0b00000100;
+                    break;
+            }
+
+            switch (_signal_calculation_states.lamps.SdBL) {
+                case DARK:
+                    signal_d = 0b00000000;
+                    break;
+                case GREEN:
+                    signal_d = 0b00000010;
+                    break;
+                case YELLOW:
+                    signal_d = 0b00000001;
+                    break;
+                case RED:
+                    signal_d = 0b00000100;
+                    break;
+            }
+
+            if ((last_signal_a != signal_a) || (last_signal_b != signal_b) || (last_signal_c != signal_c) || (last_signal_d != signal_d)) {
+
+                MCP23S17Driver_set_signals(signal_a, signal_b, signal_c, signal_d);
+
+                last_signal_a = signal_a;
+                last_signal_b = signal_b;
+                last_signal_c = signal_c;
+                last_signal_d = signal_d;
+
+            }
+
+            if (_board_configuration.board_location == BL)
+                TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TLC;
+            else
+                TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TRC;
+
+
+
+            _RB8 = 0;
+
+
 
         }
 

@@ -529,8 +529,8 @@ void _send_change_events_occupancy_left(signaling_state_t *states, board_configu
 
 void _send_change_events_turnout_left(signaling_state_t *states, board_configuration_t *board_configuration, send_event_engine_t *event_engine)
 {
-
     if (states->turnout.TLO != states->next.turnout.TLO)
+
     {
 
         switch (states->next.turnout.TLO)
@@ -551,6 +551,14 @@ void _send_change_events_turnout_left(signaling_state_t *states, board_configura
         }
 
         states->turnout.TLO = states->next.turnout.TLO;
+    }
+    
+    // don't need to test but it may be useful someday.
+    if (states->turnout.TLC != states->next.turnout.TLC)
+    {
+        
+        states->turnout.TLC = states->next.turnout.TLC;
+        
     }
 }
 

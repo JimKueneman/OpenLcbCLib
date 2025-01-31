@@ -159,7 +159,7 @@ void MCP23S17Driver_initialize() {
 
 }
 
-void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D) { // 0b00000YRG
+void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D) { // 0b00000RGY
 
     uint8_olcb_t _port = aspect_B | (aspect_D << 3);
     _write_register(OLATA, _port);

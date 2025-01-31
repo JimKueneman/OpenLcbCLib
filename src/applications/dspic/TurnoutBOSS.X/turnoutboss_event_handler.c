@@ -241,23 +241,35 @@ void _handle_event_for_this_board(uint16_olcb_t suffix) {
         {
 
             _event_handler_signaling_state->next.ctc_control.SHD = TRUE;
+            _event_handler_signaling_state->next.ctc_control.SCL = FALSE;
+            _event_handler_signaling_state->next.ctc_control.SCR = FALSE;
+            _event_handler_signaling_state->next.ctc_control.SCB = FALSE;
             break;
         }
         case EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_LEFT:
         {
 
+            _event_handler_signaling_state->next.ctc_control.SHD = FALSE;
             _event_handler_signaling_state->next.ctc_control.SCL = TRUE;
+            _event_handler_signaling_state->next.ctc_control.SCR = FALSE;
+            _event_handler_signaling_state->next.ctc_control.SCB = FALSE;
             break;
         }
         case EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_RIGHT:
         {
 
+            _event_handler_signaling_state->next.ctc_control.SHD = FALSE;
+            _event_handler_signaling_state->next.ctc_control.SCL = FALSE;
             _event_handler_signaling_state->next.ctc_control.SCR = TRUE;
+            _event_handler_signaling_state->next.ctc_control.SCB = FALSE;
             break;
         }
         case EVENT_SUFFIX_VITAL_LOGIC_STATE_CLEARED_BOTH:
         {
 
+            _event_handler_signaling_state->next.ctc_control.SHD = FALSE;
+            _event_handler_signaling_state->next.ctc_control.SCL = FALSE;
+            _event_handler_signaling_state->next.ctc_control.SCR = FALSE;
             _event_handler_signaling_state->next.ctc_control.SCB = TRUE;
             break;
         }

@@ -74,7 +74,7 @@ extern "C" {
 
     extern void MCP23S17Driver_initialize(void);
     
-    extern void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D); // 0b00000YRG
+    extern void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D); // 0b00000RGY
     
 #ifdef	__cplusplus
 }
