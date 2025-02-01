@@ -213,12 +213,12 @@ void _calculate_signal_a_board_right(signaling_state_t *states, board_configurat
     states->next.signal_lamps.SaBR = RED; // set red
     states->next.stop.SaBRstop = ACTIVE;
 
-    // If ( SCB?SCR) && TRO Normal && ! OML && ! OTR && ! ScdBAL at Stop:
+    // If ( SCB?SCR) && TRO Normal && ! OMR && ! OTR && ! ScdBAR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCR == ACTIVE)) && // CTC Clear Both or Left
         (states->next.turnout.TRO == TURNOUT_OBSERVED_NORMAL) &&                                  // Turnout Observed set to normal (straight)
-        !(states->next.occupancy.OML == OCCUPIED) &&                                              // not Left Main Occupied
+        !(states->next.occupancy.OMR == OCCUPIED) &&                                              // not Left Main Occupied
         !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
-        !(states->next.stop.ScdBALstop == ACTIVE)                                                 // not Signal CD on the Adjacent Board Left at Stop
+        !(states->next.stop.ScdBARstop == ACTIVE)                                                 // not Signal CD on the Adjacent Board Left at Stop
     )
     {
 
@@ -228,12 +228,12 @@ void _calculate_signal_a_board_right(signaling_state_t *states, board_configurat
         states->next.stop.SaBRstop = INACTIVE;
     }
 
-    // If ( SCB?SCR) && TRO Normal && ! OML && ! OTR && ScdBAL at Stop:
+    // If ( SCB?SCR) && TRO Normal && ! OMR && ! OTR && ScdBAR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCR == ACTIVE)) && // CTC Clear Both or Left
         (states->next.turnout.TRO == TURNOUT_OBSERVED_NORMAL) &&                                  // Turnout Observed set to normal (straight)
-        !(states->next.occupancy.OML == OCCUPIED) &&                                              // not Left Main Occupied
+        !(states->next.occupancy.OMR == OCCUPIED) &&                                              // not Left Main Occupied
         !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
-        (states->next.stop.ScdBALstop == ACTIVE)                                                  // Signal CD on the Adjacent Board Left at Stop
+        (states->next.stop.ScdBARstop == ACTIVE)                                                  // Signal CD on the Adjacent Board Left at Stop
     )
     {
 
@@ -252,12 +252,12 @@ void _calculate_signal_b_board_right(signaling_state_t *states, board_configurat
     states->next.signal_lamps.SbBR = RED; // set red
     states->next.stop.SbBRstop = ACTIVE;
 
-    // If ( SCB?SCR) && TRO Diverging && ! OML && ! OTR && ! ScdBAL at Stop:
+    // If ( SCB?SCR) && TRO Diverging && ! OMR && ! OTR && ! ScdBAR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCR == ACTIVE)) && // not (CTC Clear Both or Left)
         (states->next.turnout.TRO == TURNOUT_OBSERVED_DIVERGING) &&                                // Turnout Observed set to diverging
-        !(states->next.occupancy.OML == OCCUPIED) &&                                               // not Left Main Occupied
+        !(states->next.occupancy.OMR == OCCUPIED) &&                                               // not Left Main Occupied
         !(states->next.occupancy.OTR == OCCUPIED) &&                                               // not Left Turnout Occupied
-        !(states->next.stop.ScdBALstop == ACTIVE)                                                  // not (Signal CD on the Adjacent Board Left at Stop)
+        !(states->next.stop.ScdBARstop == ACTIVE)                                                  // not (Signal CD on the Adjacent Board Left at Stop)
     )
     {
 
@@ -266,12 +266,12 @@ void _calculate_signal_b_board_right(signaling_state_t *states, board_configurat
         states->next.stop.SbBRstop = INACTIVE;
     }
 
-    // If ( SCB?SCR) && TRO Diverging && ! OML && ! OTR && ScdBAL at Stop:
+    // If ( SCB?SCR) && TRO Diverging && ! OMR && ! OTR && ScdBAR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCR == ACTIVE)) && // not (CTC Clear Both or Left)
         (states->next.turnout.TRO == TURNOUT_OBSERVED_DIVERGING) &&                                // Turnout Observed set to diverging
-        !(states->next.occupancy.OML == OCCUPIED) &&                                               // not Left Main Occupied
+        !(states->next.occupancy.OMR == OCCUPIED) &&                                               // not Left Main Occupied
         !(states->next.occupancy.OTR == OCCUPIED) &&                                               // not Left Turnout Occupied
-        (states->next.stop.ScdBALstop == ACTIVE)                                                   // Signal CD on the Adjacent Board Left at Stop
+        (states->next.stop.ScdBARstop == ACTIVE)                                                   // Signal CD on the Adjacent Board Left at Stop
     )
     {
 
@@ -293,10 +293,10 @@ void _calculate_signal_cd_single_head_board_right(signaling_state_t *states, boa
     states->next.signal_lamps.ScBR = RED; // set red
     ScBRStop = ACTIVE;
 
-    // If ( SCB?SCL) && TRO Normal && ! OTL && ! OMC && ! SaBR at Stop:
+    // If ( SCB?SCL) && TRO Normal && ! OTR && ! OMC && ! SaBR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_NORMAL) &&                                  // Turnout Observed set to normal
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OMC == OCCUPIED) &&                                              // not Main Center Occupied
         !(states->next.stop.SaBRstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
     )
@@ -307,10 +307,10 @@ void _calculate_signal_cd_single_head_board_right(signaling_state_t *states, boa
         ScBRStop = INACTIVE;
     }
 
-    // If ( SCB?SCL) && TRO Normal && ! OTL && ! OMC && SaBR at Stop:
+    // If ( SCB?SCL) && TRO Normal && ! OTR && ! OMC && SaBR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_NORMAL) &&                                  // Turnout Observed set to normal
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OMC == OCCUPIED) &&                                              // not Main Center Occupied
         (states->next.stop.SaBRstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
     )
@@ -321,10 +321,10 @@ void _calculate_signal_cd_single_head_board_right(signaling_state_t *states, boa
         ScBRStop = INACTIVE;
     }
 
-    // If ( SCB?SCL) && TRO Diverging && ! OTL && ! OSC && ! SbBR at Stop:
+    // If ( SCB?SCL) && TRO Diverging && ! OTR && ! OSC && ! SbBR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_DIVERGING) &&                               // Turnout Observed set to diverging
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OSC == OCCUPIED) &&                                              // not Main Center Occupied
         !(states->next.stop.SbBRstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
     )
@@ -335,10 +335,10 @@ void _calculate_signal_cd_single_head_board_right(signaling_state_t *states, boa
         ScBRStop = INACTIVE;
     }
 
-    // If ( SCB?SCL) && TRO Diverging && ! OTL && ! OSC && SbBR at Stop:
+    // If ( SCB?SCL) && TRO Diverging && ! OTR && ! OSC && SbBR at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_DIVERGING) &&                               // Turnout Observed set to diverging
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OSC == OCCUPIED) &&                                              // not Main Center Occupied
         (states->next.stop.SbBRstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
     )
@@ -369,12 +369,12 @@ void _calculate_signal_cd_dual_head_board_right(signaling_state_t *states, board
     states->next.signal_lamps.ScBR = RED; // set red
     ScBRStop = ACTIVE;
 
-    // If ( SCB?SCL) && TRO Normal && ! OTL && ! OMC && ! SaBR at Stop:
+    // If ( SCB?SCL) && TRO Normal && ! OTR && ! OMC && ! SaBL at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_NORMAL) &&                                  // Turnout Observed set to normal
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OMC == OCCUPIED) &&                                              // not Main Center Occupied
-        !(states->next.stop.SaBRstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
+        !(states->next.stop.SaBLstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
     )
     {
 
@@ -383,12 +383,12 @@ void _calculate_signal_cd_dual_head_board_right(signaling_state_t *states, board
         ScBRStop = INACTIVE;
     }
 
-    // If ( SCB?SCL) && TRO Normal && ! OTL && ! OMC && SaBR at Stop:
+    // If ( SCB?SCL) && TRO Normal && ! OTR && ! OMC && SaBL at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_NORMAL) &&                                  // Turnout Observed set to normal
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OMC == OCCUPIED) &&                                              // not Main Center Occupied
-        (states->next.stop.SaBRstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
+        (states->next.stop.SaBLstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
     )
     {
 
@@ -403,12 +403,12 @@ void _calculate_signal_cd_dual_head_board_right(signaling_state_t *states, board
     states->next.signal_lamps.SdBR = RED; // set red
     SdBRStop = ACTIVE;
 
-    // If ( SCB?SCL) && TRO Diverging && ! OTL && ! OSC && ! SbBR at Stop:
+    // If ( SCB?SCL) && TRO Diverging && ! OTR && ! OSC && ! SbBL at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_DIVERGING) &&                               // Turnout Observed set to diverging
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OSC == OCCUPIED) &&                                              // not Main Center Occupied
-        !(states->next.stop.SbBRstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
+        !(states->next.stop.SbBLstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
     )
     {
 
@@ -417,12 +417,12 @@ void _calculate_signal_cd_dual_head_board_right(signaling_state_t *states, board
         SdBRStop = INACTIVE;
     }
 
-    // If ( SCB?SCL) && TRO Diverging && ! OTL && ! OSC && SbBR at Stop:
+    // If ( SCB?SCL) && TRO Diverging && ! OTR && ! OSC && SbBL at Stop:
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCL == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TRO == TURNOUT_OBSERVED_DIVERGING) &&                               // Turnout Observed set to diverging
-        !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
+        !(states->next.occupancy.OTR == OCCUPIED) &&                                              // not Left Turnout Occupied
         !(states->next.occupancy.OSC == OCCUPIED) &&                                              // not Main Center Occupied
-        (states->next.stop.SbBRstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
+        (states->next.stop.SbBLstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
     )
     {
 

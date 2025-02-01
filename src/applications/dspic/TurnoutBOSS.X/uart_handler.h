@@ -44,6 +44,8 @@
 #include "src/openlcb/openlcb_types.h"
 #endif
 
+#include "turnoutboss_types.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -56,6 +58,10 @@ extern "C" {
     extern uint8_olcb_t signalD;
     
     extern uint8_olcb_t track_detector_to_led;
+    
+    
+    extern board_configuration_t *UartHandler_board_configuration;
+    extern signaling_state_t *UartHandler_signal_calculation_states;
 
 
 #ifdef	__cplusplus

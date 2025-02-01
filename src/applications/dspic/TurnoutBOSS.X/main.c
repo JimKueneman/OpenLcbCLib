@@ -165,6 +165,8 @@ int main(void) {
             );
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
+    UartHandler_board_configuration = &_board_configuration;
+    UartHandler_signal_calculation_states = &_signal_calculation_states;
 
     Application_Callbacks_set_alias_change(&_alias_change_callback);
 

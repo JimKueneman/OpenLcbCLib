@@ -52,6 +52,7 @@
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #include "local_drivers/_MCP4014/MCP4014_driver.h"
 #include "turnoutboss_drivers.h"
+#include "turnoutboss_types.h"
 
 uint8_olcb_t signalA = 0x00; // All off
 uint8_olcb_t signalB = 0x00;
@@ -61,6 +62,9 @@ uint8_olcb_t signalD = 0x00;
 uint8_olcb_t detector_gain = 0;
 
 uint8_olcb_t track_detector_to_led = 1;
+
+board_configuration_t *UartHandler_board_configuration;
+signaling_state_t *UartHandler_signal_calculation_states;
 
 void UartHandler_handle_rx(uint16_olcb_t code) {
 
@@ -170,20 +174,27 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
         case 's':
 
             printf("Setting the Signals\n");
-
-            if (signalA == 0) {
-                signalA = 0b111;
-                signalB = 0b111;
-                signalC = 0b111;
-                signalD = 0b111;
-            } else {
+            
+            if (signalA == 0b111) {
                 signalA = 0b000;
                 signalB = 0b000;
                 signalC = 0b000;
                 signalD = 0b000;
+                
+            } else {
+                
+                signalA = signalA + 1;
+                signalB = signalB + 1;
+                signalC = signalC + 1;
+                signalD = signalD + 1;
             }
+            
+            printf("A = %d, B = %d, C = %d, D = %d\n", signalA, signalB, signalC, signalD);
 
+           
             MCP23S17Driver_set_signals(signalA, signalB, signalC, signalD);
+            
+       //     MCP23S17Driver_set_signals(1, 1, 1, 1);
 
             return;
 
@@ -211,6 +222,247 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             TURNOUT_DRIVER_PIN = !TURNOUT_DRIVER_PIN;
 
             return;
+
+
+        case 'l':
+        case 'L':
+
+            if (UartHandler_signal_calculation_states->hardware.occupany_1 == OCCUPIED) {
+                printf("Track 1 (BL = OTL, BR = OTR) is OCCUPIED\n");
+            } else {
+                printf("Track 1 (BL = OTL, BR = OTR) is UNOCCUPIED\n");
+            }
+            if (UartHandler_signal_calculation_states->hardware.occupany_2 == OCCUPIED) {
+                printf("Track 2 (BL = OMC, BR = OMR) is OCCUPIED\n");
+            } else {
+                printf("Track 2 (BL = OMC, BR = OMR)  is UNOCCUPIED\n");
+            }
+            if (UartHandler_signal_calculation_states->hardware.occupany_3 == OCCUPIED) {
+                printf("Track 3 (BL = OSC, BR = unused) is OCCUPIED\n");
+            } else {
+                printf("Track 3 (BL = OSC, BR = unused) is UNOCCUPIED\n");
+            }
+
+            if (UartHandler_signal_calculation_states->hardware.turnout_pushbutton_normal == CLOSED) {
+                printf("Pushbutton Normal is CLOSED\n");
+            } else {
+                printf("Pushbutton Normal is OPEN\n");
+            }
+            if (UartHandler_signal_calculation_states->hardware.turnout_pushbutton_diverging == CLOSED) {
+                printf("Pushbutton Diverging is CLOSED\n");
+            } else {
+                printf("Pushbutton Diverging is OPEN\n");
+            }
+
+            if (UartHandler_signal_calculation_states->hardware.turnout_feedback_normal == ACTIVE) {
+                printf("Turnout Feedback Normal is ACTIVE\n");
+            } else {
+                printf("Turnout Feedback Normal is INACTIVE\n");
+            }
+            if (UartHandler_signal_calculation_states->hardware.turnout_pushbutton_diverging == ACTIVE) {
+                printf("Turnout Feedback Diverging is ACTIVE\n");
+            } else {
+                printf("Turnout Feedback Diverging is INACTIVE\n");
+            }
+
+            if (UartHandler_board_configuration->board_location == BL) {
+                if (UartHandler_signal_calculation_states->turnout.TLC == ACTIVE) {
+                    printf("Turnout Control = NORMAL\n");
+                } else {
+                    printf("Turnout Control = DIVERGING\n");
+                }
+            } else {
+                if (UartHandler_signal_calculation_states->turnout.TRC == ACTIVE) {
+                    printf("Turnout Control = NORMAL\n");
+                } else {
+                    printf("Turnout Control = DIVERGING\n");
+                }
+            }
+
+            if (UartHandler_board_configuration->board_location == BL) {
+
+                switch (UartHandler_signal_calculation_states->lamps.SaBL) {
+
+                    case RED:
+                        printf("Signal A = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal A = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal A = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal A = DARK\n");
+                        break;
+                }
+
+                switch (UartHandler_signal_calculation_states->lamps.SbBL) {
+
+                    case RED:
+                        printf("Signal B = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal B = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal B = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal B = DARK\n");
+                        break;
+                }
+
+                switch (UartHandler_signal_calculation_states->lamps.ScBL) {
+
+                    case RED:
+                        printf("Signal C = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal C = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal C = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal C = DARK\n");
+                        break;
+                }
+
+                switch (UartHandler_signal_calculation_states->lamps.SdBR) {
+
+                    case RED:
+                        printf("Signal D = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal D = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal D = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal D = DARK\n");
+                        break;
+                }
+            } else {
+                switch (UartHandler_signal_calculation_states->lamps.SaBR) {
+
+                    case RED:
+                        printf("Signal A = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal A = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal A = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal A = DARK\n");
+                        break;
+                }
+
+                switch (UartHandler_signal_calculation_states->lamps.SbBR) {
+
+                    case RED:
+                        printf("Signal B = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal B = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal B = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal B = DARK\n");
+                        break;
+                }
+
+                switch (UartHandler_signal_calculation_states->lamps.ScBR) {
+
+                    case RED:
+                        printf("Signal C = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal C = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal C = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal C = DARK\n");
+                        break;
+                }
+
+                switch (UartHandler_signal_calculation_states->lamps.SdBR) {
+
+                    case RED:
+                        printf("Signal D = RED\n");
+                        break;
+                    case YELLOW:
+                        printf("Signal D = YELLOW\n");
+                        break;
+                    case GREEN:
+                        printf("Signal D = GREEN\n");
+                        break;
+                    case DARK:
+                        printf("Signal D = DARK\n");
+                        break;
+                }
+            }
+
+            if (UartHandler_board_configuration->board_location == BL) {
+
+                if (UartHandler_signal_calculation_states->stop.SaBLstop == ACTIVE) {
+                    printf("Signal A at STOP\n");
+                } else {
+                    printf("Signal A at NONSTOP\n");
+                }
+
+                if (UartHandler_signal_calculation_states->stop.SbBLstop == ACTIVE) {
+                    printf("Signal B at STOP\n");
+                } else {
+                    printf("Signal B at NONSTOP\n");
+                }
+
+                if (UartHandler_signal_calculation_states->stop.ScdBLstop == ACTIVE) {
+                    printf("Signal CD at STOP\n");
+                } else {
+                    printf("Signal CD at NONSTOP\n");
+                }
+
+                if (UartHandler_signal_calculation_states->stop.ScdBALstop == ACTIVE) {
+                    printf("Signal BAL CD at STOP\n");
+                } else {
+                    printf("Signal BAL CD at NONSTOP\n");
+                }
+            } else {
+
+                if (UartHandler_signal_calculation_states->stop.SaBRstop == ACTIVE) {
+                    printf("Signal A at STOP\n");
+                } else {
+                    printf("Signal A at NONSTOP\n");
+                }
+
+                if (UartHandler_signal_calculation_states->stop.SbBRstop == ACTIVE) {
+                    printf("Signal B at STOP\n");
+                } else {
+                    printf("Signal B at NONSTOP\n");
+                }
+
+                if (UartHandler_signal_calculation_states->stop.ScdBRstop == ACTIVE) {
+                    printf("Signal CD at STOP\n");
+                } else {
+                    printf("Signal CD at NONSTOP\n");
+                }
+
+                if (UartHandler_signal_calculation_states->stop.ScdBARstop == ACTIVE) {
+                    printf("Signal BAR CD at STOP\n");
+                } else {
+                    printf("Signal BAR CD at NONSTOP\n");
+                }
+            }
+
+            break;
 
     }
 

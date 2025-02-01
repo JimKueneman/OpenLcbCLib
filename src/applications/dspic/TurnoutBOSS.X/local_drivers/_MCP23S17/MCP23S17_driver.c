@@ -161,13 +161,15 @@ void MCP23S17Driver_initialize() {
 
 void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D) { // 0b00000RGY
 
-    uint8_olcb_t _port = aspect_B | (aspect_D << 3);
+    // Had to change the order of the C signal bits to make the layout easier
+    uint8_olcb_t _temp_port_D = ((aspect_D >> 2) & 0b00000001) | ((aspect_D << 2) & 0b00000100) | (aspect_D & 0b00000010);
+    
+    
+    uint8_olcb_t _port = aspect_C | (aspect_B << 3);
     _write_register(OLATA, _port);
 
-    // Had to change the order of the C signal bits to make the layout easier
-    uint8_olcb_t _temp_port = ((aspect_C >> 2) & 0b00000001) | ((aspect_C << 2) & 0b00000100) | (aspect_C & 0b00000010);
     
-    _port = aspect_A |(_temp_port << 3);
+    _port = aspect_A | (_temp_port_D << 3);
     _write_register(OLATB, _port);
 
     

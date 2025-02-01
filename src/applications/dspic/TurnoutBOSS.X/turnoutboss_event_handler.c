@@ -151,7 +151,7 @@ void _handle_event_from_board_left_for_rb(uint16_olcb_t suffix) {
         }
         case EVENT_SUFFIX_SIGNAL_STATE_B_STOP:
         {
-            _event_handler_signaling_state->next.stop.SbBLstop = INACTIVE;
+            _event_handler_signaling_state->next.stop.SbBLstop = ACTIVE;
             break;
 
         }
