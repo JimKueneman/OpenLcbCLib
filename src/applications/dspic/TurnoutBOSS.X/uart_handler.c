@@ -259,7 +259,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             } else {
                 printf("Turnout Feedback Normal is INACTIVE\n");
             }
-            if (UartHandler_signal_calculation_states->hardware.turnout_pushbutton_diverging == ACTIVE) {
+            if (UartHandler_signal_calculation_states->hardware.turnout_feedback_diverging == ACTIVE) {
                 printf("Turnout Feedback Diverging is ACTIVE\n");
             } else {
                 printf("Turnout Feedback Diverging is INACTIVE\n");

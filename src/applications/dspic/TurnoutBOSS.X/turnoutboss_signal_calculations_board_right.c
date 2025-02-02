@@ -183,13 +183,13 @@ void _calculate_turnout_observed_state_board_right(signaling_state_t *states, bo
 
     case TurnoutFeedbackDual:
 
-        if (((states->hardware.turnout_feedback_normal && ACTIVE == ACTIVE) && (states->hardware.turnout_feedback_diverging && ACTIVE == ACTIVE)) ||
-            ((states->hardware.turnout_feedback_normal && INACTIVE == INACTIVE) && (states->hardware.turnout_feedback_diverging && INACTIVE == INACTIVE)))
+        if ((states->hardware.turnout_feedback_normal && states->hardware.turnout_feedback_diverging) ||
+            (states->hardware.turnout_feedback_normal && states->hardware.turnout_feedback_diverging ))
         {
 
             states->next.turnout.TRO = TURNOUT_OBSERVED_IN_MOTION;
         }
-        else if (states->hardware.turnout_feedback_normal && ACTIVE == ACTIVE)
+        else if (states->hardware.turnout_feedback_normal)
         {
 
             states->next.turnout.TRO = TURNOUT_OBSERVED_NORMAL;

@@ -46,7 +46,6 @@
 #include "../../../openlcb/application_callbacks.h"
 #include "../../../openlcb/openlcb_tx_driver.h"
 #include "local_drivers/_MCP4014/MCP4014_driver.h"
-#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #else
 #include "src/openlcb/openlcb_utilities.h"
 #include "src/openlcb/openlcb_types.h"
@@ -71,7 +70,6 @@
 board_configuration_t* _turnoutboss_board_configuration;
 
 void _set_detector_gains(void) {
-
 #ifdef MPLAB
     MCP4014Driver_set_gain(_turnoutboss_board_configuration->detector_gain_a, _turnoutboss_board_configuration->detector_gain_b, _turnoutboss_board_configuration->detector_gain_c, _turnoutboss_board_configuration->led_brightness_gain);
 #endif
