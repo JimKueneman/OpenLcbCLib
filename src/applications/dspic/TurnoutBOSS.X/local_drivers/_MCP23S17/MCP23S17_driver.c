@@ -117,12 +117,13 @@ void MCP23S17Driver_initialize(void) {
     __delay32(2);
     _MCP23S17_CS = 1;
 
-    _write_register(IODIRA, 0b10000000); // Set direction top 1 bit is not used so leave as inputs, Pin 6 is the chip select for LED brightness gain and needs to be high
-    _write_register(IODIRB, 0b11000000); // Set direction top 2 bits are not used so leave them as inputs
+    _write_register(IODIRA, 0b11000000); // Set direction top 2 bits are not used so leave them as inputs
+    _write_register(IODIRB, 0b10000000); // Set direction top 1 bit is not used so leave as inputs, Pin 7 is the chip select for LED brightness gain and needs to be high
+    
     
     // Turn on all the LEDs on boot for a test the logic will reset them correctly eventually.
-    _write_register(OLATA, 0b01111111); // Set output to high 
-    _write_register(OLATB, 0b00111111); // Set output to high 
+    _write_register(OLATA, 0b00111111); // Set output to high 
+    _write_register(OLATB, 0b01111111); // Set output to high 
 
 }
 
@@ -132,11 +133,11 @@ void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, ui
     uint8_olcb_t temp_port_D = ((aspect_D >> 2) & 0b00000001) | ((aspect_D << 2) & 0b00000100) | (aspect_D & 0b00000010);
     
     
-    uint8_olcb_t port = 0b01000000 | aspect_C | (aspect_B << 3); // keep the chip select (CS) for the brightness gain adjust high
+    uint8_olcb_t port = aspect_C | (aspect_B << 3); // keep the chip select (CS) for the brightness gain adjust high
     _write_register(OLATA, port);
 
     
-    port = aspect_A | (temp_port_D << 3);
+    port = 0b01000000 | aspect_A | (temp_port_D << 3);
     _write_register(OLATB, port);
 
     
@@ -144,20 +145,20 @@ void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, ui
 
 void MCP23S17Driver_set_signal_brightness_cs(void) { 
     
-    uint8_olcb_t port = _read_register(OLATA);
+    uint8_olcb_t port = _read_register(OLATB);
         
     port = port & 0b10111111;  // clear the CS bit
             
-    _write_register(OLATA, port);
+    _write_register(OLATB, port);
     
 }
 
 void MCP23S17Driver_clear_signal_brightness_cs(void) { 
     
-    uint8_olcb_t port = _read_register(OLATA);
+    uint8_olcb_t port = _read_register(OLATB);
     port = port | 0b01000000;  // clear the CS bit
             
-    _write_register(OLATA, port);
+    _write_register(OLATB, port);
     
 }
 
