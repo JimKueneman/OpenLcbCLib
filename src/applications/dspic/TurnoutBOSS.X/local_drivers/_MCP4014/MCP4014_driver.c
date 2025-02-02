@@ -41,16 +41,18 @@
 
 #include "../../../../../openlcb/openlcb_types.h"
 #include "../../turnoutboss_drivers.h"
+#include "../_MCP23S17/MCP23S17_driver.h"
 
-void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channel2, uint8_olcb_t gain_channel3) {
+void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channel2, uint8_olcb_t gain_channel3, uint8_olcb_t gain_led_brightness) {
 
     // We can count them all down at the same time 
-
+    
     OCCUPANCY_DETECT_GAIN_PIN = 0; // set to 0 before CS is lower = decrement mode
     __delay_us(1);
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 0;
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 0;
     OCCUPANCY_DETECT_GAIN_3_CS_PIN = 0;
+    MCP23S17Driver_set_signal_brightness_cs();
     __delay_us(1);
 
     // Countdown to 0;
@@ -67,6 +69,7 @@ void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channe
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     OCCUPANCY_DETECT_GAIN_3_CS_PIN = 1;
+    MCP23S17Driver_clear_signal_brightness_cs();
     __delay_us(1);
 
 
@@ -121,8 +124,21 @@ void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channe
     __delay_us(1);
     OCCUPANCY_DETECT_GAIN_3_CS_PIN = 1;
 
+    
+    // Now set the gain from 0
+    MCP23S17Driver_set_signal_brightness_cs();
+    __delay_us(1);
 
+    // Count up to gain
+    for (int i = 0; i < gain_led_brightness; i++) {
+        __delay_us(1);
+        OCCUPANCY_DETECT_GAIN_PIN = 0;
+        __delay_us(1);
+        OCCUPANCY_DETECT_GAIN_PIN = 1; // Wiper increments on this edge
 
+    }
+    __delay_us(1);
+    MCP23S17Driver_clear_signal_brightness_cs();
 
 }
 

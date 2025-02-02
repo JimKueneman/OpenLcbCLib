@@ -76,6 +76,10 @@ extern "C" {
     
     extern void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D); // 0b00000RGY
     
+    extern void MCP23S17Driver_set_signal_brightness_cs(void);
+    
+    extern void MCP23S17Driver_clear_signal_brightness_cs(void);  
+    
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

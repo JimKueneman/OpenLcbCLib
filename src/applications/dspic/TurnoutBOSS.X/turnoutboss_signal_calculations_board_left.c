@@ -158,7 +158,7 @@ void _calculate_turnout_commanded_state_board_left(signaling_state_t *states, bo
 
     case Pushbutton_Single:
 
-        if (states->pushbutton_normal_toggled)
+        if (states->pushbutton_normal_toggled && (states->next.hardware.turnout_pushbutton_normal == CLOSED))
         {
 
             states->next.turnout.TLC = !states->turnout.TLC;

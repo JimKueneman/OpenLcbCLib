@@ -45,7 +45,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channel2, uint8_olcb_t gain_channel3);
+    extern void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channel2, uint8_olcb_t gain_channel3, uint8_olcb_t gain_led_brightness);
     
 #ifdef	__cplusplus
 }

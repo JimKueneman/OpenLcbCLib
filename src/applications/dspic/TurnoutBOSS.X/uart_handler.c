@@ -124,7 +124,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("Setting the Detector Gain\n");
 
-            MCP4014Driver_set_gain(0, 0, 0);
+            MCP4014Driver_set_gain(0, 0, 0, 0);
 
             return;
 
@@ -133,7 +133,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("Setting the Detector Gain\n");
 
-            MCP4014Driver_set_gain(63, 64, 64);
+            MCP4014Driver_set_gain(63, 64, 64, 64);
 
             return;
 
@@ -144,7 +144,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("Increasing the Detector Gain: %d\n", detector_gain);
 
-            MCP4014Driver_set_gain(detector_gain, detector_gain, detector_gain);
+            MCP4014Driver_set_gain(detector_gain, detector_gain, detector_gain, detector_gain);
 
             return;
 
@@ -155,7 +155,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("Decreasing the Detector Gain: %d\n", detector_gain);
 
-            MCP4014Driver_set_gain(detector_gain, detector_gain, detector_gain);
+            MCP4014Driver_set_gain(detector_gain, detector_gain, detector_gain, detector_gain);
 
             return;
 
@@ -329,7 +329,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
                         break;
                 }
 
-                switch (UartHandler_signal_calculation_states->lamps.SdBR) {
+                switch (UartHandler_signal_calculation_states->lamps.SdBL) {
 
                     case RED:
                         printf("Signal D = RED\n");

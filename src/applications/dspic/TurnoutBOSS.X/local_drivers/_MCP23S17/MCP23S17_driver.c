@@ -39,7 +39,7 @@
 #include "../../../../../openlcb/openlcb_types.h"
 #include "../../turnoutboss_drivers.h"
 
-void _mcp23s17_flush_buffers() {
+void _mcp23s17_flush_buffers(void) {
 
     uint8_olcb_t result;
 
@@ -56,7 +56,7 @@ void _mcp23s17_flush_buffers() {
 
 }
 
-uint8_olcb_t _mcp23s17_wait_for_reply() {
+uint8_olcb_t _mcp23s17_wait_for_reply(void) {
 
     // Wait for any transmit to finish
     while (SPI_TX_BUFFER_EMPTY_FLAG == 1) {
@@ -99,62 +99,29 @@ void _write_register(uint8_olcb_t _register, uint8_olcb_t data) {
 
 }
 
-void _read_register(uint8_olcb_t _register) {
+uint8_olcb_t _read_register(uint8_olcb_t _register) {
     
     // the data here is just to clock out the reply it is not actually used for anything
 
     _access_register(ADDRESS_READ_MASK, _register, 0x00);   // 0bxxxxAAAx assumes address 0000 here.  More general solution would have this as a parameter
-
-}
-
-uint8_olcb_t _swap_bits(uint8_olcb_t x, uint8_olcb_t p1, uint8_olcb_t p2) {
-
-    uint8_olcb_t mask1 = (1 << p1);  // Mask for bit at position p1
-
-    uint8_olcb_t mask2 = (1 << p2);  // Mask for bit at position p2
-
-    uint8_olcb_t bit1 = (x & mask1) ? 1 : 0;  // Isolate the bits
-
-    uint8_olcb_t bit2 = (x & mask2) ? 1 : 0;
-
-    int xor = bit1 ^ bit2;  // XOR the bits
-
-    x = x ^ ((xor << p1) | (xor << p2)); // Put the XOR result back in original positions
-
-    return x;
-
-} 
-
-uint8_olcb_t _reverse_bits(uint8_olcb_t num) {
     
-    uint8_olcb_t reversed = 0;
-    uint8_olcb_t numBits = sizeof(num) * 8;
+    return SPI_BUFFER;
 
-    for (int i = 0; i < numBits; i++) {
-        
-        if (num & (1 << i)) {
-            
-            reversed |= 1 << (numBits - 1 - i); 
-            
-        }
-        
-    }
-
-    return reversed;
 }
 
-void MCP23S17Driver_initialize() {
+
+void MCP23S17Driver_initialize(void) {
     
     // Datasheet says the CS needs a strobe on powerup to reset the chip in mode 1, 1
     _MCP23S17_CS = 0;
     __delay32(2);
     _MCP23S17_CS = 1;
 
-    _write_register(IODIRA, 0b11000000); // Set direction top 2 bits are not used so leave them as inputs
+    _write_register(IODIRA, 0b10000000); // Set direction top 1 bit is not used so leave as inputs, Pin 6 is the chip select for LED brightness gain and needs to be high
     _write_register(IODIRB, 0b11000000); // Set direction top 2 bits are not used so leave them as inputs
     
     // Turn on all the LEDs on boot for a test the logic will reset them correctly eventually.
-    _write_register(OLATA, 0b00111111); // Set output to high 
+    _write_register(OLATA, 0b01111111); // Set output to high 
     _write_register(OLATB, 0b00111111); // Set output to high 
 
 }
@@ -162,18 +129,36 @@ void MCP23S17Driver_initialize() {
 void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D) { // 0b00000RGY
 
     // Had to change the order of the C signal bits to make the layout easier
-    uint8_olcb_t _temp_port_D = ((aspect_D >> 2) & 0b00000001) | ((aspect_D << 2) & 0b00000100) | (aspect_D & 0b00000010);
+    uint8_olcb_t temp_port_D = ((aspect_D >> 2) & 0b00000001) | ((aspect_D << 2) & 0b00000100) | (aspect_D & 0b00000010);
     
     
-    uint8_olcb_t _port = aspect_C | (aspect_B << 3);
-    _write_register(OLATA, _port);
+    uint8_olcb_t port = 0b01000000 | aspect_C | (aspect_B << 3); // keep the chip select (CS) for the brightness gain adjust high
+    _write_register(OLATA, port);
 
     
-    _port = aspect_A | (_temp_port_D << 3);
-    _write_register(OLATB, _port);
+    port = aspect_A | (temp_port_D << 3);
+    _write_register(OLATB, port);
 
     
 }
 
+void MCP23S17Driver_set_signal_brightness_cs(void) { 
+    
+    uint8_olcb_t port = _read_register(OLATA);
+        
+    port = port & 0b10111111;  // clear the CS bit
+            
+    _write_register(OLATA, port);
+    
+}
+
+void MCP23S17Driver_clear_signal_brightness_cs(void) { 
+    
+    uint8_olcb_t port = _read_register(OLATA);
+    port = port | 0b01000000;  // clear the CS bit
+            
+    _write_register(OLATA, port);
+    
+}
 
 
