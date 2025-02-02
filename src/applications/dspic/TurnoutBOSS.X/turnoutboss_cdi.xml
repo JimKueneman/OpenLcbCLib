@@ -235,5 +235,14 @@
         <slider tickSpacing="8" immediate="yes" showValue="true"/>
       </hints>
     </int>
+    <int size="1">
+      <name>LED Brightness</name>
+      <min> 0</min>
+      <max>63</max>
+      <default>31</default>
+      <hints>
+        <slider tickSpacing="8" immediate="yes" showValue="true"/>
+      </hints>
+    </int>
   </segment>
 </cdi>
