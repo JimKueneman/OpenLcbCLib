@@ -38,7 +38,7 @@
 #define	__BOOTLOADER_DRIVERS__
 
 
-#include "../../../openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_types.h"
 
 // UART ------------------------------------------------------------------------
 // with FCY = 40000000UL

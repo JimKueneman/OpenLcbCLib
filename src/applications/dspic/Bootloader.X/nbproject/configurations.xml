@@ -7,10 +7,6 @@
       <logicalFolder name="Bootloader.X"
                      displayName="Bootloader.X"
                      projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
         <logicalFolder name="local_drivers"
                        displayName="local_drivers"
                        projectFiles="true">
@@ -18,51 +14,49 @@
             <itemPath>local_drivers/_25AA1024/25AA1024_driver.h</itemPath>
           </logicalFolder>
         </logicalFolder>
+        <logicalFolder name="src" displayName="src" projectFiles="true">
+          <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+            <logicalFolder name="common" displayName="common" projectFiles="true">
+              <itemPath>src/drivers/common/can_rx_statemachine.h</itemPath>
+              <itemPath>src/drivers/common/can_frame_message_handler.h</itemPath>
+              <itemPath>src/drivers/common/can_utilities.h</itemPath>
+              <itemPath>src/drivers/common/can_types.h</itemPath>
+              <itemPath>src/drivers/common/can_tx_statemachine.h</itemPath>
+              <itemPath>src/drivers/common/can_buffer_store.h</itemPath>
+              <itemPath>src/drivers/common/can_buffer_fifo.h</itemPath>
+              <itemPath>src/drivers/common/can_main_statemachine.h</itemPath>
+              <itemPath>src/drivers/common/can_login_message_handler.h</itemPath>
+            </logicalFolder>
+            <itemPath>src/drivers/ecan1_helper.h</itemPath>
+            <itemPath>src/drivers/driver_mcu.h</itemPath>
+            <itemPath>src/drivers/driver_100ms_clock.h</itemPath>
+            <itemPath>src/drivers/driver_configuration_memory.h</itemPath>
+            <itemPath>src/drivers/driver_can.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
+            <itemPath>src/openlcb/application_callbacks.h</itemPath>
+            <itemPath>src/openlcb/protocol_snip.h</itemPath>
+            <itemPath>src/openlcb/protocol_event_transport.h</itemPath>
+            <itemPath>src/openlcb/openlcb_buffer_list.h</itemPath>
+            <itemPath>src/openlcb/openlcb_types.h</itemPath>
+            <itemPath>src/openlcb/openlcb_utilities.h</itemPath>
+            <itemPath>src/openlcb/application.h</itemPath>
+            <itemPath>src/openlcb/openlcb_main_statemachine.h</itemPath>
+            <itemPath>src/openlcb/openlcb_gridconnect.h</itemPath>
+            <itemPath>src/openlcb/openlcb_tx_driver.h</itemPath>
+            <itemPath>src/openlcb/protocol_message_network.h</itemPath>
+            <itemPath>src/openlcb/openlcb_buffer_fifo.h</itemPath>
+            <itemPath>src/openlcb/protocol_datagram.h</itemPath>
+            <itemPath>src/openlcb/openlcb_node.h</itemPath>
+            <itemPath>src/openlcb/openlcb_defines.h</itemPath>
+            <itemPath>src/openlcb/openlcb_buffer_store.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
         <itemPath>bootloader_drivers.h</itemPath>
+        <itemPath>debug.h</itemPath>
         <itemPath>node_parameters.h</itemPath>
         <itemPath>uart_handler.h</itemPath>
         <itemPath>bootloader_types.h</itemPath>
-        <itemPath>debug.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="common" displayName="common" projectFiles="true">
-          <itemPath>../../../drivers/common/can_rx_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_frame_message_handler.h</itemPath>
-          <itemPath>../../../drivers/common/can_utilities.h</itemPath>
-          <itemPath>../../../drivers/common/can_types.h</itemPath>
-          <itemPath>../../../drivers/common/can_tx_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_store.h</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_fifo.h</itemPath>
-          <itemPath>../../../drivers/common/can_main_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_login_message_handler.h</itemPath>
-        </logicalFolder>
-        <itemPath>../../../drivers/driver_mcu.h</itemPath>
-        <itemPath>../../../drivers/driver_100ms_clock.h</itemPath>
-        <itemPath>../../../drivers/driver_configuration_memory.h</itemPath>
-        <itemPath>../../../drivers/driver_can.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="dsPIC_Common"
-                     displayName="dsPIC_Common"
-                     projectFiles="true">
-        <itemPath>../dsPIC_Common/ecan1_helper.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
-        <itemPath>../../../openlcb/application_callbacks.h</itemPath>
-        <itemPath>../../../openlcb/protocol_snip.h</itemPath>
-        <itemPath>../../../openlcb/protocol_event_transport.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_list.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_types.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_utilities.h</itemPath>
-        <itemPath>../../../openlcb/application.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_main_statemachine.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_gridconnect.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_tx_driver.h</itemPath>
-        <itemPath>../../../openlcb/protocol_message_network.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_fifo.h</itemPath>
-        <itemPath>../../../openlcb/protocol_datagram.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_node.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -80,10 +74,6 @@
       <logicalFolder name="Bootloader.X"
                      displayName="Bootloader.X"
                      projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
         <logicalFolder name="local_drivers"
                        displayName="local_drivers"
                        projectFiles="true">
@@ -91,48 +81,46 @@
             <itemPath>local_drivers/_25AA1024/25AA1024_driver.c</itemPath>
           </logicalFolder>
         </logicalFolder>
+        <logicalFolder name="src" displayName="src" projectFiles="true">
+          <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+            <logicalFolder name="common" displayName="common" projectFiles="true">
+              <itemPath>src/drivers/common/can_buffer_fifo.c</itemPath>
+              <itemPath>src/drivers/common/can_main_statemachine.c</itemPath>
+              <itemPath>src/drivers/common/can_login_message_handler.c</itemPath>
+              <itemPath>src/drivers/common/can_utilities.c</itemPath>
+              <itemPath>src/drivers/common/can_frame_message_handler.c</itemPath>
+              <itemPath>src/drivers/common/can_rx_statemachine.c</itemPath>
+              <itemPath>src/drivers/common/can_tx_statemachine.c</itemPath>
+              <itemPath>src/drivers/common/can_buffer_store.c</itemPath>
+            </logicalFolder>
+            <itemPath>src/drivers/ecan1_helper.c</itemPath>
+            <itemPath>src/drivers/driver_mcu.c</itemPath>
+            <itemPath>src/drivers/driver_can.c</itemPath>
+            <itemPath>src/drivers/driver_100ms_clock.c</itemPath>
+            <itemPath>src/drivers/driver_configuration_memory.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
+            <itemPath>src/openlcb/openlcb_buffer_fifo.c</itemPath>
+            <itemPath>src/openlcb/openlcb_node.c</itemPath>
+            <itemPath>src/openlcb/protocol_datagram.c</itemPath>
+            <itemPath>src/openlcb/openlcb_buffer_store.c</itemPath>
+            <itemPath>src/openlcb/openlcb_utilities.c</itemPath>
+            <itemPath>src/openlcb/protocol_event_transport.c</itemPath>
+            <itemPath>src/openlcb/openlcb_buffer_list.c</itemPath>
+            <itemPath>src/openlcb/protocol_snip.c</itemPath>
+            <itemPath>src/openlcb/application_callbacks.c</itemPath>
+            <itemPath>src/openlcb/openlcb_gridconnect.c</itemPath>
+            <itemPath>src/openlcb/openlcb_main_statemachine.c</itemPath>
+            <itemPath>src/openlcb/application.c</itemPath>
+            <itemPath>src/openlcb/protocol_message_network.c</itemPath>
+            <itemPath>src/openlcb/openlcb_tx_driver.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>debug.c</itemPath>
         <itemPath>bootloader_drivers.c</itemPath>
         <itemPath>main.c</itemPath>
         <itemPath>node_parameters.c</itemPath>
         <itemPath>uart_handler.c</itemPath>
-        <itemPath>debug.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="common" displayName="common" projectFiles="true">
-          <itemPath>../../../drivers/common/can_buffer_fifo.c</itemPath>
-          <itemPath>../../../drivers/common/can_main_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_login_message_handler.c</itemPath>
-          <itemPath>../../../drivers/common/can_utilities.c</itemPath>
-          <itemPath>../../../drivers/common/can_frame_message_handler.c</itemPath>
-          <itemPath>../../../drivers/common/can_rx_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_tx_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_store.c</itemPath>
-        </logicalFolder>
-        <itemPath>../../../drivers/driver_mcu.c</itemPath>
-        <itemPath>../../../drivers/driver_can.c</itemPath>
-        <itemPath>../../../drivers/driver_100ms_clock.c</itemPath>
-        <itemPath>../../../drivers/driver_configuration_memory.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="dsPIC_Common"
-                     displayName="dsPIC_Common"
-                     projectFiles="true">
-        <itemPath>../dsPIC_Common/ecan1_helper.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
-        <itemPath>../../../openlcb/openlcb_buffer_fifo.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_node.c</itemPath>
-        <itemPath>../../../openlcb/protocol_datagram.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_store.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_utilities.c</itemPath>
-        <itemPath>../../../openlcb/protocol_event_transport.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_buffer_list.c</itemPath>
-        <itemPath>../../../openlcb/protocol_snip.c</itemPath>
-        <itemPath>../../../openlcb/application_callbacks.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_gridconnect.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_main_statemachine.c</itemPath>
-        <itemPath>../../../openlcb/application.c</itemPath>
-        <itemPath>../../../openlcb/protocol_message_network.c</itemPath>
-        <itemPath>../../../openlcb/openlcb_tx_driver.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

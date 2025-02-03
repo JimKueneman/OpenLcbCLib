@@ -40,7 +40,7 @@
 #ifndef __BOOTLOADER_TYPES__
 #define	__BOOTLOADER_TYPES__
 
-#include "../../../openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_types.h"
 
 
 #ifdef	__cplusplus

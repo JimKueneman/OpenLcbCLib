@@ -38,7 +38,7 @@
 #ifndef __25AA1024_DRIVER__
 #define	__25AA1024_DRIVER__
 
-#include "../../../../../openlcb/openlcb_types.h"
+#include "../../src/openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {

@@ -78,19 +78,19 @@
 #include "string.h"
 #include "stdlib.h"
 
-#include "../../../drivers/common/can_main_statemachine.h"
-#include "../../../drivers/common/../driver_mcu.h"
-#include "../../../drivers/driver_can.h"
-#include "../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../openlcb/openlcb_node.h"
-#include "../../../openlcb/application_callbacks.h"
-#include "../../../openlcb/application.h"
-#include "../../../openlcb/openlcb_utilities.h"
-#include "../dsPIC_Common/ecan1_helper.h"
+#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/common/../driver_mcu.h"
+#include "src/drivers/driver_can.h"
+#include "src/openlcb/openlcb_main_statemachine.h"
+#include "src/openlcb/openlcb_node.h"
+#include "src/openlcb/application.h"
+#include "src/openlcb/openlcb_utilities.h"
 #include "bootloader_drivers.h"
 #include "uart_handler.h"
 #include "bootloader_drivers.h"
 #include "node_parameters.h"
+#include "src/drivers/ecan1_helper.h"
+#include "src/openlcb/application_callbacks.h"
 
 
 uint64_olcb_t node_id_base = 0x0507010100AA;
@@ -105,7 +105,18 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 void _configmem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer) {
     
-    
+    if (address >= NodeParameters_main_node.firmware_image_offset) {
+        
+        address = address - NodeParameters_main_node.firmware_image_offset;
+        
+        for (int i = 0; i < data_count; i++) {
+            
+            printf("%c", *config_mem_buffer[i]);
+            
+        }
+        
+        printf("\n");
+    }
     
 }
 

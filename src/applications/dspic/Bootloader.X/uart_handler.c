@@ -38,15 +38,15 @@
 
 #include "xc.h"
 #include "stdio.h"  // printf
-#include "../../../openlcb/openlcb_defines.h"
-#include "../../../drivers/common/can_buffer_store.h"
-#include "../../../openlcb/openlcb_buffer_store.h"
-#include "../../../drivers/common/can_main_statemachine.h"
-#include "../../../drivers/driver_can.h"
-#include "../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../openlcb/openlcb_node.h"
+#include "src/openlcb/openlcb_defines.h"
+#include "src/drivers/common/can_buffer_store.h"
+#include "src/openlcb/openlcb_buffer_store.h"
+#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/driver_can.h"
+#include "src/openlcb/openlcb_main_statemachine.h"
+#include "src/openlcb/openlcb_node.h"
 #include "debug.h"
-#include "../dsPIC_Common/ecan1_helper.h"
+#include "src/drivers/ecan1_helper.h"
 
 #include "bootloader_drivers.h"
 #include "bootloader_types.h"

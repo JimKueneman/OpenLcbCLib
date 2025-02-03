@@ -36,11 +36,11 @@
 #include "debug.h"
 
 #include "xc.h"
-#include "../../../openlcb/openlcb_defines.h"
-#include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
-#include "../../../openlcb/openlcb_buffer_fifo.h"
-#include "../../../openlcb/openlcb_defines.h"
+#include "src/openlcb/openlcb_defines.h"
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/common/can_types.h"
+#include "src/openlcb/openlcb_buffer_fifo.h"
+#include "src/openlcb/openlcb_defines.h"
 
 #ifdef PRINT_DEBUG
 

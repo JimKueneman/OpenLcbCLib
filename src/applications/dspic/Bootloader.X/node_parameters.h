@@ -40,7 +40,7 @@
 #ifndef __NODE_PARAMETERS__
 #define	__NODE_PARAMETERS__
 
-#include "../../../openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_types.h"
 
 
 // nice reply for multiple ways of defining constant structures

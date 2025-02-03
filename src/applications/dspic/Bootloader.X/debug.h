@@ -14,9 +14,9 @@
 
 #ifdef PRINT_DEBUG 
 
-#include "../../../openlcb/openlcb_defines.h"
-#include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+#include "src/openlcb/openlcb_defines.h"
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/common/can_types.h"
 
 #endif
 

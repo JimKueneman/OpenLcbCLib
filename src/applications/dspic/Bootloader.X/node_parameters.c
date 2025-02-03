@@ -33,7 +33,7 @@
  */
 
 #include "node_parameters.h"
-#include "../../../openlcb/openlcb_defines.h"
+#include "src/openlcb/openlcb_defines.h"
 
 
 const node_parameters_t NodeParameters_main_node = {
@@ -57,8 +57,8 @@ const node_parameters_t NodeParameters_main_node = {
     PSI_SIMPLE_NODE_INFORMATION
     ),
 
-    .configuration_options.high_address_space = SUPPORT_FIRMWARE_BOOTLOADER,
-    .configuration_options.low_address_space = SUPPORT_FIRMWARE_BOOTLOADER,
+    .configuration_options.high_address_space = ADDRESS_SPACE_FIRMWARE,
+    .configuration_options.low_address_space = ADDRESS_SPACE_FIRMWARE,
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
     .configuration_options.stream_read_write_supported = 0,
@@ -125,7 +125,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
     .address_space_firmware.description = "",
 
-    .firmware_image_offset = 0x200, // start at 1024 mark
+    .firmware_image_offset = 0xFFFF, // lets us know this is a firmware write when we receive the callback
 #endif
 
     .cdi =

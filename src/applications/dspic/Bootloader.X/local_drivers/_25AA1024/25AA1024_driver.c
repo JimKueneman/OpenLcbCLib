@@ -35,7 +35,7 @@
 #include "25AA1024_driver.h"
 
 #include "xc.h"
-#include "../../../../../drivers/driver_configuration_memory.h"
+#include "../../src/drivers/driver_configuration_memory.h"
 #include "../../bootloader_drivers.h"
 
 void _25AA1024_Driver_initialize() {

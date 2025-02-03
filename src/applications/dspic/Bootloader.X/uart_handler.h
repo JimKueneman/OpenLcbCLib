@@ -38,7 +38,7 @@
 #ifndef __UART_HANDLER__
 #define	__UART_HANDLER__
 
-#include "../../../openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
