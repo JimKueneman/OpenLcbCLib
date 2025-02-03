@@ -24,53 +24,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file ecan1_driver.h
+ * \file bootloader_types.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Module pulls the linked board NodeID (if available) and the board type (BL/BR) from
+ * the configuration memory.  It also maintains the state of the signals that are updated
+ * from the TurnoutBoss_Event_Handler module for incoming events from linked Left and 
+ * Right TurnoutBosses
  *
  * @author Jim Kueneman
-* @date 5 Jan 2025
+ * @date 03 Feb 2025
  */
-
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __ECAN1_HELPER__
-#define	__ECAN1_HELPER__
+#ifndef __BOOTLOADER_TYPES__
+#define	__BOOTLOADER_TYPES__
 
 #include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
- // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
-    
-extern void Ecan1Helper_initialization(void);
-
-extern void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback);
-
-extern uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t Channel);
-
-extern void Ecan1Helper_pause_can_rx(void);
-
-extern void Ecan1Helper_resume_can_rx(void);
-
-extern uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
-
-
-// Custom Driver functions
-
-// How full the chips CAN fifo has gotten
-extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void);
 
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __ECAN1_HELPER__ */
+#endif	/* __BOOTLOADER_TYPES__ */
 

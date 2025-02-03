@@ -1,5 +1,6 @@
+
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,53 +25,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file ecan1_driver.h
+ * \file 25AA1024_driver.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Driver for the MicroChip 25AA1024 EEPROM.
  *
  * @author Jim Kueneman
-* @date 5 Jan 2025
+ * @date 5 Dec 2024
  */
-
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __ECAN1_HELPER__
-#define	__ECAN1_HELPER__
+#ifndef __25AA1024_DRIVER__
+#define	__25AA1024_DRIVER__
 
-#include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+#include "../../../../../openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
- // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
+    extern void _25AA1024_Driver_initialize(void);
     
-extern void Ecan1Helper_initialization(void);
+    extern void _25AA1024_Driver_erase_chip(void);
 
-extern void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback);
+    extern uint8_olcb_t _25AA1024_Driver_read_status_register(void);
 
-extern uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+    extern void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status);
 
-extern void Ecan1Helper_pause_can_rx(void);
+    extern void _25AA1024_Driver_write_latch_enable(void);
 
-extern void Ecan1Helper_resume_can_rx(void);
+    extern void _25AA1024_Driver_write_latch_disable(void);
 
-extern uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
+    extern void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte);
 
+    extern uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
 
-// Custom Driver functions
+    extern uint8_olcb_t _25AA1024_Driver_write_in_progress();
 
-// How full the chips CAN fifo has gotten
-extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void);
+    extern uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address);
 
+    extern uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __ECAN1_HELPER__ */
+#endif	/* __25AA1024_DRIVER__ */
 

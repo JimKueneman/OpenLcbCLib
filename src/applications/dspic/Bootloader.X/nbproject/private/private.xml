@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/protocol_datagram.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/Bootloader.X/node_parameters.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/Bootloader.X/debug.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/drivers/common/can_types.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/openlcb_defines.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/Bootloader.X/debug.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/Bootloader.X/main.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/application_callbacks.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/application_callbacks.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/Bootloader.X/bootloader_drivers.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/Bootloader.X/uart_handler.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/openlcb_types.h</file>
+        </group>
+    </open-files>
+</project-private>
