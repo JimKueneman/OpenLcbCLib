@@ -156,7 +156,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
             ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
-        case MTI_PRODUCER_IDENDIFY:
+        case MTI_PRODUCER_IDENTIFY:
         {
             ProtocolEventTransport_handle_producer_identify(openlcb_node, openlcb_msg, worker_msg);
             return;
