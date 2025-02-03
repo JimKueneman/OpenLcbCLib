@@ -187,7 +187,7 @@
         <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-procedural-abstraction" value="false"/>
         <property key="enable-short-double" value="false"/>
-        <property key="enable-symbols" value="true"/>
+        <property key="enable-symbols" value="false"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="expand-pragma-config" value="false"/>
         <property key="extra-include-directories" value=""/>
@@ -239,7 +239,7 @@
       </C30-AS>
       <C30-CO>
         <property key="coverage-enable" value=""/>
-        <property key="stack-guidance" value="false"/>
+        <property key="stack-guidance" value="true"/>
       </C30-CO>
       <C30-LD>
         <property key="additional-options-use-response-files" value="false"/>

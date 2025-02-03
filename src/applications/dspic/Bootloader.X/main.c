@@ -81,13 +81,7 @@
 #include <stdlib.h>
 
 #include "src/drivers/common/can_main_statemachine.h"
-#include "src/drivers/common/../driver_mcu.h"
-#include "src/drivers/driver_can.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/application.h"
-#include "src/openlcb/openlcb_utilities.h"
-#include "bootloader_drivers.h"
 #include "uart_handler.h"
 #include "bootloader_drivers.h"
 #include "node_parameters.h"
