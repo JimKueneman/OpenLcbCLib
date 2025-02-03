@@ -237,9 +237,6 @@ extern "C" {
 #endif
         user_address_space_info_t address_space_firmware;
         user_configuration_options configuration_options;
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
-        uint32_olcb_t firmware_image_offset; // where in the EEPROM the image is stuffed
-#endif
 
     } node_parameters_t;
 

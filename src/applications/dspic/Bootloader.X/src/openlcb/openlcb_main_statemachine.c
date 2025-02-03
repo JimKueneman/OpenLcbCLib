@@ -36,7 +36,9 @@
 
 #include "openlcb_main_statemachine.h"
 
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "openlcb_buffer_store.h"
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
@@ -79,7 +81,7 @@ void MainStatemachine_initialize(
     DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback);
     DriverMcu_initialization(mcu_setup_callback, reboot_callback);
     
-    for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
+    for (int i = 0; i < sizeof( openlcb_helper.worker_buffer); i++)
         openlcb_helper.worker_buffer[i] = 0x00;
     
     openlcb_helper.active_msg = (void*) 0;
@@ -92,7 +94,7 @@ void MainStatemachine_initialize(
     openlcb_helper.worker.timerticks = 0;
     openlcb_helper.worker.state.inprocess = FALSE;
     openlcb_helper.worker.payload = (openlcb_payload_t*) &openlcb_helper.worker_buffer;
-    openlcb_helper.worker.payload_size = LEN_MESSAGE_BYTES_STREAM;
+    openlcb_helper.worker.payload_size = sizeof(openlcb_helper.worker_buffer);
     openlcb_helper.worker.state.allocated = TRUE;
 
 }

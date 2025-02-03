@@ -120,36 +120,16 @@ openlcb_node_t* Node_get_next(uint8_olcb_t key) {
 
 void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
-    uint64_olcb_t node_id = openlcb_node->id << 16;
-
     openlcb_node->consumers.count = 0;
-    for (int i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++)
-
-        if (i < USER_DEFINED_CONSUMER_COUNT) { // safety net
-
-            openlcb_node->consumers.list[i] = node_id + i;
-            openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
-            
-        }
-
+    
     openlcb_node->producers.count = 0;
-    for (int i = 0; i < openlcb_node->parameters->producer_count_autocreate; i++)
-
-        if (i < USER_DEFINED_PRODUCER_COUNT) { // safety net
-
-            openlcb_node->producers.list[i] = node_id + i;
-            openlcb_node->producers.count = openlcb_node->producers.count + 1;
-            
-        }
-
+    
 
     openlcb_node->consumers.enumerator.running = FALSE;
     openlcb_node->consumers.enumerator.enum_index = 0;
 
     openlcb_node->producers.enumerator.running = FALSE;
     openlcb_node->producers.enumerator.enum_index = 0;
-
-
 
 }
 

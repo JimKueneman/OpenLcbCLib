@@ -36,7 +36,9 @@
 
 #include "protocol_message_network.h"
 
-#include "stdio.h" // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_fifo.h"
@@ -78,9 +80,7 @@ void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_VERIFIED_NODE_ID, 3);
     Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
-
-    if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
-        worker_msg->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
+    
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
@@ -98,10 +98,13 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_PROTOCOL_SUPPORT_REPLY, 6);
 
-    uint64_olcb_t temp = openlcb_node->parameters->protocol_support;
+    
+    uint64_olcb_t temp = PSI_DATAGRAM | PSI_SIMPLE_NODE_INFORMATION;
 
     if (openlcb_node->state.firmware_upgrade)
         temp = temp | PSI_FIRMWARE_UPGRADE_ACTIVE;
+    else
+       temp = temp | PSI_FIRMWARE_UPGRADE; 
 
     if (temp > 0)
 

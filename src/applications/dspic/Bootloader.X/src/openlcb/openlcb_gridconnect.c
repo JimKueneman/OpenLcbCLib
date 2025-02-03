@@ -36,14 +36,14 @@
  * @date 11 Dec 2024
  */
 
-#include <stdio.h>
+
+#include <stdio.h>  // sprintf
+
 #include <stdlib.h>
 #include <string.h>
 #include "openlcb_gridconnect.h"
 #include "openlcb_types.h"
 #include "../drivers/common/can_types.h"
-
-#include "stdio.h" // printf
 
 uint8_olcb_t _current_state = GRIDCONNECT_STATE_SYNC_START;
 uint8_olcb_t _receive_buffer_index = 0;

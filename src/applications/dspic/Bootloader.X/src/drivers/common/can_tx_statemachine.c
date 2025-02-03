@@ -37,7 +37,9 @@
 
 #include "can_tx_statemachine.h"
 
-#include "stdio.h" // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_buffer_store.h"

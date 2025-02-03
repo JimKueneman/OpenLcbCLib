@@ -35,7 +35,9 @@
 #include "bootloader_drivers.h"
 
 #include "xc.h"
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include <libpic30.h> // delay
 
 #include "local_drivers/_25AA1024/25AA1024_driver.h"

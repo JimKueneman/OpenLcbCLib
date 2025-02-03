@@ -37,7 +37,9 @@
 #include "uart_handler.h"
 
 #include "xc.h"
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "src/openlcb/openlcb_defines.h"
 #include "src/drivers/common/can_buffer_store.h"
 #include "src/openlcb/openlcb_buffer_store.h"

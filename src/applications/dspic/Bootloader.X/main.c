@@ -73,10 +73,12 @@
 
 #include <libpic30.h>
 
-#include "xc.h"
-#include "stdio.h"  // printf
-#include "string.h"
-#include "stdlib.h"
+#include <xc.h>
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
+#include <string.h>
+#include <stdlib.h>
 
 #include "src/drivers/common/can_main_statemachine.h"
 #include "src/drivers/common/../driver_mcu.h"
@@ -97,27 +99,25 @@ uint64_olcb_t node_id_base = 0x0507010100AA;
 
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
+#ifdef PRINT_DEBUG
     printf("Alias Allocation: 0x%02X  ", new_alias);
-  //  PrintNodeID(node_id);
+    //  PrintNodeID(node_id);
     printf("\n");
-
+#endif
 }
 
 void _configmem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer) {
-    
-    if (address >= NodeParameters_main_node.firmware_image_offset) {
-        
-        address = address - NodeParameters_main_node.firmware_image_offset;
-        
-        for (int i = 0; i < data_count; i++) {
-            
-            printf("%c", *config_mem_buffer[i]);
-            
-        }
-        
-        printf("\n");
+
+    #ifdef PRINT_DEBUG
+    for (int i = 0; i < data_count; i++) {
+
+        printf("%c", *config_mem_buffer[i]);
+
     }
-    
+
+    printf("\n");
+#endif
+
 }
 
 int main(void) {
@@ -147,14 +147,14 @@ int main(void) {
 
     BootloaderDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
     Application_Callbacks_set_alias_change(&_alias_change_callback);
-    
+
     Application_Callbacks_set_config_mem_write(&_configmem_write_callback);
 
-
+#ifdef PRINT_DEBUG
     printf("\nBooted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
-
+#endif
 
     while (1) {
 

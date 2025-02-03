@@ -37,7 +37,9 @@
 
 #include "can_login_message_handler.h"
 
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_node.h"
@@ -171,10 +173,6 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
             MTI_INITIALIZATION_COMPLETE,
             6
             );
-
-
-    if (next_node->parameters->protocol_support & PSI_SIMPLE)
-        openlcb_worker->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
 
     Utilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
 

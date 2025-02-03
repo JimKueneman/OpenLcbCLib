@@ -38,7 +38,9 @@
 
 #include "openlcb_buffer_store.h"
 
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "openlcb_types.h"
 
 message_buffer_t _message_buffer;
@@ -82,12 +84,7 @@ void BufferStore_initialize(void) {
             _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_SNIP;
             _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.snip[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH)];
 
-        } else {
-
-            _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_STREAM;
-            _message_buffer.messages[i].payload = (openlcb_payload_t*) & _message_buffer.stream[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH)];
-
-        }
+        } 
 
     }
 }
@@ -105,12 +102,11 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
         
         buffer_size = LEN_MESSAGE_BYTES_DATAGRAM;
     
-    } else if (buffer_size <= LEN_MESSAGE_BYTES_SNIP) {
+    } else  {
         
         buffer_size = LEN_MESSAGE_BYTES_SNIP;
     
-    } else 
-        buffer_size = LEN_MESSAGE_BYTES_STREAM;
+    } 
 
 
     switch (buffer_size) {
@@ -126,10 +122,6 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
         case LEN_MESSAGE_BYTES_SNIP:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_SNIP_BUFFER_DEPTH;
-            break;
-        case LEN_MESSAGE_BYTES_STREAM:
-            offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH;
-            offset_end = offset_start + USER_DEFINED_STREAM_BUFFER_DEPTH;
             break;
 
     }

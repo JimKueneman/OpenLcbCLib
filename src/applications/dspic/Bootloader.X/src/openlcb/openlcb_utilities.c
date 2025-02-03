@@ -35,21 +35,12 @@
 
 #include "openlcb_utilities.h"
 
-#include "stdio.h" // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 
-
-uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node) {
-    
-    uint32_olcb_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
-    
-    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-       offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.highest_address; 
-    
-    return (offset_per_node * openlcb_node->index);
-    
-}
 
 void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target) {
 

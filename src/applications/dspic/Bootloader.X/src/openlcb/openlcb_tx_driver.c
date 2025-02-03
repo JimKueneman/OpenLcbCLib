@@ -37,7 +37,9 @@
 
 #include "openlcb_tx_driver.h"
 
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "openlcb_types.h"
 #include "openlcb_node.h"
 

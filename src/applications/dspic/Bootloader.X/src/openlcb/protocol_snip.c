@@ -36,7 +36,9 @@
 
 #include "protocol_snip.h"
 
-#include "stdio.h" // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_fifo.h"
@@ -178,10 +180,8 @@ uint16_olcb_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_
 
 
     uint32_olcb_t data_address = 0; // User Name is always the first 63 Bytes in the Configuration Space
-    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-        data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
 
-    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
+    data_address = data_address; // offset for multiple nodes
 
     data_count = DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));  
       
@@ -210,10 +210,6 @@ uint16_olcb_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, o
         data_count = LEN_SNIP_USER_DESCRIPTION - 1;
 
     uint32_olcb_t data_address = LEN_SNIP_USER_NAME; // User Name is always the first 63 Bytes in the Configuration Space and Description next 64 bytes
-    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-        data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
-
-    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
     data_count = DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index])); 
    

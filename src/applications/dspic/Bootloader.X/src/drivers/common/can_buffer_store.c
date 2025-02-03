@@ -38,7 +38,9 @@
 
 #include "can_buffer_store.h"
 
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 

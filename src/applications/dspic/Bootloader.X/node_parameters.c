@@ -38,24 +38,12 @@
 
 const node_parameters_t NodeParameters_main_node = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
-
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = "Mustangpeak Engineering",
     .snip.model = "dsPIC Bootloader",
     .snip.hardware_version = "Ver A",
     .snip.software_version = "prototype",
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
-
-    .protocol_support = (
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER 
-    PSI_FIRMWARE_UPGRADE |
-#endif
-    PSI_DATAGRAM |
-    PSI_EVENT_EXCHANGE |
-    PSI_SIMPLE_NODE_INFORMATION
-    ),
 
     .configuration_options.high_address_space = ADDRESS_SPACE_FIRMWARE,
     .configuration_options.low_address_space = ADDRESS_SPACE_FIRMWARE,
@@ -66,56 +54,7 @@ const node_parameters_t NodeParameters_main_node = {
     .configuration_options.unaligned_writes_supported = 1,
     .configuration_options.write_to_user_space_0xfb_supported = 1,
     .configuration_options.write_under_mask_supported = 1,
-    .configuration_options.description = "",
 
-    // Space 0xFF 
-    // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so 
-    //    make sure the CDI maps these 2 items to the first 128 bytes as well
-    .address_space_configuration_definition.read_only = 1,
-    .address_space_configuration_definition.present = 0,
-    .address_space_configuration_definition.low_address_valid = 0, // assume the low address starts at 0
-    .address_space_configuration_definition.low_address = 0, // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 0, // this is the length of the .cdi file byte array in this initialization structure
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .address_space_configuration_definition.description = "",
-
-    // Space 0xFE
-    .address_space_all.read_only = 1,
-    .address_space_all.present = 0,
-    .address_space_all.low_address_valid = 0, // assume the low address starts at 0
-    .address_space_all.low_address = 0, // ignored if low_address_valid is false
-    .address_space_all.highest_address = 0,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
-    .address_space_all.description = "",
-
-    // Space 0xFD
-    .address_space_config_memory.read_only = 0,
-    .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 0, // assume the low address starts at 0
-    .address_space_config_memory.low_address = 0, // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0x1FF, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
-    .address_space_config_memory.description = "",
-
-    // Space 0xFC
-    .address_space_acdi_manufacturer.read_only = 1,
-    .address_space_acdi_manufacturer.present = 1,
-    .address_space_acdi_manufacturer.low_address_valid = 0, // assume the low address starts at 0
-    .address_space_acdi_manufacturer.low_address = 0, // ignored if low_address_valid is false
-    .address_space_acdi_manufacturer.highest_address = 125, // Predefined in the Configuration Description Definition Spec
-    .address_space_acdi_manufacturer.address_space = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS,
-    .address_space_acdi_manufacturer.description = "",
-
-    // Space 0xFB
-    .address_space_acdi_user.read_only = 0,
-    .address_space_acdi_user.present = 0,
-    .address_space_acdi_user.low_address_valid = 0, // assume the low address starts at 0
-    .address_space_acdi_user.low_address = 0, // ignored if low_address_valid is false
-    .address_space_acdi_user.highest_address = 128, // Predefined in the Configuration Description Definition Spec
-    .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
-    .address_space_acdi_user.description = "",
-
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
     // Space 0xEF
     .address_space_firmware.read_only = 0,
     .address_space_firmware.present = 1,
@@ -123,15 +62,5 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_firmware.low_address = 0, // Firmware ALWAYS assumes it starts at 0
     .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
     .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
-    .address_space_firmware.description = "",
-
-    .firmware_image_offset = 0xFFFF, // lets us know this is a firmware write when we receive the callback
-#endif
-
-    .cdi =
-    {
-
-    },
-
 
 };

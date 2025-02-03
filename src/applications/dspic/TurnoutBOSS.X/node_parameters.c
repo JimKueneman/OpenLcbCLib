@@ -54,9 +54,6 @@ const node_parameters_t NodeParameters_main_node = {
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
 
     .protocol_support = (
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER 
-    PSI_FIRMWARE_UPGRADE |
-#endif
     PSI_DATAGRAM |
     PSI_MEMORY_CONFIGURATION |
     PSI_EVENT_EXCHANGE |
@@ -122,19 +119,6 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.highest_address = 128, // Predefined in the Configuration Description Definition Spec
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ACDI access user storage",
-
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
-    // Space 0xEF
-    .address_space_firmware.read_only = 0,
-    .address_space_firmware.present = 1,
-    .address_space_firmware.low_address_valid = 0, // assume the low address starts at 0
-    .address_space_firmware.low_address = 0, // Firmware ALWAYS assumes it starts at 0
-    .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
-    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
-    .address_space_firmware.description = "Firmware update address space",
-
-    .firmware_image_offset = 0x200, // start at 1024 mark
-#endif
 
     .cdi =
     {

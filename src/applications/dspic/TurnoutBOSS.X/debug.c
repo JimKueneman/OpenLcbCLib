@@ -131,8 +131,8 @@ void PrintMtiName(uint16_olcb_t mti) {
         case MTI_CONSUMER_IDENTIFIED_RESERVED:
             printf("MTI_CONSUMER_IDENTIFIED_RESERVED");
             break;
-        case MTI_PRODUCER_IDENDIFY:
-            printf("MTI_PRODUCER_IDENDIFY");
+        case MTI_PRODUCER_IDENTIFY:
+            printf("MTI_PRODUCER_IDENTIFY");
             break;
         case MTI_PRODUCER_IDENTIFY_RANGE:
             printf("MTI_PRODUCER_IDENTIFY_RANGE");

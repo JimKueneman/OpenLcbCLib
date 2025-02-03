@@ -32,7 +32,9 @@
  * @date 5 Dec 2024
  */
 
-#include "stdio.h"  // printf
+#ifdef PRINT_DEBUG
+#include <stdio.h>  // printf
+#endif
 #include "debug.h"
 
 #include "xc.h"

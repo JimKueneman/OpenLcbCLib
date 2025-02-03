@@ -45,51 +45,41 @@ extern "C" {
 
     // ************************ USER DEFINED VARIABLES *****************************
 
-// Total number of message buffers available for use
-// Note you can override these with Define Macros in your compiler 
+    // Total number of message buffers available for use
+    // Note you can override these with Define Macros in your compiler 
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
-#define USER_DEFINED_BASIC_BUFFER_DEPTH     16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define USER_DEFINED_BASIC_BUFFER_DEPTH     2  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
 #endif
 
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  1  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
 #endif
 
 #ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
-#define USER_DEFINED_SNIP_BUFFER_DEPTH      20  // USER DEFINED
+#define USER_DEFINED_SNIP_BUFFER_DEPTH      1  // USER DEFINED
 #endif
-
-#ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
-#define USER_DEFINED_STREAM_BUFFER_DEPTH    0  // USER DEFINED
-#endif
-
 
 
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH      16  // USER DEFINED 
+#define USER_DEFINED_NODE_BUFFER_DEPTH      1  // USER DEFINED 
 #endif
 
-#ifndef USER_DEFINED_CDI_LENGTH
-#define USER_DEFINED_CDI_LENGTH             6000 // USER DEFINED 
-#endif
-
-#ifndef USER_DEFINED_FDI_LENGTH
-#define USER_DEFINED_FDI_LENGTH             1000 // USER DEFINED 
-#endif
 
 #ifndef USER_DEFINED_PRODUCER_COUNT
-#define USER_DEFINED_PRODUCER_COUNT         48 // USER DEFINED 
+#define USER_DEFINED_PRODUCER_COUNT         0 // USER DEFINED 
 #endif
 
 #ifndef USER_DEFINED_CONSUMER_COUNT
-#define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
+#define USER_DEFINED_CONSUMER_COUNT         0 // USER DEFINED 
 #endif
+
+    // *********************END USER DEFINED VARIABLES *****************************
+
 
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
 #define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
-    // *********************END USER DEFINED VARIABLES *****************************
 
     typedef uint8_t uint8_olcb_t;
     typedef uint64_t uint64_olcb_t;
@@ -126,23 +116,20 @@ extern "C" {
 #define LEN_MESSAGE_BYTES_BASIC        16     // most are 8 bytes but a few protocols take 2 frames like Traction
 #define LEN_MESSAGE_BYTES_DATAGRAM     72
 #define LEN_MESSAGE_BYTES_SNIP        256     // will cover Event with Payload as well
-#define LEN_MESSAGE_BYTES_STREAM      512
 
 #define LEN_EVENT_ID                    8
 
-#define LEN_MESSAGE_BUFFER  (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)
+#define LEN_MESSAGE_BUFFER  (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH)
 
 #define LEN_DATAGRAM_MAX_PAYLOAD       64   // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
     typedef uint8_olcb_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_olcb_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
     typedef uint8_olcb_t payload_snip_t[LEN_MESSAGE_BYTES_SNIP];
-    typedef uint8_olcb_t payload_stream_t[LEN_MESSAGE_BYTES_STREAM];
 
     typedef payload_basic_t openlcb_basic_data_buffer_t[USER_DEFINED_BASIC_BUFFER_DEPTH];
     typedef payload_datagram_t openlcb_datagram_data_buffer_t[USER_DEFINED_DATAGRAM_BUFFER_DEPTH];
     typedef payload_snip_t openlcb_snip_data_buffer_t[USER_DEFINED_SNIP_BUFFER_DEPTH];
-    typedef payload_stream_t openlcb_stream_data_buffer_t[USER_DEFINED_STREAM_BUFFER_DEPTH];
 
 
     typedef uint8_olcb_t openlcb_payload_t[1];
@@ -178,7 +165,6 @@ extern "C" {
         openlcb_basic_data_buffer_t basic; // array of basic arrays
         openlcb_datagram_data_buffer_t datagram; // array of datagram arrays
         openlcb_snip_data_buffer_t snip; // array of snip arrays
-        openlcb_stream_data_buffer_t stream; // array of stream arrays
     } message_buffer_t;
 
 
@@ -204,7 +190,7 @@ extern "C" {
         uint8_olcb_t stream_read_write_supported : 1;
         uint8_olcb_t high_address_space;
         uint8_olcb_t low_address_space;
-        char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];
+
     } user_configuration_options;
 
     typedef struct {
@@ -214,33 +200,13 @@ extern "C" {
         uint8_olcb_t address_space;
         uint32_olcb_t highest_address;
         uint32_olcb_t low_address;
-        char description[LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION];
     } user_address_space_info_t;
 
     typedef struct {
         user_snip_struct_t snip;
-        uint64_olcb_t protocol_support;
-        uint8_olcb_t consumer_count_autocreate;
-        uint8_olcb_t producer_count_autocreate;
-        uint8_olcb_t cdi[USER_DEFINED_CDI_LENGTH];
-#ifdef SUPPORT_TRACTION
-        uint8_olcb_t fdi[USER_DEFINED_FDI_LENGTH];
-#endif
-        user_address_space_info_t address_space_configuration_definition;
-        user_address_space_info_t address_space_all;
-        user_address_space_info_t address_space_config_memory;
-        user_address_space_info_t address_space_acdi_manufacturer;
-        user_address_space_info_t address_space_acdi_user;
-#ifdef SUPPORT_TRACTION
-        user_address_space_info_t address_space_train_function_definition;
-        user_address_space_info_t address_space_train_function_config_memory;
-#endif
+
         user_address_space_info_t address_space_firmware;
         user_configuration_options configuration_options;
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
-        uint32_olcb_t firmware_image_offset; // where in the EEPROM the image is stuffed
-#endif
-
     } node_parameters_t;
 
 
@@ -307,7 +273,7 @@ extern "C" {
 
     typedef struct {
         openlcb_msg_t worker;
-        payload_stream_t worker_buffer;
+        payload_datagram_t worker_buffer;
         openlcb_msg_t* active_msg;
     } openlcb_statemachine_worker_t;
 
