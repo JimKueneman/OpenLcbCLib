@@ -45,46 +45,22 @@ extern "C" {
 
     // ************************ USER DEFINED VARIABLES *****************************
 
-// Total number of message buffers available for use
-// Note you can override these with Define Macros in your compiler 
+    // Total number of message buffers available for use
 
-#ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
 #define USER_DEFINED_BASIC_BUFFER_DEPTH     16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
-#endif
-
-#ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
 #define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
-#endif
-
-#ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
 #define USER_DEFINED_SNIP_BUFFER_DEPTH      20  // USER DEFINED
-#endif
-
-#ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
 #define USER_DEFINED_STREAM_BUFFER_DEPTH    0  // USER DEFINED
-#endif
 
 
+#define USER_DEFINED_NODE_BUFFER_DEPTH                16  // USER DEFINED 
 
-#ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH      16  // USER DEFINED 
-#endif
 
-#ifndef USER_DEFINED_CDI_LENGTH
-#define USER_DEFINED_CDI_LENGTH             6000 // USER DEFINED 
-#endif
+#define USER_DEFINED_CDI_LENGTH                   6000
+#define USER_DEFINED_FDI_LENGTH                   1000
 
-#ifndef USER_DEFINED_FDI_LENGTH
-#define USER_DEFINED_FDI_LENGTH             1000 // USER DEFINED 
-#endif
-
-#ifndef USER_DEFINED_PRODUCER_COUNT
-#define USER_DEFINED_PRODUCER_COUNT         48 // USER DEFINED 
-#endif
-
-#ifndef USER_DEFINED_CONSUMER_COUNT
-#define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
-#endif
+#define USER_DEFINED_PRODUCER_COUNT         48
+#define USER_DEFINED_CONSUMER_COUNT         32
 
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
 #define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
@@ -99,10 +75,10 @@ extern "C" {
 
 #define FALSE 0
 #define TRUE  1
-
+    
 #define LOW 0
 #define HIGH 1
-
+    
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
 
@@ -131,7 +107,7 @@ extern "C" {
 #define LEN_EVENT_ID                    8
 
 #define LEN_MESSAGE_BUFFER  (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)
-
+    
 #define LEN_DATAGRAM_MAX_PAYLOAD       64   // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
     typedef uint8_olcb_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
@@ -149,7 +125,7 @@ extern "C" {
 
     typedef uint64_olcb_t event_id_t;
     typedef uint64_olcb_t node_id_t;
-
+    
     typedef uint8_olcb_t event_payload_t[255];
 
     typedef struct {
@@ -237,12 +213,15 @@ extern "C" {
 #endif
         user_address_space_info_t address_space_firmware;
         user_configuration_options configuration_options;
+#ifdef SUPPORT_FIRMWARE_BOOTLOADER
+        uint32_olcb_t firmware_image_offset; // where in the EEPROM the image is stuffed
+#endif
 
     } node_parameters_t;
 
 
     // Event ID Structures
-
+    
 #define EVENTS_ENCODED_IN_BYTE 4
 
     typedef struct {
@@ -310,7 +289,7 @@ extern "C" {
 
 
     typedef void(*parameterless_callback_t) (void);
-
+    
     typedef void(*mcu_driver_callback_t) (parameterless_callback_t);
 
     typedef uint8_olcb_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];

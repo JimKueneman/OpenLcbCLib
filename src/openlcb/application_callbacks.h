@@ -95,11 +95,8 @@ extern callback_event_pc_report_t Application_Callbacks_get_event_pc_report(void
 extern void Application_Callbacks_set_event_pc_report_with_payload(callback_event_pc_report_with_payload_t event_pc_report_callback);
 extern callback_event_pc_report_with_payload_t Application_Callbacks_get_event_pc_report_with_payload(void);
 
-
-
 extern void Application_Callbacks_set_config_mem_write(callback_config_mem_write_t config_mem_write_callback);
 extern callback_config_mem_write_t Application_Callbacks_get_config_mem_write(void);
-
 
 #ifdef	__cplusplus
 }

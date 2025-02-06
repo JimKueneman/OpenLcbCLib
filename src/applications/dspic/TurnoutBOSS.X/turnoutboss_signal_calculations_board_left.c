@@ -167,6 +167,17 @@ void _calculate_turnout_commanded_state_board_left(signaling_state_t *states, bo
 
         break;
     }
+    
+    // If the buttons commanded a state change, produce the corresponding turnout command event
+    if (tlc_updated)
+    {
+        if (states->next.turnout.TLC == ACTIVE)
+        {
+            event_engine->events[OFFSET_EVENT_TURNOUT_COMMAND_NORMAL].state.send = TRUE;
+        } else {
+            event_engine->events[OFFSET_EVENT_TURNOUT_COMMAND_DIVERGING].state.send = TRUE;
+        }
+    }
 
     // See if we received a remote control turnout control command and if so override the buttons
     if (states->next.remote_control.turnout_normal)
@@ -201,28 +212,45 @@ void _calculate_turnout_observed_state_board_left(signaling_state_t *states, boa
         break;
 
     case TurnoutFeedbackSingle:
-
-        states->next.turnout.TLO = states->hardware.turnout_feedback_normal == ACTIVE;
+            
+        if (states->next.turnout.TLC == ACTIVE)
+        {
+            if (states->hardware.turnout_feedback_normal == ACTIVE)
+            {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_NORMAL;
+            } else {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_IN_MOTION;
+            }
+        } else {
+            if (states->hardware.turnout_feedback_normal == INACTIVE)
+            {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_DIVERGING;
+            } else {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_IN_MOTION;
+            }
+        }
+            
         break;
-
+            
     case TurnoutFeedbackDual:
-
-        if ((states->hardware.turnout_feedback_normal && states->hardware.turnout_feedback_diverging ) ||
-            (! states->hardware.turnout_feedback_normal && ! states->hardware.turnout_feedback_diverging) )
+        
+        if (states->next.turnout.TLC == ACTIVE)
         {
-
-            states->next.turnout.TLO = TURNOUT_OBSERVED_IN_MOTION;
+            if (states->hardware.turnout_feedback_normal == ACTIVE)
+            {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_NORMAL;
+            } else {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_IN_MOTION;
+            }
+        } else {
+            if (states->hardware.turnout_feedback_diverging == ACTIVE)
+            {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_DIVERGING;
+            } else {
+                states->next.turnout.TLO = TURNOUT_OBSERVED_IN_MOTION;
+            }
         }
-        else if (states->hardware.turnout_feedback_normal)
-        {
-
-            states->next.turnout.TLO = TURNOUT_OBSERVED_NORMAL;
-        }
-        else
-        {
-
-            states->next.turnout.TLO = TURNOUT_OBSERVED_DIVERGING;
-        }
+            
         break;
     }
 }
@@ -348,8 +376,8 @@ void _calculate_signal_cd_single_head_board_left(signaling_state_t *states, boar
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCR == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TLO == TURNOUT_OBSERVED_DIVERGING) &&                               // Turnout Observed set to diverging
         !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
-        !(states->next.occupancy.OMC == OCCUPIED) &&                                              // not Main Center Occupied
-        !(states->next.stop.SaBRstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
+        !(states->next.occupancy.OSC == OCCUPIED) &&                                              // not Main Center Occupied
+        !(states->next.stop.SbBRstop == ACTIVE)                                                   //  not (Signal A on the Board Right at Stop)
     )
     {
 
@@ -362,8 +390,8 @@ void _calculate_signal_cd_single_head_board_left(signaling_state_t *states, boar
     if (((states->next.ctc_control.SCB == ACTIVE) || (states->next.ctc_control.SCR == ACTIVE)) && // CTC Clear Both or Right
         (states->next.turnout.TLO == TURNOUT_OBSERVED_DIVERGING) &&                               // Turnout Observed set to diverging
         !(states->next.occupancy.OTL == OCCUPIED) &&                                              // not Left Turnout Occupied
-        !(states->next.occupancy.OMC == OCCUPIED) &&                                              // not Main Center Occupied
-        (states->next.stop.SaBRstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
+        !(states->next.occupancy.OSC == OCCUPIED) &&                                              // not Main Center Occupied
+        (states->next.stop.SbBRstop == ACTIVE)                                                    //  (Signal A on the Board Right at Stop)
     )
     {
 

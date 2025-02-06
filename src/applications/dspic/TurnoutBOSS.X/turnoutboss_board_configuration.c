@@ -139,6 +139,20 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 
             }
 
+        case BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS:
+            
+            if (*config_mem_buffer[0] == 1) {
+                
+                _turnoutboss_board_configuration->point_signalhead_type = PointSignalHeadSingle;
+                
+            } else {
+                
+                _turnoutboss_board_configuration->point_signalhead_type = PointSignalHeadDual;
+                
+            }
+            
+            return;
+
         case DETECTOR_A_GAIN_ADDRESS:
 
             _turnoutboss_board_configuration->detector_gain_a = *config_mem_buffer[0];

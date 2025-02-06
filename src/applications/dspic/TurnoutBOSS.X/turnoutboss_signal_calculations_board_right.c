@@ -142,6 +142,17 @@ void _calculate_turnout_commanded_state_board_right(signaling_state_t *states, b
         break;
     }
 
+    // If the buttons commanded a state change, produce the corresponding turnout command event
+    if (trc_updated)
+    {
+        if (states->next.turnout.TRC == ACTIVE)
+        {
+            event_engine->events[OFFSET_EVENT_TURNOUT_COMMAND_NORMAL].state.send = TRUE;
+        } else {
+            event_engine->events[OFFSET_EVENT_TURNOUT_COMMAND_DIVERGING].state.send = TRUE;
+        }
+    }
+
     // See if we received a remote control turnout control command and if so override the buttons
     if (states->next.remote_control.turnout_normal)
     {
@@ -176,28 +187,43 @@ void _calculate_turnout_observed_state_board_right(signaling_state_t *states, bo
         break;
 
     case TurnoutFeedbackSingle:
-
-        states->next.turnout.TRO = states->hardware.turnout_feedback_normal == ACTIVE;
+            
+        if (states->next.turnout.TRC == ACTIVE)
+        {
+            if (states->hardware.turnout_feedback_normal == ACTIVE)
+            {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_NORMAL;
+            } else {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_IN_MOTION;
+            }
+        } else {
+            if (states->hardware.turnout_feedback_normal == INACTIVE)
+            {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_DIVERGING;
+            } else {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_IN_MOTION;
+            }
+        }
 
         break;
 
     case TurnoutFeedbackDual:
 
-        if ((states->hardware.turnout_feedback_normal && states->hardware.turnout_feedback_diverging) ||
-            (! states->hardware.turnout_feedback_normal && ! states->hardware.turnout_feedback_diverging ))
+        if (states->next.turnout.TRC == ACTIVE)
         {
-
-            states->next.turnout.TRO = TURNOUT_OBSERVED_IN_MOTION;
-        }
-        else if (states->hardware.turnout_feedback_normal)
-        {
-
-            states->next.turnout.TRO = TURNOUT_OBSERVED_NORMAL;
-        }
-        else
-        {
-
-            states->next.turnout.TRO = TURNOUT_OBSERVED_DIVERGING;
+            if (states->hardware.turnout_feedback_normal == ACTIVE)
+            {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_NORMAL;
+            } else {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_IN_MOTION;
+            }
+        } else {
+            if (states->hardware.turnout_feedback_diverging == ACTIVE)
+            {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_DIVERGING;
+            } else {
+                states->next.turnout.TRO = TURNOUT_OBSERVED_IN_MOTION;
+            }
         }
 
         break;

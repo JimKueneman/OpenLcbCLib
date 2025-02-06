@@ -45,7 +45,7 @@ uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* 
     uint32_olcb_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
     
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-       offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.highest_address; 
+       offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.low_address; 
     
     return (offset_per_node * openlcb_node->index);
     
