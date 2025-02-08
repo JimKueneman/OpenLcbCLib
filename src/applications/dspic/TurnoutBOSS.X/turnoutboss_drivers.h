@@ -144,6 +144,12 @@ extern "C" {
     // Custom Driver functions
     
     extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
+    
+    extern void TurnoutBossDrivers_u1_rx_interrupt_handler(void);
+    
+    extern void TurnoutBossDrivers_u1_tx_interrupt_handler(void);
+    
+    extern void TurnoutBossDrivers_t2_interrupt_handler(void);
    
 
 #endif	/* __TURNOUTBOSS_DRIVERS__ */

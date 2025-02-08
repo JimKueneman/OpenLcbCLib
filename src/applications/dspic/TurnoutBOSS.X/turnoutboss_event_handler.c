@@ -376,6 +376,8 @@ void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t 
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_UNOCCUPIED, TRUE, event_engine);
 
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL, OFFSET_EVENT_TURNOUT_COMMAND_NORMAL, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING, OFFSET_EVENT_TURNOUT_COMMAND_DIVERGING, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_ACTIVE, OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_INACTIVE, OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_INACTIVE, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_DIVERGING_ACTIVE, OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE, TRUE, event_engine);
@@ -462,6 +464,8 @@ void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_RIGHT_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_RIGHT_OCCUPIED, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_MAIN_RIGHT_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_RIGHT_UNOCCUPIED, TRUE, event_engine);
 
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL, OFFSET_EVENT_TURNOUT_COMMAND_NORMAL, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_DIVERGING, OFFSET_EVENT_TURNOUT_COMMAND_DIVERGING, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_ACTIVE, OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_ACTIVE, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_NORMAL_INACTIVE, OFFSET_EVENT_TURNOUT_FEEDBACK_NORMAL_INACTIVE, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_FEEDBACK_DIVERGING_ACTIVE, OFFSET_EVENT_TURNOUT_FEEDBACK_DIVERGING_ACTIVE, TRUE, event_engine);

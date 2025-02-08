@@ -33,7 +33,7 @@
  */
 
 
-// DSPIC33EP64GP502 Configuration Bit Settings
+// DSPIC33EP512GP504 Configuration Bit Settings
 
 // 'C' source line config statements
 
@@ -93,6 +93,7 @@
 #include "debug.h"
 #include "uart_handler.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
+#include "traps.h"
 
 #else 
 
@@ -116,6 +117,27 @@
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
 
+#define AppStartAddress 0x4000
+#define ResetVectorSize 0x0004
+
+// This creates an array of pointers to the handlers for the different interrupts that are at a known
+// place in the program space (AppStartAddress++ResetVectorSize).  We defined the program start at AppStartAddress
+// so that is a jump call to the start of the initialization.
+__prog__ const uint16_olcb_t __attribute__((space(prog), address((AppStartAddress+ResetVectorSize)))) _VirtualIVT[9] = {
+    
+    (uint16_olcb_t)&Traps_oscillator_fail_handler,
+    (uint16_olcb_t)&Traps_address_error_handler,
+    (uint16_olcb_t)&Traps_stack_error_handler,
+    (uint16_olcb_t)&Traps_math_error_handler,
+    (uint16_olcb_t)&Traps_dmac_error_handler,
+    (uint16_olcb_t)&TurnoutBossDrivers_t2_interrupt_handler,
+    (uint16_olcb_t)&TurnoutBossDrivers_u1_rx_interrupt_handler,
+    (uint16_olcb_t)&TurnoutBossDrivers_u1_tx_interrupt_handler,
+    (uint16_olcb_t)&Ecan1Helper_get_max_can_fifo_depth,
+    
+};
+
+
 board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
 send_event_engine_t _event_engine;
@@ -130,7 +152,10 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
+
 int main(void) {
+    
+    
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));

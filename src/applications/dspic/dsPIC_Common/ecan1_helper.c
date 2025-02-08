@@ -491,12 +491,9 @@ void Ecan1Helper_initialization() {
 
 }
 
-
-// CAN 1 Interrupt
-
-void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
-
-    /* clear interrupt flag */
+void Ecan1Helper_C1_interrupt_handler(void) {
+    
+       /* clear interrupt flag */
     IFS2bits.C1IF = 0; // clear interrupt flag
     
     _RB8 = !_RB8;
@@ -555,6 +552,17 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
     }
 
     return;
+ 
+    
+    
+}
+
+// CAN 1 Interrupt
+
+void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    Ecan1Helper_C1_interrupt_handler(); 
 
 }
 

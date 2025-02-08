@@ -48,17 +48,17 @@ uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
 
 void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
-    
+
     _100ms_timer_sink_func = _100ms_timer_sink;
-    
-    
+
+
     // IO Pin Initialize -------------------------------------------------------
 
     ANSELA = 0x00; // Convert all I/O pins to digital
     ANSELB = 0x00;
     ANSELC = 0x00;
     // -------------------------------------------------------------------------
-    
+
     // Oscillator Initialize --------------------------------------------------- 
     // Make sure the Fuse bits are set too
 
@@ -68,86 +68,86 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     PLLFBDbits.PLLDIV = 60 + PLLDIV_OFFSET; // This should be 60 for 80 Mhz.  Need 80 Mhz because the CAN module is limited to Fcy = 40 Mhz
     CLKDIV = 0x0001; // PreScaler divide by 3; Post Scaler divide by 2
 
-     // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
+    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
     // CAN Pin Mapping
-     RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
-     RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
- 
+    RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
+    RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
+
     // UART Pin Mapping
     RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
     RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
 
-    _MCP23S17_CS_TRIS = 0;  // Output
+    _MCP23S17_CS_TRIS = 0; // Output
     _MCP23S17_CS = 0;
 
-    _MCP23S17_RESET_TRIS = 0;  // Output
+    _MCP23S17_RESET_TRIS = 0; // Output
     _MCP23S17_RESET = 0;
     __delay32(100); // 1us min setup and hold
     _MCP23S17_RESET = 1;
-    
-    _25AAxxx_CS_TRIS = 0;  // Output
+
+    _25AAxxx_CS_TRIS = 0; // Output
     _25AAxxx_CS = 0;
-    
-    _25AAxxx_HOLD_TRIS = 0;  // Output
+
+    _25AAxxx_HOLD_TRIS = 0; // Output
     _25AAxxx_HOLD = 1;
 
-    OCCUPANCY_DETECT_GAIN_1_CS_TRIS = 0;  // Output
+    OCCUPANCY_DETECT_GAIN_1_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
     __delay32(100); // strobe CS
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
-    
-\
-    OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0;  // Output
+
+    \
+    OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
-    
-    OCCUPANCY_DETECT_GAIN_3_CS_TRIS = 0;  // Output
+
+    OCCUPANCY_DETECT_GAIN_3_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_3_CS_PIN = 1;
     __delay32(100); // strobe CS
     OCCUPANCY_DETECT_GAIN_3_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_3_CS_PIN = 1;
-    
-    OCCUPANCY_DETECT_GAIN_TRIS = 0;  // Output
+
+    OCCUPANCY_DETECT_GAIN_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_PIN = 0;
-    OCCUPANCY_DETECT_1_TRIS = 1;  // Input
-    OCCUPANCY_DETECT_2_TRIS = 1;  // Input
-    OCCUPANCY_DETECT_3_TRIS = 1;  // Input
+    OCCUPANCY_DETECT_1_TRIS = 1; // Input
+    OCCUPANCY_DETECT_2_TRIS = 1; // Input
+    OCCUPANCY_DETECT_3_TRIS = 1; // Input
 
-    TURNOUT_POSITION_STRAIGHT_TRIS = 1;  // Input
-    TURNOUT_POSITION_DIVERGING_TRIS = 1;  // Input
+    TURNOUT_POSITION_STRAIGHT_TRIS = 1; // Input
+    TURNOUT_POSITION_DIVERGING_TRIS = 1; // Input
 
-    TURNOUT_DRIVER_TRIS = 0;  // Output
+    TURNOUT_DRIVER_TRIS = 0; // Output
     TURNOUT_DRIVER_PIN = 0;
 
-    TURNOUT_PUSHBUTTON_STRAIGHT_TRIS = 1;  // Input
-    TURNOUT_PUSHBUTTON_DIVERGING_TRIS = 1;  // Input
+    TURNOUT_PUSHBUTTON_STRAIGHT_TRIS = 1; // Input
+    TURNOUT_PUSHBUTTON_DIVERGING_TRIS = 1; // Input
 
     //UART_TX/RX auto-set by the PPS 
-    UART_CTS_TRIS = 0;  // Output
-    UART_RTS_TRIS = 1;  // Input
-    UART_CTS = 0;       // Set to Clear to Send (low)
-    
+    UART_CTS_TRIS = 0; // Output
+    UART_RTS_TRIS = 1; // Input
+    UART_CTS = 0; // Set to Clear to Send (low)
+
     LED_TRIS = 0;
     LED = 0;
 
     // Using default SPI 1 pins
-    SPI_CLK_TRIS = 0;  // Output
+    SPI_CLK_TRIS = 0; // Output
     SPI_CLK = 0;
-    SPI_SDO_TRIS = 0;  // Output
+    SPI_SDO_TRIS = 0; // Output
     SPI_SDO = 0;
-    SPI_SDI_TRIS = 1;  // Input
+    SPI_SDI_TRIS = 1; // Input
 
     // Setup the SPI 1 SFRs
     IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
     IEC0bits.SPI1IE = 0; // Disable the interrupt
 
-    SPI1CON1bits.SPRE = 0b011;  // ~8Mhz
+    SPI1CON1bits.SPRE = 0b011; // ~8Mhz
     SPI1CON1bits.PPRE = 0b11;
 
     SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
@@ -158,9 +158,9 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     SPI1CON1bits.CKE = 1; // Serial output data changes on transition from Idle clock state to active clock state
     SPI1CON1bits.CKP = 0; // Idle state for clock is a low level; active state is a high level
     SPI1STATbits.SPIEN = 1; // Enable SPI module
-    
-     // Setup UART 1 SFRs to 333,333 baud
-    
+
+    // Setup UART 1 SFRs to 333,333 baud
+
     U1MODEbits.STSEL = 0; // 1-Stop bit
     U1MODEbits.PDSEL = 0; // No Parity, 8-Data bits
     U1MODEbits.ABAUD = 0; // Auto-Baud disabled
@@ -178,9 +178,9 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
     U1MODEbits.UARTEN = 1; // Enable UART
     U1STAbits.UTXEN = 1; // Enable UART TX .. must be after the overall UART Enable
-    
+
     // Setup the 100 ms timer on Timer 2
-    
+
     IPC1bits.T2IP0 = 1; // Timer 2 Interrupt Priority = 5   (1 means off)
     IPC1bits.T2IP1 = 0;
     IPC1bits.T2IP2 = 1;
@@ -194,34 +194,34 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     IEC0bits.T2IE = 1; // Enable the Interrupt
 
     T2CONbits.TON = 1; // Turn on 100ms Timer
-    
-    
+
+
     Ecan1Helper_initialization();
     MCP23S17Driver_initialize();
     _25AA1024_Driver_initialize();
-    
+
 }
 
 void TurnoutBossDrivers_reboot(void) {
-    
+
     asm("RESET ");
-    
+
 }
 
 void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback) {
-  
+
     _uart_rx_callback_func = uart_rx_callback;
-    
+
 }
 
 uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-  
+
     return _25AA1024_Driver_read(address, count, buffer);
-    
+
 }
-   
+
 uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-    
+
     _25AA1024_Driver_write_latch_enable();
     _25AA1024_Driver_write(address, count, buffer);
 
@@ -230,37 +230,37 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
     }
 
     return count;
-    
+
 }
 
 void TurnoutBossDrivers_pause_100ms_timer() {
-  
+
     T2CONbits.TON = 0; // Turn off 100ms Timer
-    
+
 }
-    
+
 void TurnoutBossDrivers_resume_100ms_timer() {
-    
+
     T2CONbits.TON = 1; // Turn off 100ms Timer
-    
+
 }
 
-
-
-
-
-
-
-void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
+void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
 
     IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
 
-    return;
+}
+
+void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_u1_tx_interrupt_handler();
+
 }
 
 // UART1 Receive Interrupt
 
-void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
 
     IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
 
@@ -270,18 +270,31 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
             _uart_rx_callback_func(U1RXREG);
 
     }
-    return;
+
 }
 
-void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_u1_rx_interrupt_handler();
+
+}
+
+void TurnoutBossDrivers_t2_interrupt_handler(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
 
     _RB7 = !_RB7;
-    
+
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)
         _100ms_timer_sink_func();
 
-    return;
+}
+
+void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_t2_interrupt_handler();
+
 }
