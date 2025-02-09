@@ -1,14 +1,36 @@
-/*
- * File:   main.c
- * Author: jimkueneman
+/** \copyright
+ * Copyright (c) 2024, Jim Kueneman
+ * All rights reserved.
  *
- * Created on February 7, 2025, 11:45 AM
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \file main.c
+ *
+ * TurnoutBOSS main
+ *
+ * @author Jim Kueneman
+ * @date 5 Dec 2024
  */
-
-
-#include "xc.h"
-#include <stdio.h>
-#include "../../../openlcb/openlcb_utilities.h"
 
 
 // DSPIC33EP512GP504 Configuration Bit Settings
@@ -49,290 +71,90 @@
 // Use project enums instead of #define for ON and OFF.
 
 
-#include "local_drivers/_25AA1024/25AA1024_driver.h"
-#include "turnoutboss_bootloader_drivers.h"
+#include <libpic30.h>
+
+#include "xc.h"
+#include "stdio.h"  // printf
+#include "string.h"
+#include "stdlib.h"
+
+#include "../../../drivers/common/can_main_statemachine.h"
+#include "../../../drivers/common/../driver_mcu.h"
+#include "../../../drivers/driver_can.h"
+#include "../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../openlcb/openlcb_node.h"
+#include "../../../openlcb/application_callbacks.h"
+#include "../../../openlcb/application.h"
 #include "../../../openlcb/openlcb_utilities.h"
-#define PRINTF_LOG
+#include "../dsPIC_Common/ecan1_helper.h"
+#include "turnoutboss_drivers.h"
+#include "debug.h"
+#include "uart_handler.h"
+#include "traps.h"
 
-#define BootloadingValidProgramFlagAddress 0x0200
-#define BootloadingFlagAddress 0x0201  // address in to the EEPROM that flags if we are entering bootloader mode
-#define BootloadingNodeIDAddress 0x0202 // Node ID to use for running the bootloader node code
-#define BootloadingNodeAliasAddress 0x0208 // Node Alias to use for running the bootloader node code
 
+#include "node_parameters.h"
 
-
-#define AppStartAddress 0x4000
-#define ResetVectorSize 0x0004
-
-#define OscillatorFailInterruptOffset 0
-#define AddressErrorInterruptOffset 2
-#define StackErrorInterruptOffset 4
-#define MathErrorInterruptOffset 6
-#define DMACErrorInterruptOffset 8
-#define T2InterruptOffset 10
-#define U1RXInterruptOffset 12
-#define U1TXInterruptOffset 14
-#define C1InterruptOffset 16
-
-
-void (*startApplication)() = (void*) AppStartAddress;
-
-
-uint16_t writing_application = 0;
-
-void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + OscillatorFailInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-}
-
-void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + AddressErrorInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + StackErrorInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + MathErrorInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + DMACErrorInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + T2InterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + U1RXInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + U1TXInterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void __attribute__((interrupt, no_auto_psv)) _C1Interrupt(void) {
-
-    if (!writing_application) {
-
-        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + C1InterruptOffset);
-
-        if (address) {
-
-            ((void(*)())address)();
-
-        }
-
-    }
-
-}
-
-void login_and_load_program(void) {
-
-    uint16_olcb_t success = FALSE;
-
-#ifdef PRINTF_LOG
-    printf("Invalid Program... logging in\n");
-#endif
+uint16_olcb_t _config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
     
-    // Don't forward interrupts
-    writing_application = TRUE;
+    PrintDWord(address);
+
+    return count;
+}
 
 
-    // Do stuff to make it happen
+uint64_olcb_t node_id_base = 0x0507010100AA;
 
-    if (success) {
+void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
-#ifdef PRINTF_LOG
-        printf("Successful login and load, writing flag to EEPROM\n");
-#endif       
-        _25AA1024_Driver_write_byte(BootloadingValidProgramFlagAddress, 0xBB);
-
-        asm("RESET ");
-
-    }
-
+    printf("Alias Allocation: 0x%02X  ", new_alias);
+    PrintNodeID(node_id);
+    printf("\n");
 
 }
+
 
 int main(void) {
+    
 
-#ifdef PRINTF_LOG
-    printf("starting Bootloader\n");
-#endif
-
-    TurnoutBossBootloaderDrivers_setup();
-    _25AA1024_Driver_initialize();
-
-
-
-    if (_25AA1024_Driver_read_byte(BootloadingValidProgramFlagAddress) != 0xBB) {
-
-        login_and_load_program();
-
-    }
+    // RB7 and RB8 are test outputs
+    // we also have the LED variable for RB9 and the LED output
+    _TRISB7 = 0;
+    _RB7 = 0;
+    _TRISB8 = 0;
+    _RB8 = 0;
 
 
-    if (RCONbits.SWR) {
+    CanMainStatemachine_initialize(
+            &Ecan1Helper_setup,
+            &Ecan1Helper_transmit_raw_can_frame,
+            &Ecan1Helper_is_can_tx_buffer_clear,
+            &Ecan1Helper_pause_can_rx,
+            &Ecan1Helper_resume_can_rx
+            );
+    MainStatemachine_initialize(
+            &TurnoutBossDrivers_setup,
+            &TurnoutBossDrivers_reboot,
+            &TurnoutBossDrivers_config_mem_read,
+            &_config_mem_write,
+            &TurnoutBossDrivers_pause_100ms_timer,
+            &TurnoutBossDrivers_resume_100ms_timer
+            );
 
-        // Software Reset
-
-#ifdef PRINTF_LOG
-        printf("Software Reset\n");
-#endif
-
-        configuration_memory_buffer_t buffer;
-        
-        if (_25AA1024_Driver_read_byte(BootloadingFlagAddress) == 0xAA) {
-
-#ifdef PRINTF_LOG
-            printf("Bootloading\n");
-#endif
-            
-            writing_application = TRUE;
-
-            _25AA1024_Driver_read(BootloadingNodeIDAddress, 6, &buffer);
-            node_id_t node_id = Utilities_extract_node_id_from_config_mem_buffer(&buffer, 0);
-
-            _25AA1024_Driver_read(BootloadingNodeAliasAddress, 2, &buffer);
-            uint16_olcb_t alias = Utilities_extract_word_from_config_mem_buffer(&buffer, 0);
-
-            // Clear the flags
-            _25AA1024_Driver_write(BootloadingFlagAddress, 9, 0x00);
-
-            uint16_olcb_t success = FALSE;
-            
-            while (1) {
-
-                // Gather the buffer and write it
-               
-                if (success) {
-                    
-                  asm("RESET ");
-               
-                }
-                
-            }
-            
-
-        } else {
-
-#ifdef PRINTF_LOG
-            printf("Starting Application\n");
-#endif
-
-            startApplication();
-
-        }
+    TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
+    
+    Application_Callbacks_set_alias_change(&_alias_change_callback);
 
 
-    } else {
+    printf("\nBooted\n");
+    openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
+    printf("Node Created\n");
+    
 
-        // POR
+    while (1) {
 
-#ifdef PRINTF_LOG
-        printf("Starting Application\n");
-#endif
-
-        startApplication();
+        CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
     }
-
 
 }

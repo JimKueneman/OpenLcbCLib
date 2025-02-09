@@ -34,6 +34,9 @@
  * @date 5 Dec 2024
  */
 
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+
 #include "protocol_event_transport.h"
 
 #include "stdio.h" // printf
@@ -581,4 +584,6 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+
+#endif // SUPPORT_FIRMWARE_BOOTLOADER
 

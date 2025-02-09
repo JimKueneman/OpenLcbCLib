@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \turnoutboss_bootloader_drivers.c
+ * \turnoutboss_drivers.c
  *
  *  
  *
@@ -32,13 +32,22 @@
  * @date 4 Jan 2025
  */
 
-#include "turnoutboss_bootloader_drivers.h"
+#include "turnoutboss_drivers.h"
 
 #include "xc.h"
+#include "stdio.h"  // printf
 #include <libpic30.h> // delay
 
+#include "local_drivers/_25AA1024/25AA1024_driver.h"
+#include "../dsPIC_Common/ecan1_helper.h"
+#include "debug.h"
 
-void TurnoutBossBootloaderDrivers_setup(void) {
+uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
+parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
+
+void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
+
+    _100ms_timer_sink_func = _100ms_timer_sink;
 
 
     // IO Pin Initialize -------------------------------------------------------
@@ -184,12 +193,105 @@ void TurnoutBossBootloaderDrivers_setup(void) {
 
     T2CONbits.TON = 1; // Turn on 100ms Timer
 
- //   _25AA1024_Driver_initialize();
+
+    Ecan1Helper_initialization();
+    _25AA1024_Driver_initialize();
 
 }
 
+void TurnoutBossDrivers_reboot(void) {
 
+    asm("RESET ");
 
+}
 
+void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback) {
 
+    _uart_rx_callback_func = uart_rx_callback;
 
+}
+
+uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+
+    return _25AA1024_Driver_read(address, count, buffer);
+
+}
+
+uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+
+    _25AA1024_Driver_write_latch_enable();
+    _25AA1024_Driver_write(address, count, buffer);
+
+    while (_25AA1024_Driver_write_in_progress()) {
+
+    }
+
+    return count;
+
+}
+
+void TurnoutBossDrivers_pause_100ms_timer() {
+
+    T2CONbits.TON = 0; // Turn off 100ms Timer
+
+}
+
+void TurnoutBossDrivers_resume_100ms_timer() {
+
+    T2CONbits.TON = 1; // Turn off 100ms Timer
+
+}
+
+void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
+
+    IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
+
+}
+
+void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_u1_tx_interrupt_handler();
+
+}
+
+// UART1 Receive Interrupt
+
+void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
+
+    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
+
+    if (U1STAbits.URXDA == 1) {
+
+        if (_uart_rx_callback_func)
+            _uart_rx_callback_func(U1RXREG);
+
+    }
+
+}
+
+void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_u1_rx_interrupt_handler();
+
+}
+
+void TurnoutBossDrivers_t2_interrupt_handler(void) {
+
+    IFS0bits.T2IF = 0; // Clear T2IF
+
+    _RB7 = !_RB7;
+
+    // Increment any timer counters assigned
+    if (_100ms_timer_sink_func)
+        _100ms_timer_sink_func();
+
+}
+
+void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_t2_interrupt_handler();
+
+}

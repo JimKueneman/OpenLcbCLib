@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_BOOTLOADER_DRIVERS__
-#define	__TURNOUTBOSS_BOOTLOADER_DRIVERS__
+#ifndef __TURNOUTBOSS_DRIVERS__
+#define	__TURNOUTBOSS_DRIVERS__
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -118,6 +118,10 @@
 #define LED _RB9
 #define LED_TRIS _TRISB9
 
+// Assign the function pointer to where the UART Rx should call back with the byte it received
+// WARNING: Is in the context of the interrupt, be careful
+// void func(rx_data);
+typedef void (*uart_rx_callback_t) (uint16_olcb_t);
 
 #ifdef	__cplusplus
 extern "C" {
@@ -125,8 +129,28 @@ extern "C" {
 
     // OpenLcbCLib defined callback functions that much be defined
     
-    extern void TurnoutBossBootloaderDrivers_setup();
+    extern void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink);
 
+    extern void TurnoutBossDrivers_reboot(void);
+    
+    extern uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
+    
+    extern uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
+    
+    extern void TurnoutBossDrivers_pause_100ms_timer();
+    
+    extern void TurnoutBossDrivers_resume_100ms_timer();
+    
+    // Custom Driver functions
+    
+    extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
+    
+    extern void TurnoutBossDrivers_u1_rx_interrupt_handler(void);
+    
+    extern void TurnoutBossDrivers_u1_tx_interrupt_handler(void);
+    
+    extern void TurnoutBossDrivers_t2_interrupt_handler(void);
+   
 
-#endif	/* __TURNOUTBOSS_BOOTLOADER_DRIVERS__ */
+#endif	/* __TURNOUTBOSS_DRIVERS__ */
 

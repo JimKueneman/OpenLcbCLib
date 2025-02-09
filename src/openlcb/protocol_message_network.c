@@ -100,9 +100,11 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     uint64_olcb_t temp = openlcb_node->parameters->protocol_support;
 
+#ifdef SUPPORT_FIRMWARE_BOOTLOADER
     if (openlcb_node->state.firmware_upgrade)
-        temp = temp | PSI_FIRMWARE_UPGRADE_ACTIVE;
-
+        temp = (temp & (~PSI_FIRMWARE_UPGRADE)) | PSI_FIRMWARE_UPGRADE_ACTIVE;
+#endif
+    
     if (temp > 0)
 
         while ((temp & 0xFF00000000000000) == 0)

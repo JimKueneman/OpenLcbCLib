@@ -54,10 +54,6 @@
 #include "can_buffer_store.h"
 #include "../driver_mcu.h"
 
-
-
-
-
 void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
     next_node->seed = next_node->id;
@@ -77,7 +73,7 @@ void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node) {
 void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = Node_generate_alias(next_node->seed);
-    
+
     callback_alias_change_t alias_change_callback = Application_Callbacks_get_alias_change();
 
     if (alias_change_callback)
@@ -192,6 +188,7 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
 
 void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker) {
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
     if (next_node->producers.enumerator.running) {
 
@@ -231,9 +228,17 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
     }
 
+#else
+
+    next_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
+
+#endif // SUPPORT_FIRMWARE_BOOTLOADER
+
 }
 
 void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker) {
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
     if (next_node->consumers.enumerator.running) {
 
@@ -247,7 +252,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
                     0,
                     ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index),
                     6
-);
+                    );
 
             Utilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
 
@@ -271,5 +276,10 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
     }
 
+#else
+
+    next_node->state.run_state = RUNSTATE_RUN;
+
+#endif
 
 }

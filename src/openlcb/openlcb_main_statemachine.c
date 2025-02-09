@@ -57,7 +57,6 @@
 
 openlcb_statemachine_worker_t openlcb_helper;
 
-
 void MainStatemachine_initialize(
         mcu_driver_callback_t mcu_setup_callback,
         parameterless_callback_t reboot_callback,
@@ -65,25 +64,24 @@ void MainStatemachine_initialize(
         configuration_mem_callback_t configuration_mem_write_callback,
         parameterless_callback_t _100ms_clock_pause_callback,
         parameterless_callback_t _100ms_clock_resume_callback
-        )
-{
-    
+        ) {
+
     BufferStore_initialize();
     BufferList_initialiaze();
     BufferFifo_initialiaze();
-    
+
     Node_initialize();
     ProtocolDatagram_initialize();
-    
+
     Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
     DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback);
     DriverMcu_initialization(mcu_setup_callback, reboot_callback);
-    
+
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
         openlcb_helper.worker_buffer[i] = 0x00;
-    
+
     openlcb_helper.active_msg = (void*) 0;
-    
+
     openlcb_helper.worker.source_alias = 0;
     openlcb_helper.worker.source_id = 0;
     openlcb_helper.worker.dest_alias = 0;
@@ -91,7 +89,7 @@ void MainStatemachine_initialize(
     openlcb_helper.worker.mti = 0;
     openlcb_helper.worker.timerticks = 0;
     openlcb_helper.worker.state.inprocess = FALSE;
-    openlcb_helper.worker.payload = (openlcb_payload_t*) &openlcb_helper.worker_buffer;
+    openlcb_helper.worker.payload = (openlcb_payload_t*) & openlcb_helper.worker_buffer;
     openlcb_helper.worker.payload_size = LEN_MESSAGE_BYTES_STREAM;
     openlcb_helper.worker.state.allocated = TRUE;
 
@@ -126,6 +124,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
             ProtocolMessageNetwork_handle_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case MTI_CONSUMER_IDENTIFY:
         {
             ProtocolEventTransport_handle_consumer_identify(openlcb_node, openlcb_msg, worker_msg);
@@ -211,6 +210,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
             ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
+#endif // SUPPORT_FIRMWARE_BOOTLOADER
         case MTI_DATAGRAM:
         {
             ProtocolDatagram_handle_datagram(openlcb_node, openlcb_msg, worker_msg);

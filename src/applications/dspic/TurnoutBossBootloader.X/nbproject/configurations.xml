@@ -21,6 +21,11 @@
         <itemPath>../../../drivers/driver_configuration_memory.h</itemPath>
         <itemPath>../../../drivers/driver_can.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="dsPIC_Common"
+                     displayName="dsPIC_Common"
+                     projectFiles="true">
+        <itemPath>../dsPIC_Common/ecan1_helper.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/application_callbacks.h</itemPath>
         <itemPath>../../../openlcb/protocol_snip.h</itemPath>
@@ -59,7 +64,11 @@
             <itemPath>local_drivers/_25AA1024/25AA1024_driver.h</itemPath>
           </logicalFolder>
         </logicalFolder>
-        <itemPath>turnoutboss_bootloader_drivers.h</itemPath>
+        <itemPath>turnoutboss_drivers.h</itemPath>
+        <itemPath>node_parameters.h</itemPath>
+        <itemPath>uart_handler.h</itemPath>
+        <itemPath>traps.h</itemPath>
+        <itemPath>debug.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -90,6 +99,11 @@
         <itemPath>../../../drivers/driver_can.c</itemPath>
         <itemPath>../../../drivers/driver_100ms_clock.c</itemPath>
         <itemPath>../../../drivers/driver_configuration_memory.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="dsPIC_Common"
+                     displayName="dsPIC_Common"
+                     projectFiles="true">
+        <itemPath>../dsPIC_Common/ecan1_helper.c</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/openlcb_buffer_fifo.c</itemPath>
@@ -127,8 +141,13 @@
             <itemPath>local_drivers/_25AA1024/25AA1024_driver.c</itemPath>
           </logicalFolder>
         </logicalFolder>
-        <itemPath>turnoutboss_bootloader_drivers.c</itemPath>
+        <itemPath>main_old.c</itemPath>
+        <itemPath>turnoutboss_drivers.c</itemPath>
         <itemPath>main.c</itemPath>
+        <itemPath>node_parameters.c</itemPath>
+        <itemPath>traps.c</itemPath>
+        <itemPath>uart_handler.c</itemPath>
+        <itemPath>debug.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
@@ -136,6 +155,7 @@
     <Elem>.</Elem>
     <Elem>../../../openlcb</Elem>
     <Elem>../../../drivers</Elem>
+    <Elem>../dsPIC_Common</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -181,7 +201,7 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="../../../drivers/common/can_buffer_fifo.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -197,7 +217,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_buffer_fifo.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -213,7 +233,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_buffer_store.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -229,7 +249,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_buffer_store.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -245,7 +265,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_frame_message_handler.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -261,7 +281,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_frame_message_handler.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -277,7 +297,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_login_message_handler.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -293,7 +313,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_login_message_handler.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -309,7 +329,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_main_statemachine.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -325,7 +345,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_main_statemachine.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -341,7 +361,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_rx_statemachine.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -357,7 +377,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_rx_statemachine.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -373,7 +393,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_tx_statemachine.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -389,7 +409,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_tx_statemachine.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -404,7 +424,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/common/can_types.h" ex="true" overriding="false">
+      <item path="../../../drivers/common/can_types.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -419,7 +439,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_utilities.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -435,7 +455,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/common/can_utilities.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -450,7 +470,9 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/driver_100ms_clock.c" ex="true" overriding="false">
+      <item path="../../../drivers/driver_100ms_clock.c"
+            ex="false"
+            overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -464,7 +486,9 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/driver_100ms_clock.h" ex="true" overriding="false">
+      <item path="../../../drivers/driver_100ms_clock.h"
+            ex="false"
+            overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -478,7 +502,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/driver_can.c" ex="true" overriding="false">
+      <item path="../../../drivers/driver_can.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -492,7 +516,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/driver_can.h" ex="true" overriding="false">
+      <item path="../../../drivers/driver_can.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -507,7 +531,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/driver_configuration_memory.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -523,7 +547,7 @@
         </C30Global>
       </item>
       <item path="../../../drivers/driver_configuration_memory.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -538,7 +562,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/driver_mcu.c" ex="true" overriding="false">
+      <item path="../../../drivers/driver_mcu.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -552,7 +576,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../drivers/driver_mcu.h" ex="true" overriding="false">
+      <item path="../../../drivers/driver_mcu.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -566,7 +590,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/application.c" ex="true" overriding="false">
+      <item path="../../../openlcb/application.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -580,7 +604,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/application.h" ex="true" overriding="false">
+      <item path="../../../openlcb/application.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -595,7 +619,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/application_callbacks.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -611,7 +635,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/application_callbacks.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -627,7 +651,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_buffer_fifo.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -643,7 +667,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_buffer_fifo.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -659,7 +683,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_buffer_list.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -675,7 +699,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_buffer_list.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -691,7 +715,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_buffer_store.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -707,7 +731,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_buffer_store.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -722,7 +746,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/openlcb_defines.h" ex="true" overriding="false">
+      <item path="../../../openlcb/openlcb_defines.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -737,7 +761,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_gridconnect.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -753,7 +777,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_gridconnect.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -769,7 +793,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_main_statemachine.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -785,7 +809,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/openlcb_main_statemachine.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -800,7 +824,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/openlcb_node.c" ex="true" overriding="false">
+      <item path="../../../openlcb/openlcb_node.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -814,7 +838,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/openlcb_node.h" ex="true" overriding="false">
+      <item path="../../../openlcb/openlcb_node.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -828,7 +852,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/openlcb_tx_driver.c" ex="true" overriding="false">
+      <item path="../../../openlcb/openlcb_tx_driver.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -842,7 +866,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/openlcb_tx_driver.h" ex="true" overriding="false">
+      <item path="../../../openlcb/openlcb_tx_driver.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -856,7 +880,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/openlcb_types.h" ex="true" overriding="false">
+      <item path="../../../openlcb/openlcb_types.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -870,7 +894,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/protocol_datagram.c" ex="true" overriding="false">
+      <item path="../../../openlcb/protocol_datagram.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -884,7 +908,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/protocol_datagram.h" ex="true" overriding="false">
+      <item path="../../../openlcb/protocol_datagram.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -899,7 +923,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/protocol_event_transport.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -915,7 +939,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/protocol_event_transport.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -931,7 +955,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/protocol_message_network.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -947,7 +971,7 @@
         </C30Global>
       </item>
       <item path="../../../openlcb/protocol_message_network.h"
-            ex="true"
+            ex="false"
             overriding="false">
         <C30>
         </C30>
@@ -962,7 +986,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/protocol_snip.c" ex="true" overriding="false">
+      <item path="../../../openlcb/protocol_snip.c" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -976,7 +1000,7 @@
         <C30Global>
         </C30Global>
       </item>
-      <item path="../../../openlcb/protocol_snip.h" ex="true" overriding="false">
+      <item path="../../../openlcb/protocol_snip.h" ex="false" overriding="false">
         <C30>
         </C30>
         <C30-AR>
@@ -1112,7 +1136,8 @@
         <property key="generic-16-bit" value="false"/>
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
-        <property key="oXC16glb-macros" value="FCY=40000000UL"/>
+        <property key="oXC16glb-macros"
+                  value="FCY=40000000UL;MPLAB;SUPPORT_FIRMWARE_BOOTLOADER;USER_DEFINED_CDI_LENGTH=0;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_BASIC_BUFFER_DEPTH=4;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=10;USER_DEFINED_SNIP_BUFFER_DEPTH=2;USER_DEFINED_NODE_BUFFER_DEPTH=1"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>
@@ -2070,6 +2095,8 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
+      <item path="main_old.c" ex="true" overriding="false">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>

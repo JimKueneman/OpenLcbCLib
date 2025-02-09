@@ -78,12 +78,17 @@ extern "C" {
 #define USER_DEFINED_FDI_LENGTH             1000 // USER DEFINED 
 #endif
 
-#ifndef USER_DEFINED_PRODUCER_COUNT
-#define USER_DEFINED_PRODUCER_COUNT         48 // USER DEFINED 
-#endif
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+  #ifndef USER_DEFINED_PRODUCER_COUNT
+    #define USER_DEFINED_PRODUCER_COUNT         48 // USER DEFINED 
+  #endif
 
-#ifndef USER_DEFINED_CONSUMER_COUNT
-#define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
+  #ifndef USER_DEFINED_CONSUMER_COUNT
+    #define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
+  #endif
+#else
+  #define USER_DEFINED_PRODUCER_COUNT 0
+  #define USER_DEFINED_CONSUMER_COUNT 0
 #endif
 
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
@@ -235,10 +240,9 @@ extern "C" {
         user_address_space_info_t address_space_train_function_definition;
         user_address_space_info_t address_space_train_function_config_memory;
 #endif
-        user_address_space_info_t address_space_firmware;
         user_configuration_options configuration_options;
 #ifdef SUPPORT_FIRMWARE_BOOTLOADER
-        uint32_olcb_t firmware_image_offset; // where in the EEPROM the image is stuffed
+        user_address_space_info_t address_space_firmware;
 #endif
 
     } node_parameters_t;
