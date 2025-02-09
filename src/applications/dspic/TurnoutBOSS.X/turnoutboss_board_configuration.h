@@ -58,6 +58,7 @@ extern "C" {
     
     extern void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_configuration_t* board_configuration);
     
+    extern uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint8_olcb_t address);
 
 #ifdef	__cplusplus
 }

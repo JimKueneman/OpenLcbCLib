@@ -7,6 +7,8 @@
 
 
 #include "xc.h"
+#include <stdio.h>
+#include "../../../openlcb/openlcb_utilities.h"
 
 
 // DSPIC33EP512GP504 Configuration Bit Settings
@@ -46,6 +48,19 @@
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
 
+
+#include "local_drivers/_25AA1024/25AA1024_driver.h"
+#include "turnoutboss_bootloader_drivers.h"
+#include "../../../openlcb/openlcb_utilities.h"
+#define PRINTF_LOG
+
+#define BootloadingValidProgramFlagAddress 0x0200
+#define BootloadingFlagAddress 0x0201  // address in to the EEPROM that flags if we are entering bootloader mode
+#define BootloadingNodeIDAddress 0x0202 // Node ID to use for running the bootloader node code
+#define BootloadingNodeAliasAddress 0x0208 // Node Alias to use for running the bootloader node code
+
+
+
 #define AppStartAddress 0x4000
 #define ResetVectorSize 0x0004
 
@@ -59,19 +74,23 @@
 #define U1TXInterruptOffset 14
 #define C1InterruptOffset 16
 
+
+void (*startApplication)() = (void*) AppStartAddress;
+
+
 uint16_t writing_application = 0;
 
 void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
 
     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + OscillatorFailInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + OscillatorFailInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 }
@@ -79,14 +98,14 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
 void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
 
     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + AddressErrorInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + AddressErrorInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -94,15 +113,15 @@ void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
 
-     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + StackErrorInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+    if (!writing_application) {
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + StackErrorInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -110,15 +129,15 @@ void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
 
-     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + MathErrorInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+    if (!writing_application) {
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + MathErrorInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -127,14 +146,14 @@ void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
 void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
 
     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + DMACErrorInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + DMACErrorInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -142,15 +161,15 @@ void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void) {
 
-     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + T2InterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+    if (!writing_application) {
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + T2InterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -158,15 +177,15 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
 
-     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + U1RXInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+    if (!writing_application) {
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + U1RXInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -174,15 +193,15 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
 
 void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
 
-     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + U1TXInterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+    if (!writing_application) {
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + U1TXInterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
@@ -191,24 +210,127 @@ void __attribute__((interrupt, no_auto_psv)) _U1TXInterrupt(void) {
 void __attribute__((interrupt, no_auto_psv)) _C1Interrupt(void) {
 
     if (!writing_application) {
-        
-       uint16_t address =  __builtin_tblrdl((AppStartAddress + ResetVectorSize) + C1InterruptOffset);
-       
-       if (address) {
-           
-           ((void(*)())address)();
-           
-       }
+
+        uint16_t address = __builtin_tblrdl((AppStartAddress + ResetVectorSize) + C1InterruptOffset);
+
+        if (address) {
+
+            ((void(*)())address)();
+
+        }
 
     }
 
 }
 
+void login_and_load_program(void) {
+
+    uint16_olcb_t success = FALSE;
+
+#ifdef PRINTF_LOG
+    printf("Invalid Program... logging in\n");
+#endif
+    
+    // Don't forward interrupts
+    writing_application = TRUE;
+
+
+    // Do stuff to make it happen
+
+    if (success) {
+
+#ifdef PRINTF_LOG
+        printf("Successful login and load, writing flag to EEPROM\n");
+#endif       
+        _25AA1024_Driver_write_byte(BootloadingValidProgramFlagAddress, 0xBB);
+
+        asm("RESET ");
+
+    }
+
+
+}
+
 int main(void) {
 
+#ifdef PRINTF_LOG
+    printf("starting Bootloader\n");
+#endif
 
-    while (1) {
+    TurnoutBossBootloaderDrivers_setup();
+    _25AA1024_Driver_initialize();
 
+
+
+    if (_25AA1024_Driver_read_byte(BootloadingValidProgramFlagAddress) != 0xBB) {
+
+        login_and_load_program();
+
+    }
+
+
+    if (RCONbits.SWR) {
+
+        // Software Reset
+
+#ifdef PRINTF_LOG
+        printf("Software Reset\n");
+#endif
+
+        configuration_memory_buffer_t buffer;
+        
+        if (_25AA1024_Driver_read_byte(BootloadingFlagAddress) == 0xAA) {
+
+#ifdef PRINTF_LOG
+            printf("Bootloading\n");
+#endif
+            
+            writing_application = TRUE;
+
+            _25AA1024_Driver_read(BootloadingNodeIDAddress, 6, &buffer);
+            node_id_t node_id = Utilities_extract_node_id_from_config_mem_buffer(&buffer, 0);
+
+            _25AA1024_Driver_read(BootloadingNodeAliasAddress, 2, &buffer);
+            uint16_olcb_t alias = Utilities_extract_word_from_config_mem_buffer(&buffer, 0);
+
+            // Clear the flags
+            _25AA1024_Driver_write(BootloadingFlagAddress, 9, 0x00);
+
+            uint16_olcb_t success = FALSE;
+            
+            while (1) {
+
+                // Gather the buffer and write it
+               
+                if (success) {
+                    
+                  asm("RESET ");
+               
+                }
+                
+            }
+            
+
+        } else {
+
+#ifdef PRINTF_LOG
+            printf("Starting Application\n");
+#endif
+
+            startApplication();
+
+        }
+
+
+    } else {
+
+        // POR
+
+#ifdef PRINTF_LOG
+        printf("Starting Application\n");
+#endif
+
+        startApplication();
 
     }
 

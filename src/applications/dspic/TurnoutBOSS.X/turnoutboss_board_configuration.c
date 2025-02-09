@@ -56,6 +56,7 @@
 
 #include "turnoutboss_types.h"
 
+// 0x0000 to 0x007F are for the User Name/Description
 #define BOARD_LOCATION_CONFIG_MEM_ADDRESS 0x7F // Single Byte, 0 = LB; 1 = RB
 #define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS 0x80  // 8 Bytes for an Event ID
 #define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS 0x88 // 8 Bytes for an Event ID
@@ -68,6 +69,7 @@
 #define LED_BRIGHTNESS_GAIN_ADDRESS 0x183
 
 board_configuration_t* _turnoutboss_board_configuration;
+
 
 void _set_detector_gains(void) {
 #ifdef MPLAB
@@ -286,6 +288,15 @@ uint8_olcb_t _extract_detector_gain_from_config_mem(openlcb_node_t *node, uint32
 
 }
 
+uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint8_olcb_t address) {
+    
+   configuration_memory_buffer_t buffer;
+
+   Utilities_copy_event_id_to_config_mem_buffer(&buffer, event, 0);
+   return (Application_write_configuration_memory(node, address, 8, &buffer));
+       
+}
+
 void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_configuration_t* board_configuration) {
 
     Application_Callbacks_set_config_mem_write(&_config_mem_write_callback);
@@ -307,3 +318,4 @@ void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_config
     _set_detector_gains();
 
 }
+

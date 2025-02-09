@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -24,47 +25,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file application.h
+ * \file 25AA1024_driver.h
  *
- * Where most of the application layer code interfaces with the library
+ * Driver for the MicroChip 25AA1024 EEPROM.
  *
  * @author Jim Kueneman
- * @date 16 Jan 2025
+ * @date 5 Dec 2024
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __APPLICATION__
-#define	__APPLICATION__
+#ifndef __25AA1024_DRIVER__
+#define	__25AA1024_DRIVER__
 
-
-#include "openlcb_types.h"
+#include "../../../../../openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    // Event ID helpers
-    extern void Application_clear_consumer_eventids(openlcb_node_t* node);
+    extern void _25AA1024_Driver_initialize(void);
+    
+    extern void _25AA1024_Driver_erase_chip(void);
 
-    extern void Application_clear_producer_eventids(openlcb_node_t* node);
+    extern uint8_olcb_t _25AA1024_Driver_read_status_register(void);
 
-    extern uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t* node, event_id_t eventid);
+    extern void _25AA1024_Driver_write_status_register(uint8_olcb_t new_status);
 
-    extern uint16_olcb_t Application_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
+    extern void _25AA1024_Driver_write_latch_enable(void);
 
-    extern uint8_olcb_t Application_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
+    extern void _25AA1024_Driver_write_latch_disable(void);
 
+    extern void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte);
 
-    // Configuration Memory helpers
-    extern uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
 
-    extern uint16_olcb_t Application_write_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint8_olcb_t _25AA1024_Driver_write_in_progress();
 
+    extern uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address);
+
+    extern uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __APPLICATION__ */
+#endif	/* __25AA1024_DRIVER__ */
 

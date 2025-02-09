@@ -93,3 +93,14 @@ uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32
 
     return FALSE;
 }
+
+uint16_olcb_t Application_write_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
+{
+
+    configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_write_callback();
+
+    if (_getmem_callback)
+        return (_getmem_callback(Utilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+
+    return FALSE;
+}

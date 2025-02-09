@@ -57,13 +57,17 @@ OPTIONAL(-lfx)
 */
 MEMORY
 {
+
   data  (a!xr)   : ORIGIN = 0x1000,        LENGTH = 0xC000
   reset          : ORIGIN = 0x0,           LENGTH = 0x4
   ivt            : ORIGIN = 0x4,           LENGTH = 0x1FC
+
 /* TurnoutBoss Bootloader
 * program (xr)   : ORIGIN = 0x200,         LENGTH = 0x555EC
 */ 
- program (xr)   : ORIGIN = 0x4000,         LENGTH = 0x3E00
+
+  program (xr)   : ORIGIN = 0x200,         LENGTH = 0x3E00
+
   FICD           : ORIGIN = 0x557F0,       LENGTH = 0x2
   FPOR           : ORIGIN = 0x557F2,       LENGTH = 0x2
   FWDT           : ORIGIN = 0x557F4,       LENGTH = 0x2
@@ -92,8 +96,8 @@ __FUID3 = 0x800FFE;
 * __CODE_LENGTH = 0x555EC;
 */ 
 
-__CODE_BASE = 0x4000;
-__CODE_LENGTH = 0x517EC;
+__CODE_BASE = 0x200;
+__CODE_LENGTH = 0x3E00;
 
 __IVT_BASE  = 0x4;
 __DATA_BASE = 0x1000;

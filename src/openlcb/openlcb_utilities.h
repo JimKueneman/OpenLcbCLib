@@ -94,6 +94,13 @@ extern uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_n
 
 extern node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
 
+extern uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
+
+extern void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index);
+
+extern void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index);
+  
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
