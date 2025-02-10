@@ -688,12 +688,12 @@ void _send_change_events_stop_right(signaling_state_t *states, board_configurati
 
         case ACTIVE:
 
-            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_A_STOP].state.send = TRUE;
+            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_A_STOP_P].state.send = TRUE;
             break;
 
         case INACTIVE:
 
-            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP].state.send = TRUE;
+            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_P].state.send = TRUE;
             break;
         }
 
@@ -708,12 +708,12 @@ void _send_change_events_stop_right(signaling_state_t *states, board_configurati
 
         case ACTIVE:
 
-            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_B_STOP].state.send = TRUE;
+            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_B_STOP_P].state.send = TRUE;
             break;
 
         case INACTIVE:
 
-            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP].state.send = TRUE;
+            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_P].state.send = TRUE;
             break;
         }
 
@@ -728,12 +728,12 @@ void _send_change_events_stop_right(signaling_state_t *states, board_configurati
 
         case ACTIVE:
 
-            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_CD_STOP].state.send = TRUE;
+            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_CD_STOP_P].state.send = TRUE;
             break;
 
         case INACTIVE:
 
-            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP].state.send = TRUE;
+            event_engine->events[OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_P].state.send = TRUE;
             break;
         }
 

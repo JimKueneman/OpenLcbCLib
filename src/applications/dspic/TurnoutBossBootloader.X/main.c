@@ -132,8 +132,14 @@ uint8_olcb_t checksum = 0;
 uint16_olcb_t running_checksum = 0;
 uint32_olcb_t start_segment_adddress_80x86 = 0;
 uint32_olcb_t start_linear_address = 0;
+uint16_olcb_t extended_address_segment = 0;
+
+uint32_olcb_t flash_address_start, flash_address_end, flash_erase_page_address = 0;
+uint16_olcb_t flash_block_0, flash_block_1;
 
 uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
+
+    bool result;
 
     switch (state_machine_state) {
 
@@ -249,7 +255,7 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
                 state_machine_state = HEX_STATE_READ_DATA_CHAR_0;
 
             }
-            
+
             break;
 
 
@@ -276,7 +282,7 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
             data[byte_index] = strtol(&temp[0], NULL, 16);
             byte_index = byte_index + 1;
 
-            running_checksum = running_checksum + data[byte_index-1];
+            running_checksum = running_checksum + data[byte_index - 1];
 
             if (byte_index >= byte_count) {
 
@@ -284,10 +290,10 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
                 state_machine_state = HEX_STATE_READ_CHECKSUM_CHAR_0;
 
             } else {
-                
+
                 state_machine_state = HEX_STATE_READ_DATA_CHAR_0;
 
-                
+
             }
 
             break;
@@ -307,13 +313,89 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
 
             temp[1] = next_char;
             checksum = strtol(&temp[0], NULL, 16);
-            
+
             if (checksum == ((~running_checksum + 1) & 0x00FF)) {
 
                 switch (record_type) {
 
                     case RECORD_TYPE_DATA: // Data
+             
+                        // 1 instruction = 3 bytes = 2 addresses
+                        // erase page = 1024 instructions = 3072 bytes = 2048 addresses
+                        // write page = 64 instructions = 192 bytes = 128 addresses
 
+                        flash_address_start = ((uint32_olcb_t) extended_address << 16) | base_address;
+                        flash_address_start = flash_address_start >> 2; // dsPIC addresses are 2x
+
+                        flash_address_end = flash_address_start + (byte_count >> 2);  // each instruction is 2 addresses (but 24 bits... yikes the phantom byte)
+
+                        if (flash_address_start >= 0xB000) {
+
+                            uint32_olcb_t next_flash_erase_page_address = FLASH_GetErasePageAddress(flash_address_start);
+
+                            // we assume the "Normalize Hex File" is enabled so addresses are always increasing
+                            // TODO: The HEX file may cross the erase page boundries... need to account for this.....
+                           
+
+                            if (next_flash_erase_page_address != flash_erase_page_address) {
+
+                                FLASH_ErasePage(next_flash_erase_page_address);
+
+                                flash_erase_page_address = next_flash_erase_page_address;
+
+                            }
+
+
+                            // Waiting for answer in Microchip page for will this reset everything and ALL has to be written to the erased page
+                            // May have to read in the entire erase block, modify what I have, (re)erase the block and write it back
+                            
+                            FLASH_Unlock(FLASH_UNLOCK_KEY);
+
+                            int i = 0;
+
+                            while (i < byte_count) {
+
+                                // Every 4th byte in the HEX file is a 0x00 and thrown away (24bit instructions)
+                                flash_block_0 = ((uint16_olcb_t) data[i] << 8) | (uint16_olcb_t) data[i + 1];
+                                flash_block_1 = ((uint16_olcb_t) data[i + 2] << 8) | (uint16_olcb_t) data[i + 3];
+
+                                // Write one 24 bit instruction with a phantom byte
+                                result = FLASH_WriteDoubleWord16(flash_address_start, flash_block_0, flash_block_1);
+
+                                if (!result) {
+
+                                    printf("Error writing Flash\n");
+
+                                }
+                                
+                                result = (FLASH_ReadWord16(flash_address_start) == flash_block_0) & (FLASH_ReadWord16(flash_address_start + 1) == flash_block_1);
+                                
+                                if (!result) {
+
+                                    printf("Error on Flash read back\n");
+
+                                }
+                                
+                                i = i + 4; // each instruction but 24 bits but is 32 bits in the HEX file
+                                flash_address_start = flash_address_start + 2; // each instruction is 2 addresses (but 24 bits... yikes the phantom byte)
+
+                            }
+
+                            FLASH_Lock();
+
+                        }
+
+
+                        printf("Address: 0x%04X", extended_address);
+                        printf("%04X - ", base_address);
+
+                        for (int i = 0; i < byte_count; i++) {
+
+                            printf("%02X", data[i]);
+
+                        }
+
+                        printf("\n");
 
                         break;
 
@@ -325,7 +407,7 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
 
                         // The data buffer was filled with nulls before the payload was read
 
-                        start_segment_adddress_80x86 = strtol((char*) &data[0], NULL, 16) * 16;
+                        extended_address_segment = ((uint16_olcb_t) data[0] << 8) | ((uint16_olcb_t) data[1]);
 
                         break;
 
@@ -335,7 +417,7 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
 
                         // The data buffer was filled with nulls before the payload was read
 
-                        start_segment_adddress_80x86 = strtol((char*) &data[0], NULL, 16);
+                        start_segment_adddress_80x86 = ((uint32_olcb_t) data[0] << 24) | ((uint32_olcb_t) data[1] << 16) | ((uint32_olcb_t) data[2] << 8) | ((uint32_olcb_t) data[3]);
 
                         break;
 
@@ -343,7 +425,7 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
 
                         // The data buffer was filled with nulls before the payload was read
 
-                        extended_address = strtol((char*) &data[0], NULL, 16);
+                        extended_address = ((uint16_olcb_t) data[0] << 8) | ((uint16_olcb_t) data[1]);
 
                         break;
 
@@ -351,7 +433,7 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
 
                         // The data buffer was filled with nulls before the payload was read
 
-                        start_linear_address = strtol((char*) &data[0], NULL, 16);
+                        start_linear_address = ((uint32_olcb_t) data[0] << 24) | ((uint32_olcb_t) data[1] << 16) | ((uint32_olcb_t) data[2] << 8) | ((uint32_olcb_t) data[3]);
                         break;
 
                 }
@@ -374,8 +456,19 @@ uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
 
 uint16_olcb_t _config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
-    for (int i = 0; i < count; i++)
-        _run_hex_file_state_machine(*buffer[i]);
+    //  printf("Count: %d\n", count);
+
+    for (int i = 0; i < count; i++) {
+
+        //      printf("%02X.", (*buffer)[i]);
+        _run_hex_file_state_machine((*buffer)[i]);
+
+    }
+
+    //    memset(buffer, 0x00, sizeof( configuration_memory_buffer_t));
+    //    printf("\n");
+
+
 
     //  PrintDWord(address);
 
@@ -395,10 +488,10 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 int main(void) {
 
-    char* test = ":106000002FBD23000EFF27000E01880000000000B6";
+    //   char* test = "08AFF000FBFF0000FFFFFF0062";
 
-    for (int i = 0; i < strlen(test); i++)
-        _run_hex_file_state_machine(test[i]);
+    //   for (int i = 0; i < strlen(test); i++)
+    //      _run_hex_file_state_machine(test[i]);
 
 
     // RB7 and RB8 are test outputs

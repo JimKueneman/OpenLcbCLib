@@ -153,19 +153,26 @@
 #define OFFSET_EVENT_SIGNAL_D_GREEN 39
 #define OFFSET_EVENT_SIGNAL_D_DARK 40
 
-#define OFFSET_EVENT_SIGNAL_STATE_A_STOP 41
-#define OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP 42
-#define OFFSET_EVENT_SIGNAL_STATE_B_STOP 43
-#define OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP 44
-#define OFFSET_EVENT_SIGNAL_STATE_CD_STOP 45
-#define OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP 46
+#define OFFSET_EVENT_SIGNAL_STATE_A_STOP_C 41       // _C for consumer
+#define OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_C 42
+#define OFFSET_EVENT_SIGNAL_STATE_B_STOP_C 43
+#define OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_C 44
+#define OFFSET_EVENT_SIGNAL_STATE_CD_STOP_C 45
+#define OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_C 46
 
 #define OFFSET_EVENT_VITAL_LOGIC_STATE_HELD 47
 #define OFFSET_EVENT_VITAL_LOGIC_STATE_CLEARED_LEFT 48
 #define OFFSET_EVENT_VITAL_LOGIC_STATE_CLEARED_RIGHT 49
 #define OFFSET_EVENT_VITAL_LOGIC_STATE_CLEARED_BOTH 50
 
-#define MAX_EVENT_SUFFIX 51
+#define OFFSET_EVENT_SIGNAL_STATE_A_STOP_P 51       // _P for producer
+#define OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_P 52
+#define OFFSET_EVENT_SIGNAL_STATE_B_STOP_P 53
+#define OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_P 54
+#define OFFSET_EVENT_SIGNAL_STATE_CD_STOP_P 55
+#define OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_P 56
+
+#define MAX_EVENT_SUFFIX 57
 
 typedef uint16_olcb_t event_suffix_t[MAX_EVENT_SUFFIX];
 
@@ -359,10 +366,10 @@ typedef struct {
 
     node_id_t board_to_the_left;
     node_id_t board_to_the_right;
-    uint8_olcb_t detector_gain_a;
-    uint8_olcb_t detector_gain_b;
-    uint8_olcb_t detector_gain_c;
-    uint8_olcb_t led_brightness_gain;
+    uint8_olcb_t detector_gain_1;
+    uint8_olcb_t detector_gain_2;
+    uint8_olcb_t detector_gain_3;
+    uint8_olcb_t signal_led_brightness_gain;
 
 } board_configuration_t;
 

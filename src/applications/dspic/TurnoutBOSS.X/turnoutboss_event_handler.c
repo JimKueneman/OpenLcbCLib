@@ -36,6 +36,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>
 
 #include "turnoutboss_event_handler.h"
 
@@ -54,6 +55,7 @@
 #endif
 
 #include "turnoutboss_types.h"
+#include "turnoutboss_board_configuration.h"
 
 board_configuration_t* _event_handler_board_configuration;
 signaling_state_t* _event_handler_signaling_state;
@@ -323,6 +325,10 @@ void _register_producer(openlcb_node_t *node, event_id_t event, uint8_olcb_t off
     Application_register_producer_eventid(node, event);
     event_engine->events[offset].state.valid_producer = TRUE;
     event_engine->events[offset].state.core_signaling = core_signaling_event;
+    
+    // store into configuration memory for CDI sample
+    uint16_t config_address = START_OF_PRODUCER_CONSUMER_MAP + offset*8;
+    TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(node, event, config_address);
 
 }
 
@@ -331,6 +337,10 @@ void _register_consumer(openlcb_node_t *node, event_id_t event, uint8_olcb_t off
     Application_register_consumer_eventid(node, event);
     event_engine->events[offset].state.valid_consumer = TRUE;
     event_engine->events[offset].state.core_signaling = core_signaling_event;
+
+    // store into configuration memory for CDI sample
+    uint16_t config_address = START_OF_PRODUCER_CONSUMER_MAP + offset*8;
+    TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(node, event, config_address);
 
 }
 
@@ -343,8 +353,8 @@ void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t 
 
         _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE, event_engine);
         _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_OCCUPANCY_MAIN_LEFT_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_adjacent_left + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_C, TRUE, event_engine);
 
     }
 
@@ -352,22 +362,22 @@ void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t 
 
         event_id_t _event_id_base_board_right = board_right << 16;
 
-        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_right + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_C, TRUE, event_engine);
 
     }
 
     // LH Defined Node Only specific Producers
     event_id_t _event_id_base = node->id << 16;
 
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_P, TRUE, event_engine);
 
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_OCCUPIED, OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_OCCUPIED, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_LEFT_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_TURNOUT_LEFT_UNOCCUPIED, TRUE, event_engine);
@@ -393,18 +403,22 @@ void _board_left_register_core_signaling_events(openlcb_node_t *node, node_id_t 
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED,    OFFSET_EVENT_SIGNAL_A_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW, OFFSET_EVENT_SIGNAL_A_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN,  OFFSET_EVENT_SIGNAL_A_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_DARK,   OFFSET_EVENT_SIGNAL_A_DARK,   TRUE, event_engine);
+
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED,    OFFSET_EVENT_SIGNAL_B_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW, OFFSET_EVENT_SIGNAL_B_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN,  OFFSET_EVENT_SIGNAL_B_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_DARK,   OFFSET_EVENT_SIGNAL_B_DARK,   TRUE, event_engine);
+
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED,    OFFSET_EVENT_SIGNAL_C_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW, OFFSET_EVENT_SIGNAL_C_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN,  OFFSET_EVENT_SIGNAL_C_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_DARK,   OFFSET_EVENT_SIGNAL_C_DARK,   TRUE, event_engine);
+
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED,    OFFSET_EVENT_SIGNAL_D_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW, OFFSET_EVENT_SIGNAL_D_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN,  OFFSET_EVENT_SIGNAL_D_GREEN,  TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_DARK,   OFFSET_EVENT_SIGNAL_D_DARK,   TRUE, event_engine);
 
     // LH Defined Node Only specific Consumers
 
@@ -427,8 +441,8 @@ void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t
 
         event_id_t _event_id_base_board_adjacent_right = board_adjacent_right << 16;
 
-        _register_consumer(node, _event_id_base_board_adjacent_right + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_adjacent_right + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_adjacent_right + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_adjacent_right + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_C, TRUE, event_engine);
 
     }
 
@@ -436,11 +450,11 @@ void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t
 
         event_id_t _event_id_base_board_left = board_left << 16;
 
-        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE, event_engine);
-        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE, event_engine);
-        
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP_C, TRUE, event_engine);
+        _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_C, TRUE, event_engine);
+
         _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_OCCUPIED, TRUE, event_engine);
         _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_MAIN_CENTER_UNOCCUPIED, TRUE, event_engine);
         _register_consumer(node, _event_id_base_board_left + EVENT_SUFFIX_OCCUPANCY_SIDING_CENTER_OCCUPIED, OFFSET_EVENT_OCCUPANCY_SIDING_CENTER_OCCUPIED, TRUE, event_engine);
@@ -452,12 +466,12 @@ void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t
 
     event_id_t _event_id_base = node->id << 16;
 
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP, TRUE, event_engine);
-    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_STOP, OFFSET_EVENT_SIGNAL_STATE_A_STOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_A_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_A_NONSTOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_STOP, OFFSET_EVENT_SIGNAL_STATE_B_STOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_B_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_B_NONSTOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_STOP, OFFSET_EVENT_SIGNAL_STATE_CD_STOP_P, TRUE, event_engine);
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_STATE_CD_NONSTOP, OFFSET_EVENT_SIGNAL_STATE_CD_NONSTOP_P, TRUE, event_engine);
 
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_RIGHT_OCCUPIED, OFFSET_EVENT_OCCUPANCY_TURNOUT_RIGHT_OCCUPIED, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_OCCUPANCY_TURNOUT_RIGHT_UNOCCUPIED, OFFSET_EVENT_OCCUPANCY_TURNOUT_RIGHT_UNOCCUPIED, TRUE, event_engine);
@@ -481,19 +495,23 @@ void _board_right_register_core_signaling_events(openlcb_node_t *node, node_id_t
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_RED,    OFFSET_EVENT_SIGNAL_A_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_YELLOW, OFFSET_EVENT_SIGNAL_A_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_GREEN,  OFFSET_EVENT_SIGNAL_A_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_A_DARK,   OFFSET_EVENT_SIGNAL_A_DARK,   TRUE, event_engine);
+
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_RED,    OFFSET_EVENT_SIGNAL_B_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_YELLOW, OFFSET_EVENT_SIGNAL_B_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_GREEN,  OFFSET_EVENT_SIGNAL_B_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_B_DARK,   OFFSET_EVENT_SIGNAL_B_DARK,   TRUE, event_engine);
+
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_RED,    OFFSET_EVENT_SIGNAL_C_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_YELLOW, OFFSET_EVENT_SIGNAL_C_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_GREEN,  OFFSET_EVENT_SIGNAL_C_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_C_DARK,   OFFSET_EVENT_SIGNAL_C_DARK,   TRUE, event_engine);
+
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_RED,    OFFSET_EVENT_SIGNAL_D_RED,    TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_YELLOW, OFFSET_EVENT_SIGNAL_D_YELLOW, TRUE, event_engine);
     _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_GREEN,  OFFSET_EVENT_SIGNAL_D_GREEN,  TRUE, event_engine);
-    
+    _register_producer(node, _event_id_base + EVENT_SUFFIX_SIGNAL_D_DARK,   OFFSET_EVENT_SIGNAL_D_DARK,   TRUE, event_engine);
+
     // RH Defined Node Only specific Consumers
 
     _register_consumer(node, _event_id_base + EVENT_SUFFIX_TURNOUT_COMMAND_NORMAL, OFFSET_EVENT_TURNOUT_COMMAND_NORMAL, TRUE, event_engine);

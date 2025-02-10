@@ -35,7 +35,6 @@
  * @date 22 Jan 2025
  */
 
-
 #include "turnoutboss_board_configuration.h"
 
 
@@ -56,24 +55,31 @@
 
 #include "turnoutboss_types.h"
 
-// 0x0000 to 0x007F are for the User Name/Description
-#define BOARD_LOCATION_CONFIG_MEM_ADDRESS 0x7F // Single Byte, 0 = LB; 1 = RB
-#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS 0x80  // 8 Bytes for an Event ID
-#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS 0x88 // 8 Bytes for an Event ID
-#define BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS 0x90  // uses 2 pushbutton for normal/diverging or using one to toggle, 0 = two buttons; 1 = single button toggle
-#define BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS 0x91 // uses both turnout feedbacks or just a single one, 0 = not used; 1 = single feedback sensors; 2 = two feedback sensor
-#define BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS 0x100 // do the points use a single or dual signal head 
-#define DETECTOR_A_GAIN_ADDRESS 0x180
-#define DETECTOR_B_GAIN_ADDRESS 0x181
-#define DETECTOR_C_GAIN_ADDRESS 0x182
-#define LED_BRIGHTNESS_GAIN_ADDRESS 0x183
+// Identification locations (SNIP, ACDI) fill configuration space 0 - 126
+// These have to align with the CDI XML file
+// First segment
+#define BOARD_LOCATION_CONFIG_MEM_ADDRESS               127 // Single Byte, 0 = LB; 1 = RB
+#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS          128 // 8 Bytes for an Event ID
+#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS         136 // 8 Bytes for an Event ID
+#define BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS        144 // uses 2 pushbutton for normal/diverging or using one to toggle, 0 = two buttons; 1 = single button toggle
+#define BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS  145 // uses both turnout feedbacks or just a single one, 0 = not used; 1 = single feedback sensors; 2 = two feedback sensor
+#define BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS  146 // does the point signal use a single or dual signal head
+// some reserved space
+// Second segment starts at 170 with 4 bytes of signal electrical configuration
+#define DETECTOR_1_GAIN_ADDRESS                         174
+#define DETECTOR_2_GAIN_ADDRESS                         175
+#define DETECTOR_3_GAIN_ADDRESS                         176
+#define SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS              177
+// some reserved space for other brightness gains, etc
+// The starting location for the event ID map is defined by START_OF_PRODUCER_CONSUMER_MAP in the .h file: 200
+// configuration space ends at 632, see .address_space_config_memory.highest_address in node_parameters.c
 
 board_configuration_t* _turnoutboss_board_configuration;
 
 
 void _set_detector_gains(void) {
 #ifdef MPLAB
-    MCP4014Driver_set_gain(_turnoutboss_board_configuration->detector_gain_a, _turnoutboss_board_configuration->detector_gain_b, _turnoutboss_board_configuration->detector_gain_c, _turnoutboss_board_configuration->led_brightness_gain);
+    MCP4014Driver_set_gain(_turnoutboss_board_configuration->detector_gain_1, _turnoutboss_board_configuration->detector_gain_2, _turnoutboss_board_configuration->detector_gain_3, _turnoutboss_board_configuration->signal_led_brightness_gain);
 #endif
 }
 
@@ -155,35 +161,34 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
             
             return;
 
-        case DETECTOR_A_GAIN_ADDRESS:
+        case DETECTOR_1_GAIN_ADDRESS:
 
-            _turnoutboss_board_configuration->detector_gain_a = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->detector_gain_1 = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
 
-        case DETECTOR_B_GAIN_ADDRESS:
+        case DETECTOR_2_GAIN_ADDRESS:
 
-            _turnoutboss_board_configuration->detector_gain_b = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->detector_gain_2 = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
 
-        case DETECTOR_C_GAIN_ADDRESS:
+        case DETECTOR_3_GAIN_ADDRESS:
 
-            _turnoutboss_board_configuration->detector_gain_c = *config_mem_buffer[0];
+            _turnoutboss_board_configuration->detector_gain_3 = *config_mem_buffer[0];
             _set_detector_gains();
 
             return;
 
-        case LED_BRIGHTNESS_GAIN_ADDRESS:
-
-            _turnoutboss_board_configuration->led_brightness_gain = *config_mem_buffer[0];
+        case SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS:
+            
+            _turnoutboss_board_configuration->signal_led_brightness_gain = *config_mem_buffer[0];
             _set_detector_gains();
-
+            
             return;
-
-
+            
     }
 
 }
@@ -288,12 +293,20 @@ uint8_olcb_t _extract_detector_gain_from_config_mem(openlcb_node_t *node, uint32
 
 }
 
-uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint8_olcb_t address) {
+uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint16_olcb_t address) {
     
-   configuration_memory_buffer_t buffer;
+    configuration_memory_buffer_t buffer;
+    Application_read_configuration_memory(node, address, 8, &buffer);
+    // no need to write if the buffer contains the requested event ID
+    event_id_t read_event_id = Utilities_copy_config_mem_buffer_to_event_id(&buffer, 0);
+    
+    if (event == read_event_id) {
+        // skipping write
+        return 8;  // as if the write succeeded
+    }
 
-   Utilities_copy_event_id_to_config_mem_buffer(&buffer, event, 0);
-   return (Application_write_configuration_memory(node, address, 8, &buffer));
+    Utilities_copy_event_id_to_config_mem_buffer(&buffer, event, 0);
+    return (Application_write_configuration_memory(node, address, 8, &buffer));
        
 }
 
@@ -310,10 +323,12 @@ void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_config
     _turnoutboss_board_configuration->turnout_feedback_type = _extract_turnoutfeedback_type_from_config_mem(node, BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
     _turnoutboss_board_configuration->point_signalhead_type = _extract_point_signalhead_type_from_config_mem(node, BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
     _turnoutboss_board_configuration->pushbutton_type = _extract_pushbutton_type_from_config_mem(node, BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-    _turnoutboss_board_configuration->detector_gain_a = _extract_detector_gain_from_config_mem(node, DETECTOR_A_GAIN_ADDRESS, &config_mem_buffer);
-    _turnoutboss_board_configuration->detector_gain_b = _extract_detector_gain_from_config_mem(node, DETECTOR_B_GAIN_ADDRESS, &config_mem_buffer);
-    _turnoutboss_board_configuration->detector_gain_c = _extract_detector_gain_from_config_mem(node, DETECTOR_C_GAIN_ADDRESS, &config_mem_buffer);
-    _turnoutboss_board_configuration->led_brightness_gain = _extract_detector_gain_from_config_mem(node, LED_BRIGHTNESS_GAIN_ADDRESS, &config_mem_buffer);
+
+    _turnoutboss_board_configuration->detector_gain_1 = _extract_detector_gain_from_config_mem(node, DETECTOR_1_GAIN_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->detector_gain_2 = _extract_detector_gain_from_config_mem(node, DETECTOR_2_GAIN_ADDRESS, &config_mem_buffer);
+    _turnoutboss_board_configuration->detector_gain_3 = _extract_detector_gain_from_config_mem(node, DETECTOR_3_GAIN_ADDRESS, &config_mem_buffer);
+
+    _turnoutboss_board_configuration->signal_led_brightness_gain = _extract_detector_gain_from_config_mem(node, SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS, &config_mem_buffer);
 
     _set_detector_gains();
 

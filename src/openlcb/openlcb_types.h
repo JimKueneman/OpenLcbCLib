@@ -71,7 +71,7 @@ extern "C" {
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
-#define USER_DEFINED_CDI_LENGTH             6000 // USER DEFINED 
+#define USER_DEFINED_CDI_LENGTH             20000 // USER DEFINED 
 #endif
 
 #ifndef USER_DEFINED_FDI_LENGTH

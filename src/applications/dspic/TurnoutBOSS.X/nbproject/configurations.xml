@@ -211,7 +211,7 @@
       </makeCustomizationType>
       <C30>
         <property key="cast-align" value="false"/>
-        <property key="code-model" value="default"/>
+        <property key="code-model" value="large-code"/>
         <property key="const-model" value="default"/>
         <property key="data-model" value="default"/>
         <property key="disable-instruction-scheduling" value="false"/>
@@ -331,8 +331,7 @@
         <property key="generic-16-bit" value="false"/>
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
-        <property key="oXC16glb-macros"
-                  value="SUPPORT_FIRMWARE_BOOTLOADER;FCY=40000000UL;MPLAB"/>
+        <property key="oXC16glb-macros" value="FCY=40000000UL;MPLAB"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>

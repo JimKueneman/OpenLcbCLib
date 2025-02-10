@@ -401,3 +401,16 @@ void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t 
     }
 
 }
+
+event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index) {
+    
+    
+    event_id_t retval = 0L;
+    
+    for (int i = 0; i <= 7; i++) {
+        retval = retval << 8;
+        retval |= (*buffer)[i + index] & 0xFF;
+    }
+    
+    return retval;
+}

@@ -99,7 +99,8 @@ extern uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration
 extern void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index);
 
 extern void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index);
-  
+
+extern event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
 
 #ifdef	__cplusplus
 }
