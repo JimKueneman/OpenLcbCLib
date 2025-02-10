@@ -26,7 +26,7 @@
  *
  * \file main.c
  *
- * TurnoutBOSS main
+ * TurnoutBoss Bootloader main
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
@@ -74,9 +74,9 @@
 #include <libpic30.h>
 
 #include "xc.h"
-#include "stdio.h"  // printf
-#include "string.h"
-#include "stdlib.h"
+#include <stdio.h>  // printf
+#include <string.h>
+#include <stdlib.h>
 
 #include "../../../drivers/common/can_main_statemachine.h"
 #include "../../../drivers/common/../driver_mcu.h"
@@ -91,13 +91,293 @@
 #include "debug.h"
 #include "uart_handler.h"
 #include "traps.h"
-
+#include "mcc_generated_files/memory/flash.h"
 
 #include "node_parameters.h"
 
+
+#define HEX_STATE_FIND_COLON 0
+#define HEX_STATE_READ_BYTECOUNT_CHAR_0 1
+#define HEX_STATE_READ_BYTECOUNT_CHAR_FINAL 2
+#define HEX_STATE_READ_ADDRESS_CHAR_0 3
+#define HEX_STATE_READ_ADDRESS_CHAR_1 4
+#define HEX_STATE_READ_ADDRESS_CHAR_2 5
+#define HEX_STATE_READ_ADDRESS_CHAR_FINAL 6
+#define HEX_STATE_READ_RECORD_TYPE_CHAR_0 7
+#define HEX_STATE_READ_RECORD_TYPE_CHAR_FINAL 8
+#define HEX_STATE_READ_DATA_CHAR_0 9
+#define HEX_STATE_READ_DATA_CHAR_FINAL 10
+#define HEX_STATE_READ_CHECKSUM_CHAR_0 11
+#define HEX_STATE_READ_CHECKSUM_CHAR_FINAL 12
+
+
+#define RECORD_TYPE_DATA 0x00
+#define RECORD_TYPE_EOF 0x01
+#define RECORD_TYPE_EXTENDED_SEGMENT_ADDRESS 0x02
+#define RECORD_TYPE_START_SEGMENT_ADDRESS 0x03
+#define RECORD_TYPE_EXTENDED_LINEAR_ADDRESS 0x04
+#define RECORD_TYPE_START_LINEAR_ADDRESS 0x05
+
+
+uint8_olcb_t state_machine_state = HEX_STATE_FIND_COLON;
+
+char temp[5] = {};
+uint8_olcb_t byte_count = 0;
+uint16_olcb_t base_address = 0;
+uint16_olcb_t extended_address = 0;
+uint8_olcb_t record_type = 0;
+uint8_olcb_t data[0xFF];
+uint8_olcb_t byte_index = 0;
+uint8_olcb_t checksum = 0;
+uint16_olcb_t running_checksum = 0;
+uint32_olcb_t start_segment_adddress_80x86 = 0;
+uint32_olcb_t start_linear_address = 0;
+
+uint8_olcb_t _run_hex_file_state_machine(uint8_olcb_t next_char) {
+
+    switch (state_machine_state) {
+
+        case HEX_STATE_FIND_COLON:
+        {
+
+            if (next_char == ':') {
+
+                memset(&temp, 0x00, sizeof ( temp));
+                memset(&checksum, 0x00, sizeof ( checksum));
+                running_checksum = 0;
+
+                state_machine_state = HEX_STATE_READ_BYTECOUNT_CHAR_0;
+
+            }
+
+            break;
+        }
+
+        case HEX_STATE_READ_BYTECOUNT_CHAR_0:
+        {
+
+            temp[0] = next_char;
+
+            state_machine_state = HEX_STATE_READ_BYTECOUNT_CHAR_FINAL;
+
+            break;
+        }
+
+        case HEX_STATE_READ_BYTECOUNT_CHAR_FINAL:
+        {
+
+            temp[1] = next_char;
+            byte_count = strtol(&temp[0], NULL, 16);
+
+            running_checksum = byte_count;
+
+            // prepare for next      
+            memset(&temp, 0x00, sizeof ( temp));
+            state_machine_state = HEX_STATE_READ_ADDRESS_CHAR_0;
+
+            break;
+        }
+
+        case HEX_STATE_READ_ADDRESS_CHAR_0:
+        {
+
+            temp[0] = next_char;
+            state_machine_state = HEX_STATE_READ_ADDRESS_CHAR_1;
+
+            break;
+        }
+
+        case HEX_STATE_READ_ADDRESS_CHAR_1:
+        {
+
+            temp[1] = next_char;
+            state_machine_state = HEX_STATE_READ_ADDRESS_CHAR_2;
+
+            break;
+        }
+
+        case HEX_STATE_READ_ADDRESS_CHAR_2:
+        {
+
+            temp[2] = next_char;
+            state_machine_state = HEX_STATE_READ_ADDRESS_CHAR_FINAL;
+
+            break;
+        }
+
+        case HEX_STATE_READ_ADDRESS_CHAR_FINAL:
+        {
+
+            temp[3] = next_char;
+            base_address = strtol(&temp[0], NULL, 16);
+
+            running_checksum = running_checksum + ((base_address >> 8) & 0x00FF) + (base_address & 0x00FF);
+
+            // prepare for next
+            memset(&temp, 0x00, sizeof ( temp));
+            state_machine_state = HEX_STATE_READ_RECORD_TYPE_CHAR_0;
+
+            break;
+        }
+
+        case HEX_STATE_READ_RECORD_TYPE_CHAR_0:
+        {
+
+            temp[0] = next_char;
+            state_machine_state = HEX_STATE_READ_RECORD_TYPE_CHAR_FINAL;
+
+            break;
+        }
+
+        case HEX_STATE_READ_RECORD_TYPE_CHAR_FINAL:
+        {
+
+            temp[1] = next_char;
+            record_type = strtol(&temp[0], NULL, 16);
+
+            running_checksum = running_checksum + record_type;
+
+            if (byte_count == 0) {
+
+                state_machine_state = HEX_STATE_READ_CHECKSUM_CHAR_0; // has no data
+
+            } else {
+                // prepare for next
+                byte_index = 0;
+                memset(&data, 0x00, sizeof ( data));
+                memset(&temp, 0x00, sizeof ( temp));
+                state_machine_state = HEX_STATE_READ_DATA_CHAR_0;
+
+            }
+            
+            break;
+
+
+        }
+
+        case HEX_STATE_READ_DATA_CHAR_0:
+        {
+
+            // reading these (and the checksum) one byte at a time so the terminating null will persist at the correct index
+
+            temp[0] = next_char;
+
+            state_machine_state = HEX_STATE_READ_DATA_CHAR_FINAL;
+
+            break;
+        }
+
+        case HEX_STATE_READ_DATA_CHAR_FINAL:
+        {
+
+            // reading these (and the checksum) one byte at a time so the terminating null will persist at the correct index
+
+            temp[1] = next_char;
+            data[byte_index] = strtol(&temp[0], NULL, 16);
+            byte_index = byte_index + 1;
+
+            running_checksum = running_checksum + data[byte_index-1];
+
+            if (byte_index >= byte_count) {
+
+                memset(&temp, 0x00, sizeof ( temp));
+                state_machine_state = HEX_STATE_READ_CHECKSUM_CHAR_0;
+
+            } else {
+                
+                state_machine_state = HEX_STATE_READ_DATA_CHAR_0;
+
+                
+            }
+
+            break;
+        }
+
+        case HEX_STATE_READ_CHECKSUM_CHAR_0:
+        {
+
+            temp[0] = next_char;
+            state_machine_state = HEX_STATE_READ_CHECKSUM_CHAR_FINAL;
+
+            break;
+        }
+
+        case HEX_STATE_READ_CHECKSUM_CHAR_FINAL:
+        {
+
+            temp[1] = next_char;
+            checksum = strtol(&temp[0], NULL, 16);
+            
+            if (checksum == ((~running_checksum + 1) & 0x00FF)) {
+
+                switch (record_type) {
+
+                    case RECORD_TYPE_DATA: // Data
+
+
+                        break;
+
+                    case RECORD_TYPE_EOF: // EOF
+
+                        break;
+
+                    case RECORD_TYPE_EXTENDED_SEGMENT_ADDRESS: // Extended Segment Address
+
+                        // The data buffer was filled with nulls before the payload was read
+
+                        start_segment_adddress_80x86 = strtol((char*) &data[0], NULL, 16) * 16;
+
+                        break;
+
+                    case RECORD_TYPE_START_SEGMENT_ADDRESS: // Start Segment Address
+
+                        // for 80x86 processors.. 
+
+                        // The data buffer was filled with nulls before the payload was read
+
+                        start_segment_adddress_80x86 = strtol((char*) &data[0], NULL, 16);
+
+                        break;
+
+                    case RECORD_TYPE_EXTENDED_LINEAR_ADDRESS: // Extended Linear Address
+
+                        // The data buffer was filled with nulls before the payload was read
+
+                        extended_address = strtol((char*) &data[0], NULL, 16);
+
+                        break;
+
+                    case RECORD_TYPE_START_LINEAR_ADDRESS: // Start Linear Address
+
+                        // The data buffer was filled with nulls before the payload was read
+
+                        start_linear_address = strtol((char*) &data[0], NULL, 16);
+                        break;
+
+                }
+
+            } else {
+
+
+                printf("Checksum Failed\n");
+
+            }
+
+
+            state_machine_state = HEX_STATE_FIND_COLON;
+            break;
+        }
+    }
+
+    return FALSE;
+}
+
 uint16_olcb_t _config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-    
-    PrintDWord(address);
+
+    for (int i = 0; i < count; i++)
+        _run_hex_file_state_machine(*buffer[i]);
+
+    //  PrintDWord(address);
 
     return count;
 }
@@ -113,9 +393,13 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
-
 int main(void) {
-    
+
+    char* test = ":106000002FBD23000EFF27000E01880000000000B6";
+
+    for (int i = 0; i < strlen(test); i++)
+        _run_hex_file_state_machine(test[i]);
+
 
     // RB7 and RB8 are test outputs
     // we also have the LED variable for RB9 and the LED output
@@ -142,14 +426,14 @@ int main(void) {
             );
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
-    
+
     Application_Callbacks_set_alias_change(&_alias_change_callback);
 
 
     printf("\nBooted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
-    
+
 
     while (1) {
 

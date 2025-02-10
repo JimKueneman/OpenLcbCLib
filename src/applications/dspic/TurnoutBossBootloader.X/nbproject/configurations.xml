@@ -26,6 +26,13 @@
                      projectFiles="true">
         <itemPath>../dsPIC_Common/ecan1_helper.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="MCC Generated Files"
+                     displayName="MCC Generated Files"
+                     projectFiles="true">
+        <logicalFolder name="memory" displayName="memory" projectFiles="true">
+          <itemPath>mcc_generated_files/memory/flash.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/application_callbacks.h</itemPath>
         <itemPath>../../../openlcb/protocol_snip.h</itemPath>
@@ -75,6 +82,7 @@
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
+      <itemPath>TurnoutBossBootloader.mc3</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -104,6 +112,13 @@
                      displayName="dsPIC_Common"
                      projectFiles="true">
         <itemPath>../dsPIC_Common/ecan1_helper.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="MCC Generated Files"
+                     displayName="MCC Generated Files"
+                     projectFiles="true">
+        <logicalFolder name="memory" displayName="memory" projectFiles="true">
+          <itemPath>mcc_generated_files/memory/flash.s</itemPath>
+        </logicalFolder>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/openlcb_buffer_fifo.c</itemPath>
@@ -1191,7 +1206,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart1io.uartioenabled" value="true"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -1666,7 +1681,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart1io.uartioenabled" value="true"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -2096,6 +2111,18 @@
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
       <item path="main_old.c" ex="true" overriding="false">
+        <C30>
+        </C30>
+        <C30-AR>
+        </C30-AR>
+        <C30-AS>
+        </C30-AS>
+        <C30-CO>
+        </C30-CO>
+        <C30-LD>
+        </C30-LD>
+        <C30Global>
+        </C30Global>
       </item>
     </conf>
   </confs>
