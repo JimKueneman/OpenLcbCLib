@@ -1,7 +1,7 @@
 
 #include <xc.inc>
     
-.section resetvector, address(0x4000), code
+.section resetvector, address(0xB000), code
 goto __reset
 
 

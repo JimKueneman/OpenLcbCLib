@@ -117,25 +117,34 @@
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
 
-#define AppStartAddress 0x4000
+#define AppStartAddress 0xB000
 #define ResetVectorSize 0x0004
 
 // This creates an array of pointers to the handlers for the different interrupts that are at a known
 // place in the program space (AppStartAddress++ResetVectorSize).  We defined the program start at AppStartAddress
 // so that is a jump call to the start of the initialization.
-__prog__ const uint16_olcb_t __attribute__((space(prog), address((AppStartAddress+ResetVectorSize)))) _VirtualIVT[9] = {
-    
-    (uint16_olcb_t)&Traps_oscillator_fail_handler,
-    (uint16_olcb_t)&Traps_address_error_handler,
-    (uint16_olcb_t)&Traps_stack_error_handler,
-    (uint16_olcb_t)&Traps_math_error_handler,
-    (uint16_olcb_t)&Traps_dmac_error_handler,
-    (uint16_olcb_t)&TurnoutBossDrivers_t2_interrupt_handler,
-    (uint16_olcb_t)&TurnoutBossDrivers_u1_rx_interrupt_handler,
-    (uint16_olcb_t)&TurnoutBossDrivers_u1_tx_interrupt_handler,
-    (uint16_olcb_t)&Ecan1Helper_get_max_can_fifo_depth,
-    
+__prog__ const uint16_olcb_t __attribute__((space(prog), address((AppStartAddress + ResetVectorSize)))) _VirtualIVT[9] = {
+
+    (uint16_olcb_t) & Traps_oscillator_fail_handler, // 0x0004
+    (uint16_olcb_t) & Traps_address_error_handler, // 0x0006
+    (uint16_olcb_t) & Traps_stack_error_handler, // 0x0008
+    (uint16_olcb_t) & Traps_math_error_handler, // 0x000A
+    (uint16_olcb_t) & Traps_dmac_error_handler, // 0x000C
+    (uint16_olcb_t) & TurnoutBossDrivers_t2_interrupt_handler, // 0x000E
+    (uint16_olcb_t) & TurnoutBossDrivers_u1_rx_interrupt_handler, // 0x0010
+    (uint16_olcb_t) & TurnoutBossDrivers_u1_tx_interrupt_handler, // 0x0012
+    (uint16_olcb_t) & Ecan1Helper_C1_interrupt_handler, // 0x0014
+
 };
+
+// Reserve the first address slot of data so we don't stomp it.  It belongs to the Bootloader... 
+// If this works we can share memory for NodeID and Alias!!!!
+#ifdef __CCI__
+uint8_olcb_t app_running __at(0x1000);
+#else
+uint8_olcb_t app_running __attribute__((address(0x1000)));
+#endif
+
 
 
 board_configuration_t _board_configuration;
@@ -152,10 +161,9 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
-
 int main(void) {
-    
-    
+
+
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
@@ -172,7 +180,6 @@ int main(void) {
     uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
     uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
 
-
     CanMainStatemachine_initialize(
             &Ecan1Helper_setup,
             &Ecan1Helper_transmit_raw_can_frame,
@@ -188,6 +195,13 @@ int main(void) {
             &TurnoutBossDrivers_pause_100ms_timer,
             &TurnoutBossDrivers_resume_100ms_timer
             );
+    
+    // Re-enable the global interrupts (thought the boot code would do that)
+    _GIE = TRUE;
+    while (1) {
+        _RB8 = !_RB8;
+        __delay32(1000);
+    }
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
     UartHandler_board_configuration = &_board_configuration;
@@ -221,8 +235,6 @@ int main(void) {
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
-
-            _RB8 = 1;
 
             TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
@@ -311,12 +323,6 @@ int main(void) {
                 TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TLC;
             else
                 TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TRC;
-
-
-
-            _RB8 = 0;
-
-
 
         }
 

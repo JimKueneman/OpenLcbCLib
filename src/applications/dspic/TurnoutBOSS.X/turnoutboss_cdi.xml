@@ -3,9 +3,9 @@
 <cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://openlcb.org/schema/cdi/1/4/cdi.xsd">
   <identification>
     <manufacturer>Mustangpeak Engineering</manufacturer>
-    <model>TurnoutBOSS</model>
+    <model>TurnoutBoss</model>
     <hardwareVersion>Ver A</hardwareVersion>
-    <softwareVersion>0.1</softwareVersion>
+    <softwareVersion>0.2</softwareVersion>
     <map>
       <relation>
         <property>Description</property>
@@ -20,12 +20,11 @@
   <acdi/>
   <segment origin="0" space="253">
     <name>Layout Configuration Setup</name>
-    <description>&#13;
-      The basic information required to get your TurnoutBOSS up and operational creating a fully signaled CTC layout.&#13;
-    </description>
+    <description>The basic information required to get your TurnoutBoss up
+        and operational to create a fully signaled layout.</description>
     <group>
       <name>User Info</name>
-      <description>Enter a name and description to help uniquely identify this TurnoutBOSS.</description>
+      <description>Enter a name and description to help uniquely identify this TurnoutBoss.</description>
       <string size="63">
         <name>User Name</name>
       </string>
@@ -34,8 +33,8 @@
       </string>
     </group>
     <group>
-      <name>How this TurnoutBOSS is used on your layout.</name>
-      <description>Select configuration of the TurnoutBOSS.        </description>
+      <name>How this TurnoutBoss is used on your layout.</name>
+      <description>Select configuration of the TurnoutBoss.</description>
       <int size="1">
         <min>0</min>
         <max>1</max>
@@ -43,11 +42,11 @@
         <map>
           <relation>
             <property>0</property>
-            <value>Three Blocks (mainline before + turnout + mainline after)</value>
+            <value>"Left" board: three blocks (turnout, mainline between, siding)</value>
           </relation>
           <relation>
             <property>1</property>
-            <value>Two Blocks (turnout + siding)</value>
+            <value>"Right" board: two blocks (turnout, mainline to next siding)</value>
           </relation>
         </map>
         <hints>
@@ -60,16 +59,16 @@
       <description>TurnoutBoss Node IDs adjacent to this unit. </description>
       <eventid>
         <name>Left</name>
-        <description>NodeID of the TurnoutBOSS to immediate left of this unit.</description>
+        <description>NodeID of the TurnoutBoss to immediate left of this unit.</description>
       </eventid>
       <eventid>
         <name>Right</name>
-        <description>NodeID of the TurnoutBOSS to immediate right of this unit.</description>
+        <description>NodeID of the TurnoutBoss to immediate right of this unit.</description>
       </eventid>
     </group>
     <group>
-      <name>Turnout control</name>
-      <description>Define how this TurnoutBoss's turnout control/feedback is connected to the layout</description>
+      <name>Turnout Control</name>
+      <description>Define how this TurnoutBoss's turnout control/feedback is wired to the layout</description>
       <int size="1">
         <name>Control Buttons</name>
         <min>0</min>
@@ -107,15 +106,9 @@
         </map>
       </int>
     </group>
-  </segment>
-  <segment origin="256" space="253">
-    <name>Hardware Configuration</name>
-    <description>
-      Information about the hardware connected to your TurnoutBOSS.
-    </description>
     <group>
       <name>Signalhead Options</name>
-      <description>Information on the signal heads for this TurnoutBOSS.</description>
+      <description>Information on the signal heads for this TurnoutBoss.</description>
       <int size="1">
         <min>0</min>
         <max>1</max>
@@ -132,11 +125,17 @@
         </map>
       </int>
     </group>
+  </segment>
+  <segment origin="170" space="253">
+    <name>Hardware Configuration</name>
+    <description>
+      Information about the hardware connected to your TurnoutBoss.
+    </description>
     <group>
       <name>Signalhead light configuration</name>
       <description>Define the signal head LED configuration</description>
       <int size="1">
-        <name> Signal "A"</name>
+        <name> Signal A</name>
         <description>The straight through path signal</description>
         <min>0</min>
         <max>1</max>
@@ -153,7 +152,7 @@
         </map>
       </int>
       <int size="1">
-        <name> Signal "B"</name>
+        <name> Signal B</name>
         <description>The diverging path signal</description>
         <min>0</min>
         <max>1</max>
@@ -170,7 +169,7 @@
         </map>
       </int>
       <int size="1">
-        <name> Signal "C"</name>
+        <name> Signal C</name>
         <description>The straight through path signal at the points</description>
         <min>0</min>
         <max>1</max>
@@ -187,7 +186,7 @@
         </map>
       </int>
       <int size="1">
-        <name> Signal "D"</name>
+        <name> Signal D</name>
         <description>The diverging path signal at the points</description>
         <min>0</min>
         <max>1</max>
@@ -204,45 +203,231 @@
         </map>
       </int>
     </group>
+    <group>
+      <name>Track Detector Sensitivity</name>
+      <description>Adjusts the gain of the track detectors for detection sensitivity</description>
+      <hints><visibility hideable="yes" hidden="yes"/></hints>
+      <int size="1">
+        <name>Detector 1</name>
+        <min>0</min>
+        <max>63</max>
+        <default>31</default>
+        <hints>
+          <slider tickSpacing="8" immediate="yes" showValue="true"/>
+        </hints>
+      </int>
+      <int size="1">
+        <name>Detector 2</name>
+        <min>0</min>
+        <max>63</max>
+        <default>31</default>
+        <hints>
+          <slider tickSpacing="8" immediate="yes" showValue="true"/>
+        </hints>
+      </int>
+      <int size="1">
+        <name>Detector 3</name>
+        <min>0</min>
+        <max>63</max>
+        <default>31</default>
+        <hints>
+          <slider tickSpacing="8" immediate="yes" showValue="true"/>
+        </hints>
+      </int>
+    </group>
+    <group>
+        <name>Signal LED Brightness</name>
+        <description>Adjusts the current to the signal head LEDs to control brightness</description>
+        <hints><visibility hideable="yes" hidden="yes"/></hints>
+      <int size="1">
+          <name>Signal LED Brightness</name>
+          <min>0</min>
+          <max>63</max>
+          <default>31</default>
+          <hints>
+              <slider tickSpacing="8" immediate="yes" showValue="true"/>
+          </hints>
+      </int>
+    </group>
   </segment>
-  <segment origin="384" space="253">
-    <name>Track Detector Gain</name>
-    <description>Adjusts the gain of the track detectors for detection sensitivity</description>
-    <int size="1">
-      <name>Detector A</name>
-      <min> 0</min>
-      <max>63</max>
-      <default>31</default>
-      <hints>
-        <slider tickSpacing="8" immediate="yes" showValue="true"/>
-      </hints>
-    </int>
-    <int size="1">
-      <name>Detector B</name>
-      <min> 0</min>
-      <max>63</max>
-      <default>31</default>
-      <hints>
-        <slider tickSpacing="8" immediate="yes" showValue="true"/>
-      </hints>
-    </int>
-    <int size="1">
-      <name>Detector C</name>
-      <min> 0</min>
-      <max>63</max>
-      <default>31</default>
-      <hints>
-        <slider tickSpacing="8" immediate="yes" showValue="true"/>
-      </hints>
-    </int>
-    <int size="1">
-      <name>LED Brightness</name>
-      <min> 0</min>
-      <max>63</max>
-      <default>31</default>
-      <hints>
-        <slider tickSpacing="8" immediate="yes" showValue="true"/>
-      </hints>
-    </int>
+  <segment origin="200" space="253">
+    <name>Advanced Options</name>
+    <group>
+      <name>Producers and Consumers</name>
+      <description>Copy and paste these to other nodes to make connections</description>
+      <hints><visibility hideable="yes" hidden="yes"/><readOnly/></hints>
+      <eventid>
+        <name>Main Left Occupied</name>
+      </eventid>
+      <eventid>
+        <name>Main Left Unoccupied</name>
+      </eventid>        
+      <eventid>
+        <name>Turnout Left Occupied</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Left Unoccupied</name>
+      </eventid>        
+      <eventid>
+        <name>Main Center Occupied</name>
+      </eventid>
+      <eventid>
+        <name>Main Center Unoccupied</name>
+      </eventid>        
+      <eventid>
+        <name>Siding Occupied</name>
+      </eventid>
+      <eventid>
+        <name>Siding Unoccupied</name>
+      </eventid>        
+      <eventid>
+        <name>Turnout Right Occupied</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Right Unoccupied</name>
+      </eventid>        
+      <eventid>
+        <name>Turnout Main Right Occupied</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Main Right Unoccupied</name>
+      </eventid>        
+      <eventid>
+        <name>Turnout Command Normal (C)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Command Diverging (C)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Feedback Normal Active (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Feedback Normal Inactive (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Feedback Diverging Active (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Feedback Diverging Inactive (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Button Normal Open (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Button Normal Closed (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Button Diverging Open (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Button Diverging Closed (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Observed Normal (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Observed Diverging (P)</name>
+      </eventid>
+      <eventid>
+        <name>Turnout Observed In Motion (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal A Red (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal A Yellow (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal A Green (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal A Dark (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal B Red (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal B Yellow (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal B Green (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal B Dark (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal C Red (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal C Yellow (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal C Green (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal C Dark (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal D Red (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal D Yellow (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal D Green (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal D Dark (P)</name>
+      </eventid>
+      <eventid>
+        <name>Signal State A Stop (C)</name>
+      </eventid>
+      <eventid>
+        <name>Signal State A Nonstop (C)</name>
+      </eventid>
+      <eventid>
+        <name>Signal State B Stop (C)</name>
+      </eventid>
+      <eventid>
+        <name>Signal State B Nonstop (C)</name>
+      </eventid>
+      <eventid>
+        <name>Signal State CD Stop (C)</name>
+      </eventid>
+      <eventid>
+        <name>Signal State CD Nonstop (C)</name>
+      </eventid>
+      <eventid>
+        <name>Vital Logic Held (C)</name>
+      </eventid>
+      <eventid>
+        <name>Vital Logic Cleared Left (C)</name>
+      </eventid>
+      <eventid>
+        <name>Vital Logic Cleared Right (C)</name>
+      </eventid>
+      <eventid>
+        <name>Vital Logic Cleared Both (C)</name>
+      </eventid>
+      <eventid>
+          <name>Signal State A Stop (P)</name>
+      </eventid>
+      <eventid>
+          <name>Signal State A Nonstop (P)</name>
+      </eventid>
+      <eventid>
+          <name>Signal State B Stop (P)</name>
+      </eventid>
+      <eventid>
+          <name>Signal State B Nonstop (P)</name>
+      </eventid>
+      <eventid>
+          <name>Signal State CD Stop (P)</name>
+      </eventid>
+      <eventid>
+          <name>Signal State CD Nonstop (P)</name>
+      </eventid>
+    </group>
+
   </segment>
 </cdi>

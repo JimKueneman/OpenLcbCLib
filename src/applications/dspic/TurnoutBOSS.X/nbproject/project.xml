@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>TurnoutBOSS</name>
+            <name>TurnoutBoss</name>
             <creation-uuid>d757272e-b6c2-478e-a1e1-a48f46fee18b</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
@@ -14,6 +14,7 @@
                 <sourceRootElem>../../../drivers</sourceRootElem>
                 <sourceRootElem>../../test/main_statemachine/main_statemachine.X</sourceRootElem>
                 <sourceRootElem>../dsPIC_Common</sourceRootElem>
+                <sourceRootElem>../TurnoutBossBootloader.X</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

@@ -36,11 +36,9 @@
 
 
 #include "xc.h"
-
-#include <libpic30.h> // Delay
-
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
+#include "turnoutboss_drivers.h"
 
 can_rx_callback_func_t internal_can_rx_callback_func;
 
@@ -496,17 +494,7 @@ void Ecan1Helper_C1_interrupt_handler(void) {
     
        /* clear interrupt flag */
     IFS2bits.C1IF = 0; // clear interrupt flag
-    
-    _RB7 = 0;
-    _RB7 = 1;
-    __delay32(10);
-    _RB7 = 0;
 
-    return;
-    
-    
-    
-    
     if (C1INTFbits.RBIF) { // RX Interrupt
 
         // Snag all the buffers that have data that are associated with this interrupt
@@ -560,7 +548,9 @@ void Ecan1Helper_C1_interrupt_handler(void) {
 
     }
 
-    return;   
+    return;
+ 
+    
     
 }
 
@@ -568,9 +558,24 @@ void Ecan1Helper_C1_interrupt_handler(void) {
 
 void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
-    // Allows a bootloader to call the normal function from it's interrupt
-    Ecan1Helper_C1_interrupt_handler(); 
+    // This needs more than this, need to know if the application is running yet or not....
 
+    if (TurnoutBossDrivers_app_running) {
+        
+        // Create a variable on the stack and grab the address of the CAN C1 handler
+        uint16_t applicationISRAddress = __builtin_tblrdl(0xB014); // Where the C1 Interrupt Handler is in the Application
+
+        // Create a function pointer variable on the stack
+        void (*app_c1_interrupt_func)() = (void*) applicationISRAddress;
+
+        app_c1_interrupt_func();
+
+    } else {
+        
+        Ecan1Helper_C1_interrupt_handler(); 
+        
+    }
+    
 }
 
 extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void) {

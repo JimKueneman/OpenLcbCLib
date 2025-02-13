@@ -129,6 +129,22 @@
       <logicalFolder name="TurnoutBOSS.X"
                      displayName="TurnoutBOSS.X"
                      projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="Diagrams" displayName="Diagrams" projectFiles="true">
+        </logicalFolder>
+        <logicalFolder name="dist" displayName="dist" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+            <logicalFolder name="production" displayName="production" projectFiles="true">
+            </logicalFolder>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="JMRI Simulator"
+                       displayName="JMRI Simulator"
+                       projectFiles="true">
+        </logicalFolder>
         <logicalFolder name="local_drivers"
                        displayName="local_drivers"
                        projectFiles="true">
@@ -165,6 +181,7 @@
     <Elem>../../../drivers</Elem>
     <Elem>../../test/main_statemachine/main_statemachine.X</Elem>
     <Elem>../dsPIC_Common</Elem>
+    <Elem>../TurnoutBossBootloader.X</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -204,7 +221,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep></makeCustomizationPostStep>
+        <makeCustomizationPostStep>/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate ${ImagePath} -o${ImageDir}/loaderboss -format=INHX32,8</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
@@ -351,7 +368,7 @@
         <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
-        <property key="oscillator.frequency" value="1"/>
+        <property key="oscillator.frequency" value="70"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
@@ -826,7 +843,7 @@
         <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
-        <property key="oscillator.frequency" value="1"/>
+        <property key="oscillator.frequency" value="70"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>

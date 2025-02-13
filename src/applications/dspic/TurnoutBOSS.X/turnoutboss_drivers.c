@@ -248,7 +248,13 @@ void TurnoutBossDrivers_resume_100ms_timer() {
 void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
 
     IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
-
+    
+     _RB7 = !_RB7;
+    __delay32(10);
+    _RB7 = !_RB7;
+    
+    return;
+   
 }
 
 void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
@@ -263,6 +269,12 @@ void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
 
     IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
+    
+     _RB7 = !_RB7;
+    __delay32(10);
+    _RB7 = !_RB7;
+    
+    return;
 
     if (U1STAbits.URXDA == 1) {
 
@@ -283,8 +295,13 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
-
+    
+    
     _RB7 = !_RB7;
+    __delay32(10);
+    _RB7 = !_RB7;
+    
+    return;
 
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)

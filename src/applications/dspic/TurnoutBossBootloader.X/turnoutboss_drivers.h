@@ -150,6 +150,8 @@ extern "C" {
     extern void TurnoutBossDrivers_u1_tx_interrupt_handler(void);
     
     extern void TurnoutBossDrivers_t2_interrupt_handler(void);
+    
+    extern uint8_olcb_t TurnoutBossDrivers_app_running;
    
 
 #endif	/* __TURNOUTBOSS_DRIVERS__ */

@@ -39,11 +39,17 @@
 #include <libpic30.h> // delay
 
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
-#include "../dsPIC_Common/ecan1_helper.h"
+#include "ecan1_bootloader_helper.h"
 #include "debug.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
+
+#ifdef __CCI__
+uint8_olcb_t TurnoutBossDrivers_app_running __at(0x1000);
+#else
+uint8_olcb_t TurnoutBossDrivers_app_running __attribute__((address(0x1000)));
+#endif
 
 void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
@@ -96,7 +102,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
 
-    \
+                \
     OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
@@ -250,8 +256,23 @@ void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
 
 void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 
-    // Allows a bootloader to call the normal function from it's interrupt
-    TurnoutBossDrivers_u1_tx_interrupt_handler();
+    // This needs more than this, need to know if the application is running yet or not....
+
+    if (TurnoutBossDrivers_app_running) {
+        
+        // Create a variable on the stack and grab the address of the U1 TX handler
+        uint16_t applicationISRAddress = __builtin_tblrdl(0xB012); // Where the UART TX Interrupt Handler is in the Application
+
+        // Create a function pointer variable on the stack
+        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
+
+        app_u1_tx_interrupt_func();
+
+    } else {
+
+        TurnoutBossDrivers_u1_tx_interrupt_handler();
+
+    }
 
 }
 
@@ -271,17 +292,31 @@ void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
 }
 
 void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+    
+    // This needs more than this, need to know if the application is running yet or not....
 
-    // Allows a bootloader to call the normal function from it's interrupt
-    TurnoutBossDrivers_u1_rx_interrupt_handler();
+    if (TurnoutBossDrivers_app_running) {
+        
+        // Create a variable on the stack and grab the address of the U1 RX handler
+        uint16_t applicationISRAddress = __builtin_tblrdl(0xB010); // Where the UART RX Interrupt Handler is in the Application
+
+        // Create a function pointer variable on the stack
+        void (*app_u1_rx_interrupt_func)() = (void*) applicationISRAddress;
+
+        app_u1_rx_interrupt_func();
+        
+
+    } else {
+
+        TurnoutBossDrivers_u1_rx_interrupt_handler();
+        
+    }
 
 }
 
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
-
-    _RB7 = !_RB7;
 
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)
@@ -290,8 +325,28 @@ void TurnoutBossDrivers_t2_interrupt_handler(void) {
 }
 
 void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
+    
+  //  _RB7 = !_RB7;
 
-    // Allows a bootloader to call the normal function from it's interrupt
-    TurnoutBossDrivers_t2_interrupt_handler();
+    // This needs more than this, need to know if the application is running yet or not....
+
+    if (TurnoutBossDrivers_app_running) {
+             
+        // Create a variable on the stack and grab the address of the T2 handler
+        uint16_t applicationISRAddress = __builtin_tblrdl(0xB00E); // Where the T2 Interrupt Handler is in the Application
+
+        // Create a function pointer variable on the stack
+        void (*app_interrupt_t2_func)() = (void*) applicationISRAddress;
+
+        app_interrupt_t2_func();
+        
+
+    } else {
+        
+    //l     _RB8 = !_RB8;
+
+        TurnoutBossDrivers_t2_interrupt_handler();
+
+    }
 
 }

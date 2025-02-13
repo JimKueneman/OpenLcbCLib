@@ -45,15 +45,114 @@
 #include "../../../drivers/driver_can.h"
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/openlcb_node.h"
-#include "../dsPIC_Common/ecan1_helper.h"
+#include "ecan1_bootloader_helper.h"
 #include "debug.h"
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 
 #include "turnoutboss_drivers.h"
 
+void (*startApplication)() = (void*) 0xB000;
+
 void UartHandler_handle_rx(uint16_olcb_t code) {
 
+    uint16_t applicationISRAddress = 0;
+
     switch (code) {
+
+        case '0':
+
+            _RB8 = 1;
+            __delay32(10);
+
+            applicationISRAddress = __builtin_tblrdl(0xB00E); // Where the Timer 2 Interrupt Handler is in the Application
+
+            _RB8 = 0;
+            __delay32(10);
+
+            printf("0x%04X\n", applicationISRAddress);
+
+            void (*app_t1_interrupt_func)() = (void*) applicationISRAddress;
+            app_t1_interrupt_func();
+
+            _RB8 = 1;
+            __delay32(10);
+
+            return;
+
+        case '1':
+
+            _RB8 = 1;
+            __delay32(10);
+
+            applicationISRAddress = __builtin_tblrdl(0xB010); // Where the UART RX Interrupt Handler is in the Application
+
+            _RB8 = 0;
+            __delay32(10);
+            
+            printf("0x%04X\n", applicationISRAddress);
+
+            void (*app_u1_rx_interrupt_func)() = (void*) applicationISRAddress;
+
+            app_u1_rx_interrupt_func();
+
+            _RB8 = 1;
+            __delay32(10);
+
+            return;
+
+        case '2':
+
+            _RB8 = 1;
+            __delay32(10);
+
+            applicationISRAddress = __builtin_tblrdl(0xB012); // Where the UART TX Interrupt Handler is in the Application
+
+            _RB8 = 0;
+            __delay32(10);
+            
+            printf("0x%04X\n", applicationISRAddress);
+
+            void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
+            app_u1_tx_interrupt_func();
+
+            _RB8 = 1;
+            __delay32(10);
+
+            return;
+
+        case '3':
+
+            _RB8 = 1;
+            __delay32(10);
+
+            applicationISRAddress = __builtin_tblrdl(0xB014); // Where the CAN C1 Interrupt Handler is in the Application
+
+            _RB8 = 0;
+            __delay32(10);
+            
+            printf("0x%04X\n", applicationISRAddress);
+
+            void (*app_c1_tx_interrupt_func)() = (void*) applicationISRAddress;
+            app_c1_tx_interrupt_func();
+
+            _RB8 = 1;
+            __delay32(10);
+
+            return;
+
+
+
+        case 'L':
+        case 'l':
+
+            printf("Jumping to App... I hope!");
+
+            // Disable the Interrupt
+            _GIE = 0;
+            TurnoutBossDrivers_app_running = TRUE;
+            startApplication();
+
+            return;
         case 'B':
         case 'b':
 
