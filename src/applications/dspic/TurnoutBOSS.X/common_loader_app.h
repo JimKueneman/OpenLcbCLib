@@ -25,23 +25,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_drivers.h
+ * \file common_loader_app.h
  *
  *
  * @author Jim Kueneman
  * @date 3 Jan 2025
  */
-
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_DRIVERS__
-#define	__TURNOUTBOSS_DRIVERS__
+#ifndef _COMMON_LOADER_APP__
+#define	_COMMON_LOADER_APP__
 
-#ifndef PLATFORMIO
+#include <xc.h> // include processor files - each processor file is guarded.  
+
 #include "../../../openlcb/openlcb_types.h"
-#else
-#include "src/openlcb/openlcb_types.h"
-#endif
+
+
+#define RESET_INSTRUCTION_SIZE 4
+#define INSTRUCTION_ADDRESS_SIZE 2
+
+
+// Bootloader program code needs to be limited to not go past this in the linker file, example
+#define APPLICATION_START_ADDRESS 0x00B000
+
+// Bootloader won't write any addresses past this address as to not destroy the configuration bits
+// This is the last page in the 512kB chip that contains the Configuration Bits DO NOT ERASE THIS PAGE
+#define APPLICATION_END_ADDRESS 0x055800
+
+#define BOOTLOADER_START_ADDRESS 0x000200
+#define BOOTLOADER_END_ADDRESS APPLICATION_START_ADDRESS - INSTRUCTION_ADDRESS_SIZE
+
+#define VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT (0x00000B000 + RESET_INSTRUCTION_SIZE)                               // 0xB004
+#define VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT (VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)    // 0xB006
+#define VIVT_ADDRESS_STACK_ERROR_INTERRUPT (VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)        // 0xB008
+#define VIVT_ADDRESS_MATH_ERROR_INTERRUPT (VIVT_ADDRESS_STACK_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)           // 0xB00A
+#define VIVT_ADDRESS_DMAC_ERROR_INTERRUPT (VIVT_ADDRESS_MATH_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)            // 0xB00C
+#define VIVT_ADDRESS_T2_INTERRUPT (VIVT_ADDRESS_DMAC_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                    // 0xB00E
+#define VIVT_ADDRESS_U1_RX_INTERRUPT (VIVT_ADDRESS_T2_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                         // 0xB010
+#define VIVT_ADDRESS_U1_TX_INTERRUPT (VIVT_ADDRESS_U1_RX_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                      // 0xB012
+#define VIVT_ADDRESS_C1_INTERRUPT (VIVT_ADDRESS_U1_TX_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                         // 0xB014
+
 
 // UART ------------------------------------------------------------------------
 // with FCY = 40000000UL
@@ -118,41 +141,50 @@
 #define LED _RB9
 #define LED_TRIS _TRISB9
 
-// Assign the function pointer to where the UART Rx should call back with the byte it received
-// WARNING: Is in the context of the interrupt, be careful
-// void func(rx_data);
-typedef void (*uart_rx_callback_t) (uint16_olcb_t);
+
+// ECAN 80 Mhz oscillator
+// Make sure FCY is defined in the compiler macros and set to 40000000UL (80Mhz/2)
+
+#define   ECAN_SWJ 2-1
+#define   ECAN_BRP 15
+// These are 0 indexed so need to subtract one from the value in the ECAN Bit Rate Calculator Tool
+#define   ECAN_PROP_SEG 3-1  
+#define   ECAN_PHASESEG_1 3-1
+#define   ECAN_PHASESEG_2 3-1 
+#define   ECAN_TRIPLE_SAMPLE 1
+#define   ECAN_PHASESEG_2_PROGRAMMAGLE 1
+
+/* CAN Message Buffer Configuration */
+#define ECAN1_MSG_BUF_LENGTH   32
+#define ECAN1_MSG_LENGTH_BYTES 8
+#define ECAN1_FIFO_LENGTH_BYTES (ECAN1_MSG_BUF_LENGTH * ECAN1_MSG_LENGTH_BYTES * 2)
+
+#define MAX_CAN_FIFO_BUFFER  31
+#define MIN_CAN_FIFO_BUFFER  8
+
+#define X 0b0000000000000000;
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    // OpenLcbCLib defined callback functions that much be defined
-    
-    extern void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink);
-
-    extern void TurnoutBossDrivers_reboot(void);
-    
-    extern uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
-    
-    extern uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
-    
-    extern void TurnoutBossDrivers_pause_100ms_timer();
-    
-    extern void TurnoutBossDrivers_resume_100ms_timer();
-    
-    // Custom Driver functions
-    
-    extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
-    
-    extern void TurnoutBossDrivers_u1_rx_interrupt_handler(void);
-    
-    extern void TurnoutBossDrivers_u1_tx_interrupt_handler(void);
-    
-    extern void TurnoutBossDrivers_t2_interrupt_handler(void);
-    
-    extern uint8_olcb_t TurnoutBossDrivers_app_running;
+extern void CommonLoaderApp_initialize_sfrs(void);
+extern void CommonLoaderApp_initialize_can_sfrs(void);
    
+extern uint16_olcb_t CommonLoaderApp_app_running __attribute__((persistent address(0x1000)));  // 2 bytes
+extern uint16_olcb_t CommonLoaderApp_t2_interrupt __attribute__((persistent address(0x1002)));
+extern uint16_olcb_t CommonLoaderApp_u1_tx_interrupt __attribute__((persistent address(0x1004)));
+extern uint16_olcb_t CommonLoaderApp_u1_rx_interrupt __attribute__((persistent address(0x1006)));
+extern uint16_olcb_t CommonLoaderApp_c1_interrupt __attribute__((persistent address(0x1008)));
+extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(0x100A)));
+extern node_id_t CommonLoaderApp_node_id __attribute__((persistent address(0x100C)));          // 8 bytes 
 
-#endif	/* __TURNOUTBOSS_DRIVERS__ */
+
+    
+#ifdef	__cplusplus
+}
+#endif /* __cplusplus */
+
+#endif	/* _COMMON_LOADER_APP__ */
 

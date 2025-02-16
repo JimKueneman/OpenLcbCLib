@@ -49,16 +49,6 @@
       <logicalFolder name="TurnoutBossBootloader.X"
                      displayName="TurnoutBossBootloader.X"
                      projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
         <logicalFolder name="local_drivers"
                        displayName="local_drivers"
                        projectFiles="true">
@@ -72,12 +62,13 @@
           <logicalFolder name="memory" displayName="memory" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
-        <itemPath>turnoutboss_drivers.h</itemPath>
-        <itemPath>node_parameters.h</itemPath>
-        <itemPath>uart_handler.h</itemPath>
-        <itemPath>traps.h</itemPath>
         <itemPath>debug.h</itemPath>
-        <itemPath>ecan1_bootloader_helper.h</itemPath>
+        <itemPath>turnoutboss_bootloader_drivers.h</itemPath>
+        <itemPath>turnoutboss_bootloader_traps.h</itemPath>
+        <itemPath>turnoutboss_bootloader_uart_handler.h</itemPath>
+        <itemPath>common_loader_app.h</itemPath>
+        <itemPath>turnoutboss_bootloader_node_parameters.h</itemPath>
+        <itemPath>turnoutboss_bootloader_ecan1_helper.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -140,12 +131,6 @@
           <logicalFolder name="default" displayName="default" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
         <logicalFolder name="local_drivers"
                        displayName="local_drivers"
                        projectFiles="true">
@@ -159,14 +144,14 @@
           <logicalFolder name="memory" displayName="memory" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
-        <itemPath>main_old.c</itemPath>
-        <itemPath>turnoutboss_drivers.c</itemPath>
         <itemPath>main.c</itemPath>
-        <itemPath>node_parameters.c</itemPath>
-        <itemPath>traps.c</itemPath>
-        <itemPath>uart_handler.c</itemPath>
         <itemPath>debug.c</itemPath>
-        <itemPath>ecan1_bootloader_helper.c</itemPath>
+        <itemPath>turnoutboss_bootloader_drivers.c</itemPath>
+        <itemPath>turnoutboss_bootloader_traps.c</itemPath>
+        <itemPath>turnoutboss_bootloader_uart_handler.c</itemPath>
+        <itemPath>common_loader_app.c</itemPath>
+        <itemPath>turnoutboss_bootloader_node_parameters.c</itemPath>
+        <itemPath>turnoutboss_bootloader_ecan1_helper.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
@@ -213,8 +198,8 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
-        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate ${ImagePath} -o${ImageDir}/loaderboss -format=INHX32,8</makeCustomizationPostStep>
+        <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep>"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -addressing=2 -o/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/turnoutboss_merged.hex </makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
@@ -2114,20 +2099,6 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
-      <item path="main_old.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>

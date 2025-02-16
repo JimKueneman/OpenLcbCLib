@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file ecan1_driver.c
+ * \file turnoutboss_bootloader_ecan1_helper.c
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
@@ -34,42 +34,18 @@
  * @date 5 Jan 2025
  */
 
+#include "turnoutboss_bootloader_ecan1_helper.h"
 
 #include "xc.h"
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
-#include "turnoutboss_drivers.h"
-
-can_rx_callback_func_t internal_can_rx_callback_func;
-
-uint8_olcb_t Ecan1Helper_max_can_fifo_depth = 0;
-
+#include "turnoutboss_bootloader_drivers.h"
+#include "common_loader_app.h"
 
 // ECAN1 ------------------------------------------------------------------------
 // First buffer index that is a RX buffer
 const uint8_olcb_t FIFO_RX_START_INDEX = 8; // (8-31)
 
-// ECAN 80 Mhz oscillator
-// Make sure FCY is defined in the compiler macros and set to 40000000UL (80Mhz/2)
-
-#define   ECAN_SWJ 2-1
-#define   ECAN_BRP 15
-// These are 0 indexed so need to subtract one from the value in the ECAN Bit Rate Calculator Tool
-#define   ECAN_PROP_SEG 3-1  
-#define   ECAN_PHASESEG_1 3-1
-#define   ECAN_PHASESEG_2 3-1 
-#define   ECAN_TRIPLE_SAMPLE 1
-#define   ECAN_PHASESEG_2_PROGRAMMAGLE 1
-
-/* CAN Message Buffer Configuration */
-#define ECAN1_MSG_BUF_LENGTH   32
-#define ECAN1_MSG_LENGTH_BYTES 8
-#define ECAN1_FIFO_LENGTH_BYTES (ECAN1_MSG_BUF_LENGTH * ECAN1_MSG_LENGTH_BYTES * 2)
-
-#define MAX_CAN_FIFO_BUFFER  31
-#define MIN_CAN_FIFO_BUFFER  8
-
-#define X 0b0000000000000000;
 
 const uint16_olcb_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
     0b1111111111111101,
@@ -99,50 +75,11 @@ __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(dma), aligned(ECAN1_FI
 __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(xmemory), aligned(ECAN1_FIFO_LENGTH_BYTES)));
 #endif
 
-void ecan1_write_rx_acpt_filter(int16_t n, int32_t identifier, uint16_olcb_t exide, uint16_olcb_t bufPnt, uint16_olcb_t maskSel) {
 
-    uint32_olcb_t sid10_0 = 0;
+can_rx_callback_func_t internal_can_rx_callback_func;
 
-    uint32_olcb_t eid15_0 = 0;
+uint8_olcb_t Ecan1Helper_max_can_fifo_depth = 0;
 
-    uint32_olcb_t eid17_16 = 0;
-    uint16_olcb_t *sidRegAddr;
-    uint16_olcb_t *bufPntRegAddr;
-    uint16_olcb_t *maskSelRegAddr;
-    uint16_olcb_t *fltEnRegAddr;
-
-    C1CTRL1bits.WIN = 1;
-
-    // Obtain the Address of CiRXFnSID, CiBUFPNTn, CiFMSKSELn and CiFEN register for a given filter number "n"
-    sidRegAddr = (uint16_olcb_t *) (&C1RXF0SID + (n << 1));
-    bufPntRegAddr = (uint16_olcb_t *) (&C1BUFPNT1 + (n >> 2));
-    maskSelRegAddr = (uint16_olcb_t *) (&C1FMSKSEL1 + (n >> 3));
-    fltEnRegAddr = (uint16_olcb_t *) (&C1FEN1);
-
-    // Bit-filed manipulation to write to Filter identifier register
-    if (exide == 1) { // Filter Extended Identifier
-        eid15_0 = (identifier & 0xFFFF);
-        eid17_16 = (identifier >> 16) & 0x3;
-        sid10_0 = (identifier >> 18) & 0x7FF;
-
-        *sidRegAddr = (((sid10_0) << 5) + 0x8) + eid17_16; // Write to CiRXFnSID Register
-        *(sidRegAddr + 1) = eid15_0; // Write to CiRXFnEID Register
-    } else { // Filter Standard Identifier
-        sid10_0 = (identifier & 0x7FF);
-        *sidRegAddr = (sid10_0) << 5; // Write to CiRXFnSID Register
-        *(sidRegAddr + 1) = 0; // Write to CiRXFnEID Register
-    }
-
-    *bufPntRegAddr = (*bufPntRegAddr) & (0xFFFF - (0xF << (4 * (n & 3)))); // clear nibble
-    *bufPntRegAddr = ((bufPnt << (4 * (n & 3))) | (*bufPntRegAddr)); // Write to C1BUFPNTn Register
-    *maskSelRegAddr = (*maskSelRegAddr) & (0xFFFF - (0x3 << ((n & 7) * 2))); // clear 2 bits
-    *maskSelRegAddr = ((maskSel << (2 * (n & 7))) | (*maskSelRegAddr)); // Write to C1FMSKSELn Register
-    *fltEnRegAddr = ((0x1 << n) | (*fltEnRegAddr)); // Write to C1FEN1 Register
-    C1CTRL1bits.WIN = 0;
-
-    return;
-
-}
 
 void _ecan1_tx_buffer_set_transmit(uint16_olcb_t buf) {
 
@@ -291,7 +228,7 @@ void _ecan1_read_rx_msg_buf_data(uint16_olcb_t buf, can_msg_t *rxData) {
 
 }
 
-uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t channel) {
+uint8_olcb_t TurnoutbossBootloader_ecan1helper_is_can_tx_buffer_clear(uint16_olcb_t channel) {
 
     switch (channel) {
         case 0: return (C1TR01CONbits.TXREQ0 == 0);
@@ -307,9 +244,9 @@ uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t channel) {
 
 }
 
-uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
+uint8_olcb_t TurnoutbossBootloader_ecan1helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
 
-    if (Ecan1Helper_is_can_tx_buffer_clear(channel)) {
+    if (TurnoutbossBootloader_ecan1helper_is_can_tx_buffer_clear(channel)) {
 
 #ifndef DEBUG
 
@@ -325,28 +262,75 @@ uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t*
     return 0;
 }
 
-void Ecan1Helper_pause_can_rx() {
+void TurnoutbossBootloader_ecan1helper_pause_can_rx() {
 
     C1INTEbits.RBIE = 0; // Enable CAN1 RX 
 
 };
 
-void Ecan1Helper_resume_can_rx() {
+void TurnoutbossBootloader_ecan1helper_resume_can_rx() {
 
     C1INTEbits.RBIE = 1; // Enable CAN1 RX
 
 };
 
-void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback) {
+void TurnoutbossBootloader_ecan1helper_setup(can_rx_callback_func_t can_rx_callback) {
     
     internal_can_rx_callback_func = can_rx_callback;
     
 }
 
+void ecan1_write_rx_acpt_filter(int16_t n, int32_t identifier, uint16_olcb_t exide, uint16_olcb_t bufPnt, uint16_olcb_t maskSel) {
 
-void Ecan1Helper_initialization() {
+    uint32_olcb_t sid10_0 = 0;
 
-    // ECAN1 Initialize --------------------------------------------------------
+    uint32_olcb_t eid15_0 = 0;
+
+    uint32_olcb_t eid17_16 = 0;
+    uint16_olcb_t *sidRegAddr;
+    uint16_olcb_t *bufPntRegAddr;
+    uint16_olcb_t *maskSelRegAddr;
+    uint16_olcb_t *fltEnRegAddr;
+
+    C1CTRL1bits.WIN = 1;
+
+    // Obtain the Address of CiRXFnSID, CiBUFPNTn, CiFMSKSELn and CiFEN register for a given filter number "n"
+    sidRegAddr = (uint16_olcb_t *) (&C1RXF0SID + (n << 1));
+    bufPntRegAddr = (uint16_olcb_t *) (&C1BUFPNT1 + (n >> 2));
+    maskSelRegAddr = (uint16_olcb_t *) (&C1FMSKSEL1 + (n >> 3));
+    fltEnRegAddr = (uint16_olcb_t *) (&C1FEN1);
+
+    // Bit-filed manipulation to write to Filter identifier register
+    if (exide == 1) { // Filter Extended Identifier
+        eid15_0 = (identifier & 0xFFFF);
+        eid17_16 = (identifier >> 16) & 0x3;
+        sid10_0 = (identifier >> 18) & 0x7FF;
+
+        *sidRegAddr = (((sid10_0) << 5) + 0x8) + eid17_16; // Write to CiRXFnSID Register
+        *(sidRegAddr + 1) = eid15_0; // Write to CiRXFnEID Register
+    } else { // Filter Standard Identifier
+        sid10_0 = (identifier & 0x7FF);
+        *sidRegAddr = (sid10_0) << 5; // Write to CiRXFnSID Register
+        *(sidRegAddr + 1) = 0; // Write to CiRXFnEID Register
+    }
+
+    *bufPntRegAddr = (*bufPntRegAddr) & (0xFFFF - (0xF << (4 * (n & 3)))); // clear nibble
+    *bufPntRegAddr = ((bufPnt << (4 * (n & 3))) | (*bufPntRegAddr)); // Write to C1BUFPNTn Register
+    *maskSelRegAddr = (*maskSelRegAddr) & (0xFFFF - (0x3 << ((n & 7) * 2))); // clear 2 bits
+    *maskSelRegAddr = ((maskSel << (2 * (n & 7))) | (*maskSelRegAddr)); // Write to C1FMSKSELn Register
+    *fltEnRegAddr = ((0x1 << n) | (*fltEnRegAddr)); // Write to C1FEN1 Register
+    C1CTRL1bits.WIN = 0;
+
+    return;
+
+}
+
+
+void TurnoutbossBootloader_ecan1helper_initialization() {
+    
+  CommonLoaderApp_initialize_can_sfrs();
+  
+  // ECAN1 Initialize --------------------------------------------------------
     // -------------------------------------------------------------------------
 
     /* Request Configuration Mode */
@@ -485,15 +469,11 @@ void Ecan1Helper_initialization() {
 
     DMA0CONbits.CHEN = 1;
     // -------------------------------------------------------------------------
-
-    return;
+    
 
 }
 
-void Ecan1Helper_C1_interrupt_handler(void) {
-    
-       /* clear interrupt flag */
-    IFS2bits.C1IF = 0; // clear interrupt flag
+void TurnoutbossBootloader_ecan1helper_c1_interrupt_handler(void) {
 
     if (C1INTFbits.RBIF) { // RX Interrupt
 
@@ -549,36 +529,41 @@ void Ecan1Helper_C1_interrupt_handler(void) {
     }
 
     return;
- 
-    
     
 }
 
 // CAN 1 Interrupt
 
 void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
+    
+    /* clear interrupt flag */
+    IFS2bits.C1IF = 0; // clear interrupt flag
+    
+    _RB7 = !_RB7;
 
     // This needs more than this, need to know if the application is running yet or not....
 
-    if (TurnoutBossDrivers_app_running) {
+    if (CommonLoaderApp_app_running) {
         
         // Create a variable on the stack and grab the address of the CAN C1 handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(0xB014); // Where the C1 Interrupt Handler is in the Application
+        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_C1_INTERRUPT); // Where the C1 Interrupt Handler is in the Application
 
         // Create a function pointer variable on the stack
         void (*app_c1_interrupt_func)() = (void*) applicationISRAddress;
+        
+     //  void (*app_c1_interrupt_func)() = (void*) CommonLoaderApp_c1_interrupt;
 
         app_c1_interrupt_func();
 
     } else {
         
-        Ecan1Helper_C1_interrupt_handler(); 
+        TurnoutbossBootloader_ecan1helper_c1_interrupt_handler(); 
         
     }
     
 }
 
-extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void) {
+extern uint8_olcb_t TurnoutbossBootloader_ecan1helper_get_max_can_fifo_depth(void) {
     
     return Ecan1Helper_max_can_fifo_depth;
     

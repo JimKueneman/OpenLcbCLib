@@ -25,7 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file debug.h
+ * \file turnoutboss_drivers.h
  *
  *
  * @author Jim Kueneman
@@ -34,66 +34,49 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __Debug__
-#define	__Debug__
+#ifndef __TURNOUTBOSS_DRIVERS__
+#define	__TURNOUTBOSS_DRIVERS__
 
-#include "../../../openlcb/openlcb_defines.h"
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#endif
 
-extern void PrintCAN1Registers(void);
 
-extern void PrintDMA0Registers(void);
-
-extern void PrintDMA1Registers(void);
-
-extern void PrintDMA2Registers(void);
-
-extern void PrintDMA3Registers(void);
-
-extern void PrintMtiName(uint16_olcb_t mti);
-
-extern void PrintBufferStats(void);
-
-//extern void ForceFlushAndFreeFIFO(openlcb_msg_buffer_t* fifo);
-//extern void PrintContentsFIFO(openlcb_msg_buffer_t* fifo);
-
-extern void PrintAliasAndNodeID(uint16_olcb_t alias, uint64_olcb_t node_id);
-
-extern void PrintCanIdentifier(uint32_olcb_t identifier);
-
-extern void PrintCanFrameIdentifierName(uint32_olcb_t identifier);
-
-extern void PrintAlias(uint16_olcb_t alias);
-
-extern void PrintNodeID(uint64_olcb_t node_id);
-
-extern void PrintEventID(event_id_t event_id) ;
-
-extern void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg);
-
-extern void PrintInt64(uint64_olcb_t n);
-
-extern void PrintDWord(uint32_olcb_t dword);
-
-extern void PrintCanMsg(can_msg_t* can_msg);
-
-extern void PrintNode(openlcb_node_t* node);
-    
-
-extern uint8_olcb_t print_msg;
-
+// Assign the function pointer to where the UART Rx should call back with the byte it received
+// WARNING: Is in the context of the interrupt, be careful
+// void func(rx_data);
+typedef void (*uart_rx_callback_t) (uint16_olcb_t);
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
+    // OpenLcbCLib defined callback functions that much be defined
+    
+    extern void TurnoutBossBootloaderDrivers_setup(parameterless_callback_t _100ms_timer_sink);
 
-#ifdef	__cplusplus
-}
-#endif /* __cplusplus */
+    extern void TurnoutBossBootloaderDrivers_reboot(void);
+    
+    extern uint16_olcb_t TurnoutBossBootloaderDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
+    
+    extern uint16_olcb_t TurnoutBossBootloaderDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
+    
+    extern void TurnoutBossBootloaderDrivers_pause_100ms_timer();
+    
+    extern void TurnoutBossBootloaderDrivers_resume_100ms_timer();
+    
+    // Custom Driver functions
+    
+    extern void TurnoutBossBootloaderDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
+    
+    extern void TurnoutBossBootloaderDrivers_u1_rx_interrupt_handler(void);
+    
+    extern void TurnoutBossBootloaderDrivers_u1_tx_interrupt_handler(void);
+    
+    extern void TurnoutBossBootloaderDrivers_t2_interrupt_handler(void);
+   
 
-#endif	/* __Debug__ */
+#endif	/* __TURNOUTBOSS_DRIVERS__ */
 

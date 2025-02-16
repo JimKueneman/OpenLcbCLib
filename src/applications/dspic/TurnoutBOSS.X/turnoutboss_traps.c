@@ -46,8 +46,7 @@ void Traps_oscillator_fail_handler(void) {
     
     INTCON1bits.OSCFAIL = 0; //Clear the trap flag
     while (1);
-    
-    
+       
 }
 
 void Traps_address_error_handler(void) {

@@ -66,7 +66,7 @@ MEMORY
 * program (xr)   : ORIGIN = 0x200,         LENGTH = 0x555EC
 */ 
 
-  program (xr)   : ORIGIN = 0x200,         LENGTH = 0xB000-0x200
+  program (xr)   : ORIGIN = 0x200,         LENGTH = 0xB000-0x200-2
 
   FICD           : ORIGIN = 0x557F0,       LENGTH = 0x2
   FPOR           : ORIGIN = 0x557F2,       LENGTH = 0x2
@@ -97,7 +97,7 @@ __FUID3 = 0x800FFE;
 */ 
 
 __CODE_BASE = 0x200;
-__CODE_LENGTH = 0xAFFF;
+__CODE_LENGTH = 0xB000-0x200-2;
 
 __IVT_BASE  = 0x4;
 __DATA_BASE = 0x1000;

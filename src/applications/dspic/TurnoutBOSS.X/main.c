@@ -33,44 +33,6 @@
  */
 
 
-// DSPIC33EP512GP504 Configuration Bit Settings
-
-// 'C' source line config statements
-
-// FICD
-#pragma config ICS = PGD1               // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
-#pragma config JTAGEN = OFF             // JTAG Enable bit (JTAG is disabled)
-
-// FPOR
-#pragma config ALTI2C1 = OFF            // Alternate I2C1 pins (I2C1 mapped to SDA1/SCL1 pins)
-#pragma config ALTI2C2 = OFF            // Alternate I2C2 pins (I2C2 mapped to SDA2/SCL2 pins)
-#pragma config WDTWIN = WIN25           // Watchdog Window Select bits (WDT Window is 25% of WDT period)
-
-// FWDT
-#pragma config WDTPOST = PS32768        // Watchdog Timer Postscaler bits (1:32,768)
-#pragma config WDTPRE = PR128           // Watchdog Timer Prescaler bit (1:128)
-#pragma config PLLKEN = ON              // PLL Lock Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.)
-#pragma config WINDIS = OFF             // Watchdog Timer Window Enable bit (Watchdog Timer in Non-Window mode)
-#pragma config FWDTEN = OFF             // Watchdog Timer Enable bit (Watchdog timer enabled/disabled by user software)
-
-// FOSC
-#pragma config POSCMD = HS              // Primary Oscillator Mode Select bits (HS Crystal Oscillator Mode)
-#pragma config OSCIOFNC = OFF           // OSC2 Pin Function bit (OSC2 is clock output)
-#pragma config IOL1WAY = OFF            // Peripheral pin select configuration (Allow multiple reconfigurations)
-#pragma config FCKSM = CSDCMD           // Clock Switching Mode bits (Both Clock switching and Fail-safe Clock Monitor are disabled)
-
-// FOSCSEL
-#pragma config FNOSC = PRIPLL           // Oscillator Source Selection (Primary Oscillator with PLL module (XT + PLL, HS + PLL, EC + PLL))
-#pragma config IESO = ON                // Two-speed Oscillator Start-up Enable bit (Start up device with FRC, then switch to user-selected oscillator source)
-
-// FGS
-#pragma config GWRP = OFF               // General Segment Write-Protect bit (General Segment may be written)
-#pragma config GCP = OFF                // General Segment Code-Protect bit (General Segment Code protect is Disabled)
-
-// #pragma config statements should precede project file includes.
-// Use project enums instead of #define for ON and OFF.
-
-
 #include <libpic30.h>
 
 #include "xc.h"
@@ -91,9 +53,10 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "turnoutboss_drivers.h"
 #include "debug.h"
-#include "uart_handler.h"
+#include "turnoutboss_uart_handler.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
-#include "traps.h"
+#include "turnoutboss_traps.h"
+#include "common_loader_app.h"
 
 #else 
 
@@ -108,7 +71,7 @@
 
 #endif
 
-#include "node_parameters.h"
+#include "turnoutboss_node_parameters.h"
 #include "turnoutboss_event_handler.h"
 #include "turnoutboss_hardware_handler.h"
 #include "turnoutboss_signal_calculations_board_left.h"
@@ -117,13 +80,12 @@
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
 
-#define AppStartAddress 0xB000
-#define ResetVectorSize 0x0004
+extern int main(void);
 
 // This creates an array of pointers to the handlers for the different interrupts that are at a known
 // place in the program space (AppStartAddress++ResetVectorSize).  We defined the program start at AppStartAddress
 // so that is a jump call to the start of the initialization.
-__prog__ const uint16_olcb_t __attribute__((space(prog), address((AppStartAddress + ResetVectorSize)))) _VirtualIVT[9] = {
+__prog__ const uint16_olcb_t __attribute__((space(prog), address((APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)))) _VirtualIVT[9] = {
 
     (uint16_olcb_t) & Traps_oscillator_fail_handler, // 0x0004
     (uint16_olcb_t) & Traps_address_error_handler, // 0x0006
@@ -136,16 +98,6 @@ __prog__ const uint16_olcb_t __attribute__((space(prog), address((AppStartAddres
     (uint16_olcb_t) & Ecan1Helper_C1_interrupt_handler, // 0x0014
 
 };
-
-// Reserve the first address slot of data so we don't stomp it.  It belongs to the Bootloader... 
-// If this works we can share memory for NodeID and Alias!!!!
-#ifdef __CCI__
-uint8_olcb_t app_running __at(0x1000);
-#else
-uint8_olcb_t app_running __attribute__((address(0x1000)));
-#endif
-
-
 
 board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
@@ -162,8 +114,6 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 }
 
 int main(void) {
-
-
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
@@ -195,13 +145,7 @@ int main(void) {
             &TurnoutBossDrivers_pause_100ms_timer,
             &TurnoutBossDrivers_resume_100ms_timer
             );
-    
-    // Re-enable the global interrupts (thought the boot code would do that)
-    _GIE = TRUE;
-    while (1) {
-        _RB8 = !_RB8;
-        __delay32(1000);
-    }
+
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
     UartHandler_board_configuration = &_board_configuration;
@@ -210,10 +154,24 @@ int main(void) {
     Application_Callbacks_set_alias_change(&_alias_change_callback);
 
 
-    printf("\nBooted\n");
+    printf("\nApplication Booted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
     printf("Node Created\n");
 
+    // Need to check CommonLoaderApp_node_id and CommonLoaderApp_node_alias to see if the bootloader has already logged us in
+
+    printf("Bootloaders Openlcb credentials:\n");
+    PrintNodeID(CommonLoaderApp_node_id);
+    PrintAlias(CommonLoaderApp_node_alias);
+
+    if ((CommonLoaderApp_node_id != NULL_NODE_ID) && (CommonLoaderApp_node_alias != 0)) {
+        
+        printf("Using the bootloaders credentials");
+        node->alias = CommonLoaderApp_node_alias;
+        node->id = CommonLoaderApp_node_id;
+        
+    }
+    
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBossBoardConfiguration_initialize(node, &_board_configuration);
 
@@ -230,6 +188,9 @@ int main(void) {
     // Build the dynamic events and the callback to handle incoming events
     TurnoutBossEventHandler_initialize(node, &_board_configuration, &_signal_calculation_states, &_event_engine);
 
+    // Lets rock
+    _GIE = TRUE;
+   
     while (1) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();

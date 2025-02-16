@@ -497,16 +497,6 @@ void Ecan1Helper_C1_interrupt_handler(void) {
        /* clear interrupt flag */
     IFS2bits.C1IF = 0; // clear interrupt flag
     
-    _RB7 = 0;
-    _RB7 = 1;
-    __delay32(10);
-    _RB7 = 0;
-
-    return;
-    
-    
-    
-    
     if (C1INTFbits.RBIF) { // RX Interrupt
 
         // Snag all the buffers that have data that are associated with this interrupt

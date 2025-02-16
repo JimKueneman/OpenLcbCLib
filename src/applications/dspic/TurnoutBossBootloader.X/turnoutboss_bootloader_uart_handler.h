@@ -49,6 +49,8 @@ extern "C" {
 #endif /* __cplusplus */
 
     extern void UartHandler_handle_rx(uint16_olcb_t code);
+    
+    extern uint16_olcb_t TurnoutBossBootloaderUartHandler_start_app;
 
 
 #ifdef	__cplusplus

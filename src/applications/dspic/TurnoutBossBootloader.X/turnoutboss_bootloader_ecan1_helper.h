@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -25,75 +24,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file debug.h
+ * \file ecan1_driver.h
  *
+ * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
+ * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
+ * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
- * @date 3 Jan 2025
+* @date 5 Jan 2025
  */
+
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __Debug__
-#define	__Debug__
+#ifndef __ECAN1_HELPER__
+#define	__ECAN1_HELPER__
 
-#include "../../../openlcb/openlcb_defines.h"
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
-
-extern void PrintCAN1Registers(void);
-
-extern void PrintDMA0Registers(void);
-
-extern void PrintDMA1Registers(void);
-
-extern void PrintDMA2Registers(void);
-
-extern void PrintDMA3Registers(void);
-
-extern void PrintMtiName(uint16_olcb_t mti);
-
-extern void PrintBufferStats(void);
-
-//extern void ForceFlushAndFreeFIFO(openlcb_msg_buffer_t* fifo);
-//extern void PrintContentsFIFO(openlcb_msg_buffer_t* fifo);
-
-extern void PrintAliasAndNodeID(uint16_olcb_t alias, uint64_olcb_t node_id);
-
-extern void PrintCanIdentifier(uint32_olcb_t identifier);
-
-extern void PrintCanFrameIdentifierName(uint32_olcb_t identifier);
-
-extern void PrintAlias(uint16_olcb_t alias);
-
-extern void PrintNodeID(uint64_olcb_t node_id);
-
-extern void PrintEventID(event_id_t event_id) ;
-
-extern void PrintOpenLcbMsg(openlcb_msg_t* openlcb_msg);
-
-extern void PrintInt64(uint64_olcb_t n);
-
-extern void PrintDWord(uint32_olcb_t dword);
-
-extern void PrintCanMsg(can_msg_t* can_msg);
-
-extern void PrintNode(openlcb_node_t* node);
-    
-
-extern uint8_olcb_t print_msg;
-
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
+ // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
+    
+extern void TurnoutbossBootloader_ecan1helper_initialization(void);
+
+extern void TurnoutbossBootloader_ecan1helper_setup(can_rx_callback_func_t can_rx_callback);
+
+extern uint8_olcb_t TurnoutbossBootloader_ecan1helper_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+
+extern void TurnoutbossBootloader_ecan1helper_pause_can_rx(void);
+
+extern void TurnoutbossBootloader_ecan1helper_resume_can_rx(void);
+
+extern uint8_olcb_t TurnoutbossBootloader_ecan1helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
+
+extern void TurnoutbossBootloader_ecan1helper_c1_interrupt_handler(void);
+
+
+// Custom Driver functions
+
+// How full the chips CAN fifo has gotten
+extern uint8_olcb_t TurnoutbossBootloader_ecan1helper_get_max_can_fifo_depth(void);
+
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __Debug__ */
+#endif	/* __ECAN1_HELPER__ */
 

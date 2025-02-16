@@ -33,7 +33,7 @@
  */
 
 #ifdef MPLAB
-#include "node_parameters.h"
+#include "turnoutboss_bootloader_node_parameters.h"
 #include "../../../openlcb/openlcb_defines.h"
 #else
 #include "node_parameters.h"

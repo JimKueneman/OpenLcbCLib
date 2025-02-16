@@ -62,8 +62,6 @@
         </logicalFolder>
         <itemPath>turnoutboss_drivers.h</itemPath>
         <itemPath>debug.h</itemPath>
-        <itemPath>node_parameters.h</itemPath>
-        <itemPath>uart_handler.h</itemPath>
         <itemPath>turnoutboss_event_handler.h</itemPath>
         <itemPath>turnoutboss_hardware_handler.h</itemPath>
         <itemPath>turnoutboss_event_engine.h</itemPath>
@@ -72,7 +70,10 @@
         <itemPath>turnoutboss_signal_calculations_board_left.h</itemPath>
         <itemPath>turnoutboss_signal_calculations_board_right.h</itemPath>
         <itemPath>turnoutboss_signal_calculations.h</itemPath>
-        <itemPath>traps.h</itemPath>
+        <itemPath>common_loader_app.h</itemPath>
+        <itemPath>turnoutboss_node_parameters.h</itemPath>
+        <itemPath>turnoutboss_traps.h</itemPath>
+        <itemPath>turnoutboss_uart_handler.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -133,18 +134,6 @@
           <logicalFolder name="default" displayName="default" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
-        <logicalFolder name="Diagrams" displayName="Diagrams" projectFiles="true">
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="JMRI Simulator"
-                       displayName="JMRI Simulator"
-                       projectFiles="true">
-        </logicalFolder>
         <logicalFolder name="local_drivers"
                        displayName="local_drivers"
                        projectFiles="true">
@@ -158,12 +147,9 @@
             <itemPath>local_drivers/_MCP4014/MCP4014_driver.c</itemPath>
           </logicalFolder>
         </logicalFolder>
-        <itemPath>traps.c</itemPath>
         <itemPath>debug.c</itemPath>
         <itemPath>turnoutboss_drivers.c</itemPath>
         <itemPath>main.c</itemPath>
-        <itemPath>node_parameters.c</itemPath>
-        <itemPath>uart_handler.c</itemPath>
         <itemPath>turnoutboss_event_handler.c</itemPath>
         <itemPath>turnoutboss_hardware_handler.c</itemPath>
         <itemPath>turnoutboss_event_engine.c</itemPath>
@@ -172,6 +158,10 @@
         <itemPath>turnoutboss_signal_calculations_board_left.c</itemPath>
         <itemPath>turnoutboss_signal_calculations.c</itemPath>
         <itemPath>reset_vector.s</itemPath>
+        <itemPath>common_loader_app.c</itemPath>
+        <itemPath>turnoutboss_node_parameters.c</itemPath>
+        <itemPath>turnoutboss_traps.c</itemPath>
+        <itemPath>turnoutboss_uart_handler.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
@@ -221,7 +211,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate ${ImagePath} -o${ImageDir}/loaderboss -format=INHX32,8</makeCustomizationPostStep>
+        <makeCustomizationPostStep>"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -addressing=2 -o/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/turnoutboss_merged.hex </makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>

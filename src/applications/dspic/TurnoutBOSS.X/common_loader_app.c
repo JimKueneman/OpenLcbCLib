@@ -1,5 +1,6 @@
+
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,37 +25,76 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \turnoutboss_drivers.c
+ * \file turnoutboss_drivers.h
  *
- *  
  *
  * @author Jim Kueneman
- * @date 4 Jan 2025
+ * @date 3 Jan 2025
  */
 
-#include "turnoutboss_drivers.h"
+#include "common_loader_app.h"
 
 #include "xc.h"
-#include "stdio.h"  // printf
 #include <libpic30.h> // delay
+#include "../../../openlcb/openlcb_defines.h"
 
-#include "local_drivers/_25AA1024/25AA1024_driver.h"
-#include "ecan1_bootloader_helper.h"
-#include "debug.h"
 
-uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
-parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
+// DSPIC33EP512GP504 Configuration Bit Settings
 
-#ifdef __CCI__
-uint8_olcb_t TurnoutBossDrivers_app_running __at(0x1000);
-#else
-uint8_olcb_t TurnoutBossDrivers_app_running __attribute__((address(0x1000)));
-#endif
+// 'C' source line config statements
 
-void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
+// FICD
+#pragma config ICS = PGD1               // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
+#pragma config JTAGEN = OFF             // JTAG Enable bit (JTAG is disabled)
 
-    _100ms_timer_sink_func = _100ms_timer_sink;
+// FPOR
+#pragma config ALTI2C1 = OFF            // Alternate I2C1 pins (I2C1 mapped to SDA1/SCL1 pins)
+#pragma config ALTI2C2 = OFF            // Alternate I2C2 pins (I2C2 mapped to SDA2/SCL2 pins)
+#pragma config WDTWIN = WIN25           // Watchdog Window Select bits (WDT Window is 25% of WDT period)
 
+// FWDT
+#pragma config WDTPOST = PS32768        // Watchdog Timer Postscaler bits (1:32,768)
+#pragma config WDTPRE = PR128           // Watchdog Timer Prescaler bit (1:128)
+#pragma config PLLKEN = ON              // PLL Lock Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.)
+#pragma config WINDIS = OFF             // Watchdog Timer Window Enable bit (Watchdog Timer in Non-Window mode)
+#pragma config FWDTEN = OFF             // Watchdog Timer Enable bit (Watchdog timer enabled/disabled by user software)
+
+// FOSC
+#pragma config POSCMD = HS              // Primary Oscillator Mode Select bits (HS Crystal Oscillator Mode)
+#pragma config OSCIOFNC = OFF           // OSC2 Pin Function bit (OSC2 is clock output)
+#pragma config IOL1WAY = OFF            // Peripheral pin select configuration (Allow multiple reconfigurations)
+#pragma config FCKSM = CSDCMD           // Clock Switching Mode bits (Both Clock switching and Fail-safe Clock Monitor are disabled)
+
+// FOSCSEL
+#pragma config FNOSC = PRIPLL           // Oscillator Source Selection (Primary Oscillator with PLL module (XT + PLL, HS + PLL, EC + PLL))
+#pragma config IESO = ON                // Two-speed Oscillator Start-up Enable bit (Start up device with FRC, then switch to user-selected oscillator source)
+
+// FGS
+#pragma config GWRP = OFF               // General Segment Write-Protect bit (General Segment may be written)
+#pragma config GCP = OFF                // General Segment Code-Protect bit (General Segment Code protect is Disabled)
+
+// #pragma config statements should precede project file includes.
+// Use project enums instead of #define for ON and OFF.
+
+
+
+uint16_olcb_t CommonLoaderApp_app_running __attribute__((persistent address(0x1000)));  // 2 bytes
+ uint16_olcb_t CommonLoaderApp_t2_interrupt __attribute__((persistent address(0x1002)));
+ uint16_olcb_t CommonLoaderApp_u1_tx_interrupt __attribute__((persistent address(0x1004)));
+ uint16_olcb_t CommonLoaderApp_u1_rx_interrupt __attribute__((persistent address(0x1006)));
+ uint16_olcb_t CommonLoaderApp_c1_interrupt __attribute__((persistent address(0x1008)));
+ uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(0x100A)));
+ node_id_t CommonLoaderApp_node_id __attribute__((persistent address(0x100C)));       
+
+
+void CommonLoaderApp_initialize_sfrs(void) {
+    
+    // RB7 and RB8 are test outputs
+    // we also have the LED variable for RB9 and the LED output
+    _TRISB7 = 0;
+    _RB7 = 0;
+    _TRISB8 = 0;
+    _RB8 = 0;
 
     // IO Pin Initialize -------------------------------------------------------
 
@@ -102,7 +142,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
 
-                \
+                    \
     OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
@@ -148,6 +188,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     SPI_SDI_TRIS = 1; // Input
 
     // Setup the SPI 1 SFRs
+
     IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
     IEC0bits.SPI1IE = 0; // Disable the interrupt
 
@@ -199,154 +240,12 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
     T2CONbits.TON = 1; // Turn on 100ms Timer
 
-
-    Ecan1Helper_initialization();
-    _25AA1024_Driver_initialize();
-
 }
 
-void TurnoutBossDrivers_reboot(void) {
 
-    asm("RESET ");
-
-}
-
-void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback) {
-
-    _uart_rx_callback_func = uart_rx_callback;
-
-}
-
-uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-
-    return _25AA1024_Driver_read(address, count, buffer);
-
-}
-
-uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-
-    _25AA1024_Driver_write_latch_enable();
-    _25AA1024_Driver_write(address, count, buffer);
-
-    while (_25AA1024_Driver_write_in_progress()) {
-
-    }
-
-    return count;
-
-}
-
-void TurnoutBossDrivers_pause_100ms_timer() {
-
-    T2CONbits.TON = 0; // Turn off 100ms Timer
-
-}
-
-void TurnoutBossDrivers_resume_100ms_timer() {
-
-    T2CONbits.TON = 1; // Turn off 100ms Timer
-
-}
-
-void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
-
-    IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
-
-}
-
-void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
-
-    // This needs more than this, need to know if the application is running yet or not....
-
-    if (TurnoutBossDrivers_app_running) {
-        
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(0xB012); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_tx_interrupt_func();
-
-    } else {
-
-        TurnoutBossDrivers_u1_tx_interrupt_handler();
-
-    }
-
-}
-
-// UART1 Receive Interrupt
-
-void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
-
-    IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
-
-    if (U1STAbits.URXDA == 1) {
-
-        if (_uart_rx_callback_func)
-            _uart_rx_callback_func(U1RXREG);
-
-    }
-
-}
-
-void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
+void CommonLoaderApp_initialize_can_sfrs(void) {
     
-    // This needs more than this, need to know if the application is running yet or not....
-
-    if (TurnoutBossDrivers_app_running) {
-        
-        // Create a variable on the stack and grab the address of the U1 RX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(0xB010); // Where the UART RX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_rx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_rx_interrupt_func();
-        
-
-    } else {
-
-        TurnoutBossDrivers_u1_rx_interrupt_handler();
-        
-    }
-
-}
-
-void TurnoutBossDrivers_t2_interrupt_handler(void) {
-
-    IFS0bits.T2IF = 0; // Clear T2IF
-
-    // Increment any timer counters assigned
-    if (_100ms_timer_sink_func)
-        _100ms_timer_sink_func();
-
-}
-
-void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
     
-  //  _RB7 = !_RB7;
-
-    // This needs more than this, need to know if the application is running yet or not....
-
-    if (TurnoutBossDrivers_app_running) {
-             
-        // Create a variable on the stack and grab the address of the T2 handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(0xB00E); // Where the T2 Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_interrupt_t2_func)() = (void*) applicationISRAddress;
-
-        app_interrupt_t2_func();
-        
-
-    } else {
-        
-    //l     _RB8 = !_RB8;
-
-        TurnoutBossDrivers_t2_interrupt_handler();
-
-    }
-
+    
+    
 }

@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \uart_handler.c
+ * \turnoutboss_uart_handler.c
  *
  * Handles the UART receive code to process what is asked.
  *
@@ -34,7 +34,7 @@
 
 #include <libpic30.h>
 
-#include "uart_handler.h"
+#include "turnoutboss_uart_handler.h"
 
 #include "xc.h"
 #include "stdio.h"  // printf
