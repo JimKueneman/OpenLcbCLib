@@ -63,7 +63,8 @@ const node_parameters_t NodeParameters_main_node = {
     PSI_EVENT_EXCHANGE |
     PSI_ABBREVIATED_DEFAULT_CDI |
     PSI_SIMPLE_NODE_INFORMATION |
-    PSI_CONFIGURATION_DESCRIPTION_INFO
+    PSI_CONFIGURATION_DESCRIPTION_INFO |
+    PSI_FIRMWARE_UPGRADE
     ),
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
@@ -124,7 +125,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ACDI access user storage",
 
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
+#ifdef SUPPORT_FIRMWARE_BOOTLOADER_ADDRESS_SPACE
     // Space 0xEF
     .address_space_firmware.read_only = 0,
     .address_space_firmware.present = 1,

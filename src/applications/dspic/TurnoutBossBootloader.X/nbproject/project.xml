@@ -13,6 +13,7 @@
                 <sourceRootElem>../../../openlcb</sourceRootElem>
                 <sourceRootElem>../../../drivers</sourceRootElem>
                 <sourceRootElem>../dsPIC_Common</sourceRootElem>
+                <sourceRootElem>../TurnoutBossCommon</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

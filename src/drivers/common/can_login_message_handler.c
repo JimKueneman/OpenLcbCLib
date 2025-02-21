@@ -74,7 +74,7 @@ void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = Node_generate_alias(next_node->seed);
 
-    callback_alias_change_t alias_change_callback = Application_Callbacks_get_alias_change();
+    callback_alias_change_t alias_change_callback = ApplicationCallbacks_get_alias_change();
 
     if (alias_change_callback)
         alias_change_callback(next_node->alias, next_node->id);

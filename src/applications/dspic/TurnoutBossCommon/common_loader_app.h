@@ -45,6 +45,8 @@
 #define INSTRUCTION_ADDRESS_SIZE 2
 
 
+#define DATA_START_ADDRESS 0x1000 // chip dependant
+
 // Bootloader program code needs to be limited to not go past this in the linker file, example
 #define APPLICATION_START_ADDRESS 0x00B000
 
@@ -55,7 +57,7 @@
 #define BOOTLOADER_START_ADDRESS 0x000200
 #define BOOTLOADER_END_ADDRESS APPLICATION_START_ADDRESS - INSTRUCTION_ADDRESS_SIZE
 
-#define VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT (0x00000B000 + RESET_INSTRUCTION_SIZE)                               // 0xB004
+#define VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT (APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)                 // 0xB004
 #define VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT (VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)    // 0xB006
 #define VIVT_ADDRESS_STACK_ERROR_INTERRUPT (VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)        // 0xB008
 #define VIVT_ADDRESS_MATH_ERROR_INTERRUPT (VIVT_ADDRESS_STACK_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)           // 0xB00A
@@ -138,8 +140,23 @@
 #define _MCP23S17_RESET _RB4
 #define _MCP23S17_RESET_TRIS _TRISB4
 
+#ifdef BOSS1
 #define LED _RB9
 #define LED_TRIS _TRISB9
+#endif
+
+#ifdef BOSS2
+
+#define LED_BLUE_TRIS _TRISB9
+#define LED_BLUE _RB9
+
+#define LED_YELLOW_TRIS _TRISA8
+#define LED_YELLOW _RA8
+
+#define LED_GREEN_TRIS _TRISC0
+#define LED_GREEN _RC0
+
+#endif
 
 
 // ECAN 80 Mhz oscillator
@@ -162,7 +179,20 @@
 #define MAX_CAN_FIFO_BUFFER  31
 #define MIN_CAN_FIFO_BUFFER  8
 
-#define X 0b0000000000000000;
+
+typedef struct {
+    
+    parameterless_callback_t oscillatorfail_hander;
+    parameterless_callback_t addresserror_hander;
+    parameterless_callback_t stackerror_hander;
+    parameterless_callback_t matherror_hander;
+    parameterless_callback_t dmacerror_hander;
+    parameterless_callback_t timer_2_hander;
+    parameterless_callback_t u1_tx_hander;
+    parameterless_callback_t u1_rx_hander;
+    parameterless_callback_t c1_hander;
+    
+} vivt_jumptable_t;
 
 
 #ifdef	__cplusplus
@@ -172,15 +202,9 @@ extern "C" {
 extern void CommonLoaderApp_initialize_sfrs(void);
 extern void CommonLoaderApp_initialize_can_sfrs(void);
    
-extern uint16_olcb_t CommonLoaderApp_app_running __attribute__((persistent address(0x1000)));  // 2 bytes
-extern uint16_olcb_t CommonLoaderApp_t2_interrupt __attribute__((persistent address(0x1002)));
-extern uint16_olcb_t CommonLoaderApp_u1_tx_interrupt __attribute__((persistent address(0x1004)));
-extern uint16_olcb_t CommonLoaderApp_u1_rx_interrupt __attribute__((persistent address(0x1006)));
-extern uint16_olcb_t CommonLoaderApp_c1_interrupt __attribute__((persistent address(0x1008)));
-extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(0x100A)));
-extern node_id_t CommonLoaderApp_node_id __attribute__((persistent address(0x100C)));          // 8 bytes 
-
-
+extern uint16_olcb_t CommonLoaderApp_app_running __attribute__((persistent address(DATA_START_ADDRESS)));  // 2 bytes
+extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2)));   // 2 bytes
+extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 4)));  // 9 * 4 = 36 bytes
     
 #ifdef	__cplusplus
 }

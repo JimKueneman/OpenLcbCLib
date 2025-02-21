@@ -52,11 +52,11 @@
 #include "../../../openlcb/openlcb_utilities.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "turnoutboss_drivers.h"
-#include "debug.h"
+#include "../TurnoutBossCommon/common_debug_helper.h"
 #include "turnoutboss_uart_handler.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #include "turnoutboss_traps.h"
-#include "common_loader_app.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 #else 
 
@@ -80,28 +80,29 @@
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
 
-extern int main(void);
 
 // This creates an array of pointers to the handlers for the different interrupts that are at a known
 // place in the program space (AppStartAddress++ResetVectorSize).  We defined the program start at AppStartAddress
 // so that is a jump call to the start of the initialization.
-__prog__ const uint16_olcb_t __attribute__((space(prog), address((APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)))) _VirtualIVT[9] = {
+//__prog__ const uint16_olcb_t __attribute__((space(prog), address((APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)))) _VirtualIVT[9] = {
+//
+//    (uint16_olcb_t) & Traps_oscillator_fail_handler, // APPLICATION_START_ADDRESS + 0x0004
+//    (uint16_olcb_t) & Traps_address_error_handler, // APPLICATION_START_ADDRESS + // 0x0006
+//    (uint16_olcb_t) & Traps_stack_error_handler, // APPLICATION_START_ADDRESS + // 0x0008
+//    (uint16_olcb_t) & Traps_math_error_handler, // APPLICATION_START_ADDRESS + 0x000A
+//    (uint16_olcb_t) & Traps_dmac_error_handler, // APPLICATION_START_ADDRESS + 0x000C
+//    (uint16_olcb_t) & TurnoutBossDrivers_t2_interrupt_handler, // APPLICATION_START_ADDRESS + 0x000E
+//    (uint16_olcb_t) & TurnoutBossDrivers_u1_rx_interrupt_handler, // APPLICATION_START_ADDRESS + 0x0010
+//    (uint16_olcb_t) & TurnoutBossDrivers_u1_tx_interrupt_handler, // APPLICATION_START_ADDRESS + 0x0012
+//    (uint16_olcb_t) & Ecan1Helper_C1_interrupt_handler, // APPLICATION_START_ADDRESS + 0x0014
+//
+//};
 
-    (uint16_olcb_t) & Traps_oscillator_fail_handler, // 0x0004
-    (uint16_olcb_t) & Traps_address_error_handler, // 0x0006
-    (uint16_olcb_t) & Traps_stack_error_handler, // 0x0008
-    (uint16_olcb_t) & Traps_math_error_handler, // 0x000A
-    (uint16_olcb_t) & Traps_dmac_error_handler, // 0x000C
-    (uint16_olcb_t) & TurnoutBossDrivers_t2_interrupt_handler, // 0x000E
-    (uint16_olcb_t) & TurnoutBossDrivers_u1_rx_interrupt_handler, // 0x0010
-    (uint16_olcb_t) & TurnoutBossDrivers_u1_tx_interrupt_handler, // 0x0012
-    (uint16_olcb_t) & Ecan1Helper_C1_interrupt_handler, // 0x0014
-
-};
 
 board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
 send_event_engine_t _event_engine;
+uint8_olcb_t _start_bootloader = FALSE;
 
 uint64_olcb_t node_id_base = 0x0507010100AA;
 
@@ -113,12 +114,28 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
+void _config_memory_freeze_firmware_update_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+
+  _start_bootloader = TRUE;
+
+}
+
 int main(void) {
+
+    uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
+    uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
     memset(&_event_engine, 0x00, sizeof ( _event_engine));
 
+#ifdef BOSS2
+    LED_BLUE = 1;
+    LED_GREEN = 1;
+    LED_YELLOW = 1;
+#endif
+
+#ifdef BOSS1
 
     // RB7 and RB8 are test outputs
     // we also have the LED variable for RB9 and the LED output
@@ -127,8 +144,7 @@ int main(void) {
     _TRISB8 = 0;
     _RB8 = 0;
 
-    uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
-    uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
+#endif
 
     CanMainStatemachine_initialize(
             &Ecan1Helper_setup,
@@ -146,12 +162,24 @@ int main(void) {
             &TurnoutBossDrivers_resume_100ms_timer
             );
 
+    // After the initialization where we cleared these variables set it up the bootloader jump table
+    CommonLoaderApp_jumptable.oscillatorfail_hander = &Traps_oscillator_fail_handler;
+    CommonLoaderApp_jumptable.addresserror_hander = &Traps_address_error_handler;
+    CommonLoaderApp_jumptable.stackerror_hander = &Traps_stack_error_handler;
+    CommonLoaderApp_jumptable.matherror_hander = &Traps_math_error_handler;
+    CommonLoaderApp_jumptable.dmacerror_hander = &Traps_dmac_error_handler;
+    CommonLoaderApp_jumptable.timer_2_hander = &TurnoutBossDrivers_t2_interrupt_handler;
+    CommonLoaderApp_jumptable.u1_rx_hander = &TurnoutBossDrivers_u1_rx_interrupt_handler;
+    CommonLoaderApp_jumptable.u1_tx_hander = &TurnoutBossDrivers_u1_tx_interrupt_handler;
+    CommonLoaderApp_jumptable.c1_hander = &Ecan1Helper_C1_interrupt_handler;
+
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
     UartHandler_board_configuration = &_board_configuration;
     UartHandler_signal_calculation_states = &_signal_calculation_states;
 
-    Application_Callbacks_set_alias_change(&_alias_change_callback);
+    ApplicationCallbacks_set_alias_change(&_alias_change_callback);
+    ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
 
 
     printf("\nApplication Booted\n");
@@ -161,17 +189,27 @@ int main(void) {
     // Need to check CommonLoaderApp_node_id and CommonLoaderApp_node_alias to see if the bootloader has already logged us in
 
     printf("Bootloaders Openlcb credentials:\n");
-    PrintNodeID(CommonLoaderApp_node_id);
     PrintAlias(CommonLoaderApp_node_alias);
+   
 
-    if ((CommonLoaderApp_node_id != NULL_NODE_ID) && (CommonLoaderApp_node_alias != 0)) {
+    // The bootloader would have cleared Power Up Reset flag if this has been started through the bootloader
+    if (RCONbits.SWR) {
         
-        printf("Using the bootloaders credentials");
-        node->alias = CommonLoaderApp_node_alias;
-        node->id = CommonLoaderApp_node_id;
+        RCONbits.SWR = 0;
+        
+        if (CommonLoaderApp_node_alias != 0) {
+
+            printf("Using the bootloaders credentials\n");
+            node->alias = CommonLoaderApp_node_alias;   
+            node->state.permitted = TRUE;
+            node->state.initalized = TRUE;
+            node->state.run_state = RUNSTATE_RUN;
+
+        }
         
     }
-    
+
+
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBossBoardConfiguration_initialize(node, &_board_configuration);
 
@@ -189,9 +227,10 @@ int main(void) {
     TurnoutBossEventHandler_initialize(node, &_board_configuration, &_signal_calculation_states, &_event_engine);
 
     // Lets rock
-    _GIE = TRUE;
-   
-    while (1) {
+    CommonLoaderApp_app_running = TRUE;
+    _GIE = 1;
+
+    while (!_start_bootloader) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
@@ -290,5 +329,17 @@ int main(void) {
         TurnoutBossEventEngine_run(node, &_event_engine);
 
     }
+    
+    
+    // Create a pointer to a function at the app entry point
+    void (*startBootloader)() = (void*) BOOTLOADER_START_ADDRESS;
+
+    RCONbits.SWR = 1; // Signal bootloader that it is starting through the application that has already logged into the network
+  
+    CommonLoaderApp_node_alias = node->alias;
+    
+    _GIE = 0; // Disable Interrupts
+
+    startBootloader();
 
 }

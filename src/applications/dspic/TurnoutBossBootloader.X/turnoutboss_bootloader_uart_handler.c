@@ -37,7 +37,7 @@
 #include "xc.h"
 #include "stdio.h"  // printf
 
-#include "common_loader_app.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 uint16_olcb_t TurnoutBossBootloaderUartHandler_start_app = 0;
 

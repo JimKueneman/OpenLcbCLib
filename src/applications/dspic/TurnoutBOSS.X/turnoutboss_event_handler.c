@@ -549,9 +549,9 @@ void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuratio
 
     _board_register_general_events(node);
 
-    Application_Callbacks_set_event_pc_report(&_event_pc_report_callback);
+    ApplicationCallbacks_set_event_pc_report(&_event_pc_report_callback);
     
     // treat Producer Identified (valid) the same way
-    Application_Callbacks_set_event_producer_identified_set(&_event_pc_report_callback);
+    ApplicationCallbacks_set_event_producer_identified_set(&_event_pc_report_callback);
 
 }

@@ -33,7 +33,7 @@
  */
 
 #include "stdio.h"  // printf
-#include "debug.h"
+#include "common_debug_helper.h"
 
 #ifdef MPLAB
 #include "xc.h"

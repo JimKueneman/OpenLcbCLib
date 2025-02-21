@@ -57,6 +57,8 @@ extern void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openl
     
 extern void DatagramProtocol_100ms_time_tick(void);
 
+extern void ProtocolDatagram_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

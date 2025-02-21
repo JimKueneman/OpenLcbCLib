@@ -40,8 +40,9 @@
 
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 #include "turnoutboss_bootloader_ecan1_helper.h"
-#include "debug.h"
-#include "common_loader_app.h"
+#include "../TurnoutBossCommon/common_debug_helper.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
+#include "mcc_generated_files/memory/flash.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
@@ -128,16 +129,16 @@ void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_U1_TX_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-
-        //   void (*app_u1_tx_interrupt_func)() = (void*) CommonLoaderApp_u1_tx_interrupt;
-
-        app_u1_tx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 TX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_U1_TX_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_u1_tx_interrupt_func();
+        
+        if (CommonLoaderApp_jumptable.u1_tx_hander)
+            CommonLoaderApp_jumptable.u1_tx_hander();
 
 
     } else {
@@ -154,15 +155,17 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        //        // Create a variable on the stack and grab the address of the U1 RX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_U1_RX_INTERRUPT); // Where the UART RX Interrupt Handler is in the Application
-        //
-        //        // Create a function pointer variable on the stack
-        void (*app_u1_rx_interrupt_func)() = (void*) applicationISRAddress;
-
-        //   void (*app_u1_rx_interrupt_func)() = (void*) CommonLoaderApp_u1_rx_interrupt;
-
-        app_u1_rx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 RX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_U1_RX_INTERRUPT); // Where the UART RX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_u1_rx_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_u1_rx_interrupt_func();
+        
+        
+        if (CommonLoaderApp_jumptable.u1_rx_hander)
+            CommonLoaderApp_jumptable.u1_rx_hander();
 
 
     } else {
@@ -176,18 +179,29 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
-
+   
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the T2 handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_T2_INTERRUPT); // Where the T2 Interrupt Handler is in the Application
+//        // Create a variable on the stack and grab the address of the T2 handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_T2_INTERRUPT); // Where the T2 Interrupt Handler is in the Application
+//        
+//        uint16_t applicationISRAddress = FLASH_ReadWord16(VIVT_ADDRESS_T2_INTERRUPT);
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_interrupt_t2_func)() = (void*) applicationISRAddress;
+//
+//        app_interrupt_t2_func();
 
-        // Create a function pointer variable on the stack
-        void (*app_interrupt_t2_func)() = (void*) applicationISRAddress;
-
-        //   void (*app_interrupt_t2_func)() = (void*) CommonLoaderApp_t2_interrupt;
-
-        app_interrupt_t2_func();
+        
+        
+        
+        if (CommonLoaderApp_jumptable.timer_2_hander) {
+            
+            LED = !LED;
+            CommonLoaderApp_jumptable.timer_2_hander();
+            
+        }
+            
 
     } else {
 

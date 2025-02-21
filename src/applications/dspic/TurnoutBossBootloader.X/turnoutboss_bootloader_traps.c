@@ -34,7 +34,7 @@
 
 
 #include <xc.h>
-#include "common_loader_app.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 
 
@@ -44,13 +44,18 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_tx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 TX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_oscillator_fail_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_oscillator_fail_interrupt_func();
+        
+        
+        if (CommonLoaderApp_jumptable.oscillatorfail_hander)
+            CommonLoaderApp_jumptable.oscillatorfail_hander();
+        
 
     } else {
 
@@ -65,13 +70,16 @@ void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_tx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 TX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_address_failure_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_address_failure_interrupt_func();
+        
+        if (CommonLoaderApp_jumptable.addresserror_hander)
+            CommonLoaderApp_jumptable.addresserror_hander();
 
     } else {
 
@@ -87,13 +95,16 @@ void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_STACK_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_tx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 TX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_STACK_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_stack_error_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_stack_error_interrupt_func();
+        
+        if (CommonLoaderApp_jumptable.stackerror_hander)
+            CommonLoaderApp_jumptable.stackerror_hander();
 
     } else {
 
@@ -109,13 +120,16 @@ void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_MATH_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_tx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 TX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_MATH_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_math_error_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_math_error_interrupt_func();
+        
+        if (CommonLoaderApp_jumptable.matherror_hander)
+            CommonLoaderApp_jumptable.matherror_hander();
 
     } else {
 
@@ -132,13 +146,16 @@ void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
 
     if (CommonLoaderApp_app_running) {
 
-        // Create a variable on the stack and grab the address of the U1 TX handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_DMAC_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_u1_tx_interrupt_func)() = (void*) applicationISRAddress;
-
-        app_u1_tx_interrupt_func();
+//        // Create a variable on the stack and grab the address of the U1 TX handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_DMAC_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_dmac_error_interrupt_func)() = (void*) applicationISRAddress;
+//
+//        app_dmac_error_interrupt_func();
+        
+        if (CommonLoaderApp_jumptable.dmacerror_hander)
+            CommonLoaderApp_jumptable.dmacerror_hander();
 
     } else {
 

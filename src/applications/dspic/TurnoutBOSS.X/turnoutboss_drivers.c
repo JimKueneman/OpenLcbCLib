@@ -43,7 +43,7 @@
 //#include "local_drivers/_MCP4014/MCP4014_driver.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 //#include "debug.h"
-#include "common_loader_app.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;

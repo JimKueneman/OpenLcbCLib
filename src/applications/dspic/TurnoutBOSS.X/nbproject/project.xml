@@ -15,6 +15,7 @@
                 <sourceRootElem>../../test/main_statemachine/main_statemachine.X</sourceRootElem>
                 <sourceRootElem>../dsPIC_Common</sourceRootElem>
                 <sourceRootElem>../TurnoutBossBootloader.X</sourceRootElem>
+                <sourceRootElem>../TurnoutBossCommon</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

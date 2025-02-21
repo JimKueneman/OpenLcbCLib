@@ -53,7 +53,7 @@ typedef void (*uart_rx_callback_t) (uint16_olcb_t);
 extern "C" {
 #endif /* __cplusplus */
 
-    // OpenLcbCLib defined callback functions that much be defined
+    // OpenLcbCLib defined callback functions that must be defined
     
     extern void TurnoutBossBootloaderDrivers_setup(parameterless_callback_t _100ms_timer_sink);
 

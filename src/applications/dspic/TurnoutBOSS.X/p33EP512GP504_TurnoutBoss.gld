@@ -68,8 +68,9 @@ MEMORY
 /* 
 *  This is the length available from 0xB000 to 0x55000 (0x55800 is the end of all flash) which is the last page where the config bits live that we never want to erase so don't let code reside in that page
 *  Note this is 1024 instructions per the datasheet but in address that is 2 addresses per instruction so it is on 2048 (0x800) boundaries in addresses
+*  the second erase page is for the checksum to be stored
 */
-  program (xr)   : ORIGIN = 0xB000,         LENGTH = 0x55800-0xB000-0x0800
+  program (xr)   : ORIGIN = 0xB000,         LENGTH = 0x55800-0xB000-0x0800-0x0800
 
   FICD           : ORIGIN = 0x557F0,       LENGTH = 0x2
   FPOR           : ORIGIN = 0x557F2,       LENGTH = 0x2
@@ -100,7 +101,7 @@ __FUID3 = 0x800FFE;
 */ 
 
 __CODE_BASE = 0xB000;
-__CODE_LENGTH = 0x55800-0xB000-0x0800;
+__CODE_LENGTH = 0x55800-0xB000-0x0800-0x0800;
 
 __IVT_BASE  = 0x4;
 __DATA_BASE = 0x1000;

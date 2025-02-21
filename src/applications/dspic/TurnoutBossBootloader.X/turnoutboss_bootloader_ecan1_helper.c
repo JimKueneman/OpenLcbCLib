@@ -40,7 +40,7 @@
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
 #include "turnoutboss_bootloader_drivers.h"
-#include "common_loader_app.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 // ECAN1 ------------------------------------------------------------------------
 // First buffer index that is a RX buffer
@@ -538,22 +538,21 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
     
     /* clear interrupt flag */
     IFS2bits.C1IF = 0; // clear interrupt flag
-    
-    _RB7 = !_RB7;
-
+   
     // This needs more than this, need to know if the application is running yet or not....
 
     if (CommonLoaderApp_app_running) {
         
-        // Create a variable on the stack and grab the address of the CAN C1 handler
-        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_C1_INTERRUPT); // Where the C1 Interrupt Handler is in the Application
-
-        // Create a function pointer variable on the stack
-        void (*app_c1_interrupt_func)() = (void*) applicationISRAddress;
+//        // Create a variable on the stack and grab the address of the CAN C1 handler
+//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_C1_INTERRUPT); // Where the C1 Interrupt Handler is in the Application
+//
+//        // Create a function pointer variable on the stack
+//        void (*app_c1_interrupt_func)() = (void*) applicationISRAddress;
+//        
+//        app_c1_interrupt_func();
         
-     //  void (*app_c1_interrupt_func)() = (void*) CommonLoaderApp_c1_interrupt;
-
-        app_c1_interrupt_func();
+        if (CommonLoaderApp_jumptable.c1_hander)
+            CommonLoaderApp_jumptable.c1_hander();
 
     } else {
         

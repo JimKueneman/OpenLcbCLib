@@ -47,56 +47,66 @@ extern "C" {
     
 
 // Node Alias and Node ID
-typedef void (*callback_alias_change_t) (uint16_olcb_t, uint64_olcb_t);
+typedef void (*callback_alias_change_t) (uint16_olcb_t alias, uint64_olcb_t node_id);
 
 // Incoming Event
-typedef void (*callback_event_identified_t)(openlcb_node_t*, event_id_t*);
+typedef void (*callback_event_identified_t)(openlcb_node_t* openlcb_node, event_id_t* event_id);
 
 // Incoming PCR Event
-typedef void (*callback_event_pc_report_t)(openlcb_node_t*, event_id_t*);
+typedef void (*callback_event_pc_report_t)(openlcb_node_t* openlcb_node, event_id_t* event_id);
 
 // Incoming PCR Event with Payload
-typedef void (*callback_event_pc_report_with_payload_t)(openlcb_node_t*, event_id_t*, uint8_olcb_t count, event_payload_t* payload);
+typedef void (*callback_event_pc_report_with_payload_t)(openlcb_node_t* node, event_id_t* event_id, uint8_olcb_t count, event_payload_t* payload);
 
 // Configuration Memory Write occured
 typedef void (*callback_config_mem_write_t)(uint32_olcb_t address, uint8_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer);
+
+// Configuration Memory Freeze
+typedef void(*callback_config_mem_freeze_t)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+
 
 /**
 * When a node is created and it allocates and alias ID (or if it detects a collision and 
 *        allocates a new alias ID this callback is called with the new value)
 */
 
-extern void Application_Callbacks_set_alias_change(callback_alias_change_t alias_change_callback);
-extern callback_alias_change_t Application_Callbacks_get_alias_change(void);
+extern void ApplicationCallbacks_set_alias_change(callback_alias_change_t alias_change_callback);
+extern callback_alias_change_t ApplicationCallbacks_get_alias_change(void);
 
 // Event Consumer Identified
-extern void Application_Callbacks_set_event_consumer_identified_unknown(callback_event_identified_t event_identified_callback);
-extern callback_event_identified_t Application_Callbacks_get_consumer_identified_unknown(void);
+extern void ApplicationCallbacks_set_event_consumer_identified_unknown(callback_event_identified_t event_identified_callback);
+extern callback_event_identified_t ApplicationCallbacks_get_consumer_identified_unknown(void);
 
-extern void Application_Callbacks_set_event_consumer_identified_clear(callback_event_identified_t event_identified_callback);
-extern callback_event_identified_t Application_Callbacks_get_consumer_identified_clear(void);
+extern void ApplicationCallbacks_set_event_consumer_identified_clear(callback_event_identified_t event_identified_callback);
+extern callback_event_identified_t ApplicationCallbacks_get_consumer_identified_clear(void);
 
-extern void Application_Callbacks_set_event_consumer_identified_set(callback_event_identified_t event_identified_callback);
-extern callback_event_identified_t Application_Callbacks_get_consumer_identified_set(void);
+extern void ApplicationCallbacks_set_event_consumer_identified_set(callback_event_identified_t event_identified_callback);
+extern callback_event_identified_t ApplicationCallbacks_get_consumer_identified_set(void);
 
 // Event Producer Identified
-extern void Application_Callbacks_set_event_producer_identified_unknown(callback_event_identified_t event_identified_callback);
-extern callback_event_identified_t Application_Callbacks_get_producer_identified_unknown(void);
+extern void ApplicationCallbacks_set_event_producer_identified_unknown(callback_event_identified_t event_identified_callback);
+extern callback_event_identified_t ApplicationCallbacks_get_producer_identified_unknown(void);
 
-extern void Application_Callbacks_set_event_producer_identified_clear(callback_event_identified_t event_identified_callback);
-extern callback_event_identified_t Application_Callbacks_get_producer_identified_clear(void);
+extern void ApplicationCallbacks_set_event_producer_identified_clear(callback_event_identified_t event_identified_callback);
+extern callback_event_identified_t ApplicationCallbacks_get_producer_identified_clear(void);
 
-extern void Application_Callbacks_set_event_producer_identified_set(callback_event_identified_t event_identified_callback);
-extern callback_event_identified_t Application_Callbacks_get_producer_identified_set(void);
+extern void ApplicationCallbacks_set_event_producer_identified_set(callback_event_identified_t event_identified_callback);
+extern callback_event_identified_t ApplicationCallbacks_get_producer_identified_set(void);
 
-extern void Application_Callbacks_set_event_pc_report(callback_event_pc_report_t event_pc_report_callback);
-extern callback_event_pc_report_t Application_Callbacks_get_event_pc_report(void);
+extern void ApplicationCallbacks_set_event_pc_report(callback_event_pc_report_t event_pc_report_callback);
+extern callback_event_pc_report_t ApplicationCallbacks_get_event_pc_report(void);
 
-extern void Application_Callbacks_set_event_pc_report_with_payload(callback_event_pc_report_with_payload_t event_pc_report_callback);
-extern callback_event_pc_report_with_payload_t Application_Callbacks_get_event_pc_report_with_payload(void);
+extern void ApplicationCallbacks_set_event_pc_report_with_payload(callback_event_pc_report_with_payload_t event_pc_report_callback);
+extern callback_event_pc_report_with_payload_t ApplicationCallbacks_get_event_pc_report_with_payload(void);
 
 extern void Application_Callbacks_set_config_mem_write(callback_config_mem_write_t config_mem_write_callback);
-extern callback_config_mem_write_t Application_Callbacks_get_config_mem_write(void);
+extern callback_config_mem_write_t ApplicationCallbacks_get_config_mem_write(void);
+
+extern void ApplicationCallbacks_set_config_mem_freeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_freeze);
+extern callback_config_mem_freeze_t ApplicationCallbacks_get_config_mem_freeze_firmware_update(void);
+
+extern void ApplicationCallbacks_set_config_mem_unfreeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_freeze);
+extern callback_config_mem_freeze_t ApplicationCallbacks_get_config_mem_unfreeze_firmware_update(void);
 
 #ifdef	__cplusplus
 }

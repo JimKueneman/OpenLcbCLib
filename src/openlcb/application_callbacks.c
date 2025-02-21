@@ -49,110 +49,112 @@ callback_event_identified_t callback_event_producer_identified_set_func = (void*
 callback_event_pc_report_t callback_event_pc_report_func = (void*) 0;
 callback_event_pc_report_with_payload_t callback_event_pc_report_with_payload_func = (void*) 0;
 callback_config_mem_write_t callback_config_mem_write_func = (void*) 0;
+callback_config_mem_freeze_t callback_config_mem_freeze_firmware_update_func = (void*) 0;
+callback_config_mem_freeze_t callback_config_mem_unfreeze_firmware_update_func = (void*) 0;
 
-void Application_Callbacks_set_alias_change(callback_alias_change_t alias_change_callback) {
+void ApplicationCallbacks_set_alias_change(callback_alias_change_t alias_change_callback) {
 
     callback_alias_change_func = alias_change_callback;
 
 }
 
-callback_alias_change_t Application_Callbacks_get_alias_change(void) {
+callback_alias_change_t ApplicationCallbacks_get_alias_change(void) {
 
     return callback_alias_change_func;
 
 }
 
-void Application_Callbacks_set_event_consumer_identified_unknown(callback_event_identified_t event_identified_callback) {
+void ApplicationCallbacks_set_event_consumer_identified_unknown(callback_event_identified_t event_identified_callback) {
 
     callback_event_consumer_identified_unknown_func = event_identified_callback;
 
 }
 
-callback_event_identified_t Application_Callbacks_get_consumer_identified_unknown(void) {
+callback_event_identified_t ApplicationCallbacks_get_consumer_identified_unknown(void) {
 
     return callback_event_consumer_identified_unknown_func;
 
 }
 
-void Application_Callbacks_set_event_consumer_identified_clear(callback_event_identified_t event_identified_callback) {
+void ApplicationCallbacks_set_event_consumer_identified_clear(callback_event_identified_t event_identified_callback) {
 
     callback_event_consumer_identified_clear_func = event_identified_callback;
 
 }
 
-callback_event_identified_t Application_Callbacks_get_consumer_identified_clear(void) {
+callback_event_identified_t ApplicationCallbacks_get_consumer_identified_clear(void) {
 
     return callback_event_consumer_identified_clear_func;
 
 }
 
-void Application_Callbacks_set_event_consumer_identified_set(callback_event_identified_t event_identified_callback) {
+void ApplicationCallbacks_set_event_consumer_identified_set(callback_event_identified_t event_identified_callback) {
 
     callback_event_consumer_identified_set_func = event_identified_callback;
 
 }
 
-callback_event_identified_t Application_Callbacks_get_consumer_identified_set(void) {
+callback_event_identified_t ApplicationCallbacks_get_consumer_identified_set(void) {
 
     return callback_event_consumer_identified_set_func;
 
 }
 
-void Application_Callbacks_set_event_producer_identified_unknown(callback_event_identified_t event_identified_callback) {
+void ApplicationCallbacks_set_event_producer_identified_unknown(callback_event_identified_t event_identified_callback) {
 
     callback_event_producer_identified_unknown_func = event_identified_callback;
 
 }
 
-callback_event_identified_t Application_Callbacks_get_producer_identified_unknown(void) {
+callback_event_identified_t ApplicationCallbacks_get_producer_identified_unknown(void) {
 
     return callback_event_producer_identified_unknown_func;
 
 }
 
-void Application_Callbacks_set_event_producer_identified_clear(callback_event_identified_t event_identified_callback) {
+void ApplicationCallbacks_set_event_producer_identified_clear(callback_event_identified_t event_identified_callback) {
 
     callback_event_producer_identified_clear_func = event_identified_callback;
 
 }
 
-callback_event_identified_t Application_Callbacks_get_producer_identified_clear(void) {
+callback_event_identified_t ApplicationCallbacks_get_producer_identified_clear(void) {
 
     return callback_event_producer_identified_clear_func;
 
 }
 
-void Application_Callbacks_set_event_producer_identified_set(callback_event_identified_t event_identified_callback) {
+void ApplicationCallbacks_set_event_producer_identified_set(callback_event_identified_t event_identified_callback) {
 
     callback_event_producer_identified_set_func = event_identified_callback;
 
 }
 
-callback_event_identified_t Application_Callbacks_get_producer_identified_set(void) {
+callback_event_identified_t ApplicationCallbacks_get_producer_identified_set(void) {
 
     return callback_event_producer_identified_set_func;
 
 }
 
-void Application_Callbacks_set_event_pc_report(callback_event_pc_report_t event_pc_report_callback) {
+void ApplicationCallbacks_set_event_pc_report(callback_event_pc_report_t event_pc_report_callback) {
 
     callback_event_pc_report_func = event_pc_report_callback;
 
 }
 
-callback_event_pc_report_t Application_Callbacks_get_event_pc_report(void) {
+callback_event_pc_report_t ApplicationCallbacks_get_event_pc_report(void) {
 
     return callback_event_pc_report_func;
 
 }
 
-void Application_Callbacks_set_event_pc_report_with_payload(callback_event_pc_report_with_payload_t event_pc_report_callback) {
+void ApplicationCallbacks_set_event_pc_report_with_payload(callback_event_pc_report_with_payload_t event_pc_report_callback) {
 
     callback_event_pc_report_with_payload_func = event_pc_report_callback;
 
 }
 
-callback_event_pc_report_with_payload_t Application_Callbacks_get_event_pc_report_with_payload(void) {
+callback_event_pc_report_with_payload_t ApplicationCallbacks_get_event_pc_report_with_payload(void) {
 
     return callback_event_pc_report_with_payload_func;
 
@@ -164,8 +166,33 @@ void Application_Callbacks_set_config_mem_write(callback_config_mem_write_t conf
     
 }
 
-callback_config_mem_write_t Application_Callbacks_get_config_mem_write(void) {
+callback_config_mem_write_t ApplicationCallbacks_get_config_mem_write(void) {
     
     return callback_config_mem_write_func;
+    
+}
+
+
+void ApplicationCallbacks_set_config_mem_freeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_freeze) {
+  
+    callback_config_mem_freeze_firmware_update_func = callback_config_mem_freeze;
+    
+}
+
+callback_config_mem_freeze_t ApplicationCallbacks_get_config_mem_freeze_firmware_update(void) {
+    
+   return callback_config_mem_freeze_firmware_update_func; 
+    
+}
+
+void ApplicationCallbacks_set_config_mem_unfreeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_unfreeze) {
+  
+    callback_config_mem_unfreeze_firmware_update_func = callback_config_mem_unfreeze;
+    
+}
+
+callback_config_mem_freeze_t ApplicationCallbacks_get_config_mem_unfreeze_firmware_update(void) {
+    
+   return callback_config_mem_unfreeze_firmware_update_func; 
     
 }

@@ -45,7 +45,7 @@
 #include "../../../drivers/driver_can.h"
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/openlcb_node.h"
-#include "debug.h"
+#include "../TurnoutBossCommon/common_debug_helper.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
@@ -467,6 +467,5 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
     }
 
     return;
-
 
 }
