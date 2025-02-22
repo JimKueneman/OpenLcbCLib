@@ -56,12 +56,6 @@
             <itemPath>local_drivers/_25AA1024/25AA1024_driver.h</itemPath>
           </logicalFolder>
         </logicalFolder>
-        <logicalFolder name="mcc_generated_files"
-                       displayName="mcc_generated_files"
-                       projectFiles="true">
-          <logicalFolder name="memory" displayName="memory" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
         <itemPath>turnoutboss_bootloader_drivers.h</itemPath>
         <itemPath>turnoutboss_bootloader_traps.h</itemPath>
         <itemPath>turnoutboss_bootloader_uart_handler.h</itemPath>
@@ -141,12 +135,6 @@
                        projectFiles="true">
           <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
             <itemPath>local_drivers/_25AA1024/25AA1024_driver.c</itemPath>
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="mcc_generated_files"
-                       displayName="mcc_generated_files"
-                       projectFiles="true">
-          <logicalFolder name="memory" displayName="memory" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
         <itemPath>turnoutboss_bootloader_drivers.c</itemPath>

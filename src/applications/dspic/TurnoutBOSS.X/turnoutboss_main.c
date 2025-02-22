@@ -121,6 +121,44 @@ void _config_memory_freeze_firmware_update_callback(openlcb_node_t* openlcb_node
 }
 
 int main(void) {
+    
+    #ifdef BOSS1
+
+    // RB7 and RB8 are test outputs
+    // we also have the LED variable for RB9 and the LED output
+    _TRISB7 = 0;
+    _RB7 = 0;
+    _TRISB8 = 0;
+    _RB8 = 0;
+    
+    
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    _RB7 = !_RB7;
+    
+
+#endif
 
     uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
     uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
@@ -135,16 +173,7 @@ int main(void) {
     LED_YELLOW = 1;
 #endif
 
-#ifdef BOSS1
 
-    // RB7 and RB8 are test outputs
-    // we also have the LED variable for RB9 and the LED output
-    _TRISB7 = 0;
-    _RB7 = 0;
-    _TRISB8 = 0;
-    _RB8 = 0;
-
-#endif
 
     CanMainStatemachine_initialize(
             &Ecan1Helper_setup,
@@ -181,6 +210,10 @@ int main(void) {
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
 
+    
+    printf(".......\n");
+    printf("NEW AND FINALLY FUNCTIONAL image for Bootloading.......\n");
+    printf(".......\n");
 
     printf("\nApplication Booted\n");
     openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
@@ -192,8 +225,8 @@ int main(void) {
     PrintAlias(CommonLoaderApp_node_alias);
    
 
-    // The bootloader would have cleared Power Up Reset flag if this has been started through the bootloader
-    if (RCONbits.SWR) {
+    
+    if (RCONbits.SWR) {     // The bootloader would have set the Software Reset flag if this has been started through the bootloader
         
         RCONbits.SWR = 0;
         
