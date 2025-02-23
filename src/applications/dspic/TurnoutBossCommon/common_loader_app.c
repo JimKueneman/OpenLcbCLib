@@ -79,11 +79,10 @@
 // Use project enums instead of #define for ON and OFF.
 
 
-uint16_olcb_t CommonLoaderApp_interrupt_redirect __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
-bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
-uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 2 bytes
-uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 6))); // 8 bytes
-vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 14))); // 9 * 4 = 36 bytes
+bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS ))); // 2 bytes
+uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
+uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 8 bytes
+vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 12))); // 9 * 4 = 36 bytes
 
 void CommonLoaderApp_initialize_sfrs(void) {
 

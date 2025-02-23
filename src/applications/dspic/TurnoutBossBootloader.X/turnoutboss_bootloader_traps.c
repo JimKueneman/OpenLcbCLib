@@ -42,7 +42,7 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
     
     INTCON1bits.OSCFAIL = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_interrupt_redirect) {
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
    
         if (CommonLoaderApp_jumptable.oscillatorfail_hander)
             CommonLoaderApp_jumptable.oscillatorfail_hander();
@@ -59,7 +59,7 @@ void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
     
     INTCON1bits.ADDRERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_interrupt_redirect) {
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
 
         if (CommonLoaderApp_jumptable.addresserror_hander)
             CommonLoaderApp_jumptable.addresserror_hander();
@@ -76,7 +76,7 @@ void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
     
     INTCON1bits.STKERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_interrupt_redirect) {
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
         
         if (CommonLoaderApp_jumptable.stackerror_hander)
             CommonLoaderApp_jumptable.stackerror_hander();
@@ -93,7 +93,7 @@ void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
     
     INTCON1bits.MATHERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_interrupt_redirect) {
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
 
         if (CommonLoaderApp_jumptable.matherror_hander)
             CommonLoaderApp_jumptable.matherror_hander();
@@ -111,7 +111,7 @@ void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
 
     INTCON1bits.DMACERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_interrupt_redirect) {
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
 
         if (CommonLoaderApp_jumptable.dmacerror_hander)
             CommonLoaderApp_jumptable.dmacerror_hander();

@@ -176,7 +176,7 @@ void _run_bootloader(uint16_olcb_t node_alias) {
     while (!CommonLoaderApp_bootloader_state.do_start) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
-
+        
     }
 
     CommonLoaderApp_node_alias = openlcb_node->alias;
@@ -200,9 +200,8 @@ void _initialize_state(void) {
 
     }
     
-    CommonLoaderApp_bootloader_state.bootloader_running = TRUE;
-    CommonLoaderApp_bootloader_state.app_running = FALSE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
+    CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
 
 }
 
@@ -212,7 +211,6 @@ int main(void) {
     CommonLoaderApp_node_id = _extract_node_id();
     _initialize();
     
-    CommonLoaderApp_interrupt_redirect = FALSE;
     _GIE = 1; // Enable Interrupts
     
     printf("Bootloader Starting\n");
@@ -246,9 +244,7 @@ int main(void) {
 
     CommonLoaderApp_bootloader_state.started_from_bootloader = TRUE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
-    CommonLoaderApp_bootloader_state.app_running = FALSE;
     CommonLoaderApp_bootloader_state.started_from_app = FALSE;
-    CommonLoaderApp_bootloader_state.bootloader_running = FALSE;
 
     startApplication();
 

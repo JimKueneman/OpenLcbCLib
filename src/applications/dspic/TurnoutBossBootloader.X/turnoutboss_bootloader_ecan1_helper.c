@@ -541,7 +541,7 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
    
     // This needs more than this, need to know if the application is running yet or not....
 
-    if (CommonLoaderApp_interrupt_redirect) {
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
         
         if (CommonLoaderApp_jumptable.c1_hander)
             CommonLoaderApp_jumptable.c1_hander();

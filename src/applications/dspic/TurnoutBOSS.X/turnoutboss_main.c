@@ -132,8 +132,6 @@ void _initialize_state(void) {
 
     }
 
-    CommonLoaderApp_bootloader_state.bootloader_running = FALSE;
-    CommonLoaderApp_bootloader_state.app_running = TRUE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
 }
 
@@ -243,7 +241,7 @@ int main(void) {
     TurnoutBossEventHandler_initialize(node, &_board_configuration, &_signal_calculation_states, &_event_engine);
 
     // Lets rock and roll
-    CommonLoaderApp_interrupt_redirect = TRUE;
+    CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
     _GIE = 1; // Enable interrupts
     
     while (!CommonLoaderApp_bootloader_state.do_start) {
@@ -350,14 +348,12 @@ int main(void) {
     printf("Starting Bootloader.........\n");
     
     _GIE = 0; // Disable Interrupts
-    CommonLoaderApp_interrupt_redirect = FALSE;
-
+    
     CommonLoaderApp_node_alias = node->alias;
     CommonLoaderApp_bootloader_state.started_from_bootloader = FALSE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
-    CommonLoaderApp_bootloader_state.app_running = FALSE;
     CommonLoaderApp_bootloader_state.started_from_app = TRUE;
-    CommonLoaderApp_bootloader_state.bootloader_running = FALSE;
+    CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
     
     // Create a pointer to a function at the app entry point
     void (*startBootloader)() = (void*) BOOTLOADER_START_ADDRESS;

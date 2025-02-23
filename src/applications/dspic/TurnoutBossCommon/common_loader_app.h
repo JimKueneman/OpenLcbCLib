@@ -206,8 +206,7 @@ typedef struct {
 
 typedef struct {
     
-    uint16_olcb_t app_running:1;
-    uint16_olcb_t bootloader_running:1;
+    uint16_olcb_t interrupt_redirect:1;
     uint16_olcb_t started_from_app:1;
     uint16_olcb_t started_from_bootloader:1;
     uint16_olcb_t do_start: 1;
@@ -222,11 +221,10 @@ extern "C" {
 extern void CommonLoaderApp_initialize_sfrs(void);
 extern void CommonLoaderApp_initialize_can_sfrs(void);
    
-extern uint16_olcb_t CommonLoaderApp_interrupt_redirect __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
-extern bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
-extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 2 bytes
-extern uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 6))); // 8 bytes
-extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 14))); // 9 * 4 = 36 bytes
+extern bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
+extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
+extern uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 8 bytes
+extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 12))); // 9 * 4 = 36 bytes
     
 #ifdef	__cplusplus
 }

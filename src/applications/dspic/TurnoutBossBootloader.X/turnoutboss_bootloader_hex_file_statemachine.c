@@ -311,7 +311,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
                     running_address = running_address + 4;
 
                     if (running_instruction_count >= instruction_count) {
-
+                                           
                         state_machine_state = HEX_STATE_FIND_COLON;
 
                     }
