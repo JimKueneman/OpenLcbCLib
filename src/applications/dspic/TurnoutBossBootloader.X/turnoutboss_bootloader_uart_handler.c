@@ -51,9 +51,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             printf("Jumping to App... I hope!");
 
             TurnoutBossBootloaderUartHandler_start_app = TRUE;
-            
-            CommonLoaderApp_app_running = TRUE;
-            
+                    
             break;
 
     }

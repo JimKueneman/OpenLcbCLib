@@ -40,12 +40,13 @@
 
 #include "../../../openlcb/openlcb_types.h"
 
+#define NODE_ID_DEFAULT 0x050701010000
+#define EOF_ADDRESS 0xFFFFFFFF
 
 #define RESET_INSTRUCTION_SIZE 4
 #define INSTRUCTION_ADDRESS_SIZE 2
 
 #define INSTRUCTIONS_PER_ERASE_BLOCK 1024
-
 
 #define DATA_START_ADDRESS 0x1000 // chip dependant
 
@@ -56,18 +57,25 @@
 // This is the last page in the 512kB chip that contains the Configuration Bits DO NOT ERASE THIS PAGE
 #define APPLICATION_END_ADDRESS 0x055800
 
+// Where the checksum is and the addresses to calculate it are  32 bit each stored as StartAddress, EndAddress, Checksum
+// 0x055800 is the end of the chip, 0x055000 is the page with the configuration bits and 0x054800 is the page before that
+#define APPLICATION_CHECKSUM_ADDRESS 0x054800  
+
+// Where the NodeID is stored in the flash, it is two 24 bit instructions at the start of a page boundry that is reserve for this purpose
+#define GLOBAL_NODE_ID_ADDRESS 0x54000
+
 #define BOOTLOADER_START_ADDRESS 0x000200
 #define BOOTLOADER_END_ADDRESS APPLICATION_START_ADDRESS - INSTRUCTION_ADDRESS_SIZE
 
-#define VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT (APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)                 // 0xB004
-#define VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT (VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)    // 0xB006
-#define VIVT_ADDRESS_STACK_ERROR_INTERRUPT (VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)        // 0xB008
-#define VIVT_ADDRESS_MATH_ERROR_INTERRUPT (VIVT_ADDRESS_STACK_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)           // 0xB00A
-#define VIVT_ADDRESS_DMAC_ERROR_INTERRUPT (VIVT_ADDRESS_MATH_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)            // 0xB00C
-#define VIVT_ADDRESS_T2_INTERRUPT (VIVT_ADDRESS_DMAC_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                    // 0xB00E
-#define VIVT_ADDRESS_U1_RX_INTERRUPT (VIVT_ADDRESS_T2_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                         // 0xB010
-#define VIVT_ADDRESS_U1_TX_INTERRUPT (VIVT_ADDRESS_U1_RX_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                      // 0xB012
-#define VIVT_ADDRESS_C1_INTERRUPT (VIVT_ADDRESS_U1_TX_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                         // 0xB014
+//#define VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT (APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)                 // 0xB004
+//#define VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT (VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)    // 0xB006
+//#define VIVT_ADDRESS_STACK_ERROR_INTERRUPT (VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)        // 0xB008
+//#define VIVT_ADDRESS_MATH_ERROR_INTERRUPT (VIVT_ADDRESS_STACK_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)           // 0xB00A
+//#define VIVT_ADDRESS_DMAC_ERROR_INTERRUPT (VIVT_ADDRESS_MATH_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)            // 0xB00C
+//#define VIVT_ADDRESS_T2_INTERRUPT (VIVT_ADDRESS_DMAC_ERROR_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                    // 0xB00E
+//#define VIVT_ADDRESS_U1_RX_INTERRUPT (VIVT_ADDRESS_T2_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                         // 0xB010
+//#define VIVT_ADDRESS_U1_TX_INTERRUPT (VIVT_ADDRESS_U1_RX_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                      // 0xB012
+//#define VIVT_ADDRESS_C1_INTERRUPT (VIVT_ADDRESS_U1_TX_INTERRUPT + INSTRUCTION_ADDRESS_SIZE)                         // 0xB014
 
 
 // UART ------------------------------------------------------------------------
@@ -196,6 +204,16 @@ typedef struct {
     
 } vivt_jumptable_t;
 
+typedef struct {
+    
+    uint16_olcb_t app_running:1;
+    uint16_olcb_t bootloader_running:1;
+    uint16_olcb_t started_from_app:1;
+    uint16_olcb_t started_from_bootloader:1;
+    uint16_olcb_t do_start: 1;
+     
+} bootloader_state_t;
+
 
 #ifdef	__cplusplus
 extern "C" {
@@ -204,9 +222,11 @@ extern "C" {
 extern void CommonLoaderApp_initialize_sfrs(void);
 extern void CommonLoaderApp_initialize_can_sfrs(void);
    
-extern uint16_olcb_t CommonLoaderApp_app_running __attribute__((persistent address(DATA_START_ADDRESS)));  // 2 bytes
-extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2)));   // 2 bytes
-extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 4)));  // 9 * 4 = 36 bytes
+extern uint16_olcb_t CommonLoaderApp_interrupt_redirect __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
+extern bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
+extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 2 bytes
+extern uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 6))); // 8 bytes
+extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 14))); // 9 * 4 = 36 bytes
     
 #ifdef	__cplusplus
 }

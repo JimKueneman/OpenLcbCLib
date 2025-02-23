@@ -127,7 +127,7 @@ void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 
     IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
 
-    if (CommonLoaderApp_app_running) {
+    if (CommonLoaderApp_interrupt_redirect) {
 
 //        // Create a variable on the stack and grab the address of the U1 TX handler
 //        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_U1_TX_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
@@ -153,7 +153,7 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 
     IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
 
-    if (CommonLoaderApp_app_running) {
+    if (CommonLoaderApp_interrupt_redirect) {
 
 //        // Create a variable on the stack and grab the address of the U1 RX handler
 //        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_U1_RX_INTERRUPT); // Where the UART RX Interrupt Handler is in the Application
@@ -180,7 +180,7 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
    
-    if (CommonLoaderApp_app_running) {
+    if (CommonLoaderApp_interrupt_redirect) {
 
 //        // Create a variable on the stack and grab the address of the T2 handler
 //        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_T2_INTERRUPT); // Where the T2 Interrupt Handler is in the Application

@@ -37,6 +37,10 @@
 
 extern uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char);
 
+extern uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void);
+
+extern uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id(void);
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

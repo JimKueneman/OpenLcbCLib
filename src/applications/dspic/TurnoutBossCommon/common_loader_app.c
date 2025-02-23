@@ -79,16 +79,16 @@
 // Use project enums instead of #define for ON and OFF.
 
 
-
- uint16_olcb_t CommonLoaderApp_app_running __attribute__((persistent address(0x1000)));  // 2 bytes
- uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(0x1002)));   // 2 bytes
- vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(0x1004)));  // 9 * 4 = 36 bytes
-
+uint16_olcb_t CommonLoaderApp_interrupt_redirect __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
+bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
+uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 2 bytes
+uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 6))); // 8 bytes
+vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 14))); // 9 * 4 = 36 bytes
 
 void CommonLoaderApp_initialize_sfrs(void) {
-    
-    memset(&CommonLoaderApp_jumptable, 0x00, sizeof(vivt_jumptable_t));
-    
+
+    memset(&CommonLoaderApp_jumptable, 0x00, sizeof (vivt_jumptable_t));
+
 #ifdef BOSS1
     // RB7 and RB8 are test outputs
     // we also have the LED variable for RB9 and the LED output
@@ -96,21 +96,21 @@ void CommonLoaderApp_initialize_sfrs(void) {
     _RB7 = 0;
     _TRISB8 = 0;
     _RB8 = 0;
-    
+
     LED_TRIS = 0;
     LED = 0;
 #endif
-    
+
 #ifdef BOSS2
-    
+
     LED_BLUE_TRIS = 0; // output
     LED_GREEN_TRIS = 0; // output
     LED_YELLOW_TRIS = 0; // output
-    
+
     LED_BLUE = 0;
     LED_YELLOW = 0;
-    LED_GREEN = 0; 
-    
+    LED_GREEN = 0;
+
 #endif
 
     // IO Pin Initialize -------------------------------------------------------
@@ -159,7 +159,7 @@ void CommonLoaderApp_initialize_sfrs(void) {
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
 
-                    \
+                        \
     OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
@@ -206,13 +206,13 @@ void CommonLoaderApp_initialize_sfrs(void) {
     IFS0bits.SPI1IF = 0; // Clear the Interrupt flag
     IEC0bits.SPI1IE = 0; // Disable the interrupt
 
-    
+
     SPI1CON1bits.SPRE = 0b011; // ~8Mhz
     SPI1CON1bits.PPRE = 0b11;
-    
+
     // 156k
- //   SPI1CON1bits.SPRE = 0b100; // divide by 4
- //   SPI1CON1bits.PPRE = 0b00; // divide by 64       Fcy/(PrimaryPrescale * SecondaryPrescale)
+    //   SPI1CON1bits.SPRE = 0b100; // divide by 4
+    //   SPI1CON1bits.PPRE = 0b00; // divide by 64       Fcy/(PrimaryPrescale * SecondaryPrescale)
 
     SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
     SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
@@ -261,10 +261,9 @@ void CommonLoaderApp_initialize_sfrs(void) {
 
 }
 
-
 void CommonLoaderApp_initialize_can_sfrs(void) {
-    
-    
-    
-    
+
+
+
+
 }

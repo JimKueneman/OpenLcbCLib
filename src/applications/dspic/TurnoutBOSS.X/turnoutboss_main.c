@@ -102,9 +102,6 @@
 board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
 send_event_engine_t _event_engine;
-uint8_olcb_t _start_bootloader = FALSE;
-
-uint64_olcb_t node_id_base = 0x0507010100AA;
 
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
@@ -116,56 +113,62 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 void _config_memory_freeze_firmware_update_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-  _start_bootloader = TRUE;
+    CommonLoaderApp_bootloader_state.do_start = TRUE;
+
+}
+
+
+// The only time POR and/or BOR is set is with a true start from 0V so it is guaranteed to be the first boot.  
+
+void _initialize_state(void) {
+
+    if (RCONbits.POR || RCONbits.BOR) {
+
+        memset(&CommonLoaderApp_bootloader_state, 0x0000, sizeof (CommonLoaderApp_bootloader_state));
+
+        // Clear it so the app knows the CommonLoaderApp_bootloader_state is valid
+        RCONbits.POR = 0;
+        RCONbits.BOR = 0;
+
+    }
+
+    CommonLoaderApp_bootloader_state.bootloader_running = FALSE;
+    CommonLoaderApp_bootloader_state.app_running = TRUE;
+    CommonLoaderApp_bootloader_state.do_start = FALSE;
+}
+
+node_id_t _extract_node_id(void) {
+
+    if (CommonLoaderApp_bootloader_state.started_from_bootloader) {
+
+        if ((CommonLoaderApp_node_id == 0xFFFFFFFFFFFF) || (CommonLoaderApp_node_id == 0x000000000000)) {
+
+            return NODE_ID_DEFAULT;
+
+        } else {
+
+            return CommonLoaderApp_node_id;
+
+        }
+
+    } else {
+
+        return NODE_ID_DEFAULT;
+
+    }
 
 }
 
 int main(void) {
-    
-    #ifdef BOSS1
 
+#ifdef BOSS1
     // RB7 and RB8 are test outputs
     // we also have the LED variable for RB9 and the LED output
     _TRISB7 = 0;
     _RB7 = 0;
     _TRISB8 = 0;
     _RB8 = 0;
-    
-    
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    _RB7 = !_RB7;
-    
-
 #endif
-
-    uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
-    uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
-
-    memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
-    memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
-    memset(&_event_engine, 0x00, sizeof ( _event_engine));
 
 #ifdef BOSS2
     LED_BLUE = 1;
@@ -173,7 +176,14 @@ int main(void) {
     LED_YELLOW = 1;
 #endif
 
+    uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
+    uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
 
+    _initialize_state();
+
+    memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
+    memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
+    memset(&_event_engine, 0x00, sizeof ( _event_engine));
 
     CanMainStatemachine_initialize(
             &Ecan1Helper_setup,
@@ -190,7 +200,7 @@ int main(void) {
             &TurnoutBossDrivers_pause_100ms_timer,
             &TurnoutBossDrivers_resume_100ms_timer
             );
-
+    
     // After the initialization where we cleared these variables set it up the bootloader jump table
     CommonLoaderApp_jumptable.oscillatorfail_hander = &Traps_oscillator_fail_handler;
     CommonLoaderApp_jumptable.addresserror_hander = &Traps_address_error_handler;
@@ -210,39 +220,12 @@ int main(void) {
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
 
-    
-    printf(".......\n");
-    printf("NEW AND FINALLY FUNCTIONAL image for Bootloading.......\n");
-    printf(".......\n");
 
-    printf("\nApplication Booted\n");
-    openlcb_node_t* node = Node_allocate(node_id_base, &NodeParameters_main_node);
-    printf("Node Created\n");
+    printf("\nApplication Booted: WITH A NEW BUILD\n");
 
-    // Need to check CommonLoaderApp_node_id and CommonLoaderApp_node_alias to see if the bootloader has already logged us in
-
-    printf("Bootloaders Openlcb credentials:\n");
-    PrintAlias(CommonLoaderApp_node_alias);
-   
-
-    
-    if (RCONbits.SWR) {     // The bootloader would have set the Software Reset flag if this has been started through the bootloader
-        
-        RCONbits.SWR = 0;
-        
-        if (CommonLoaderApp_node_alias != 0) {
-
-            printf("Using the bootloaders credentials\n");
-            node->alias = CommonLoaderApp_node_alias;   
-            node->state.permitted = TRUE;
-            node->state.initalized = TRUE;
-            node->state.run_state = RUNSTATE_RUN;
-
-        }
-        
-    }
-
-
+    // We always boot and reallocate the alias
+    openlcb_node_t* node = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
+ 
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBossBoardConfiguration_initialize(node, &_board_configuration);
 
@@ -259,12 +242,12 @@ int main(void) {
     // Build the dynamic events and the callback to handle incoming events
     TurnoutBossEventHandler_initialize(node, &_board_configuration, &_signal_calculation_states, &_event_engine);
 
-    // Lets rock
-    CommonLoaderApp_app_running = TRUE;
+    // Lets rock and roll
+    CommonLoaderApp_interrupt_redirect = TRUE;
     _GIE = 1;
-
-    while (!_start_bootloader) {
-
+    
+    while (!CommonLoaderApp_bootloader_state.do_start) {
+      
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
@@ -362,17 +345,23 @@ int main(void) {
         TurnoutBossEventEngine_run(node, &_event_engine);
 
     }
+
     
+    printf("Starting Bootloader.........\n");
+    
+    _GIE = 0; // Disable Interrupts
+    CommonLoaderApp_interrupt_redirect = FALSE;
+
+    CommonLoaderApp_node_alias = node->alias;
+    CommonLoaderApp_bootloader_state.started_from_bootloader = FALSE;
+    CommonLoaderApp_bootloader_state.do_start = FALSE;
+    CommonLoaderApp_bootloader_state.app_running = FALSE;
+    CommonLoaderApp_bootloader_state.started_from_app = TRUE;
+    CommonLoaderApp_bootloader_state.bootloader_running = FALSE;
     
     // Create a pointer to a function at the app entry point
     void (*startBootloader)() = (void*) BOOTLOADER_START_ADDRESS;
-
-    RCONbits.SWR = 1; // Signal bootloader that it is starting through the application that has already logged into the network
-  
-    CommonLoaderApp_node_alias = node->alias;
     
-    _GIE = 0; // Disable Interrupts
-
     startBootloader();
 
 }

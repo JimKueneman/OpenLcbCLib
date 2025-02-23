@@ -62,15 +62,6 @@
 #include "turnoutboss_bootloader_hex_file_statemachine.h"
 #include "mcc_generated_files/memory/flash.h"
 
-
-uint8_olcb_t _start_app = FALSE;
-
-node_id_t _extract_node_id(void) {
-
-    return (0x0507010100AA);
-
-}
-
 uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     for (int i = 0; i < count; i++) {
@@ -85,7 +76,6 @@ uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t co
 
     return count;
 }
-
 
 void _config_memory_freeze_bootloader_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -110,7 +100,7 @@ void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, o
 
         openlcb_node->state.firmware_upgrade = FALSE;
 
-        _start_app = TRUE;
+        CommonLoaderApp_bootloader_state.do_start = TRUE;
 
     }
 
@@ -124,15 +114,7 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 }
 
-uint8_olcb_t _is_application_valid(void) {
-
-    return (FLASH_ReadWord24(APPLICATION_START_ADDRESS) != 0x00FFFFFF);
-
-}
-
 void _initialize(void) {
-
-    CommonLoaderApp_app_running = FALSE;
 
     CanMainStatemachine_initialize(
             &TurnoutbossBootloader_ecan1helper_setup,
@@ -151,29 +133,38 @@ void _initialize(void) {
             );
 
     TurnoutBossBootloaderDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
-
-}
-
-void _enter_bootloader_mode(uint16_olcb_t node_alias) {
-    
-    // Already Initialized with _initialize()
-
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_unfreeze_firmware_update(&_config_memory_unfreeze_bootloader_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_bootloader_callback);
 
-    openlcb_node_t * openlcb_node = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
 
+}
 
-    if (node_alias != 0) {
-        
-        printf("Node Alias: %04X\n", node_alias);
+node_id_t _extract_node_id(void) {
+    
+    node_id_t result = TurnoutbossBootloaderHexFileStateMachine_extract_node_id();
 
-        openlcb_node->alias = node_alias;
+    if ((result == 0x00FFFFFFFFFFFF) || (result == 0x000000000000))
+
+        result = NODE_ID_DEFAULT;
+    
+    return result;
+
+}
+
+void _run_bootloader(uint16_olcb_t node_alias) {
+
+    printf("Running the Bootloader mode: alias is 0x%04X.\n", node_alias);
+
+    openlcb_node_t * openlcb_node = Node_allocate(CommonLoaderApp_node_id, &NodeParameters_main_node);
+
+    if ((CommonLoaderApp_bootloader_state.started_from_app) & (CommonLoaderApp_node_alias != 0)) {
+
+        openlcb_node->alias = CommonLoaderApp_node_alias;
         openlcb_node->state.permitted = TRUE;
         openlcb_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
         openlcb_node->state.firmware_upgrade = TRUE;
-        
+
         printf("pre-loaded the node, entering bootloader mode from the main application.\n");
 
     } else {
@@ -182,72 +173,80 @@ void _enter_bootloader_mode(uint16_olcb_t node_alias) {
 
     }
 
-    while (!_start_app) {
+    while (!CommonLoaderApp_bootloader_state.do_start) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
 
     }
 
     CommonLoaderApp_node_alias = openlcb_node->alias;
+    
+    printf("Exiting the bootloader\n");
+
+}
+
+
+// The only time POR and/or BOR is set is with a true start from 0V so it is guaranteed to be the first boot.  
+
+void _initialize_state(void) {
+
+    if (RCONbits.POR || RCONbits.BOR) {
+
+        memset(&CommonLoaderApp_bootloader_state, 0x0000, sizeof (CommonLoaderApp_bootloader_state));
+        
+        // Clear it so the app knows the CommonLoaderApp_bootloader_state is valid
+        RCONbits.POR = 0;
+        RCONbits.BOR = 0;
+
+    }
+
+    CommonLoaderApp_interrupt_redirect = FALSE;
+    CommonLoaderApp_bootloader_state.bootloader_running = TRUE;
+    CommonLoaderApp_bootloader_state.app_running = FALSE;
+    CommonLoaderApp_bootloader_state.do_start = FALSE;
 
 }
 
 int main(void) {
-
+    
+    _initialize_state();
+    CommonLoaderApp_node_id = _extract_node_id();
     _initialize();
-
+    
     printf("Bootloader Starting\n");
 
-    _start_app = FALSE;
-    _GIE = 1;
-
-    if (RCONbits.SWR) { // Power On or Brownout Reset
+    if (CommonLoaderApp_bootloader_state.started_from_app) {
         
-        RCONbits.SWR = 0;
-        
-        if (CommonLoaderApp_node_alias == 0) {
+        printf("Bootloader running: Started from app");
 
-            printf("Entering Bootloader mode: coming from running application but something wrong with node id or alias.\n");
+        _run_bootloader(CommonLoaderApp_node_alias);
 
-        } else {
-
-            printf("Entering Bootloader mode: coming from running application.\n");
-
-        }
-        
-        _enter_bootloader_mode(CommonLoaderApp_node_alias);
-
-    } else { // Software Reset back to the bootloader
+    } else {
 
         CommonLoaderApp_node_alias = 0;
 
-        if (!_is_application_valid()) {
+        if (!TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum()) {
 
-            printf("Entering Bootloader mode: POR/BOR reset without finding a valid application.\n");
+            printf("Bootloader running: Cold start no app image found");
 
-            _enter_bootloader_mode(0x0000); // No valid application image need to get one loaded
+            _run_bootloader(CommonLoaderApp_node_alias); // No valid application image need to get one loaded
 
         }
-
-        printf("falling through to the application.\n");
-
+        
     }
 
+    printf("Starting application............\n");
     
-   
-    __delay32(10000);
-    __delay32(10000);
-    __delay32(10000);
-    __delay32(10000);
-    __delay32(10000);
-
-    // if we fall through to this its time to run the application
+    _GIE = 0; // Disable Interrupts
 
     // Create a pointer to a function at the app entry point
     void (*startApplication)() = (void*) APPLICATION_START_ADDRESS;
 
-    RCONbits.SWR = 1; // Signal application that it is starting through the bootloader that has already logged into the network
-    _GIE = 0; // Disable Interrupts
+    CommonLoaderApp_bootloader_state.started_from_bootloader = TRUE;
+    CommonLoaderApp_bootloader_state.do_start = FALSE;
+    CommonLoaderApp_bootloader_state.app_running = FALSE;
+    CommonLoaderApp_bootloader_state.started_from_app = FALSE;
+    CommonLoaderApp_bootloader_state.bootloader_running = FALSE;
 
     startApplication();
 

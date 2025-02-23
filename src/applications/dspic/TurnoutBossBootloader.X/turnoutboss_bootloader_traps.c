@@ -42,17 +42,8 @@ void __attribute__((interrupt, no_auto_psv)) _OscillatorFail(void) {
     
     INTCON1bits.OSCFAIL = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_app_running) {
-
-//        // Create a variable on the stack and grab the address of the U1 TX handler
-//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_OSCILLATOR_FAIL_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-//
-//        // Create a function pointer variable on the stack
-//        void (*app_oscillator_fail_interrupt_func)() = (void*) applicationISRAddress;
-//
-//        app_oscillator_fail_interrupt_func();
-        
-        
+    if (CommonLoaderApp_interrupt_redirect) {
+   
         if (CommonLoaderApp_jumptable.oscillatorfail_hander)
             CommonLoaderApp_jumptable.oscillatorfail_hander();
         
@@ -68,16 +59,8 @@ void __attribute__((interrupt, no_auto_psv)) _AddressError(void) {
     
     INTCON1bits.ADDRERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_app_running) {
+    if (CommonLoaderApp_interrupt_redirect) {
 
-//        // Create a variable on the stack and grab the address of the U1 TX handler
-//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_ADDRESS_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-//
-//        // Create a function pointer variable on the stack
-//        void (*app_address_failure_interrupt_func)() = (void*) applicationISRAddress;
-//
-//        app_address_failure_interrupt_func();
-        
         if (CommonLoaderApp_jumptable.addresserror_hander)
             CommonLoaderApp_jumptable.addresserror_hander();
 
@@ -93,15 +76,7 @@ void __attribute__((interrupt, no_auto_psv)) _StackError(void) {
     
     INTCON1bits.STKERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_app_running) {
-
-//        // Create a variable on the stack and grab the address of the U1 TX handler
-//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_STACK_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-//
-//        // Create a function pointer variable on the stack
-//        void (*app_stack_error_interrupt_func)() = (void*) applicationISRAddress;
-//
-//        app_stack_error_interrupt_func();
+    if (CommonLoaderApp_interrupt_redirect) {
         
         if (CommonLoaderApp_jumptable.stackerror_hander)
             CommonLoaderApp_jumptable.stackerror_hander();
@@ -118,16 +93,8 @@ void __attribute__((interrupt, no_auto_psv)) _MathError(void) {
     
     INTCON1bits.MATHERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_app_running) {
+    if (CommonLoaderApp_interrupt_redirect) {
 
-//        // Create a variable on the stack and grab the address of the U1 TX handler
-//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_MATH_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-//
-//        // Create a function pointer variable on the stack
-//        void (*app_math_error_interrupt_func)() = (void*) applicationISRAddress;
-//
-//        app_math_error_interrupt_func();
-        
         if (CommonLoaderApp_jumptable.matherror_hander)
             CommonLoaderApp_jumptable.matherror_hander();
 
@@ -144,16 +111,8 @@ void __attribute__((interrupt, no_auto_psv)) _DMACError(void) {
 
     INTCON1bits.DMACERR = 0; //Clear the trap flag
 
-    if (CommonLoaderApp_app_running) {
+    if (CommonLoaderApp_interrupt_redirect) {
 
-//        // Create a variable on the stack and grab the address of the U1 TX handler
-//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_DMAC_ERROR_INTERRUPT); // Where the UART TX Interrupt Handler is in the Application
-//
-//        // Create a function pointer variable on the stack
-//        void (*app_dmac_error_interrupt_func)() = (void*) applicationISRAddress;
-//
-//        app_dmac_error_interrupt_func();
-        
         if (CommonLoaderApp_jumptable.dmacerror_hander)
             CommonLoaderApp_jumptable.dmacerror_hander();
 

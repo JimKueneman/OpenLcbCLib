@@ -541,15 +541,7 @@ void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
    
     // This needs more than this, need to know if the application is running yet or not....
 
-    if (CommonLoaderApp_app_running) {
-        
-//        // Create a variable on the stack and grab the address of the CAN C1 handler
-//        uint16_t applicationISRAddress = __builtin_tblrdl(VIVT_ADDRESS_C1_INTERRUPT); // Where the C1 Interrupt Handler is in the Application
-//
-//        // Create a function pointer variable on the stack
-//        void (*app_c1_interrupt_func)() = (void*) applicationISRAddress;
-//        
-//        app_c1_interrupt_func();
+    if (CommonLoaderApp_interrupt_redirect) {
         
         if (CommonLoaderApp_jumptable.c1_hander)
             CommonLoaderApp_jumptable.c1_hander();
