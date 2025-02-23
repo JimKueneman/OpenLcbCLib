@@ -234,6 +234,14 @@ int main(void) {
         }
         
     }
+    
+    if (!TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum()) {
+        
+        printf("Starting application but checksum is invalid, rebooting.\n");
+        asm ("RESET");
+        
+    }
+    
 
     printf("Starting application............\n");
     
