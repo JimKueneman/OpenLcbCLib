@@ -284,7 +284,7 @@ extern "C" {
         uint16_olcb_t openlcb_datagram_ack_sent : 1;
         uint16_olcb_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint16_olcb_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-        uint16_olcb_t firmware_upgrade : 1; // Set if the node is in firmware upgrade mode
+        uint16_olcb_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;
 
     typedef struct {

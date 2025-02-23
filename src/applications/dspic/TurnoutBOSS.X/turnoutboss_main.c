@@ -221,7 +221,7 @@ int main(void) {
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
 
 
-    printf("\nApplication Booted: WITH A NEW BUILD\n");
+    printf("\nApplication Booted: WITH AN OLD BUILD\n");
 
     // We always boot and reallocate the alias
     openlcb_node_t* node = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
@@ -244,7 +244,7 @@ int main(void) {
 
     // Lets rock and roll
     CommonLoaderApp_interrupt_redirect = TRUE;
-    _GIE = 1;
+    _GIE = 1; // Enable interrupts
     
     while (!CommonLoaderApp_bootloader_state.do_start) {
       

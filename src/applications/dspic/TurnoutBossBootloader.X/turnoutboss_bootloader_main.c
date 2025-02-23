@@ -90,7 +90,7 @@ void _config_memory_freeze_bootloader_callback(openlcb_node_t* openlcb_node, ope
 
     if (openlcb_node->state.openlcb_msg_handled)
 
-        openlcb_node->state.firmware_upgrade = TRUE;
+        openlcb_node->state.firmware_upgrade_active = TRUE;
 
 }
 
@@ -98,7 +98,7 @@ void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, o
 
     if (openlcb_node->state.openlcb_msg_handled) {
 
-        openlcb_node->state.firmware_upgrade = FALSE;
+        openlcb_node->state.firmware_upgrade_active = FALSE;
 
         CommonLoaderApp_bootloader_state.do_start = TRUE;
 
@@ -163,7 +163,7 @@ void _run_bootloader(uint16_olcb_t node_alias) {
         openlcb_node->alias = CommonLoaderApp_node_alias;
         openlcb_node->state.permitted = TRUE;
         openlcb_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
-        openlcb_node->state.firmware_upgrade = TRUE;
+        openlcb_node->state.firmware_upgrade_active = TRUE;
 
         printf("pre-loaded the node, entering bootloader mode from the main application.\n");
 
@@ -199,8 +199,7 @@ void _initialize_state(void) {
         RCONbits.BOR = 0;
 
     }
-
-    CommonLoaderApp_interrupt_redirect = FALSE;
+    
     CommonLoaderApp_bootloader_state.bootloader_running = TRUE;
     CommonLoaderApp_bootloader_state.app_running = FALSE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
@@ -212,6 +211,9 @@ int main(void) {
     _initialize_state();
     CommonLoaderApp_node_id = _extract_node_id();
     _initialize();
+    
+    CommonLoaderApp_interrupt_redirect = FALSE;
+    _GIE = 1; // Enable Interrupts
     
     printf("Bootloader Starting\n");
 
