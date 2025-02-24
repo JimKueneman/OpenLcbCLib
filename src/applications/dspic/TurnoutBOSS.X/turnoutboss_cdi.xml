@@ -202,11 +202,34 @@
           </relation>
         </map>
       </int>
+      <int size="1">
+        <name> Signal Head LED Type</name>
+        <description>Define how the LEDs are connected</description>
+        <min>0</min>
+        <max>2</max>
+        <default>0</default>
+        <map>
+          <relation>
+            <property>0</property>
+            <value>Three outputs (individual LED outputs common anode)</value>
+          </relation>
+          <relation>
+            <property>1</property>
+            <value>Three outputs (individual LED outputs command cathode)</value>
+          </relation>
+          <relation>
+            <property>2</property>
+            <value>Two outputs (bi-directional LED with multiplexed yellow)</value>
+          </relation>
+        </map>
+      </int>
     </group>
     <group>
       <name>Track Detector Sensitivity</name>
       <description>Adjusts the gain of the track detectors for detection sensitivity</description>
-      <hints><visibility hideable="yes" hidden="yes"/></hints>
+      <hints>
+        <visibility hideable="yes" hidden="yes"/>
+      </hints>
       <int size="1">
         <name>Detector 1</name>
         <min>0</min>
@@ -236,17 +259,19 @@
       </int>
     </group>
     <group>
-        <name>Signal LED Brightness</name>
-        <description>Adjusts the current to the signal head LEDs to control brightness</description>
-        <hints><visibility hideable="yes" hidden="yes"/></hints>
+      <name>Signal LED Brightness</name>
+      <description>Adjusts the current to the signal head LEDs to control brightness</description>
+      <hints>
+        <visibility hideable="yes" hidden="yes"/>
+      </hints>
       <int size="1">
-          <name>Signal LED Brightness</name>
-          <min>0</min>
-          <max>63</max>
-          <default>31</default>
-          <hints>
-              <slider tickSpacing="8" immediate="yes" showValue="true"/>
-          </hints>
+        <name>Signal LED Brightness</name>
+        <min>0</min>
+        <max>63</max>
+        <default>31</default>
+        <hints>
+          <slider tickSpacing="8" immediate="yes" showValue="true"/>
+        </hints>
       </int>
     </group>
   </segment>
@@ -255,43 +280,46 @@
     <group>
       <name>Producers and Consumers</name>
       <description>Copy and paste these to other nodes to make connections</description>
-      <hints><visibility hideable="yes" hidden="yes"/><readOnly/></hints>
+      <hints>
+        <visibility hideable="yes" hidden="yes"/>
+        <readOnly/>
+      </hints>
       <eventid>
         <name>Main Left Occupied</name>
       </eventid>
       <eventid>
         <name>Main Left Unoccupied</name>
-      </eventid>        
+      </eventid>
       <eventid>
         <name>Turnout Left Occupied</name>
       </eventid>
       <eventid>
         <name>Turnout Left Unoccupied</name>
-      </eventid>        
+      </eventid>
       <eventid>
         <name>Main Center Occupied</name>
       </eventid>
       <eventid>
         <name>Main Center Unoccupied</name>
-      </eventid>        
+      </eventid>
       <eventid>
         <name>Siding Occupied</name>
       </eventid>
       <eventid>
         <name>Siding Unoccupied</name>
-      </eventid>        
+      </eventid>
       <eventid>
         <name>Turnout Right Occupied</name>
       </eventid>
       <eventid>
         <name>Turnout Right Unoccupied</name>
-      </eventid>        
+      </eventid>
       <eventid>
         <name>Turnout Main Right Occupied</name>
       </eventid>
       <eventid>
         <name>Turnout Main Right Unoccupied</name>
-      </eventid>        
+      </eventid>
       <eventid>
         <name>Turnout Command Normal (C)</name>
       </eventid>
@@ -410,24 +438,23 @@
         <name>Vital Logic Cleared Both (C)</name>
       </eventid>
       <eventid>
-          <name>Signal State A Stop (P)</name>
+        <name>Signal State A Stop (P)</name>
       </eventid>
       <eventid>
-          <name>Signal State A Nonstop (P)</name>
+        <name>Signal State A Nonstop (P)</name>
       </eventid>
       <eventid>
-          <name>Signal State B Stop (P)</name>
+        <name>Signal State B Stop (P)</name>
       </eventid>
       <eventid>
-          <name>Signal State B Nonstop (P)</name>
+        <name>Signal State B Nonstop (P)</name>
       </eventid>
       <eventid>
-          <name>Signal State CD Stop (P)</name>
+        <name>Signal State CD Stop (P)</name>
       </eventid>
       <eventid>
-          <name>Signal State CD Nonstop (P)</name>
+        <name>Signal State CD Nonstop (P)</name>
       </eventid>
     </group>
-
   </segment>
 </cdi>

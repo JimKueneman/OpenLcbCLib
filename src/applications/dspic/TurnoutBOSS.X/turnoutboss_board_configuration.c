@@ -38,6 +38,8 @@
 #include "turnoutboss_board_configuration.h"
 
 
+#include "stdio.h"  // printf
+
 #ifdef MPLAB
 #include "../../../openlcb/openlcb_utilities.h"
 #include "../../../openlcb/openlcb_types.h"
@@ -66,10 +68,17 @@
 #define BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS  146 // does the point signal use a single or dual signal head
 // some reserved space
 // Second segment starts at 170 with 4 bytes of signal electrical configuration
-#define DETECTOR_1_GAIN_ADDRESS                         174
-#define DETECTOR_2_GAIN_ADDRESS                         175
-#define DETECTOR_3_GAIN_ADDRESS                         176
-#define SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS              177
+#define SIGNAL_A_LED_CONFIGURATION                      170 // Is it a 3 or 2 light head
+#define SIGNAL_B_LED_CONFIGURATION                      171 // Is it a 3 or 2 light head
+#define SIGNAL_C_LED_CONFIGURATION                      172 // Is it a 3 or 2 light head
+#define SIGNAL_D_LED_CONFIGURATION                      173 // Is it a 3 or 2 light head
+#define LED_POLARITY_ADDRESS                            174 // Common Anode, Common Cathode, BiDirectional Yellow
+#define DETECTOR_1_GAIN_ADDRESS                         175
+#define DETECTOR_2_GAIN_ADDRESS                         176
+#define DETECTOR_3_GAIN_ADDRESS                         177
+#define SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS              178
+
+
 // some reserved space for other brightness gains, etc
 // The starting location for the event ID map is defined by START_OF_PRODUCER_CONSUMER_MAP in the .h file: 200
 // configuration space ends at 632, see .address_space_config_memory.highest_address in node_parameters.c
@@ -189,6 +198,12 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
             
             return;
             
+        case LED_POLARITY_ADDRESS: 
+           
+            _turnoutboss_board_configuration->led_polarity = *config_mem_buffer[0];
+        
+            return;
+            
     }
 
 }
@@ -293,6 +308,30 @@ uint8_olcb_t _extract_detector_gain_from_config_mem(openlcb_node_t *node, uint32
 
 }
 
+signal_led_polarity_enum_t _extract_led_polarity_from_config_mem(openlcb_node_t *node, uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
+
+    signal_led_polarity_enum_t result;
+
+    result = CommonAnode;
+    if (Application_read_configuration_memory(node, config_mem_address, 1, config_mem_buffer) == 1)
+        result = (signal_led_polarity_enum_t) *config_mem_buffer[0];
+   
+    return result;
+
+}
+
+signalhead_type_enum_t _extract_signal_type_from_config_mem(openlcb_node_t *node, uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
+
+    signalhead_type_enum_t result;
+
+    result = ThreeLEDOutputs;
+    if (Application_read_configuration_memory(node, config_mem_address, 1, config_mem_buffer) == 1)
+        result = (signalhead_type_enum_t) *config_mem_buffer[0];
+   
+    return result;
+
+}
+
 uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint16_olcb_t address) {
     
     configuration_memory_buffer_t buffer;
@@ -323,13 +362,17 @@ void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_config
     _turnoutboss_board_configuration->turnout_feedback_type = _extract_turnoutfeedback_type_from_config_mem(node, BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
     _turnoutboss_board_configuration->point_signalhead_type = _extract_point_signalhead_type_from_config_mem(node, BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
     _turnoutboss_board_configuration->pushbutton_type = _extract_pushbutton_type_from_config_mem(node, BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS, &config_mem_buffer);
-
+    _turnoutboss_board_configuration->signal_a_type = _extract_signal_type_from_config_mem(node, SIGNAL_A_LED_CONFIGURATION, &config_mem_buffer);
+    _turnoutboss_board_configuration->signal_b_type = _extract_signal_type_from_config_mem(node, SIGNAL_B_LED_CONFIGURATION, &config_mem_buffer);
+    _turnoutboss_board_configuration->signal_c_type = _extract_signal_type_from_config_mem(node, SIGNAL_C_LED_CONFIGURATION, &config_mem_buffer);
+    _turnoutboss_board_configuration->signal_d_type = _extract_signal_type_from_config_mem(node, SIGNAL_D_LED_CONFIGURATION, &config_mem_buffer);
+    _turnoutboss_board_configuration->led_polarity = _extract_led_polarity_from_config_mem(node, LED_POLARITY_ADDRESS, &config_mem_buffer); 
+    
     _turnoutboss_board_configuration->detector_gain_1 = _extract_detector_gain_from_config_mem(node, DETECTOR_1_GAIN_ADDRESS, &config_mem_buffer);
     _turnoutboss_board_configuration->detector_gain_2 = _extract_detector_gain_from_config_mem(node, DETECTOR_2_GAIN_ADDRESS, &config_mem_buffer);
     _turnoutboss_board_configuration->detector_gain_3 = _extract_detector_gain_from_config_mem(node, DETECTOR_3_GAIN_ADDRESS, &config_mem_buffer);
-
     _turnoutboss_board_configuration->signal_led_brightness_gain = _extract_detector_gain_from_config_mem(node, SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS, &config_mem_buffer);
-
+    
     _set_detector_gains();
 
 }

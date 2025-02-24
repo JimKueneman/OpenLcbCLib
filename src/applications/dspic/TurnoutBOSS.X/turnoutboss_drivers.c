@@ -107,8 +107,6 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
 
         }
         
-        printf("\n");
-
     }
 
     return count;

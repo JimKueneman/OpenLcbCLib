@@ -221,11 +221,11 @@ typedef struct {
 
 typedef struct {
     // BL only
-    uint8_olcb_t TL  : 1; // Turnout Left 
+    uint8_olcb_t TL : 1; // Turnout Left 
     uint8_olcb_t TLC : 1; // Turnout Left Command  (normal position = TRUE; diverging position = FALSE)
     uint8_olcb_t TLO : 2; // Turnout Left Observed (normal position = TRUE; diverging position = FALSE; In-Motion = IN_MOTION) 
     // BR only
-    uint8_olcb_t TR  : 1; // Turnout Right 
+    uint8_olcb_t TR : 1; // Turnout Right 
     uint8_olcb_t TRC : 1; // Turnout Right Command  (normal position = TRUE; diverging position = FALSE)
     uint8_olcb_t TRO : 2; // Turnout Right Observed (normal position = TRUE; diverging position = FALSE; In-Motion = IN_MOTION)
 
@@ -296,9 +296,8 @@ typedef struct {
     vital_logic_state_t ctc_control;
     remote_control_state_t remote_control;
     hardware_input_states_t hardware;
-            
-} next_signaling_state_t;
 
+} next_signaling_state_t;
 
 typedef struct {
     occupancy_state_t occupancy;
@@ -308,8 +307,8 @@ typedef struct {
     vital_logic_state_t ctc_control;
     next_signaling_state_t next; // collects information for calculating the next state to compare to the current state fields
     hardware_input_states_t hardware;
-    uint8_olcb_t pushbutton_normal_toggled: 1;
-    uint8_olcb_t pushbutton_diverging_toggled: 1;
+    uint8_olcb_t pushbutton_normal_toggled : 1;
+    uint8_olcb_t pushbutton_diverging_toggled : 1;
 
 } signaling_state_t;
 
@@ -358,11 +357,30 @@ typedef enum {
 
 } point_signalhead_type_enum_t;
 
+typedef enum {
+    ThreeLEDOutputs,
+    TwoLEDOutputsYellowBiDirectional
+
+} signalhead_type_enum_t;
+
+typedef enum {
+    CommonAnode,
+    CommonCathode,
+    BiDirectionalYellow
+
+} signal_led_polarity_enum_t;
+
 typedef struct {
     board_type_enum_t board_location;
     pushbutton_type_enum_t pushbutton_type;
     turnout_feedback_type_enum_t turnout_feedback_type;
     point_signalhead_type_enum_t point_signalhead_type;
+    signalhead_type_enum_t signal_a_type;
+    signalhead_type_enum_t signal_b_type;
+    signalhead_type_enum_t signal_c_type;
+    signalhead_type_enum_t signal_d_type;
+    
+    signal_led_polarity_enum_t led_polarity;
 
     node_id_t board_to_the_left;
     node_id_t board_to_the_right;

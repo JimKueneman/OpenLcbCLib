@@ -129,6 +129,12 @@ void MCP23S17Driver_initialize(void) {
 
 void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, uint8_olcb_t aspect_C, uint8_olcb_t aspect_D) { // 0b00000RGY
 
+    aspect_A = aspect_A & 0b00000111;
+    aspect_B = aspect_B & 0b00000111;
+    aspect_C = aspect_C & 0b00000111;
+    aspect_D = aspect_D & 0b00000111;
+    
+    
     // Had to change the order of the C signal bits to make the layout easier
     uint8_olcb_t temp_port_D = ((aspect_D >> 2) & 0b00000001) | ((aspect_D << 2) & 0b00000100) | (aspect_D & 0b00000010);
     

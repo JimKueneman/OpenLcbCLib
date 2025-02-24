@@ -157,27 +157,120 @@ node_id_t _extract_node_id(void) {
 
 }
 
-int main(void) {
+uint8_olcb_t signal_a, signal_b, signal_c, signal_d;
+uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d;
 
-#ifdef BOSS1
-    // RB7 and RB8 are test outputs
-    // we also have the LED variable for RB9 and the LED output
-    _TRISB7 = 0;
-    _RB7 = 0;
-    _TRISB8 = 0;
-    _RB8 = 0;
-#endif
+void _update_signal_lamps(void) {
 
-#ifdef BOSS2
-    LED_BLUE = 1;
-    LED_GREEN = 1;
-    LED_YELLOW = 1;
-#endif
+    // Eventually pull this into a timer that get called at around 100Hz so we can handle the bidirectional Yellow
 
-    uint8_olcb_t signal_a, signal_b, signal_c, signal_d = 0;
-    uint8_olcb_t last_signal_a, last_signal_b, last_signal_c, last_signal_d = 0;
+    switch (_signal_calculation_states.lamps.SaBL) {
+        case DARK:
+            signal_a = 0b00000000;
+            break;
+        case GREEN:
+            signal_a = 0b00000010;
+            break;
+        case YELLOW:
+            signal_a = 0b00000001;
+            break;
+        case RED:
+            signal_a = 0b00000100;
+            break;
+    }
 
-    _initialize_state();
+    switch (_signal_calculation_states.lamps.SbBL) {
+        case DARK:
+            signal_b = 0b00000000;
+            break;
+        case GREEN:
+            signal_b = 0b00000010;
+            break;
+        case YELLOW:
+            signal_b = 0b00000001;
+            break;
+        case RED:
+            signal_b = 0b00000100;
+            break;
+    }
+
+    switch (_signal_calculation_states.lamps.ScBL) {
+        case DARK:
+            signal_c = 0b00000000;
+            break;
+        case GREEN:
+            signal_c = 0b00000010;
+            break;
+        case YELLOW:
+            signal_c = 0b00000001;
+            break;
+        case RED:
+            signal_c = 0b00000100;
+            break;
+    }
+
+    switch (_signal_calculation_states.lamps.SdBL) {
+        case DARK:
+            signal_d = 0b00000000;
+            break;
+        case GREEN:
+            signal_d = 0b00000010;
+            break;
+        case YELLOW:
+            signal_d = 0b00000001;
+            break;
+        case RED:
+            signal_d = 0b00000100;
+            break;
+    }
+    
+    
+    if (_board_configuration.led_polarity == CommonAnode) {
+
+        signal_a = ~signal_a;
+        signal_b = ~signal_b;
+        signal_c = ~signal_c;
+        signal_d = ~signal_d;
+        
+
+    } else if ((_board_configuration.led_polarity == BiDirectionalYellow)) {
+
+        // TODO:
+
+    } 
+    
+    if ((last_signal_a != signal_a) || (last_signal_b != signal_b) || (last_signal_c != signal_c) || (last_signal_d != signal_d)) {
+
+        MCP23S17Driver_set_signals(signal_a, signal_b, signal_c, signal_d); // 0b00000RGY
+
+        last_signal_a = signal_a;
+        last_signal_b = signal_b;
+        last_signal_c = signal_c;
+        last_signal_d = signal_d;
+
+    }
+
+
+}
+
+void _build_interrupt_jump_table(void) {
+
+    // After the initialization where we cleared these variables set it up the bootloader jump table
+    CommonLoaderApp_jumptable.oscillatorfail_hander = &Traps_oscillator_fail_handler;
+    CommonLoaderApp_jumptable.addresserror_hander = &Traps_address_error_handler;
+    CommonLoaderApp_jumptable.stackerror_hander = &Traps_stack_error_handler;
+    CommonLoaderApp_jumptable.matherror_hander = &Traps_math_error_handler;
+    CommonLoaderApp_jumptable.dmacerror_hander = &Traps_dmac_error_handler;
+    CommonLoaderApp_jumptable.timer_2_hander = &TurnoutBossDrivers_t2_interrupt_handler;
+    CommonLoaderApp_jumptable.u1_rx_hander = &TurnoutBossDrivers_u1_rx_interrupt_handler;
+    CommonLoaderApp_jumptable.u1_tx_hander = &TurnoutBossDrivers_u1_tx_interrupt_handler;
+    CommonLoaderApp_jumptable.c1_hander = &Ecan1Helper_C1_interrupt_handler;
+
+}
+
+openlcb_node_t* _initialize_turnout_boss(void) {
+
+    openlcb_node_t* result = (void*) 0;
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
@@ -199,17 +292,7 @@ int main(void) {
             &TurnoutBossDrivers_resume_100ms_timer
             );
 
-    // After the initialization where we cleared these variables set it up the bootloader jump table
-    CommonLoaderApp_jumptable.oscillatorfail_hander = &Traps_oscillator_fail_handler;
-    CommonLoaderApp_jumptable.addresserror_hander = &Traps_address_error_handler;
-    CommonLoaderApp_jumptable.stackerror_hander = &Traps_stack_error_handler;
-    CommonLoaderApp_jumptable.matherror_hander = &Traps_math_error_handler;
-    CommonLoaderApp_jumptable.dmacerror_hander = &Traps_dmac_error_handler;
-    CommonLoaderApp_jumptable.timer_2_hander = &TurnoutBossDrivers_t2_interrupt_handler;
-    CommonLoaderApp_jumptable.u1_rx_hander = &TurnoutBossDrivers_u1_rx_interrupt_handler;
-    CommonLoaderApp_jumptable.u1_tx_hander = &TurnoutBossDrivers_u1_tx_interrupt_handler;
-    CommonLoaderApp_jumptable.c1_hander = &Ecan1Helper_C1_interrupt_handler;
-
+    _build_interrupt_jump_table();
 
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
     UartHandler_board_configuration = &_board_configuration;
@@ -218,20 +301,11 @@ int main(void) {
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
 
-
-#ifdef BOSS1
-    printf("\nApplication Booted: Boss 1.0\n");
-#endif
-#ifdef BOSS2 
-    printf("\nApplication Booted: Boss 2.0\n");
-#endif
-
-
     // We always boot and reallocate the alias
-    openlcb_node_t* node = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
+    result = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
 
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
-    TurnoutBossBoardConfiguration_initialize(node, &_board_configuration);
+    TurnoutBossBoardConfiguration_initialize(result, &_board_configuration);
 
     // Initialize Calculation data structures
     if (_board_configuration.board_location == BL) {
@@ -244,7 +318,46 @@ int main(void) {
     TurnoutBossEventEngine_initialize(&_event_engine);
 
     // Build the dynamic events and the callback to handle incoming events
-    TurnoutBossEventHandler_initialize(node, &_board_configuration, &_signal_calculation_states, &_event_engine);
+    TurnoutBossEventHandler_initialize(result, &_board_configuration, &_signal_calculation_states, &_event_engine);
+
+    return result;
+
+}
+
+void _print_version(void) {
+
+#ifdef BOSS1
+    printf("Application Booted: Boss 1.0.................\n");
+#endif
+#ifdef BOSS2 
+    printf("Application Booted: Boss 2.0.................\n");
+#endif
+
+
+}
+
+int main(void) {
+
+    openlcb_node_t* node;
+
+#ifdef BOSS1
+    // RB7 and RB8 are test outputs
+    // we also have the LED variable for RB9 and the LED output
+    _TRISB7 = 0;
+    _RB7 = 0;
+    _TRISB8 = 0;
+    _RB8 = 0;
+#endif
+
+#ifdef BOSS2
+    LED_BLUE = 1;
+    LED_GREEN = 1;
+    LED_YELLOW = 1;
+#endif
+
+    _initialize_state();
+    node = _initialize_turnout_boss();
+    _print_version();
 
     // Lets rock and roll
     CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
@@ -264,87 +377,17 @@ int main(void) {
 
                 TurnoutBossSignalCalculationsBoardLeft_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
+                TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TLC;
+
             } else {
 
                 TurnoutBossSignalCalculationsBoardRight_run(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
-            }
-
-            switch (_signal_calculation_states.lamps.SaBL) {
-                case DARK:
-                    signal_a = 0b00000000;
-                    break;
-                case GREEN:
-                    signal_a = 0b00000010;
-                    break;
-                case YELLOW:
-                    signal_a = 0b00000001;
-                    break;
-                case RED:
-                    signal_a = 0b00000100;
-                    break;
-            }
-
-            switch (_signal_calculation_states.lamps.SbBL) {
-                case DARK:
-                    signal_b = 0b00000000;
-                    break;
-                case GREEN:
-                    signal_b = 0b00000010;
-                    break;
-                case YELLOW:
-                    signal_b = 0b00000001;
-                    break;
-                case RED:
-                    signal_b = 0b00000100;
-                    break;
-            }
-
-            switch (_signal_calculation_states.lamps.ScBL) {
-                case DARK:
-                    signal_c = 0b00000000;
-                    break;
-                case GREEN:
-                    signal_c = 0b00000010;
-                    break;
-                case YELLOW:
-                    signal_c = 0b00000001;
-                    break;
-                case RED:
-                    signal_c = 0b00000100;
-                    break;
-            }
-
-            switch (_signal_calculation_states.lamps.SdBL) {
-                case DARK:
-                    signal_d = 0b00000000;
-                    break;
-                case GREEN:
-                    signal_d = 0b00000010;
-                    break;
-                case YELLOW:
-                    signal_d = 0b00000001;
-                    break;
-                case RED:
-                    signal_d = 0b00000100;
-                    break;
-            }
-
-            if ((last_signal_a != signal_a) || (last_signal_b != signal_b) || (last_signal_c != signal_c) || (last_signal_d != signal_d)) {
-
-                MCP23S17Driver_set_signals(signal_a, signal_b, signal_c, signal_d);
-
-                last_signal_a = signal_a;
-                last_signal_b = signal_b;
-                last_signal_c = signal_c;
-                last_signal_d = signal_d;
-
-            }
-
-            if (_board_configuration.board_location == BL)
-                TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TLC;
-            else
                 TURNOUT_DRIVER_PIN = _signal_calculation_states.turnout.TRC;
+
+            }
+
+            _update_signal_lamps();
 
         }
 
