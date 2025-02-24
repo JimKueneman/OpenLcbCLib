@@ -37,8 +37,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __ECAN1_HELPER__
-#define	__ECAN1_HELPER__
+#ifndef __TURNOUTBOSS_BOOTLOADER_ECAN1_HELPER__
+#define	__TURNOUTBOSS_BOOTLOADER_ECAN1_HELPER__
 
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
@@ -74,5 +74,5 @@ extern uint8_olcb_t TurnoutbossBootloader_ecan1helper_get_max_can_fifo_depth(voi
 }
 #endif /* __cplusplus */
 
-#endif	/* __ECAN1_HELPER__ */
+#endif	/* __TURNOUTBOSS_BOOTLOADER_ECAN1_HELPER__ */
 

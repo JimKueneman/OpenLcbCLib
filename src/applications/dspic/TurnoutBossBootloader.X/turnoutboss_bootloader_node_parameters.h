@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __NODE_DEFINITION__
-#define	__NODE_DEFINITION__
+#ifndef __TURNOUTBOSS_BOOTLOADER_NODE_DEFINITION__
+#define	__TURNOUTBOSS_BOOTLOADER_NODE_DEFINITION__
 
 #ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
@@ -61,5 +61,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* XC_HEADER_TEMPLATE_H */
+#endif	/* __TURNOUTBOSS_BOOTLOADER_NODE_DEFINITION__ */
 

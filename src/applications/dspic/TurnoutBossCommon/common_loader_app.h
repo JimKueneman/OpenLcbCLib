@@ -40,6 +40,16 @@
 
 #include "../../../openlcb/openlcb_types.h"
 
+#ifdef BOSS1
+#define EEPROM_PAGE_SIZE 256
+#define EEPROM_ADDRESS_SIZE 24
+#endif
+
+#ifdef BOSS2
+#define EEPROM_PAGE_SIZE 16
+#define EEPROM_ADDRESS_SIZE 16
+#endif
+
 #define NODE_ID_DEFAULT 0x050701010000
 #define EOF_ADDRESS 0xFFFFFFFF
 

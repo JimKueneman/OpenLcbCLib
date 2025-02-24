@@ -51,8 +51,8 @@
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #include "local_drivers/_MCP4014/MCP4014_driver.h"
-#include "turnoutboss_drivers.h"
 #include "turnoutboss_types.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 uint8_olcb_t signalA = 0x00; // All off
 uint8_olcb_t signalB = 0x00;

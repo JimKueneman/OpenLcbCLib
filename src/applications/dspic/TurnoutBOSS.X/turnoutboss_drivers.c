@@ -55,7 +55,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     CommonLoaderApp_initialize_sfrs();
     Ecan1Helper_initialization();
     MCP23S17Driver_initialize();
-    _25AA1024_Driver_initialize();
+    _25AA1024_Driver_initialize(EEPROM_ADDRESS_SIZE);
 
 }
 
@@ -73,16 +73,41 @@ void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callb
 
 uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
-    return _25AA1024_Driver_read(address, count, buffer);
+    return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE);
 
 }
 
 uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
-    _25AA1024_Driver_write_latch_enable();
-    _25AA1024_Driver_write(address, count, buffer);
+    uint16_olcb_t page_buffer_index;
+    uint32_olcb_t current_address = address;
+    uint16_olcb_t buffer_index = 0;
+    uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE];
+    uint16_olcb_t start_address;
 
-    while (_25AA1024_Driver_write_in_progress()) {
+    while (current_address < (address + count)) {
+        
+        page_buffer_index = 0;
+        start_address = current_address;
+
+        while (((current_address % EEPROM_PAGE_SIZE != 0) || (page_buffer_index == 0)) && (current_address < (address + count))) {
+            
+            page_buffer[page_buffer_index] = (*buffer)[buffer_index];
+           
+            buffer_index = buffer_index + 1;
+            page_buffer_index = page_buffer_index + 1;
+            current_address = current_address + 1;
+            
+        };
+
+        _25AA1024_Driver_write_latch_enable();
+        _25AA1024_Driver_write(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer, EEPROM_ADDRESS_SIZE);
+
+        while (_25AA1024_Driver_write_in_progress()) {
+
+        }
+        
+        printf("\n");
 
     }
 
@@ -105,15 +130,15 @@ void TurnoutBossDrivers_resume_100ms_timer() {
 void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
 
 
-   
+
 }
 
 void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
-    
+
     uint16_olcb_t value;
 
     if (U1STAbits.URXDA == 1) {
-        
+
         value = U1RXREG; // read it so it does not fill and overflow
 
         if (_uart_rx_callback_func)
@@ -122,7 +147,6 @@ void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
     }
 
 }
-
 
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
 
@@ -133,7 +157,7 @@ void TurnoutBossDrivers_t2_interrupt_handler(void) {
 }
 
 void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
-    
+
     IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag
 
     // Allows a bootloader to call the normal function from it's interrupt
@@ -142,7 +166,7 @@ void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 }
 
 void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
-    
+
     IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
 
     // Allows a bootloader to call a normal function from it's interrupt
@@ -151,7 +175,7 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 }
 
 void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
-    
+
     IFS0bits.T2IF = 0; // Clear T2IF
 
     // Allows a bootloader to call the normal function from it's interrupt

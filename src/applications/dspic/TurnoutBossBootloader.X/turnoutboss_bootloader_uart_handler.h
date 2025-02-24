@@ -35,8 +35,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __UART_HANDLER__
-#define	__UART_HANDLER__
+#ifndef __TURNOUTBOSS_BOOTLOADER_UART_HANDLER__
+#define	__TURNOUTBOSS_BOOTLOADER_UART_HANDLER__
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
@@ -57,4 +57,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __UART_HANDLER__ */
+#endif	/* __TURNOUTBOSS_BOOTLOADER_UART_HANDLER__ */

@@ -28,8 +28,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TRAPS__
-#define	__TRAPS__
+#ifndef __TURNOUTBOSS_BOOTLOADER_TRAPS__
+#define	__TURNOUTBOSS_BOOTLOADER_TRAPS__
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
@@ -48,5 +48,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __TRAPS__ */
+#endif	/* __TURNOUTBOSS_BOOTLOADER_TRAPS__ */
 

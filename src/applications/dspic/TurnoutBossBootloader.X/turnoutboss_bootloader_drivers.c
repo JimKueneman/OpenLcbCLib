@@ -197,7 +197,9 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
         
         if (CommonLoaderApp_jumptable.timer_2_hander) {
             
+#ifdef BOSS1
             LED = !LED;
+#endif
             CommonLoaderApp_jumptable.timer_2_hander();
             
         }

@@ -46,7 +46,7 @@
 #endif
 
 #include "turnoutboss_types.h"
-#include "turnoutboss_drivers.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 
 
 #define INPUT_FILTER_COUNT 10

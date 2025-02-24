@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_DRIVERS__
-#define	__TURNOUTBOSS_DRIVERS__
+#ifndef __TURNOUTBOSS_BOOTLOADER_DRIVERS__
+#define	__TURNOUTBOSS_BOOTLOADER_DRIVERS__
 
 #ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"

@@ -37,7 +37,7 @@
 #include "xc.h"
 #include <libpic30.h> // delay
 #include "../../../../../openlcb/openlcb_types.h"
-#include "../../turnoutboss_drivers.h"
+#include "../../../TurnoutBossCommon/common_loader_app.h"
 
 void _mcp23s17_flush_buffers(void) {
 

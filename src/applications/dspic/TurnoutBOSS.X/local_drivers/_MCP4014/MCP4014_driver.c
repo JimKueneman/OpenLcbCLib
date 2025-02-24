@@ -42,6 +42,7 @@
 #include "../../../../../openlcb/openlcb_types.h"
 #include "../../turnoutboss_drivers.h"
 #include "../_MCP23S17/MCP23S17_driver.h"
+#include "../../../TurnoutBossCommon/common_loader_app.h"
 
 void MCP4014Driver_set_gain(uint8_olcb_t gain_channel1, uint8_olcb_t gain_channel2, uint8_olcb_t gain_channel3, uint8_olcb_t gain_led_brightness) {
 

@@ -198,7 +198,7 @@ int main(void) {
             &TurnoutBossDrivers_pause_100ms_timer,
             &TurnoutBossDrivers_resume_100ms_timer
             );
-    
+
     // After the initialization where we cleared these variables set it up the bootloader jump table
     CommonLoaderApp_jumptable.oscillatorfail_hander = &Traps_oscillator_fail_handler;
     CommonLoaderApp_jumptable.addresserror_hander = &Traps_address_error_handler;
@@ -219,11 +219,17 @@ int main(void) {
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
 
 
-    printf("\nApplication Booted: WITH AN OLD BUILD\n");
+#ifdef BOSS1
+    printf("\nApplication Booted: Boss 1.0\n");
+#endif
+#ifdef BOSS2 
+    printf("\nApplication Booted: Boss 2.0\n");
+#endif
+
 
     // We always boot and reallocate the alias
     openlcb_node_t* node = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
- 
+
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBossBoardConfiguration_initialize(node, &_board_configuration);
 
@@ -243,10 +249,12 @@ int main(void) {
     // Lets rock and roll
     CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
     _GIE = 1; // Enable interrupts
-    
+
     while (!CommonLoaderApp_bootloader_state.do_start) {
-      
+
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
+
+        TurnoutBossEventEngine_run(node, &_event_engine);
 
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
 
@@ -340,24 +348,22 @@ int main(void) {
 
         }
 
-        TurnoutBossEventEngine_run(node, &_event_engine);
-
     }
 
-    
+
     printf("Starting Bootloader.........\n");
-    
+
     _GIE = 0; // Disable Interrupts
-    
+
     CommonLoaderApp_node_alias = node->alias;
     CommonLoaderApp_bootloader_state.started_from_bootloader = FALSE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
     CommonLoaderApp_bootloader_state.started_from_app = TRUE;
     CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
-    
+
     // Create a pointer to a function at the app entry point
     void (*startBootloader)() = (void*) BOOTLOADER_START_ADDRESS;
-    
+
     startBootloader();
 
 }

@@ -138,7 +138,7 @@ void CommonLoaderApp_initialize_sfrs(void) {
     RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
 
     _MCP23S17_CS_TRIS = 0; // Output
-    _MCP23S17_CS = 0;
+    _MCP23S17_CS = 1;
 
     _MCP23S17_RESET_TRIS = 0; // Output
     _MCP23S17_RESET = 0;
@@ -146,7 +146,7 @@ void CommonLoaderApp_initialize_sfrs(void) {
     _MCP23S17_RESET = 1;
 
     _25AAxxx_CS_TRIS = 0; // Output
-    _25AAxxx_CS = 0;
+    _25AAxxx_CS = 1;
 
     _25AAxxx_HOLD_TRIS = 0; // Output
     _25AAxxx_HOLD = 1;
@@ -157,8 +157,7 @@ void CommonLoaderApp_initialize_sfrs(void) {
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
-
-                        \
+                  
     OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
