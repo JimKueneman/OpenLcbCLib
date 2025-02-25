@@ -300,6 +300,15 @@ typedef struct {
 } next_signaling_state_t;
 
 typedef struct {
+    
+    uint8_olcb_t signal_a; 
+    uint8_olcb_t signal_b;
+    uint8_olcb_t signal_c; 
+    uint8_olcb_t signal_d;
+    
+} last_led_state_t;
+
+typedef struct {
     occupancy_state_t occupancy;
     turnout_state_t turnout;
     lamp_state_t lamps;
@@ -309,6 +318,7 @@ typedef struct {
     hardware_input_states_t hardware;
     uint8_olcb_t pushbutton_normal_toggled : 1;
     uint8_olcb_t pushbutton_diverging_toggled : 1;
+    last_led_state_t leds;
 
 } signaling_state_t;
 

@@ -123,6 +123,11 @@ void TurnoutBossBootloaderDrivers_t2_interrupt_handler(void) {
 
 }
 
+void TurnoutBossBootloaderDrivers_t1_interrupt_handler(void) {
+
+
+}
+
 void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 
     IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag  
@@ -208,6 +213,27 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
     } else {
 
         TurnoutBossBootloaderDrivers_t2_interrupt_handler();
+
+    }
+
+}
+
+void __attribute__((interrupt(no_auto_psv))) _T1Interrupt(void) {
+
+    IFS0bits.T1IF = 0; // Clear T2IF
+   
+    if (CommonLoaderApp_bootloader_state.interrupt_redirect) {
+   
+        if (CommonLoaderApp_jumptable.timer_1_hander) {
+            
+            CommonLoaderApp_jumptable.timer_1_hander();
+            
+        }
+            
+
+    } else {
+
+        TurnoutBossBootloaderDrivers_t1_interrupt_handler();
 
     }
 

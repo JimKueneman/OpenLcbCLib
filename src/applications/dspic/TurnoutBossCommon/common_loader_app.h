@@ -211,6 +211,7 @@ typedef struct {
     parameterless_callback_t u1_tx_hander;
     parameterless_callback_t u1_rx_hander;
     parameterless_callback_t c1_hander;
+    parameterless_callback_t timer_1_hander;
     
 } vivt_jumptable_t;
 

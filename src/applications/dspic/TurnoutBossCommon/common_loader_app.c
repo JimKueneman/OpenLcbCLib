@@ -256,6 +256,16 @@ void CommonLoaderApp_initialize_sfrs(void) {
     IEC0bits.T2IE = 1; // Enable the Interrupt
 
     T2CONbits.TON = 1; // Turn on 100ms Timer
+    
+    T1CONbits.TCS = 0; // internal clock
+    T1CONbits.TCKPS0 = 1; // 256 Prescaler
+    T1CONbits.TCKPS1 = 1;
+    PR1 = 1000; // Clock ticks every (1/80MHz * 2 * 256 * 1562 = 10.00091ms interrupts
+
+    IFS0bits.T1IF = 0; // Clear T1IF
+    IEC0bits.T1IE = 1; // Enable the Interrupt
+
+    T1CONbits.TON = 1; // Turn on Signal Calculation Timer
 
 }
 

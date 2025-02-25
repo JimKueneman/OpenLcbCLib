@@ -47,6 +47,7 @@
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
+parameterless_callback_t _signal_update_timer_sink_func = (void*) 0;
 
 void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 
@@ -57,6 +58,12 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     MCP23S17Driver_initialize();
     _25AA1024_Driver_initialize(EEPROM_ADDRESS_SIZE);
 
+}
+
+void TurnoutBossDrivers_set_signal_update_timer_sink(parameterless_callback_t signal_update_timer_sink_func) {
+    
+   _signal_update_timer_sink_func = signal_update_timer_sink_func;
+   
 }
 
 void TurnoutBossDrivers_reboot(void) {
@@ -72,8 +79,13 @@ void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callb
 }
 
 uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+    
+    // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
+    TurnoutBossDrivers_pause_signal_calculation_timer();
 
     return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE);
+    
+    TurnoutBossDrivers_resume_signal_calculation_timer();
 
 }
 
@@ -84,6 +96,9 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
     uint16_olcb_t buffer_index = 0;
     uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE];
     uint16_olcb_t start_address;
+    
+    // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
+    TurnoutBossDrivers_pause_signal_calculation_timer();
 
     while (current_address < (address + count)) {
         
@@ -108,21 +123,35 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
         }
         
     }
+    
+    TurnoutBossDrivers_resume_signal_calculation_timer();
 
     return count;
 
 }
 
-void TurnoutBossDrivers_pause_100ms_timer() {
+void TurnoutBossDrivers_pause_100ms_timer(void) {
 
     T2CONbits.TON = 0; // Turn off 100ms Timer
 
 }
 
-void TurnoutBossDrivers_resume_100ms_timer() {
+void TurnoutBossDrivers_resume_100ms_timer(void) {
 
-    T2CONbits.TON = 1; // Turn off 100ms Timer
+    T2CONbits.TON = 1; // Turn 0n 100ms Timer
 
+}
+
+void TurnoutBossDrivers_pause_signal_calculation_timer(void) {
+    
+  T1CONbits.TON = 0; // Turn off 
+  
+}
+    
+void TurnoutBossDrivers_resume_signal_calculation_timer(void) {
+    
+    T1CONbits.TON = 1; // Turn on 
+    
 }
 
 void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
@@ -143,6 +172,13 @@ void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
             _uart_rx_callback_func(value);
 
     }
+
+}
+
+void TurnoutBossDrivers_t1_interrupt_handler(void) {
+    
+    if (_signal_update_timer_sink_func)
+        _signal_update_timer_sink_func();
 
 }
 
@@ -179,4 +215,13 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
     // Allows a bootloader to call the normal function from it's interrupt
     TurnoutBossDrivers_t2_interrupt_handler();
 
+}
+
+void __attribute__((interrupt(no_auto_psv))) _T1Interrupt(void) {
+
+    IFS0bits.T1IF = 0; // Clear T1IF
+
+    // Allows a bootloader to call the normal function from it's interrupt
+    TurnoutBossDrivers_t1_interrupt_handler();
+    
 }

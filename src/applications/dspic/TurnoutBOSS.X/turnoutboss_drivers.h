@@ -53,29 +53,36 @@ extern "C" {
 #endif /* __cplusplus */
 
     // OpenLcbCLib defined callback functions that much be defined
-    
+
     extern void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink);
 
     extern void TurnoutBossDrivers_reboot(void);
-    
+
     extern uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
-    
+
     extern uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
-    
-    extern void TurnoutBossDrivers_pause_100ms_timer();
-    
-    extern void TurnoutBossDrivers_resume_100ms_timer();
-    
+
+    extern void TurnoutBossDrivers_pause_100ms_timer(void);
+
+    extern void TurnoutBossDrivers_resume_100ms_timer(void);
+
     // Custom Driver functions
-    
+
     extern void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback);
-    
+
     extern void TurnoutBossDrivers_u1_rx_interrupt_handler(void);
-    
+
     extern void TurnoutBossDrivers_u1_tx_interrupt_handler(void);
-    
+
     extern void TurnoutBossDrivers_t2_interrupt_handler(void);
-   
+
+    extern void TurnoutBossDrivers_t1_interrupt_handler(void);
+
+    extern void TurnoutBossDrivers_pause_signal_calculation_timer(void);
+
+    extern void TurnoutBossDrivers_resume_signal_calculation_timer(void);
+
+    extern void TurnoutBossDrivers_set_signal_update_timer_sink(parameterless_callback_t signal_update_timer_sink_func);
 
 #endif	/* __TURNOUTBOSS_DRIVERS__ */
 
