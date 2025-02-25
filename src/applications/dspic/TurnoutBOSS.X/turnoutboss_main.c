@@ -309,30 +309,44 @@ void _validate_config_mem(void) {
 
     if (_25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS) == 0xFF) {
        
-        for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+        for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) 
+            buffer[i] = 0;
 
-            buffer[i] = 0x000;
-
-        }
 
         for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) {
             
             _25AA1024_Driver_write_latch_enable();
-
             _25AA1024_Driver_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-
-            while (_25AA1024_Driver_write_in_progress()) {
-                
-                // 25AA08 seems to be sensitive to how fast you check the register... it will lock up
-                
-                 __delay32(1000);
-
+            while (_25AA1024_Driver_write_in_progress()) {                      
+                 __delay32(1000);  // 25AA08 seems to be sensitive to how fast you check the register... it will lock up  
             }
 
         }
         
-        printf("Address 0x000 in EEPROM: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
-
+        
+        buffer[0] = 31;
+        
+        _25AA1024_Driver_write_latch_enable();
+         _25AA1024_Driver_write(DETECTOR_1_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+        while (_25AA1024_Driver_write_in_progress()) {
+                 __delay32(1000);
+            }
+        _25AA1024_Driver_write_latch_enable();
+         _25AA1024_Driver_write(DETECTOR_2_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+        while (_25AA1024_Driver_write_in_progress()) {
+                 __delay32(1000);
+            }
+        _25AA1024_Driver_write_latch_enable();
+         _25AA1024_Driver_write(DETECTOR_3_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+        while (_25AA1024_Driver_write_in_progress()) {
+                 __delay32(1000);
+            }
+        _25AA1024_Driver_write_latch_enable();
+         _25AA1024_Driver_write(SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+        while (_25AA1024_Driver_write_in_progress()) {
+                 __delay32(1000);
+            }
+ 
     }
 
 }

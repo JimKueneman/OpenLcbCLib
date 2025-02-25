@@ -57,28 +57,6 @@
 
 #include "turnoutboss_types.h"
 
-// Identification locations (SNIP, ACDI) fill configuration space 0 - 126
-// These have to align with the CDI XML file
-// First segment
-#define BOARD_LOCATION_CONFIG_MEM_ADDRESS               127 // Single Byte, 0 = LB; 1 = RB
-#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS          128 // 8 Bytes for an Event ID
-#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS         136 // 8 Bytes for an Event ID
-#define BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS        144 // uses 2 pushbutton for normal/diverging or using one to toggle, 0 = two buttons; 1 = single button toggle
-#define BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS  145 // uses both turnout feedbacks or just a single one, 0 = not used; 1 = single feedback sensors; 2 = two feedback sensor
-#define BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS  146 // does the point signal use a single or dual signal head
-// some reserved space
-// Second segment starts at 170 with 4 bytes of signal electrical configuration
-#define SIGNAL_A_LED_CONFIGURATION                      170 // Is it a 3 or 2 light head
-#define SIGNAL_B_LED_CONFIGURATION                      171 // Is it a 3 or 2 light head
-#define SIGNAL_C_LED_CONFIGURATION                      172 // Is it a 3 or 2 light head
-#define SIGNAL_D_LED_CONFIGURATION                      173 // Is it a 3 or 2 light head
-#define LED_POLARITY_ADDRESS                            174 // Common Anode, Common Cathode, BiDirectional Yellow
-#define DETECTOR_1_GAIN_ADDRESS                         175
-#define DETECTOR_2_GAIN_ADDRESS                         176
-#define DETECTOR_3_GAIN_ADDRESS                         177
-#define SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS              178
-
-
 // some reserved space for other brightness gains, etc
 // The starting location for the event ID map is defined by START_OF_PRODUCER_CONSUMER_MAP in the .h file: 200
 // configuration space ends at 632, see .address_space_config_memory.highest_address in node_parameters.c

@@ -475,32 +475,21 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("Address 0x000 in EEPROM before: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
 
-
-
             for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) {
-
                 buffer[i] = 0xFF;
-
             }
 
             for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) {
 
                 _25AA1024_Driver_write_latch_enable();
-
                 _25AA1024_Driver_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-
                 while (_25AA1024_Driver_write_in_progress()) {
-
-                    // 25AA08 seems to be sensitive to how fast you check the register... it will lock up
-
-                    __delay32(1000);
-
+                    __delay32(1000); // 25AA08 seems to be sensitive to how fast you check the register... it will lock up
                 }
-   
+                
             }
 
-            printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
-            
+            printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));    
             printf("Erased:\n");
 
             break;

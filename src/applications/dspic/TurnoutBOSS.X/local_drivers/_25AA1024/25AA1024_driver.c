@@ -170,6 +170,7 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t addr
 
     if (address_size_in_bits > 8) {
         SPI_BUFFER = (address >> 8);
+        _25aa1024_wait_for_reply();
     }
 
     SPI_BUFFER = address & 0xFF;
