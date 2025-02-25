@@ -546,7 +546,7 @@ void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuratio
         _board_right_register_core_signaling_events(node, _event_handler_board_configuration->board_to_the_left, _event_handler_board_configuration->board_to_the_right, event_engine);
 
     }
-
+    
     _board_register_general_events(node);
 
     ApplicationCallbacks_set_event_pc_report(&_event_pc_report_callback);

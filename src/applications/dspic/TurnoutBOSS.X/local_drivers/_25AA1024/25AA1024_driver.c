@@ -38,12 +38,12 @@
 #include "../../../../../drivers/driver_configuration_memory.h"
 #include "../../../TurnoutBossCommon/common_loader_app.h"
 
-void _25AA1024_Driver_initialize(uint8_olcb_t address_size) {
+void _25AA1024_Driver_initialize(uint8_olcb_t address_size_in_bits) {
 
     configuration_memory_buffer_t buffer;
 
     // Needs to be clocked a few times to get initialized
-    _25AA1024_Driver_read(0, 64, &buffer, address_size);
+    _25AA1024_Driver_read(0, 64, &buffer, address_size_in_bits);
 
 }
 
@@ -153,7 +153,7 @@ void _25AA1024_Driver_write_latch_disable() {
 
 }
 
-uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t address_size) {
+uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t address_size_in_bits) {
 
     _25aa1024_flush_buffers();
 
@@ -163,12 +163,12 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t addr
     SPI_BUFFER = 0b00000011;
     _25aa1024_wait_for_reply();
 
-    if (address_size > 16) {
+    if (address_size_in_bits > 16) {
         SPI_BUFFER = (address >> 16) & 0xFF;
         _25aa1024_wait_for_reply();
     }
 
-    if (address_size > 8) {
+    if (address_size_in_bits > 8) {
         SPI_BUFFER = (address >> 8);
     }
 
@@ -186,7 +186,7 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t addr
 
 }
 
-uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size) {
+uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size_in_bits) {
 
     uint8_olcb_t temp;
 
@@ -198,12 +198,12 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
     SPI_BUFFER = 0b00000011;
     _25aa1024_wait_for_reply();
 
-    if (address_size > 16) {
+    if (address_size_in_bits > 16) {
         SPI_BUFFER = (address >> 16) & 0xFF;
         _25aa1024_wait_for_reply();
     }
 
-    if (address_size > 8) {
+    if (address_size_in_bits > 8) {
         SPI_BUFFER = (address >> 8) & 0xFF;
         _25aa1024_wait_for_reply();
 
@@ -228,7 +228,7 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
 }
 
-void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte, uint8_olcb_t address_size) {
+void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte, uint8_olcb_t address_size_in_bits) {
 
     uint8_olcb_t temp;
 
@@ -240,12 +240,12 @@ void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte, uint8
     SPI_BUFFER = 0b00000010;
     _25aa1024_wait_for_reply();
 
-    if (address_size > 16) {
+    if (address_size_in_bits > 16) {
         SPI_BUFFER = (address >> 16) & 0xFF;
         _25aa1024_wait_for_reply();
     }
 
-    if (address_size > 8) {
+    if (address_size_in_bits > 8) {
         SPI_BUFFER = (address >> 8) & 0xFF;
         _25aa1024_wait_for_reply();
     }
@@ -279,7 +279,7 @@ void _25AA1024_Driver_erase_chip() {
 
 }
 
-uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size) {
+uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size_in_bits) {
 
     uint8_olcb_t temp;
 
@@ -292,12 +292,12 @@ uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, 
     _25aa1024_wait_for_reply();
 
 
-    if (address_size > 16) {
+    if (address_size_in_bits > 16) {
         SPI_BUFFER = (address >> 16) & 0xFF;
         _25aa1024_wait_for_reply();
     }
 
-    if (address_size > 8) {
+    if (address_size_in_bits > 8) {
         SPI_BUFFER = (address >> 8) & 0xFF;
         _25aa1024_wait_for_reply();
     }

@@ -56,7 +56,7 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     CommonLoaderApp_initialize_sfrs();
     Ecan1Helper_initialization();
     MCP23S17Driver_initialize();
-    _25AA1024_Driver_initialize(EEPROM_ADDRESS_SIZE);
+    _25AA1024_Driver_initialize(EEPROM_ADDRESS_SIZE_IN_BITS);
 
 }
 
@@ -83,7 +83,7 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_o
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
     TurnoutBossDrivers_pause_signal_calculation_timer();
 
-    return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE);
+    return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
     
     TurnoutBossDrivers_resume_signal_calculation_timer();
 
@@ -94,7 +94,7 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
     uint16_olcb_t page_buffer_index;
     uint32_olcb_t current_address = address;
     uint16_olcb_t buffer_index = 0;
-    uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE];
+    uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE_IN_BYTES];
     uint16_olcb_t start_address;
     
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
@@ -105,7 +105,7 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
         page_buffer_index = 0;
         start_address = current_address;
 
-        while (((current_address % EEPROM_PAGE_SIZE != 0) || (page_buffer_index == 0)) && (current_address < (address + count))) {
+        while (((current_address % EEPROM_PAGE_SIZE_IN_BYTES != 0) || (page_buffer_index == 0)) && (current_address < (address + count))) {
             
             page_buffer[page_buffer_index] = (*buffer)[buffer_index];
            
@@ -116,7 +116,7 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
         };
 
         _25AA1024_Driver_write_latch_enable();
-        _25AA1024_Driver_write(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer, EEPROM_ADDRESS_SIZE);
+        _25AA1024_Driver_write(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
 
         while (_25AA1024_Driver_write_in_progress()) {
 
@@ -176,13 +176,15 @@ void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
 }
 
 void TurnoutBossDrivers_t1_interrupt_handler(void) {
-    
+     
     if (_signal_update_timer_sink_func)
         _signal_update_timer_sink_func();
 
 }
 
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
+    
+    LED_GREEN = !LED_GREEN;
 
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)

@@ -174,27 +174,27 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
         case 's':
 
             printf("Setting the Signals\n");
-            
+
             if (signalA == 0b111) {
                 signalA = 0b000;
                 signalB = 0b000;
                 signalC = 0b000;
                 signalD = 0b000;
-                
+
             } else {
-                
+
                 signalA = signalA + 1;
                 signalB = signalB + 1;
                 signalC = signalC + 1;
                 signalD = signalD + 1;
             }
-            
+
             printf("A = %d, B = %d, C = %d, D = %d\n", signalA, signalB, signalC, signalD);
 
-           
+
             MCP23S17Driver_set_signals(signalA, signalB, signalC, signalD);
-            
-       //     MCP23S17Driver_set_signals(1, 1, 1, 1);
+
+            //     MCP23S17Driver_set_signals(1, 1, 1, 1);
 
             return;
 
@@ -464,6 +464,46 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             break;
 
+        case 'E':
+        case 'e':
+
+            // The 25AA08 does not have an erase instruction
+
+            printf("Erasing EEPROM\n");
+
+            uint8_olcb_t buffer[EEPROM_PAGE_SIZE_IN_BYTES];
+
+            printf("Address 0x000 in EEPROM before: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
+
+
+
+            for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+
+                buffer[i] = 0xFF;
+
+            }
+
+            for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+
+                _25AA1024_Driver_write_latch_enable();
+
+                _25AA1024_Driver_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+
+                while (_25AA1024_Driver_write_in_progress()) {
+
+                    // 25AA08 seems to be sensitive to how fast you check the register... it will lock up
+
+                    __delay32(1000);
+
+                }
+   
+            }
+
+            printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
+            
+            printf("Erased:\n");
+
+            break;
     }
 
     return;

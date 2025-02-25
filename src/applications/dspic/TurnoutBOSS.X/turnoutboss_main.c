@@ -79,6 +79,7 @@
 #include "turnoutboss_event_engine.h"
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
+#include "local_drivers/_25AA1024/25AA1024_driver.h"
 
 
 // This creates an array of pointers to the handlers for the different interrupts that are at a known
@@ -117,13 +118,13 @@ void _config_memory_freeze_firmware_update_callback(openlcb_node_t* openlcb_node
 
 }
 
-
-// The only time POR and/or BOR is set is with a true start from 0V so it is guaranteed to be the first boot.  
-
 void _initialize_bootloader_state(void) {
 
+    // The only time POR and/or BOR is set is with a true start from 0V so it is guaranteed to be the first boot.
+    // if we jumped here from the bootloader it will have cleared these bits
     if (RCONbits.POR || RCONbits.BOR) {
 
+        // the code is being used stand alone without a bootloader so initialize the states
         memset(&CommonLoaderApp_bootloader_state, 0x0000, sizeof (CommonLoaderApp_bootloader_state));
 
         // Clear it so the app knows the CommonLoaderApp_bootloader_state is valid
@@ -152,6 +153,8 @@ node_id_t _extract_node_id(void) {
 
     } else {
 
+        // TODO: Need to add the code to allow a stand alone version read the node id from flash
+
         return NODE_ID_DEFAULT;
 
     }
@@ -159,19 +162,19 @@ node_id_t _extract_node_id(void) {
 }
 
 uint8_olcb_t _calculate_yellow_led(uint8_olcb_t signal, uint8_olcb_t bi_directional) {
-    
+
     uint8_olcb_t result;
 
     if (bi_directional) {
 
         if (signal != 0b00000010) { // if the green is not on turn it on
-            
+
             result = 0b00000010; // turn on the green  
-            
+
         } else {
-            
+
             result = 0b00000100; // turn on the red      
-            
+
         }
 
     } else {
@@ -179,15 +182,14 @@ uint8_olcb_t _calculate_yellow_led(uint8_olcb_t signal, uint8_olcb_t bi_directio
         result = 0b00000001; // Just turn-on the yellow led   
 
     }
-    
+
     return result;
 
 }
 
 void _update_signal_lamps(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
 
-    // Eventually pull this into a timer that get called at around 100Hz so we can handle the bidirectional Yellow
-
+    // Called from the T1 time incase yellow is a bi-directional LED and we need to toggle it to make yellow out of green/red
 
     uint8_olcb_t signal_a, signal_b, signal_c, signal_d;
 
@@ -199,7 +201,7 @@ void _update_signal_lamps(signaling_state_t* signal_calculation_states, board_co
             signal_a = 0b00000010;
             break;
         case YELLOW:
-            signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow)); 
+            signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
             break;
         case RED:
             signal_a = 0b00000100;
@@ -259,9 +261,9 @@ void _update_signal_lamps(signaling_state_t* signal_calculation_states, board_co
         signal_c = ~signal_c;
         signal_d = ~signal_d;
 
-    } 
+    }
 
-   if ((signal_calculation_states->leds.signal_a != signal_a) || (signal_calculation_states->leds.signal_b != signal_b) || (signal_calculation_states->leds.signal_c != signal_c) || (signal_calculation_states->leds.signal_d != signal_d)) {
+    if ((signal_calculation_states->leds.signal_a != signal_a) || (signal_calculation_states->leds.signal_b != signal_b) || (signal_calculation_states->leds.signal_c != signal_c) || (signal_calculation_states->leds.signal_d != signal_d)) {
 
         MCP23S17Driver_set_signals(signal_a, signal_b, signal_c, signal_d); // 0b00000RGY
 
@@ -271,7 +273,6 @@ void _update_signal_lamps(signaling_state_t* signal_calculation_states, board_co
         signal_calculation_states->leds.signal_d = signal_d;
 
     }
-
 
 }
 
@@ -295,8 +296,44 @@ void _signal_update_timer_1_callback(void) {
 
     // Timer 1 will be paused when the states are being recalculated (below) and when any configuration memory access occurs (turnoutboss_drivers.c)
     // so the SPI bus will not have a conflict
-    
+
     _update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
+
+}
+
+void _validate_config_mem(void) {
+
+    uint8_olcb_t buffer[EEPROM_PAGE_SIZE_IN_BYTES];
+
+    printf("Address 0x000 in EEPROM: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
+
+    if (_25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS) == 0xFF) {
+       
+        for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+
+            buffer[i] = 0x000;
+
+        }
+
+        for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+            
+            _25AA1024_Driver_write_latch_enable();
+
+            _25AA1024_Driver_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+
+            while (_25AA1024_Driver_write_in_progress()) {
+                
+                // 25AA08 seems to be sensitive to how fast you check the register... it will lock up
+                
+                 __delay32(1000);
+
+            }
+
+        }
+        
+        printf("Address 0x000 in EEPROM: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
+
+    }
 
 }
 
@@ -338,6 +375,10 @@ openlcb_node_t* _initialize_turnout_boss(void) {
     // We always boot and reallocate the alias
     result = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
 
+
+    // Can do this now that the SPI has been setup and need to do it before we try to load the board_configuration.
+    _validate_config_mem();
+
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBossBoardConfiguration_initialize(result, &_board_configuration);
 
@@ -348,7 +389,7 @@ openlcb_node_t* _initialize_turnout_boss(void) {
         TurnoutBossSignalCalculationsBoardRight_initialize(&_signal_calculation_states);
     }
 
-    // Setup the event engine so when states change any outgoing events can be flags to send
+    // Setup the event engine so when states change any outgoing events can be flagged to send
     TurnoutBossEventEngine_initialize(&_event_engine);
 
     // Build the dynamic events and the callback to handle incoming events
@@ -367,10 +408,9 @@ void _print_turnoutboss_version(void) {
     printf("Application Booted: Boss 2.0.................\n");
 #endif
 
-
 }
 
-void _recalculate(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
+void _recalculate_states(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
 
     if (board_configuration->board_location == BL) {
 
@@ -402,16 +442,27 @@ int main(void) {
 #endif
 
 #ifdef BOSS2
+
+    ANSELA = 0x00; // Convert all I/O pins to digital
+    ANSELB = 0x00;
+    ANSELC = 0x00;
+
+
+    LED_BLUE_TRIS = 0;
+    LED_GREEN_TRIS = 0;
+    LED_YELLOW_TRIS = 0;
+
     LED_BLUE = 1;
     LED_GREEN = 1;
     LED_YELLOW = 1;
 #endif
 
+
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
 
-    // Lets rock and roll
+    // Point the interrupt table to the application and re-enable the interrupts
     CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
     _GIE = 1; // Enable interrupts
 
@@ -428,8 +479,8 @@ int main(void) {
             // Pause the timer so we don't re-calculate the state of the signals and stomp on the signals being set in the Signal Update Timer
             TurnoutBossDrivers_pause_signal_calculation_timer();
 
-            _recalculate(&_signal_calculation_states, &_board_configuration, &_event_engine);
-        
+            _recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
+
             TurnoutBossDrivers_resume_signal_calculation_timer();
 
         }
