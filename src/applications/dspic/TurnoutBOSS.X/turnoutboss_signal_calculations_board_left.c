@@ -805,4 +805,10 @@ void _send_change_events_ctc_control_left(signaling_state_t *states, board_confi
     _send_change_events_lamp_left(states, board_configuration, event_engine);
     _send_change_events_stop_left(states, board_configuration, event_engine);
     _send_change_events_ctc_control_left(states, board_configuration, event_engine);
+    
+#ifdef BOSS2
+    states->hardware.teach_pin = states->next.hardware.teach_pin;
+    states->hardware.learn_pin = states->next.hardware.learn_pin;
+#endif
+    
 }

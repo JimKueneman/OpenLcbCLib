@@ -767,5 +767,10 @@ void TurnoutBossSignalCalculationsBoardRight_run(signaling_state_t *states, boar
     _send_change_events_lamp_right(states, board_configuration, event_engine);
     _send_change_events_stop_right(states, board_configuration, event_engine);
     _send_change_events_ctc_control_right(states, board_configuration, event_engine);
+    
+#ifdef BOSS2
+    states->hardware.teach_pin = states->next.hardware.teach_pin;
+    states->hardware.learn_pin = states->next.hardware.learn_pin;
+#endif
 
 }

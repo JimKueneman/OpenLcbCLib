@@ -287,8 +287,8 @@ typedef struct {
     uint8_olcb_t turnout_pushbutton_diverging : 1;
 
 #ifdef BOSS2
-    uint8_olcb_t teach : 1;
-    uint8_olcb_t learn : 1;
+    uint8_olcb_t teach_pin : 1;
+    uint8_olcb_t learn_pin : 1;
 #endif
 
 } hardware_input_states_t;

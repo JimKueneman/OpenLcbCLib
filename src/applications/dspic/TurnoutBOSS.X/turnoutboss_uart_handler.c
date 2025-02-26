@@ -141,8 +141,8 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             printf("Occupancy 3: %d\n", UartHandler_signal_calculation_states->hardware.occupany_3);
             
 #ifdef BOSS2
-            printf("Teach: %d\n", UartHandler_signal_calculation_states->teach);
-            printf("Learn: %d\n", UartHandler_signal_calculation_states->learn);
+            printf("Teach: %d\n", UartHandler_signal_calculation_states->hardware.teach_pin);
+            printf("Learn: %d\n", UartHandler_signal_calculation_states->hardware.learn_pin); 
 #endif           
             return;
             

@@ -263,7 +263,7 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
 
     for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
 
-        if (LEARN_BUTTON) {
+        if (LEARN_BUTTON_PIN) {
 
             filter = _run_filter_inc(filter);
 
@@ -275,11 +275,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
 
     if (filter == 0) {
 
-        signal_calculation_states->next.hardware.learn = OPEN;
+        signal_calculation_states->next.hardware.learn_pin = OPEN;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        signal_calculation_states->next.hardware.learn = CLOSED;
+        signal_calculation_states->next.hardware.learn_pin = CLOSED;
 
     }
     
@@ -288,7 +288,7 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
 
     for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
 
-        if (TEACH_BUTTON) {
+        if (TEACH_BUTTON_PIN) {
 
             filter = _run_filter_inc(filter);
 
@@ -300,11 +300,11 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
 
     if (filter == 0) {
 
-        signal_calculation_states->next.hardware.teach = OPEN;
+        signal_calculation_states->next.hardware.teach_pin = OPEN;
 
     } else if (filter == INPUT_FILTER_COUNT) {
 
-        signal_calculation_states->next.hardware.teach = CLOSED;
+        signal_calculation_states->next.hardware.teach_pin = CLOSED;
 
     }
     

@@ -266,6 +266,16 @@ void CommonLoaderApp_initialize_sfrs(void) {
     IEC0bits.T1IE = 1; // Enable the Interrupt
 
     T1CONbits.TON = 1; // Turn on Signal Calculation Timer
+    
+#ifdef BOSS2 
+    TEACH_BUTTON_TRIS = 1; // input
+    LEARN_BUTTON_TRIS = 1; // input
+    
+    LEARN_BUTTON_PULL_UP = 1;
+    TEACH_BUTTON_PULL_UP = 1;
+    TEACH_BUTTON_PULL_DOWN = 0;
+    LEARN_BUTTON_PULL_DOWN = 0;
+#endif
 
 }
 

@@ -292,11 +292,13 @@ int main(void) {
         // Are all the events in the Event Engine sent?
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
 
-            // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
-            TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
+            if (!UartHandler_pause_calculations) {
+              // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
+              TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
-            if (!UartHandler_pause_calculations)
               TurnoutBossSignalCalculations_recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
+              
+            }
 
         }
 
