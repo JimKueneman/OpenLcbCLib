@@ -286,6 +286,11 @@ typedef struct {
     uint8_olcb_t turnout_pushbutton_normal : 1;
     uint8_olcb_t turnout_pushbutton_diverging : 1;
 
+#ifdef BOSS2
+    uint8_olcb_t teach : 1;
+    uint8_olcb_t learn : 1;
+#endif
+
 } hardware_input_states_t;
 
 typedef struct {
@@ -300,12 +305,11 @@ typedef struct {
 } next_signaling_state_t;
 
 typedef struct {
-    
-    uint8_olcb_t signal_a; 
+    uint8_olcb_t signal_a;
     uint8_olcb_t signal_b;
-    uint8_olcb_t signal_c; 
+    uint8_olcb_t signal_c;
     uint8_olcb_t signal_d;
-    
+
 } last_led_state_t;
 
 typedef struct {
@@ -389,7 +393,7 @@ typedef struct {
     signalhead_type_enum_t signal_b_type;
     signalhead_type_enum_t signal_c_type;
     signalhead_type_enum_t signal_d_type;
-    
+
     signal_led_polarity_enum_t led_polarity;
 
     node_id_t board_to_the_left;

@@ -57,6 +57,7 @@
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #include "turnoutboss_traps.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
+#include "local_drivers/_25AA1024/25AA1024_driver.h"
 
 #else 
 
@@ -79,26 +80,6 @@
 #include "turnoutboss_event_engine.h"
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
-#include "local_drivers/_25AA1024/25AA1024_driver.h"
-
-
-// This creates an array of pointers to the handlers for the different interrupts that are at a known
-// place in the program space (AppStartAddress++ResetVectorSize).  We defined the program start at AppStartAddress
-// so that is a jump call to the start of the initialization.
-//__prog__ const uint16_olcb_t __attribute__((space(prog), address((APPLICATION_START_ADDRESS + RESET_INSTRUCTION_SIZE)))) _VirtualIVT[9] = {
-//
-//    (uint16_olcb_t) & Traps_oscillator_fail_handler, // APPLICATION_START_ADDRESS + 0x0004
-//    (uint16_olcb_t) & Traps_address_error_handler, // APPLICATION_START_ADDRESS + // 0x0006
-//    (uint16_olcb_t) & Traps_stack_error_handler, // APPLICATION_START_ADDRESS + // 0x0008
-//    (uint16_olcb_t) & Traps_math_error_handler, // APPLICATION_START_ADDRESS + 0x000A
-//    (uint16_olcb_t) & Traps_dmac_error_handler, // APPLICATION_START_ADDRESS + 0x000C
-//    (uint16_olcb_t) & TurnoutBossDrivers_t2_interrupt_handler, // APPLICATION_START_ADDRESS + 0x000E
-//    (uint16_olcb_t) & TurnoutBossDrivers_u1_rx_interrupt_handler, // APPLICATION_START_ADDRESS + 0x0010
-//    (uint16_olcb_t) & TurnoutBossDrivers_u1_tx_interrupt_handler, // APPLICATION_START_ADDRESS + 0x0012
-//    (uint16_olcb_t) & Ecan1Helper_C1_interrupt_handler, // APPLICATION_START_ADDRESS + 0x0014
-//
-//};
-
 
 board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
@@ -114,7 +95,17 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 void _config_memory_freeze_firmware_update_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    // User want to drop into booloader mode via the OpenLcb/LCC Firmware Update Protocol
     CommonLoaderApp_bootloader_state.do_start = TRUE;
+
+}
+
+void _signal_update_timer_1_callback(void) {
+
+    // Timer 1 will be paused when the states are being recalculated (below) and when any configuration memory access occurs (turnoutboss_drivers.c)
+    // so the SPI bus will not have a conflict
+
+    TurnoutBossHardwareHandler_update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
 }
 
@@ -161,120 +152,6 @@ node_id_t _extract_node_id(void) {
 
 }
 
-uint8_olcb_t _calculate_yellow_led(uint8_olcb_t signal, uint8_olcb_t bi_directional) {
-
-    uint8_olcb_t result;
-
-    if (bi_directional) {
-
-        if (signal != 0b00000010) { // if the green is not on turn it on
-
-            result = 0b00000010; // turn on the green  
-
-        } else {
-
-            result = 0b00000100; // turn on the red      
-
-        }
-
-    } else {
-
-        result = 0b00000001; // Just turn-on the yellow led   
-
-    }
-
-    return result;
-
-}
-
-void _update_signal_lamps(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
-
-    // Called from the T1 time incase yellow is a bi-directional LED and we need to toggle it to make yellow out of green/red
-
-    uint8_olcb_t signal_a, signal_b, signal_c, signal_d;
-
-    switch (signal_calculation_states->lamps.SaBL) {
-        case DARK:
-            signal_a = 0b00000000;
-            break;
-        case GREEN:
-            signal_a = 0b00000010;
-            break;
-        case YELLOW:
-            signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_a = 0b00000100;
-            break;
-    }
-
-    switch (signal_calculation_states->lamps.SbBL) {
-        case DARK:
-            signal_b = 0b00000000;
-            break;
-        case GREEN:
-            signal_b = 0b00000010;
-            break;
-        case YELLOW:
-            signal_b = _calculate_yellow_led(signal_calculation_states->leds.signal_b, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_b = 0b00000100;
-            break;
-    }
-
-    switch (signal_calculation_states->lamps.ScBL) {
-        case DARK:
-            signal_c = 0b00000000;
-            break;
-        case GREEN:
-            signal_c = 0b00000010;
-            break;
-        case YELLOW:
-            signal_c = _calculate_yellow_led(signal_calculation_states->leds.signal_c, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_c = 0b00000100;
-            break;
-    }
-
-    switch (signal_calculation_states->lamps.SdBL) {
-        case DARK:
-            signal_d = 0b00000000;
-            break;
-        case GREEN:
-            signal_d = 0b00000010;
-            break;
-        case YELLOW:
-            signal_d = _calculate_yellow_led(signal_calculation_states->leds.signal_d, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_d = 0b00000100;
-            break;
-    }
-
-
-    if (board_configuration->led_polarity == CommonAnode) {
-
-        signal_a = ~signal_a;
-        signal_b = ~signal_b;
-        signal_c = ~signal_c;
-        signal_d = ~signal_d;
-
-    }
-
-    if ((signal_calculation_states->leds.signal_a != signal_a) || (signal_calculation_states->leds.signal_b != signal_b) || (signal_calculation_states->leds.signal_c != signal_c) || (signal_calculation_states->leds.signal_d != signal_d)) {
-
-        MCP23S17Driver_set_signals(signal_a, signal_b, signal_c, signal_d); // 0b00000RGY
-
-        signal_calculation_states->leds.signal_a = signal_a;
-        signal_calculation_states->leds.signal_b = signal_b;
-        signal_calculation_states->leds.signal_c = signal_c;
-        signal_calculation_states->leds.signal_d = signal_d;
-
-    }
-
-}
 
 void _build_interrupt_jump_table(void) {
 
@@ -292,68 +169,16 @@ void _build_interrupt_jump_table(void) {
 
 }
 
-void _signal_update_timer_1_callback(void) {
-
-    // Timer 1 will be paused when the states are being recalculated (below) and when any configuration memory access occurs (turnoutboss_drivers.c)
-    // so the SPI bus will not have a conflict
-
-    _update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
-
-}
-
-void _validate_config_mem(void) {
-
-    uint8_olcb_t buffer[EEPROM_PAGE_SIZE_IN_BYTES];
-
-    printf("Address 0x000 in EEPROM: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
-
-    if (_25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS) == 0xFF) {
-       
-        for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) 
-            buffer[i] = 0;
-
-
-        for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) {
-            
-            _25AA1024_Driver_write_latch_enable();
-            _25AA1024_Driver_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-            while (_25AA1024_Driver_write_in_progress()) {                      
-                 __delay32(1000);  // 25AA08 seems to be sensitive to how fast you check the register... it will lock up  
-            }
-
-        }
-        
-        
-        buffer[0] = 31;
-        
-        _25AA1024_Driver_write_latch_enable();
-         _25AA1024_Driver_write(DETECTOR_1_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-        while (_25AA1024_Driver_write_in_progress()) {
-                 __delay32(1000);
-            }
-        _25AA1024_Driver_write_latch_enable();
-         _25AA1024_Driver_write(DETECTOR_2_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-        while (_25AA1024_Driver_write_in_progress()) {
-                 __delay32(1000);
-            }
-        _25AA1024_Driver_write_latch_enable();
-         _25AA1024_Driver_write(DETECTOR_3_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-        while (_25AA1024_Driver_write_in_progress()) {
-                 __delay32(1000);
-            }
-        _25AA1024_Driver_write_latch_enable();
-         _25AA1024_Driver_write(SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS, 1, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-        while (_25AA1024_Driver_write_in_progress()) {
-                 __delay32(1000);
-            }
- 
-    }
-
+void _initialize_callbacks(void) {
+    
+    TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
+    ApplicationCallbacks_set_alias_change(&_alias_change_callback);
+    ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
+    TurnoutBossDrivers_set_signal_update_timer_sink(&_signal_update_timer_1_callback);
+    
 }
 
 openlcb_node_t* _initialize_turnout_boss(void) {
-
-    openlcb_node_t* result = (void*) 0;
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
@@ -377,21 +202,13 @@ openlcb_node_t* _initialize_turnout_boss(void) {
 
     _build_interrupt_jump_table();
 
-    TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
-    UartHandler_board_configuration = &_board_configuration;
-    UartHandler_signal_calculation_states = &_signal_calculation_states;
-
-    ApplicationCallbacks_set_alias_change(&_alias_change_callback);
-    ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
-
-    TurnoutBossDrivers_set_signal_update_timer_sink(&_signal_update_timer_1_callback);
-
+    _initialize_callbacks();
+    
     // We always boot and reallocate the alias
-    result = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
-
+    openlcb_node_t* result = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
 
     // Can do this now that the SPI has been setup and need to do it before we try to load the board_configuration.
-    _validate_config_mem();
+    TurnoutBossHardwareHandler_validate_config_mem();
 
     // Read in the configuration memory for how the user has the board configured and setup a callback so new changes to the board configuration are captured
     TurnoutBossBoardConfiguration_initialize(result, &_board_configuration);
@@ -408,6 +225,9 @@ openlcb_node_t* _initialize_turnout_boss(void) {
 
     // Build the dynamic events and the callback to handle incoming events
     TurnoutBossEventHandler_initialize(result, &_board_configuration, &_signal_calculation_states, &_event_engine);
+    
+    UartHandler_board_configuration = &_board_configuration;
+    UartHandler_signal_calculation_states = &_signal_calculation_states;
 
     return result;
 
@@ -421,24 +241,6 @@ void _print_turnoutboss_version(void) {
 #ifdef BOSS2 
     printf("Application Booted: Boss 2.0.................\n");
 #endif
-
-}
-
-void _recalculate_states(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
-
-    if (board_configuration->board_location == BL) {
-
-        TurnoutBossSignalCalculationsBoardLeft_run(signal_calculation_states, board_configuration, event_engine);
-
-        TURNOUT_DRIVER_PIN = signal_calculation_states->turnout.TLC;
-
-    } else {
-
-        TurnoutBossSignalCalculationsBoardRight_run(signal_calculation_states, board_configuration, event_engine);
-
-        TURNOUT_DRIVER_PIN = signal_calculation_states->turnout.TRC;
-
-    }
 
 }
 
@@ -471,7 +273,6 @@ int main(void) {
     LED_YELLOW = 1;
 #endif
 
-
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
@@ -482,20 +283,20 @@ int main(void) {
 
     while (!CommonLoaderApp_bootloader_state.do_start) {
 
-        CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
+        // Run the main Openlcb/LCC engine
+        CanMainStateMachine_run(); 
 
+        // Send any events that have been flagged
         TurnoutBossEventEngine_run(node, &_event_engine);
 
+        // Are all the events in the Event Engine sent?
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
 
+            // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
             TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
-            // Pause the timer so we don't re-calculate the state of the signals and stomp on the signals being set in the Signal Update Timer
-            TurnoutBossDrivers_pause_signal_calculation_timer();
-
-            _recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
-
-            TurnoutBossDrivers_resume_signal_calculation_timer();
+            if (!UartHandler_pause_calculations)
+              TurnoutBossSignalCalculations_recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
         }
 

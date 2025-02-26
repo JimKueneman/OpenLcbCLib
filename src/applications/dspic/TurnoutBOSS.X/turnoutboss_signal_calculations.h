@@ -57,6 +57,8 @@ extern "C" {
     
     extern void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(signaling_state_t* states, board_configuration_t* board_configuration, send_event_engine_t* event_engine);
 
+    extern void TurnoutBossSignalCalculations_recalculate_states(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine);
+    
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

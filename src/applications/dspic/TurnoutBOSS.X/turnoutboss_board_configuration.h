@@ -81,7 +81,8 @@ extern "C" {
     
     extern uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint16_olcb_t address);
 
-# define the start location of the producer/consumer array for CDI. This goes with the other definitions in turnout_board_configuration.h
+// define the start location of the producer/consumer array for CDI. This goes with the other definitions in turnout_board_configuration.h
+    
 #define START_OF_PRODUCER_CONSUMER_MAP                  200 // 416 bytes space for 51 producers and consumers
 
 #ifdef	__cplusplus

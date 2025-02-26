@@ -40,9 +40,8 @@
 
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
-//#include "local_drivers/_MCP4014/MCP4014_driver.h"
+#include "turnoutboss_hardware_handler.h"
 #include "../dsPIC_Common/ecan1_helper.h"
-//#include "debug.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
@@ -114,14 +113,8 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
             current_address = current_address + 1;
             
         };
-
-        _25AA1024_Driver_write_latch_enable();
-        _25AA1024_Driver_write(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-
-        while (_25AA1024_Driver_write_in_progress()) {
-
-        }
         
+        TurnoutBossHardwareHandler_write_eeprom(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer);     
     }
     
     TurnoutBossDrivers_resume_signal_calculation_timer();
@@ -184,8 +177,6 @@ void TurnoutBossDrivers_t1_interrupt_handler(void) {
 
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
     
-    LED_GREEN = !LED_GREEN;
-
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)
         _100ms_timer_sink_func();

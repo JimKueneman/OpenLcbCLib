@@ -53,31 +53,29 @@
 #include "local_drivers/_MCP4014/MCP4014_driver.h"
 #include "turnoutboss_types.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
+#include "turnoutboss_hardware_handler.h"
 
-uint8_olcb_t signalA = 0x00; // All off
-uint8_olcb_t signalB = 0x00;
-uint8_olcb_t signalC = 0x00;
-uint8_olcb_t signalD = 0x00;
-
+uint8_olcb_t UartHandler_pause_calculations = FALSE;
+uint8_olcb_t _signal_a = 0x00; // All off
+uint8_olcb_t _signal_b = 0x00;
+uint8_olcb_t _signal_c = 0x00;
+uint8_olcb_t _signal_d = 0x00;
 uint8_olcb_t detector_gain = 0;
-
-uint8_olcb_t track_detector_to_led = 1;
 
 board_configuration_t *UartHandler_board_configuration;
 signaling_state_t *UartHandler_signal_calculation_states;
 
 void UartHandler_handle_rx(uint16_olcb_t code) {
-
+        
     switch (code) {
         case 'B':
         case 'b':
 
             printf("\nCan Buffers: %d\n", CanBufferStore_messages_allocated());
-            printf("\nBuffers: %d\n", BufferStore_messages_allocated());
-
-            printf("\nMax Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
-            printf("\nMax Buffers: %d\n", BufferStore_messages_max_allocated());
-            printf("\nMax CAN FIFO depth: %d\n", Ecan1Helper_get_max_can_fifo_depth());
+            printf("Buffers: %d\n", BufferStore_messages_allocated());
+            printf("Max Can Buffers: %d\n", CanBufferStore_messages_max_allocated());
+            printf("Max Buffers: %d\n", BufferStore_messages_max_allocated());
+            printf("Max CAN FIFO depth: %d\n", Ecan1Helper_get_max_can_fifo_depth());
 
             return;
 
@@ -111,17 +109,62 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
         case 'H':
         case 'h':
-
+            
             printf("B - Print Buffer Storage state\n");
             printf("P - Print the active message in the CanHelper\n");
             printf("C - Print the active message in the OpenLcbHelper\n");
             printf("N - Print the state of the first allocated Node\n");
+            printf("G - Set Detector Gain to 0\n");
+            printf("Z - Set Detector Gain to 64\n");
+            printf("1 - Decrease Detector Gain by 1\n");
+            printf("2 - Increase Detector Gain by 1\n");
+            printf("S - Cycle through the signal LED lights (Use 'Y' to pause the calculations)\n");
+            printf("I - Reinitialize the MCP23S17\n");
+            printf("R - Reset the MCP23S17\n");
+            printf("M - Toggle the Turnout Driver (Use 'Y' to pause the calculations)\n");
+            printf("L - List out all of the TurnoutBoss internal Signal States\n");
+            printf("E - Erase the EEPROM\n");
+            printf("Y - Pause the internal calculations to allow overriding\n");
+            printf("Q - List the current state of the inputs\n");
 
             return;
+            
+        case 'Q':
+        case 'q':
+            
+            printf("Turnout Feedback Normal: %d\n", UartHandler_signal_calculation_states->hardware.turnout_feedback_normal);
+            printf("Turnout Feedback Diverging: %d\n", UartHandler_signal_calculation_states->hardware.turnout_feedback_diverging);
+            printf("Turnout Pushbutton Normal: %d\n", UartHandler_signal_calculation_states->hardware.turnout_pushbutton_normal);
+            printf("Turnout Pushbutton Diverging: %d\n", UartHandler_signal_calculation_states->hardware.turnout_pushbutton_diverging);
+            printf("Occupancy 1: %d\n", UartHandler_signal_calculation_states->hardware.occupany_1);
+            printf("Occupancy 2: %d\n", UartHandler_signal_calculation_states->hardware.occupany_2);
+            printf("Occupancy 3: %d\n", UartHandler_signal_calculation_states->hardware.occupany_3);
+            
+#ifdef BOSS2
+            printf("Teach: %d\n", UartHandler_signal_calculation_states->teach);
+            printf("Learn: %d\n", UartHandler_signal_calculation_states->learn);
+#endif           
+            return;
+            
+        case 'Y':
+        case 'y':
 
+            if (UartHandler_pause_calculations) {
+                
+                UartHandler_pause_calculations = FALSE;
+                printf("Internal Calculations Enabled....\n");        
+           
+            } else {
+                
+                UartHandler_pause_calculations = TRUE;
+                printf("Internal Calculations Disabled....\n");
+      
+            }
+
+            return;
         case 'G':
         case 'g':
-
+                   
             printf("Setting the Detector Gain\n");
 
             MCP4014Driver_set_gain(0, 0, 0, 0);
@@ -159,43 +202,30 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             return;
 
-        case '3':
-
-            track_detector_to_led = track_detector_to_led + 1;
-
-            if (track_detector_to_led > 3)
-                track_detector_to_led = 1;
-
-            printf("Detected track %d\n", track_detector_to_led);
-
-            return;
-
         case 'S':
         case 's':
 
             printf("Setting the Signals\n");
 
-            if (signalA == 0b111) {
-                signalA = 0b000;
-                signalB = 0b000;
-                signalC = 0b000;
-                signalD = 0b000;
+            if (_signal_a == 0b111) {
+                _signal_a = 0b000;
+                _signal_b = 0b000;
+                _signal_c = 0b000;
+                _signal_d = 0b000;
 
             } else {
 
-                signalA = signalA + 1;
-                signalB = signalB + 1;
-                signalC = signalC + 1;
-                signalD = signalD + 1;
+                _signal_a = _signal_a + 1;
+                _signal_b = _signal_b + 1;
+                _signal_c = _signal_c + 1;
+                _signal_d = _signal_d + 1;
             }
 
-            printf("A = %d, B = %d, C = %d, D = %d\n", signalA, signalB, signalC, signalD);
+            printf("A = %d, B = %d, C = %d, D = %d\n", _signal_a, _signal_b, _signal_c, _signal_d);
 
 
-            MCP23S17Driver_set_signals(signalA, signalB, signalC, signalD);
-
-            //     MCP23S17Driver_set_signals(1, 1, 1, 1);
-
+            MCP23S17Driver_set_signals(_signal_a, _signal_b, _signal_c, _signal_d);
+    
             return;
 
         case 'I':
@@ -218,11 +248,20 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
         case 'M':
         case 'm':
-
-            TURNOUT_DRIVER_PIN = !TURNOUT_DRIVER_PIN;
+            
+            if (TURNOUT_DRIVER_PIN) {
+                
+                TURNOUT_DRIVER_PIN = FALSE;
+                printf("TURNOUT_DRIVER_PIN = FALSE\n");
+                
+            } else {
+                
+                TURNOUT_DRIVER_PIN = TRUE;
+                printf("TURNOUT_DRIVER_PIN = TRUE\n");
+                
+            }
 
             return;
-
 
         case 'l':
         case 'L':
@@ -475,21 +514,14 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
             printf("Address 0x000 in EEPROM before: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
 
-            for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+            for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++)
                 buffer[i] = 0xFF;
-            }
 
-            for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) {
 
-                _25AA1024_Driver_write_latch_enable();
-                _25AA1024_Driver_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-                while (_25AA1024_Driver_write_in_progress()) {
-                    __delay32(1000); // 25AA08 seems to be sensitive to how fast you check the register... it will lock up
-                }
-                
-            }
+            for (uint16_olcb_t i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) 
+                TurnoutBossHardwareHandler_write_eeprom((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer);
 
-            printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));    
+            printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
             printf("Erased:\n");
 
             break;
@@ -498,3 +530,4 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
     return;
 
 }
+

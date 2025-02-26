@@ -52,16 +52,10 @@ extern "C" {
 
     extern void UartHandler_handle_rx(uint16_olcb_t code);
 
-    extern uint8_olcb_t signalA; // All off
-    extern uint8_olcb_t signalB;
-    extern uint8_olcb_t signalC;
-    extern uint8_olcb_t signalD;
-    
-    extern uint8_olcb_t track_detector_to_led;
-    
-    
+  
     extern board_configuration_t *UartHandler_board_configuration;
     extern signaling_state_t *UartHandler_signal_calculation_states;
+    extern uint8_olcb_t UartHandler_pause_calculations;
 
 
 #ifdef	__cplusplus

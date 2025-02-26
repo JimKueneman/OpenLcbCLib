@@ -33,6 +33,7 @@
  */
 
 #include "xc.h"
+#include <libpic30.h> // delay32
 #include <string.h>
 #include "stdio.h"  // printf
 
@@ -41,12 +42,16 @@
 
 #ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
+#include "local_drivers/_25AA1024/25AA1024_driver.h"
+#include "local_drivers/_MCP23S17/MCP23S17_driver.h"
 #else
 #include "src/openlcb/openlcb_types.h"
 #endif
 
 #include "turnoutboss_types.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
+#include "turnoutboss_board_configuration.h"
+
 
 
 #define INPUT_FILTER_COUNT 10
@@ -249,6 +254,216 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
     } else if (filter == INPUT_FILTER_COUNT) {
 
         signal_calculation_states->next.hardware.turnout_pushbutton_diverging = CLOSED;
+
+    }
+    
+#ifdef BOSS2
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (LEARN_BUTTON) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    if (filter == 0) {
+
+        signal_calculation_states->next.hardware.learn = OPEN;
+
+    } else if (filter == INPUT_FILTER_COUNT) {
+
+        signal_calculation_states->next.hardware.learn = CLOSED;
+
+    }
+    
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (TEACH_BUTTON) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    if (filter == 0) {
+
+        signal_calculation_states->next.hardware.teach = OPEN;
+
+    } else if (filter == INPUT_FILTER_COUNT) {
+
+        signal_calculation_states->next.hardware.teach = CLOSED;
+
+    }
+    
+#endif
+    
+
+}
+
+uint8_olcb_t _calculate_yellow_led(uint8_olcb_t signal, uint8_olcb_t bi_directional) {
+    
+    // Yellow may be an alternating Green/Red LED
+
+    uint8_olcb_t result;
+
+    if (bi_directional) {
+
+        if (signal != 0b00000010) { // if the green is not on turn it on
+
+            result = 0b00000010; // turn on the green  
+
+        } else {
+
+            result = 0b00000100; // turn on the red      
+
+        }
+
+    } else {
+
+        result = 0b00000001; // Just turn-on the yellow led   
+
+    }
+
+    return result;
+
+}
+
+void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
+
+    // Called from the T1 time incase yellow is a bi-directional LED and we need to toggle it to make yellow out of green/red
+
+    uint8_olcb_t signal_a, signal_b, signal_c, signal_d;
+
+    switch (signal_calculation_states->lamps.SaBL) {
+        case DARK:
+            signal_a = 0b00000000;
+            break;
+        case GREEN:
+            signal_a = 0b00000010;
+            break;
+        case YELLOW:
+            signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
+            break;
+        case RED:
+            signal_a = 0b00000100;
+            break;
+    }
+
+    switch (signal_calculation_states->lamps.SbBL) {
+        case DARK:
+            signal_b = 0b00000000;
+            break;
+        case GREEN:
+            signal_b = 0b00000010;
+            break;
+        case YELLOW:
+            signal_b = _calculate_yellow_led(signal_calculation_states->leds.signal_b, (board_configuration->led_polarity == BiDirectionalYellow));
+            break;
+        case RED:
+            signal_b = 0b00000100;
+            break;
+    }
+
+    switch (signal_calculation_states->lamps.ScBL) {
+        case DARK:
+            signal_c = 0b00000000;
+            break;
+        case GREEN:
+            signal_c = 0b00000010;
+            break;
+        case YELLOW:
+            signal_c = _calculate_yellow_led(signal_calculation_states->leds.signal_c, (board_configuration->led_polarity == BiDirectionalYellow));
+            break;
+        case RED:
+            signal_c = 0b00000100;
+            break;
+    }
+
+    switch (signal_calculation_states->lamps.SdBL) {
+        case DARK:
+            signal_d = 0b00000000;
+            break;
+        case GREEN:
+            signal_d = 0b00000010;
+            break;
+        case YELLOW:
+            signal_d = _calculate_yellow_led(signal_calculation_states->leds.signal_d, (board_configuration->led_polarity == BiDirectionalYellow));
+            break;
+        case RED:
+            signal_d = 0b00000100;
+            break;
+    }
+
+
+    if (board_configuration->led_polarity == CommonAnode) {
+
+        signal_a = ~signal_a;
+        signal_b = ~signal_b;
+        signal_c = ~signal_c;
+        signal_d = ~signal_d;
+
+    }
+
+    if ((signal_calculation_states->leds.signal_a != signal_a) || (signal_calculation_states->leds.signal_b != signal_b) || (signal_calculation_states->leds.signal_c != signal_c) || (signal_calculation_states->leds.signal_d != signal_d)) {
+
+        MCP23S17Driver_set_signals(signal_a, signal_b, signal_c, signal_d); // 0b00000RGY
+
+        signal_calculation_states->leds.signal_a = signal_a;
+        signal_calculation_states->leds.signal_b = signal_b;
+        signal_calculation_states->leds.signal_c = signal_c;
+        signal_calculation_states->leds.signal_d = signal_d;
+
+    }
+
+}
+
+void TurnoutBossHardwareHandler_write_eeprom(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+
+    _25AA1024_Driver_write_latch_enable();
+
+    _25AA1024_Driver_write(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+
+    while (_25AA1024_Driver_write_in_progress()) {
+
+        __delay32(1000); // 25AA08 seems to be sensitive to how fast you check the register... it will lock up  
+
+    }
+
+}
+
+void TurnoutBossHardwareHandler_validate_config_mem(void) {
+
+    configuration_memory_buffer_t buffer;
+
+    printf("Address 0x000 in EEPROM: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
+
+    if (_25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS) == 0xFF) {
+
+        for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++)
+            buffer[i] = 0x00; // Default value
+
+
+        for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++)
+            TurnoutBossHardwareHandler_write_eeprom((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, & buffer);
+
+        buffer[0] = 31;
+        TurnoutBossHardwareHandler_write_eeprom(DETECTOR_1_GAIN_ADDRESS, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(DETECTOR_2_GAIN_ADDRESS, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(DETECTOR_3_GAIN_ADDRESS, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS, 1, &buffer);
 
     }
 

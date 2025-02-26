@@ -42,12 +42,15 @@
 
 #ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 #else
 #include "src/openlcb/openlcb_types.h"
 #endif
 
 #include "turnoutboss_types.h"
-
+#include "turnoutboss_signal_calculations_board_left.h"
+#include "turnoutboss_signal_calculations_board_right.h"
+#include "turnoutboss_drivers.h"
 
 void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signaling_state_t* states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
 
@@ -70,9 +73,9 @@ void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signal
         states->hardware.turnout_pushbutton_normal = states->next.hardware.turnout_pushbutton_normal;
 
     } else {
-        
+
         states->pushbutton_normal_toggled = FALSE;
-        
+
     }
 
 
@@ -95,10 +98,10 @@ void TurnoutBossSignalCalculations_send_hardware_pushbutton_change_events(signal
         states->pushbutton_diverging_toggled = TRUE;
         states->hardware.turnout_pushbutton_diverging = states->next.hardware.turnout_pushbutton_diverging;
 
-    }  else {
-        
+    } else {
+
         states->pushbutton_diverging_toggled = FALSE;
-        
+
     }
 
 }
@@ -120,9 +123,9 @@ void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(
                 break;
 
         }
-   
+
         states->hardware.turnout_feedback_normal = states->next.hardware.turnout_feedback_normal;
-        
+
     }
 
     if (states->hardware.turnout_feedback_diverging != states->next.hardware.turnout_feedback_diverging) {
@@ -142,8 +145,31 @@ void TurnoutBossSignalCalculations_send_hardware_turnout_feedback_change_events(
         }
 
         states->hardware.turnout_feedback_diverging = states->next.hardware.turnout_feedback_diverging;
-        
+
     }
 
+}
+
+void TurnoutBossSignalCalculations_recalculate_states(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine) {
+
+    // Pause the timer so we don't re-calculate the state of the signals and stomp on the signals being set in the Signal Update Timer
+    TurnoutBossDrivers_pause_signal_calculation_timer();
+            
+    if (board_configuration->board_location == BL) {
+
+        TurnoutBossSignalCalculationsBoardLeft_run(signal_calculation_states, board_configuration, event_engine);
+
+        TURNOUT_DRIVER_PIN = signal_calculation_states->turnout.TLC;
+
+    } else {
+
+        TurnoutBossSignalCalculationsBoardRight_run(signal_calculation_states, board_configuration, event_engine);
+
+        TURNOUT_DRIVER_PIN = signal_calculation_states->turnout.TRC;
+
+    }
+    
+    TurnoutBossDrivers_resume_signal_calculation_timer();
+    
 }
 

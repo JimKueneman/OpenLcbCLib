@@ -51,7 +51,13 @@ extern "C" {
 #endif /* __cplusplus */
 
     extern void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calculation_states);
+    
+    extern void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_calculation_states, board_configuration_t* board_configuration, send_event_engine_t* event_engine);
+    
+    extern void TurnoutBossHardwareHandler_write_eeprom(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
 
+    extern void TurnoutBossHardwareHandler_validate_config_mem(void);
+    
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

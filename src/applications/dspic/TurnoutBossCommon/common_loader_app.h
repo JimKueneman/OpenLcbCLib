@@ -180,6 +180,12 @@
 #define LED_GREEN_TRIS _TRISC0
 #define LED_GREEN _RC0
 
+#define LEARN_BUTTON_TRIS _TRISB7
+#define LEARN_BUTTON _RB7
+
+#define TEACH_BUTTON_TRIS _TRISB8
+#define TEACH_BUTTON _RB8
+
 #endif
 
 
