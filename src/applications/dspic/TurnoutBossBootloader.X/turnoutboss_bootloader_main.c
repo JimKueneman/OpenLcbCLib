@@ -61,6 +61,8 @@
 
 #include "turnoutboss_bootloader_hex_file_statemachine.h"
 #include "mcc_generated_files/memory/flash.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
+#include "local_drivers/_25AA1024/25AA1024_driver.h"
 
 uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
@@ -140,13 +142,34 @@ void _initialize(void) {
 
 }
 
+node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
+
+    if (_25AA1024_Driver_read(config_mem_address, 6, config_mem_buffer, EEPROM_ADDRESS_SIZE_IN_BITS) == 6) {
+        
+        node_id_t result = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
+
+        if ((result != NULL_NODE_ID) && (result != 0xFFFFFFFFFFFF)) {
+            
+            return result;
+            
+        }
+    }
+
+    return NODE_ID_DEFAULT;
+
+}
+
 node_id_t _extract_node_id(void) {
+    
+    configuration_memory_buffer_t config_mem_buffer;
     
     node_id_t result = TurnoutbossBootloaderHexFileStateMachine_extract_node_id();
 
-    if ((result == 0x00FFFFFFFFFFFF) || (result == 0x000000000000))
+    if ((result == 0x00FFFFFFFFFFFF) || (result == 0x000000000000)) {
 
-        result = NODE_ID_DEFAULT;
+        result = _extract_node_id_from_eeprom(NODE_ID_ADDRESS, &config_mem_buffer);
+        
+    }
     
     return result;
 
@@ -208,8 +231,8 @@ void _initialize_state(void) {
 int main(void) {
     
     _initialize_state();
-    CommonLoaderApp_node_id = _extract_node_id();
     _initialize();
+    CommonLoaderApp_node_id = _extract_node_id();
     
     _GIE = 1; // Enable Interrupts
     

@@ -35,6 +35,7 @@
 #ifdef MPLAB
 #include "turnoutboss_node_parameters.h"
 #include "../../../openlcb/openlcb_defines.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 #else
 #include "node_parameters.h"
 #include "src/openlcb/openlcb_defines.h"
@@ -63,12 +64,18 @@ const node_parameters_t NodeParameters_main_node = {
     PSI_EVENT_EXCHANGE |
     PSI_ABBREVIATED_DEFAULT_CDI |
     PSI_SIMPLE_NODE_INFORMATION |
-    PSI_CONFIGURATION_DESCRIPTION_INFO |
-    PSI_FIRMWARE_UPGRADE
+    PSI_CONFIGURATION_DESCRIPTION_INFO
+#ifndef EXCLUDE_FIRMWARE_ADDRESS_SPACE
+    | PSI_FIRMWARE_UPGRADE
+#endif
     ),
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+#ifdef EXCLUDE_FIRMWARE_ADDRESS_SPACE
     .configuration_options.low_address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+#else
+    .configuration_options.low_address_space = ADDRESS_SPACE_FIRMWARE,
+#endif
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
     .configuration_options.stream_read_write_supported = 0,
@@ -103,7 +110,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_config_memory.present = 1,
     .address_space_config_memory.low_address_valid = 0, // assume the low address starts at 0
     .address_space_config_memory.low_address = 0, // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 700, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.highest_address = EEPROM_SIZE_IN_BYTES, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -125,17 +132,18 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ACDI access user storage",
 
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER_ADDRESS_SPACE
     // Space 0xEF
     .address_space_firmware.read_only = 0,
+#ifdef EXCLUDE_FIRMWARE_ADDRESS_SPACE
+    .address_space_firmware.present = 0,
+#else
     .address_space_firmware.present = 1,
+#endif
     .address_space_firmware.low_address_valid = 0, // assume the low address starts at 0
     .address_space_firmware.low_address = 0, // Firmware ALWAYS assumes it starts at 0
     .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
     .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware update address space",
-
-#endif
 
     .cdi =
     {

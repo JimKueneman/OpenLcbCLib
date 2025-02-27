@@ -494,7 +494,6 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
         worker_msg->payload_count = read_result_or_error_code;
 
     } else {
-
         *worker_msg->payload[1] = return_msg_fail;
         Utilities_copy_word_to_openlcb_payload(worker_msg, read_result_or_error_code, reply_payload_index); // read_result is the error code in this case
         worker_msg->payload_count = reply_payload_index + 2;

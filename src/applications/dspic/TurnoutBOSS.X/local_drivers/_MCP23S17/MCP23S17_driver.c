@@ -145,7 +145,6 @@ void MCP23S17Driver_set_signals(uint8_olcb_t aspect_A, uint8_olcb_t aspect_B, ui
     
     port = 0b01000000 | aspect_A | (temp_port_D << 3);
     _write_register(OLATB, port);
-
     
 }
 

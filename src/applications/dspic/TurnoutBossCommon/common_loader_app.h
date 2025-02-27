@@ -54,6 +54,9 @@
 #define EEPROM_SIZE_IN_BYTES  1024 
 #endif
 
+#define NODE_ID_ADDRESS  EEPROM_SIZE_IN_BYTES - EEPROM_PAGE_SIZE_IN_BYTES // put it on the last page in the EEPROM 1024-16 = 1008 in our case
+
+
 #define NODE_ID_DEFAULT 0x050701010000
 #define EOF_ADDRESS 0xFFFFFFFF
 

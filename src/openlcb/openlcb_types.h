@@ -241,9 +241,7 @@ extern "C" {
         user_address_space_info_t address_space_train_function_config_memory;
 #endif
         user_configuration_options configuration_options;
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER_ADDRESS_SPACE
         user_address_space_info_t address_space_firmware;
-#endif
 
     } node_parameters_t;
 

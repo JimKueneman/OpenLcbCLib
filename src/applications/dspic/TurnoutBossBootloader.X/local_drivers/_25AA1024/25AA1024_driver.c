@@ -38,13 +38,13 @@
 #include "../../../../../drivers/driver_configuration_memory.h"
 #include "../../../TurnoutBossCommon/common_loader_app.h"
 
-void _25AA1024_Driver_initialize() {
-    
+void _25AA1024_Driver_initialize(uint8_olcb_t address_size_in_bits) {
+
     configuration_memory_buffer_t buffer;
-    
+
     // Needs to be clocked a few times to get initialized
-    _25AA1024_Driver_read(0, 64, &buffer);
-    
+    _25AA1024_Driver_read(0, 64, &buffer, address_size_in_bits);
+
 }
 
 void _25aa1024_flush_buffers() {
@@ -153,7 +153,7 @@ void _25AA1024_Driver_write_latch_disable() {
 
 }
 
-uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
+uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t address_size_in_bits) {
 
     _25aa1024_flush_buffers();
 
@@ -161,19 +161,19 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
 
     // Transmit
     SPI_BUFFER = 0b00000011;
-
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    if (address_size_in_bits > 16) {
+        SPI_BUFFER = (address >> 16) & 0xFF;
+        _25aa1024_wait_for_reply();
+    }
 
-    _25aa1024_wait_for_reply();
-
-    SPI_BUFFER = (address >> 8) & 0xFF;
-
-    _25aa1024_wait_for_reply();
+    if (address_size_in_bits > 8) {
+        SPI_BUFFER = (address >> 8);
+        _25aa1024_wait_for_reply();
+    }
 
     SPI_BUFFER = address & 0xFF;
-
     _25aa1024_wait_for_reply();
 
     // Transmit
@@ -187,7 +187,7 @@ uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address) {
 
 }
 
-uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer) {
+uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size_in_bits) {
 
     uint8_olcb_t temp;
 
@@ -197,26 +197,26 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
     // Transmit
     SPI_BUFFER = 0b00000011;
-
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    if (address_size_in_bits > 16) {
+        SPI_BUFFER = (address >> 16) & 0xFF;
+        _25aa1024_wait_for_reply();
+    }
 
-    _25aa1024_wait_for_reply();
+    if (address_size_in_bits > 8) {
+        SPI_BUFFER = (address >> 8) & 0xFF;
+        _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 8) & 0xFF;
-
-    _25aa1024_wait_for_reply();
+    }
 
     SPI_BUFFER = address & 0xFF;
-
     _25aa1024_wait_for_reply();
 
     for (int i = 0; i < count; i++) {
 
         // Transmit
         SPI_BUFFER = 0b00000000;
-
         temp = _25aa1024_wait_for_reply();
 
         (*buffer)[i] = temp;
@@ -229,7 +229,7 @@ uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, c
 
 }
 
-void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
+void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte, uint8_olcb_t address_size_in_bits) {
 
     uint8_olcb_t temp;
 
@@ -239,24 +239,23 @@ void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte) {
 
     // Transmit
     SPI_BUFFER = 0b00000010;
-
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
+    if (address_size_in_bits > 16) {
+        SPI_BUFFER = (address >> 16) & 0xFF;
+        _25aa1024_wait_for_reply();
+    }
 
-    _25aa1024_wait_for_reply();
-
-    SPI_BUFFER = (address >> 8) & 0xFF;
-
-    _25aa1024_wait_for_reply();
+    if (address_size_in_bits > 8) {
+        SPI_BUFFER = (address >> 8) & 0xFF;
+        _25aa1024_wait_for_reply();
+    }
 
     SPI_BUFFER = address & 0xFF;
-
     _25aa1024_wait_for_reply();
 
     // Transmit
     SPI_BUFFER = byte;
-
     temp = _25aa1024_wait_for_reply();
 
     _25AAxxx_CS = 1; // CS
@@ -270,11 +269,9 @@ void _25AA1024_Driver_erase_chip() {
     _25AAxxx_CS = 0; // CS
 
     SPI_BUFFER = 0b11000111;
-
     _25aa1024_wait_for_reply();
 
     _25AAxxx_CS = 1;
-
 
     while (_25AA1024_Driver_write_in_progress()) {
 
@@ -283,7 +280,7 @@ void _25AA1024_Driver_erase_chip() {
 
 }
 
-uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer) {
+uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size_in_bits) {
 
     uint8_olcb_t temp;
 
@@ -293,26 +290,26 @@ uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, 
 
     // Transmit
     SPI_BUFFER = 0b00000010;
-
     _25aa1024_wait_for_reply();
 
-    SPI_BUFFER = (address >> 16) & 0xFF;
 
-    _25aa1024_wait_for_reply();
+    if (address_size_in_bits > 16) {
+        SPI_BUFFER = (address >> 16) & 0xFF;
+        _25aa1024_wait_for_reply();
+    }
 
-    SPI_BUFFER = (address >> 8) & 0xFF;
-
-    _25aa1024_wait_for_reply();
+    if (address_size_in_bits > 8) {
+        SPI_BUFFER = (address >> 8) & 0xFF;
+        _25aa1024_wait_for_reply();
+    }
 
     SPI_BUFFER = address & 0xFF;
-
     _25aa1024_wait_for_reply();
 
     for (int i = 0; i < count; i++) {
 
         // Transmit
         SPI_BUFFER = (*buffer)[i];
-
         temp = _25aa1024_wait_for_reply();
 
     }

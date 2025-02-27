@@ -323,11 +323,11 @@ uint8_olcb_t _calculate_yellow_led(uint8_olcb_t signal, uint8_olcb_t bi_directio
 
         if (signal != 0b00000010) { // if the green is not on turn it on
 
-            result = 0b00000010; // turn on the green  
+            result = 0b00000010; // turn on the red  
 
         } else {
 
-            result = 0b00000100; // turn on the red      
+            result = 0b00000100; // turn on the green      
 
         }
 
@@ -352,13 +352,13 @@ void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_ca
             signal_a = 0b00000000;
             break;
         case GREEN:
-            signal_a = 0b00000010;
+            signal_a = 0b00000100;
             break;
         case YELLOW:
             signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
             break;
         case RED:
-            signal_a = 0b00000100;
+            signal_a = 0b00000010;
             break;
     }
 
@@ -367,13 +367,13 @@ void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_ca
             signal_b = 0b00000000;
             break;
         case GREEN:
-            signal_b = 0b00000010;
+            signal_b = 0b00000100;
             break;
         case YELLOW:
             signal_b = _calculate_yellow_led(signal_calculation_states->leds.signal_b, (board_configuration->led_polarity == BiDirectionalYellow));
             break;
         case RED:
-            signal_b = 0b00000100;
+            signal_b = 0b00000010;
             break;
     }
 
@@ -382,13 +382,13 @@ void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_ca
             signal_c = 0b00000000;
             break;
         case GREEN:
-            signal_c = 0b00000010;
+            signal_c = 0b00000100;
             break;
         case YELLOW:
             signal_c = _calculate_yellow_led(signal_calculation_states->leds.signal_c, (board_configuration->led_polarity == BiDirectionalYellow));
             break;
         case RED:
-            signal_c = 0b00000100;
+            signal_c = 0b00000010;
             break;
     }
 
@@ -397,18 +397,18 @@ void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_ca
             signal_d = 0b00000000;
             break;
         case GREEN:
-            signal_d = 0b00000010;
+            signal_d = 0b00000100;
             break;
         case YELLOW:
             signal_d = _calculate_yellow_led(signal_calculation_states->leds.signal_d, (board_configuration->led_polarity == BiDirectionalYellow));
             break;
         case RED:
-            signal_d = 0b00000100;
+            signal_d = 0b00000010;
             break;
     }
 
 
-    if (board_configuration->led_polarity == CommonAnode) {
+    if (board_configuration->led_polarity == CommonCathode) {
 
         signal_a = ~signal_a;
         signal_b = ~signal_b;

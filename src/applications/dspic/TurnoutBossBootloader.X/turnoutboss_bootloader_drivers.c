@@ -53,7 +53,7 @@ void TurnoutBossBootloaderDrivers_setup(parameterless_callback_t _100ms_timer_si
 
     CommonLoaderApp_initialize_sfrs();
     TurnoutbossBootloader_ecan1helper_initialization();
-    _25AA1024_Driver_initialize();
+    _25AA1024_Driver_initialize(EEPROM_ADDRESS_SIZE_IN_BITS);
 
 }
 
@@ -71,14 +71,14 @@ void TurnoutBossBootloaderDrivers_assign_uart_rx_callback(uart_rx_callback_t uar
 
 uint16_olcb_t TurnoutBossBootloaderDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
-    return _25AA1024_Driver_read(address, count, buffer);
+    return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
 
 }
 
 uint16_olcb_t TurnoutBossBootloaderDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     _25AA1024_Driver_write_latch_enable();
-    _25AA1024_Driver_write(address, count, buffer);
+    _25AA1024_Driver_write(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
 
     while (_25AA1024_Driver_write_in_progress()) {
 

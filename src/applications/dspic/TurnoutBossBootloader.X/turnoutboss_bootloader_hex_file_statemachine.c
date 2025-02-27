@@ -210,9 +210,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
             if (_read_dword(next_char)) {
 
                 start_erase_block_address = strtoul((char*) &temp, NULL, 16);
-                                
-                printf("erase block: 0x%04X%04X; %s\n", (uint16_olcb_t)(start_erase_block_address >> 16), (uint16_olcb_t) start_erase_block_address, temp);
-
+                              
                 if (start_erase_block_address == EOF_ADDRESS) {
 
                     return _test_checksum();

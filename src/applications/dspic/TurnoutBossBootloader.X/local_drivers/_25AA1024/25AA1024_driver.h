@@ -44,7 +44,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void _25AA1024_Driver_initialize(void);
+    extern void _25AA1024_Driver_initialize(uint8_olcb_t address_size_in_bits);
     
     extern void _25AA1024_Driver_erase_chip(void);
 
@@ -56,15 +56,15 @@ extern "C" {
 
     extern void _25AA1024_Driver_write_latch_disable(void);
 
-    extern void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte);
+    extern void _25AA1024_Driver_write_byte(uint32_olcb_t address, uint8_olcb_t byte, uint8_olcb_t address_size_in_bits);
 
-    extern uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
+    extern uint16_olcb_t _25AA1024_Driver_write(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size_in_bits);
 
-    extern uint8_olcb_t _25AA1024_Driver_write_in_progress();
+    extern uint8_olcb_t _25AA1024_Driver_write_in_progress(void);
 
-    extern uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address);
+    extern uint8_olcb_t _25AA1024_Driver_read_byte(uint32_olcb_t address, uint8_olcb_t address_size_in_bits);
 
-    extern uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer);
+    extern uint16_olcb_t _25AA1024_Driver_read(uint32_olcb_t address, uint8_olcb_t count, configuration_memory_buffer_t* buffer, uint8_olcb_t address_size_in_bits);
 
 #ifdef	__cplusplus
 }

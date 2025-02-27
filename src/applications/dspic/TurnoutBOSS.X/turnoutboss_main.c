@@ -104,8 +104,26 @@ void _signal_update_timer_1_callback(void) {
 
     // Timer 1 will be paused when the states are being recalculated (below) and when any configuration memory access occurs (turnoutboss_drivers.c)
     // so the SPI bus will not have a conflict
+ 
+    if (!UartHandler_pause_calculations) 
+     TurnoutBossHardwareHandler_update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
-    TurnoutBossHardwareHandler_update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
+}
+
+node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
+
+    if (_25AA1024_Driver_read(config_mem_address, 6, config_mem_buffer, EEPROM_ADDRESS_SIZE_IN_BITS) == 6) {
+        
+        node_id_t result = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
+
+        if ((result != NULL_NODE_ID) && (result != 0xFFFFFFFFFFFF)) {
+            
+            return result;
+            
+        }
+    }
+
+    return NODE_ID_DEFAULT;
 
 }
 
@@ -128,7 +146,9 @@ void _initialize_bootloader_state(void) {
 
 }
 
-node_id_t _extract_node_id(void) {
+node_id_t _extract_node_id() {
+    
+    configuration_memory_buffer_t config_mem_buffer;
 
     if (CommonLoaderApp_bootloader_state.started_from_bootloader) {
 
@@ -144,9 +164,7 @@ node_id_t _extract_node_id(void) {
 
     } else {
 
-        // TODO: Need to add the code to allow a stand alone version read the node id from flash
-
-        return NODE_ID_DEFAULT;
+        return _extract_node_id_from_eeprom(NODE_ID_ADDRESS, &config_mem_buffer);
 
     }
 
@@ -273,6 +291,7 @@ int main(void) {
     LED_YELLOW = 1;
 #endif
 
+
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
@@ -293,6 +312,7 @@ int main(void) {
         if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
 
             if (!UartHandler_pause_calculations) {
+                
               // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
               TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
@@ -301,6 +321,10 @@ int main(void) {
             }
 
         }
+        
+        LED_BLUE = OCCUPANCY_DETECT_1_PIN;
+        LED_GREEN = OCCUPANCY_DETECT_2_PIN;
+        LED_YELLOW = OCCUPANCY_DETECT_3_PIN;
 
     }
 
