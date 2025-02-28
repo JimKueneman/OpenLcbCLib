@@ -264,9 +264,14 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
                     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
                     if (!FLASH_ErasePage(start_erase_block_address)) {
+                        
+                        if (!FLASH_ErasePage(start_erase_block_address)) {  // try it twice then fail
 
-                        printf("Erasing failed:\n");
+                           printf("Erasing failed:\n");
+                           
+                           return FALSE;
 
+                        }
                     };
 
                     FLASH_Lock();
@@ -275,6 +280,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
 
                 is_data_byte_1 = TRUE;
                 state_machine_state = state_machine_state + 1;
+                
             }
 
             break;
@@ -305,6 +311,8 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
                     if (!FLASH_WriteDoubleWord24(running_address, data_byte_1, data_byte_2)) {
 
                         printf("Flash Write Failed");
+                        
+                        return FALSE;
 
                     }
 
