@@ -40,35 +40,38 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../../../drivers/common/can_main_statemachine.h"
-#include "../../../drivers/common/../driver_mcu.h"
-#include "../../../drivers/driver_can.h"
-#include "../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../openlcb/openlcb_node.h"
-#include "../../../openlcb/application_callbacks.h"
-#include "../../../openlcb/application.h"
-#include "../../../openlcb/openlcb_utilities.h"
-#include "../../../openlcb/openlcb_tx_driver.h"
-#include "../../../openlcb/protocol_datagram.h"
+
 #include "turnoutboss_bootloader_ecan1_helper.h"
 #include "turnoutboss_bootloader_drivers.h"
 #include "turnoutboss_bootloader_uart_handler.h"
-#include "turnoutboss_bootloader_traps.h"
-
 #include "turnoutboss_bootloader_node_parameters.h"
+#include "turnoutboss_bootloader_hex_file_statemachine.h"
+
 #include "../TurnoutBossCommon/common_debug_helper.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
 
-#include "turnoutboss_bootloader_hex_file_statemachine.h"
+#include "../../../drivers/common/can_main_statemachine.h"
+#include "../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../openlcb/openlcb_node.h"
+#include "../../../openlcb/application_callbacks.h"
+#include "../../../openlcb/openlcb_utilities.h"
+#include "../../../openlcb/protocol_datagram.h"
+
 #include "mcc_generated_files/memory/flash.h"
-#include "../TurnoutBossCommon/common_loader_app.h"
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 
+//
+// The firmware is written through the OpenLcb Configuration Memory Protocol so we hook into it here
+// to pass it to the statemachine to bisect it and write it to flash
+//
 uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     for (int i = 0; i < count; i++) {
 
         if (!TurnoutbossBootloaderHexFileStateMachine_run((*buffer)[i])) {
+            
+            // Something happened
+            CommonLoaderApp_bootloader_state.update_succeeded = FALSE;
 
             return ERROR_TEMPORARY_TRANSFER_ERROR; // RETURN AN ERROR CODE HERE TO SEND A WRITE FAIL MESSAGE
 
@@ -90,19 +93,32 @@ void _config_memory_freeze_bootloader_callback(openlcb_node_t* openlcb_node, ope
 
     ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
 
         openlcb_node->state.firmware_upgrade_active = TRUE;
+        
+        // Lets be optimistic
+        CommonLoaderApp_bootloader_state.update_succeeded = TRUE;
+        
+        TurnoutbossBootloaderHexFileStateMachine_reset();
+        
+    }
 
 }
 
 void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    // Make sure to wait until we know the library has responded to the caller before acting
     if (openlcb_node->state.openlcb_msg_handled) {
 
         openlcb_node->state.firmware_upgrade_active = FALSE;
+        
+        // Only exit and start the app if it succeeded
+        if (CommonLoaderApp_bootloader_state.update_succeeded) {
 
-        CommonLoaderApp_bootloader_state.do_start = TRUE;
+           CommonLoaderApp_bootloader_state.do_start = TRUE;
+        
+        }
 
     }
 
@@ -154,19 +170,23 @@ node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configu
             
         }
     }
+    
+    printf("Node ID not found in EEPROM\n");
 
     return NODE_ID_DEFAULT;
 
 }
 
-node_id_t _extract_node_id(void) {
+node_id_t _extract_node_id_from_flash_or_eeprom(void) {
     
     configuration_memory_buffer_t config_mem_buffer;
     
-    node_id_t result = TurnoutbossBootloaderHexFileStateMachine_extract_node_id();
+    node_id_t result = TurnoutbossBootloaderHexFileStateMachine_extract_node_id_from_flash();
 
     if ((result == 0x00FFFFFFFFFFFF) || (result == 0x000000000000)) {
-
+        
+        printf("Node ID not found in FLASH\n");
+        
         result = _extract_node_id_from_eeprom(NODE_ID_ADDRESS, &config_mem_buffer);
         
     }
@@ -223,6 +243,7 @@ void _initialize_state(void) {
 
     }
     
+    CommonLoaderApp_bootloader_state.update_succeeded = FALSE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
     CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
 
@@ -232,7 +253,7 @@ int main(void) {
     
     _initialize_state();
     _initialize();
-    CommonLoaderApp_node_id = _extract_node_id();
+    CommonLoaderApp_node_id = _extract_node_id_from_flash_or_eeprom();
     
     _GIE = 1; // Enable Interrupts
     

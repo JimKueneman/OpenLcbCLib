@@ -238,6 +238,7 @@ typedef struct {
     uint16_olcb_t started_from_app:1;
     uint16_olcb_t started_from_bootloader:1;
     uint16_olcb_t do_start: 1;
+    uint16_olcb_t update_succeeded: 1;
      
 } bootloader_state_t;
 

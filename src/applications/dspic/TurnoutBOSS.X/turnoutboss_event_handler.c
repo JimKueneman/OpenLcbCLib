@@ -530,6 +530,7 @@ void _board_register_general_events(openlcb_node_t *node) {
 
 void TurnoutBossEventHandler_initialize(openlcb_node_t *node, board_configuration_t* board_configuration, signaling_state_t* signaling_state, send_event_engine_t* event_engine) {
 
+    // Save local pointers to these structures for later use
     _event_handler_board_configuration = board_configuration;
     _event_handler_signaling_state = signaling_state;
 

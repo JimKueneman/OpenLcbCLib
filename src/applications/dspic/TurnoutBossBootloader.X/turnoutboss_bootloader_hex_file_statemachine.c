@@ -30,7 +30,6 @@ uint8_olcb_t state_machine_state = HEX_STATE_FIND_COLON;
 char temp[20] = {};  
 uint8_olcb_t byte_index = 0;
 
-
 uint32_olcb_t start_erase_block_address = 0;
 uint32_olcb_t instruction_count = 0;
 uint32_olcb_t data_byte_1 = 0;
@@ -38,9 +37,25 @@ uint32_olcb_t data_byte_2 = 0;
 uint8_olcb_t is_data_byte_1 = TRUE;
 uint16_olcb_t running_instruction_count = 0;
 uint32_olcb_t running_address = 0;
-
-
 uint8_olcb_t dword_state = 0;
+
+
+void TurnoutbossBootloaderHexFileStateMachine_reset(void) {
+    
+  dword_state = 0;  
+  running_address = 0;
+  running_instruction_count = 0;
+  is_data_byte_1 = TRUE;
+  data_byte_2 = 0;
+  data_byte_1 = 0;
+  instruction_count = 0;
+  start_erase_block_address = 0;
+  byte_index = 0;
+  state_machine_state = 0;
+  
+  memset(&temp, 0x00, sizeof ( temp));
+    
+}
 
 uint8_olcb_t _read_dword(uint8_olcb_t next_char) {
 
@@ -122,7 +137,7 @@ uint8_olcb_t _read_dword(uint8_olcb_t next_char) {
 
 }
 
-uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id(void) {
+uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id_from_flash(void) {
 
     uint64_olcb_t upper, lower;
 
@@ -141,6 +156,9 @@ uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id(void) {
 
 uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
 
+    // Checksum information is stored in the flash page directly before the Configuration Bits
+    // It stores where to start and finish the calculation then the value it should be note this 
+    // are 32 bit words so it can reach into the full 24 bit address space
     uint32_olcb_t start_address = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS);
     uint32_olcb_t end_address = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS + 2);
     uint32_olcb_t checksum = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS + 4);
@@ -150,6 +168,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
 //    printf("End Address: 0x%04X%04X\n", (uint16_olcb_t) (end_address >> 16), (uint16_olcb_t) end_address);
 //    printf("Checksum : 0x%04X%04X\n", (uint16_olcb_t) (checksum >> 16), (uint16_olcb_t) checksum);
 
+    // Read every byte 
     while (start_address <= end_address) {
 
         running_checksum = running_checksum + FLASH_ReadWord24(start_address);
@@ -158,6 +177,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
 
     }
 
+    // We can only store 24 bits in the flash in a DWord read/write
     running_checksum = running_checksum & 0x00FFFFFF;
 
     if (checksum == running_checksum) {
@@ -289,12 +309,12 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
                     }
 
                     FLASH_Lock();
-
+                    
                     if (FLASH_ReadWord24(running_address) != data_byte_1) {
 
                         printf("Read-back on data_byte_1 failed\n");
 
-                 //       return FALSE;
+                        return FALSE;
 
                     }
 
@@ -302,7 +322,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
 
                         printf("Read-back on data_byte_1 failed\n");
 
-                  //      return FALSE;
+                        return FALSE;
 
                     }
 

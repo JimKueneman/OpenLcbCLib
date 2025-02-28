@@ -47,6 +47,7 @@
 #include "../../../openlcb/application_callbacks.h"
 #include "../../../openlcb/openlcb_tx_driver.h"
 #include "local_drivers/_MCP4014/MCP4014_driver.h"
+#include "turnoutboss_drivers.h"
 #else
 #include "src/openlcb/openlcb_utilities.h"
 #include "src/openlcb/openlcb_types.h"
@@ -66,10 +67,17 @@ board_configuration_t* _turnoutboss_board_configuration;
 
 void _set_detector_gains(void) {
 #ifdef MPLAB
+    // Since we multiplex the port expander don't let the timer update the signal LEDs while we are writing to the LED brightness gain adjustment (use a port expander pin for CS)
+    TurnoutBossDrivers_pause_signal_calculation_timer();
     MCP4014Driver_set_gain(_turnoutboss_board_configuration->detector_gain_1, _turnoutboss_board_configuration->detector_gain_2, _turnoutboss_board_configuration->detector_gain_3, _turnoutboss_board_configuration->signal_led_brightness_gain);
+    TurnoutBossDrivers_resume_signal_calculation_timer();
 #endif
 }
 
+//
+// Whenever anything is written to the configuration memory we may need to react to it with a different
+// state calulation so we hook into the OpenlcbCLib Configuration Memory Write system to see what it being changed
+//
 void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer) {
 
     switch (address) {

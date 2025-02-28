@@ -35,11 +35,13 @@
 
 #include "../../../openlcb/openlcb_types.h"
 
+extern void TurnoutbossBootloaderHexFileStateMachine_reset(void);
+
 extern uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char);
 
 extern uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void);
 
-extern uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id(void);
+extern uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id_from_flash(void);
 
 #ifdef	__cplusplus
 extern "C" {
