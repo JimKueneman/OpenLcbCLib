@@ -36,7 +36,7 @@
 #ifndef __TURNOUTBOSS_VERSION__
 #define	__TURNOUTBOSS_VERSION__
  
-#define TURNOUTBOSS_VERSION "20250301.094506"
+#define TURNOUTBOSS_VERSION "20250301.123414"
  
 #ifdef	__cplusplus
 extern "C" {

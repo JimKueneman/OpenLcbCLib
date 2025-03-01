@@ -43,6 +43,7 @@ extern uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(v
 
 extern uint64_olcb_t TurnoutbossBootloaderHexFileStateMachine_extract_node_id_from_flash(void);
 
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
