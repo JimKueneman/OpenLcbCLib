@@ -36,6 +36,7 @@
 #include "turnoutboss_bootloader_node_parameters.h"
 #include "../../../openlcb/openlcb_defines.h"
 #include "../TurnoutBossCommon/turnoutboss_version.h"
+#include "../TurnoutBossCommon/common_loader_app.h"
 #else
 #include "node_parameters.h"
 #include "src/openlcb/openlcb_defines.h"
@@ -48,9 +49,9 @@ const node_parameters_t NodeParameters_main_node = {
     .producer_count_autocreate = 0,
 
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
-    .snip.name = "Mustangpeak Engineering",
-    .snip.model = "TurnoutBoss Bootloader",
-    .snip.hardware_version = "Ver 2",
+    .snip.name = TURNOUTBOSS_COMPANY_NAME,
+    .snip.model = TURNOUTBOSS_BOOTLOADER_MODEL_NAME,
+    .snip.hardware_version = TURNOUTBOSS_HARDWARE_VERSION,
     .snip.software_version = TURNOUTBOSS_VERSION,
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
 

@@ -46,12 +46,24 @@
 #define EEPROM_PAGE_SIZE_IN_BYTES 256
 #define EEPROM_ADDRESS_SIZE_IN_BITS 24
 #define EEPROM_SIZE_IN_BYTES 131072 
+
+#define TURNOUTBOSS_COMPANY_NAME "Mustangpeak Engineering"
+#define TURNOUTBOSS_MODEL_NAME "TurnoutBoss"
+#define TURNOUTBOSS_BOOTLOADER_MODEL_NAME "TurnoutBoss Bootloader"
+#define TURNOUTBOSS_HARDWARE_VERSION "Version 1"
 #endif
 
 #ifdef BOSS2
+
 #define EEPROM_PAGE_SIZE_IN_BYTES 16
 #define EEPROM_ADDRESS_SIZE_IN_BITS 16
 #define EEPROM_SIZE_IN_BYTES  1024 
+
+#define TURNOUTBOSS_COMPANY_NAME "Mustangpeak Engineering"
+#define TURNOUTBOSS_MODEL_NAME "TurnoutBoss"
+#define TURNOUTBOSS_BOOTLOADER_MODEL_NAME "TurnoutBoss Bootloader"
+#define TURNOUTBOSS_HARDWARE_VERSION "Version 2"
+
 #endif
 
 #define NODE_ID_ADDRESS  EEPROM_SIZE_IN_BYTES - EEPROM_PAGE_SIZE_IN_BYTES // put it on the last page in the EEPROM 1024-16 = 1008 in our case
