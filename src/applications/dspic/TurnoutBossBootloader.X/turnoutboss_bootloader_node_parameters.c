@@ -35,6 +35,7 @@
 #ifdef MPLAB
 #include "turnoutboss_bootloader_node_parameters.h"
 #include "../../../openlcb/openlcb_defines.h"
+#include "../TurnoutBossCommon/turnoutboss_version.h"
 #else
 #include "node_parameters.h"
 #include "src/openlcb/openlcb_defines.h"
@@ -50,7 +51,7 @@ const node_parameters_t NodeParameters_main_node = {
     .snip.name = "Mustangpeak Engineering",
     .snip.model = "TurnoutBoss Bootloader",
     .snip.hardware_version = "Ver 2",
-    .snip.software_version = "0.1",
+    .snip.software_version = TURNOUTBOSS_VERSION,
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
 
     .protocol_support = (

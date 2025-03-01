@@ -94,7 +94,7 @@ else
 IsDebug="false"
 endif
 
-.build-conf:  ${BUILD_SUBPROJECTS}
+.build-conf:  .pre ${BUILD_SUBPROJECTS}
 ifneq ($(INFORMATION_MESSAGE), )
 	@echo $(INFORMATION_MESSAGE)
 endif
@@ -682,6 +682,11 @@ ${DISTDIR}/TurnoutBOSS.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproje
 
 endif
 
+.pre:
+	@echo "--------------------------------------"
+	@echo "User defined pre-build step: [/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/VersionUpdater/buildversion -f /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/turnoutboss_version.h]"
+	@/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/VersionUpdater/buildversion -f /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/turnoutboss_version.h
+	@echo "--------------------------------------"
 
 # Subprojects
 .build-subprojects:

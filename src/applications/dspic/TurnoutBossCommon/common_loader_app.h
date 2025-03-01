@@ -33,8 +33,8 @@
  */
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef _COMMON_LOADER_APP__
-#define	_COMMON_LOADER_APP__
+#ifndef __COMMON_LOADER_APP__
+#define	__COMMON_LOADER_APP__
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
@@ -259,5 +259,5 @@ extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent addr
 }
 #endif /* __cplusplus */
 
-#endif	/* _COMMON_LOADER_APP__ */
+#endif	/* __COMMON_LOADER_APP__ */
 

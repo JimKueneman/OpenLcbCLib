@@ -149,8 +149,13 @@
       <logicalFolder name="TurnoutBossCommon"
                      displayName="TurnoutBossCommon"
                      projectFiles="true">
+        <logicalFolder name="VersionUpdater"
+                       displayName="VersionUpdater"
+                       projectFiles="true">
+        </logicalFolder>
         <itemPath>../TurnoutBossCommon/common_loader_app.c</itemPath>
         <itemPath>../TurnoutBossCommon/common_debug_helper.c</itemPath>
+        <itemPath>../TurnoutBossCommon/turnoutboss_version.h</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
@@ -195,9 +200,9 @@
         </subordinates>
       </compileType>
       <makeCustomizationType>
-        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeCustomizationPreStepEnabled>true</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
-        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPreStep>/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/VersionUpdater/buildversion -f /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/turnoutboss_version.h</makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep>"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -addressing=2 -o/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/turnoutboss_merged.hex </makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>

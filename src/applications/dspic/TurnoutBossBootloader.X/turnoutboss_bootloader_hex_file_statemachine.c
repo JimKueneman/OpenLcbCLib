@@ -20,11 +20,6 @@
 #define HEX_STATE_READ_INSTRUCTION_COUNT 2
 #define HEX_STATE_READ_DATA 3
 
-
-//uint32_olcb_t buffer[1024];
-
-
-
 uint8_olcb_t state_machine_state = HEX_STATE_FIND_COLON;
 
 char temp[20] = {};  
