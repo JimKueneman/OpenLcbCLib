@@ -47,15 +47,7 @@
 
 teach_learn_state_t TurnoutBossTeachLearn_teach_learn_state;
 
-void TurnoutBossTeachLearn_initialize(void) {
-
-    memset(&TurnoutBossTeachLearn_teach_learn_state, 0x00, sizeof (TurnoutBossTeachLearn_teach_learn_state));
-
-}
-
 #define LED_ARRAY_LEN 12
-uint8_olcb_t _led_array_index = 0;
-uint8_olcb_t _is_signal_sequence;
 
 const uint8_olcb_t _led_blue_array_one_blink[LED_ARRAY_LEN] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 const uint8_olcb_t _led_blue_array_two_blink[LED_ARRAY_LEN] = {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -65,15 +57,19 @@ const uint8_olcb_t _led_blue_array_five_blink[LED_ARRAY_LEN] = {1, 0, 1, 0, 1, 0
 
 const uint8_olcb_t _led_green_array_blink[LED_ARRAY_LEN] = {1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0};
 
-uint8_olcb_t _timer_tick;
+void TurnoutBossTeachLearn_initialize(void) {
+
+    memset(&TurnoutBossTeachLearn_teach_learn_state, 0x00, sizeof (TurnoutBossTeachLearn_teach_learn_state));
+
+}
 
 void _inc_led_array_indexer(void) {
 
-    _led_array_index = _led_array_index + 1;
+    TurnoutBossTeachLearn_teach_learn_state.led_array_index = TurnoutBossTeachLearn_teach_learn_state.led_array_index + 1;
 
-    if (_led_array_index >= LED_ARRAY_LEN) {
+    if (TurnoutBossTeachLearn_teach_learn_state.led_array_index >= LED_ARRAY_LEN) {
 
-        _led_array_index = 0;
+        TurnoutBossTeachLearn_teach_learn_state.led_array_index = 0;
 
     }
 
@@ -88,7 +84,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = TRUE;
             LED_YELLOW = TRUE;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
 
@@ -98,8 +94,8 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
         case STATE_TEACH_LEARN_START_WAIT_FOR_LEARN_START_SIGNALS:
 
             LED_BLUE = FALSE;
-            LED_YELLOW = _is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
 
@@ -108,9 +104,9 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_CATHODE_START:
         case STATE_TEACH_LEARN_START_SIGNALS_COMMON_CATHODE:
 
-            LED_BLUE = _led_blue_array_one_blink[_led_array_index];
-            LED_YELLOW = _is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_BLUE = _led_blue_array_one_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
 
@@ -119,9 +115,9 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_BI_DIRECTIONAL_START:
         case STATE_TEACH_LEARN_START_SIGNALS_BI_DIRECTIONAL:
 
-            LED_BLUE = _led_blue_array_two_blink[_led_array_index];
-            LED_YELLOW = _is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_BLUE = _led_blue_array_two_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
 
@@ -130,9 +126,9 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_ANODE_START:
         case STATE_TEACH_LEARN_START_SIGNALS_COMMON_ANODE:
 
-            LED_BLUE = _led_blue_array_three_blink[_led_array_index];
-            LED_YELLOW = _is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_BLUE = _led_blue_array_three_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
 
@@ -141,18 +137,18 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START:
         case STATE_TEACH_LEARN_START_SIGNALS_POINT_DOUBLE_HEAD:
 
-            LED_BLUE = _led_blue_array_four_blink[_led_array_index];
-            LED_YELLOW = _is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_BLUE = _led_blue_array_four_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
             
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_SINGLE_HEAD_START:
         case STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD:
             
-            LED_BLUE = _led_blue_array_five_blink[_led_array_index];
-            LED_YELLOW = _is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[_led_array_index];
+            LED_BLUE = _led_blue_array_five_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             
             break;
 
@@ -170,7 +166,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
     _inc_led_array_indexer();
 
-    _timer_tick = _timer_tick + 1;
+    TurnoutBossTeachLearn_teach_learn_state.timer_tick = TurnoutBossTeachLearn_teach_learn_state.timer_tick + 1;
 
 }
 
@@ -219,7 +215,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
         case STATE_TEACH_LEARN_START_LEARN:
             
-            _is_signal_sequence = FALSE;
+            TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence = FALSE;
 
             // Wait to release the Teach Button
             if (!LEARN_BUTTON_PIN) {
@@ -355,7 +351,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
         case STATE_TEACH_LEARN_START_LEARN_SIGNALS:
 
-            _is_signal_sequence = TRUE;
+            TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence = TRUE;
             
             // Wait to release the Teach Button
             if (!LEARN_BUTTON_PIN) {
@@ -557,7 +553,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
 void TurnoutBossTeachLearn_check_for_enable(void) {
 
-    _timer_tick = 0;
+    TurnoutBossTeachLearn_teach_learn_state.timer_tick = 0;
 
     if (LEARN_BUTTON_PIN && TEACH_BUTTON_PIN) {
 
@@ -571,7 +567,7 @@ void TurnoutBossTeachLearn_check_for_enable(void) {
 
         while (LEARN_BUTTON_PIN) {
 
-            if (_timer_tick > 30) {
+            if (TurnoutBossTeachLearn_teach_learn_state.timer_tick > 30) {
 
                 TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_LEARN_SIGNALS;
 

@@ -408,6 +408,9 @@ typedef struct {
 typedef struct {
     
     uint8_olcb_t state;  // one of the STATE_TEACH_LEARN_xxxx defines
+    uint8_olcb_t led_array_index;
+    uint8_olcb_t is_signal_sequence;   
+    uint8_olcb_t timer_tick;
 
 } teach_learn_state_t;
 
