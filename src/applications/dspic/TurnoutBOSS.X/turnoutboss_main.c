@@ -298,11 +298,12 @@ int main(void) {
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
 
-    TurnoutBossTeachLearn_check_for_enable();
-
     // Point the interrupt table to the application and re-enable the interrupts
     CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
     _GIE = 1; // Enable interrupts
+    
+    // Need the timers running for this
+    TurnoutBossTeachLearn_check_for_enable(); 
 
     while (!CommonLoaderApp_bootloader_state.do_start) {
 

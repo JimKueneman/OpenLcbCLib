@@ -69,6 +69,15 @@
 #define CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN    178
 
 
+#define LED_POLARITY_COMMON_ANODE    0
+#define LED_POLARITY_COMMON_CATHODE  1
+#define LED_POLARITY_BI_DIRECTIONAL  2
+
+#define POINT_SIGNAL_HEAD_DOUBLE     0
+#define POINT_SIGNAL_HEAD_SINGLE     1
+
+
+
 // define the start location of the producer/consumer array for CDI. This goes with the other definitions in turnout_board_configuration.h
     
 #define START_OF_PRODUCER_CONSUMER_MAP                  200 // 416 bytes space for 51 producers and consumers
