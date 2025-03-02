@@ -72,6 +72,7 @@
         <itemPath>turnoutboss_node_parameters.h</itemPath>
         <itemPath>turnoutboss_traps.h</itemPath>
         <itemPath>turnoutboss_uart_handler.h</itemPath>
+        <itemPath>turnoutboss_teach_learn.h</itemPath>
       </logicalFolder>
       <logicalFolder name="TurnoutBossCommon"
                      displayName="TurnoutBossCommon"
@@ -168,6 +169,7 @@
         <itemPath>turnoutboss_traps.c</itemPath>
         <itemPath>turnoutboss_uart_handler.c</itemPath>
         <itemPath>turnoutboss_main.c</itemPath>
+        <itemPath>turnoutboss_teach_learn.c</itemPath>
       </logicalFolder>
       <logicalFolder name="TurnoutBossCommon"
                      displayName="TurnoutBossCommon"

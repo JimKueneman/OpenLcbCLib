@@ -405,6 +405,12 @@ typedef struct {
 
 } board_configuration_t;
 
+typedef struct {
+    
+    uint8_olcb_t state;  // one of the STATE_TEACH_LEARN_xxxx defines
+
+} teach_learn_state_t;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -328,7 +328,7 @@ void _register_producer(openlcb_node_t *node, event_id_t event, uint8_olcb_t off
     
     // store into configuration memory for CDI sample
     uint16_t config_address = START_OF_PRODUCER_CONSUMER_MAP + offset*8;
-    TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(node, event, config_address);
+    TurnoutBossBoardConfiguration_write_event_id_to_configuration_memory(node, event, config_address);
 
 }
 
@@ -340,7 +340,7 @@ void _register_consumer(openlcb_node_t *node, event_id_t event, uint8_olcb_t off
 
     // store into configuration memory for CDI sample
     uint16_t config_address = START_OF_PRODUCER_CONSUMER_MAP + offset*8;
-    TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(node, event, config_address);
+    TurnoutBossBoardConfiguration_write_event_id_to_configuration_memory(node, event, config_address);
 
 }
 

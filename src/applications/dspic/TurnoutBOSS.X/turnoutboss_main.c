@@ -58,6 +58,7 @@
 #include "turnoutboss_traps.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
+#include "turnoutboss_teach_learn.h"
 
 #else 
 
@@ -80,6 +81,7 @@
 #include "turnoutboss_event_engine.h"
 #include "turnoutboss_board_configuration.h"
 #include "turnoutboss_types.h"
+
 
 board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
@@ -104,22 +106,22 @@ void _signal_update_timer_1_callback(void) {
 
     // Timer 1 will be paused when the states are being recalculated (below) and when any configuration memory access occurs (turnoutboss_drivers.c)
     // so the SPI bus will not have a conflict
- 
-    if (!UartHandler_pause_calculations) 
-     TurnoutBossHardwareHandler_update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
+
+    if (!UartHandler_pause_calculations)
+        TurnoutBossHardwareHandler_update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
 
 }
 
 node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
 
     if (_25AA1024_Driver_read(config_mem_address, 6, config_mem_buffer, EEPROM_ADDRESS_SIZE_IN_BITS) == 6) {
-        
+
         node_id_t result = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
 
         if ((result != NULL_NODE_ID) && (result != 0xFFFFFFFFFFFF)) {
-            
+
             return result;
-            
+
         }
     }
 
@@ -147,7 +149,7 @@ void _initialize_bootloader_state(void) {
 }
 
 node_id_t _extract_node_id() {
-    
+
     configuration_memory_buffer_t config_mem_buffer;
 
     if (CommonLoaderApp_bootloader_state.started_from_bootloader) {
@@ -170,7 +172,6 @@ node_id_t _extract_node_id() {
 
 }
 
-
 void _build_interrupt_jump_table(void) {
 
     // After the initialization where we cleared these variables set it up the bootloader jump table
@@ -188,12 +189,12 @@ void _build_interrupt_jump_table(void) {
 }
 
 void _initialize_callbacks(void) {
-    
+
     TurnoutBossDrivers_assign_uart_rx_callback(&UartHandler_handle_rx);
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
     TurnoutBossDrivers_set_signal_update_timer_sink(&_signal_update_timer_1_callback);
-    
+
 }
 
 openlcb_node_t* _initialize_turnout_boss(void) {
@@ -221,7 +222,7 @@ openlcb_node_t* _initialize_turnout_boss(void) {
     _build_interrupt_jump_table();
 
     _initialize_callbacks();
-    
+
     // We always boot and reallocate the alias
     openlcb_node_t* result = Node_allocate(_extract_node_id(), &NodeParameters_main_node);
 
@@ -243,7 +244,9 @@ openlcb_node_t* _initialize_turnout_boss(void) {
 
     // Build the dynamic events and the callback to handle incoming events
     TurnoutBossEventHandler_initialize(result, &_board_configuration, &_signal_calculation_states, &_event_engine);
-    
+
+    TurnoutBossTeachLearn_initialize();
+
     UartHandler_board_configuration = &_board_configuration;
     UartHandler_signal_calculation_states = &_signal_calculation_states;
 
@@ -291,10 +294,11 @@ int main(void) {
     LED_YELLOW = 1;
 #endif
 
-
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
+
+    TurnoutBossTeachLearn_check_for_enable();
 
     // Point the interrupt table to the application and re-enable the interrupts
     CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
@@ -303,28 +307,41 @@ int main(void) {
     while (!CommonLoaderApp_bootloader_state.do_start) {
 
         // Run the main Openlcb/LCC engine
-        CanMainStateMachine_run(); 
+        CanMainStateMachine_run();
 
-        // Send any events that have been flagged
-        TurnoutBossEventEngine_run(node, &_event_engine);
+        // Need to wait for the node to log in before doing anything that may try to send and event/message
+        if (node->state.initalized) {
+            
+            if (!TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
 
-        // Are all the events in the Event Engine sent?
-        if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
+                TurnoutBossTeachLearn_run(node);
 
-            if (!UartHandler_pause_calculations) {
-                
-              // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
-              TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
+            } else {
 
-              TurnoutBossSignalCalculations_recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
-              
+                // Send any events that have been flagged
+                TurnoutBossEventEngine_run(node, &_event_engine);
+
+                // Are all the events in the Event Engine sent?
+                if (TurnoutBossEventEngine_is_flushed(&_event_engine)) {
+
+                    if (!UartHandler_pause_calculations) {
+
+                        // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
+                        TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
+
+                        TurnoutBossSignalCalculations_recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
+
+                    }
+
+                }
+
+                LED_BLUE = OCCUPANCY_DETECT_1_PIN;
+                LED_GREEN = OCCUPANCY_DETECT_2_PIN;
+                LED_YELLOW = OCCUPANCY_DETECT_3_PIN;
+
             }
 
         }
-        
-        LED_BLUE = OCCUPANCY_DETECT_1_PIN;
-        LED_GREEN = OCCUPANCY_DETECT_2_PIN;
-        LED_YELLOW = OCCUPANCY_DETECT_3_PIN;
 
     }
 

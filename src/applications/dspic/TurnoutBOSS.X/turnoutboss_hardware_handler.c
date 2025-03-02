@@ -460,10 +460,10 @@ void TurnoutBossHardwareHandler_validate_config_mem(void) {
             TurnoutBossHardwareHandler_write_eeprom((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, & buffer);
 
         buffer[0] = 31;
-        TurnoutBossHardwareHandler_write_eeprom(DETECTOR_1_GAIN_ADDRESS, 1, &buffer);
-        TurnoutBossHardwareHandler_write_eeprom(DETECTOR_2_GAIN_ADDRESS, 1, &buffer);
-        TurnoutBossHardwareHandler_write_eeprom(DETECTOR_3_GAIN_ADDRESS, 1, &buffer);
-        TurnoutBossHardwareHandler_write_eeprom(SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_DETECTOR_2_GAIN, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_DETECTOR_3_GAIN, 1, &buffer);
+        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN, 1, &buffer);
 
     }
 

@@ -43,6 +43,7 @@
 #include "turnoutboss_hardware_handler.h"
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
+#include "turnoutboss_teach_learn.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
@@ -60,9 +61,9 @@ void TurnoutBossDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
 }
 
 void TurnoutBossDrivers_set_signal_update_timer_sink(parameterless_callback_t signal_update_timer_sink_func) {
-    
-   _signal_update_timer_sink_func = signal_update_timer_sink_func;
-   
+
+    _signal_update_timer_sink_func = signal_update_timer_sink_func;
+
 }
 
 void TurnoutBossDrivers_reboot(void) {
@@ -78,12 +79,12 @@ void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callb
 }
 
 uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-    
+
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
     TurnoutBossDrivers_pause_signal_calculation_timer();
 
     return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-    
+
     TurnoutBossDrivers_resume_signal_calculation_timer();
 
 }
@@ -95,28 +96,28 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
     uint16_olcb_t buffer_index = 0;
     uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE_IN_BYTES];
     uint16_olcb_t start_address;
-    
+
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
     TurnoutBossDrivers_pause_signal_calculation_timer();
 
     while (current_address < (address + count)) {
-        
+
         page_buffer_index = 0;
         start_address = current_address;
 
         while (((current_address % EEPROM_PAGE_SIZE_IN_BYTES != 0) || (page_buffer_index == 0)) && (current_address < (address + count))) {
-            
+
             page_buffer[page_buffer_index] = (*buffer)[buffer_index];
-           
+
             buffer_index = buffer_index + 1;
             page_buffer_index = page_buffer_index + 1;
             current_address = current_address + 1;
-            
+
         };
-        
-        TurnoutBossHardwareHandler_write_eeprom(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer);     
+
+        TurnoutBossHardwareHandler_write_eeprom(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer);
     }
-    
+
     TurnoutBossDrivers_resume_signal_calculation_timer();
 
     return count;
@@ -136,15 +137,15 @@ void TurnoutBossDrivers_resume_100ms_timer(void) {
 }
 
 void TurnoutBossDrivers_pause_signal_calculation_timer(void) {
-    
-  T1CONbits.TON = 0; // Turn off 
-  
+
+    T1CONbits.TON = 0; // Turn off 
+
 }
-    
+
 void TurnoutBossDrivers_resume_signal_calculation_timer(void) {
-    
+
     T1CONbits.TON = 1; // Turn on 
-    
+
 }
 
 void TurnoutBossDrivers_u1_tx_interrupt_handler(void) {
@@ -169,7 +170,7 @@ void TurnoutBossDrivers_u1_rx_interrupt_handler(void) {
 }
 
 void TurnoutBossDrivers_t1_interrupt_handler(void) {
-     
+
     if (_signal_update_timer_sink_func)
         _signal_update_timer_sink_func();
 
@@ -177,6 +178,8 @@ void TurnoutBossDrivers_t1_interrupt_handler(void) {
 
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
     
+    TurnoutBossTeachLearn_update_leds(TurnoutBossTeachLearn_teach_learn_state.state);
+
     // Increment any timer counters assigned
     if (_100ms_timer_sink_func)
         _100ms_timer_sink_func();
@@ -216,5 +219,5 @@ void __attribute__((interrupt(no_auto_psv))) _T1Interrupt(void) {
 
     // Allows a bootloader to call the normal function from it's interrupt
     TurnoutBossDrivers_t1_interrupt_handler();
-    
+
 }

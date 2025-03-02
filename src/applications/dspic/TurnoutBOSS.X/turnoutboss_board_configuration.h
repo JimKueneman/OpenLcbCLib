@@ -42,6 +42,7 @@
 
 #ifdef MPLAB
 #include "../../../openlcb/openlcb_types.h"
+#include "turnoutboss_types.h"
 #else
 #include "src/openlcb/openlcb_types.h"
 #endif
@@ -49,41 +50,40 @@
 // Identification locations (SNIP, ACDI) fill configuration space 0 - 126
 // These have to align with the CDI XML file
 // First segment
-#define BOARD_LOCATION_CONFIG_MEM_ADDRESS               127 // Single Byte, 0 = LB; 1 = RB
-#define BOARD_ADJACENT_LEFT_CONFIG_MEM_ADDRESS          128 // 8 Bytes for an Event ID
-#define BOARD_ADJACENT_RIGHT_CONFIG_MEM_ADDRESS         136 // 8 Bytes for an Event ID
-#define BOARD_PUSHBUTTON_TYPE_CONFIG_MEM_ADDRESS        144 // uses 2 pushbutton for normal/diverging or using one to toggle, 0 = two buttons; 1 = single button toggle
-#define BOARD_TURNOUT_FEEDBACK_TYPE_CONFIG_MEM_ADDRESS  145 // uses both turnout feedbacks or just a single one, 0 = not used; 1 = single feedback sensors; 2 = two feedback sensor
-#define BOARD_POINT_SIGNALHEAD_TYPE_CONFIG_MEM_ADDRESS  146 // does the point signal use a single or dual signal head
+#define CONFIG_MEM_ADDRESS_BOARD_LOCATION               127 // Single Byte, 0 = LB; 1 = RB
+#define CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT          128 // 8 Bytes for an Event ID
+#define CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT         136 // 8 Bytes for an Event ID
+#define CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE        144 // uses 2 pushbutton for normal/diverging or using one to toggle, 0 = two buttons; 1 = single button toggle
+#define CONFIG_MEM_ADDRESS_BOARD_TURNOUT_FEEDBACK_TYPE  145 // uses both turnout feedbacks or just a single one, 0 = not used; 1 = single feedback sensors; 2 = two feedback sensor
+#define CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE  146 // does the point signal use a single or dual signal head
 // some reserved space
 // Second segment starts at 170 with 4 bytes of signal electrical configuration
-#define SIGNAL_A_LED_CONFIGURATION                      170 // Is it a 3 or 2 light head
-#define SIGNAL_B_LED_CONFIGURATION                      171 // Is it a 3 or 2 light head
-#define SIGNAL_C_LED_CONFIGURATION                      172 // Is it a 3 or 2 light head
-#define SIGNAL_D_LED_CONFIGURATION                      173 // Is it a 3 or 2 light head
-#define LED_POLARITY_ADDRESS                            174 // Common Anode, Common Cathode, BiDirectional Yellow
-#define DETECTOR_1_GAIN_ADDRESS                         175
-#define DETECTOR_2_GAIN_ADDRESS                         176
-#define DETECTOR_3_GAIN_ADDRESS                         177
-#define SIGNAL_LED_BRIGHTNESS_GAIN_ADDRESS              178
+#define CONFIG_MEM_ADDRESS_SIGNAL_A_LED_TYPE             170 // Is it a 3 or 2 light head
+#define CONFIG_MEM_ADDRESS_SIGNAL_B_LED_TYPE             171 // Is it a 3 or 2 light head
+#define CONFIG_MEM_ADDRESS_SIGNAL_C_LED_TYPE             172 // Is it a 3 or 2 light head
+#define CONFIG_MEM_ADDRESS_SIGNAL_D_LED_TYPE             173 // Is it a 3 or 2 light head
+#define CONFIG_MEM_ADDRESS_LED_POLARITY                  174 // Common Anode, Common Cathode, BiDirectional Yellow
+#define CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN               175
+#define CONFIG_MEM_ADDRESS_DETECTOR_2_GAIN               176
+#define CONFIG_MEM_ADDRESS_DETECTOR_3_GAIN               177
+#define CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN    178
 
 
-#include "turnoutboss_types.h"
-
+// define the start location of the producer/consumer array for CDI. This goes with the other definitions in turnout_board_configuration.h
+    
+#define START_OF_PRODUCER_CONSUMER_MAP                  200 // 416 bytes space for 51 producers and consumers
 
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+    extern void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_configuration_t *board_configuration);
     
-    extern void TurnoutBossBoardConfiguration_initialize(openlcb_node_t *node, board_configuration_t* board_configuration);
+    extern uint16_olcb_t TurnoutBossBoardConfiguration_write_event_id_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint16_olcb_t address);
     
-    extern uint16_olcb_t TurnoutBossBoardConfiguration_write_eventID_to_configuration_memory(openlcb_node_t *node, event_id_t event, uint16_olcb_t address);
-
-// define the start location of the producer/consumer array for CDI. This goes with the other definitions in turnout_board_configuration.h
-    
-#define START_OF_PRODUCER_CONSUMER_MAP                  200 // 416 bytes space for 51 producers and consumers
+    extern void TurnoutBossBoardConfiguration_reset_to_defaults(openlcb_node_t *node);
+   
 
 #ifdef	__cplusplus
 }
