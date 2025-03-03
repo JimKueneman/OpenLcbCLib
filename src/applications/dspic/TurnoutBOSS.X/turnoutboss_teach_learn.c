@@ -45,6 +45,7 @@
 #include "../../../openlcb/application.h"
 #include "../../../openlcb/application_callbacks.h"
 #include "../../../openlcb/openlcb_utilities.h"
+#include "turnoutboss_drivers.h"
 
 
 teach_learn_state_t TurnoutBossTeachLearn_teach_learn_state;
@@ -70,7 +71,7 @@ void _event_learn_callback(openlcb_node_t* openlcb_node, event_id_t* event_id) {
             
             Utilities_copy_event_id_to_config_mem_buffer(&buffer, *event_id, 0);
             
-            if (Application_write_configuration_memory(openlcb_node, CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT, 8, &buffer) == 8) {
+            if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT, 8, &buffer) == 8) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -82,7 +83,7 @@ void _event_learn_callback(openlcb_node_t* openlcb_node, event_id_t* event_id) {
             
             Utilities_copy_event_id_to_config_mem_buffer(&buffer, *event_id, 0);
             
-            if (Application_write_configuration_memory(openlcb_node, CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT, 8, &buffer) == 8) {
+            if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT, 8, &buffer) == 8) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -356,7 +357,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
                 printf("Teach/Learn sequence done, reboot node\n");
 
                 buffer[0] = BL;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -384,7 +385,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
                 printf("Teach/Learn sequence done, reboot node\n");
 
                 buffer[0] = BR;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -444,7 +445,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
                 // Write Common Anode
                 buffer[0] = LED_POLARITY_COMMON_ANODE;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -480,7 +481,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
                 // Write Common Cathode
                 buffer[0] = LED_POLARITY_COMMON_CATHODE;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -514,7 +515,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
                 // Write Bi-Directional
                 buffer[0] = LED_POLARITY_BI_DIRECTIONAL;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -551,7 +552,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
                 // Write Double Head Mast
                 buffer[0] = POINT_SIGNAL_HEAD_DOUBLE;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -580,7 +581,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
                 // Write Single Head Mast
                 buffer[0] = POINT_SIGNAL_HEAD_SINGLE;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer) == 1) {
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 

@@ -36,7 +36,7 @@
 
 #include "xc.h"
 #include "stdio.h"  // printf
-//#include <libpic30.h> // delay
+#include <libpic30.h> // delay
 
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 #include "local_drivers/_MCP23S17/MCP23S17_driver.h"
@@ -44,6 +44,7 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
 #include "turnoutboss_teach_learn.h"
+#include "turnoutboss_drivers.h"
 
 uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
 parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
@@ -92,30 +93,43 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_o
 uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     uint16_olcb_t page_buffer_index;
-    uint32_olcb_t current_address = address;
-    uint16_olcb_t buffer_index = 0;
+    uint32_olcb_t running_address;
+    uint16_olcb_t buffer_index;
     uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE_IN_BYTES];
-    uint16_olcb_t start_address;
+    uint16_olcb_t page_start_address;
+    uint16_olcb_t end_address;
 
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
     TurnoutBossDrivers_pause_signal_calculation_timer();
 
-    while (current_address < (address + count)) {
+    running_address = address;
+    buffer_index = 0;
+    end_address = address + count;
+    
+    while (running_address < end_address) {
 
         page_buffer_index = 0;
-        start_address = current_address;
+        page_start_address = running_address;
 
-        while (((current_address % EEPROM_PAGE_SIZE_IN_BYTES != 0) || (page_buffer_index == 0)) && (current_address < (address + count))) {
+        while (((running_address % EEPROM_PAGE_SIZE_IN_BYTES != 0) || (page_buffer_index == 0)) && (running_address < end_address)) {
 
             page_buffer[page_buffer_index] = (*buffer)[buffer_index];
 
             buffer_index = buffer_index + 1;
             page_buffer_index = page_buffer_index + 1;
-            current_address = current_address + 1;
+            running_address = running_address + 1;
 
         };
+        
+        _25AA1024_Driver_write_latch_enable();
 
-        TurnoutBossHardwareHandler_write_eeprom(start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer);
+        _25AA1024_Driver_write(page_start_address, page_buffer_index, (configuration_memory_buffer_t*) & page_buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
+
+        while (_25AA1024_Driver_write_in_progress()) {
+
+            __delay32(1000); // 25AA08 seems to be sensitive to how fast you check the register... it will lock up  
+
+        }
     }
 
     TurnoutBossDrivers_resume_signal_calculation_timer();
@@ -177,7 +191,7 @@ void TurnoutBossDrivers_t1_interrupt_handler(void) {
 }
 
 void TurnoutBossDrivers_t2_interrupt_handler(void) {
-    
+
     TurnoutBossTeachLearn_update_leds(TurnoutBossTeachLearn_teach_learn_state.state);
 
     // Increment any timer counters assigned

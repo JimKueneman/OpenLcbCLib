@@ -53,7 +53,7 @@
 #include "local_drivers/_MCP4014/MCP4014_driver.h"
 #include "turnoutboss_types.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
-#include "turnoutboss_hardware_handler.h"
+#include "turnoutboss_drivers.h"
 
 uint8_olcb_t UartHandler_pause_calculations = FALSE;
 uint8_olcb_t _signal_a = 0x00; // All off
@@ -519,7 +519,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
 
             for (uint16_olcb_t i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) 
-                TurnoutBossHardwareHandler_write_eeprom((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer);
+                TurnoutBossDrivers_config_mem_write((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer);
 
             printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
             printf("Erased:\n");

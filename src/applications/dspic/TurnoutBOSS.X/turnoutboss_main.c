@@ -327,7 +327,9 @@ int main(void) {
             
             if (TurnoutBossTeachLearn_teach_learn_state.state != STATE_TEACH_LEARN_DEACTIVATED) {
 
+                TurnoutBossDrivers_pause_100ms_timer();
                 TurnoutBossTeachLearn_run(node);
+                TurnoutBossDrivers_resume_100ms_timer();
 
             } else {
 

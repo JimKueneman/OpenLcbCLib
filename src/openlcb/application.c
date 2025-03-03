@@ -5,6 +5,8 @@
  * Created on January 16, 2025, 12:00 PM
  */
 
+#include "application.h"
+
 #include "openlcb_types.h"
 #include "../drivers/driver_configuration_memory.h"
 #include "openlcb_utilities.h"

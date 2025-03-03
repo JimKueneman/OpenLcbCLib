@@ -345,23 +345,23 @@ void TurnoutBossBoardConfiguration_reset_to_defaults(openlcb_node_t *node) {
     
  memset(&buffer, 0x00, sizeof(buffer));
  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer);
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT, 8, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT, 8, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_TURNOUT_FEEDBACK_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_SIGNAL_A_LED_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_SIGNAL_B_LED_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_SIGNAL_C_LED_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_SIGNAL_D_LED_TYPE, 1, &buffer);  
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer); 
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer);
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT, 8, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT, 8, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_TURNOUT_FEEDBACK_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_A_LED_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_B_LED_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_C_LED_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_D_LED_TYPE, 1, &buffer);  
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer); 
  
  buffer[0] = 32;
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN, 1, &buffer); 
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_DETECTOR_2_GAIN, 1, &buffer); 
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_DETECTOR_3_GAIN, 1, &buffer); 
- Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN, 1, &buffer); 
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN, 1, &buffer); 
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_2_GAIN, 1, &buffer); 
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_3_GAIN, 1, &buffer); 
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN, 1, &buffer); 
  
 }
 

@@ -51,6 +51,7 @@
 #include "turnoutboss_types.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
 #include "turnoutboss_board_configuration.h"
+#include "turnoutboss_drivers.h"
 
 
 
@@ -434,20 +435,6 @@ void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_ca
 
 }
 
-void TurnoutBossHardwareHandler_write_eeprom(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
-
-    _25AA1024_Driver_write_latch_enable();
-
-    _25AA1024_Driver_write(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
-
-    while (_25AA1024_Driver_write_in_progress()) {
-
-        __delay32(1000); // 25AA08 seems to be sensitive to how fast you check the register... it will lock up  
-
-    }
-
-}
-
 void TurnoutBossHardwareHandler_validate_config_mem(void) {
 
     configuration_memory_buffer_t buffer;
@@ -461,13 +448,13 @@ void TurnoutBossHardwareHandler_validate_config_mem(void) {
 
 
         for (int i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++)
-            TurnoutBossHardwareHandler_write_eeprom((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, & buffer);
+            TurnoutBossDrivers_config_mem_write((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, & buffer);
 
         buffer[0] = 31;
-        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN, 1, &buffer);
-        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_DETECTOR_2_GAIN, 1, &buffer);
-        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_DETECTOR_3_GAIN, 1, &buffer);
-        TurnoutBossHardwareHandler_write_eeprom(CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN, 1, &buffer);
+        TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN, 1, &buffer);
+        TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_2_GAIN, 1, &buffer);
+        TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_3_GAIN, 1, &buffer);
+        TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_LED_BRIGHTNESS_GAIN, 1, &buffer);
 
     }
 
