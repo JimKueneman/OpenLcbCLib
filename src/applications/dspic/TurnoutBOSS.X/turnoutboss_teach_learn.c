@@ -142,14 +142,14 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
             LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
 
             break;
-            
+
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_SINGLE_HEAD_START:
         case STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD:
-            
+
             LED_BLUE = _led_blue_array_five_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
             LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
-            
+
             break;
 
 
@@ -175,8 +175,8 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
     configuration_memory_buffer_t buffer;
 
     switch (TurnoutBossTeachLearn_teach_learn_state.state) {
-        
-        // Jumps in here if starting a Reset to Defaults sequence
+
+            // Jumps in here if starting a Reset to Defaults sequence
 
         case STATE_TEACH_LEARN_SET_DEFAULTS_START:
 
@@ -211,10 +211,10 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
             return;
 
 
-        // Jumps in here if starting a Board Configuration Sequence
+            // Jumps in here if starting a Board Configuration Sequence
 
         case STATE_TEACH_LEARN_START_LEARN:
-            
+
             TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence = FALSE;
 
             // Wait to release the Teach Button
@@ -352,7 +352,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
         case STATE_TEACH_LEARN_START_LEARN_SIGNALS:
 
             TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence = TRUE;
-            
+
             // Wait to release the Teach Button
             if (!LEARN_BUTTON_PIN) {
 
@@ -366,9 +366,44 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
             if (LEARN_BUTTON_PIN) {
 
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_ANODE_START;
+
+            }
+
+            return;
+
+        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_ANODE_START:
+
+            if (!LEARN_BUTTON_PIN) {
+
+                printf("Teaching Common Anode Signals\n");
+
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_SIGNALS_COMMON_ANODE;
+
+            }
+
+            return;
+
+        case STATE_TEACH_LEARN_START_SIGNALS_COMMON_ANODE:
+
+            if (LEARN_BUTTON_PIN) {
+
                 TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_CATHODE_START;
 
             }
+
+            if (TEACH_BUTTON_PIN) {
+
+                // Write Common Anode
+                buffer[0] = LED_POLARITY_COMMON_ANODE;
+                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
+
+                    TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
+
+                }
+
+            }
+
 
             return;
 
@@ -392,7 +427,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
                 TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_BI_DIRECTIONAL_START;
 
             }
-            
+
             if (TEACH_BUTTON_PIN) {
 
                 // Write Common Cathode
@@ -423,10 +458,10 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
             if (LEARN_BUTTON_PIN) {
 
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_ANODE_START;
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START;
 
             }
-            
+
             if (TEACH_BUTTON_PIN) {
 
                 // Write Bi-Directional
@@ -442,40 +477,6 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
             return;
 
-        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_COMMON_ANODE_START:
-
-            if (!LEARN_BUTTON_PIN) {
-
-                printf("Teaching Common Anode Signals\n");
-
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_SIGNALS_COMMON_ANODE;
-
-            }
-
-            return;
-
-        case STATE_TEACH_LEARN_START_SIGNALS_COMMON_ANODE:
-
-            if (LEARN_BUTTON_PIN) {
-
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START;
-
-            }
-            
-            if (TEACH_BUTTON_PIN) {
-
-                // Write Common Anode
-                buffer[0] = LED_POLARITY_COMMON_ANODE;
-                if (Application_write_configuration_memory(node, CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer) == 1) {
-
-                    TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
-
-                }
-
-            }
-
-
-            return;
 
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START:
 
@@ -497,7 +498,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
                 TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_SINGLE_HEAD_START;
 
             }
-            
+
             if (TEACH_BUTTON_PIN) {
 
                 // Write Double Head Mast
@@ -524,8 +525,8 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
             }
 
             return;
-            
-            case STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD:
+
+        case STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD:
 
             if (TEACH_BUTTON_PIN) {
 
