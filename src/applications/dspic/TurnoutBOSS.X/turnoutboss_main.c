@@ -265,6 +265,18 @@ void _print_turnoutboss_version(void) {
 
 }
 
+void _handle_learn_event(openlcb_node_t *node) {
+
+    if (_signal_calculation_states.teach_button_toggled) {
+
+        _signal_calculation_states.teach_button_toggled = FALSE;
+
+        Application_send_teach_event(node, node->id);
+
+    }
+
+}
+
 int main(void) {
 
     openlcb_node_t* node;
@@ -301,9 +313,9 @@ int main(void) {
     // Point the interrupt table to the application and re-enable the interrupts
     CommonLoaderApp_bootloader_state.interrupt_redirect = TRUE;
     _GIE = 1; // Enable interrupts
-    
+
     // Need the timers running for this
-    TurnoutBossTeachLearn_check_for_enable(); 
+    TurnoutBossTeachLearn_check_for_enable();
 
     while (!CommonLoaderApp_bootloader_state.do_start) {
 
@@ -313,7 +325,7 @@ int main(void) {
         // Need to wait for the node to log in before doing anything that may try to send and event/message
         if (node->state.initalized) {
             
-            if (!TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
+            if (TurnoutBossTeachLearn_teach_learn_state.state != STATE_TEACH_LEARN_DEACTIVATED) {
 
                 TurnoutBossTeachLearn_run(node);
 
@@ -335,6 +347,8 @@ int main(void) {
                     }
 
                 }
+                
+                _handle_learn_event(node);
 
                 LED_BLUE = OCCUPANCY_DETECT_1_PIN;
                 LED_GREEN = OCCUPANCY_DETECT_2_PIN;

@@ -43,23 +43,63 @@
 #include "turnoutboss_types.h"
 #include "turnoutboss_board_configuration.h"
 #include "../../../openlcb/application.h"
+#include "../../../openlcb/application_callbacks.h"
+#include "../../../openlcb/openlcb_utilities.h"
 
 
 teach_learn_state_t TurnoutBossTeachLearn_teach_learn_state;
 
-#define LED_ARRAY_LEN 12
+#define LED_ARRAY_LEN 22
+#define LED_GREEN_ARRAY_LEN 16
 
-const uint8_olcb_t _led_blue_array_one_blink[LED_ARRAY_LEN] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const uint8_olcb_t _led_blue_array_two_blink[LED_ARRAY_LEN] = {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const uint8_olcb_t _led_blue_array_three_blink[LED_ARRAY_LEN] = {1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0};
-const uint8_olcb_t _led_blue_array_four_blink[LED_ARRAY_LEN] = {1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0};
-const uint8_olcb_t _led_blue_array_five_blink[LED_ARRAY_LEN] = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0};
+const uint8_olcb_t _led_blue_array_one_blink[LED_ARRAY_LEN] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const uint8_olcb_t _led_blue_array_two_blink[LED_ARRAY_LEN] = {1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const uint8_olcb_t _led_blue_array_three_blink[LED_ARRAY_LEN] = {1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+const uint8_olcb_t _led_blue_array_four_blink[LED_ARRAY_LEN] = {1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+const uint8_olcb_t _led_blue_array_five_blink[LED_ARRAY_LEN] = {1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0};
 
-const uint8_olcb_t _led_green_array_blink[LED_ARRAY_LEN] = {1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0};
+const uint8_olcb_t _led_green_array_blink[LED_GREEN_ARRAY_LEN] = {1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0};
+
+void _event_learn_callback(openlcb_node_t* openlcb_node, event_id_t* event_id) {
+    
+    configuration_memory_buffer_t buffer;
+
+    switch (TurnoutBossTeachLearn_teach_learn_state.state) {
+
+        case STATE_TEACH_LEARN_START_LEARN_LH_BOARD:
+            
+            Utilities_copy_event_id_to_config_mem_buffer(&buffer, *event_id, 0);
+            
+            if (Application_write_configuration_memory(openlcb_node, CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT, 8, &buffer) == 8) {
+
+                    TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
+
+                }
+
+            break;
+
+        case STATE_TEACH_LEARN_START_LEARN_RH_BOARD:
+            
+            Utilities_copy_event_id_to_config_mem_buffer(&buffer, *event_id, 0);
+            
+            if (Application_write_configuration_memory(openlcb_node, CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT, 8, &buffer) == 8) {
+
+                    TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
+
+                }
+
+
+            break;
+
+    }
+
+}
 
 void TurnoutBossTeachLearn_initialize(void) {
 
     memset(&TurnoutBossTeachLearn_teach_learn_state, 0x00, sizeof (TurnoutBossTeachLearn_teach_learn_state));
+
+    ApplicationCallbacks_set_event_learn(&_event_learn_callback);
 
 }
 
@@ -70,6 +110,14 @@ void _inc_led_array_indexer(void) {
     if (TurnoutBossTeachLearn_teach_learn_state.led_array_index >= LED_ARRAY_LEN) {
 
         TurnoutBossTeachLearn_teach_learn_state.led_array_index = 0;
+
+    }
+
+    TurnoutBossTeachLearn_teach_learn_state.led_green_array_index = TurnoutBossTeachLearn_teach_learn_state.led_green_array_index + 1;
+
+    if (TurnoutBossTeachLearn_teach_learn_state.led_green_array_index >= LED_GREEN_ARRAY_LEN) {
+
+        TurnoutBossTeachLearn_teach_learn_state.led_green_array_index = 0;
 
     }
 
@@ -84,7 +132,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = TRUE;
             LED_YELLOW = TRUE;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -95,7 +143,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = FALSE;
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -106,7 +154,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = _led_blue_array_one_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -117,7 +165,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = _led_blue_array_two_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -128,7 +176,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = _led_blue_array_three_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -139,7 +187,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = _led_blue_array_four_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -148,7 +196,7 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             LED_BLUE = _led_blue_array_five_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
-            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
+            LED_GREEN = _led_green_array_blink[TurnoutBossTeachLearn_teach_learn_state.led_green_array_index];
 
             break;
 
@@ -590,6 +638,9 @@ void TurnoutBossTeachLearn_check_for_enable(void) {
         printf("Entering Learn mode: Teach Button Pressed\n");
 
     }
+
+    TurnoutBossTeachLearn_teach_learn_state.led_array_index = 0;
+    TurnoutBossTeachLearn_teach_learn_state.led_green_array_index = 0;
 
 }
 

@@ -48,6 +48,7 @@ callback_event_identified_t callback_event_producer_identified_clear_func = (voi
 callback_event_identified_t callback_event_producer_identified_set_func = (void*) 0;
 callback_event_pc_report_t callback_event_pc_report_func = (void*) 0;
 callback_event_pc_report_with_payload_t callback_event_pc_report_with_payload_func = (void*) 0;
+callback_event_identified_t callback_event_learn_func = (void*) 0;
 callback_config_mem_write_t callback_config_mem_write_func = (void*) 0;
 callback_config_mem_freeze_t callback_config_mem_freeze_firmware_update_func = (void*) 0;
 callback_config_mem_freeze_t callback_config_mem_unfreeze_firmware_update_func = (void*) 0;
@@ -157,6 +158,18 @@ void ApplicationCallbacks_set_event_pc_report_with_payload(callback_event_pc_rep
 callback_event_pc_report_with_payload_t ApplicationCallbacks_get_event_pc_report_with_payload(void) {
 
     return callback_event_pc_report_with_payload_func;
+
+}
+
+void ApplicationCallbacks_set_event_learn(callback_event_pc_report_t event_learn_callback) {
+
+    callback_event_learn_func = event_learn_callback;
+
+}
+
+callback_event_pc_report_t ApplicationCallbacks_get_event_learn(void) {
+
+    return callback_event_learn_func;
 
 }
 

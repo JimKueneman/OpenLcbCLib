@@ -322,6 +322,10 @@ typedef struct {
     hardware_input_states_t hardware;
     uint8_olcb_t pushbutton_normal_toggled : 1;
     uint8_olcb_t pushbutton_diverging_toggled : 1;
+#ifdef BOSS2
+    uint8_olcb_t teach_button_toggled : 1;
+    uint8_olcb_t learn_button_toggled : 1;
+#endif
     last_led_state_t leds;
 
 } signaling_state_t;
@@ -409,6 +413,7 @@ typedef struct {
     
     uint8_olcb_t state;  // one of the STATE_TEACH_LEARN_xxxx defines
     uint8_olcb_t led_array_index;
+    uint8_olcb_t led_green_array_index;
     uint8_olcb_t is_signal_sequence;   
     uint8_olcb_t timer_tick;
 

@@ -197,6 +197,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
         }
         case MTI_EVENT_LEARN:
         {
+
             ProtocolEventTransport_handle_event_learn(openlcb_node, openlcb_msg, worker_msg);
             return;
         }

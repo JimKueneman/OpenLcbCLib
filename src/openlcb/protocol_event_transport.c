@@ -524,6 +524,14 @@ void ProtocolEventTransport_handle_identify_dest(openlcb_node_t * openlcb_node, 
 
 void ProtocolEventTransport_handle_event_learn(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
+    if (ApplicationCallbacks_get_event_learn()) {
+
+        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+
+        ApplicationCallbacks_get_event_learn()(openlcb_node, &eventid);
+
+    }
+
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
@@ -536,7 +544,7 @@ void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node
 #ifdef PRINT_EVENT_MSG
     printf("PCER no payload\n");
 #endif
-    
+
     if (ApplicationCallbacks_get_event_pc_report()) {
 
         event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
@@ -557,23 +565,23 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
 #ifdef PRINT_EVENT_MSG
     printf("PCER payload\n");
 #endif
-    
+
     if (ApplicationCallbacks_get_event_pc_report_with_payload()) {
 
         event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         event_payload_t local_payload;
-        uint8_olcb_t local_payload_count = (openlcb_msg->payload_count - sizeof(eventid));
-        
-        int payload_index = sizeof(eventid);
-        
+        uint8_olcb_t local_payload_count = (openlcb_msg->payload_count - sizeof (eventid));
+
+        int payload_index = sizeof (eventid);
+
         for (int i = 0; i < local_payload_count; i++) {
-            
+
             local_payload[i] = *openlcb_msg->payload[payload_index];
             payload_index = payload_index + 1;
-            
+
         }
-            
+
         ApplicationCallbacks_get_event_pc_report_with_payload()(openlcb_node, &eventid, local_payload_count, &local_payload);
 
     }
