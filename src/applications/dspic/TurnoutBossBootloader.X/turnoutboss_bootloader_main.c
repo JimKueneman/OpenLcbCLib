@@ -117,6 +117,8 @@ void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, o
         if (CommonLoaderApp_bootloader_state.update_succeeded) {
 
            CommonLoaderApp_bootloader_state.do_start = TRUE;
+           
+           asm ("RESET");
         
         }
 

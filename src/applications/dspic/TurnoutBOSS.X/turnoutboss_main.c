@@ -90,8 +90,7 @@ send_event_engine_t _event_engine;
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
-    PrintNodeID(node_id);
-    printf("\n");
+    printf("NodeID: 0x%04X%04X\n\n", (uint16_olcb_t) (node_id >> 16), (uint16_olcb_t) node_id);
 
 }
 
@@ -132,7 +131,7 @@ node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configu
 void _initialize_bootloader_state(void) {
 
     // The only time POR and/or BOR is set is with a true start from 0V so it is guaranteed to be the first boot.
-    // if we jumped here from the bootloader it will have cleared these bits
+    // if we jumped here from the bootloader it will have cleared these bits so don't undo what it has done just add to it
     if (RCONbits.POR || RCONbits.BOR) {
 
         // the code is being used stand alone without a bootloader so initialize the states
