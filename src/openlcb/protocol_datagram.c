@@ -1079,12 +1079,19 @@ void _handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_m
 
 void _handle_memory_factory_reset_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
-
+        
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
         return;
 
+    }
+
+    if (DriverConfigurationMemory_get_factory_reset_callback()) {
+
+        DriverConfigurationMemory_get_factory_reset_callback()();
+        
     }
 
     openlcb_node->state.openlcb_msg_handled = TRUE;

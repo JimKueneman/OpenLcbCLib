@@ -218,6 +218,7 @@ openlcb_node_t* _initialize_turnout_boss(void) {
             &TurnoutBossDrivers_reboot,
             &TurnoutBossDrivers_config_mem_read,
             &TurnoutBossDrivers_config_mem_write,
+            &TurnoutBossDrivers_config_mem_factory_reset,
             &TurnoutBossDrivers_pause_100ms_timer,
             &TurnoutBossDrivers_resume_100ms_timer
             );

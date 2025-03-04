@@ -79,6 +79,30 @@ void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callb
 
 }
 
+void TurnoutBossDrivers_config_mem_factory_reset(void) {
+    
+    printf("Resetting to Factory Defaults\n");
+    
+    uint8_olcb_t buffer[EEPROM_PAGE_SIZE_IN_BYTES];
+ 
+    uint16_olcb_t total_pages = EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES;
+    
+    for (int i = 0; i < EEPROM_PAGE_SIZE_IN_BYTES; i++) {
+     
+        buffer[i] = 0;
+        
+    }
+    
+    total_pages = total_pages - 1;  // The Node ID is in the last page
+   
+    for (int i = 0; i < total_pages; i++) {
+        
+        TurnoutBossDrivers_config_mem_write(i * EEPROM_PAGE_SIZE_IN_BYTES, EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) &buffer);
+        
+    }
+ 
+}
+
 uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     if (CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes) {
