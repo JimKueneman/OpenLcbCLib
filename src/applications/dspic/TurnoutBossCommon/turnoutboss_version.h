@@ -28,7 +28,7 @@
 *
 *
 * @author Jim Kueneman
-* @date 03 03 2025
+* @date 03 04 2025
 */
  
 // This is a guard condition so that contents of this file are not included
@@ -36,7 +36,7 @@
 #ifndef __TURNOUTBOSS_VERSION__
 #define	__TURNOUTBOSS_VERSION__
  
-#define TURNOUTBOSS_VERSION "20250303.143408"
+#define TURNOUTBOSS_VERSION "20250304.090932"
  
 #ifdef	__cplusplus
 extern "C" {

@@ -81,12 +81,24 @@ void TurnoutBossDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callb
 
 uint16_olcb_t TurnoutBossDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
+    if (CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes) {
+        
+        T3CONbits.TON = 0; // Turn off Timer  don't count these dumps in the timing 
+        
+    }
+    
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
     TurnoutBossDrivers_pause_signal_calculation_timer();
 
     return _25AA1024_Driver_read(address, count, buffer, EEPROM_ADDRESS_SIZE_IN_BITS);
 
     TurnoutBossDrivers_resume_signal_calculation_timer();
+    
+    if (CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes) {
+        
+        T3CONbits.TON = 1; // Turn off Timer  don't count these dumps in the timing 
+        
+    }
 
 }
 
@@ -98,6 +110,12 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
     uint8_olcb_t page_buffer[EEPROM_PAGE_SIZE_IN_BYTES];
     uint16_olcb_t page_start_address;
     uint16_olcb_t end_address;
+    
+    if (CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes) {
+        
+        T3CONbits.TON = 0; // Turn off Timer  don't count these dumps in the timing 
+        
+    }
 
     // Don't let there be an overlap of the signals being written out to the Port Expander within Timer 1 and the need to access the EEPROM
     TurnoutBossDrivers_pause_signal_calculation_timer();
@@ -133,6 +151,12 @@ uint16_olcb_t TurnoutBossDrivers_config_mem_write(uint32_olcb_t address, uint16_
     }
 
     TurnoutBossDrivers_resume_signal_calculation_timer();
+    
+    if (CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes) {
+        
+        T3CONbits.TON = 1; // Turn 1 Timer  don't count these dumps in the timing 
+        
+    }
 
     return count;
 

@@ -79,10 +79,16 @@
 // Use project enums instead of #define for ON and OFF.
 
 
-bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS ))); // 2 bytes
+bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
 uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
 uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 8 bytes
 vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 12))); // 9 * 4 = 36 bytes
+
+uint16_olcb_t CommonLoaderApp_max_application_loop_delay = 0;
+uint16_olcb_t CommonLoaderApp_max_openlcb_c_lib_loop_delay = 0;
+
+uint8_olcb_t CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes = FALSE;
+
 
 void CommonLoaderApp_initialize_sfrs(void) {
 
@@ -157,7 +163,7 @@ void CommonLoaderApp_initialize_sfrs(void) {
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 0;
     __delay32(100); // 1us min setup and hold
     OCCUPANCY_DETECT_GAIN_1_CS_PIN = 1;
-                  
+
     OCCUPANCY_DETECT_GAIN_2_CS_TRIS = 0; // Output
     OCCUPANCY_DETECT_GAIN_2_CS_PIN = 1;
     __delay32(100); // strobe CS
@@ -250,27 +256,37 @@ void CommonLoaderApp_initialize_sfrs(void) {
     T2CONbits.TCS = 0; // internal clock
     T2CONbits.TCKPS0 = 1; // 256 Prescaler
     T2CONbits.TCKPS1 = 1;
-    PR2 = 15625; // Clock ticks every (1/80MHz * 2 * 256 * 15625 = 100.00091ms interrupts
+    PR2 = 15625; // Clock ticks every (1/40MHz (Fcy/Fp) * 256 * 15625 = 100.00091ms interrupts
 
     IFS0bits.T2IF = 0; // Clear T2IF
     IEC0bits.T2IE = 1; // Enable the Interrupt
 
-    T2CONbits.TON = 1; // Turn on 100ms Timer
-    
+    T2CONbits.TON = 1; // Turn on Timer 2
+
+
     T1CONbits.TCS = 0; // internal clock
     T1CONbits.TCKPS0 = 1; // 256 Prescaler
     T1CONbits.TCKPS1 = 1;
-    PR1 = 1000; // Clock ticks every (1/80MHz * 2 * 256 * 1562 = 10.00091ms interrupts
+    PR1 = 1000; // Clock ticks every (1/40MHz (Fcy/Fp) * 256 * 1562 = 10.00091ms interrupts
 
     IFS0bits.T1IF = 0; // Clear T1IF
     IEC0bits.T1IE = 1; // Enable the Interrupt
 
     T1CONbits.TON = 1; // Turn on Signal Calculation Timer
-    
+
+    // No interrupt, just using for telemetry timing
+    T3CONbits.TCS = 0; // internal clock
+    T3CONbits.TCKPS0 = 0; // 1:64 Prescaler
+    T3CONbits.TCKPS1 = 1;
+    PR3 = 0xFFFF; // Clock ticks every (1/40MHz (Fcy/Fp) * 64 * PR2 * 1.6us = timing)
+
+
+    T3CONbits.TON = 1; // Turn on Timer 
+
 #ifdef BOSS2 
     TEACH_BUTTON_TRIS = 1; // input
     LEARN_BUTTON_TRIS = 1; // input
-    
+
     LEARN_BUTTON_PULL_UP = 1;
     TEACH_BUTTON_PULL_UP = 1;
     TEACH_BUTTON_PULL_DOWN = 0;

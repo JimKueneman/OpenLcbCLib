@@ -66,7 +66,9 @@ board_configuration_t *UartHandler_board_configuration;
 signaling_state_t *UartHandler_signal_calculation_states;
 
 void UartHandler_handle_rx(uint16_olcb_t code) {
-        
+
+    T3CONbits.TON = 0; // Turn off Timer  don't count these dumps in the timing 
+
     switch (code) {
         case 'B':
         case 'b':
@@ -109,7 +111,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
         case 'H':
         case 'h':
-            
+
             printf("B - Print Buffer Storage state\n");
             printf("P - Print the active message in the CanHelper\n");
             printf("C - Print the active message in the OpenLcbHelper\n");
@@ -126,12 +128,15 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             printf("E - Erase the EEPROM\n");
             printf("Y - Pause the internal calculations to allow overriding\n");
             printf("Q - List the current state of the inputs\n");
+            printf("T - Print out the maximum timing to complete the OpenlcbCLib loop and the Application Loop\n");
+            printf("O - Reset the maximum timing counters\n");
+            printf("U - Ignore/Measure Configuration Memory read/writes in the maximum timing results");
 
             return;
-            
+
         case 'Q':
         case 'q':
-            
+
             printf("Turnout Feedback Normal: %d\n", UartHandler_signal_calculation_states->hardware.turnout_feedback_normal);
             printf("Turnout Feedback Diverging: %d\n", UartHandler_signal_calculation_states->hardware.turnout_feedback_diverging);
             printf("Turnout Pushbutton Normal: %d\n", UartHandler_signal_calculation_states->hardware.turnout_pushbutton_normal);
@@ -139,32 +144,32 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             printf("Occupancy 1: %d\n", UartHandler_signal_calculation_states->hardware.occupany_1);
             printf("Occupancy 2: %d\n", UartHandler_signal_calculation_states->hardware.occupany_2);
             printf("Occupancy 3: %d\n", UartHandler_signal_calculation_states->hardware.occupany_3);
-            
+
 #ifdef BOSS2
             printf("Teach: %d\n", UartHandler_signal_calculation_states->hardware.teach_pin);
-            printf("Learn: %d\n", UartHandler_signal_calculation_states->hardware.learn_pin); 
+            printf("Learn: %d\n", UartHandler_signal_calculation_states->hardware.learn_pin);
 #endif           
             return;
-            
+
         case 'Y':
         case 'y':
 
             if (UartHandler_pause_calculations) {
-                
+
                 UartHandler_pause_calculations = FALSE;
-                printf("Internal Calculations Enabled....\n");        
-           
+                printf("Internal Calculations Enabled....\n");
+
             } else {
-                
+
                 UartHandler_pause_calculations = TRUE;
                 printf("Internal Calculations Disabled....\n");
-      
+
             }
 
             return;
         case 'G':
         case 'g':
-                   
+
             printf("Setting the Detector Gain\n");
 
             MCP4014Driver_set_gain(0, 0, 0, 0);
@@ -225,7 +230,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
 
             MCP23S17Driver_set_signals(_signal_a, _signal_b, _signal_c, _signal_d);
-    
+
             return;
 
         case 'I':
@@ -248,17 +253,17 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
 
         case 'M':
         case 'm':
-            
+
             if (TURNOUT_DRIVER_PIN) {
-                
+
                 TURNOUT_DRIVER_PIN = FALSE;
                 printf("TURNOUT_DRIVER_PIN = FALSE\n");
-                
+
             } else {
-                
+
                 TURNOUT_DRIVER_PIN = TRUE;
                 printf("TURNOUT_DRIVER_PIN = TRUE\n");
-                
+
             }
 
             return;
@@ -518,14 +523,59 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
                 buffer[i] = 0xFF;
 
 
-            for (uint16_olcb_t i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++) 
+            for (uint16_olcb_t i = 0; i < EEPROM_SIZE_IN_BYTES / EEPROM_PAGE_SIZE_IN_BYTES; i++)
                 TurnoutBossDrivers_config_mem_write((uint32_olcb_t) (i * EEPROM_PAGE_SIZE_IN_BYTES), EEPROM_PAGE_SIZE_IN_BYTES, (configuration_memory_buffer_t*) & buffer);
 
             printf("Address 0x000 in EEPROM after: %d\n", _25AA1024_Driver_read_byte(0x0000, EEPROM_ADDRESS_SIZE_IN_BITS));
             printf("Erased:\n");
 
             break;
+
+        case 'T':
+        case 't':
+
+            printf("Max Application Delay Detected: %.2f us\n", (double) (CommonLoaderApp_max_application_loop_delay * 1.6));
+            printf("Max OpenlcbCLib Delay Detected: %.2f us\n", (double) (CommonLoaderApp_max_openlcb_c_lib_loop_delay * 1.6));
+
+            break;
+
+        case 'O':
+        case 'o':
+
+            printf("Reseting the timing counters....\n");
+            CommonLoaderApp_max_application_loop_delay = 0;
+            CommonLoaderApp_max_openlcb_c_lib_loop_delay = 0;
+
+            break;
+
+        case 'U':
+        case 'u':
+
+            printf("Reseting the timing counters....\n");
+
+            if (CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes) {
+
+                printf("Timing counters are including the config memory writes....\n");
+
+                CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes = FALSE;
+
+            } else {
+
+                printf("Timing counters are not including the config memory writes....\n");
+
+                CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes = TRUE;
+
+            }
+
+
+
+            break;
+
+
+
     }
+
+    T3CONbits.TON = 1; // Turn on Timer 
 
     return;
 

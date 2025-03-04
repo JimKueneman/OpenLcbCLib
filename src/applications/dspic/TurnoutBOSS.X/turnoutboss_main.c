@@ -90,7 +90,7 @@ send_event_engine_t _event_engine;
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
-    printf("NodeID: 0x%04X%04X\n\n", (uint16_olcb_t) (node_id >> 16), (uint16_olcb_t) node_id);
+    printf("NodeID: 0x%04X%04X%04X\n\n",  (uint16_olcb_t) (node_id >> 32), (uint16_olcb_t) (node_id >> 16), (uint16_olcb_t) node_id);
 
 }
 
@@ -118,6 +118,8 @@ node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configu
         node_id_t result = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
 
         if ((result != NULL_NODE_ID) && (result != 0xFFFFFFFFFFFF)) {
+            
+            printf("NodeID found in EEPROM:\n");
 
             return result;
 
@@ -155,6 +157,8 @@ node_id_t _extract_node_id() {
 
         if ((CommonLoaderApp_node_id == 0xFFFFFFFFFFFF) || (CommonLoaderApp_node_id == 0x000000000000)) {
 
+            printf("NodeID found in Flash:\n");
+            
             return NODE_ID_DEFAULT;
 
         } else {
@@ -276,9 +280,7 @@ void _handle_learn_event(openlcb_node_t *node) {
 
 }
 
-int main(void) {
-
-    openlcb_node_t* node;
+void _initialize_io_early_for_test(void) {
 
 #ifdef BOSS1
     // RB7 and RB8 are test outputs
@@ -305,6 +307,13 @@ int main(void) {
     LED_YELLOW = 1;
 #endif
 
+}
+
+int main(void) {
+
+    openlcb_node_t* node;
+
+    _initialize_io_early_for_test();
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
@@ -316,14 +325,33 @@ int main(void) {
     // Need the timers running for this
     TurnoutBossTeachLearn_check_for_enable();
 
+    TMR3 = 0; // Telemetry for timing
+    
     while (!CommonLoaderApp_bootloader_state.do_start) {
+        
 
+        if (TMR3 > CommonLoaderApp_max_application_loop_delay) {
+            
+            CommonLoaderApp_max_application_loop_delay = TMR3;
+            
+        }
+        
+        TMR3 = 0; // Reset
+        
         // Run the main Openlcb/LCC engine
         CanMainStateMachine_run();
+        
+        if (TMR3 > CommonLoaderApp_max_openlcb_c_lib_loop_delay) {
+            
+            CommonLoaderApp_max_openlcb_c_lib_loop_delay = TMR3;
+            
+        }
+        
+        TMR3 = 0; // Reset
 
         // Need to wait for the node to log in before doing anything that may try to send and event/message
         if (node->state.initalized) {
-            
+
             if (TurnoutBossTeachLearn_teach_learn_state.state != STATE_TEACH_LEARN_DEACTIVATED) {
 
                 TurnoutBossDrivers_pause_100ms_timer();
@@ -348,7 +376,7 @@ int main(void) {
                     }
 
                 }
-                
+
                 _handle_learn_event(node);
 
                 LED_BLUE = OCCUPANCY_DETECT_1_PIN;
