@@ -130,7 +130,7 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             printf("Q - List the current state of the inputs\n");
             printf("T - Print out the maximum timing to complete the OpenlcbCLib loop and the Application Loop\n");
             printf("O - Reset the maximum timing counters\n");
-            printf("U - Ignore/Measure Configuration Memory read/writes in the maximum timing results");
+            printf("U - Ignore/Measure Configuration Memory read/writes in the maximum timing results\n");
 
             return;
 
