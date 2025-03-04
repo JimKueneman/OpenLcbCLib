@@ -148,6 +148,7 @@ void _initialize(void) {
             &TurnoutBossBootloaderDrivers_reboot,
             &TurnoutBossBootloaderDrivers_config_mem_read,
             &_config_mem_write_callback,
+            &TurnoutBossBootloaderDrivers_factory_reset,
             &TurnoutBossBootloaderDrivers_pause_100ms_timer,
             &TurnoutBossBootloaderDrivers_resume_100ms_timer
             );
