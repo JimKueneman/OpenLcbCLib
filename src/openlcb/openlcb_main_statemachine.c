@@ -62,6 +62,7 @@ void MainStatemachine_initialize(
         parameterless_callback_t reboot_callback,
         configuration_mem_callback_t configuration_mem_read_callback,
         configuration_mem_callback_t configuration_mem_write_callback,
+        parameterless_callback_t configuration_factory_reset_callback,
         parameterless_callback_t _100ms_clock_pause_callback,
         parameterless_callback_t _100ms_clock_resume_callback
         ) {
@@ -74,7 +75,7 @@ void MainStatemachine_initialize(
     ProtocolDatagram_initialize();
 
     Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
-    DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback);
+    DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback, configuration_factory_reset_callback);
     DriverMcu_initialization(mcu_setup_callback, reboot_callback);
 
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)

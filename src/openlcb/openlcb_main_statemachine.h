@@ -53,6 +53,7 @@ extern "C" {
             parameterless_callback_t reboot_callback,
             configuration_mem_callback_t configuration_mem_read_callback,
             configuration_mem_callback_t configuration_mem_write_callback,
+            parameterless_callback_t configuration_factory_reset_callback,
             parameterless_callback_t _100ms_clock_pause_callback,
             parameterless_callback_t _100ms_clock_resume_callback);
 

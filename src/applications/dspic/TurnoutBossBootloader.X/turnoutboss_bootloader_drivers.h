@@ -63,6 +63,8 @@ extern "C" {
     
     extern uint16_olcb_t TurnoutBossBootloaderDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer);
     
+    extern void TurnoutBossBootloaderDrivers_factory_reset(void);
+    
     extern void TurnoutBossBootloaderDrivers_pause_100ms_timer();
     
     extern void TurnoutBossBootloaderDrivers_resume_100ms_timer();

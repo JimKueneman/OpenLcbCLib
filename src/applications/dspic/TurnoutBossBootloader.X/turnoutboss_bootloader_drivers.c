@@ -63,6 +63,12 @@ void TurnoutBossBootloaderDrivers_reboot(void) {
 
 }
 
+void TurnoutBossBootloaderDrivers_factory_reset(void) {
+
+   // Not implemented
+
+}
+
 void TurnoutBossBootloaderDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback) {
 
     _uart_rx_callback_func = uart_rx_callback;

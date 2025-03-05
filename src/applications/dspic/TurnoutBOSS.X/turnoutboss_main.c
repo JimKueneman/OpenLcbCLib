@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -90,7 +90,7 @@ send_event_engine_t _event_engine;
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
-    printf("NodeID: 0x%04X%04X%04X\n\n",  (uint16_olcb_t) (node_id >> 32), (uint16_olcb_t) (node_id >> 16), (uint16_olcb_t) node_id);
+    printf("NodeID: 0x%04X%04X%04X\n\n", (uint16_olcb_t) (node_id >> 32), (uint16_olcb_t) (node_id >> 16), (uint16_olcb_t) node_id);
 
 }
 
@@ -118,7 +118,7 @@ node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configu
         node_id_t result = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
 
         if ((result != NULL_NODE_ID) && (result != 0xFFFFFFFFFFFF)) {
-            
+
             printf("NodeID found in EEPROM:\n");
 
             return result;
@@ -158,7 +158,7 @@ node_id_t _extract_node_id() {
         if ((CommonLoaderApp_node_id == 0xFFFFFFFFFFFF) || (CommonLoaderApp_node_id == 0x000000000000)) {
 
             printf("NodeID found in Flash:\n");
-            
+
             return NODE_ID_DEFAULT;
 
         } else {
@@ -218,6 +218,7 @@ openlcb_node_t* _initialize_turnout_boss(void) {
             &TurnoutBossDrivers_reboot,
             &TurnoutBossDrivers_config_mem_read,
             &TurnoutBossDrivers_config_mem_write,
+            &TurnoutBossDrivers_config_mem_factory_reset,
             &TurnoutBossDrivers_pause_100ms_timer,
             &TurnoutBossDrivers_resume_100ms_timer
             );
@@ -268,7 +269,7 @@ void _print_turnoutboss_version(void) {
 
 }
 
-void _handle_learn_event(openlcb_node_t *node) {
+void _handle_teach_event(openlcb_node_t *node) {
 
     if (_signal_calculation_states.teach_button_toggled) {
 
@@ -309,6 +310,30 @@ void _initialize_io_early_for_test(void) {
 
 }
 
+void _update_application_loop_delay_timer(void) {
+
+    if (TMR3 > CommonLoaderApp_max_application_loop_delay) {
+
+        CommonLoaderApp_max_application_loop_delay = TMR3;
+
+    }
+    
+    TMR3 = 0; // Reset
+
+}
+
+void _update_openlcb_c_lib_loop_delay_timer(void) {
+
+    if (TMR3 > CommonLoaderApp_max_openlcb_c_lib_loop_delay) {
+
+        CommonLoaderApp_max_openlcb_c_lib_loop_delay = TMR3;
+
+    }
+    
+    TMR3 = 0; // Reset
+
+}
+
 int main(void) {
 
     openlcb_node_t* node;
@@ -326,28 +351,16 @@ int main(void) {
     TurnoutBossTeachLearn_check_for_enable();
 
     TMR3 = 0; // Telemetry for timing
-    
-    while (!CommonLoaderApp_bootloader_state.do_start) {
-        
 
-        if (TMR3 > CommonLoaderApp_max_application_loop_delay) {
-            
-            CommonLoaderApp_max_application_loop_delay = TMR3;
-            
-        }
-        
-        TMR3 = 0; // Reset
-        
+    while (!CommonLoaderApp_bootloader_state.do_start) {
+
+
+        _update_application_loop_delay_timer();
+
         // Run the main Openlcb/LCC engine
         CanMainStateMachine_run();
-        
-        if (TMR3 > CommonLoaderApp_max_openlcb_c_lib_loop_delay) {
-            
-            CommonLoaderApp_max_openlcb_c_lib_loop_delay = TMR3;
-            
-        }
-        
-        TMR3 = 0; // Reset
+
+        _update_openlcb_c_lib_loop_delay_timer();
 
         // Need to wait for the node to log in before doing anything that may try to send and event/message
         if (node->state.initalized) {
@@ -377,7 +390,7 @@ int main(void) {
 
                 }
 
-                _handle_learn_event(node);
+                _handle_teach_event(node);
 
                 LED_BLUE = OCCUPANCY_DETECT_1_PIN;
                 LED_GREEN = OCCUPANCY_DETECT_2_PIN;
