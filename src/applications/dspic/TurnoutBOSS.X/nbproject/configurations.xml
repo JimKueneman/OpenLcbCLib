@@ -224,9 +224,9 @@
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>true</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
-        <makeCustomizationPreStep>/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/VersionUpdater/buildversion -f /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/turnoutboss_version.h</makeCustomizationPreStep>
+        <makeCustomizationPreStep>../TurnoutBossCommon/VersionUpdater/buildversion -f ../TurnoutBossCommon/turnoutboss_version.h</makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/turnoutboss_build.sh</makeCustomizationPostStep>
+        <makeCustomizationPostStep>../TurnoutBossCommon/turnoutboss_build.sh</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
