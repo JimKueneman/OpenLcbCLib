@@ -65,7 +65,7 @@ void TurnoutBossBootloaderDrivers_reboot(void) {
 
 void TurnoutBossBootloaderDrivers_factory_reset(void) {
 
-   
+   // Not implemented
 
 }
 
