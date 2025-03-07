@@ -159,34 +159,51 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
     // Checksum information is stored in the flash page directly before the Configuration Bits
     // It stores where to start and finish the calculation then the value it should be note this 
     // are 32 bit words so it can reach into the full 24 bit address space
+    
+    // debug printout of start of checksummed memory
+    // for (int i = 0; i<=8; i++) {
+    //     uint32_olcb_t address = 0x6000+i;
+    //     unsigned int addrupper = (address >>16)&0xFFFF;
+    //     unsigned int addrlower = address&0xFFFF;
+    //     printf(" at 0x%04X%04X", addrupper, addrlower); 
+        
+    //     uint32_olcb_t content = FLASH_ReadWord24(address);
+    //     unsigned int contentupper = (content >> 16) & 0xFFFF;
+    //     unsigned int contentlower = content & 0xFFFF;
+    //     printf(" found 0x%04X%04X\n", contentupper, contentlower); 
+    // }
+    
+    
     uint32_olcb_t start_address = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS);
     uint32_olcb_t end_address = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS + 2);
     uint32_olcb_t checksum = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS + 4);
     uint32_olcb_t running_checksum = 0;
 
-    //    printf("Start Address: 0x%04X%04X\n", (uint16_olcb_t) (start_address >> 16), (uint16_olcb_t) start_address);
-    //    printf("End Address: 0x%04X%04X\n", (uint16_olcb_t) (end_address >> 16), (uint16_olcb_t) end_address);
-    //    printf("Checksum : 0x%04X%04X\n", (uint16_olcb_t) (checksum >> 16), (uint16_olcb_t) checksum);
+    printf("Start Address: 0x%04X%04X\n", (uint16_olcb_t) (start_address >> 16), (uint16_olcb_t) start_address);
+    printf("End Address: 0x%04X%04X\n", (uint16_olcb_t) (end_address >> 16), (uint16_olcb_t) end_address);
+    printf("Checksum : 0x%04X%04X\n", (uint16_olcb_t) (checksum >> 16), (uint16_olcb_t) checksum);
 
-    // Read every byte 
+    // Read and sum every byte 
     while (start_address <= end_address) {
 
-        running_checksum = running_checksum + FLASH_ReadWord24(start_address);
+        uint32_olcb_t value = FLASH_ReadWord24(start_address);
+        unsigned int byte1 = value & 0xFF;
+        unsigned int byte2 = (value >> 8) & 0xFF;
+        unsigned int byte3 = (value >> 16) & 0xFF;
+        
+        running_checksum = running_checksum + byte1 + byte2 + byte3;
 
         start_address = start_address + 2;
-
     }
 
-    // We can only store 24 bits in the flash in a DWord read/write
-    running_checksum = running_checksum & 0x00FFFFFF;
-
-    if (checksum == running_checksum) {
+    // We only sum 8 bits in the checksum
+    if ((checksum & 0xFF) == (running_checksum & 0xFF)) {
         printf("Valid Checksum: 0x%04X%04X\n", (uint16_olcb_t) (running_checksum >> 16), (uint16_olcb_t) running_checksum);
     } else {
         printf("Invalid Checksum: 0x%04X%04X\n", (uint16_olcb_t) (running_checksum >> 16), (uint16_olcb_t) running_checksum);
     }
 
-    return (checksum == running_checksum);
+    return ((checksum & 0xFF) == (running_checksum & 0xFF));
 
 }
 

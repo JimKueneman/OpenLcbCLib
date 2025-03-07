@@ -1,19 +1,19 @@
 
 echo "Converting the hex file to a dshex file..."
-pwd
+
 ../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
 
 
-echo "Generating the Merged Hex File (currently not useful as it does not have the CheckSum embedded in it)"
+echo "Generating the Merged Hex File"
 
-echo "Generating a Big Endian Merged Version (probably the correct way to do it)"
+"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"../TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -addressing=2 -o../turnoutboss_merged.hex 
 
-"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"../TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -fill=w1:0xAA@0xB000:0x53FFC -ck=0xB000-0x53FFC@0x54800w3g3 -addressing=2 -o../turnoutboss_merged_big_endian.hex 
+echo "Generating the hex file with checksum information"
 
+# first -fill inserts the start address
+# second -fill inserts the end address
+# third -fill put 0 in otherwise not loaded memory
+# the -ck inserts a one-byte checksum
 
-echo "Generating a Little Endian Merged Version"
-
-"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"../TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -fill=w1:0xAA@0xB000:0x53FFC -ck=0xB000-0x53FFC@0x54800w-3g3 -addressing=2 -o../turnoutboss_merged_little_endian.hex 
-
-
+"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" ../turnoutboss_merged.hex -o../turnoutboss_merged_summed.hex -fill=w1:0x00,0x60,0x00,0x00@0xa9000:0xa9002 -fill=w1:0xFF,0x47,0x05,0x00@0xa9004:0xa9007 -fill=00@0x6000:0x547ff -ck=0C000-0a8fff@a9008w1g1
 
