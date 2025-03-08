@@ -17,6 +17,7 @@
 /src/applications/dspic/TurnoutBOSS.X/nbproject/Makefile-local-default.mk
  
 /src/applications/dspic/turnoutboss_merged.hex
+/src/applications/dspic/turnoutboss_merged_summed.hex
 /src/applications/dspic/TurnoutBossCommon/turnoutboss_version.h
 
 .DS_Store
