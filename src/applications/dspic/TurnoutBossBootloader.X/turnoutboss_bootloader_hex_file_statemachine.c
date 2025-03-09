@@ -183,7 +183,9 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
     printf("End Address: 0x%04X%04X\n", (uint16_olcb_t) (end_address >> 16), (uint16_olcb_t) end_address);
     printf("Checksum : 0x%04X%04X\n", (uint16_olcb_t) (checksum >> 16), (uint16_olcb_t) checksum);
 
-    // Read and sum every byte 
+    if (start_address == end_address) return false; // fail if memory erased
+    
+    // checksum: read and sum every byte 
     while (start_address <= end_address) {
 
         uint32_olcb_t value = FLASH_ReadWord24(start_address);
