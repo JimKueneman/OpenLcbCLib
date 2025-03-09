@@ -1,6 +1,6 @@
 
 echo "Converting the hex file to a dshex file..."
-t
+
 ../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
 
 

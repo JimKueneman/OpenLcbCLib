@@ -159,21 +159,21 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
     // Checksum information is stored in the flash page directly before the Configuration Bits
     // It stores where to start and finish the calculation then the value it should be note this 
     // are 32 bit words so it can reach into the full 24 bit address space
-    
+
     // debug printout of start of checksummed memory
     // for (int i = 0; i<=8; i++) {
     //     uint32_olcb_t address = 0x6000+i;
     //     unsigned int addrupper = (address >>16)&0xFFFF;
     //     unsigned int addrlower = address&0xFFFF;
     //     printf(" at 0x%04X%04X", addrupper, addrlower); 
-        
+
     //     uint32_olcb_t content = FLASH_ReadWord24(address);
     //     unsigned int contentupper = (content >> 16) & 0xFFFF;
     //     unsigned int contentlower = content & 0xFFFF;
     //     printf(" found 0x%04X%04X\n", contentupper, contentlower); 
     // }
-    
-    
+
+
     uint32_olcb_t start_address = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS);
     uint32_olcb_t end_address = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS + 2);
     uint32_olcb_t checksum = FLASH_ReadWord24(APPLICATION_CHECKSUM_ADDRESS + 4);
@@ -181,10 +181,10 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
 
     printf("Start Address: 0x%04X%04X\n", (uint16_olcb_t) (start_address >> 16), (uint16_olcb_t) start_address);
     printf("End Address: 0x%04X%04X\n", (uint16_olcb_t) (end_address >> 16), (uint16_olcb_t) end_address);
-    printf("Checksum : 0x%04X%04X\n", (uint16_olcb_t) (checksum >> 16), (uint16_olcb_t) checksum);
+    printf("Stored Checksum : 0x%04X%04X\n", (uint16_olcb_t) (checksum >> 16), (uint16_olcb_t) checksum);
 
     if (start_address == end_address) return false; // fail if memory erased
-    
+
     // checksum: read and sum every byte 
     while (start_address <= end_address) {
 
@@ -192,7 +192,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
         unsigned int byte1 = value & 0xFF;
         unsigned int byte2 = (value >> 8) & 0xFF;
         unsigned int byte3 = (value >> 16) & 0xFF;
-        
+
         running_checksum = running_checksum + byte1 + byte2 + byte3;
 
         start_address = start_address + 2;
@@ -200,30 +200,15 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum(void) {
 
     // We only sum 8 bits in the checksum
     if ((checksum & 0xFF) == (running_checksum & 0xFF)) {
-        printf("Valid Checksum: 0x%04X%04X\n", (uint16_olcb_t) (running_checksum >> 16), (uint16_olcb_t) running_checksum);
+        printf("Valid calculated checksum: 0x%04X%04X\n", (uint16_olcb_t) (running_checksum >> 16), (uint16_olcb_t) running_checksum);
     } else {
-        printf("Invalid Checksum: 0x%04X%04X\n", (uint16_olcb_t) (running_checksum >> 16), (uint16_olcb_t) running_checksum);
+        printf("Invalid calculated checksum: 0x%04X%04X\n", (uint16_olcb_t) (running_checksum >> 16), (uint16_olcb_t) running_checksum);
     }
 
     return ((checksum & 0xFF) == (running_checksum & 0xFF));
 
 }
 
-uint8_olcb_t _test_checksum() {
-
-    printf("EOF Found: Checking Checksum\n");
-
-    if (!TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum()) {
-
-        printf("Failed CheckSum after Loading\n");
-
-        return FALSE;
-
-    }
-
-    return TRUE;
-
-}
 
 uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char) {
 
@@ -232,13 +217,13 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
         case HEX_STATE_FIND_COLON:
 
             if (next_char == ':') {
-                
+
                 if (!key_found) {
-                    
+
                     printf("WARNING, dsHex file did not have a unique key to identify as a valid image for this board\n");
-                    
-                    key_found = TRUE;  // fake it
-                    
+
+                    key_found = TRUE; // fake it
+
                 }
 
                 memset(&temp, 0x00, sizeof ( temp));
@@ -266,8 +251,19 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
                 start_erase_block_address = strtoul((char*) &temp, NULL, 16);
 
                 if (start_erase_block_address == EOF_ADDRESS) {
+                    
+                    printf("EOF Found: Checking Checksum\n");
 
-                    return _test_checksum();
+                    if (!TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum()) {
+
+                        printf("Failed CheckSum after Loading\n");
+
+                        return FALSE;
+
+                    }
+
+                    return TRUE;
+ 
 
                 } else {
 
@@ -383,18 +379,18 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
 
                 instruction_count = strtoul((char*) &temp, NULL, 16);
                 running_address = 0;
-                
+
                 printf("GUID Length: %d\n", (uint16_olcb_t) instruction_count);
-                
+
                 uint16_olcb_t key_len = strlen(TurnoutBossBootloaderHexFileStateMachine_key);
-                
-                if ( (instruction_count < key_len)  || (instruction_count > key_len) ) {
+
+                if ((instruction_count < key_len) || (instruction_count > key_len)) {
 
                     printf("Invalid GUID\n");
 
                     return FALSE;
 
-                } 
+                }
 
                 state_machine_state = state_machine_state + 1;
             }
@@ -410,7 +406,7 @@ uint8_olcb_t TurnoutbossBootloaderHexFileStateMachine_run(uint8_olcb_t next_char
                 if (running_address >= instruction_count) {
 
                     printf("Valid GUID\n");
-                    
+
                     key_found = TRUE;
 
                     state_machine_state = HEX_STATE_FIND_COLON;

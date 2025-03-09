@@ -75,6 +75,7 @@
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
       <itemPath>TurnoutBossBootloader.mc3</itemPath>
+      <itemPath>../TurnoutBossCommon/turnoutboss_build.sh</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -204,7 +205,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep>../TurnoutBossCommon/VersionUpdater/buildversion -f ../TurnoutBossCommon/turnoutboss_version.h</makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>"/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" r0xB000-0x55800,"../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex" r0x0000-0xB000,"../TurnoutBossBootloader.X/dist/default/production/TurnoutBossBootloader.X.production.hex" -addressing=2 -o../turnoutboss_merged.hex </makeCustomizationPostStep>
+        <makeCustomizationPostStep>../TurnoutBossCommon/turnoutboss_build.sh</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>

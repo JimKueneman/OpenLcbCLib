@@ -90,6 +90,7 @@
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
       <itemPath>TurnoutBOSS.mc3</itemPath>
+      <itemPath>../TurnoutBossCommon/turnoutboss_build.sh</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
