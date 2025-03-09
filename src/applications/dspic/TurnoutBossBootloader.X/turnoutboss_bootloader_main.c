@@ -64,12 +64,13 @@
 // The firmware is written through the OpenLcb Configuration Memory Protocol so we hook into it here
 // to pass it to the statemachine to bisect it and write it to flash
 //
+
 uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
 
     for (int i = 0; i < count; i++) {
 
         if (!TurnoutbossBootloaderHexFileStateMachine_run((*buffer)[i])) {
-            
+
             // Something happened
             CommonLoaderApp_bootloader_state.update_succeeded = FALSE;
 
@@ -96,12 +97,12 @@ void _config_memory_freeze_bootloader_callback(openlcb_node_t* openlcb_node, ope
     if (openlcb_node->state.openlcb_msg_handled) {
 
         openlcb_node->state.firmware_upgrade_active = TRUE;
-        
+
         // Lets be optimistic
         CommonLoaderApp_bootloader_state.update_succeeded = TRUE;
-        
+
         TurnoutbossBootloaderHexFileStateMachine_reset();
-        
+
     }
 
 }
@@ -112,14 +113,14 @@ void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, o
     if (openlcb_node->state.openlcb_msg_handled) {
 
         openlcb_node->state.firmware_upgrade_active = FALSE;
-        
+
         // Only exit and start the app if it succeeded
         if (CommonLoaderApp_bootloader_state.update_succeeded) {
 
-           CommonLoaderApp_bootloader_state.do_start = TRUE;
-           
-           asm ("RESET");
-        
+            CommonLoaderApp_bootloader_state.do_start = TRUE;
+
+            asm("RESET");
+
         }
 
     }
@@ -164,16 +165,16 @@ void _initialize(void) {
 node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
 
     if (_25AA1024_Driver_read(config_mem_address, 6, config_mem_buffer, EEPROM_ADDRESS_SIZE_IN_BITS) == 6) {
-        
+
         node_id_t result = Utilities_extract_node_id_from_config_mem_buffer(config_mem_buffer, 0);
 
         if ((result != NULL_NODE_ID) && (result != 0xFFFFFFFFFFFF)) {
-            
+
             return result;
-            
+
         }
     }
-    
+
     printf("Node ID not found in EEPROM\n");
 
     return NODE_ID_DEFAULT;
@@ -181,19 +182,19 @@ node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configu
 }
 
 node_id_t _extract_node_id_from_flash_or_eeprom(void) {
-    
+
     configuration_memory_buffer_t config_mem_buffer;
-    
+
     node_id_t result = TurnoutbossBootloaderHexFileStateMachine_extract_node_id_from_flash();
 
     if ((result == 0x00FFFFFFFFFFFF) || (result == 0x000000000000)) {
-        
+
         printf("Node ID not found in FLASH\n");
-        
+
         result = _extract_node_id_from_eeprom(NODE_ID_ADDRESS, &config_mem_buffer);
-        
+
     }
-    
+
     return result;
 
 }
@@ -222,11 +223,11 @@ void _run_bootloader(uint16_olcb_t node_alias) {
     while (!CommonLoaderApp_bootloader_state.do_start) {
 
         CanMainStateMachine_run(); // Running a CAN input for running it with pure OpenLcb Messages use MainStatemachine_run();
-        
+
     }
 
     CommonLoaderApp_node_alias = openlcb_node->alias;
-    
+
     printf("Exiting the bootloader\n");
 
 }
@@ -239,13 +240,13 @@ void _initialize_state(void) {
     if (RCONbits.POR || RCONbits.BOR) {
 
         memset(&CommonLoaderApp_bootloader_state, 0x0000, sizeof (CommonLoaderApp_bootloader_state));
-        
+
         // Clear it so the app knows the CommonLoaderApp_bootloader_state is valid
         RCONbits.POR = 0;
         RCONbits.BOR = 0;
 
     }
-    
+
     CommonLoaderApp_bootloader_state.update_succeeded = FALSE;
     CommonLoaderApp_bootloader_state.do_start = FALSE;
     CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
@@ -253,20 +254,28 @@ void _initialize_state(void) {
 }
 
 int main(void) {
-    
+
     _initialize_state();
     _initialize();
     CommonLoaderApp_node_id = _extract_node_id_from_flash_or_eeprom();
-    
+
     _GIE = 1; // Enable Interrupts
-    
+
     printf("Bootloader Starting\n");
 
     if (CommonLoaderApp_bootloader_state.started_from_app) {
-        
+
         printf("Bootloader running: Started from app");
 
         _run_bootloader(CommonLoaderApp_node_alias);
+
+        if (!TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum()) {
+
+            printf("Starting application but checksum is invalid, rebooting.\n");
+            asm("RESET");
+
+        }
+
 
     } else {
 
@@ -279,19 +288,12 @@ int main(void) {
             _run_bootloader(CommonLoaderApp_node_alias); // No valid application image need to get one loaded
 
         }
-        
+
     }
-    
-    if (!TurnoutbossBootloaderHexFileStateMachine_is_valid_checksum()) {
-        
-        printf("Starting application but checksum is invalid, rebooting.\n");
-        asm ("RESET");
-        
-    }
-    
+
 
     printf("Starting application............\n");
-    
+
     _GIE = 0; // Disable Interrupts
 
     // Create a pointer to a function at the app entry point
