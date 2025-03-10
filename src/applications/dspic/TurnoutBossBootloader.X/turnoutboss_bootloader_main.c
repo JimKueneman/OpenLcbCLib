@@ -84,6 +84,8 @@ uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t co
 }
 
 void _config_memory_freeze_bootloader_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+    
+    // Does not get called if dropping in from the application, it got the Freeze Call then dropped into the bootloader
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
 
@@ -116,8 +118,13 @@ void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, o
 
         // Only exit and start the app if it succeeded
         if (CommonLoaderApp_bootloader_state.update_succeeded) {
-
-            CommonLoaderApp_bootloader_state.do_start = TRUE;
+            
+            printf("Update Succeeded\n");
+            
+            CommonLoaderApp_bootloader_state.started_from_app = FALSE;
+            CommonLoaderApp_bootloader_state.started_from_bootloader = FALSE;
+            CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
+            CommonLoaderApp_bootloader_state.do_start = FALSE;
 
             asm("RESET");
 
@@ -247,7 +254,7 @@ void _initialize_state(void) {
 
     }
 
-    CommonLoaderApp_bootloader_state.update_succeeded = FALSE;
+    CommonLoaderApp_bootloader_state.update_succeeded = TRUE; // Assume the best
     CommonLoaderApp_bootloader_state.do_start = FALSE;
     CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
 

@@ -1,7 +1,7 @@
 
-echo "Converting the hex file to a dshex file..."
+# echo "Converting the hex file to a dshex file..."
 
-../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
+#../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
 
 
 echo "Generating the Merged Hex File"
@@ -21,3 +21,10 @@ echo "Generating the hex file with checksum information"
 
 "/Applications/microchip/mplabx/v6.20/mplab_platform/bin/hexmate" ../turnoutboss_merged.hex -o../turnoutboss_merged_summed.hex -addressing=2 -fill=w1:0x00,0xB0,0x00,0x00@0x54800:0x54801 -fill=w1:0xFF,0x3F,0x05,0x00@0x54802:0x54803 -fill=00@0xB000:0x53FFF -ck=0B000-0538ff@54804w1g1
 
+echo "Converting the hex file to a dshex file..."
+
+../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../turnoutboss_merged_summed.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
+
+echo "Deleting the Merged file"
+
+rm ../turnoutboss_merged.hex

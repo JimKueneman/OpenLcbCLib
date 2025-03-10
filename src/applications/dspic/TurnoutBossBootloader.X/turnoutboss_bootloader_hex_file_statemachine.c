@@ -5,6 +5,7 @@
  * Created on February 17, 2025, 6:34 AM
  */
 
+#include "turnoutboss_bootloader_hex_file_statemachine.h"
 
 #include <stdio.h>  // printf
 #include <string.h>
@@ -13,7 +14,7 @@
 #include "../../../openlcb/openlcb_types.h"
 #include "mcc_generated_files/memory/flash.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
-#include "turnoutboss_bootloader_hex_file_statemachine.h"
+
 
 #define HEX_STATE_FIND_COLON 0
 #define HEX_STATE_READ_ADDRESS 1
