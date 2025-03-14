@@ -36,6 +36,8 @@
 
 #include "nmra_dcc_driver.h"
 
+#include "stdio.h"
+
 #include "nmra_dcc_types.h"
 #include "nmra_dcc_buffer_store.h"
 
@@ -49,13 +51,13 @@ nmra_dcc_timing_callback_t _zero_bit_lo = (void *) 0;
 nmra_dcc_timing_callback_t _high_z_cutout = (void *) 0;
 
 nmra_dcc_message_t* _load_idle_message(void) {
-    
+
     nmra_dcc_message_t* result = NmraDccBufferStore_allocateBuffer();
-    
+
     result->buffer_size = 2;
     result->buffer[0] = 0b11111111;
     result->buffer[1] = 0b00000000;
-    
+
     return result;
 
 }
@@ -106,12 +108,23 @@ nmra_dcc_message_t* _next_nmra_dcc_message(void) {
 
     }
 
+    // always start with the pramble
+    result->state = STATE_NMRA_DCC_PREAMBLE;
+    result->next_callback = _one_bit_hi;
+    result->next_callback_parameter = NMRA_DCC_ONE_BIT_WIDTH_IN_MICROSECONDS;
+
     return result;
 }
 
 void NmraDccDriver_initalize(nmra_dcc_timing_callback_t one_bit_hi, nmra_dcc_timing_callback_t one_bit_lo, nmra_dcc_timing_callback_t zero_bit_hi, nmra_dcc_timing_callback_t zero_bit_lo, nmra_dcc_timing_callback_t high_z_cutout) {
 
     NmraDccBufferStore_initialize();
+
+    _one_bit_hi = one_bit_hi;
+    _one_bit_lo = one_bit_lo;
+    _zero_bit_hi = zero_bit_hi;
+    _zero_bit_lo = zero_bit_lo;
+    _high_z_cutout = high_z_cutout;
 
     _nmra_dcc_priority_buffers.high.head = 0;
     _nmra_dcc_priority_buffers.high.tail = 0;
@@ -122,24 +135,28 @@ void NmraDccDriver_initalize(nmra_dcc_timing_callback_t one_bit_hi, nmra_dcc_tim
     _nmra_dcc_priority_buffers.low.head = 0;
     _nmra_dcc_priority_buffers.low.tail = 0;
 
-    _nmra_dcc_current_message = (void *) 0;
-
-    _one_bit_hi = one_bit_hi;
-    _one_bit_lo = one_bit_lo;
-    _zero_bit_hi = zero_bit_hi;
-    _zero_bit_lo = zero_bit_lo;
-    _high_z_cutout = high_z_cutout;
-    
     // Load the system with a message or idle message
     _nmra_dcc_current_message = _next_nmra_dcc_message();
 
 }
 
 void NmraDccDriver_56us_timer(void) {
-    
-    if (!_nmra_dcc_current_message) 
-        
+
+    if (!_nmra_dcc_current_message) {
+
+        if (!_nmra_dcc_current_message->next_callback) {
+
+            printf("no next_callback assigned\n");
+
+            return;
+
+        }
+
+        printf("no _nmra_dcc_current_message assigned\n");
+
         return;
+
+    }
 
     // this keeps a consistent dead-time in calling the callbacks by being the first thing that happens
 
@@ -194,6 +211,8 @@ void NmraDccDriver_56us_timer(void) {
             // is it the first high half?
             if (_nmra_dcc_current_message->next_callback == _zero_bit_hi) {
 
+                printf("Start Bit\n");
+                
                 // send the low half of the bit
                 _nmra_dcc_current_message->next_callback = _zero_bit_lo;
                 _nmra_dcc_current_message->next_callback_parameter = NMRA_DCC_ZERO_BIT_WIDTH_IN_MICROSECONDS;
@@ -225,6 +244,8 @@ void NmraDccDriver_56us_timer(void) {
 
                 } else {
 
+                    printf("XOR Byte\n");
+                    
                     // XOR time
                     _nmra_dcc_current_message->buffer_byte_bit_index = 0; // reset the byte bits
                     _nmra_dcc_current_message->state = STATE_NMRA_DCC_XOR_BYTE; // send the next data byte
@@ -353,6 +374,8 @@ void NmraDccDriver_56us_timer(void) {
 
             if (_nmra_dcc_current_message->next_callback == _one_bit_hi) {
 
+                printf("End Bit\n");
+                
                 // send the second half of the one bit
                 _nmra_dcc_current_message->next_callback = _one_bit_lo;
                 _nmra_dcc_current_message->next_callback_parameter = NMRA_DCC_ONE_BIT_WIDTH_IN_MICROSECONDS;
@@ -361,10 +384,10 @@ void NmraDccDriver_56us_timer(void) {
 
                 // all done...
                 NmraDccBufferStore_freeBuffer(_nmra_dcc_current_message);
-                
+
                 // if there is not a waiting message this will return an idle message
                 _nmra_dcc_current_message = _next_nmra_dcc_message();
- 
+
                 _nmra_dcc_current_message->state = STATE_NMRA_DCC_PREAMBLE;
                 _nmra_dcc_current_message->buffer_byte_bit_index = 0; // reset the bit index
                 _nmra_dcc_current_message->buffer_byte_index = 0;
