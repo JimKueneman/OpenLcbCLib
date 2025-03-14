@@ -50,6 +50,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+    
 extern void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 extern void ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
@@ -88,6 +90,7 @@ extern uint16_olcb_t ProtocolEventTransport_extract_consumer_event_state_mti(ope
 
 extern uint16_olcb_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint8_olcb_t event_index);
 
+#endif // SUPPORT_FIRMWARE_BOOTLOADER
 
 #ifdef	__cplusplus
 }

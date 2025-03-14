@@ -216,7 +216,7 @@ void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_
     strcat((char *)gridconnect, ":");
     strcat((char *)gridconnect, "X");
 
-    sprintf((char *)&temp_str, "%08X", can_msg->identifier);
+    sprintf((char *)&temp_str, "%08lX", (unsigned long) can_msg->identifier);
     strcat((char *)gridconnect, (char *)&temp_str);
     strcat((char *)gridconnect, "N");
     for (int i = 0; i < can_msg->payload_count; i++)

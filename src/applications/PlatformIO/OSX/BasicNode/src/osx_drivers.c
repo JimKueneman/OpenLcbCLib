@@ -50,6 +50,12 @@ pthread_mutex_t OSxDdrivers_input_mutex;
 
 parameterless_callback_t _100ms_timer_sink_func = (void *)0;
 
+void OSxDrivers_factory_reset(void) {
+
+    // nothing to do with an OSx program
+    
+}
+
 uint8_olcb_t OSxDrivers_input_is_connected(void)
 {
 

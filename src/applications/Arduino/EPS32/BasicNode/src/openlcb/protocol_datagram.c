@@ -82,7 +82,7 @@ void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node_t* op
 
 }
 
-void _try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+void ProtocolDatagram_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
@@ -116,11 +116,13 @@ const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* ope
             return&openlcb_node->parameters->address_space_acdi_user;
 
 #ifdef SUPPORT_TRACTION
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
             return &openlcb_node->parameters->address_space_train_function_definition;
 
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
             return &openlcb_node->parameters->address_space_train_function_config_memory;
+#endif
 #endif
 
 #ifdef SUPPORT_FIRMWARE_BOOTLOADER
@@ -189,6 +191,8 @@ uint16_olcb_t _validate_memory_write_space_parameters(const user_address_space_i
 
 }
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+
 uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, data_address, &data_count);
@@ -198,6 +202,9 @@ uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t*
     return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[data_address], reply_payload_index, data_count);
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
 
@@ -208,9 +215,12 @@ uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t
     return ERROR_PERMANENT_NOT_IMPLEMENTED;
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
-
+    
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
     if (invalid)
         return invalid;
@@ -220,6 +230,9 @@ uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_no
     return reply_payload_index + DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
 
@@ -250,6 +263,9 @@ uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, 
     }
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
 
@@ -275,8 +291,10 @@ uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb
     }
 
 }
+#endif
 
 #ifdef SUPPORT_TRACTION
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 uint16_olcb_t _read_memory_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
 
@@ -298,13 +316,14 @@ uint16_olcb_t _read_memory_space_train_function_configuration_memory(openlcb_nod
     return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
-
+#endif
 #endif
 
 uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count, uint8_olcb_t space) {
 
     switch (space) {
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
             return read_memory_space_cdi(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
 
@@ -326,13 +345,17 @@ uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* wo
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
             return _read_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
 #endif
+#endif
         default:
             return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
     }
 
 }
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+
 uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+
 
     uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
     if (invalid)
@@ -342,13 +365,16 @@ uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_n
 
     uint16_olcb_t write_count = DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
-    if (Application_Callbacks_get_config_mem_write()) {
-        
-        Application_Callbacks_get_config_mem_write()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
-        
+    if (ApplicationCallbacks_get_config_mem_write()) {
+
+        ApplicationCallbacks_get_config_mem_write()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+
     }
     return write_count;
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
 
@@ -367,6 +393,7 @@ uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlc
     return _write_memory_space_configuration_memory(openlcb_node, openlcb_msg, data_address, reply_payload_index, data_count);
 
 }
+#endif
 
 #ifdef SUPPORT_TRACTION
 
@@ -378,6 +405,8 @@ uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_no
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
+TODO:
+    THIS IS WRONG.... NOT CONFIGURATION MEMORY WRITE REALLY
     return DriverConfigurationMemory_write(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
@@ -391,8 +420,9 @@ uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb
     if (invalid)
         return invalid;
 
-    data_address = data_address + openlcb_node->parameters->firmware_image_offset;
+    //   data_address = data_address + openlcb_node->parameters->firmware_image_offset;
 
+    //    TODO: This should not be the Configuration Memory 
     return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
@@ -401,15 +431,18 @@ uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb
 uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count, uint8_olcb_t space) {
 
     switch (space) {
-
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
             return _write_memory_space_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
             return _write_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+#endif
 #ifdef SUPPORT_TRACTION
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
             return _write_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+#endif
 #endif
 #ifdef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_FIRMWARE:
@@ -423,6 +456,7 @@ uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* w
 }
 
 
+#ifndef BOOTLOADER_ONLY
 // Memory read handlers
 
 void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space, uint8_olcb_t return_msg_ok, uint8_olcb_t return_msg_fail) {
@@ -435,7 +469,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
     }
 
-    uint16_olcb_t data_count = *openlcb_msg->payload[6];
+    uint16_olcb_t data_count = (*openlcb_msg->payload[6])&0x7F; // top bit reserved
     uint16_olcb_t reply_payload_index = 6;
     uint32_olcb_t data_address = Utilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
 
@@ -443,7 +477,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
         reply_payload_index = 7;
         *worker_msg->payload[6] = space;
-        data_count = *openlcb_msg->payload[7];
+        data_count = (*openlcb_msg->payload[7])&0x7F; // top bit reserved
 
     }
 
@@ -451,8 +485,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
     Utilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
-
-
+    
     uint16_olcb_t read_result_or_error_code = _read_memory_space(openlcb_node, worker_msg, data_address, reply_payload_index, data_count, space);
 
     if (read_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
@@ -461,14 +494,13 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
         worker_msg->payload_count = read_result_or_error_code;
 
     } else {
-
         *worker_msg->payload[1] = return_msg_fail;
         Utilities_copy_word_to_openlcb_payload(worker_msg, read_result_or_error_code, reply_payload_index); // read_result is the error code in this case
         worker_msg->payload_count = reply_payload_index + 2;
 
     }
 
-    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+    ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
 
@@ -504,6 +536,8 @@ void _handle_memory_read_reply_fail_message(openlcb_node_t* openlcb_node, openlc
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+
+#endif // BOOTLOADER_ONLY
 
 
 // Memory write handlers
@@ -551,9 +585,11 @@ void _handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 
     }
 
-    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+    ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space, uint8_olcb_t return_msg_ok, uint8_olcb_t return_msg_fail) {
 
@@ -636,9 +672,11 @@ void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openl
 
     }
 
-    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+    ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
+
+#endif
 
 void _handle_memory_write_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space) {
 
@@ -673,6 +711,8 @@ void _handle_memory_write_reply_fail_message(openlcb_node_t* openlcb_node, openl
 }
 
 // Other memory access handlers
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -725,9 +765,13 @@ void _handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_ms
         worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, openlcb_node->parameters->configuration_options.description, worker_msg->payload_count);
 
 
-    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+    ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
+#endif
+
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_options_reply_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -745,6 +789,10 @@ void _handle_memory_options_reply_message(openlcb_node_t* openlcb_node, openlcb_
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+#endif
+
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -811,9 +859,12 @@ void _handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node,
         worker_msg->payload_count = worker_msg->payload_count + Utilities_copy_string_to_openlcb_payload(worker_msg, target_space->description, worker_msg->payload_count);
 
 
-    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+    ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_get_address_space_info_reply_not_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -830,6 +881,9 @@ void _handle_memory_get_address_space_info_reply_not_present_message(openlcb_nod
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_get_address_space_info_reply_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -846,6 +900,10 @@ void _handle_memory_get_address_space_info_reply_present_message(openlcb_node_t*
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+#endif
+
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -877,9 +935,12 @@ void _handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_m
     *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
     Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->lock_node, 2);
 
-    _try_transmit(openlcb_node, openlcb_msg, worker_msg);
+    ProtocolDatagram_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_get_unique_id_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -894,47 +955,38 @@ void _handle_memory_get_unique_id_message(openlcb_node_t* openlcb_node, openlcb_
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+#endif
 
 void _handle_memory_unfreeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+    
+    if (*openlcb_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
 
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
-    if (*openlcb_msg->payload[2] != ADDRESS_SPACE_FIRMWARE) {
+        if (openlcb_node->parameters->address_space_firmware.present) {
 
-        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+            if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
-            _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+                _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-            return;
+                return;
 
-        } else
+            } else {
 
-            openlcb_node->state.openlcb_msg_handled = TRUE;
+                openlcb_node->state.openlcb_msg_handled = TRUE;
 
-    } else {
+                if (ApplicationCallbacks_get_config_mem_unfreeze_firmware_update()) {
 
-        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+                    ApplicationCallbacks_get_config_mem_unfreeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
 
-            _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
+                }
 
-            return;
+                return;
+
+            }
 
         }
 
-        Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
-
-        if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
-            worker_msg->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
-
-        Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
-
-        _try_transmit(openlcb_node, openlcb_msg, worker_msg);
-
-        if (openlcb_node->state.openlcb_msg_handled)
-
-            openlcb_node->state.firmware_upgrade = FALSE;
-
     }
-#else
+
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
@@ -945,50 +997,37 @@ void _handle_memory_unfreeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
-#endif
 }
 
 void _handle_memory_freeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-#ifdef SUPPORT_FIRMWARE_BOOTLOADER
-    if (*openlcb_msg->payload[2] != ADDRESS_SPACE_FIRMWARE) {
+    if (*openlcb_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
 
-        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+        if (openlcb_node->parameters->address_space_firmware.present) {
 
-            _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+            if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
-            return;
+                _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        } else
+                return;
 
-            openlcb_node->state.openlcb_msg_handled = TRUE;
+            } else {
 
-    } else {
+                openlcb_node->state.openlcb_msg_handled = TRUE;
 
-        if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+                if (ApplicationCallbacks_get_config_mem_freeze_firmware_update()) {
 
-            _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
+                    ApplicationCallbacks_get_config_mem_freeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
 
-            return;
+                }
+
+                return;
+
+            }
 
         }
 
-        Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
-
-        if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
-            worker_msg->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
-
-        Utilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
-
-
-        _try_transmit(openlcb_node, openlcb_msg, worker_msg);
-
-        if (openlcb_node->state.openlcb_msg_handled)
-            openlcb_node->state.firmware_upgrade = TRUE;
-
     }
-
-#else
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
@@ -1000,7 +1039,6 @@ void _handle_memory_freeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* 
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
-#endif
 
 }
 
@@ -1018,6 +1056,8 @@ void _handle_memory_update_complete_message(openlcb_node_t* openlcb_node, openlc
 
 }
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+
 void _handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
@@ -1033,20 +1073,31 @@ void _handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_m
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+#endif
+
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void _handle_memory_factory_reset_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
-
+        
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
         return;
 
     }
 
+    if (DriverConfigurationMemory_get_factory_reset_callback()) {
+
+        DriverConfigurationMemory_get_factory_reset_callback()();
+        
+    }
+
     openlcb_node->state.openlcb_msg_handled = TRUE;
 
 }
+#endif
 
 void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1059,6 +1110,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
             switch (*openlcb_msg->payload[1]) {
 
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
                 case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
                     _handle_memory_read_message(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6, DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
                     return;
@@ -1095,9 +1147,11 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                 case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF:
                     _handle_memory_read_reply_fail_message(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO);
                     return;
+#endif // SUPPORT_FIRMWARE_BOOTLOADER
                 case DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6:
                     _handle_memory_write_message(openlcb_node, openlcb_msg, worker_msg, *openlcb_msg->payload[6], DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6, DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
                     return;
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
                 case DATAGRAM_MEMORY_WRITE_SPACE_FD:
                     _handle_memory_write_message(openlcb_node, openlcb_msg, worker_msg, ADDRESS_SPACE_CONFIGURATION_MEMORY, DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD, DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD);
                     return;
@@ -1164,12 +1218,14 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                 case DATAGRAM_MEMORY_CONFIGURATION_GET_UNIQUE_ID:
                     _handle_memory_get_unique_id_message(openlcb_node, openlcb_msg, worker_msg);
                     return;
+#endif
                 case DATAGRAM_MEMORY_CONFIGURATION_UNFREEZE:
                     _handle_memory_unfreeze_message(openlcb_node, openlcb_msg, worker_msg);
                     return;
                 case DATAGRAM_MEMORY_CONFIGURATION_FREEZE:
                     _handle_memory_freeze_message(openlcb_node, openlcb_msg, worker_msg);
                     return;
+#ifndef SUPPORT_FIRMWARE_BOOTLOADER
                 case DATAGRAM_MEMORY_CONFIGURATION_UPDATE_COMPLETE:
                     _handle_memory_update_complete_message(openlcb_node, openlcb_msg, worker_msg);
                     return;
@@ -1179,7 +1235,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                 case DATAGRAM_MEMORY_CONFIGURATION_FACTORY_RESET:
                     _handle_memory_factory_reset_message(openlcb_node, openlcb_msg, worker_msg);
                     return;
-
+#endif
                 default:
                     _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
                     return;

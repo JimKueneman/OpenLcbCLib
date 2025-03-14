@@ -49,12 +49,15 @@ extern "C" {
 
     extern void DriverConfigurationMemory_initialization(
             configuration_mem_callback_t configuration_mem_read_callback,
-            configuration_mem_callback_t configuration_mem_write_callback
+            configuration_mem_callback_t configuration_mem_write_callback,
+            parameterless_callback_t configuration_mem_factory_reset_callback
             );
 
     extern configuration_mem_callback_t DriverConfigurationMemory_get_read_callback(void);
 
     extern configuration_mem_callback_t DriverConfigurationMemory_get_write_callback(void);
+    
+    extern parameterless_callback_t DriverConfigurationMemory_get_factory_reset_callback(void);
 
 
 #ifdef	__cplusplus

@@ -67,6 +67,8 @@ extern "C"
 
     extern uint8_olcb_t OSxDrivers_input_is_connected(void);
 
+    extern void OSxDrivers_factory_reset(void);
+
     extern pthread_mutex_t OSxDdrivers_input_mutex;
 
 #ifdef __cplusplus

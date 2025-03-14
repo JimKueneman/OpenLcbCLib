@@ -19,8 +19,6 @@
 #include "src/openlcb/openlcb_utilities.h"
 #include "src/openlcb/application.h"
 #include "src/openlcb/application_callbacks.h"
-#include "turnoutboss_event_handler.h"
-
 
 
 int main(void)
@@ -40,6 +38,7 @@ int main(void)
       &OSxDrivers_reboot,
       &OSxDrivers_config_mem_read,
       &OSxDrivers_config_mem_write,
+      &OSxDrivers_factory_reset,
       &OSxDrivers_pause_100ms_timer,
       &OSxDrivers_resume_100ms_timer);
 
@@ -59,7 +58,7 @@ int main(void)
   printf("Allocated.....\n");
 
   printf("Registering Events\n");
-  TurnoutBoss_Event_Handler_initialize(node);
+
   printf("Events Allocated.....\n");
 
 

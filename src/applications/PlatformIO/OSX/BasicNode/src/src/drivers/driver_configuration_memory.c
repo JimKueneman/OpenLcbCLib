@@ -39,15 +39,18 @@
 
 configuration_mem_callback_t _configuration_mem_read_callback_func = (void*) 0;
 configuration_mem_callback_t _configuration_mem_write_callback_func = (void*) 0;
+parameterless_callback_t _configuration_mem_factory_reset_func = (void*) 0;
 
 void DriverConfigurationMemory_initialization(
         configuration_mem_callback_t configuration_mem_read_callback,
-        configuration_mem_callback_t configuration_mem_write_callback
+        configuration_mem_callback_t configuration_mem_write_callback,
+        parameterless_callback_t configuration_mem_factory_reset_callback
         ) 
 {
 
     _configuration_mem_read_callback_func = configuration_mem_read_callback;
     _configuration_mem_write_callback_func = configuration_mem_write_callback;
+    _configuration_mem_factory_reset_func = configuration_mem_factory_reset_callback;
 
 }
 
@@ -61,4 +64,10 @@ configuration_mem_callback_t DriverConfigurationMemory_get_write_callback(void) 
 
     return _configuration_mem_write_callback_func;
 
+}
+
+parameterless_callback_t DriverConfigurationMemory_get_factory_reset_callback(void) {
+    
+    return _configuration_mem_factory_reset_func;
+    
 }

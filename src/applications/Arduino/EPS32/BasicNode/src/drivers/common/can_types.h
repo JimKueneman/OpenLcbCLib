@@ -45,11 +45,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-// ************************ USER DEFINED VARIABLES *****************************
+    // ************************ USER DEFINED VARIABLES *****************************
 
+#ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH
 #define USER_DEFINED_CAN_MSG_BUFFER_DEPTH                    10   // USER DEFINED 
+#endif
 
-// *********************END USER DEFINED VARIABLES *****************************
+    // *********************END USER DEFINED VARIABLES *****************************
 
 #define TX_CHANNEL_CAN_CONTROL 0
 #define TX_CHANNEL_OPENLCB_MSG 0

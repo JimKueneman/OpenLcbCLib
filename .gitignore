@@ -21,3 +21,4 @@
 /src/applications/dspic/TurnoutBossCommon/turnoutboss_version.h
 
 .DS_Store
+/src/applications/dsPIC/TrainBoss.X/dist/

@@ -45,7 +45,7 @@ uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* 
     uint32_olcb_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
     
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-       offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.highest_address; 
+       offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.low_address; 
     
     return (offset_per_node * openlcb_node->index);
     
@@ -365,5 +365,52 @@ node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_
         ((uint64_olcb_t)(*buffer)[2 + index] << 24) |
         ((uint64_olcb_t)(*buffer)[3 + index] << 16) |
         ((uint64_olcb_t)(*buffer)[4 + index] << 8) |
-        ((uint64_olcb_t)(*buffer)[5 + index]));
+        ((uint64_olcb_t)(*buffer)[5 + index])
+        );
+}
+
+uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index) 
+{
+    
+    return (
+        ((uint64_olcb_t)(*buffer)[0 + index] << 8) |
+        ((uint64_olcb_t)(*buffer)[1 + index])
+        );
+    
+}
+
+void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index) {
+
+    for (int i = 5; i >= 0; i--) {
+        
+        (*buffer)[i + index] = node_id & 0xFF;
+        node_id = node_id >> 8;
+
+    }
+
+}
+
+void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index) {
+  
+        
+    for (int i = 7; i >= 0; i--) {
+        
+        (*buffer)[i + index] = event_id & 0xFF;
+        event_id = event_id >> 8;
+
+    }
+
+}
+
+event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index) {
+    
+    
+    event_id_t retval = 0L;
+    
+    for (int i = 0; i <= 7; i++) {
+        retval = retval << 8;
+        retval |= (*buffer)[i + index] & 0xFF;
+    }
+    
+    return retval;
 }

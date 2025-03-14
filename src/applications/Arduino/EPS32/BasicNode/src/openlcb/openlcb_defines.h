@@ -105,7 +105,7 @@ extern "C" {
 #define MTI_CONSUMER_IDENTIFIED_SET          0x04C4                            // Databytes = EventID
 #define MTI_CONSUMER_IDENTIFIED_CLEAR        0x04C5                            // Databytes = EventID
 #define MTI_CONSUMER_IDENTIFIED_RESERVED     0x04C6                            // Databytes = EventID
-#define MTI_PRODUCER_IDENDIFY                0x0914                            // Databytes = EventID
+#define MTI_PRODUCER_IDENTIFY                0x0914                            // Databytes = EventID
 #define MTI_PRODUCER_IDENTIFY_RANGE          0x0524                            // Databytes = EventID with Mask
 #define MTI_PRODUCER_IDENTIFIED_UNKNOWN      0x0547                            // Databytes = EventID
 #define MTI_PRODUCER_IDENTIFIED_SET          0x0544                            // Databytes = EventID
