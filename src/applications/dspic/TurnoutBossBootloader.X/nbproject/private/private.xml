@@ -3,10 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossBootloader.X/turnoutboss_bootloader_main.c</file>
-            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossBootloader.X/turnoutboss_bootloader_hex_file_statemachine.c</file>
-            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/dsPIC/TurnoutBossCommon/turnoutboss_build.sh</file>
-            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/protocol_datagram.c</file>
+            <file>file:/Users/jake/MPLABXProjects/OpenLcbCLib/src/applications/dspic/TurnoutBossBootloader.X/turnoutboss_bootloader_hex_file_statemachine.c</file>
         </group>
     </open-files>
 </project-private>

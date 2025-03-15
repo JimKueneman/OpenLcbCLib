@@ -18,6 +18,8 @@
  
 /src/applications/dspic/turnoutboss_merged.hex
 /src/applications/dspic/turnoutboss_merged_summed.hex
+/src/applications/dspic/turnoutboss_merged_summed.hex.dshex
+
 /src/applications/dspic/TurnoutBossCommon/turnoutboss_version.h
 
 .DS_Store
