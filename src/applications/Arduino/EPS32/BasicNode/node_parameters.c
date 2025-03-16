@@ -86,7 +86,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_configuration_definition.present = 1,
     .address_space_configuration_definition.low_address_valid = 0, // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0, // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 4757, // this is the length of the .cdi file byte array in this initialization structure
+    .address_space_configuration_definition.highest_address = 4757 - 1, // this is the length of the .cdi file byte array in this initialization structure
     .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
@@ -115,7 +115,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_manufacturer.present = 1,
     .address_space_acdi_manufacturer.low_address_valid = 0, // assume the low address starts at 0
     .address_space_acdi_manufacturer.low_address = 0, // ignored if low_address_valid is false
-    .address_space_acdi_manufacturer.highest_address = 125, // Predefined in the Configuration Description Definition Spec
+    .address_space_acdi_manufacturer.highest_address = 125 - 1, // Predefined in the Configuration Description Definition Spec 1 + 41 + 41 + 21 + 21 = 125 
     .address_space_acdi_manufacturer.address_space = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "ACDI access manufacturer",
 
@@ -125,7 +125,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.present = 1,
     .address_space_acdi_user.low_address_valid = 0, // assume the low address starts at 0
     .address_space_acdi_user.low_address = 0, // ignored if low_address_valid is false
-    .address_space_acdi_user.highest_address = 128, // Predefined in the Configuration Description Definition Spec
+    .address_space_acdi_user.highest_address = 128 - 1, // Predefined in the Configuration Description Definition Spec = 1 + 63 + 64 = 128 bytes length
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ACDI access user storage",
 
