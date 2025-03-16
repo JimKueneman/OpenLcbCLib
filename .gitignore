@@ -1,11 +1,11 @@
 /src/applications/dspic/TurnoutBossBootloader.X/.generated_files/
 /src/applications/dspic/TurnoutBossBootloader.X/dist/
 /src/applications/dspic/TurnoutBossBootloader.X/build/
+/src/applications/dspic/TurnoutBossBootloader.X/nbproject/private/
 
 /src/applications/dspic/TurnoutBossBootloader.X/nbproject/Makefile-default.mk
 /src/applications/dspic/TurnoutBossBootloader.X/nbproject/Makefile-genesis.properties
 /src/applications/dspic/TurnoutBossBootloader.X/nbproject/Makefile-local-default.mk
-
 
 /src/applications/dspic/TurnoutBOSS.X/.generated_files/
 /src/applications/dspic/TurnoutBOSS.X/dist/
@@ -15,6 +15,9 @@
 /src/applications/dspic/TurnoutBOSS.X/nbproject/Makefile-default.mk
 /src/applications/dspic/TurnoutBOSS.X/nbproject/Makefile-genesis.properties
 /src/applications/dspic/TurnoutBOSS.X/nbproject/Makefile-local-default.mk
+ 
+/src/applications/dspic/MicroCap.X/nbproject/Makefile-genesis.properties
+/src/applications/dspic/MicroCap.X/nbproject/Makefile-local-default.mk
  
 /src/applications/dspic/turnoutboss_merged.hex
 /src/applications/dspic/turnoutboss_merged_summed.hex
