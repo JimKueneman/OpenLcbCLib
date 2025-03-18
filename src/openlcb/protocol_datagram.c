@@ -177,7 +177,7 @@ uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_in
         return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
 
     if ((data_address + *data_count) > space_info->highest_address)
-        *data_count = space_info->highest_address - data_address;
+        *data_count = space_info->highest_address - data_address + 1; // length +1 due to 0...end
 
     return 0;
 }
