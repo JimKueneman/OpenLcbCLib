@@ -772,5 +772,10 @@ void TurnoutBossSignalCalculationsBoardRight_run(signaling_state_t *states, boar
     states->hardware.teach_pin = states->next.hardware.teach_pin;
     states->hardware.learn_pin = states->next.hardware.learn_pin;
 #endif
+    
+#ifdef BOSS3
+    states->hardware.teach_pin = states->next.hardware.teach_pin;
+    states->hardware.learn_pin = states->next.hardware.learn_pin;
+#endif
 
 }

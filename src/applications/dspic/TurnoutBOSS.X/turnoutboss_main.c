@@ -266,6 +266,10 @@ void _print_turnoutboss_version(void) {
 #ifdef BOSS2 
     printf("Application Booted: Boss 2.0.................\n");
 #endif
+    
+#ifdef BOSS3 
+    printf("Application Booted: Boss 3.0.................\n");
+#endif
 
 }
 
@@ -293,6 +297,22 @@ void _initialize_io_early_for_test(void) {
 #endif
 
 #ifdef BOSS2
+
+    ANSELA = 0x00; // Convert all I/O pins to digital
+    ANSELB = 0x00;
+    ANSELC = 0x00;
+
+
+    LED_BLUE_TRIS = 0;
+    LED_GREEN_TRIS = 0;
+    LED_YELLOW_TRIS = 0;
+
+    LED_BLUE = 1;
+    LED_GREEN = 1;
+    LED_YELLOW = 1;
+#endif
+    
+#ifdef BOSS3
 
     ANSELA = 0x00; // Convert all I/O pins to digital
     ANSELB = 0x00;
@@ -363,7 +383,7 @@ int main(void) {
         _update_openlcb_c_lib_loop_delay_timer();
 
         // Need to wait for the node to log in before doing anything that may try to send and event/message
-        if (node->state.initalized) {
+        if (node->state.initalized && node->state.events_broadcasted) {
 
             if (TurnoutBossTeachLearn_teach_learn_state.state != STATE_TEACH_LEARN_DEACTIVATED) {
 

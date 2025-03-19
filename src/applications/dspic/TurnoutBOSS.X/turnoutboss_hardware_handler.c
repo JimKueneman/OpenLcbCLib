@@ -315,6 +315,63 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
     
 #endif
     
+#ifdef BOSS3
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (LEARN_BUTTON_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    if (filter == 0) {
+        
+        signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
+
+        signal_calculation_states->next.hardware.learn_pin = OPEN;
+      
+    } else if (filter == INPUT_FILTER_COUNT) {
+        
+        signal_calculation_states->next.hardware.learn_pin = CLOSED;
+
+    }
+    
+    // *******************
+    filter = INPUT_FILTER_COUNT / 2;
+
+    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+
+        if (TEACH_BUTTON_PIN) {
+
+            filter = _run_filter_inc(filter);
+
+        } else
+
+            filter = _run_filter_dec(filter);
+
+    }
+
+    if (filter == 0) {
+        
+        signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != OPEN;
+
+        signal_calculation_states->next.hardware.teach_pin = OPEN;
+
+    } else if (filter == INPUT_FILTER_COUNT) {
+
+        signal_calculation_states->next.hardware.teach_pin = CLOSED;
+
+    }
+    
+#endif
+    
 
 }
 

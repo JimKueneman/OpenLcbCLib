@@ -149,6 +149,11 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
             printf("Teach: %d\n", UartHandler_signal_calculation_states->hardware.teach_pin);
             printf("Learn: %d\n", UartHandler_signal_calculation_states->hardware.learn_pin);
 #endif           
+            
+#ifdef BOSS3
+            printf("Teach: %d\n", UartHandler_signal_calculation_states->hardware.teach_pin);
+            printf("Learn: %d\n", UartHandler_signal_calculation_states->hardware.learn_pin);
+#endif
             return;
 
         case 'Y':

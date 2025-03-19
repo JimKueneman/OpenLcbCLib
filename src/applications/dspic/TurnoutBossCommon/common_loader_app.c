@@ -118,6 +118,18 @@ void CommonLoaderApp_initialize_sfrs(void) {
 
 #endif
 
+#ifdef BOSS3
+
+    LED_BLUE_TRIS = 0; // output
+    LED_GREEN_TRIS = 0; // output
+    LED_YELLOW_TRIS = 0; // output
+
+    LED_BLUE = 0;
+    LED_YELLOW = 0;
+    LED_GREEN = 0;
+
+#endif
+    
     // IO Pin Initialize -------------------------------------------------------
 
     ANSELA = 0x00; // Convert all I/O pins to digital
@@ -284,6 +296,16 @@ void CommonLoaderApp_initialize_sfrs(void) {
     T3CONbits.TON = 1; // Turn on Timer 
 
 #ifdef BOSS2 
+    TEACH_BUTTON_TRIS = 1; // input
+    LEARN_BUTTON_TRIS = 1; // input
+
+    LEARN_BUTTON_PULL_UP = 1;
+    TEACH_BUTTON_PULL_UP = 1;
+    TEACH_BUTTON_PULL_DOWN = 0;
+    LEARN_BUTTON_PULL_DOWN = 0;
+#endif
+    
+#ifdef BOSS3 
     TEACH_BUTTON_TRIS = 1; // input
     LEARN_BUTTON_TRIS = 1; // input
 

@@ -355,7 +355,7 @@
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
         <property key="oXC16glb-macros"
-                  value="FCY=40000000UL;MPLAB;BOSS2;______EXCLUDE_FIRMWARE_ADDRESS_SPACE"/>
+                  value="FCY=40000000UL;MPLAB;BOSS3;______EXCLUDE_FIRMWARE_ADDRESS_SPACE"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>

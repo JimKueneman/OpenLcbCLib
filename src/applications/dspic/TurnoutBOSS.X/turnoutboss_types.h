@@ -291,6 +291,11 @@ typedef struct {
     uint8_olcb_t learn_pin : 1;
 #endif
 
+#ifdef BOSS3
+    uint8_olcb_t teach_pin : 1;
+    uint8_olcb_t learn_pin : 1;
+#endif
+    
 } hardware_input_states_t;
 
 typedef struct {
@@ -323,6 +328,11 @@ typedef struct {
     uint8_olcb_t pushbutton_normal_toggled : 1;
     uint8_olcb_t pushbutton_diverging_toggled : 1;
 #ifdef BOSS2
+    uint8_olcb_t teach_button_toggled : 1;
+    uint8_olcb_t learn_button_toggled : 1;
+#endif
+    
+#ifdef BOSS3
     uint8_olcb_t teach_button_toggled : 1;
     uint8_olcb_t learn_button_toggled : 1;
 #endif

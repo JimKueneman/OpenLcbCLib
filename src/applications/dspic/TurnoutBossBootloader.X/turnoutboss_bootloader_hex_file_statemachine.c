@@ -25,7 +25,13 @@
 
 uint8_olcb_t state_machine_state = HEX_STATE_FIND_COLON;
 
+#ifdef BOSS2
 char* TurnoutBossBootloaderHexFileStateMachine_key = "MustangpeakEngineeringTurnoutBoss2.0";
+#endif
+char* TurnoutBossBootloaderHexFileStateMachine_key = "MustangpeakEngineeringTurnoutBoss3.0";
+#ifdef BOSS3
+
+#endif
 
 char temp[20] = {};
 uint8_olcb_t byte_index = 0;
