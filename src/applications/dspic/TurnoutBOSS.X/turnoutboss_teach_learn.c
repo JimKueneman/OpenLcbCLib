@@ -183,8 +183,8 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
         case STATE_TEACH_LEARN_START_LEARN_BOARD_RH:
         case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_BOARD_RH_START:
-        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START:
-        case STATE_TEACH_LEARN_START_SIGNALS_POINT_DOUBLE_HEAD:
+        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_TURNOUT_CTRL_TWO_START:
+        case STATE_TEACH_LEARN_START_TURNOUT_CTRL_TWO:
 
             LED_BLUE = _led_blue_array_four_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
@@ -192,8 +192,8 @@ void TurnoutBossTeachLearn_update_leds(uint8_olcb_t teach_learn_state) {
 
             break;
 
-        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_SINGLE_HEAD_START:
-        case STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD:
+        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_TURNOUT_CTRL_ONE_START:
+        case STATE_TEACH_LEARN_START_TURNOUT_CTRL_ONE:
 
             LED_BLUE = _led_blue_array_five_blink[TurnoutBossTeachLearn_teach_learn_state.led_array_index];
             LED_YELLOW = TurnoutBossTeachLearn_teach_learn_state.is_signal_sequence;
@@ -513,7 +513,7 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
             if (LEARN_BUTTON_PIN) {
 
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START;
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_TURNOUT_CTRL_TWO_START;
 
             }
 
@@ -533,13 +533,13 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
             return;
 
 
-        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_DOUBLE_HEAD_START:
+        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_TURNOUT_CTRL_TWO_START:
 
             if (!LEARN_BUTTON_PIN) {
 
-                printf("Teaching Points Double Head Signals\n");
+                printf("Teaching Turnout Control Two Button\n");
 
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_SIGNALS_POINT_DOUBLE_HEAD;
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_TURNOUT_CTRL_TWO;
                 TurnoutBossTeachLearn_teach_learn_state.led_array_index = 0;  // restart the blue blink
 
             }
@@ -547,19 +547,19 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
             return;
 
 
-        case STATE_TEACH_LEARN_START_SIGNALS_POINT_DOUBLE_HEAD:
+        case STATE_TEACH_LEARN_START_TURNOUT_CTRL_TWO:
 
             if (LEARN_BUTTON_PIN) {
 
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_SINGLE_HEAD_START;
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_TURNOUT_CTRL_ONE_START;
 
             }
 
             if (TEACH_BUTTON_PIN) {
 
                 // Write Double Head Mast
-                buffer[0] = POINT_SIGNAL_HEAD_DOUBLE;
-                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer) == 1) {
+                buffer[0] = TURNOUT_CONTROL_TWO_BUTTON;
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
@@ -570,26 +570,26 @@ void TurnoutBossTeachLearn_run(openlcb_node_t *node) {
 
             return;
 
-        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_SIGNALS_POINT_SINGLE_HEAD_START:
+        case STATE_TEACH_LEARN_WAIT_FOR_BUTTON_UP_TURNOUT_CTRL_ONE_START:
 
             if (!LEARN_BUTTON_PIN) {
 
                 printf("Teaching Points Single Head Signals\n");
 
-                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD;
+                TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_START_TURNOUT_CTRL_ONE;
                 TurnoutBossTeachLearn_teach_learn_state.led_array_index = 0;  // restart the blue blink
 
             }
 
             return;
 
-        case STATE_TEACH_LEARN_START_SIGNALS_POINT_SINGLE_HEAD:
+        case STATE_TEACH_LEARN_START_TURNOUT_CTRL_ONE:
 
             if (TEACH_BUTTON_PIN) {
 
                 // Write Single Head Mast
-                buffer[0] = POINT_SIGNAL_HEAD_SINGLE;
-                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer) == 1) {
+                buffer[0] = TURNOUT_CONTROL_ONE_BUTTON;
+                if (TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE, 1, &buffer) == 1) {
 
                     TurnoutBossTeachLearn_teach_learn_state.state = STATE_TEACH_LEARN_ACTION_DONE;
 
