@@ -111,12 +111,12 @@ void _config_mem_write_callback(uint32_olcb_t address, uint8_olcb_t data_count, 
 
         case CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE:
 
-            if (*config_mem_buffer[0] == 1) {
+            if (*config_mem_buffer[0] == TURNOUT_CONTROL_ONE_BUTTON) {
 
                 _turnoutboss_board_configuration->pushbutton_type = Pushbutton_Single;
 
             } else {
-
+                // TURNOUT_CONTROL_TWO_BUTTON case
                 _turnoutboss_board_configuration->pushbutton_type = Pushbutton_Dual;
 
             }
@@ -348,7 +348,6 @@ void TurnoutBossBoardConfiguration_reset_to_defaults(openlcb_node_t *node) {
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_LOCATION, 1, &buffer);
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_ADJACENT_LEFT, 8, &buffer);  
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_ADJACENT_RIGHT, 8, &buffer);  
- TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE, 1, &buffer);  
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_TURNOUT_FEEDBACK_TYPE, 1, &buffer);  
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_POINT_SIGNALHEAD_TYPE, 1, &buffer);  
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_A_LED_TYPE, 1, &buffer);  
@@ -356,6 +355,9 @@ void TurnoutBossBoardConfiguration_reset_to_defaults(openlcb_node_t *node) {
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_C_LED_TYPE, 1, &buffer);  
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_SIGNAL_D_LED_TYPE, 1, &buffer);  
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_LED_POLARITY, 1, &buffer); 
+ 
+ buffer[0] = TURNOUT_CONTROL_ONE_BUTTON;
+ TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_BOARD_PUSHBUTTON_TYPE, 1, &buffer);  
  
  buffer[0] = 32;
  TurnoutBossDrivers_config_mem_write(CONFIG_MEM_ADDRESS_DETECTOR_1_GAIN, 1, &buffer); 

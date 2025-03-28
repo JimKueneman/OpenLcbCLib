@@ -76,7 +76,8 @@
 #define POINT_SIGNAL_HEAD_DOUBLE     0
 #define POINT_SIGNAL_HEAD_SINGLE     1
 
-
+#define TURNOUT_CONTROL_TWO_BUTTON   0
+#define TURNOUT_CONTROL_ONE_BUTTON   1
 
 // define the start location of the producer/consumer array for CDI. This goes with the other definitions in turnout_board_configuration.h
     
