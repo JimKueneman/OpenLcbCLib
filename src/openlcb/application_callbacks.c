@@ -54,6 +54,20 @@ callback_config_mem_freeze_t callback_config_mem_freeze_firmware_update_func = (
 callback_config_mem_freeze_t callback_config_mem_unfreeze_firmware_update_func = (void*) 0;
 parameterless_callback_t callback_can_rx_func = (void*) 0;
 parameterless_callback_t callback_can_tx_func = (void*) 0;
+parameterless_callback_t callback_100ms_timer_func = (void*) 0;
+
+
+void ApplicationCallbacks_set_100ms_timer(parameterless_callback_t callback_100ms_timer) {
+    
+   callback_100ms_timer_func = callback_100ms_timer;
+   
+}
+
+parameterless_callback_t ApplicationCallbacks_get_100ms_timer(void) {
+    
+    return callback_100ms_timer_func;
+    
+}
 
 void ApplicationCallbacks_set_can_tx(parameterless_callback_t callback_can_tx) {
     
@@ -77,7 +91,6 @@ parameterless_callback_t ApplicationCallbacks_get_can_rx(void) {
     return callback_can_rx_func;
     
 }
-
 
 
 void ApplicationCallbacks_set_alias_change(callback_alias_change_t alias_change_callback) {

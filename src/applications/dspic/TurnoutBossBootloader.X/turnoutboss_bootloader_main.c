@@ -60,22 +60,39 @@
 #include "mcc_generated_files/memory/flash.h"
 #include "local_drivers/_25AA1024/25AA1024_driver.h"
 
-//
-// The firmware is written through the OpenLcb Configuration Memory Protocol so we hook into it here
-// to pass it to the statemachine to bisect it and write it to flash
+uint16_olcb_t _blinker = 0;
+
+void _100ms_timer_callback(void) {
+
+
+    _blinker = _blinker + 1;
+
+    if (_blinker > 1) {
+
+        LED_YELLOW = FALSE;
+        LED_BLUE = FALSE;
+
+        _blinker = 0;
+
+    }
+
+}
 
 void _can_rx_callback(void) {
-    
-       LED_YELLOW = !LED_YELLOW;
+
+    LED_YELLOW = !LED_YELLOW;
 
 }
 
 void _can_tx_callback(void) {
-     
-        LED_BLUE = !LED_BLUE;
-        
+
+    LED_BLUE = !LED_BLUE;
+
 }
 
+//
+// The firmware is written through the OpenLcb Configuration Memory Protocol so we hook into it here
+// to pass it to the statemachine to bisect it and write it to flash
 //
 
 uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
@@ -97,7 +114,7 @@ uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t co
 }
 
 void _config_memory_freeze_bootloader_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
-    
+
     // Does not get called if dropping in from the application, it got the Freeze Call then dropped into the bootloader
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
@@ -131,9 +148,9 @@ void _config_memory_unfreeze_bootloader_callback(openlcb_node_t* openlcb_node, o
 
         // Only exit and start the app if it succeeded
         if (CommonLoaderApp_bootloader_state.update_succeeded) {
-            
+
             printf("Update Succeeded\n");
-            
+
             CommonLoaderApp_bootloader_state.started_from_app = FALSE;
             CommonLoaderApp_bootloader_state.started_from_bootloader = FALSE;
             CommonLoaderApp_bootloader_state.interrupt_redirect = FALSE;
@@ -180,6 +197,7 @@ void _initialize(void) {
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_bootloader_callback);
     ApplicationCallbacks_set_can_rx(&_can_rx_callback);
     ApplicationCallbacks_set_can_tx(&_can_tx_callback);
+    ApplicationCallbacks_set_100ms_timer(&_100ms_timer_callback);
 
 
 }

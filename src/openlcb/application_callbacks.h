@@ -117,6 +117,9 @@ extern parameterless_callback_t ApplicationCallbacks_get_can_tx(void);
 extern void ApplicationCallbacks_set_can_rx(parameterless_callback_t callback_can_rx);
 extern parameterless_callback_t ApplicationCallbacks_get_can_rx(void);
 
+extern void ApplicationCallbacks_set_100ms_timer(parameterless_callback_t callback_100ms_timer);
+extern parameterless_callback_t ApplicationCallbacks_get_100ms_timer(void);
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

@@ -87,25 +87,45 @@ board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
 send_event_engine_t _event_engine;
 
+uint16_olcb_t _blinker = 0;
+
+void _100ms_timer_callback(void) {
+
+    if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
+
+        _blinker = _blinker + 1;
+
+        if (_blinker > 1) {
+
+            LED_YELLOW = FALSE;
+            LED_BLUE = FALSE;
+
+            _blinker = 0;
+
+        }
+
+    }
+
+}
+
 void _can_rx_callback(void) {
-    
-   if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
-      
-       LED_YELLOW = !LED_YELLOW;
-      
-   }
-    
+
+    if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
+
+        LED_YELLOW = TRUE;
+
+    }
+
 }
 
 void _can_tx_callback(void) {
-    
+
     if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
-       
-        LED_BLUE = !LED_BLUE;
-        
-   }
-    
-    
+
+        LED_BLUE = TRUE;
+
+    }
+
 }
 
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
@@ -132,7 +152,7 @@ void _signal_update_timer_1_callback(void) {
 
 }
 
-node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t *config_mem_buffer) {
+node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t * config_mem_buffer) {
 
     if (_25AA1024_Driver_read(config_mem_address, 6, config_mem_buffer, EEPROM_ADDRESS_SIZE_IN_BITS) == 6) {
 
@@ -220,10 +240,11 @@ void _initialize_callbacks(void) {
     TurnoutBossDrivers_set_signal_update_timer_sink(&_signal_update_timer_1_callback);
     ApplicationCallbacks_set_can_rx(&_can_rx_callback);
     ApplicationCallbacks_set_can_tx(&_can_tx_callback);
+    ApplicationCallbacks_set_100ms_timer(&_100ms_timer_callback);
 
 }
 
-openlcb_node_t* _initialize_turnout_boss(void) {
+openlcb_node_t * _initialize_turnout_boss(void) {
 
     memset(&_board_configuration, 0x00, sizeof ( _board_configuration));
     memset(&_signal_calculation_states, 0x00, sizeof ( _signal_calculation_states));
@@ -289,14 +310,14 @@ void _print_turnoutboss_version(void) {
 #ifdef BOSS2 
     printf("Application Booted: Boss 2.0.................\n");
 #endif
-    
+
 #ifdef BOSS3 
     printf("Application Booted: Boss 3.0.................\n");
 #endif
 
 }
 
-void _handle_teach_event(openlcb_node_t *node) {
+void _handle_teach_event(openlcb_node_t * node) {
 
     if (_signal_calculation_states.teach_button_toggled) {
 
@@ -334,7 +355,7 @@ void _initialize_io_early_for_test(void) {
     LED_GREEN = 1;
     LED_YELLOW = 1;
 #endif
-    
+
 #ifdef BOSS3
 
     ANSELA = 0x00; // Convert all I/O pins to digital
@@ -360,7 +381,7 @@ void _update_application_loop_delay_timer(void) {
         CommonLoaderApp_max_application_loop_timer = TMR3;
 
     }
-    
+
     TMR3 = 0; // Reset
 
 }
@@ -372,7 +393,7 @@ void _update_openlcb_c_lib_loop_delay_timer(void) {
         CommonLoaderApp_max_openlcb_c_lib_loop_timer = TMR3;
 
     }
-    
+
     TMR3 = 0; // Reset
 
 }
@@ -381,8 +402,8 @@ int main(void) {
 
     openlcb_node_t* node;
 
-    _initialize_io_early_for_test();  // allows LED and pins to blink for debugging
-    
+    _initialize_io_early_for_test(); // allows LED and pins to blink for debugging
+
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
@@ -405,7 +426,7 @@ int main(void) {
         CanMainStateMachine_run();
 
         _update_openlcb_c_lib_loop_delay_timer();
-        
+
         // Need to wait for the node to log in before doing anything that may try to send and event/message
         if (node->state.initalized && node->state.initial_events_broadcast_complete) {
 
@@ -439,7 +460,7 @@ int main(void) {
                 LED_BLUE = OCCUPANCY_DETECT_1_PIN;
                 LED_GREEN = OCCUPANCY_DETECT_2_PIN;
                 LED_YELLOW = OCCUPANCY_DETECT_3_PIN;
-      
+
             }
 
         }

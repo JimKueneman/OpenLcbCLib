@@ -37,6 +37,7 @@
 #include "../openlcb/openlcb_types.h"
 #include "../openlcb/openlcb_node.h"
 #include "../openlcb/protocol_datagram.h"
+#include "../openlcb/application_callbacks.h"
 
 
 parameterless_callback_t _pause_timer_callback_func = (void*) 0;
@@ -56,6 +57,11 @@ void _100ms_clock_sink(void) {
     Node_100ms_timer_tick();
     DatagramProtocol_100ms_time_tick();
     
+    if (ApplicationCallbacks_get_100ms_timer()) {
+        
+        ApplicationCallbacks_get_100ms_timer()();
+        
+    }
     
 }
 
