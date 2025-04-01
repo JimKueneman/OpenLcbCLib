@@ -102,7 +102,7 @@ void _can_tx_callback(void) {
     if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
        
         LED_BLUE = !LED_BLUE;
-       
+        
    }
     
     
@@ -117,7 +117,7 @@ void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
 void _config_memory_freeze_firmware_update_callback(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-    // User want to drop into booloader mode via the OpenLcb/LCC Firmware Update Protocol
+    // User wants to drop into bootloader mode via the OpenLcb/LCC Firmware Update Protocol
     CommonLoaderApp_bootloader_state.do_start = TRUE;
 
 }
