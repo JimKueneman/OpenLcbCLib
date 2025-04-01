@@ -539,8 +539,8 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
         case 'T':
         case 't':
 
-            printf("Max Application Delay Detected: %.2f us\n", (double) (CommonLoaderApp_max_application_loop_delay * 1.6));
-            printf("Max OpenlcbCLib Delay Detected: %.2f us\n", (double) (CommonLoaderApp_max_openlcb_c_lib_loop_delay * 1.6));
+            printf("Max Application Delay Detected: %.2f us\n", (double) (CommonLoaderApp_max_application_loop_timer * 1.6));
+            printf("Max OpenlcbCLib Delay Detected: %.2f us\n", (double) (CommonLoaderApp_max_openlcb_c_lib_loop_timer * 1.6));
 
             break;
 
@@ -548,8 +548,8 @@ void UartHandler_handle_rx(uint16_olcb_t code) {
         case 'o':
 
             printf("Reseting the timing counters....\n");
-            CommonLoaderApp_max_application_loop_delay = 0;
-            CommonLoaderApp_max_openlcb_c_lib_loop_delay = 0;
+            CommonLoaderApp_max_application_loop_timer = 0;
+            CommonLoaderApp_max_openlcb_c_lib_loop_timer = 0;
 
             break;
 

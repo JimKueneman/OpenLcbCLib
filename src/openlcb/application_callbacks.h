@@ -111,6 +111,12 @@ extern callback_config_mem_freeze_t ApplicationCallbacks_get_config_mem_freeze_f
 extern void ApplicationCallbacks_set_config_mem_unfreeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_freeze);
 extern callback_config_mem_freeze_t ApplicationCallbacks_get_config_mem_unfreeze_firmware_update(void);
 
+extern void ApplicationCallbacks_set_can_tx(parameterless_callback_t callback_can_tx);
+extern parameterless_callback_t ApplicationCallbacks_get_can_tx(void);
+
+extern void ApplicationCallbacks_set_can_rx(parameterless_callback_t callback_can_rx);
+extern parameterless_callback_t ApplicationCallbacks_get_can_rx(void);
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

@@ -45,6 +45,7 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_utilities.h"
+#include "../../openlcb/application_callbacks.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
@@ -298,8 +299,20 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 uint8_olcb_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
 
     if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
+        
+        if (ApplicationCallbacks_get_can_tx()) {
+
+            ApplicationCallbacks_get_can_tx()();
+            
+        }
 
         DriverCan_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
+        
+        if (ApplicationCallbacks_get_can_tx()) {
+
+            ApplicationCallbacks_get_can_tx()();
+            
+        }
 
         return TRUE;
 

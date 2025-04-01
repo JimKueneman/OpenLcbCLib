@@ -84,8 +84,8 @@ uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_
 uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 8 bytes
 vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 12))); // 9 * 4 = 36 bytes
 
-uint16_olcb_t CommonLoaderApp_max_application_loop_delay = 0;
-uint16_olcb_t CommonLoaderApp_max_openlcb_c_lib_loop_delay = 0;
+uint16_olcb_t CommonLoaderApp_max_application_loop_timer = 0;
+uint16_olcb_t CommonLoaderApp_max_openlcb_c_lib_loop_timer = 0;
 
 uint8_olcb_t CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes = FALSE;
 

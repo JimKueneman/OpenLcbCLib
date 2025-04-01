@@ -63,6 +63,19 @@
 //
 // The firmware is written through the OpenLcb Configuration Memory Protocol so we hook into it here
 // to pass it to the statemachine to bisect it and write it to flash
+
+void _can_rx_callback(void) {
+    
+       LED_YELLOW = !LED_YELLOW;
+
+}
+
+void _can_tx_callback(void) {
+     
+        LED_BLUE = !LED_BLUE;
+        
+}
+
 //
 
 uint16_olcb_t _config_mem_write_callback(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
@@ -165,6 +178,8 @@ void _initialize(void) {
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_unfreeze_firmware_update(&_config_memory_unfreeze_bootloader_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_bootloader_callback);
+    ApplicationCallbacks_set_can_rx(&_can_rx_callback);
+    ApplicationCallbacks_set_can_tx(&_can_tx_callback);
 
 
 }

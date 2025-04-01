@@ -52,6 +52,33 @@ callback_event_identified_t callback_event_learn_func = (void*) 0;
 callback_config_mem_write_t callback_config_mem_write_func = (void*) 0;
 callback_config_mem_freeze_t callback_config_mem_freeze_firmware_update_func = (void*) 0;
 callback_config_mem_freeze_t callback_config_mem_unfreeze_firmware_update_func = (void*) 0;
+parameterless_callback_t callback_can_rx_func = (void*) 0;
+parameterless_callback_t callback_can_tx_func = (void*) 0;
+
+void ApplicationCallbacks_set_can_tx(parameterless_callback_t callback_can_tx) {
+    
+   callback_can_tx_func = callback_can_tx;
+   
+}
+
+parameterless_callback_t ApplicationCallbacks_get_can_tx(void) {
+    
+    return callback_can_tx_func;
+    
+}
+
+void ApplicationCallbacks_set_can_rx(parameterless_callback_t callback_can_rx) {
+    
+    callback_can_rx_func = callback_can_rx;
+    
+}
+parameterless_callback_t ApplicationCallbacks_get_can_rx(void) {
+    
+    return callback_can_rx_func;
+    
+}
+
+
 
 void ApplicationCallbacks_set_alias_change(callback_alias_change_t alias_change_callback) {
 

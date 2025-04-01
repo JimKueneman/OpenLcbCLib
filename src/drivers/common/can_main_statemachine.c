@@ -44,6 +44,7 @@
 #include "../../openlcb/openlcb_tx_driver.h"
 #include "../../openlcb/protocol_message_network.h"
 #include "../../openlcb/protocol_datagram.h"
+#include "../../openlcb/application_callbacks.h"
 #include "can_types.h"
 #include "can_buffer_fifo.h"
 #include "can_frame_message_handler.h"
@@ -228,13 +229,21 @@ uint8_olcb_t _pop_next_can_helper_active_message(void) {
     DriverCan_resume_can_rx();
     Driver100msClock_resume_100ms_timer();
 
-    if (can_helper.active_msg)
+    if (can_helper.active_msg) {
+
+        if (ApplicationCallbacks_get_can_rx()) {
+
+            ApplicationCallbacks_get_can_rx()();
+
+        }
 
         return TRUE;
 
-    else
+    } else {
 
         return FALSE;
+
+    }
 
 }
 
@@ -250,13 +259,21 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(void) {
     Driver100msClock_resume_100ms_timer();
 
 
-    if (can_helper.openlcb_worker->active_msg)
+    if (can_helper.openlcb_worker->active_msg) {
+
+        if (ApplicationCallbacks_get_can_rx()) {
+
+            ApplicationCallbacks_get_can_rx()();
+
+        }
 
         return TRUE;
 
-    else
+    } else {
 
         return FALSE;
+
+    }
 
 }
 
@@ -457,5 +474,16 @@ void CanMainStateMachine_run(void) {
     }
 
     _reset_active_message_buffers_if_done(is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
+
+    // update callbacks
+    if (is_newly_popped_can_active_msg || is_newly_popped_openlcb_active_msg) {
+
+        if (ApplicationCallbacks_get_can_rx()) {
+
+            ApplicationCallbacks_get_can_rx()();
+
+        }
+
+    }
 
 }

@@ -87,6 +87,27 @@ board_configuration_t _board_configuration;
 signaling_state_t _signal_calculation_states;
 send_event_engine_t _event_engine;
 
+void _can_rx_callback(void) {
+    
+   if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
+      
+       LED_YELLOW = !LED_YELLOW;
+      
+   }
+    
+}
+
+void _can_tx_callback(void) {
+    
+    if (TurnoutBossTeachLearn_teach_learn_state.state == STATE_TEACH_LEARN_DEACTIVATED) {
+       
+        LED_BLUE = !LED_BLUE;
+       
+   }
+    
+    
+}
+
 void _alias_change_callback(uint16_olcb_t new_alias, uint64_olcb_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
@@ -197,6 +218,8 @@ void _initialize_callbacks(void) {
     ApplicationCallbacks_set_alias_change(&_alias_change_callback);
     ApplicationCallbacks_set_config_mem_freeze_firmware_update(&_config_memory_freeze_firmware_update_callback);
     TurnoutBossDrivers_set_signal_update_timer_sink(&_signal_update_timer_1_callback);
+    ApplicationCallbacks_set_can_rx(&_can_rx_callback);
+    ApplicationCallbacks_set_can_tx(&_can_tx_callback);
 
 }
 
@@ -332,9 +355,9 @@ void _initialize_io_early_for_test(void) {
 
 void _update_application_loop_delay_timer(void) {
 
-    if (TMR3 > CommonLoaderApp_max_application_loop_delay) {
+    if (TMR3 > CommonLoaderApp_max_application_loop_timer) {
 
-        CommonLoaderApp_max_application_loop_delay = TMR3;
+        CommonLoaderApp_max_application_loop_timer = TMR3;
 
     }
     
@@ -344,9 +367,9 @@ void _update_application_loop_delay_timer(void) {
 
 void _update_openlcb_c_lib_loop_delay_timer(void) {
 
-    if (TMR3 > CommonLoaderApp_max_openlcb_c_lib_loop_delay) {
+    if (TMR3 > CommonLoaderApp_max_openlcb_c_lib_loop_timer) {
 
-        CommonLoaderApp_max_openlcb_c_lib_loop_delay = TMR3;
+        CommonLoaderApp_max_openlcb_c_lib_loop_timer = TMR3;
 
     }
     
@@ -358,7 +381,8 @@ int main(void) {
 
     openlcb_node_t* node;
 
-    _initialize_io_early_for_test();
+    _initialize_io_early_for_test();  // allows LED and pins to blink for debugging
+    
     _initialize_bootloader_state();
     node = _initialize_turnout_boss();
     _print_turnoutboss_version();
@@ -381,9 +405,9 @@ int main(void) {
         CanMainStateMachine_run();
 
         _update_openlcb_c_lib_loop_delay_timer();
-
+        
         // Need to wait for the node to log in before doing anything that may try to send and event/message
-        if (node->state.initalized && node->state.events_broadcasted) {
+        if (node->state.initalized && node->state.initial_events_broadcast_complete) {
 
             if (TurnoutBossTeachLearn_teach_learn_state.state != STATE_TEACH_LEARN_DEACTIVATED) {
 
@@ -415,7 +439,7 @@ int main(void) {
                 LED_BLUE = OCCUPANCY_DETECT_1_PIN;
                 LED_GREEN = OCCUPANCY_DETECT_2_PIN;
                 LED_YELLOW = OCCUPANCY_DETECT_3_PIN;
-
+      
             }
 
         }
