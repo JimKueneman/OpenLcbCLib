@@ -457,10 +457,6 @@ int main(void) {
 
                 _handle_teach_event(node);
 
-                LED_BLUE = OCCUPANCY_DETECT_1_PIN;
-                LED_GREEN = OCCUPANCY_DETECT_2_PIN;
-                LED_YELLOW = OCCUPANCY_DETECT_3_PIN;
-
             }
 
         }
