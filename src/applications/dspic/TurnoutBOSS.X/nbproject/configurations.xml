@@ -59,6 +59,10 @@
           <logicalFolder name="_MCP4014" displayName="_MCP4014" projectFiles="true">
             <itemPath>local_drivers/_MCP4014/MCP4014_driver.h</itemPath>
           </logicalFolder>
+          <logicalFolder name="_PCA9685" displayName="_PCA9685" projectFiles="true">
+            <itemPath>local_drivers/_PCA9685/i2c_driver.h</itemPath>
+            <itemPath>local_drivers/_PCA9685/pca9685_driver.h</itemPath>
+          </logicalFolder>
         </logicalFolder>
         <itemPath>turnoutboss_drivers.h</itemPath>
         <itemPath>turnoutboss_event_handler.h</itemPath>
@@ -155,6 +159,10 @@
           </logicalFolder>
           <logicalFolder name="_MCP4014" displayName="_MCP4014" projectFiles="true">
             <itemPath>local_drivers/_MCP4014/MCP4014_driver.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="_PCA9685" displayName="_PCA9685" projectFiles="true">
+            <itemPath>local_drivers/_PCA9685/pca9685_driver.c</itemPath>
+            <itemPath>local_drivers/_PCA9685/i2c_driver.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <itemPath>turnoutboss_drivers.c</itemPath>
@@ -1313,6 +1321,18 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
+      <item path="local_drivers/_PCA9685/i2c_driver.c" ex="true" overriding="false">
+      </item>
+      <item path="local_drivers/_PCA9685/i2c_driver.h" ex="true" overriding="false">
+      </item>
+      <item path="local_drivers/_PCA9685/pca9685_driver.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="local_drivers/_PCA9685/pca9685_driver.h"
+            ex="true"
+            overriding="false">
+      </item>
       <item path="reset_vector.s" ex="false" overriding="false">
         <C30>
         </C30>
