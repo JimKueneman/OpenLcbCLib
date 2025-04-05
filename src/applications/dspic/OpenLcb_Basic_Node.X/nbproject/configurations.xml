@@ -27,11 +27,13 @@
         <itemPath>../dsPIC_Common/ecan1_helper.h</itemPath>
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
+        <itemPath>../../../openlcb/application_callbacks.h</itemPath>
         <itemPath>../../../openlcb/protocol_snip.h</itemPath>
         <itemPath>../../../openlcb/protocol_event_transport.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_list.h</itemPath>
         <itemPath>../../../openlcb/openlcb_types.h</itemPath>
         <itemPath>../../../openlcb/openlcb_utilities.h</itemPath>
+        <itemPath>../../../openlcb/application.h</itemPath>
         <itemPath>../../../openlcb/openlcb_main_statemachine.h</itemPath>
         <itemPath>../../../openlcb/openlcb_gridconnect.h</itemPath>
         <itemPath>../../../openlcb/openlcb_tx_driver.h</itemPath>
@@ -41,65 +43,28 @@
         <itemPath>../../../openlcb/openlcb_node.h</itemPath>
         <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
-        <itemPath>../../../openlcb/application.h</itemPath>
-        <itemPath>../../../openlcb/application_callbacks.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="TurnoutBOSS.X"
-                     displayName="TurnoutBOSS.X"
+      <logicalFolder name="OpenLcb_Basic_Node.X"
+                     displayName="OpenLcb_Basic_Node.X"
                      projectFiles="true">
-        <logicalFolder name="local_drivers"
-                       displayName="local_drivers"
-                       projectFiles="true">
-          <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
-            <itemPath>local_drivers/_25AA1024/25AA1024_driver.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP23S17" displayName="_MCP23S17" projectFiles="true">
-            <itemPath>local_drivers/_MCP23S17/MCP23S17_driver.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP4014" displayName="_MCP4014" projectFiles="true">
-            <itemPath>local_drivers/_MCP4014/MCP4014_driver.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_PCA9685" displayName="_PCA9685" projectFiles="true">
-            <itemPath>local_drivers/_PCA9685/i2c_driver.h</itemPath>
-            <itemPath>local_drivers/_PCA9685/pca9685_driver.h</itemPath>
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
-        <itemPath>turnoutboss_drivers.h</itemPath>
-        <itemPath>turnoutboss_event_handler.h</itemPath>
-        <itemPath>turnoutboss_hardware_handler.h</itemPath>
-        <itemPath>turnoutboss_event_engine.h</itemPath>
-        <itemPath>turnoutboss_board_configuration.h</itemPath>
-        <itemPath>turnoutboss_types.h</itemPath>
-        <itemPath>turnoutboss_signal_calculations_board_left.h</itemPath>
-        <itemPath>turnoutboss_signal_calculations_board_right.h</itemPath>
-        <itemPath>turnoutboss_signal_calculations.h</itemPath>
-        <itemPath>turnoutboss_node_parameters.h</itemPath>
-        <itemPath>turnoutboss_traps.h</itemPath>
-        <itemPath>turnoutboss_uart_handler.h</itemPath>
-        <itemPath>turnoutboss_teach_learn.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="TurnoutBossCommon"
-                     displayName="TurnoutBossCommon"
-                     projectFiles="true">
-        <logicalFolder name="VersionUpdater"
-                       displayName="VersionUpdater"
-                       projectFiles="true">
+        <logicalFolder name="dist" displayName="dist" projectFiles="true">
         </logicalFolder>
-        <itemPath>../TurnoutBossCommon/common_loader_app.h</itemPath>
-        <itemPath>../TurnoutBossCommon/common_debug_helper.h</itemPath>
+        <itemPath>node_parameters.h</itemPath>
+        <itemPath>drivers.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
-      <itemPath>TurnoutBOSS.mc3</itemPath>
-      <itemPath>../TurnoutBossCommon/turnoutboss_build.sh</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
-      <itemPath>p33EP512GP504_TurnoutBoss.gld</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -134,68 +99,38 @@
         <itemPath>../../../openlcb/protocol_event_transport.c</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_list.c</itemPath>
         <itemPath>../../../openlcb/protocol_snip.c</itemPath>
+        <itemPath>../../../openlcb/application_callbacks.c</itemPath>
         <itemPath>../../../openlcb/openlcb_gridconnect.c</itemPath>
         <itemPath>../../../openlcb/openlcb_main_statemachine.c</itemPath>
+        <itemPath>../../../openlcb/application.c</itemPath>
         <itemPath>../../../openlcb/protocol_message_network.c</itemPath>
         <itemPath>../../../openlcb/openlcb_tx_driver.c</itemPath>
-        <itemPath>../../../openlcb/application.c</itemPath>
-        <itemPath>../../../openlcb/application_callbacks.c</itemPath>
       </logicalFolder>
-      <logicalFolder name="TurnoutBOSS.X"
-                     displayName="TurnoutBOSS.X"
+      <logicalFolder name="OpenLcb_Basic_Node.X"
+                     displayName="OpenLcb_Basic_Node.X"
                      projectFiles="true">
         <logicalFolder name="debug" displayName="debug" projectFiles="true">
           <logicalFolder name="default" displayName="default" projectFiles="true">
           </logicalFolder>
         </logicalFolder>
-        <logicalFolder name="local_drivers"
-                       displayName="local_drivers"
-                       projectFiles="true">
-          <logicalFolder name="_25AA1024" displayName="_25AA1024" projectFiles="true">
-            <itemPath>local_drivers/_25AA1024/25AA1024_driver.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP23S17" displayName="_MCP23S17" projectFiles="true">
-            <itemPath>local_drivers/_MCP23S17/MCP23S17_driver.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_MCP4014" displayName="_MCP4014" projectFiles="true">
-            <itemPath>local_drivers/_MCP4014/MCP4014_driver.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="_PCA9685" displayName="_PCA9685" projectFiles="true">
-            <itemPath>local_drivers/_PCA9685/pca9685_driver.c</itemPath>
-            <itemPath>local_drivers/_PCA9685/i2c_driver.c</itemPath>
+        <logicalFolder name="dist" displayName="dist" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+            <logicalFolder name="production" displayName="production" projectFiles="true">
+            </logicalFolder>
           </logicalFolder>
         </logicalFolder>
-        <itemPath>turnoutboss_drivers.c</itemPath>
-        <itemPath>turnoutboss_event_handler.c</itemPath>
-        <itemPath>turnoutboss_hardware_handler.c</itemPath>
-        <itemPath>turnoutboss_event_engine.c</itemPath>
-        <itemPath>turnoutboss_board_configuration.c</itemPath>
-        <itemPath>turnoutboss_signal_calculations_board_right.c</itemPath>
-        <itemPath>turnoutboss_signal_calculations_board_left.c</itemPath>
-        <itemPath>turnoutboss_signal_calculations.c</itemPath>
-        <itemPath>reset_vector.s</itemPath>
-        <itemPath>turnoutboss_node_parameters.c</itemPath>
-        <itemPath>turnoutboss_traps.c</itemPath>
-        <itemPath>turnoutboss_uart_handler.c</itemPath>
-        <itemPath>turnoutboss_main.c</itemPath>
-        <itemPath>turnoutboss_teach_learn.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="TurnoutBossCommon"
-                     displayName="TurnoutBossCommon"
-                     projectFiles="true">
-        <itemPath>../TurnoutBossCommon/common_loader_app.c</itemPath>
-        <itemPath>../TurnoutBossCommon/common_debug_helper.c</itemPath>
+        <itemPath>main.c</itemPath>
+        <itemPath>drivers.c</itemPath>
+        <itemPath>node_parameters.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>.</Elem>
-    <Elem>../../../openlcb</Elem>
+    <Elem>../TurnoutBOSS.X/local_drivers/_PCA9685</Elem>
     <Elem>../../../drivers</Elem>
-    <Elem>../../test/main_statemachine/main_statemachine.X</Elem>
+    <Elem>../../../openlcb</Elem>
+    <Elem>.</Elem>
     <Elem>../dsPIC_Common</Elem>
-    <Elem>../TurnoutBossBootloader.X</Elem>
-    <Elem>../TurnoutBossCommon</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -231,18 +166,18 @@
         </subordinates>
       </compileType>
       <makeCustomizationType>
-        <makeCustomizationPreStepEnabled>true</makeCustomizationPreStepEnabled>
+        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
-        <makeCustomizationPreStep>../TurnoutBossCommon/VersionUpdater/buildversion -f ../TurnoutBossCommon/turnoutboss_version.h</makeCustomizationPreStep>
-        <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>../TurnoutBossCommon/turnoutboss_build.sh</makeCustomizationPostStep>
+        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep></makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
-        <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <C30>
         <property key="cast-align" value="false"/>
-        <property key="code-model" value="large-code"/>
+        <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
         <property key="data-model" value="default"/>
         <property key="disable-instruction-scheduling" value="false"/>
@@ -363,7 +298,7 @@
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
         <property key="oXC16glb-macros"
-                  value="FCY=40000000UL;MPLAB;BOSS3;______EXCLUDE_FIRMWARE_ADDRESS_SPACE"/>
+                  value="FCY=40000000;EXCLUDE_FIRMWARE_ADDRESS_SPACE;USER_DEFINED_CDI_LENGTH=1200;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_PRODUCER_COUNT=0;USER_DEFINED_CONSUMER_COUNT=0;USER_DEFINED_NODE_BUFFER_DEPTH=1;USER_DEFINED_SNIP_BUFFER_DEPTH=2;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=2"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>
@@ -383,7 +318,7 @@
         <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
-        <property key="oscillator.frequency" value="70"/>
+        <property key="oscillator.frequency" value="1"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
@@ -417,7 +352,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="true"/>
+        <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -858,7 +793,7 @@
         <property key="lastid" value=""/>
         <property key="oscillator.auxfrequency" value="120"/>
         <property key="oscillator.auxfrequencyunit" value="Mega"/>
-        <property key="oscillator.frequency" value="70"/>
+        <property key="oscillator.frequency" value="1"/>
         <property key="oscillator.frequencyunit" value="Mega"/>
         <property key="oscillator.rcfrequency" value="250"/>
         <property key="oscillator.rcfrequencyunit" value="Kilo"/>
@@ -892,7 +827,7 @@
         <property key="uart0io.uartioenabled" value="false"/>
         <property key="uart1io.output" value="window"/>
         <property key="uart1io.outputfile" value=""/>
-        <property key="uart1io.uartioenabled" value="true"/>
+        <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
         <property key="uart2io.uartioenabled" value="false"/>
@@ -1321,80 +1256,6 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
-      <item path="local_drivers/_PCA9685/i2c_driver.c" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
-      <item path="local_drivers/_PCA9685/i2c_driver.h" ex="true" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
-      <item path="local_drivers/_PCA9685/pca9685_driver.c"
-            ex="true"
-            overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
-      <item path="local_drivers/_PCA9685/pca9685_driver.h"
-            ex="true"
-            overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
-      <item path="reset_vector.s" ex="false" overriding="false">
-        <C30>
-        </C30>
-        <C30-AR>
-        </C30-AR>
-        <C30-AS>
-        </C30-AS>
-        <C30-CO>
-        </C30-CO>
-        <C30-LD>
-        </C30-LD>
-        <C30Global>
-        </C30Global>
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>
