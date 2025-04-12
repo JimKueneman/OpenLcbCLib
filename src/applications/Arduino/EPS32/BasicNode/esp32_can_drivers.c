@@ -97,6 +97,14 @@ void receive_task(void *arg)
     }
 }
 
+void Esp32CanDriver_config_mem_factory_reset(void) {
+    
+    printf("Resetting to Factory Defaults\n");
+    
+    // TODO: implement based on how Config Mem is stored
+ 
+}
+
 uint8_olcb_t Esp32CanDriver_is_connected(void)
 {
 

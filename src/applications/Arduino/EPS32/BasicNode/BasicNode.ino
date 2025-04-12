@@ -70,6 +70,7 @@ void setup() {
       &Esp32Drivers_reboot,
       &Esp32Drivers_config_mem_read,
       &Esp32Drivers_config_mem_write,
+      &Esp32CanDriver_config_mem_factory_reset,
       &Esp32Drivers_pause_100ms_timer,
       &Esp32Drivers_resume_100ms_timer);
 

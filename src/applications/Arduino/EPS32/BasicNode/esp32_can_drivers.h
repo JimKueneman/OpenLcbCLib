@@ -59,6 +59,8 @@ extern "C"
 
     extern uint8_olcb_t Esp32CanDriver_is_connected(void);
 
+    extern void Esp32CanDriver_config_mem_factory_reset(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

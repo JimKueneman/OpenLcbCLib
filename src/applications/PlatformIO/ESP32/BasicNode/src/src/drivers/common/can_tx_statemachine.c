@@ -45,6 +45,7 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_utilities.h"
+#include "../../openlcb/application_callbacks.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
@@ -98,15 +99,27 @@ uint32_olcb_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_msg
 void _transmit_can_frame(can_msg_t* can_msg) {
 
 #ifdef CAN_TX_TEST 
-    
+
     printf("\n");
     PrintCanMsg(can_msg);
     printf("\n\n");
-    
+
 #else
-    
+
+    if (ApplicationCallbacks_get_can_tx()) {
+
+        ApplicationCallbacks_get_can_tx()();
+
+    }
+
     DriverCan_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
-    
+
+    if (ApplicationCallbacks_get_can_tx()) {
+
+        ApplicationCallbacks_get_can_tx()();
+
+    }
+
 #endif
 
 }
@@ -122,14 +135,14 @@ void _datagram_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker
 
     can_msg_worker->identifier = _construct_identfier_datagram_first_frame(openlcb_msg);
     _transmit_can_frame(can_msg_worker);
-    
+
 }
 
 void _datagram_middle_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
 
     can_msg_worker->identifier = _construct_identfier_datagram_middle_frame(openlcb_msg);
     _transmit_can_frame(can_msg_worker);
-    
+
 }
 
 void _datagram_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker) {
@@ -213,7 +226,7 @@ uint16_olcb_t _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t*
         // TODO: Is there such a thing as a unaddressed multi frame?
 
     }
-    
+
     return result;
 
 }
@@ -250,7 +263,7 @@ uint16_olcb_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* c
 uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_olcb_t openlcb_start_index) {
 
     uint16_olcb_t result = 0;
-    
+
     if (!DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL))
 
         return result;
@@ -272,7 +285,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
             case MTI_STREAM_INIT_REQUEST:
             case MTI_STREAM_PROCEED:
             {
-                
+
                 break;
 
             }
@@ -280,7 +293,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
             default:
 
                 result = _handle_addressed_message(openlcb_msg, can_msg_worker, openlcb_start_index);
-                
+
                 break;
 
         }
@@ -299,7 +312,19 @@ uint8_olcb_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
 
     if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 
+        if (ApplicationCallbacks_get_can_tx()) {
+
+            ApplicationCallbacks_get_can_tx()();
+
+        }
+
         DriverCan_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
+
+        if (ApplicationCallbacks_get_can_tx()) {
+
+            ApplicationCallbacks_get_can_tx()();
+
+        }
 
         return TRUE;
 

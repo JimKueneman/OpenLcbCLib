@@ -149,6 +149,7 @@ void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
     if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
 
+        next_node->state.initial_events_broadcast_complete = FALSE;
         next_node->state.permitted = TRUE;
         next_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
 
@@ -266,6 +267,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
                     next_node->consumers.enumerator.running = FALSE;
                     next_node->consumers.enumerator.enum_index = 0;
 
+                    next_node->state.initial_events_broadcast_complete = TRUE;
                     next_node->state.run_state = RUNSTATE_RUN;
 
                 }

@@ -276,6 +276,7 @@ extern "C" {
         uint16_olcb_t allocated : 1; // Allocated to be used
         uint16_olcb_t permitted : 1; // Has the CAN alias been allocated and the network notified
         uint16_olcb_t initalized : 1; // Has the node been logged into the the network
+        uint16_olcb_t initial_events_broadcast_complete : 1; // has the node finished it initial broadcast of events?
         uint16_olcb_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
         uint16_olcb_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
         uint16_olcb_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next

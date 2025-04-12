@@ -40,8 +40,9 @@
 
 const node_parameters_t NodeParameters_main_node = {
 
-    .consumer_count = 4,
-    .producer_count = 4,
+    // Howmany consumers/producers to autocreate
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
 
 
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
