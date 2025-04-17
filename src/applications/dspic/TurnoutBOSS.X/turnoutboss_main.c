@@ -323,7 +323,10 @@ void _handle_teach_event(openlcb_node_t * node) {
 
         _signal_calculation_states.teach_button_toggled = FALSE;
 
-        Application_send_teach_event(node, node->id);
+        // convert node ID held in `node->id` to a real event ID with two low zero bytes
+        event_id_t local_event = node->id << 16;
+
+        Application_send_teach_event(node, local_event);
 
     }
 
