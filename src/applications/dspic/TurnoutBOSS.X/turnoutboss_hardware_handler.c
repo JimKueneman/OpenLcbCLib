@@ -54,8 +54,44 @@
 #include "turnoutboss_drivers.h"
 
 
-
 #define INPUT_FILTER_COUNT 10
+#define INPUT_FILTER_COUNT_MIDPOINT 5
+
+
+// Occupancy1, Occupancy2, Occupancy3, TurnoutFeedback Normal, TurnoutFeedback Diverging, TurnoutControl Normal, TurnoutControl Diverging, Learn Button, Teach Button
+
+#define INPUT_OCCUPANCY1 0
+#define INPUT_OCCUPANCY2 1
+#define INPUT_OCCUPANCY3 2
+#define INPUT_TURNOUT_FEEDBACK_NORMAL 3
+#define INPUT_TURNOUT_FEEDBACK_DIVERGING 4
+#define INPUT_TURNOUT_PUSHBUTTON_NORMAL 5
+#define INPUT_TURNOUT_PUSHBUTTON_DIVERGING 6
+#define INPUT_LEARN_BUTTON 7
+#define INPUT_TEACH_BUTTON 8
+
+#define INPUT_COUNT 9
+
+typedef struct {
+    uint8_olcb_t counter;
+    int filter_array[INPUT_COUNT];
+
+} hardware_filter_t;
+
+
+hardware_filter_t _hardware_filter;
+
+void TurnoutBossHardwareHandler_initialize(void) {
+
+    _hardware_filter.counter = INPUT_FILTER_COUNT_MIDPOINT;
+
+    for (int i = 0; i < INPUT_COUNT; i++) {
+
+        _hardware_filter.filter_array[i] = 0;
+
+    }
+
+}
 
 uint8_olcb_t _run_filter_inc(uint8_olcb_t filter) {
 
@@ -79,304 +115,224 @@ uint8_olcb_t _run_filter_dec(uint8_olcb_t filter) {
 
 void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calculation_states) {
 
-    // *******************
-    uint8_olcb_t filter = INPUT_FILTER_COUNT / 2;
 
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+    if (_hardware_filter.counter < INPUT_FILTER_COUNT) {
 
         if (OCCUPANCY_DETECT_1_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_OCCUPANCY1] = _hardware_filter.filter_array[INPUT_OCCUPANCY1] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_OCCUPANCY1] = _hardware_filter.filter_array[INPUT_OCCUPANCY1] - 1;
 
-    }
-
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.occupany_1 = UNOCCUPIED;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.occupany_1 = OCCUPIED;
-
-    }
-
-
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+        }
 
         if (OCCUPANCY_DETECT_2_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_OCCUPANCY2] = _hardware_filter.filter_array[INPUT_OCCUPANCY2] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_OCCUPANCY2] = _hardware_filter.filter_array[INPUT_OCCUPANCY2] - 1;
 
-    }
-
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.occupany_2 = UNOCCUPIED;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.occupany_2 = OCCUPIED;
-
-    }
-
-
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+        }
 
         if (OCCUPANCY_DETECT_3_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_OCCUPANCY3] = _hardware_filter.filter_array[INPUT_OCCUPANCY3] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_OCCUPANCY3] = _hardware_filter.filter_array[INPUT_OCCUPANCY3] - 1;
 
-    }
-
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.occupany_3 = UNOCCUPIED;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.occupany_3 = OCCUPIED;
-
-    }
-
-
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+        }
 
         if (TURNOUT_POSITION_NORMAL_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] - 1;
 
-    }
+        }
 
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.turnout_feedback_normal = INACTIVE;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.turnout_feedback_normal = ACTIVE;
-
-    }
-
-
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
 
         if (TURNOUT_POSITION_DIVERGING_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] - 1;
 
-    }
-
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.turnout_feedback_diverging = INACTIVE;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.turnout_feedback_diverging = ACTIVE;
-
-    }
-
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
+        }
 
         if (TURNOUT_PUSHBUTTON_NORMAL_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] - 1;
 
-    }
+        }
 
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.turnout_pushbutton_normal = OPEN;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.turnout_pushbutton_normal = CLOSED;
-
-    }
-
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
 
         if (TURNOUT_PUSHBUTTON_DIVERGING_PIN) {
 
-            filter = _run_filter_inc(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] + 1;
 
-        } else
+        } else {
 
-            filter = _run_filter_dec(filter);
+            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] - 1;
+
+        }
+
+
+        if (INPUT_LEARN_BUTTON) {
+
+            _hardware_filter.filter_array[INPUT_LEARN_BUTTON] = _hardware_filter.filter_array[INPUT_LEARN_BUTTON] + 1;
+
+        } else {
+
+            _hardware_filter.filter_array[INPUT_LEARN_BUTTON] = _hardware_filter.filter_array[INPUT_LEARN_BUTTON] - 1;
+
+        }
+
+
+        if (INPUT_TEACH_BUTTON) {
+
+            _hardware_filter.filter_array[INPUT_TEACH_BUTTON] = _hardware_filter.filter_array[INPUT_TEACH_BUTTON] + 1;
+
+        } else {
+
+            _hardware_filter.filter_array[INPUT_TEACH_BUTTON] = _hardware_filter.filter_array[INPUT_TEACH_BUTTON] - 1;
+
+        }
+
+
+        _hardware_filter.counter = _hardware_filter.counter + 1;
+
+    } else {
+
+        if (_hardware_filter.filter_array[INPUT_OCCUPANCY1] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.occupany_1 = UNOCCUPIED;
+
+        } else {
+
+            signal_calculation_states->next.hardware.occupany_1 = OCCUPIED;
+
+        }
+
+        if (_hardware_filter.filter_array[INPUT_OCCUPANCY2] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.occupany_2 = UNOCCUPIED;
+
+        } else {
+
+            signal_calculation_states->next.hardware.occupany_2 = OCCUPIED;
+
+        }
+
+
+        if (_hardware_filter.filter_array[INPUT_OCCUPANCY3] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.occupany_3 = UNOCCUPIED;
+
+        } else {
+
+            signal_calculation_states->next.hardware.occupany_3 = OCCUPIED;
+
+        }
+
+        if (_hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.turnout_feedback_normal = INACTIVE;
+
+        } else {
+
+            signal_calculation_states->next.hardware.turnout_feedback_normal = ACTIVE;
+
+        }
+
+
+        if (_hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.turnout_feedback_diverging = INACTIVE;
+
+        } else {
+
+            signal_calculation_states->next.hardware.turnout_feedback_diverging = ACTIVE;
+
+        }
+
+
+        if (_hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.turnout_pushbutton_normal = INACTIVE;
+
+        } else {
+
+            signal_calculation_states->next.hardware.turnout_pushbutton_normal = ACTIVE;
+
+        }
+
+
+        if (_hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->next.hardware.turnout_pushbutton_diverging = INACTIVE;
+
+        } else {
+
+            signal_calculation_states->next.hardware.turnout_pushbutton_diverging = ACTIVE;
+
+        }
+
+
+        if (_hardware_filter.filter_array[INPUT_LEARN_BUTTON] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
+            signal_calculation_states->next.hardware.learn_pin = OPEN;
+
+        } else {
+
+            signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
+            signal_calculation_states->next.hardware.learn_pin = CLOSED;
+
+        }
+
+        if (_hardware_filter.filter_array[INPUT_TEACH_BUTTON] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+            signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != OPEN;
+            signal_calculation_states->next.hardware.teach_pin = OPEN;
+
+        } else {
+
+            signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != CLOSED;
+            signal_calculation_states->next.hardware.teach_pin = CLOSED;
+
+        }
+
+        // Reset and start again
+        _hardware_filter.counter = INPUT_FILTER_COUNT_MIDPOINT;
+
+        for (int i = 0; i < INPUT_COUNT; i++) {
+
+            _hardware_filter.filter_array[i] = 0;
+
+        }
+
 
     }
 
-    if (filter == 0) {
-
-        signal_calculation_states->next.hardware.turnout_pushbutton_diverging = OPEN;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.turnout_pushbutton_diverging = CLOSED;
-
-    }
-    
-#ifdef BOSS2
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
-
-        if (LEARN_BUTTON_PIN) {
-
-            filter = _run_filter_inc(filter);
-
-        } else
-
-            filter = _run_filter_dec(filter);
-
-    }
-
-    if (filter == 0) {
-        
-        signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
-
-        signal_calculation_states->next.hardware.learn_pin = OPEN;
-      
-    } else if (filter == INPUT_FILTER_COUNT) {
-        
-        signal_calculation_states->next.hardware.learn_pin = CLOSED;
-
-    }
-    
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
-
-        if (TEACH_BUTTON_PIN) {
-
-            filter = _run_filter_inc(filter);
-
-        } else
-
-            filter = _run_filter_dec(filter);
-
-    }
-
-    if (filter == 0) {
-        
-        signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != OPEN;
-
-        signal_calculation_states->next.hardware.teach_pin = OPEN;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.teach_pin = CLOSED;
-
-    }
-    
-#endif
-    
-#ifdef BOSS3
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
-
-        if (LEARN_BUTTON_PIN) {
-
-            filter = _run_filter_inc(filter);
-
-        } else
-
-            filter = _run_filter_dec(filter);
-
-    }
-
-    if (filter == 0) {
-        
-        signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
-
-        signal_calculation_states->next.hardware.learn_pin = OPEN;
-      
-    } else if (filter == INPUT_FILTER_COUNT) {
-        
-        signal_calculation_states->next.hardware.learn_pin = CLOSED;
-
-    }
-    
-    // *******************
-    filter = INPUT_FILTER_COUNT / 2;
-
-    for (int i = 0; i < INPUT_FILTER_COUNT; i++) {
-
-        if (TEACH_BUTTON_PIN) {
-
-            filter = _run_filter_inc(filter);
-
-        } else
-
-            filter = _run_filter_dec(filter);
-
-    }
-
-    if (filter == 0) {
-        
-        signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != OPEN;
-
-        signal_calculation_states->next.hardware.teach_pin = OPEN;
-
-    } else if (filter == INPUT_FILTER_COUNT) {
-
-        signal_calculation_states->next.hardware.teach_pin = CLOSED;
-
-    }
-    
-#endif
-    
 
 }
 
 uint8_olcb_t _calculate_yellow_led(uint8_olcb_t signal, uint8_olcb_t bi_directional) {
-    
+
     // Yellow may be an alternating Green/Red LED
 
     uint8_olcb_t result;
@@ -409,64 +365,131 @@ void TurnoutBossHardwareHandler_update_signal_lamps(signaling_state_t* signal_ca
 
     uint8_olcb_t signal_a, signal_b, signal_c, signal_d;
 
-    switch (signal_calculation_states->lamps.SaBL) {
-        case DARK:
-            signal_a = 0b00000000;
-            break;
-        case GREEN:
-            signal_a = 0b00000100;
-            break;
-        case YELLOW:
-            signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_a = 0b00000010;
-            break;
-    }
+    if (board_configuration->board_location == BL) {
 
-    switch (signal_calculation_states->lamps.SbBL) {
-        case DARK:
-            signal_b = 0b00000000;
-            break;
-        case GREEN:
-            signal_b = 0b00000100;
-            break;
-        case YELLOW:
-            signal_b = _calculate_yellow_led(signal_calculation_states->leds.signal_b, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_b = 0b00000010;
-            break;
-    }
+        switch (signal_calculation_states->lamps.SaBL) {
 
-    switch (signal_calculation_states->lamps.ScBL) {
-        case DARK:
-            signal_c = 0b00000000;
-            break;
-        case GREEN:
-            signal_c = 0b00000100;
-            break;
-        case YELLOW:
-            signal_c = _calculate_yellow_led(signal_calculation_states->leds.signal_c, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_c = 0b00000010;
-            break;
-    }
+            case DARK:
+                signal_a = 0b00000000;
+                break;
+            case GREEN:
+                signal_a = 0b00000100;
+                break;
+            case YELLOW:
+                signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_a = 0b00000010;
+                break;
+        }
 
-    switch (signal_calculation_states->lamps.SdBL) {
-        case DARK:
-            signal_d = 0b00000000;
-            break;
-        case GREEN:
-            signal_d = 0b00000100;
-            break;
-        case YELLOW:
-            signal_d = _calculate_yellow_led(signal_calculation_states->leds.signal_d, (board_configuration->led_polarity == BiDirectionalYellow));
-            break;
-        case RED:
-            signal_d = 0b00000010;
-            break;
+        switch (signal_calculation_states->lamps.SbBL) {
+            case DARK:
+                signal_b = 0b00000000;
+                break;
+            case GREEN:
+                signal_b = 0b00000100;
+                break;
+            case YELLOW:
+                signal_b = _calculate_yellow_led(signal_calculation_states->leds.signal_b, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_b = 0b00000010;
+                break;
+        }
+
+        switch (signal_calculation_states->lamps.ScBL) {
+            case DARK:
+                signal_c = 0b00000000;
+                break;
+            case GREEN:
+                signal_c = 0b00000100;
+                break;
+            case YELLOW:
+                signal_c = _calculate_yellow_led(signal_calculation_states->leds.signal_c, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_c = 0b00000010;
+                break;
+        }
+
+        switch (signal_calculation_states->lamps.SdBL) {
+            case DARK:
+                signal_d = 0b00000000;
+                break;
+            case GREEN:
+                signal_d = 0b00000100;
+                break;
+            case YELLOW:
+                signal_d = _calculate_yellow_led(signal_calculation_states->leds.signal_d, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_d = 0b00000010;
+                break;
+        }
+
+    } else {
+
+        switch (signal_calculation_states->lamps.SaBR) {
+            case DARK:
+                signal_a = 0b00000000;
+                break;
+            case GREEN:
+                signal_a = 0b00000100;
+                break;
+            case YELLOW:
+                signal_a = _calculate_yellow_led(signal_calculation_states->leds.signal_a, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_a = 0b00000010;
+                break;
+        }
+
+        switch (signal_calculation_states->lamps.SbBR) {
+            case DARK:
+                signal_b = 0b00000000;
+                break;
+            case GREEN:
+                signal_b = 0b00000100;
+                break;
+            case YELLOW:
+                signal_b = _calculate_yellow_led(signal_calculation_states->leds.signal_b, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_b = 0b00000010;
+                break;
+        }
+
+        switch (signal_calculation_states->lamps.ScBR) {
+            case DARK:
+                signal_c = 0b00000000;
+                break;
+            case GREEN:
+                signal_c = 0b00000100;
+                break;
+            case YELLOW:
+                signal_c = _calculate_yellow_led(signal_calculation_states->leds.signal_c, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_c = 0b00000010;
+                break;
+        }
+
+        switch (signal_calculation_states->lamps.SdBR) {
+            case DARK:
+                signal_d = 0b00000000;
+                break;
+            case GREEN:
+                signal_d = 0b00000100;
+                break;
+            case YELLOW:
+                signal_d = _calculate_yellow_led(signal_calculation_states->leds.signal_d, (board_configuration->led_polarity == BiDirectionalYellow));
+                break;
+            case RED:
+                signal_d = 0b00000010;
+                break;
+        }
+
     }
 
 

@@ -147,9 +147,12 @@ void _signal_update_timer_1_callback(void) {
     // Timer 1 will be paused when the states are being recalculated (below) and when any configuration memory access occurs (turnoutboss_drivers.c)
     // so the SPI bus will not have a conflict
 
+    // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
+    TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
+                        
     if (!UartHandler_pause_calculations)
         TurnoutBossHardwareHandler_update_signal_lamps(&_signal_calculation_states, &_board_configuration, &_event_engine);
-
+    
 }
 
 node_id_t _extract_node_id_from_eeprom(uint32_olcb_t config_mem_address, configuration_memory_buffer_t * config_mem_buffer) {
@@ -294,6 +297,8 @@ openlcb_node_t * _initialize_turnout_boss(void) {
     TurnoutBossEventHandler_initialize(result, &_board_configuration, &_signal_calculation_states, &_event_engine);
 
     TurnoutBossTeachLearn_initialize();
+    
+    TurnoutBossHardwareHandler_initialize();
 
     UartHandler_board_configuration = &_board_configuration;
     UartHandler_signal_calculation_states = &_signal_calculation_states;
@@ -422,7 +427,6 @@ int main(void) {
 
     while (!CommonLoaderApp_bootloader_state.do_start) {
 
-
         _update_application_loop_delay_timer();
 
         // Run the main Openlcb/LCC engine
@@ -449,8 +453,8 @@ int main(void) {
 
                     if (!UartHandler_pause_calculations) {
 
-                        // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
-                        TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
+                  //      // Scan for any hardware changes (feedback sensors, pushbuttons, etc)
+                 //       TurnoutBossHardwareHandler_scan_for_changes(&_signal_calculation_states);
 
                         TurnoutBossSignalCalculations_recalculate_states(&_signal_calculation_states, &_board_configuration, &_event_engine);
 

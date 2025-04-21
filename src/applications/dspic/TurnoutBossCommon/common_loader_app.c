@@ -223,12 +223,13 @@ void CommonLoaderApp_initialize_sfrs(void) {
     IEC0bits.SPI1IE = 0; // Disable the interrupt
 
 
-    SPI1CON1bits.SPRE = 0b011; // ~8Mhz
-    SPI1CON1bits.PPRE = 0b11;
-
-    // 156k
-    //   SPI1CON1bits.SPRE = 0b100; // divide by 4
-    //   SPI1CON1bits.PPRE = 0b00; // divide by 64       Fcy/(PrimaryPrescale * SecondaryPrescale)
+    //Fcy/(PrimaryPrescale * SecondaryPrescale)
+    
+   // SPI1CON1bits.SPRE = 0b011; // ~8Mhz
+   // SPI1CON1bits.PPRE = 0b11;
+    
+    SPI1CON1bits.SPRE = 0b011; // ~4Mhz limited by the 25AA08 running on 3.3V
+    SPI1CON1bits.PPRE = 0b10;
 
     SPI1CON1bits.DISSCK = 0; // Internal serial clock is enabled
     SPI1CON1bits.DISSDO = 0; // SDOx pin is controlled by the module
