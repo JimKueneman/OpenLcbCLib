@@ -1,7 +1,7 @@
 
 # echo "Converting the hex file to a dshex file..."
 
-#../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
+#../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../TurnoutBOSS.X/dist/default/production/TurnoutBOSS.X.production.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBossRevC
 
 
 echo "Generating the Merged Hex File"
@@ -23,7 +23,10 @@ echo "Generating the hex file with checksum information"
 
 echo "Converting the hex file to a dshex file..."
 
-../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../turnoutboss_merged_summed.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBoss2.0
+# Bob use this for the Rev B boards you have:
+#../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../turnoutboss_merged_summed.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBossRevB
+
+../TurnoutBossCommon/Hex2dsHex/hex2dshex -f ../turnoutboss_merged_summed.hex -m 0xB000 -x 0x55000 -e 1024 -c 0x54800 -k MustangpeakEngineeringTurnoutBossRevC
 
 echo "Deleting the Merged file"
 

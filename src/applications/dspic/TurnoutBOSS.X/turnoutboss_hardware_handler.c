@@ -58,8 +58,6 @@
 #define INPUT_FILTER_COUNT_MIDPOINT 5
 
 
-// Occupancy1, Occupancy2, Occupancy3, TurnoutFeedback Normal, TurnoutFeedback Diverging, TurnoutControl Normal, TurnoutControl Diverging, Learn Button, Teach Button
-
 #define INPUT_OCCUPANCY1 0
 #define INPUT_OCCUPANCY2 1
 #define INPUT_OCCUPANCY3 2
@@ -81,36 +79,225 @@ typedef struct {
 
 hardware_filter_t _hardware_filter;
 
-void TurnoutBossHardwareHandler_initialize(void) {
+void _run_filter(void) {
 
-    _hardware_filter.counter = INPUT_FILTER_COUNT_MIDPOINT;
+    if (OCCUPANCY_DETECT_1_PIN) {
+
+        _hardware_filter.filter_array[INPUT_OCCUPANCY1] = _hardware_filter.filter_array[INPUT_OCCUPANCY1] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_OCCUPANCY1] = _hardware_filter.filter_array[INPUT_OCCUPANCY1] - 1;
+
+    }
+
+    if (OCCUPANCY_DETECT_2_PIN) {
+
+        _hardware_filter.filter_array[INPUT_OCCUPANCY2] = _hardware_filter.filter_array[INPUT_OCCUPANCY2] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_OCCUPANCY2] = _hardware_filter.filter_array[INPUT_OCCUPANCY2] - 1;
+
+    }
+
+    if (OCCUPANCY_DETECT_3_PIN) {
+
+        _hardware_filter.filter_array[INPUT_OCCUPANCY3] = _hardware_filter.filter_array[INPUT_OCCUPANCY3] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_OCCUPANCY3] = _hardware_filter.filter_array[INPUT_OCCUPANCY3] - 1;
+
+    }
+
+    if (TURNOUT_POSITION_NORMAL_PIN) {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] - 1;
+
+    }
+
+
+    if (TURNOUT_POSITION_DIVERGING_PIN) {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] - 1;
+
+    }
+
+    if (TURNOUT_PUSHBUTTON_NORMAL_PIN) {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] - 1;
+
+    }
+
+
+    if (TURNOUT_PUSHBUTTON_DIVERGING_PIN) {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] - 1;
+
+    }
+
+
+    if (LEARN_BUTTON_PIN) {
+
+        _hardware_filter.filter_array[INPUT_LEARN_BUTTON] = _hardware_filter.filter_array[INPUT_LEARN_BUTTON] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_LEARN_BUTTON] = _hardware_filter.filter_array[INPUT_LEARN_BUTTON] - 1;
+
+    }
+    
+    if (TEACH_BUTTON_PIN) {
+
+        _hardware_filter.filter_array[INPUT_TEACH_BUTTON] = _hardware_filter.filter_array[INPUT_TEACH_BUTTON] + 1;
+
+    } else {
+
+        _hardware_filter.filter_array[INPUT_TEACH_BUTTON] = _hardware_filter.filter_array[INPUT_TEACH_BUTTON] - 1;
+
+    }
+
+    _hardware_filter.counter = _hardware_filter.counter + 1;
+
+}
+
+void _update_hardware_state(signaling_state_t *signal_calculation_states) {
+
+    if (_hardware_filter.filter_array[INPUT_OCCUPANCY1] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.occupany_1 = UNOCCUPIED;
+
+    } else {
+
+        signal_calculation_states->next.hardware.occupany_1 = OCCUPIED;
+
+    }
+
+    if (_hardware_filter.filter_array[INPUT_OCCUPANCY2] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.occupany_2 = UNOCCUPIED;
+
+    } else {
+
+        signal_calculation_states->next.hardware.occupany_2 = OCCUPIED;
+
+    }
+
+
+    if (_hardware_filter.filter_array[INPUT_OCCUPANCY3] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.occupany_3 = UNOCCUPIED;
+
+    } else {
+
+        signal_calculation_states->next.hardware.occupany_3 = OCCUPIED;
+
+    }
+
+    if (_hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.turnout_feedback_normal = INACTIVE;
+
+    } else {
+
+        signal_calculation_states->next.hardware.turnout_feedback_normal = ACTIVE;
+
+    }
+
+
+    if (_hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.turnout_feedback_diverging = INACTIVE;
+
+    } else {
+
+        signal_calculation_states->next.hardware.turnout_feedback_diverging = ACTIVE;
+
+    }
+
+
+    if (_hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.turnout_pushbutton_normal = INACTIVE;
+
+    } else {
+
+        signal_calculation_states->next.hardware.turnout_pushbutton_normal = ACTIVE;
+
+    }
+
+
+    if (_hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->next.hardware.turnout_pushbutton_diverging = INACTIVE;
+
+    } else {
+
+        signal_calculation_states->next.hardware.turnout_pushbutton_diverging = ACTIVE;
+
+    }
+
+
+    if (_hardware_filter.filter_array[INPUT_LEARN_BUTTON] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
+        signal_calculation_states->next.hardware.learn_pin = OPEN;
+
+    } else {
+
+        signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
+        signal_calculation_states->next.hardware.learn_pin = CLOSED;
+
+    }
+
+    if (_hardware_filter.filter_array[INPUT_TEACH_BUTTON] < INPUT_FILTER_COUNT_MIDPOINT) {
+
+        signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != OPEN;
+        signal_calculation_states->next.hardware.teach_pin = OPEN;
+
+    } else {
+
+        signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != CLOSED;
+        signal_calculation_states->next.hardware.teach_pin = CLOSED;
+
+    }
+    
+}
+
+void _reset_filter_bank(void) {
+
+    // Reset and start again
+    _hardware_filter.counter = 0;
 
     for (int i = 0; i < INPUT_COUNT; i++) {
 
-        _hardware_filter.filter_array[i] = 0;
+        _hardware_filter.filter_array[i] = INPUT_FILTER_COUNT_MIDPOINT;
 
     }
 
 }
 
-uint8_olcb_t _run_filter_inc(uint8_olcb_t filter) {
+void TurnoutBossHardwareHandler_initialize(void) {
 
-    if (filter >= INPUT_FILTER_COUNT)
-
-        return INPUT_FILTER_COUNT;
-
-    return filter + 1;
-
-}
-
-uint8_olcb_t _run_filter_dec(uint8_olcb_t filter) {
-
-    if (filter == 0)
-
-        return 0;
-
-    return filter - 1;
-
+    _reset_filter_bank();
+    
 }
 
 void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calculation_states) {
@@ -118,216 +305,14 @@ void TurnoutBossHardwareHandler_scan_for_changes(signaling_state_t *signal_calcu
 
     if (_hardware_filter.counter < INPUT_FILTER_COUNT) {
 
-        if (OCCUPANCY_DETECT_1_PIN) {
-
-            _hardware_filter.filter_array[INPUT_OCCUPANCY1] = _hardware_filter.filter_array[INPUT_OCCUPANCY1] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_OCCUPANCY1] = _hardware_filter.filter_array[INPUT_OCCUPANCY1] - 1;
-
-        }
-
-        if (OCCUPANCY_DETECT_2_PIN) {
-
-            _hardware_filter.filter_array[INPUT_OCCUPANCY2] = _hardware_filter.filter_array[INPUT_OCCUPANCY2] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_OCCUPANCY2] = _hardware_filter.filter_array[INPUT_OCCUPANCY2] - 1;
-
-        }
-
-        if (OCCUPANCY_DETECT_3_PIN) {
-
-            _hardware_filter.filter_array[INPUT_OCCUPANCY3] = _hardware_filter.filter_array[INPUT_OCCUPANCY3] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_OCCUPANCY3] = _hardware_filter.filter_array[INPUT_OCCUPANCY3] - 1;
-
-        }
-
-        if (TURNOUT_POSITION_NORMAL_PIN) {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] - 1;
-
-        }
-
-
-        if (TURNOUT_POSITION_DIVERGING_PIN) {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] - 1;
-
-        }
-
-        if (TURNOUT_PUSHBUTTON_NORMAL_PIN) {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] - 1;
-
-        }
-
-
-        if (TURNOUT_PUSHBUTTON_DIVERGING_PIN) {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] = _hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] - 1;
-
-        }
-
-
-        if (INPUT_LEARN_BUTTON) {
-
-            _hardware_filter.filter_array[INPUT_LEARN_BUTTON] = _hardware_filter.filter_array[INPUT_LEARN_BUTTON] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_LEARN_BUTTON] = _hardware_filter.filter_array[INPUT_LEARN_BUTTON] - 1;
-
-        }
-
-
-        if (INPUT_TEACH_BUTTON) {
-
-            _hardware_filter.filter_array[INPUT_TEACH_BUTTON] = _hardware_filter.filter_array[INPUT_TEACH_BUTTON] + 1;
-
-        } else {
-
-            _hardware_filter.filter_array[INPUT_TEACH_BUTTON] = _hardware_filter.filter_array[INPUT_TEACH_BUTTON] - 1;
-
-        }
-
-
-        _hardware_filter.counter = _hardware_filter.counter + 1;
+        _run_filter();
 
     } else {
 
-        if (_hardware_filter.filter_array[INPUT_OCCUPANCY1] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.occupany_1 = UNOCCUPIED;
-
-        } else {
-
-            signal_calculation_states->next.hardware.occupany_1 = OCCUPIED;
-
-        }
-
-        if (_hardware_filter.filter_array[INPUT_OCCUPANCY2] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.occupany_2 = UNOCCUPIED;
-
-        } else {
-
-            signal_calculation_states->next.hardware.occupany_2 = OCCUPIED;
-
-        }
-
-
-        if (_hardware_filter.filter_array[INPUT_OCCUPANCY3] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.occupany_3 = UNOCCUPIED;
-
-        } else {
-
-            signal_calculation_states->next.hardware.occupany_3 = OCCUPIED;
-
-        }
-
-        if (_hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_NORMAL] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.turnout_feedback_normal = INACTIVE;
-
-        } else {
-
-            signal_calculation_states->next.hardware.turnout_feedback_normal = ACTIVE;
-
-        }
-
-
-        if (_hardware_filter.filter_array[INPUT_TURNOUT_FEEDBACK_DIVERGING] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.turnout_feedback_diverging = INACTIVE;
-
-        } else {
-
-            signal_calculation_states->next.hardware.turnout_feedback_diverging = ACTIVE;
-
-        }
-
-
-        if (_hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_NORMAL] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.turnout_pushbutton_normal = INACTIVE;
-
-        } else {
-
-            signal_calculation_states->next.hardware.turnout_pushbutton_normal = ACTIVE;
-
-        }
-
-
-        if (_hardware_filter.filter_array[INPUT_TURNOUT_PUSHBUTTON_DIVERGING] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->next.hardware.turnout_pushbutton_diverging = INACTIVE;
-
-        } else {
-
-            signal_calculation_states->next.hardware.turnout_pushbutton_diverging = ACTIVE;
-
-        }
-
-
-        if (_hardware_filter.filter_array[INPUT_LEARN_BUTTON] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
-            signal_calculation_states->next.hardware.learn_pin = OPEN;
-
-        } else {
-
-            signal_calculation_states->learn_button_toggled = signal_calculation_states->next.hardware.learn_pin != OPEN;
-            signal_calculation_states->next.hardware.learn_pin = CLOSED;
-
-        }
-
-        if (_hardware_filter.filter_array[INPUT_TEACH_BUTTON] < INPUT_FILTER_COUNT_MIDPOINT) {
-
-            signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != OPEN;
-            signal_calculation_states->next.hardware.teach_pin = OPEN;
-
-        } else {
-
-            signal_calculation_states->teach_button_toggled = signal_calculation_states->next.hardware.teach_pin != CLOSED;
-            signal_calculation_states->next.hardware.teach_pin = CLOSED;
-
-        }
-
-        // Reset and start again
-        _hardware_filter.counter = INPUT_FILTER_COUNT_MIDPOINT;
-
-        for (int i = 0; i < INPUT_COUNT; i++) {
-
-            _hardware_filter.filter_array[i] = 0;
-
-        }
-
+        _update_hardware_state(signal_calculation_states);
+        _reset_filter_bank();
 
     }
-
 
 }
 

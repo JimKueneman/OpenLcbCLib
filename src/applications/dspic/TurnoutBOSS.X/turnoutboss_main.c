@@ -310,14 +310,13 @@ openlcb_node_t * _initialize_turnout_boss(void) {
 void _print_turnoutboss_version(void) {
 
 #ifdef BOSS1
-    printf("Application Booted: Boss 1.0.................\n");
+    printf("Application Booted: Boss Rev A.................\n");
 #endif
 #ifdef BOSS2 
-    printf("Application Booted: Boss 2.0.................\n");
+    printf("Application Booted: Boss Rev B.................\n");
 #endif
-
 #ifdef BOSS3 
-    printf("Application Booted: Boss 3.0.................\n");
+    printf("Application Booted: Rev C.................\n");
 #endif
 
 }
