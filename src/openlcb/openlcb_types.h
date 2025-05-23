@@ -49,11 +49,11 @@ extern "C" {
     // Note you can override these with Define Macros in your compiler 
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
-#define USER_DEFINED_BASIC_BUFFER_DEPTH     16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define USER_DEFINED_BASIC_BUFFER_DEPTH     64  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
 #endif
 
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  28  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
 #endif
 
 #ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
@@ -71,7 +71,7 @@ extern "C" {
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
-#define USER_DEFINED_CDI_LENGTH             20000 // USER DEFINED 
+#define USER_DEFINED_CDI_LENGTH            20000 // USER DEFINED 
 #endif
 
 #ifndef USER_DEFINED_FDI_LENGTH
@@ -79,16 +79,20 @@ extern "C" {
 #endif
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
+    
   #ifndef USER_DEFINED_PRODUCER_COUNT
-    #define USER_DEFINED_PRODUCER_COUNT         48 // USER DEFINED 
+    #define USER_DEFINED_PRODUCER_COUNT         64 // USER DEFINED 
   #endif
 
   #ifndef USER_DEFINED_CONSUMER_COUNT
     #define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
   #endif
+
 #else
+    
   #define USER_DEFINED_PRODUCER_COUNT 0
   #define USER_DEFINED_CONSUMER_COUNT 0
+
 #endif
 
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
@@ -276,7 +280,7 @@ extern "C" {
         uint16_olcb_t allocated : 1; // Allocated to be used
         uint16_olcb_t permitted : 1; // Has the CAN alias been allocated and the network notified
         uint16_olcb_t initalized : 1; // Has the node been logged into the the network
-        uint16_olcb_t initial_events_broadcast_complete : 1; // has the node finished it initial broadcast of events?
+        uint16_olcb_t initial_events_broadcast_complete : 1; // has the node finished its initial broadcast of events?
         uint16_olcb_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
         uint16_olcb_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
         uint16_olcb_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next

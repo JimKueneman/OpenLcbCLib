@@ -154,6 +154,26 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
         }
 
     }
+    
+    // TODO: TEST ONLY
+    
+    switch (buffer_size) {
+
+        case LEN_MESSAGE_BYTES_BASIC:
+            printf("Failed to allocated Basic\n");
+            break;
+        case LEN_MESSAGE_BYTES_DATAGRAM:
+            printf("Failed to allocated Datagram\n");
+            break;
+        case LEN_MESSAGE_BYTES_SNIP:
+            printf("Failed to allocated SNIP\n");
+            break;
+        case LEN_MESSAGE_BYTES_STREAM:
+            printf("Failed to allocated STREAM\n");
+            break;
+
+    }
+
 
     return (void*) 0;
 

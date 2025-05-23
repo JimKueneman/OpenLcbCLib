@@ -56,7 +56,7 @@ extern "C" {
     extern void CanMainStateMachine_run(void);
 
 
-    extern can_main_statemachine_t can_helper;
+    extern can_main_statemachine_t _can_helper;
 
 #ifdef	__cplusplus
 }

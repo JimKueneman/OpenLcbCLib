@@ -52,8 +52,7 @@ void Driver100msClock_initialization(parameterless_callback_t pause_timer_callba
 }
 
 void _100ms_clock_sink(void) {
-    
-   
+     
     Node_100ms_timer_tick();
     DatagramProtocol_100ms_time_tick();
     
