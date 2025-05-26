@@ -276,7 +276,7 @@ extern "C" {
     } event_id_producer_list_t;
 
     typedef struct {
-        uint16_olcb_t run_state : 6; // Run state... limits the number to how many bits here.... 64 possible states.
+        uint16_olcb_t run_state : 5; // Run state... limits the number to how many bits here.... 32 possible states.
         uint16_olcb_t allocated : 1; // Allocated to be used
         uint16_olcb_t permitted : 1; // Has the CAN alias been allocated and the network notified
         uint16_olcb_t initalized : 1; // Has the node been logged into the the network

@@ -439,12 +439,13 @@ void CanMainStateMachine_run(void) {
 
     openlcb_node_t* next_node = Node_get_first(0);
 
-    while (next_node) {
+    while (next_node)
+    {
 
         _reset_message_handled_flags_if_required(next_node, is_newly_popped_can_active_msg, is_newly_popped_openlcb_active_msg);
 
-
-        if (next_node->state.initalized) { // process any incoming messages that were popped if the node is initialized
+        if (next_node->state.run_state == RUNSTATE_RUN)
+        { // process any incoming messages that were popped if the node is initialized
 
             // these need to get out asap so don't waste time processing normal messages below until we can get these out
             if (_resend_datagram_message_from_ack_failure_reply(&_can_helper, next_node))
@@ -459,18 +460,16 @@ void CanMainStateMachine_run(void) {
             _dispatch_next_can_message_to_node(&_can_helper, next_node, &is_active_can_msg_processiong_complete);
 
             _dispatch_next_openlcb_message_to_node(&_can_helper, next_node, &is_active_openlcb_msg_processing_complete);
+        }
+        else
+        {
 
-        } else {
-  
-          // Process any login states ( )
-          if (next_node->state.run_state != RUNSTATE_RUN)
+            // Process any login states
+
             _run_can_login_statemachine(next_node, &_can_helper.can_worker, &_can_helper.openlcb_worker->worker);
-    
         }
 
-
         next_node = Node_get_next(0);
-
     }
 
     _reset_active_message_buffers_if_done(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
