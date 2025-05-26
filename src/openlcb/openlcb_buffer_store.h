@@ -60,6 +60,8 @@ extern uint16_olcb_t BufferStore_messages_max_allocated(void);
 
 extern void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg);
 
+void BufferStore_clear_max_allocated(void);
+
 
 #ifdef	__cplusplus
 }

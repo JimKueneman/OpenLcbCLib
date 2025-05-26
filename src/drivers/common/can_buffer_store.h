@@ -59,6 +59,8 @@ extern uint16_olcb_t CanBufferStore_messages_allocated(void);
 
 extern uint16_olcb_t CanBufferStore_messages_max_allocated(void);
 
+extern void CanBufferStore_clear_max_allocated(void);
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

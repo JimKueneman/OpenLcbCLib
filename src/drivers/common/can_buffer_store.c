@@ -115,3 +115,9 @@ uint16_olcb_t CanBufferStore_messages_max_allocated(void) {
     return _can_buffer_store_message_max_allocated;
     
 }
+
+void CanBufferStore_clear_max_allocated(void) {
+   
+    _can_buffer_store_message_max_allocated = 0;
+    
+}

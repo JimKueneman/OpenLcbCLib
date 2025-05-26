@@ -208,10 +208,18 @@ uint16_olcb_t BufferStore_messages_max_allocated(void) {
 
 }
 
-extern void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg) {
+void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg) {
 
     openlcb_msg->reference_count = openlcb_msg->reference_count + 1;
 
 }
+
+void BufferStore_clear_max_allocated(void) {
+    
+    _buffer_store_message_max_allocated = 0;
+    
+}
+
+
 
 
