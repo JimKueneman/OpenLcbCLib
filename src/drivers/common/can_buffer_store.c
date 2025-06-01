@@ -52,7 +52,7 @@ void CanBufferStore_initialize(void) {
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         _can_buffer_store[i].state.allocated = FALSE;
-        _can_buffer_store[i].state.direct_tx = FALSE;
+        _can_buffer_store[i].state.addressed_direct_tx = FALSE;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
         for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++)
@@ -82,7 +82,7 @@ can_msg_t* CanBufferStore_allocateBuffer(void) {
             
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
             _can_buffer_store[i].state.allocated = TRUE;
-            _can_buffer_store[i].state.direct_tx = FALSE;
+            _can_buffer_store[i].state.addressed_direct_tx = FALSE;
       
             return &_can_buffer_store[i];
 
@@ -100,7 +100,7 @@ void CanBufferStore_freeBuffer(can_msg_t* msg) {
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->state.allocated = FALSE;
-    msg->state.direct_tx = FALSE;
+    msg->state.addressed_direct_tx = FALSE;
 
 }
 

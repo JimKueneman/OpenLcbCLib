@@ -28,7 +28,7 @@
  * \file can_tx_statemachine.c
  *
  * Takes an OpenLcb message structure and splits it into CAN frames to transmit if 
- * necessary, else it packs up the CAN frame from the message struture and send it
+ * necessary, else it packs up the CAN frame from the message structure and send it
  * to the CAN Driver to transmit on the physical layer.
  *
  * @author Jim Kueneman
@@ -96,29 +96,29 @@ uint32_olcb_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_msg
 
 }
 
-void _transmit_can_frame(can_msg_t* can_msg) {
+uint8_olcb_t _transmit_can_frame(can_msg_t* can_msg) {
 
 #ifdef CAN_TX_TEST 
 
     printf("\n");
     PrintCanMsg(can_msg);
     printf("\n\n");
+    
+    return TRUE;
 
 #else
+    
+    parameterless_callback_t tx_callback = ApplicationCallbacks_get_can_tx();
+    
+    uint8_olcb_t result = DriverCan_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
 
-    if (ApplicationCallbacks_get_can_tx()) {
+    if (tx_callback && result) {
 
-        ApplicationCallbacks_get_can_tx()();
-
-    }
-
-    DriverCan_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
-
-    if (ApplicationCallbacks_get_can_tx()) {
-
-        ApplicationCallbacks_get_can_tx()();
+        tx_callback();
 
     }
+    
+    return result;
 
 #endif
 
@@ -309,27 +309,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 }
 
 uint8_olcb_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
-
-    if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
-
-        if (ApplicationCallbacks_get_can_tx()) {
-
-            ApplicationCallbacks_get_can_tx()();
-
-        }
-
-        DriverCan_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
-
-        if (ApplicationCallbacks_get_can_tx()) {
-
-            ApplicationCallbacks_get_can_tx()();
-
-        }
-
-        return TRUE;
-
-    }
-
-    return FALSE;
-
+    
+    return _transmit_can_frame(can_msg);
+    
 }

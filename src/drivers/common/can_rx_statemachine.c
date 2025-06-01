@@ -69,7 +69,7 @@ uint32_olcb_t _oir_identifier(uint16_olcb_t source_alias) {
 }
 
 openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti, uint16_olcb_t error_code) {
-
+    
     can_msg_t* can_msg_error = CanBufferFifo_push();
 
     if (can_msg_error) {
@@ -85,7 +85,7 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
         can_msg_error->payload[3] = (uint8_olcb_t) error_code & 0x00FF;
 
         // Flag so it is directly sent out and not processed by nodes
-        can_msg_error->state.direct_tx = TRUE;
+        can_msg_error->state.addressed_direct_tx = TRUE;
 
         can_msg_error->payload_count = 4;
 
@@ -131,8 +131,12 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (!result)
+    if (!result) {
+
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+
+    }
+
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
 
@@ -148,8 +152,11 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_s
 
     openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (!result)
+    if (!result) {
+ 
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+
+    }
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
     result->state.inprocess = FALSE;
@@ -379,7 +386,6 @@ void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
 
 void _state_machine_incoming_can(uint8_olcb_t channel, can_msg_t* can_msg) {
 
-
     if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
 
         switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
@@ -437,7 +443,7 @@ void _state_machine_incoming_can(uint8_olcb_t channel, can_msg_t* can_msg) {
 
 void CanRxStatemachine_initialize(can_rx_driver_callback_t can_rx_driver_callback) {
 
-    can_rx_driver_callback(&_state_machine_incoming_can); 
+    can_rx_driver_callback(&_state_machine_incoming_can);
 
 }
 

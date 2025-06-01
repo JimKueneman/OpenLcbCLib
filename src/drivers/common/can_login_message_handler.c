@@ -269,6 +269,8 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
                     next_node->state.initial_events_broadcast_complete = TRUE;
                     next_node->state.run_state = RUNSTATE_RUN;
+                    
+                    printf("Login Complete\n");
 
                 }
 

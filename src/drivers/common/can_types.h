@@ -67,7 +67,7 @@ typedef uint8_olcb_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
 typedef struct {
     uint8_olcb_t allocated: 1;
-    uint8_olcb_t direct_tx: 1;    // If set the CAN statemachine will simply directly send it assuming all the source/dest/mti/data is all set up.  Mainly for sending error found during Can frame reception to allow for the rx thread/interrupt to not have to reach across boundries to send it.
+    uint8_olcb_t addressed_direct_tx: 1;    // If set the CAN statemachine will directly send it assuming all the source/dest/mti/data is all set up.  Used for sending errors found during Can multi-frame reception 
 } can_msg_state_t;
 
 typedef struct {
