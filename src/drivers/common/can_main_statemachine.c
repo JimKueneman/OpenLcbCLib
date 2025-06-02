@@ -279,7 +279,15 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* ca
 
 }
 
-uint8_olcb_t _transmit_direct_tx_can_message(can_main_statemachine_t* can_helper) {
+void _release_direct_tx_can_message(can_main_statemachine_t* can_helper) {
+
+    can_helper->active_msg->state.addressed_direct_tx = FALSE;
+    CanBufferStore_freeBuffer(can_helper->active_msg);
+    can_helper->active_msg = (void*) 0;
+
+}
+
+uint8_olcb_t _try_transmit_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
     // Direct Tx messages are added in the CAN Rx statemachine but actually replies
     // that have already been dealt with, such as error messages created in response 
@@ -304,9 +312,7 @@ uint8_olcb_t _transmit_direct_tx_can_message(can_main_statemachine_t* can_helper
 
                     if (CanTxStatemachine_try_transmit_can_message(can_helper->active_msg)) {
 
-                        can_helper->active_msg->state.addressed_direct_tx = FALSE;
-                        CanBufferStore_freeBuffer(can_helper->active_msg);
-                        can_helper->active_msg = (void*) 0;
+                        _release_direct_tx_can_message(can_helper);
 
                         return TRUE;
 
@@ -323,10 +329,7 @@ uint8_olcb_t _transmit_direct_tx_can_message(can_main_statemachine_t* can_helper
         }
 
         // Was not for us
-
-        can_helper->active_msg->state.addressed_direct_tx = FALSE;
-        CanBufferStore_freeBuffer(can_helper->active_msg);
-        can_helper->active_msg = (void*) 0;
+        _release_direct_tx_can_message(can_helper);
 
         return TRUE;
 
@@ -353,7 +356,7 @@ void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_o
 
 }
 
-void _reset_active_message_buffers_if_done(can_main_statemachine_t* can_helper, uint8_olcb_t active_can_msg_processiong_complete, uint8_olcb_t active_openlcb_msg_processing_complete) {
+void _free_active_message_buffers_if_complete(can_main_statemachine_t* can_helper, uint8_olcb_t active_can_msg_processiong_complete, uint8_olcb_t active_openlcb_msg_processing_complete) {
 
     // Are all the nodes finished handling the incoming CAN message?
     if (active_can_msg_processiong_complete) {
@@ -461,10 +464,12 @@ void CanMainStateMachine_run(void) {
     uint8_olcb_t is_active_can_msg_processiong_complete = TRUE;
     uint8_olcb_t is_active_openlcb_msg_processing_complete = TRUE;
 
-    // handle the can message if it is a direct send (there is no node specific processing on it to do, it just needs to get sent)
-    if (_transmit_direct_tx_can_message(&_can_helper))
-        
+    // handle the CAN message if it is a direct send (there is no node specific processing on it to do, it just needs to get sent)
+    if (_try_transmit_direct_tx_can_message(&_can_helper)) {
+
         return;
+        
+    }
 
     openlcb_node_t* next_node = Node_get_first(0);
 
@@ -487,28 +492,31 @@ void CanMainStateMachine_run(void) {
             _dispatch_next_can_message_to_node(&_can_helper, next_node, &is_active_can_msg_processiong_complete);
 
             _dispatch_next_openlcb_message_to_node(&_can_helper, next_node, &is_active_openlcb_msg_processing_complete);
+            
         } else {
 
+            // We don't process any OpenLCB messages since we can't reply until after the node is initialized anyway
+            
             _dispatch_next_can_message_to_node(&_can_helper, next_node, &is_active_can_msg_processiong_complete);
+            
             // Process any login states
             _run_can_login_statemachine(next_node, &_can_helper.can_worker, &_can_helper.openlcb_worker->worker);
-
-            // Throw away and OpenLCB message during this phase
-            next_node->state.openlcb_msg_handled = TRUE;
 
         }
 
         next_node = Node_get_next(0);
     }
 
-    _reset_active_message_buffers_if_done(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
+    _free_active_message_buffers_if_complete(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
 
     // update callbacks
     if (is_newly_popped_can_active_msg || is_newly_popped_openlcb_active_msg) {
+        
+        parameterless_callback_t callback = ApplicationCallbacks_get_can_rx();
 
-        if (ApplicationCallbacks_get_can_rx()) {
+        if (callback) {
 
-            ApplicationCallbacks_get_can_rx()();
+            callback();
 
         }
 

@@ -49,15 +49,15 @@ extern "C" {
     // Note you can override these with Define Macros in your compiler 
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
-#define USER_DEFINED_BASIC_BUFFER_DEPTH     16  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define USER_DEFINED_BASIC_BUFFER_DEPTH     32  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
 #endif
 
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  10  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  4  // USER DEFINED this should be at least LEN_NODE_ARRAY + ~10
 #endif
 
 #ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
-#define USER_DEFINED_SNIP_BUFFER_DEPTH      10  // USER DEFINED
+#define USER_DEFINED_SNIP_BUFFER_DEPTH      4  // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
@@ -67,7 +67,7 @@ extern "C" {
 
 
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH      16  // USER DEFINED 
+#define USER_DEFINED_NODE_BUFFER_DEPTH      1  // USER DEFINED 
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH

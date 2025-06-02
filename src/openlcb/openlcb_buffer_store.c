@@ -42,8 +42,16 @@
 #include "openlcb_types.h"
 
 message_buffer_t _message_buffer;
-uint16_olcb_t _buffer_store_message_allocated = 0;
-uint16_olcb_t _buffer_store_message_max_allocated = 0;
+
+uint16_olcb_t _buffer_store_basic_messages_allocated = 0;
+uint16_olcb_t _buffer_store_datagram_messages_allocated = 0;
+uint16_olcb_t _buffer_store_snip_messages_allocated = 0;
+uint16_olcb_t _buffer_store_stream_messages_allocated = 0;
+
+uint16_olcb_t _buffer_store_basic_max_messages_allocated = 0;
+uint16_olcb_t _buffer_store_datagram_max_messages_allocated = 0;
+uint16_olcb_t _buffer_store_snip_max_messages_allocated = 0;
+uint16_olcb_t _buffer_store_stream_max_messages_allocated = 0;
 
 void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
@@ -92,24 +100,69 @@ void BufferStore_initialize(void) {
     }
 }
 
+void _update_buffer_telemetry(uint16_olcb_t buffer_size) {
+
+    switch (buffer_size) {
+
+        case LEN_MESSAGE_BYTES_BASIC:
+
+            _buffer_store_basic_messages_allocated = _buffer_store_basic_messages_allocated + 1;
+            if (_buffer_store_basic_messages_allocated > _buffer_store_basic_max_messages_allocated) {
+
+                _buffer_store_basic_max_messages_allocated = _buffer_store_basic_max_messages_allocated + 1;
+
+            }
+            break;
+        case LEN_MESSAGE_BYTES_DATAGRAM:
+
+            _buffer_store_datagram_messages_allocated = _buffer_store_datagram_messages_allocated + 1;
+            if (_buffer_store_datagram_messages_allocated > _buffer_store_datagram_max_messages_allocated) {
+
+                _buffer_store_datagram_max_messages_allocated = _buffer_store_datagram_max_messages_allocated + 1;
+
+            }
+            break;
+        case LEN_MESSAGE_BYTES_SNIP:
+
+            _buffer_store_snip_messages_allocated = _buffer_store_snip_messages_allocated + 1;
+            if (_buffer_store_snip_messages_allocated > _buffer_store_snip_max_messages_allocated) {
+
+                _buffer_store_snip_max_messages_allocated = _buffer_store_snip_max_messages_allocated + 1;
+
+            }
+            break;
+        case LEN_MESSAGE_BYTES_STREAM:
+
+            _buffer_store_stream_messages_allocated = _buffer_store_stream_messages_allocated + 1;
+            if (_buffer_store_stream_messages_allocated > _buffer_store_stream_max_messages_allocated) {
+
+                _buffer_store_stream_max_messages_allocated = _buffer_store_stream_max_messages_allocated + 1;
+
+            }
+            break;
+
+    }
+
+}
+
 openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
     uint16_olcb_t offset_start = 0;
     uint16_olcb_t offset_end = 0;
 
     if (buffer_size <= LEN_MESSAGE_BYTES_BASIC) {
-        
+
         buffer_size = LEN_MESSAGE_BYTES_BASIC;
-    
+
     } else if (buffer_size <= LEN_MESSAGE_BYTES_DATAGRAM) {
-        
+
         buffer_size = LEN_MESSAGE_BYTES_DATAGRAM;
-    
+
     } else if (buffer_size <= LEN_MESSAGE_BYTES_SNIP) {
-        
+
         buffer_size = LEN_MESSAGE_BYTES_SNIP;
-    
-    } else 
+
+    } else
         buffer_size = LEN_MESSAGE_BYTES_STREAM;
 
 
@@ -118,18 +171,22 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
         case LEN_MESSAGE_BYTES_BASIC:
             offset_start = 0;
             offset_end = USER_DEFINED_BASIC_BUFFER_DEPTH;
+
             break;
         case LEN_MESSAGE_BYTES_DATAGRAM:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
+
             break;
         case LEN_MESSAGE_BYTES_SNIP:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_SNIP_BUFFER_DEPTH;
+
             break;
         case LEN_MESSAGE_BYTES_STREAM:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_STREAM_BUFFER_DEPTH;
+
             break;
 
     }
@@ -138,25 +195,22 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
         if (!_message_buffer.messages[i].state.allocated) {
 
-            _buffer_store_message_allocated = _buffer_store_message_allocated + 1;
-
-            if (_buffer_store_message_allocated > _buffer_store_message_max_allocated)
-                _buffer_store_message_max_allocated = _buffer_store_message_allocated;
-
             _clear_openlcb_message(&_message_buffer.messages[i]);
 
             _message_buffer.messages[i].reference_count = 1;
 
             _message_buffer.messages[i].state.allocated = TRUE;
+            
+            _update_buffer_telemetry(_message_buffer.messages[i].payload_size);
 
             return &_message_buffer.messages[i];
 
         }
 
     }
-    
+
     // TODO: TEST ONLY
-    
+
     switch (buffer_size) {
 
         case LEN_MESSAGE_BYTES_BASIC:
@@ -189,22 +243,79 @@ void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg) {
     if (openlcb_msg->reference_count > 0)
         return;
 
-    _buffer_store_message_allocated = _buffer_store_message_allocated - 1;
+
+    switch (openlcb_msg->payload_size) {
+
+        case LEN_MESSAGE_BYTES_BASIC:
+            _buffer_store_basic_messages_allocated = _buffer_store_basic_messages_allocated - 1;
+
+            break;
+        case LEN_MESSAGE_BYTES_DATAGRAM:
+            _buffer_store_datagram_messages_allocated = _buffer_store_datagram_messages_allocated - 1;
+
+            break;
+        case LEN_MESSAGE_BYTES_SNIP:
+            _buffer_store_snip_messages_allocated = _buffer_store_snip_messages_allocated - 1;
+
+            break;
+        case LEN_MESSAGE_BYTES_STREAM:
+            _buffer_store_stream_messages_allocated = _buffer_store_stream_messages_allocated - 1;
+
+            break;
+
+    }
+
     openlcb_msg->reference_count = 0;
 
     openlcb_msg->state.allocated = FALSE;
 
 }
 
-uint16_olcb_t BufferStore_messages_allocated(void) {
+uint16_olcb_t BufferStore_basic_messages_allocated(void) {
 
-    return _buffer_store_message_allocated;
+    return (_buffer_store_basic_messages_allocated);
 
 }
 
-uint16_olcb_t BufferStore_messages_max_allocated(void) {
+uint16_olcb_t BufferStore_basic_messages_max_allocated(void) {
 
-    return _buffer_store_message_max_allocated;
+    return (_buffer_store_basic_max_messages_allocated);
+
+}
+
+uint16_olcb_t BufferStore_datagram_messages_allocated(void) {
+
+    return (_buffer_store_datagram_messages_allocated);
+
+}
+
+uint16_olcb_t BufferStore_datagram_messages_max_allocated(void) {
+
+    return (_buffer_store_datagram_max_messages_allocated);
+
+}
+
+uint16_olcb_t BufferStore_snip_messages_allocated(void) {
+
+    return (_buffer_store_snip_messages_allocated);
+
+}
+
+uint16_olcb_t BufferStore_snip_messages_max_allocated(void) {
+
+    return (_buffer_store_snip_max_messages_allocated);
+
+}
+
+uint16_olcb_t BufferStore_stream_messages_allocated(void) {
+
+    return (_buffer_store_stream_messages_allocated);
+
+}
+
+uint16_olcb_t BufferStore_stream_messages_max_allocated(void) {
+
+    return (_buffer_store_stream_max_messages_allocated);
 
 }
 
@@ -215,9 +326,12 @@ void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg) {
 }
 
 void BufferStore_clear_max_allocated(void) {
-    
-    _buffer_store_message_max_allocated = 0;
-    
+
+    _buffer_store_basic_max_messages_allocated = 0;
+    _buffer_store_datagram_max_messages_allocated = 0;
+    _buffer_store_snip_max_messages_allocated = 0;
+    _buffer_store_stream_max_messages_allocated = 0;
+
 }
 
 
