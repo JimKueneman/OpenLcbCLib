@@ -86,6 +86,7 @@ void ApplicationCallbacks_set_can_rx(parameterless_callback_t callback_can_rx) {
     callback_can_rx_func = callback_can_rx;
     
 }
+
 parameterless_callback_t ApplicationCallbacks_get_can_rx(void) {
     
     return callback_can_rx_func;

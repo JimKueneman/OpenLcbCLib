@@ -263,9 +263,11 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* ca
 
     if (can_helper->openlcb_worker->active_msg) {
 
-        if (ApplicationCallbacks_get_can_rx()) {
+        parameterless_callback_t rx_callback = ApplicationCallbacks_get_can_rx();
 
-            ApplicationCallbacks_get_can_rx()();
+        if (rx_callback) {
+
+            rx_callback();
 
         }
 
@@ -287,12 +289,14 @@ void _release_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
 }
 
-uint8_olcb_t _try_transmit_direct_tx_can_message(can_main_statemachine_t* can_helper) {
+uint8_olcb_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
-    // Direct Tx messages are added in the CAN Rx statemachine but actually replies
-    // that have already been dealt with, such as error messages created in response 
-    // out of order frames, etc so they just need to be sent out and not dispatched 
-    // to the nodes.
+    // Addressed Direct Tx messages are added by the CAN Rx statemachine , such as error messages created in response 
+    // to out of order frames, etc so they just need to be sent out, if they were actually for a node alias
+    // that is active, and not dispatched to the nodes.  These errors be generated for any multi-frame message that 
+    // ends up have issues since the CAN Rx engine is running in the context of the interrupt we don't reach into the
+    // node list from there.  We just receive all messages and wait until we get into the main loop state-machine to sort 
+    // it all out.
 
     if (!can_helper->active_msg)
 
@@ -464,11 +468,11 @@ void CanMainStateMachine_run(void) {
     uint8_olcb_t is_active_can_msg_processiong_complete = TRUE;
     uint8_olcb_t is_active_openlcb_msg_processing_complete = TRUE;
 
-    // handle the CAN message if it is a direct send (there is no node specific processing on it to do, it just needs to get sent)
-    if (_try_transmit_direct_tx_can_message(&_can_helper)) {
+   
+    if (_try_transmit_addressed_direct_tx_can_message(&_can_helper)) {
 
         return;
-        
+
     }
 
     openlcb_node_t* next_node = Node_get_first(0);
@@ -492,13 +496,13 @@ void CanMainStateMachine_run(void) {
             _dispatch_next_can_message_to_node(&_can_helper, next_node, &is_active_can_msg_processiong_complete);
 
             _dispatch_next_openlcb_message_to_node(&_can_helper, next_node, &is_active_openlcb_msg_processing_complete);
-            
+
         } else {
 
             // We don't process any OpenLCB messages since we can't reply until after the node is initialized anyway
-            
+
             _dispatch_next_can_message_to_node(&_can_helper, next_node, &is_active_can_msg_processiong_complete);
-            
+
             // Process any login states
             _run_can_login_statemachine(next_node, &_can_helper.can_worker, &_can_helper.openlcb_worker->worker);
 
@@ -508,18 +512,5 @@ void CanMainStateMachine_run(void) {
     }
 
     _free_active_message_buffers_if_complete(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
-
-    // update callbacks
-    if (is_newly_popped_can_active_msg || is_newly_popped_openlcb_active_msg) {
-        
-        parameterless_callback_t callback = ApplicationCallbacks_get_can_rx();
-
-        if (callback) {
-
-            callback();
-
-        }
-
-    }
 
 }
