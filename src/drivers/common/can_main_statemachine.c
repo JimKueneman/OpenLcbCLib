@@ -73,7 +73,8 @@ void CanMainStatemachine_initialize(
     CanRxStatemachine_initialize(can_rx_driver_callback);
     CanTxStatemachine_initialize();
 
-    _can_helper.openlcb_worker = &openlcb_helper;
+    // Just use an existing openlcb_helper structure vs allocating another one
+    _can_helper.openlcb_worker = MainStatemachine_get_openlcb_helper();
     _can_helper.active_msg = (void*) 0;
     _can_helper.can_worker.state.allocated = TRUE;
     _can_helper.can_worker.state.addressed_direct_tx = FALSE;
@@ -360,7 +361,7 @@ void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_o
 
 }
 
-void _free_active_message_buffers_if_complete(can_main_statemachine_t* can_helper, uint8_olcb_t active_can_msg_processiong_complete, uint8_olcb_t active_openlcb_msg_processing_complete) {
+void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t* can_helper, uint8_olcb_t active_can_msg_processiong_complete, uint8_olcb_t active_openlcb_msg_processing_complete) {
 
     // Are all the nodes finished handling the incoming CAN message?
     if (active_can_msg_processiong_complete) {
@@ -511,6 +512,6 @@ void CanMainStateMachine_run(void) {
         next_node = Node_get_next(0);
     }
 
-    _free_active_message_buffers_if_complete(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
+    _free_active_message_buffers_if_processing_complete(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
 
 }

@@ -60,8 +60,8 @@ extern "C" {
     extern void MainStatemachine_run(void);
 
     extern void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-
-    extern openlcb_statemachine_worker_t openlcb_helper;
+    
+    openlcb_statemachine_worker_t* MainStatemachine_get_openlcb_helper(void);
 
 
 #ifdef	__cplusplus

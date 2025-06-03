@@ -55,7 +55,7 @@
 #include "openlcb_main_statemachine.h"
 
 
-openlcb_statemachine_worker_t openlcb_helper;
+openlcb_statemachine_worker_t _openlcb_helper;
 
 void MainStatemachine_initialize(
         mcu_driver_callback_t mcu_setup_callback,
@@ -79,20 +79,20 @@ void MainStatemachine_initialize(
     DriverMcu_initialization(mcu_setup_callback, reboot_callback);
 
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
-        openlcb_helper.worker_buffer[i] = 0x00;
+        _openlcb_helper.worker_buffer[i] = 0x00;
 
-    openlcb_helper.active_msg = (void*) 0;
+    _openlcb_helper.active_msg = (void*) 0;
 
-    openlcb_helper.worker.source_alias = 0;
-    openlcb_helper.worker.source_id = 0;
-    openlcb_helper.worker.dest_alias = 0;
-    openlcb_helper.worker.dest_id = 0;
-    openlcb_helper.worker.mti = 0;
-    openlcb_helper.worker.timerticks = 0;
-    openlcb_helper.worker.state.inprocess = FALSE;
-    openlcb_helper.worker.payload = (openlcb_payload_t*) & openlcb_helper.worker_buffer;
-    openlcb_helper.worker.payload_size = LEN_MESSAGE_BYTES_STREAM;
-    openlcb_helper.worker.state.allocated = TRUE;
+    _openlcb_helper.worker.source_alias = 0;
+    _openlcb_helper.worker.source_id = 0;
+    _openlcb_helper.worker.dest_alias = 0;
+    _openlcb_helper.worker.dest_id = 0;
+    _openlcb_helper.worker.mti = 0;
+    _openlcb_helper.worker.timerticks = 0;
+    _openlcb_helper.worker.state.inprocess = FALSE;
+    _openlcb_helper.worker.payload = (openlcb_payload_t*) & _openlcb_helper.worker_buffer;
+    _openlcb_helper.worker.payload_size = LEN_MESSAGE_BYTES_STREAM;
+    _openlcb_helper.worker.state.allocated = TRUE;
 
 }
 
@@ -304,6 +304,12 @@ void MainStatemachine_run(void) {
     //    }
 
 
+}
+
+openlcb_statemachine_worker_t* MainStatemachine_get_openlcb_helper(void) {
+    
+    return &_openlcb_helper;
+    
 }
 
 void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
