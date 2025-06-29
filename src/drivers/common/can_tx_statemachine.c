@@ -267,7 +267,7 @@ uint16_olcb_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* c
     return result;
 }
 
-uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_olcb_t openlcb_start_index) {
+uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_olcb_t openlcb_payload_start_index) {
 
     uint16_olcb_t result = 0;
 
@@ -282,7 +282,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 
             case MTI_DATAGRAM:
             {
-                result = _handle_datagram(openlcb_msg, can_msg_worker, openlcb_start_index);
+                result = _handle_datagram(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
                 break;
 
             }
@@ -299,7 +299,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 
             default:
 
-                result = _handle_addressed_message(openlcb_msg, can_msg_worker, openlcb_start_index);
+                result = _handle_addressed_message(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
 
                 break;
 
@@ -307,7 +307,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 
     } else {
 
-        result = _handle_unaddressed_message(openlcb_msg, can_msg_worker, openlcb_start_index);
+        result = _handle_unaddressed_message(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
 
     }
 

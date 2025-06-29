@@ -312,7 +312,7 @@ extern "C" {
 
     } openlcb_nodes_t;
 
-    typedef struct {
+typedef struct {
         openlcb_msg_t worker;
         payload_stream_t worker_buffer;
         openlcb_msg_t* active_msg;
