@@ -38,12 +38,34 @@
  */
 
 #include "utilities/mustangpeak_string_helper.h"
-#include "string.h"
+
+#include <assert.h>
+#include <stdint.h>
+#include <string.h>
+
+/// Magic number for error checking malloc and free.
+#define STR_MALLOC_MAGIC 0x06fe11ddUL
+
+/// Internal structure for handling the allocation checking.
+typedef struct
+{
+    uint32_t magic; ///< magic number
+    char str[0]; ///< user visible string
+} StringHelper_Malloc;
+
 
 char *strnew(size_t char_count)
 {
     // Always add space for a null character.
+#if defined(NDEBUG)
     return (char *)(malloc( (char_count + 1) * sizeof(char)) );
+#else
+    // Prepend magic number.
+    StringHelper_Malloc *result = (StringHelper_Malloc *)
+        malloc( sizeof(uint32_t) + ((char_count + 1) * sizeof(char)) );
+    result->magic = STR_MALLOC_MAGIC;
+    return result->str;
+#endif
 }
 
 char *strnew_initialized(size_t char_count)
@@ -66,5 +88,13 @@ char *strcatnew(const char *str1, const char *str2)
 
 void strfree(char *str)
 {
+#if defined(NDEBUG)
     free(str);
+#else
+    StringHelper_Malloc *magic =
+        (StringHelper_Malloc *)(str - sizeof(uint32_t));
+    assert(magic->magic == STR_MALLOC_MAGIC);
+    magic->magic = 0;
+    free(magic);
+#endif
 }

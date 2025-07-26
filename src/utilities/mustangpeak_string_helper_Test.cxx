@@ -32,3 +32,20 @@ TEST(StringHelper, strcatnew)
     EXPECT_EQ("str1str2", std::string(new_str));
     strfree(new_str);
 }
+
+TEST(StringHelper, strfree_death1)
+{
+    // Free a string that was not allocated by the helper library.
+    char *str = (char*)malloc(5);
+    memset(str, 0, 5);
+    ASSERT_DEATH({strfree(str);}, "");
+}
+
+TEST(StringHelper, strfree_death2)
+{
+    // Free a string twice.
+    char *str = strnew(4);
+    strfree(str);
+    // Second attempt should fail.
+    ASSERT_DEATH({strfree(str);}, "");
+}
