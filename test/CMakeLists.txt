@@ -55,8 +55,8 @@ set(END_GROUP)
 add_link_options(--coverage)
 else ()
 # Linux specific configuration
-set(START_GROUP "-wl,--start-group")
-set(END_GROUP "-wl,--end-group")
+set(START_GROUP "-Wl,--start-group")
+set(END_GROUP "-Wl,--end-group")
 set(LINK_LIBS ${LINK_LIBS}
     -lgcov
 )
