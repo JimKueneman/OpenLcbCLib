@@ -71,8 +71,7 @@ char *strnew(size_t char_count)
 char *strnew_initialized(size_t char_count)
 {
     char *result = strnew(char_count);
-    for (int i = 0; i < char_count + 1; i++)
-      result[i] = '\0';
+    memset(result, 0, char_count + 1);
     return result;
 }
 
