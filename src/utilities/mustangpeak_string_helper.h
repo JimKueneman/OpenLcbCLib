@@ -71,6 +71,10 @@ extern char *strnew_initialized(size_t char_count);
 /// @return new string in newly allocated memory that is str1 + str2
 extern char *strcatnew(const char *str1, const char *str2);
 
+/// Free a string previously allocated by the str* helper APIs.
+/// @param str "C" string to free.
+extern void strfree(char *str);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

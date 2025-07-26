@@ -10,7 +10,7 @@ TEST(StringHelper, strnew)
     char *new_str = strnew(4);
     strcpy(new_str, "test");
     EXPECT_EQ(0, strcmp(new_str, "test"));
-    free(new_str);
+    strfree(new_str);
 }
 
 TEST(StringHelper, strnew_initialized)
@@ -21,7 +21,7 @@ TEST(StringHelper, strnew_initialized)
     EXPECT_EQ(new_str[2], '\0');
     EXPECT_EQ(new_str[3], '\0');
     EXPECT_EQ(new_str[4], '\0');
-    free(new_str);
+    strfree(new_str);
 }
 
 TEST(StringHelper, strcatnew)
@@ -30,5 +30,5 @@ TEST(StringHelper, strcatnew)
     std::string str2 = "str2";
     char *new_str = strcatnew(str1.c_str(), str2.c_str());
     EXPECT_EQ("str1str2", std::string(new_str));
-    free(new_str);
+    strfree(new_str);
 }
