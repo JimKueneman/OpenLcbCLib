@@ -39,22 +39,40 @@
 // This is a guard condition so that contents of this file are not included
 // more than once.
 
-#ifndef __MUSTANGPEAK_STRING_HELPER__
-#define __MUSTANGPEAK_STRING_HELPER__
+#ifndef __UTILITIES_MUSTANGPEAK_STRING_HELPER__
+#define __UTILITIES_MUSTANGPEAK_STRING_HELPER__
+
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-extern char *strnew(int char_count);
+/// Create a new string by allocating memory for characters and null
+/// termination. Resulting memory will be uninitialized.
+/// @param char_count the number of characters to allocate space for, one will
+///        be added to this cont for a null terminating character
+/// @return space for the new string, uninitialized
+extern char *strnew(size_t char_count);
 
-extern char *strnew_initialized(int char_count);
+/// Create a new string by allocating memory for characters and null
+/// termination. Resulting memory will be initialized to all zeros ('\0)
+/// @param char_count the number of characters to allocate space for, one will
+///        be added to this cont for a null terminating character
+/// @return space for the new string, initialized to all zeros ('\0')
+extern char *strnew_initialized(size_t char_count);
 
-extern char *strcatnew(char *str1, char *str2);
+/// Concatenate two strings. Memory will be allocated for the new string. The
+/// memory for the passed in strings is not released, and remains under the
+/// ownership of the caller.
+/// @param str1 string to concatenate at the beginning
+/// @param str2 string to concatenate at the end
+/// @return new string in newly allocated memory that is str1 + str2
+extern char *strcatnew(const char *str1, const char *str2);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __MUSTANGPEAK_STRING_HELPER__ */
+#endif /* __UTILITIES_MUSTANGPEAK_STRING_HELPER__ */

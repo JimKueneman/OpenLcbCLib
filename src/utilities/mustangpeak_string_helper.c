@@ -37,25 +37,24 @@
  * @date 5 Dec 2024
  */
 
+#include "utilities/mustangpeak_string_helper.h"
 #include "string.h"
-#include "stdio.h"
-#include "stdlib.h"
 
-
-char *strnew(unsigned long char_count)
+char *strnew(size_t char_count)
 {
-    return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+    // Always add space for a null character.
+    return (char *)(malloc( (char_count + 1) * sizeof(char)) );
 }
 
-char *strnew_initialized(int char_count)
+char *strnew_initialized(size_t char_count)
 {
-    char *result = (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+    char *result = strnew(char_count);
     for (int i = 0; i < char_count + 1; i++)
       result[i] = '\0';
     return result;
 }
 
-char *strcatnew(char *str1, char *str2)
+char *strcatnew(const char *str1, const char *str2)
 {
     unsigned long len = strlen(str1) + strlen(str2);
     char *temp1 = strnew(len);
