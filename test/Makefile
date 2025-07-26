@@ -22,7 +22,7 @@ clean:
 
 .PHONY: veryclean
 veryclean:
-	$(RMDIR) build
+	$(RMDIR) build coverage.html
 
 help:
 	$(ECHO) "Usage: make [target]"

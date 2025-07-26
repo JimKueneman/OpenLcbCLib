@@ -48,6 +48,20 @@ set(LINK_LIBS ${LINK_LIBS}
     utilities
 )
 
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+# Mac OS X specific configuration
+set(START_GROUP)
+set(END_GROUP)
+add_link_options(--coverage)
+else ()
+# Linux specific configuration
+set(START_GROUP "-wl,--start-group")
+set(END_GROUP "-wl,--end-group")
+set(LINK_LIBS ${LINK_LIBS}
+    -lgcov
+)
+endif ()
+
 # Setup gcov target.
 add_custom_target(TARGET_GCOV ALL
     DEPENDS gcovr/coverage.html
@@ -71,13 +85,9 @@ foreach(testsourcefile ${TESTS})
         GTest::gmock_main
 
         -fPIC
-        -lgcov
-        -lcrypto
-        -Wl,--start-group
+        ${START_GROUP}
         ${LINK_LIBS}
-        -Wl,--end-group
-        -lavahi-client
-        -lavahi-common
+        ${END_GROUP}
     )
     add_custom_command(TARGET ${testname}
         POST_BUILD
@@ -92,5 +102,6 @@ endforeach(testsourcefile ${TESTS})
 add_custom_command(OUTPUT gcovr/coverage.html
     COMMAND mkdir -p gcovr
     COMMAND gcovr --html-details gcovr/coverage.html --exclude=_deps.* --exclude=.*_Test.* -r ${ROOT_DIR} .
+    COMMAND ln -sf ${CMAKE_SOURCE_DIR}/build/gcovr/coverage.html ${CMAKE_SOURCE_DIR}/
     VERBATIM
 )
