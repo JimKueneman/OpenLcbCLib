@@ -370,11 +370,10 @@ node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_
 }
 
 uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index) 
-{
-    
+{  
     return (
-        ((uint64_olcb_t)(*buffer)[0 + index] << 8) |
-        ((uint64_olcb_t)(*buffer)[1 + index])
+        ((uint16_olcb_t)(*buffer)[0 + index] << 8) |
+        ((uint16_olcb_t)(*buffer)[1 + index])
         );
     
 }

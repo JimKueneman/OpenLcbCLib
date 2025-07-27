@@ -124,7 +124,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
     uint64_olcb_t node_id = openlcb_node->id << 16;
 
     openlcb_node->consumers.count = 0;
-    for (int i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++)
+    for (uint16_t i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++)
 
         if (i < USER_DEFINED_CONSUMER_COUNT) { // safety net
 

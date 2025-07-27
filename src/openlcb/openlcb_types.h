@@ -255,7 +255,7 @@ extern "C" {
 #define EVENTS_ENCODED_IN_BYTE 4
 
     typedef struct {
-        uint16_olcb_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
+        uint8_olcb_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
         uint8_olcb_t enum_index; // allows a counter for enumerating the event ids
     } event_id_enum_t;
 
@@ -276,18 +276,18 @@ extern "C" {
     } event_id_producer_list_t;
 
     typedef struct {
-        uint16_olcb_t run_state : 5; // Run state... limits the number to how many bits here.... 32 possible states.
-        uint16_olcb_t allocated : 1; // Allocated to be used
-        uint16_olcb_t permitted : 1; // Has the CAN alias been allocated and the network notified
-        uint16_olcb_t initalized : 1; // Has the node been logged into the the network
-        uint16_olcb_t initial_events_broadcast_complete : 1; // has the node finished its initial broadcast of events?
-        uint16_olcb_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
-        uint16_olcb_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
-        uint16_olcb_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
-        uint16_olcb_t openlcb_datagram_ack_sent : 1;
-        uint16_olcb_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-        uint16_olcb_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-        uint16_olcb_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
+        uint8_olcb_t run_state : 5; // Run state... limits the number to how many bits here.... 32 possible states.
+        uint8_olcb_t allocated : 1; // Allocated to be used
+        uint8_olcb_t permitted : 1; // Has the CAN alias been allocated and the network notified
+        uint8_olcb_t initalized : 1; // Has the node been logged into the the network
+        uint8_olcb_t initial_events_broadcast_complete : 1; // has the node finished its initial broadcast of events?
+        uint8_olcb_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
+        uint8_olcb_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
+        uint8_olcb_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
+        uint8_olcb_t openlcb_datagram_ack_sent : 1;
+        uint8_olcb_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+        uint8_olcb_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+        uint8_olcb_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;
 
     typedef struct {
