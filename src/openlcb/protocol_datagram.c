@@ -162,7 +162,7 @@ void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openl
 
 }
 
-uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint16_olcb_t* data_count) {
+uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint16_olcb_t* requested_bytes) {
 
     if (!space_info->present)
         return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
@@ -170,51 +170,51 @@ uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_in
     if (data_address > space_info->highest_address)
         return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND;
 
-    if (*data_count > 64)
+    if (*requested_bytes > 64)
         return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
 
-    if (*data_count == 0)
+    if (*requested_bytes == 0)
         return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
 
-    // Make sure the requested data_count to read does not overrun the highest address of the space, if so clip it
-    if ((data_address + *data_count) > space_info->highest_address) {
+    // Make sure the requested requested_bytes to read does not overrun the highest address of the space, if so clip it
+    if ((data_address + *requested_bytes) > space_info->highest_address) {
         
-        uint32_olcb_t delta = (space_info->highest_address + *data_count) - space_info->highest_address;
+        uint32_olcb_t delta = (space_info->highest_address + *requested_bytes) - space_info->highest_address;
         
-        *data_count = (uint16_olcb_t)((space_info->highest_address - data_address) + 1); // length +1 due to 0...end
+        *requested_bytes = (uint16_olcb_t)((space_info->highest_address - data_address) + 1); // length +1 due to 0...end
         
     }
         
     return 0;
 }
 
-uint16_olcb_t _validate_memory_write_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint16_olcb_t* data_count) {
+uint16_olcb_t _validate_memory_write_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint16_olcb_t* requested_bytes) {
 
     if (space_info->read_only)
         return ERROR_PERMANENT_NOT_IMPLEMENTED;
 
-    return _validate_memory_read_space_parameters(space_info, data_address, data_count);
+    return _validate_memory_read_space_parameters(space_info, data_address, requested_bytes);
 
 }
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
-    return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[data_address], reply_payload_index, data_count);
+    return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[data_address], reply_payload_index, requested_bytes);
 
 }
 #endif
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_all, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_all, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
@@ -225,43 +225,43 @@ uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
     
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    return reply_payload_index + DriverConfigurationMemory_get_read_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
+    return reply_payload_index + DriverConfigurationMemory_get_read_callback()(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
 #endif
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_manufacturer, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_manufacturer, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
     switch (data_address) {
 
         case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
-            return ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
-            return ProtocolSnip_load_name(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_name(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
-            return ProtocolSnip_load_model(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_model(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
-            return ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
-            return ProtocolSnip_load_software_version(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_software_version(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         default:
             return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL;
@@ -273,22 +273,22 @@ uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, 
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
     switch (data_address) {
 
         case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
-            return ProtocolSnip_load_user_version_id(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_user_version_id(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
-            return ProtocolSnip_load_user_name(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_user_name(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
-            return ProtocolSnip_load_user_description(openlcb_node, worker_msg, reply_payload_index, data_count);
+            return ProtocolSnip_load_user_description(openlcb_node, worker_msg, reply_payload_index, requested_bytes);
 
         default:
 
@@ -302,54 +302,54 @@ uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb
 #ifdef SUPPORT_TRACTION
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_definition, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_definition, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
-    return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->fdi[data_address], reply_payload_index, data_count);
+    return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->fdi[data_address], reply_payload_index, requested_bytes);
 }
 
-uint16_olcb_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    return reply_payload_index + DriverConfigurationMemory_read(data_address, data_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
+    return reply_payload_index + DriverConfigurationMemory_read(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
 #endif
 #endif
 
-uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count, uint8_olcb_t space) {
+uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes, uint8_olcb_t space) {
 
     switch (space) {
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
-            return read_memory_space_cdi(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return read_memory_space_cdi(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 
         case ADDRESS_SPACE_ALL:
-            return _read_memory_space_all(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _read_memory_space_all(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
-            return _read_memory_space_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _read_memory_space_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
-            return _read_memory_space_acdi_manufacurer(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _read_memory_space_acdi_manufacurer(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
-            return _read_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _read_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 #ifdef SUPPORT_TRACTION
         case ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
-            return _read_memory_space_train_function_definition_info(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _read_memory_space_train_function_definition_info(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
-            return _read_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _read_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 #endif
 #endif
         default:
@@ -360,20 +360,20 @@ uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* wo
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
 
-    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
     data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    uint16_olcb_t write_count = DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    uint16_olcb_t write_count = DriverConfigurationMemory_get_write_callback()(data_address, requested_bytes, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     if (ApplicationCallbacks_get_config_mem_write()) {
 
-        ApplicationCallbacks_get_config_mem_write()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+        ApplicationCallbacks_get_config_mem_write()(data_address, requested_bytes, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     }
     return write_count;
@@ -382,9 +382,9 @@ uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_n
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
@@ -396,16 +396,16 @@ uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlc
 
     // TODO: Should I check for and insert a terminating NULL if it is missing... 
 
-    return _write_memory_space_configuration_memory(openlcb_node, openlcb_msg, data_address, reply_payload_index, data_count);
+    return _write_memory_space_configuration_memory(openlcb_node, openlcb_msg, data_address, reply_payload_index, requested_bytes);
 
 }
 #endif
 
 #ifdef SUPPORT_TRACTION
 
-uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
@@ -413,46 +413,46 @@ uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_no
 
 TODO:
     THIS IS WRONG.... NOT CONFIGURATION MEMORY WRITE REALLY
-    return DriverConfigurationMemory_write(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    return DriverConfigurationMemory_write(data_address, requested_bytes, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
 #endif
 
 #ifdef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes) {
 
-    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_firmware, data_address, &data_count);
+    uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_firmware, data_address, &requested_bytes);
     if (invalid)
         return invalid;
 
     //   data_address = data_address + openlcb_node->parameters->firmware_image_offset;
 
     //    TODO: This should not be the Configuration Memory 
-    return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    return DriverConfigurationMemory_get_write_callback()(data_address, requested_bytes, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
 #endif
 
-uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count, uint8_olcb_t space) {
+uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t requested_bytes, uint8_olcb_t space) {
 
     switch (space) {
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
-            return _write_memory_space_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _write_memory_space_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
-            return _write_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _write_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 #endif
 #ifdef SUPPORT_TRACTION
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
-            return _write_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _write_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 #endif
 #endif
 #ifdef SUPPORT_FIRMWARE_BOOTLOADER
         case ADDRESS_SPACE_FIRMWARE:
-            return _write_memory_space_firmware(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
+            return _write_memory_space_firmware(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes);
 #endif
 
         default:
@@ -475,7 +475,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
     }
 
-    uint16_olcb_t data_count = (*openlcb_msg->payload[6])&0x7F; // top bit reserved
+    uint16_olcb_t requested_bytes = (*openlcb_msg->payload[6])&0x7F; // top bit reserved
     uint16_olcb_t reply_payload_index = 6;
     uint32_olcb_t data_address = Utilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
 
@@ -483,7 +483,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
 
         reply_payload_index = 7;
         *worker_msg->payload[6] = space;
-        data_count = (*openlcb_msg->payload[7])&0x7F; // top bit reserved
+        requested_bytes = (*openlcb_msg->payload[7])&0x7F; // top bit reserved
 
     }
 
@@ -492,7 +492,7 @@ void _handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* op
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
     Utilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
     
-    uint16_olcb_t read_result_or_error_code = _read_memory_space(openlcb_node, worker_msg, data_address, reply_payload_index, data_count, space);
+    uint16_olcb_t read_result_or_error_code = _read_memory_space(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes, space);
 
     if (read_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
@@ -559,7 +559,7 @@ void _handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 
     }
 
-    uint16_olcb_t data_count = openlcb_msg->payload_count - 6;
+    uint16_olcb_t requested_bytes = openlcb_msg->payload_count - 6;
     uint16_olcb_t payload_index = 6;
     uint32_olcb_t data_address = Utilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
 
@@ -567,7 +567,7 @@ void _handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* o
 
         payload_index = 7;
         *worker_msg->payload[6] = space;
-        data_count = openlcb_msg->payload_count - 7;
+        requested_bytes = openlcb_msg->payload_count - 7;
 
     }
 
@@ -576,7 +576,7 @@ void _handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* o
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
     Utilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
 
-    uint16_olcb_t write_result_or_error_code = _write_memory_space(openlcb_node, openlcb_msg, data_address, payload_index, data_count, space);
+    uint16_olcb_t write_result_or_error_code = _write_memory_space(openlcb_node, openlcb_msg, data_address, payload_index, requested_bytes, space);
 
     if (write_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
@@ -615,9 +615,9 @@ void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openl
     Utilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
 
-    uint16_olcb_t data_count = (openlcb_msg->payload_count - reply_payload_index);
+    uint16_olcb_t requested_bytes = (openlcb_msg->payload_count - reply_payload_index);
 
-    if ((data_count == 0) || (openlcb_msg->payload_count % 2 != 0)) {
+    if ((requested_bytes == 0) || (openlcb_msg->payload_count % 2 != 0)) {
 
         _send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
@@ -634,14 +634,14 @@ void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openl
     }
 
     // Use the worker messages payload as a buffer to read/write in the existing values
-    uint16_olcb_t _result_or_error_code = _read_memory_space(openlcb_node, worker_msg, data_address, reply_payload_index, data_count, space);
+    uint16_olcb_t _result_or_error_code = _read_memory_space(openlcb_node, worker_msg, data_address, reply_payload_index, requested_bytes, space);
 
     if (_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
         uint16_olcb_t data_pair_index = reply_payload_index;
         uint16_olcb_t data_index = reply_payload_index;
 
-        while (data_pair_index < (reply_payload_index + data_count)) {
+        while (data_pair_index < (reply_payload_index + requested_bytes)) {
 
             // (data_byte & data_mask) | (existing_byte & ~data_mask)
             *worker_msg->payload[data_index] =

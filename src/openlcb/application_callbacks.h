@@ -59,7 +59,7 @@ typedef void (*callback_event_pc_report_t)(openlcb_node_t* openlcb_node, event_i
 typedef void (*callback_event_pc_report_with_payload_t)(openlcb_node_t* node, event_id_t* event_id, uint16_olcb_t count, event_payload_t* payload);
 
 // Configuration Memory Write occured
-typedef void (*callback_config_mem_write_t)(uint32_olcb_t address, uint16_olcb_t data_count, configuration_memory_buffer_t* config_mem_buffer);
+typedef void (*callback_config_mem_write_t)(uint32_olcb_t address, uint16_olcb_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
 
 // Configuration Memory Freeze
 typedef void(*callback_config_mem_freeze_t)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);

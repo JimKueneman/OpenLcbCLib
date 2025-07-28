@@ -62,7 +62,7 @@ extern void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, 
 
 extern uint16_olcb_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint16_olcb_t index);
 
-extern uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_olcb_t byte_array[], uint16_olcb_t payload_index, uint16_olcb_t data_count);
+extern uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_olcb_t byte_array[], uint16_olcb_t payload_index, uint16_olcb_t requested_bytes);
 
 extern void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg); 
 

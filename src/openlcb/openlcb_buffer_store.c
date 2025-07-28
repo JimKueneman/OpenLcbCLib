@@ -147,8 +147,8 @@ void _update_buffer_telemetry(uint16_olcb_t buffer_size) {
 
 openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
-    uint16_olcb_t offset_start = 0;
-    uint16_olcb_t offset_end = 0;
+    uint8_olcb_t offset_start = 0;
+    uint8_olcb_t offset_end = 0;
 
     if (buffer_size <= LEN_MESSAGE_BYTES_BASIC) {
 
@@ -191,7 +191,7 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
     }
 
-    for (uint16_olcb_t i = offset_start; i < offset_end; i++) {
+    for (uint8_olcb_t i = offset_start; i < offset_end; i++) {
 
         if (!_message_buffer.messages[i].state.allocated) {
 
