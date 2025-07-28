@@ -55,7 +55,7 @@ openlcb_msg_fifo_t openlcb_msg_buffer_fifo;
 
 void BufferFifo_initialiaze(void) {
 
-    for (int i = 0; i < LEN_MESSAGE_FIFO_BUFFER; i++)
+    for (uint8_olcb_t i = 0; i < LEN_MESSAGE_FIFO_BUFFER; i++)
         openlcb_msg_buffer_fifo.list[i] = (void*) 0;
 
     openlcb_msg_buffer_fifo.head = 0;

@@ -97,7 +97,7 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
 }
 
-openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
+openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
 
     uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
     uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
@@ -125,7 +125,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_
 
 }
 
-openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_start_index) {
+openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index) {
 
     uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
     uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
@@ -146,7 +146,7 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer
 
 }
 
-openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_start_index) {
+openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index) {
 
     uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
     uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
@@ -170,7 +170,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_s
 
 }
 
-openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
+openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
 
     openlcb_msg_t* new_msg = BufferFifo_push(data_size);
 
@@ -192,7 +192,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint16_olcb_t can_buffer
 
 }
 
-void _handle_can_legacy_snip(can_msg_t* can_msg, uint16_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
+void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 

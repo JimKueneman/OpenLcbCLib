@@ -149,7 +149,7 @@ void _send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* 
 
 }
 
-void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_olcb_t reply_pending_code) {
+void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t reply_pending_code) {
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_OK_REPLY, 2);
 
@@ -162,7 +162,7 @@ void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openl
 
 }
 
-uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint8_olcb_t* data_count) {
+uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint16_olcb_t* data_count) {
 
     if (!space_info->present)
         return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
@@ -176,13 +176,19 @@ uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_in
     if (*data_count == 0)
         return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
 
-    if ((data_address + *data_count) > space_info->highest_address)
-        *data_count = space_info->highest_address - data_address + 1; // length +1 due to 0...end
-
+    // Make sure the requested data_count to read does not overrun the highest address of the space, if so clip it
+    if ((data_address + *data_count) > space_info->highest_address) {
+        
+        uint32_olcb_t delta = (space_info->highest_address + *data_count) - space_info->highest_address;
+        
+        *data_count = (uint16_olcb_t)((space_info->highest_address - data_address) + 1); // length +1 due to 0...end
+        
+    }
+        
     return 0;
 }
 
-uint16_olcb_t _validate_memory_write_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint8_olcb_t* data_count) {
+uint16_olcb_t _validate_memory_write_space_parameters(const user_address_space_info_t* space_info, uint32_olcb_t data_address, uint16_olcb_t* data_count) {
 
     if (space_info->read_only)
         return ERROR_PERMANENT_NOT_IMPLEMENTED;
@@ -193,7 +199,7 @@ uint16_olcb_t _validate_memory_write_space_parameters(const user_address_space_i
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, data_address, &data_count);
     if (invalid)
@@ -206,7 +212,7 @@ uint16_olcb_t read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t*
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_all, data_address, &data_count);
     if (invalid)
@@ -219,7 +225,7 @@ uint16_olcb_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
     
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
     if (invalid)
@@ -234,7 +240,7 @@ uint16_olcb_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_no
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_manufacturer, data_address, &data_count);
     if (invalid)
@@ -267,7 +273,7 @@ uint16_olcb_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, 
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &data_count);
     if (invalid)
@@ -296,7 +302,7 @@ uint16_olcb_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb
 #ifdef SUPPORT_TRACTION
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _read_memory_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_definition, data_address, &data_count);
     if (invalid)
@@ -305,7 +311,7 @@ uint16_olcb_t _read_memory_space_train_function_definition_info(openlcb_node_t* 
     return reply_payload_index + Utilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->fdi[data_address], reply_payload_index, data_count);
 }
 
-uint16_olcb_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
     if (invalid)
@@ -319,7 +325,7 @@ uint16_olcb_t _read_memory_space_train_function_configuration_memory(openlcb_nod
 #endif
 #endif
 
-uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count, uint8_olcb_t space) {
+uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count, uint8_olcb_t space) {
 
     switch (space) {
 
@@ -354,7 +360,7 @@ uint16_olcb_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* wo
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
 
     uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &data_count);
@@ -376,7 +382,7 @@ uint16_olcb_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_n
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &data_count);
     if (invalid)
@@ -397,7 +403,7 @@ uint16_olcb_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlc
 
 #ifdef SUPPORT_TRACTION
 
-uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_train_function_config_memory, data_address, &data_count);
     if (invalid)
@@ -414,7 +420,7 @@ TODO:
 
 #ifdef SUPPORT_FIRMWARE_BOOTLOADER
 
-uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count) {
+uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count) {
 
     uint16_olcb_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_firmware, data_address, &data_count);
     if (invalid)
@@ -428,7 +434,7 @@ uint16_olcb_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb
 }
 #endif
 
-uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint8_olcb_t data_count, uint8_olcb_t space) {
+uint16_olcb_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_olcb_t data_address, uint16_olcb_t reply_payload_index, uint16_olcb_t data_count, uint8_olcb_t space) {
 
     switch (space) {
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
@@ -632,8 +638,8 @@ void _handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openl
 
     if (_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
-        uint8_olcb_t data_pair_index = reply_payload_index;
-        uint8_olcb_t data_index = reply_payload_index;
+        uint16_olcb_t data_pair_index = reply_payload_index;
+        uint16_olcb_t data_index = reply_payload_index;
 
         while (data_pair_index < (reply_payload_index + data_count)) {
 

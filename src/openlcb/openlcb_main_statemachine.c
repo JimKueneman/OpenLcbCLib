@@ -78,7 +78,7 @@ void MainStatemachine_initialize(
     DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback, configuration_factory_reset_callback);
     DriverMcu_initialization(mcu_setup_callback, reboot_callback);
 
-    for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
+    for (uint16_olcb_t i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++)
         _openlcb_helper.worker_buffer[i] = 0x00;
 
     _openlcb_helper.active_msg = (void*) 0;

@@ -74,7 +74,7 @@ void _encode_event_state(uint8_olcb_t* state_byte, uint8_olcb_t event_offset, ev
     // Clear the bits in that offset in the byte
     (*state_byte) = (*state_byte) & ~(0b00000011 << ((3 - event_offset) * 2));
     // Set the index offset to the new value
-    (*state_byte) = (*state_byte) | (mask << (3 - event_offset) * 2);
+    (*state_byte) = (*state_byte) | (uint8_olcb_t)((mask << (3 - event_offset) * 2));
 
 }
 
@@ -187,7 +187,7 @@ void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
 }
 
-uint16_olcb_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint8_olcb_t event_index) {
+uint16_olcb_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint16_olcb_t event_index) {
 
     uint8_olcb_t event_state = openlcb_node->consumers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE];
     uint8_olcb_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE;
@@ -214,7 +214,7 @@ uint16_olcb_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_no
 
 }
 
-uint16_olcb_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint8_olcb_t event_index) {
+uint16_olcb_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint16_olcb_t event_index) {
 
     uint8_olcb_t event_state = openlcb_node->producers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE];
     uint8_olcb_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE;
@@ -247,9 +247,9 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
-    int event_index = Utilities_is_consumer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg));
-
-    if (event_index < 0) {
+    uint16_olcb_t event_index = 0;
+ 
+    if (Utilities_is_consumer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
@@ -366,9 +366,9 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
-    int event_index = Utilities_is_producer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg));
+    uint16_olcb_t event_index;
 
-    if (event_index < 0) {
+    if (Utilities_is_producer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
 
@@ -571,11 +571,11 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
         event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         event_payload_t local_payload;
-        uint8_olcb_t local_payload_count = (openlcb_msg->payload_count - sizeof (eventid));
+        uint16_olcb_t local_payload_count = (openlcb_msg->payload_count - sizeof (eventid));
 
-        int payload_index = sizeof (eventid);
+        uint16_olcb_t payload_index = sizeof (eventid);
 
-        for (int i = 0; i < local_payload_count; i++) {
+        for (uint16_olcb_t i = 0; i < local_payload_count; i++) {
 
             local_payload[i] = *openlcb_msg->payload[payload_index];
             payload_index = payload_index + 1;
