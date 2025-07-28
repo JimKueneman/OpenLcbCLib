@@ -48,7 +48,7 @@ extern "C" {
     // ************************ USER DEFINED VARIABLES *****************************
 
 #ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH
-#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH                    10   // USER DEFINED MAX VALUE = 0xFE = 256
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH                    10   // USER DEFINED MAX VALUE = 0xFE = 254
 #endif
 
     // *********************END USER DEFINED VARIABLES *****************************
