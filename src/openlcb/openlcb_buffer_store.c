@@ -71,7 +71,7 @@ void _clear_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
 void BufferStore_initialize(void) {
 
-    for (uint8_olcb_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         _clear_openlcb_message(&_message_buffer.messages[i]);
 
@@ -191,7 +191,7 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
     }
 
-    for (uint8_olcb_t i = offset_start; i < offset_end; i++) {
+    for (olcb_int_t i = offset_start; i < offset_end; i++) {
 
         if (!_message_buffer.messages[i].state.allocated) {
 

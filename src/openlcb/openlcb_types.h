@@ -107,6 +107,18 @@ extern "C" {
     typedef uint64_t uint64_olcb_t;
     typedef uint16_t uint16_olcb_t;
     typedef uint32_t uint32_olcb_t;
+#ifdef __PICC__
+    // Code specific to PIC10/12/16 devices compiled with XC8
+    typedef long int olcb_int_t;
+#elif defined(__XC8__)
+    // Code specific to PIC18, PIC24, dsPIC33, or AVR devices compiled with XC8
+    typedef long int olcb_int_t;
+#else
+    typedef int olcb_int_t;
+#endif
+
+
+    
 
 
 #define FALSE 0

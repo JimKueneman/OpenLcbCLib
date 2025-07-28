@@ -101,7 +101,7 @@ void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) {
 
 void Utilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, event_id_t event_id) {
 
-    for (uint8_olcb_t i = 7; i >= 0; i--) {
+    for (olcb_int_t i = 7; i >= 0; i--) {
 
         *openlcb_msg->payload[i] = event_id & 0xFF;
         event_id = event_id >> 8;
@@ -193,8 +193,8 @@ void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_
 
     openlcb_msg->payload_count = 6 + index;
 
-    for (uint8_olcb_t iIndex = 5; iIndex >= 0; iIndex--) {
-        *openlcb_msg->payload[iIndex + index] = node_id & 0xFF;
+    for (olcb_int_t i = 5; i >= 0; i--) {
+        *openlcb_msg->payload[i + index] = node_id & 0xFF;
         node_id = node_id >> 8;
 
     }
@@ -203,7 +203,7 @@ void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_
 
 void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64_olcb_t data) {
 
-    for (uint8_olcb_t i = 7; i >= 0; i--) {
+    for (olcb_int_t i = 7; i >= 0; i--) {
 
         *openlcb_msg->payload[i] = data & 0xFF;
         data = data >> 8;
@@ -389,7 +389,7 @@ uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory
 
 void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index) {
 
-    for (uint8_olcb_t i = 5; i >= 0; i--) {
+    for (olcb_int_t i = 5; i >= 0; i--) {
         
         (*buffer)[i + index] = node_id & 0xFF;
         node_id = node_id >> 8;
@@ -401,7 +401,7 @@ void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *
 void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index) {
   
         
-    for (uint8_olcb_t i = 7; i >= 0; i--) {
+    for (olcb_int_t i = 7; i >= 0; i--) {
         
         (*buffer)[i + index] = event_id & 0xFF;
         event_id = event_id >> 8;
@@ -415,7 +415,7 @@ event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buf
     
     event_id_t retval = 0L;
     
-    for (uint8_olcb_t i = 0; i <= 7; i++) {
+    for (olcb_int_t i = 0; i <= 7; i++) {
         retval = retval << 8;
         retval |= (*buffer)[i + index] & 0xFF;
     }

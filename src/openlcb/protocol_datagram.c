@@ -178,9 +178,7 @@ uint16_olcb_t _validate_memory_read_space_parameters(const user_address_space_in
 
     // Make sure the requested requested_bytes to read does not overrun the highest address of the space, if so clip it
     if ((data_address + *requested_bytes) > space_info->highest_address) {
-        
-        uint32_olcb_t delta = (space_info->highest_address + *requested_bytes) - space_info->highest_address;
-        
+ 
         *requested_bytes = (uint16_olcb_t)((space_info->highest_address - data_address) + 1); // length +1 due to 0...end
         
     }
