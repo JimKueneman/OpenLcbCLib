@@ -45,7 +45,7 @@ void CanUtilities_clear_can_message(can_msg_t* can_msg) {
     
     can_msg->identifier = 0;
     can_msg->payload_count = 0;
-    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) 
+    for (olcb_int_t i = 0; i < LEN_CAN_BYTE_ARRAY; i++) 
       can_msg->payload[i] = 0x00;
     
 }
@@ -64,7 +64,7 @@ uint16_olcb_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t* can_msg
 
             if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT)
 
-                return ( ((can_msg->payload[0] & 0x0F) << 8) | (can_msg->payload[1]));
+                return ( (uint16_olcb_t)((can_msg->payload[0] & 0x0F) << 8) | (uint16_olcb_t)(can_msg->payload[1]));
 
             break;
 
@@ -113,9 +113,9 @@ uint16_olcb_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t* can_msg) {
 uint8_olcb_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg, uint8_olcb_t can_start_index) {
 
 
-    uint16_olcb_t result = 0;
+    uint8_olcb_t result = 0;
 
-    for (int i = can_start_index; i < can_msg->payload_count; i++) {
+    for (olcb_int_t i = can_start_index; i < can_msg->payload_count; i++) {
 
         if (openlcb_msg->payload_count < openlcb_msg->payload_size) {
             
@@ -148,7 +148,7 @@ uint8_olcb_t CanUtilities_count_nulls_in_can_payload(can_msg_t* can_msg) {
 
     uint8_olcb_t count = 0;
 
-    for (int i = 0; i < can_msg->payload_count; i++) {
+    for (olcb_int_t i = 0; i < can_msg->payload_count; i++) {
 
         if (can_msg->payload[i] == 0x00)
 
@@ -180,8 +180,7 @@ uint64_olcb_t CanUtilities_extract_can_payload_as_node_id(can_msg_t* can_msg) {
             ((uint64_olcb_t) can_msg->payload[2] << 24) |
             ((uint64_olcb_t) can_msg->payload[3] << 16) |
             ((uint64_olcb_t) can_msg->payload[4] << 8) |
-            ((uint64_olcb_t) can_msg->payload[5])
-            
+            ((uint64_olcb_t) can_msg->payload[5])           
             );
 
 }
@@ -218,9 +217,9 @@ uint8_olcb_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t* ope
     if (openlcb_start_index >= openlcb_msg->payload_count) 
         return 0;
     
-    uint16_olcb_t count = 0;
+    uint8_olcb_t count = 0;
     
-    for (int i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
+    for (olcb_int_t i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
           
         can_msg->payload[i] = *openlcb_msg->payload[openlcb_start_index];
         
@@ -276,8 +275,8 @@ void CanUtilities_copy_node_id_to_payload(can_msg_t* can_msg, uint64_olcb_t node
 
         can_msg->payload_count = 6 + start_offset;
 
-        for (int iIndex = (start_offset + 5); iIndex >= (0 + start_offset); iIndex--) { // This is a count down...
-            can_msg->payload[iIndex] = node_id & 0xFF;
+        for (olcb_int_t i = (start_offset + 5); i >= (0 + start_offset); i--) { // This is a count down...
+            can_msg->payload[i] = node_id & 0xFF;
             node_id = node_id >> 8;
         }
 
@@ -289,7 +288,7 @@ void CanUtilities_copy_node_id_to_payload(can_msg_t* can_msg, uint64_olcb_t node
 
 void CanUtilities_copy_64_bit_to_can_message(can_msg_t* can_msg, uint64_olcb_t data) {
 
-    for (int i = 7; i >= 0; i--) {
+    for (olcb_int_t i = 7; i >= 0; i--) {
 
         can_msg->payload[i] = data & 0xFF;
         data = data >> 8;
@@ -304,7 +303,7 @@ void CanUtilities_copy_can_message(can_msg_t* can_msg_source, can_msg_t* can_msg
     
     can_msg_target->identifier = can_msg_source->identifier;
     
-    for (int i = 0; i < can_msg_source->payload_count; i++) 
+    for (olcb_int_t i = 0; i < can_msg_source->payload_count; i++) 
         can_msg_target->payload[i] = can_msg_source->payload[i];
     
     can_msg_target->payload_count = can_msg_source->payload_count;

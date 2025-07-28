@@ -45,7 +45,7 @@ openlcb_msg_t* openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
 
 void BufferList_initialiaze(void) {
 
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++)
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++)
         openlcb_msg_buffer_list[i] = (void*) 0;
 
 }
@@ -54,7 +54,7 @@ openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len) {
 
     openlcb_msg_t* new_msg;
 
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (!openlcb_msg_buffer_list[i]) {
 
@@ -78,7 +78,7 @@ openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len) {
 
 openlcb_msg_t* BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti) {
 
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (openlcb_msg_buffer_list[i]) {
 
@@ -101,7 +101,7 @@ void BufferList_free(openlcb_msg_t * msg) {
     if (!msg)
         return;
 
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (openlcb_msg_buffer_list[i] == msg) {
 
@@ -122,7 +122,7 @@ void BufferList_release(openlcb_msg_t* msg) {
     if (!msg)
         return;
 
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (openlcb_msg_buffer_list[i] == msg) {
 
@@ -146,7 +146,7 @@ openlcb_msg_t* BufferList_index_of(uint16_olcb_t index) {
 
 uint8_olcb_t BufferList_is_empty(void) {
 
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (openlcb_msg_buffer_list[i] != (void*) 0)
 

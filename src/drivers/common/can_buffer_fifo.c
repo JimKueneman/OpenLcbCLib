@@ -58,7 +58,7 @@ can_fifo_t can_msg_buffer_fifo;
 
 void CanBufferFifo_initialiaze(void) {
     
-    for (int i = 0; i < LEN_CAN_FIFO_BUFFER; i++) {
+    for (olcb_int_t i = 0; i < LEN_CAN_FIFO_BUFFER; i++) {
 
         can_msg_buffer_fifo.list[i] = (void*) 0;
         
@@ -71,7 +71,8 @@ void CanBufferFifo_initialiaze(void) {
 
 can_msg_t* CanBufferFifo_push(void) {
 
-    uint16_olcb_t next = can_msg_buffer_fifo.head + 1;
+    uint8_olcb_t next = can_msg_buffer_fifo.head + 1;
+    
     if (next >= LEN_CAN_FIFO_BUFFER)
         next = 0;
 

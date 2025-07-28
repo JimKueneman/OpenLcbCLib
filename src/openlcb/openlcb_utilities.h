@@ -54,19 +54,19 @@ extern void Utilities_copy_openlcb_message(openlcb_msg_t* source, openlcb_msg_t*
 
 extern void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64_olcb_t data);
 
-extern void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint8_olcb_t index);
+extern void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint16_olcb_t index);
 
-extern void Utilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_olcb_t word, uint8_olcb_t index);
+extern void Utilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_olcb_t word, uint16_olcb_t index);
 
-extern void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_olcb_t doubleword, uint8_olcb_t index);
+extern void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_olcb_t doubleword, uint16_olcb_t index);
 
-extern uint16_olcb_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint8_olcb_t index);
+extern uint16_olcb_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint16_olcb_t index);
 
-extern uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_olcb_t byte_array[], uint8_olcb_t payload_index, uint16_olcb_t data_count);
+extern uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_olcb_t byte_array[], uint16_olcb_t payload_index, uint16_olcb_t requested_bytes);
 
 extern void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg); 
 
-extern node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_olcb_t index);
+extern node_id_t Utilities_extract_node_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_olcb_t index);
 
 extern event_id_t Utilities_extract_event_id_from_openlcb_payload(openlcb_msg_t* openlcb_msg);
 
@@ -82,9 +82,9 @@ extern void Utilities_set_multi_frame_flag( uint8_olcb_t* target,  uint8_olcb_t 
 
 extern uint8_olcb_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
-extern int Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id);
+extern uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id, uint16_olcb_t* event_index);
 
-extern int Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id);
+extern uint8_olcb_t Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id, uint16_olcb_t* event_index);
 
 extern uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 

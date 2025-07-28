@@ -48,6 +48,8 @@ extern "C" {
     // Total number of message buffers available for use
     // Note you can override these with Define Macros in your compiler 
 
+    // The SUM of the next 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
+
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
 #define USER_DEFINED_BASIC_BUFFER_DEPTH     32  // USER DEFINED 
 #endif
@@ -64,10 +66,11 @@ extern "C" {
 #define USER_DEFINED_STREAM_BUFFER_DEPTH    0  // USER DEFINED
 #endif
 
+    // The SUM of the previous 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
 
 
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH      1  // USER DEFINED 
+#define USER_DEFINED_NODE_BUFFER_DEPTH      1  // USER DEFINED   MAX LIMIT = 0xFE = 254
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
@@ -79,19 +82,19 @@ extern "C" {
 #endif
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
-    
-  #ifndef USER_DEFINED_PRODUCER_COUNT
-    #define USER_DEFINED_PRODUCER_COUNT         64 // USER DEFINED 
-  #endif
 
-  #ifndef USER_DEFINED_CONSUMER_COUNT
-    #define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
-  #endif
+#ifndef USER_DEFINED_PRODUCER_COUNT
+#define USER_DEFINED_PRODUCER_COUNT         64 // USER DEFINED 
+#endif
+
+#ifndef USER_DEFINED_CONSUMER_COUNT
+#define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
+#endif
 
 #else
-    
-  #define USER_DEFINED_PRODUCER_COUNT 0
-  #define USER_DEFINED_CONSUMER_COUNT 0
+
+#define USER_DEFINED_PRODUCER_COUNT 0
+#define USER_DEFINED_CONSUMER_COUNT 0
 
 #endif
 
@@ -104,6 +107,18 @@ extern "C" {
     typedef uint64_t uint64_olcb_t;
     typedef uint16_t uint16_olcb_t;
     typedef uint32_t uint32_olcb_t;
+#ifdef __PICC__
+    // Code specific to PIC10/12/16 devices compiled with XC8
+    typedef long int olcb_int_t;
+#elif defined(__XC8__)
+    // Code specific to PIC18, PIC24, dsPIC33, or AVR devices compiled with XC8
+    typedef long int olcb_int_t;
+#else
+    typedef int olcb_int_t;
+#endif
+
+
+    
 
 
 #define FALSE 0
@@ -312,7 +327,7 @@ extern "C" {
 
     } openlcb_nodes_t;
 
-typedef struct {
+    typedef struct {
         openlcb_msg_t worker;
         payload_stream_t worker_buffer;
         openlcb_msg_t* active_msg;
