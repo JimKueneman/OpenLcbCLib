@@ -43,9 +43,14 @@ include_directories(
 # Add libraries that have test enabled.
 set(GTEST ON)
 add_subdirectory(${ROOT_DIR}/src/utilities utilities)
+add_subdirectory(${ROOT_DIR}/src/drivers/common/ drivers_common)
+add_subdirectory(${ROOT_DIR}/src/drivers/ drivers)
+add_subdirectory(${ROOT_DIR}/src/openlcb/ openlcb)
+
 
 set(LINK_LIBS ${LINK_LIBS}
     utilities
+    drivers_common
 )
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")

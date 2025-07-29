@@ -27,7 +27,7 @@
  * \file driver_mcu.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to initialize the device.  A new supported MCU/PC will create a file that handles the 
+ * to initialize the device.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
@@ -35,22 +35,23 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __MCU_DRV__
-#define	__MCU_DRV__
+#define __MCU_DRV__
 
-#ifdef	__cplusplus
-extern "C" {
+#include "../openlcb/openlcb_types.h"
+
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
-    
-extern void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback);
 
-extern void DriverMcu_reboot(void);
+    extern void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback);
 
-#ifdef	__cplusplus
+    extern void DriverMcu_reboot(void);
+
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-
-#endif	/* __MCU_DRV__ */
-
+#endif /* __MCU_DRV__ */
