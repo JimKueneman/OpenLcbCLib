@@ -44,8 +44,7 @@
 #include "can_types.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
     extern void CanBufferFifo_initialize(void);

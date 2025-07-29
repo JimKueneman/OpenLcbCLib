@@ -151,3 +151,7 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_wrap_head_tail)
         }
     }
 }
+
+TEST(CAN_BufferFIFO, CAN_BufferFIFO_wra)
+{
+}

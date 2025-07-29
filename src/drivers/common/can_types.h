@@ -41,8 +41,7 @@
 #include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
     // ************************ USER DEFINED VARIABLES *****************************
@@ -66,24 +65,21 @@ extern "C"
     // Structure for a basic CAN payload
     typedef uint8_olcb_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
-    typedef struct
-    {
+    typedef struct {
         uint8_olcb_t allocated : 1;
         uint8_olcb_t addressed_direct_tx : 1; // If set the CAN statemachine will directly send it assuming all the source/dest/mti/data is all set up.  Used for sending errors found during Can multi-frame reception
     } can_msg_state_t;
 
-    typedef struct
-    {
+    typedef struct {
         can_msg_state_t state;
-        uint32_olcb_t identifier;    // CAN 29 bit identifier (extended)
-        uint8_olcb_t payload_count;  // How many bytes are valid
+        uint32_olcb_t identifier; // CAN 29 bit identifier (extended)
+        uint8_olcb_t payload_count; // How many bytes are valid
         payload_bytes_can_t payload; // Payload bytes
     } can_msg_t;
 
     typedef can_msg_t can_buffer_store_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
 
-    typedef struct
-    {
+    typedef struct {
         openlcb_statemachine_worker_t *openlcb_worker;
         can_msg_t can_worker;
         can_msg_t *active_msg;
@@ -94,9 +90,9 @@ extern "C"
     // void func(uint8_olcb_t channel, can_msg_t* can_msg)
     typedef void (*can_rx_callback_func_t)(uint8_olcb_t, can_msg_t *);
 
-    typedef uint8_olcb_t (*transmit_raw_can_frame_func_t)(uint8_olcb_t, can_msg_t *);
+    typedef uint8_olcb_t(*transmit_raw_can_frame_func_t)(uint8_olcb_t, can_msg_t *);
 
-    typedef uint8_olcb_t (*is_can_tx_buffer_clear_func_t)(uint16_olcb_t);
+    typedef uint8_olcb_t(*is_can_tx_buffer_clear_func_t)(uint16_olcb_t);
 
     typedef void (*can_rx_driver_callback_t)(can_rx_callback_func_t);
 
