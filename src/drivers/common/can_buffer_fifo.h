@@ -50,7 +50,7 @@ extern "C"
 
     extern void CanBufferFifo_initialize(void);
 
-    extern uint8_olcb_t *CanBufferFifo_push(can_msg_t* new_msg);
+    extern uint8_olcb_t CanBufferFifo_push(can_msg_t* new_msg);
 
     extern can_msg_t *CanBufferFifo_pop(void);
 

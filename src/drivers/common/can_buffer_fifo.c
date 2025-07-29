@@ -67,7 +67,7 @@ void CanBufferFifo_initialize(void)
     can_msg_buffer_fifo.tail = 0;
 }
 
-uint8_olcb_t *CanBufferFifo_push(can_msg_t* new_msg)
+uint8_olcb_t CanBufferFifo_push(can_msg_t* new_msg)
 {
     
     if (!new_msg) {
