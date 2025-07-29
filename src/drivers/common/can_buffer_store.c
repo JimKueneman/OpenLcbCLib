@@ -65,7 +65,12 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
     msg->identifier = 0;
     msg->payload_count = 0;
-    
+    for (olcb_int_t i= 0; i < LEN_CAN_BYTE_ARRAY; i++) {
+
+        msg->payload[i] = 0;
+
+    }
+
 }
 
 can_msg_t* CanBufferStore_allocateBuffer(void) {
@@ -75,21 +80,21 @@ can_msg_t* CanBufferStore_allocateBuffer(void) {
         if (!_can_buffer_store[i].state.allocated) {
 
             _can_buffer_store_message_allocated = _can_buffer_store_message_allocated + 1;
-            
+
             if (_can_buffer_store_message_allocated > _can_buffer_store_message_max_allocated)
                 _can_buffer_store_message_max_allocated = _can_buffer_store_message_allocated;
-            
-            
+
+
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
             _can_buffer_store[i].state.allocated = TRUE;
             _can_buffer_store[i].state.addressed_direct_tx = FALSE;
-      
+
             return &_can_buffer_store[i];
 
         }
 
     }
-    
+
     return (void*) 0;
 
 }
@@ -111,13 +116,13 @@ uint16_olcb_t CanBufferStore_messages_allocated(void) {
 }
 
 uint16_olcb_t CanBufferStore_messages_max_allocated(void) {
-    
+
     return _can_buffer_store_message_max_allocated;
-    
+
 }
 
 void CanBufferStore_clear_max_allocated(void) {
-   
+
     _can_buffer_store_message_max_allocated = 0;
-    
+
 }

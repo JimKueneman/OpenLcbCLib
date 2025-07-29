@@ -27,7 +27,7 @@
  *
  * \file can_buffer_fifo.h
  *
- * Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages 
+ * Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages
  * that need to be passed on to the nodes.  This buffer is accessed in the CAN Rx
  * statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms
  * timer when accessing it is critical.
@@ -37,30 +37,29 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __CAN_BUFFERS__
-#define	__CAN_BUFFERS__
+#define __CAN_BUFFERS__
 
 #include "can_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void CanBufferFifo_initialiaze(void);
+    extern void CanBufferFifo_initialize(void);
 
-extern can_msg_t* CanBufferFifo_push(void);
+    extern uint8_olcb_t *CanBufferFifo_push(can_msg_t* new_msg);
 
-extern can_msg_t* CanBufferFifo_pop(void);
+    extern can_msg_t *CanBufferFifo_pop(void);
 
-extern uint8_olcb_t CanBufferFifo_is_empty(void);
+    extern uint8_olcb_t CanBufferFifo_is_empty(void);
 
-extern uint16_olcb_t CanBufferFifo_get_allocated_count(void);
+    extern uint16_olcb_t CanBufferFifo_get_allocated_count(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-
-#endif	/* __CAN_BUFFERS__ */
-
+#endif /* __CAN_BUFFERS__ */

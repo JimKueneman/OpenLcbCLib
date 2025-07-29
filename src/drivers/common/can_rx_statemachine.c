@@ -71,8 +71,8 @@ uint32_olcb_t _oir_identifier(uint16_olcb_t source_alias) {
 }
 
 openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti, uint16_olcb_t error_code) {
-    
-    can_msg_t* can_msg_error = CanBufferFifo_push();
+
+    can_msg_t* can_msg_error = CanBufferStore_allocateBuffer();
 
     if (can_msg_error) {
 
@@ -90,6 +90,8 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
         can_msg_error->state.addressed_direct_tx = TRUE;
 
         can_msg_error->payload_count = 4;
+
+        CanBufferFifo_push(can_msg_error);
 
     }
 
@@ -155,7 +157,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
     openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
     if (!result) {
- 
+
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     }
@@ -277,44 +279,49 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
 }
 
-void _handle_rid_control_frame(can_msg_t* can_msg) {
+uint8_olcb_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
 
-    can_msg_t* new_can_msg = CanBufferFifo_push();
+    can_msg_t* new_can_msg = CanBufferStore_allocateBuffer();
 
-    if (!new_can_msg)
-        return;
+    if (!new_can_msg) {
+
+        return FALSE;
+
+    }
 
     CanUtilities_copy_can_message(can_msg, new_can_msg);
+
+    return (CanBufferFifo_push(new_can_msg));
+
 }
 
-void _handle_amd_control_frame(can_msg_t* can_msg) {
+uint8_olcb_t _handle_rid_control_frame(can_msg_t* can_msg) {
 
-    can_msg_t* new_can_msg = CanBufferFifo_push();
+    return (_allocate_copy_and_push_can_msg(can_msg));
 
-    if (!new_can_msg)
-        return;
-
-    CanUtilities_copy_can_message(can_msg, new_can_msg);
 }
 
-void _handle_ame_control_frame(can_msg_t* can_msg) {
+uint8_olcb_t _handle_amd_control_frame(can_msg_t* can_msg) {
 
-    can_msg_t* new_can_msg = CanBufferFifo_push();
+    return (_allocate_copy_and_push_can_msg(can_msg));
 
-    if (!new_can_msg)
-        return;
-
-    CanUtilities_copy_can_message(can_msg, new_can_msg);
 }
 
-void _handle_amr_control_frame(can_msg_t* can_msg) {
+uint8_olcb_t _handle_ame_control_frame(can_msg_t* can_msg) {
 
-    can_msg_t* new_can_msg = CanBufferFifo_push();
+    return (_allocate_copy_and_push_can_msg(can_msg));
 
-    if (!new_can_msg)
-        return;
+}
 
-    CanUtilities_copy_can_message(can_msg, new_can_msg);
+uint8_olcb_t _handle_amr_control_frame(can_msg_t* can_msg) {
+
+    return(_allocate_copy_and_push_can_msg(can_msg));
+
+}
+
+uint8_olcb_t _handle_incoming_cid(can_msg_t* can_msg) {
+
+    return(_allocate_copy_and_push_can_msg(can_msg));
 
 }
 
@@ -350,17 +357,6 @@ void _handle_incoming_can_variable_field(can_msg_t* can_msg) {
             break;
 
     }
-
-}
-
-void _handle_incoming_cid(can_msg_t* can_msg) {
-
-    can_msg_t* new_can_msg = CanBufferFifo_push();
-
-    if (!new_can_msg)
-        return;
-
-    CanUtilities_copy_can_message(can_msg, new_can_msg);
 
 }
 
