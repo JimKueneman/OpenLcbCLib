@@ -37,25 +37,45 @@
  * @date 5 Dec 2024
  */
 
-#include "string.h"
-#include "stdio.h"
-#include "stdlib.h"
+#include "utilities/mustangpeak_string_helper.h"
 
+#include <assert.h>
+#include <stdint.h>
+#include <string.h>
 
-char *strnew(unsigned long char_count)
+/// Magic number for error checking malloc and free.
+#define STR_MALLOC_MAGIC 0x06fe11ddUL
+
+/// Internal structure for handling the allocation checking.
+typedef struct
 {
-    return (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
+    uint32_t magic; ///< magic number
+    char str[0]; ///< user visible string
+} StringHelper_Malloc;
+
+
+char *strnew(size_t char_count)
+{
+    // Always add space for a null character.
+#if defined(NDEBUG)
+    return (char *)(malloc( (char_count + 1) * sizeof(char)) );
+#else
+    // Prepend magic number.
+    StringHelper_Malloc *result = (StringHelper_Malloc *)
+        malloc( sizeof(uint32_t) + ((char_count + 1) * sizeof(char)) );
+    result->magic = STR_MALLOC_MAGIC;
+    return result->str;
+#endif
 }
 
-char *strnew_initialized(int char_count)
+char *strnew_initialized(size_t char_count)
 {
-    char *result = (char *)(malloc( (char_count + 1) * sizeof(char)) ); // always add a null
-    for (int i = 0; i < char_count + 1; i++)
-      result[i] = '\0';
+    char *result = strnew(char_count);
+    memset(result, 0, char_count + 1);
     return result;
 }
 
-char *strcatnew(char *str1, char *str2)
+char *strcatnew(const char *str1, const char *str2)
 {
     unsigned long len = strlen(str1) + strlen(str2);
     char *temp1 = strnew(len);
@@ -65,4 +85,15 @@ char *strcatnew(char *str1, char *str2)
     return temp1;
 }
 
-
+void strfree(char *str)
+{
+#if defined(NDEBUG)
+    free(str);
+#else
+    StringHelper_Malloc *magic =
+        (StringHelper_Malloc *)(str - sizeof(uint32_t));
+    assert(magic->magic == STR_MALLOC_MAGIC);
+    magic->magic = 0;
+    free(magic);
+#endif
+}
