@@ -1,3 +1,4 @@
 #include "test/main_Test.hxx"
 
-#include "openlcb/application_callbacks.h"
+#include "application_callbacks.h"
+#include "openlcb_types.h"

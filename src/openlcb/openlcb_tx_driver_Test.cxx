@@ -1,3 +1,4 @@
 #include "test/main_Test.hxx"
 
-#include "openlcb/openlcb_tx_driver.h"
+#include "openlcb_tx_driver.h"
+#include "openlcb_types.h"

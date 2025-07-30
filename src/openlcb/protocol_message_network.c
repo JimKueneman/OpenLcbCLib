@@ -195,7 +195,7 @@ void ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node_t* openlc
 
     if (openlcb_node->last_received_optional_interaction) {
 
-        BufferStore_freeBuffer(openlcb_node->last_received_optional_interaction);
+        BufferStore_free_buffer(openlcb_node->last_received_optional_interaction);
 
         openlcb_node->last_received_optional_interaction = (void*) 0;
 

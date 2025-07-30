@@ -117,7 +117,7 @@ uint8_olcb_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t* o
 
     for (olcb_int_t i = can_start_index; i < can_msg->payload_count; i++) {
 
-        if (openlcb_msg->payload_count < openlcb_msg->payload_size) {
+        if (openlcb_msg->payload_count < openlcb_msg->payload_type) {
             
             *openlcb_msg->payload[openlcb_msg->payload_count] = can_msg->payload[i];
             

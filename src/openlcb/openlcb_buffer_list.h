@@ -44,9 +44,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void BufferList_initialiaze(void);
+extern void BufferList_initialize(void);
 
-extern openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len);  
+extern openlcb_msg_t* BufferList_add(openlcb_msg_t* new_msg);  
 
 extern openlcb_msg_t* BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti); 
 

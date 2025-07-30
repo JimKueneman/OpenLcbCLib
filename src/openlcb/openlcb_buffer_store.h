@@ -27,57 +27,55 @@
  * \file openlcb_buffer_store.h
  *
  * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are 
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are
  * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to 
- * access the buffers.  
+ * so care must be taken to Pause and Resume those calls if the main loop needs to
+ * access the buffers.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_BUFFER_STORE__
-#define	__OPENLCB_BUFFER_STORE__
+#define __OPENLCB_BUFFER_STORE__
 
 #include "openlcb_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void BufferStore_initialize(void);
+    extern void BufferStore_initialize(void);
 
-extern openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size);
+    extern openlcb_msg_t *BufferStore_allocate_buffer(payload_type_enum_t payload_type);
 
-extern void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg);
+    extern void BufferStore_free_buffer(openlcb_msg_t *openlcb_msg);
 
-extern uint16_olcb_t BufferStore_basic_messages_allocated(void);
+    extern uint16_olcb_t BufferStore_basic_messages_allocated(void);
 
-extern uint16_olcb_t BufferStore_basic_messages_max_allocated(void);
+    extern uint16_olcb_t BufferStore_basic_messages_max_allocated(void);
 
-extern uint16_olcb_t BufferStore_datagram_messages_allocated(void);
+    extern uint16_olcb_t BufferStore_datagram_messages_allocated(void);
 
-extern uint16_olcb_t BufferStore_datagram_messages_max_allocated(void);
+    extern uint16_olcb_t BufferStore_datagram_messages_max_allocated(void);
 
-extern uint16_olcb_t BufferStore_snip_messages_allocated(void);
+    extern uint16_olcb_t BufferStore_snip_messages_allocated(void);
 
-extern uint16_olcb_t BufferStore_snip_messages_max_allocated(void);
+    extern uint16_olcb_t BufferStore_snip_messages_max_allocated(void);
 
-extern uint16_olcb_t BufferStore_stream_messages_allocated(void);
+    extern uint16_olcb_t BufferStore_stream_messages_allocated(void);
 
-extern uint16_olcb_t BufferStore_stream_messages_max_allocated(void);
+    extern uint16_olcb_t BufferStore_stream_messages_max_allocated(void);
 
-extern void BufferStore_inc_reference_count(openlcb_msg_t* openlcb_msg);
+    extern void BufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg);
 
-void BufferStore_clear_max_allocated(void);
+    void BufferStore_clear_max_allocated(void);
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_BUFFER_STORE__ */
-
+#endif /* __OPENLCB_BUFFER_STORE__ */

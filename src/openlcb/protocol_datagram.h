@@ -52,12 +52,8 @@ extern void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openl
 extern void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 extern void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-
-extern void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
     
 extern void DatagramProtocol_100ms_time_tick(void);
-
-extern void ProtocolDatagram_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 #ifdef	__cplusplus
 }

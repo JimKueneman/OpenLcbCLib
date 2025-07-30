@@ -43,26 +43,24 @@
 
 openlcb_msg_t* openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
 
-void BufferList_initialiaze(void) {
+void BufferList_initialize(void) {
 
     for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++)
         openlcb_msg_buffer_list[i] = (void*) 0;
 
 }
 
-openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len) {
+openlcb_msg_t* BufferList_add(openlcb_msg_t* new_msg) {
 
-    openlcb_msg_t* new_msg;
+    if (!new_msg) {
+        
+        return (void*) 0;
+        
+    }
 
     for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (!openlcb_msg_buffer_list[i]) {
-
-            new_msg = BufferStore_allocateBuffer(data_len);
-
-            if (!new_msg)
-
-                return (void*) 0;
 
             openlcb_msg_buffer_list[i] = new_msg;
 
@@ -107,7 +105,7 @@ void BufferList_free(openlcb_msg_t * msg) {
 
             openlcb_msg_buffer_list[i] = (void*) 0;
 
-            BufferStore_freeBuffer(msg);
+            BufferStore_free_buffer(msg);
 
             return;
 

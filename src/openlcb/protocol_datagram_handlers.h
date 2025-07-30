@@ -83,6 +83,9 @@ extern "C" {
 
     extern void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_olcb_t error_code);
 
+    extern void ProtocolDatagramHandlers_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
+    
+    extern void ProtocolDatagramHandlers_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 #ifdef	__cplusplus
 }
