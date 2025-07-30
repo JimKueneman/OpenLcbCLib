@@ -50,19 +50,17 @@ void BufferList_initialize(void) {
 
 }
 
-openlcb_msg_t* BufferList_allocate(enum payload_type_enum payload_type) {
+openlcb_msg_t* BufferList_add(openlcb_msg_t* new_msg) {
 
-    openlcb_msg_t* new_msg;
+    if (!new_msg) {
+        
+        return (void*) 0;
+        
+    }
 
     for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (!openlcb_msg_buffer_list[i]) {
-
-            new_msg = BufferStore_allocate_buffer(payload_type);
-
-            if (!new_msg)
-
-                return (void*) 0;
 
             openlcb_msg_buffer_list[i] = new_msg;
 

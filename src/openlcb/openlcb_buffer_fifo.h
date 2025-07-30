@@ -50,7 +50,7 @@ extern "C" {
 
     extern void BufferFifo_initialize(void);
 
-    extern openlcb_msg_t* BufferFifo_push(enum payload_type_enum payload_type);
+    extern openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg);
 
     extern openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg);
 

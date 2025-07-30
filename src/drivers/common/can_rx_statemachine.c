@@ -71,7 +71,7 @@ uint32_olcb_t _oir_identifier(uint16_olcb_t source_alias) {
 }
 
 openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti, uint16_olcb_t error_code) {
-    
+
     can_msg_t* can_msg_error = CanBufferFifo_push();
 
     if (can_msg_error) {
@@ -105,10 +105,21 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_s
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
-    if (result)
+    if (result) {
+        
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
+        
+    }
 
-    result = BufferList_allocate(payload_type);
+    result = BufferStore_allocate_buffer(payload_type);
+    
+    if (result == (void*) 0) {
+        
+        return result;
+        
+    }
+    
+    result = BufferList_add(result);
 
     if (!result)
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
@@ -155,7 +166,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
     openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
     if (!result) {
- 
+
         return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
     }
@@ -172,7 +183,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
 
 openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
 
-    openlcb_msg_t* new_msg = BufferFifo_push(payload_type);
+    openlcb_msg_t* new_msg = BufferStore_allocate_buffer(payload_type);
 
     if (new_msg) {
 
@@ -184,7 +195,14 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
         new_msg->payload_count = 0;
         CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-        return new_msg;
+        if (BufferFifo_push(new_msg) != (void*) 0) {
+
+            return new_msg;
+
+        }
+
+        BufferStore_free_buffer(new_msg);
+        return (void*) 0;
 
     }
 
