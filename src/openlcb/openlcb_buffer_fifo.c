@@ -42,8 +42,6 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_types.h"
 
-#define LEN_MESSAGE_FIFO_BUFFER  LEN_MESSAGE_BUFFER + 1  // add one slot to the fifo so it can be full without head == tail
-
 typedef struct {
     openlcb_msg_t* list[LEN_MESSAGE_FIFO_BUFFER];  // add one slot to the fifo so it can be full without head == tail
     uint8_olcb_t head;
