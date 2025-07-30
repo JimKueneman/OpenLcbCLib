@@ -125,7 +125,7 @@
 TEST(OpenLcbBufferStore, OpenLcbBufferStore_free_null_buffer)
 {
 
-    BufferStore_initialize();
+    //  BufferStore_initialize();
 
     // CanBufferStore_freeBuffer(nullptr);
 }
