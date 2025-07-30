@@ -53,7 +53,7 @@ typedef struct {
 
 openlcb_msg_fifo_t openlcb_msg_buffer_fifo;
 
-void BufferFifo_initialiaze(void) {
+void BufferFifo_initialize(void) {
 
     for (olcb_int_t i = 0; i < LEN_MESSAGE_FIFO_BUFFER; i++)
         openlcb_msg_buffer_fifo.list[i] = (void*) 0;

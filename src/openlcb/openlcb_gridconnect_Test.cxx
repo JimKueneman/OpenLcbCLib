@@ -1,3 +1,4 @@
 #include "test/main_Test.hxx"
 
-#include "openlcb/openlcb_gridconnect.h"
+#include "openlcb_gridconnect.h"
+#include "openlcb_types.h"

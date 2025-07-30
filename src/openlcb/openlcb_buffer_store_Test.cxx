@@ -1,7 +1,7 @@
 #include "test/main_Test.hxx"
 
-#include "./openlcb_buffer_store.h"
-#include "./openlcb_types.h"
+#include "openlcb_buffer_store.h"
+#include "openlcb_types.h"
 
 // TEST(OpenLcbBufferStore, OpenLcbBufferStore_initialize)
 // {

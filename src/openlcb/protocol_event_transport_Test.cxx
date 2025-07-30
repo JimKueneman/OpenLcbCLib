@@ -1,3 +1,4 @@
 #include "test/main_Test.hxx"
 
-#include "openlcb/protocol_event_transport.h"
+#include "protocol_event_transport.h"
+#include "openlcb_types.h"

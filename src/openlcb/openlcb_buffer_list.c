@@ -43,7 +43,7 @@
 
 openlcb_msg_t* openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
 
-void BufferList_initialiaze(void) {
+void BufferList_initialize(void) {
 
     for (olcb_int_t i = 0; i < LEN_MESSAGE_BUFFER; i++)
         openlcb_msg_buffer_list[i] = (void*) 0;

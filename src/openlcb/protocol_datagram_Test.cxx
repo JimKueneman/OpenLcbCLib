@@ -1,3 +1,4 @@
 #include "test/main_Test.hxx"
 
-#include "openlcb/protocol_datagram.h"
+#include "protocol_datagram.h"
+#include "openlcb_types.h"

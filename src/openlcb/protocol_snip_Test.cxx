@@ -1,3 +1,4 @@
 #include "test/main_Test.hxx"
 
-#include "openlcb/protocol_snip.h"
+#include "protocol_snip.h"
+#include "openlcb_types.h"

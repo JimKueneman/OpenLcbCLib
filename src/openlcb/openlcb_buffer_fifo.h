@@ -48,7 +48,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void BufferFifo_initialiaze(void);
+    extern void BufferFifo_initialize(void);
 
     extern openlcb_msg_t* BufferFifo_push(enum payload_type_enum payload_type);
 

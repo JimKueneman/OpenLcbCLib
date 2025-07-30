@@ -68,8 +68,8 @@ void MainStatemachine_initialize(
         ) {
 
     BufferStore_initialize();
-    BufferList_initialiaze();
-    BufferFifo_initialiaze();
+    BufferList_initialize();
+    BufferFifo_initialize();
 
     Node_initialize();
     ProtocolDatagram_initialize();
