@@ -97,7 +97,7 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
 }
 
-openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
+openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
 
     uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
     uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
@@ -108,7 +108,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_s
     if (result)
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
-    result = BufferList_allocate(data_size);
+    result = BufferList_allocate(payload_type);
 
     if (!result)
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
@@ -170,9 +170,9 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
 
 }
 
-openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
+openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
 
-    openlcb_msg_t* new_msg = BufferFifo_push(data_size);
+    openlcb_msg_t* new_msg = BufferFifo_push(payload_type);
 
     if (new_msg) {
 
@@ -192,7 +192,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
 }
 
-void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, uint16_olcb_t data_size) {
+void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 
@@ -205,7 +205,7 @@ void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_i
 
     if (!openlcb_msg_inprocess) { // Do we have one in process?
 
-        _handle_first_frame(can_msg, can_buffer_start_index, data_size);
+        _handle_first_frame(can_msg, can_buffer_start_index, payload_type);
 
     } else { // Yes we have one in process   
 
@@ -236,11 +236,11 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
                 if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
 
-                    _handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_SNIP);
+                    _handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
 
                 } else
 
-                    _handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_BASIC);
+                    _handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
 
                 break;
 
@@ -248,12 +248,12 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
                 if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY)
 
-                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_SNIP);
+                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
 
                 else
 
                     // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
-                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, LEN_MESSAGE_BYTES_BASIC);
+                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
 
                 break;
 

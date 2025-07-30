@@ -46,7 +46,7 @@ extern "C" {
 
 extern void BufferList_initialize(void);
 
-extern openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len);  
+extern openlcb_msg_t* BufferList_allocate(enum payload_type_enum payload_type);  
 
 extern openlcb_msg_t* BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti); 
 
