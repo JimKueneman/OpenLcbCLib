@@ -33,62 +33,61 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_TYPES__
-#define	__OPENLCB_TYPES__
+#define __OPENLCB_TYPES__
 
 #include <stdint.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     // ************************ USER DEFINED VARIABLES *****************************
 
     // Total number of message buffers available for use
-    // Note you can override these with Define Macros in your compiler 
+    // Note you can override these with Define Macros in your compiler
 
     // The SUM of the next 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
-#define USER_DEFINED_BASIC_BUFFER_DEPTH     32  // USER DEFINED 
+#define USER_DEFINED_BASIC_BUFFER_DEPTH 32 // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH  4  // USER DEFINED 
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH 4 // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
-#define USER_DEFINED_SNIP_BUFFER_DEPTH      4  // USER DEFINED
+#define USER_DEFINED_SNIP_BUFFER_DEPTH 4 // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
-#define USER_DEFINED_STREAM_BUFFER_DEPTH    0  // USER DEFINED
+#define USER_DEFINED_STREAM_BUFFER_DEPTH 0 // USER DEFINED
 #endif
 
     // The SUM of the previous 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
 
-
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH      1  // USER DEFINED   MAX LIMIT = 0xFE = 254
+#define USER_DEFINED_NODE_BUFFER_DEPTH 1 // USER DEFINED   MAX LIMIT = 0xFE = 254
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
-#define USER_DEFINED_CDI_LENGTH            20000 // USER DEFINED 
+#define USER_DEFINED_CDI_LENGTH 20000 // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_FDI_LENGTH
-#define USER_DEFINED_FDI_LENGTH             1000 // USER DEFINED 
+#define USER_DEFINED_FDI_LENGTH 1000 // USER DEFINED
 #endif
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 #ifndef USER_DEFINED_PRODUCER_COUNT
-#define USER_DEFINED_PRODUCER_COUNT         64 // USER DEFINED 
+#define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_CONSUMER_COUNT
-#define USER_DEFINED_CONSUMER_COUNT         32 // USER DEFINED 
+#define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED
 #endif
 
 #else
@@ -98,8 +97,8 @@ extern "C" {
 
 #endif
 
-#define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION          64-1   // space for null Size is limited by required return values - the max size of a datagram (72)
-#define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION    60-1   // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
+#define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION 64 - 1       // space for null Size is limited by required return values - the max size of a datagram (72)
+#define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION 60 - 1 // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
     // *********************END USER DEFINED VARIABLES *****************************
 
@@ -117,12 +116,8 @@ extern "C" {
     typedef int olcb_int_t;
 #endif
 
-
-
-
-
 #define FALSE 0
-#define TRUE  1
+#define TRUE 1
 
 #define LOW 0
 #define HIGH 1
@@ -131,32 +126,33 @@ extern "C" {
 #define NULL_EVENT_ID 0x0000000000000000
 
     // Per the SNIP specification
-#define LEN_SNIP_NAME              41
-#define LEN_SNIP_MODEL             41
-#define LEN_SNIP_HARDWARE_VERSION  21
-#define LEN_SNIP_SOFTWARE_VERSION  21
+#define LEN_SNIP_NAME 41
+#define LEN_SNIP_MODEL 41
+#define LEN_SNIP_HARDWARE_VERSION 21
+#define LEN_SNIP_SOFTWARE_VERSION 21
 
-#define LEN_SNIP_USER_NAME         63
-#define LEN_SNIP_USER_DESCRIPTION  64
+#define LEN_SNIP_USER_NAME 63
+#define LEN_SNIP_USER_DESCRIPTION 64
 
-#define LEN_SNIP_USER_DATA         (LEN_SNIP_USER_NAME + LEN_SNIP_USER_DESCRIPTION)
+#define LEN_SNIP_USER_DATA (LEN_SNIP_USER_NAME + LEN_SNIP_USER_DESCRIPTION)
 
-#define LEN_SNIP_VERSION            1
-#define LEN_SNIP_USER_VERSION       1
+#define LEN_SNIP_VERSION 1
+#define LEN_SNIP_USER_VERSION 1
 
-#define LEN_SNIP_STRUCTURE        253
+#define LEN_SNIP_STRUCTURE 253
 
+#define LEN_MESSAGE_BYTES_BASIC 16 // most are 8 bytes but a few protocols take 2 frames like Traction
+#define LEN_MESSAGE_BYTES_DATAGRAM 72
+#define LEN_MESSAGE_BYTES_SNIP 256 // will cover Event with Payload as well
+#define LEN_MESSAGE_BYTES_STREAM 512
 
-#define LEN_MESSAGE_BYTES_BASIC        16     // most are 8 bytes but a few protocols take 2 frames like Traction
-#define LEN_MESSAGE_BYTES_DATAGRAM     72
-#define LEN_MESSAGE_BYTES_SNIP        256     // will cover Event with Payload as well
-#define LEN_MESSAGE_BYTES_STREAM      512
+#define LEN_EVENT_ID 8
 
-#define LEN_EVENT_ID                    8
+#define LEN_MESSAGE_BUFFER (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)
 
-#define LEN_MESSAGE_BUFFER  (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)
+#define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
-#define LEN_DATAGRAM_MAX_PAYLOAD       64   // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
+#define (LEN_MESSAGE_FIFO_BUFFER LEN_MESSAGE_BUFFER + 1) // add one slot to the fifo so it can be full without head == tail
 
     enum payload_type_enum {
         BASIC = LEN_MESSAGE_BYTES_BASIC,
@@ -175,7 +171,6 @@ extern "C" {
     typedef payload_datagram_t openlcb_datagram_data_buffer_t[USER_DEFINED_DATAGRAM_BUFFER_DEPTH];
     typedef payload_snip_t openlcb_snip_data_buffer_t[USER_DEFINED_SNIP_BUFFER_DEPTH];
     typedef payload_stream_t openlcb_stream_data_buffer_t[USER_DEFINED_STREAM_BUFFER_DEPTH];
-
 
     typedef uint8_olcb_t openlcb_payload_t[1];
 
@@ -198,7 +193,7 @@ extern "C" {
         node_id_t dest_id;
         uint16_olcb_t payload_size; // How many bytes the payload can hold
         uint16_olcb_t payload_count; // valid bytes in payload
-        openlcb_payload_t* payload; // pointer to one of the data structures in the message_buffer_t type.  Size depend of the buffer type and defined as payload_size
+        openlcb_payload_t *payload; // pointer to one of the data structures in the message_buffer_t type.  Size depend of the buffer type and defined as payload_size
         uint8_olcb_t timerticks; // timeouts, etc
         uint8_olcb_t reference_count; // reference counted for garbage collection
     } openlcb_msg_t;
@@ -212,7 +207,6 @@ extern "C" {
         openlcb_snip_data_buffer_t snip; // array of snip arrays
         openlcb_stream_data_buffer_t stream; // array of stream arrays
     } message_buffer_t;
-
 
     // Defines a node for snip
 
@@ -272,7 +266,6 @@ extern "C" {
 
     } node_parameters_t;
 
-
     // Event ID Structures
 
 #define EVENTS_ENCODED_IN_BYTE 4
@@ -317,15 +310,15 @@ extern "C" {
         openlcb_node_state_t state;
         uint64_olcb_t id;
         uint16_olcb_t alias;
-        uint64_olcb_t seed; // Seed for generating the alias 
+        uint64_olcb_t seed; // Seed for generating the alias
         event_id_consumer_list_t consumers;
         event_id_producer_list_t producers;
-        const node_parameters_t* parameters;
+        const node_parameters_t *parameters;
         uint16_olcb_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
         uint64_olcb_t lock_node; // node that has this node locked
-        openlcb_msg_t* last_received_datagram;
-        openlcb_msg_t* last_received_optional_interaction;
-        uint8_olcb_t index; //what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
+        openlcb_msg_t *last_received_datagram;
+        openlcb_msg_t *last_received_optional_interaction;
+        uint8_olcb_t index; // what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
     } openlcb_node_t;
 
     typedef struct {
@@ -338,20 +331,17 @@ extern "C" {
     typedef struct {
         openlcb_msg_t worker;
         payload_stream_t worker_buffer;
-        openlcb_msg_t* active_msg;
+        openlcb_msg_t *active_msg;
     } openlcb_statemachine_worker_t;
 
+    typedef void (*parameterless_callback_t)(void);
 
-    typedef void(*parameterless_callback_t) (void);
-
-    typedef void(*mcu_driver_callback_t) (parameterless_callback_t);
+    typedef void (*mcu_driver_callback_t)(parameterless_callback_t);
 
     typedef uint8_olcb_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_TYPES__ */
-
+#endif /* __OPENLCB_TYPES__ */
