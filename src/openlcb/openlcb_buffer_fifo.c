@@ -43,7 +43,7 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    openlcb_msg_t* list[LEN_MESSAGE_FIFO_BUFFER];  // add one slot to the fifo so it can be full without head == tail
+    openlcb_msg_t* list[LEN_MESSAGE_FIFO_BUFFER]; // add one slot to the fifo so it can be full without head == tail
     uint8_olcb_t head;
     uint8_olcb_t tail;
 
@@ -62,11 +62,11 @@ void BufferFifo_initialize(void) {
 }
 
 openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
-    
+
     if (!new_msg) {
-        
+
         return (void*) 0;
-        
+
     }
 
     uint8_olcb_t next = openlcb_msg_buffer_fifo.head + 1;
@@ -77,7 +77,7 @@ openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
 
         openlcb_msg_buffer_fifo.list[openlcb_msg_buffer_fifo.head] = new_msg;
         openlcb_msg_buffer_fifo.head = next;
-        
+
         return new_msg;
 
     }
@@ -87,11 +87,11 @@ openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
 }
 
 openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
-    
+
     if (!existing_msg) {
-        
+
         return (void*) 0;
-        
+
     }
 
     uint8_olcb_t next = openlcb_msg_buffer_fifo.head + 1;
@@ -102,7 +102,7 @@ openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
 
         openlcb_msg_buffer_fifo.list[openlcb_msg_buffer_fifo.head] = existing_msg;
         openlcb_msg_buffer_fifo.head = next;
-        
+
         return existing_msg;
 
     }
@@ -123,7 +123,7 @@ openlcb_msg_t* BufferFifo_pop(void) {
 
         if (openlcb_msg_buffer_fifo.tail >= LEN_MESSAGE_FIFO_BUFFER)
             openlcb_msg_buffer_fifo.tail = 0;
-       
+
     }
 
     return result;
