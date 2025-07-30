@@ -97,7 +97,7 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
 }
 
-openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
+openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t payload_type) {
 
     uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_message(can_msg);
     uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
@@ -181,7 +181,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
 
 }
 
-openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
+openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t payload_type) {
 
     openlcb_msg_t* new_msg = BufferStore_allocate_buffer(payload_type);
 
@@ -210,7 +210,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
 }
 
-void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, enum payload_type_enum payload_type) {
+void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t payload_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 

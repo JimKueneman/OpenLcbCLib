@@ -63,7 +63,7 @@ extern "C" {
 #endif
 
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
-#define USER_DEFINED_STREAM_BUFFER_DEPTH 0 // USER DEFINED
+#define USER_DEFINED_STREAM_BUFFER_DEPTH 1 // USER DEFINED
 #endif
 
     // The SUM of the previous 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
@@ -154,13 +154,13 @@ extern "C" {
 
 #define LEN_MESSAGE_FIFO_BUFFER (LEN_MESSAGE_BUFFER + 1) // add one slot to the fifo so it can be full without head == tail
 
-    enum payload_type_enum {
+    typedef enum {
         BASIC = LEN_MESSAGE_BYTES_BASIC,
         DATAGRAM = LEN_MESSAGE_BYTES_DATAGRAM,
         SNIP = LEN_MESSAGE_BYTES_SNIP,
         STREAM = LEN_MESSAGE_BYTES_STREAM
 
-    };
+    } payload_type_enum_t;
 
     typedef uint8_olcb_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_olcb_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
