@@ -70,7 +70,7 @@ void CanMainStatemachine_initialize(
     DriverCan_initialization(transmit_raw_can_frame_callback, is_can_tx_buffer_clear_callback, pause_can_rx_callback, resume_can_rx_callback);
 
     CanBufferStore_initialize();
-    CanBufferFifo_initialiaze();
+    CanBufferFifo_initialize();
     CanRxStatemachine_initialize(can_rx_driver_callback);
     CanTxStatemachine_initialize();
 
@@ -286,7 +286,7 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* ca
 void _release_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
     can_helper->active_msg->state.addressed_direct_tx = FALSE;
-    CanBufferStore_freeBuffer(can_helper->active_msg);
+    CanBufferStore_free_buffer(can_helper->active_msg);
     can_helper->active_msg = (void*) 0;
 
 }
@@ -367,7 +367,7 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
     // Are all the nodes finished handling the incoming CAN message?
     if (active_can_msg_processiong_complete) {
 
-        CanBufferStore_freeBuffer(can_helper->active_msg);
+        CanBufferStore_free_buffer(can_helper->active_msg);
         can_helper->active_msg = (void*) 0; // Clear the "flag" the next loop _pop_next_can_message() will get a new message)
 
     }
