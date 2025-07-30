@@ -43,7 +43,8 @@
 #include "../../openlcb/openlcb_defines.h"
 #include "can_buffer_store.h"
 
-#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 // add one slot to the fifo so it can be full without head == tail
+// add one slot to the fifo so it can be full without head == tail
+#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 
 
 typedef struct
 {
@@ -96,7 +97,6 @@ uint8_olcb_t CanBufferFifo_push(can_msg_t* new_msg)
 
 can_msg_t *CanBufferFifo_pop(void)
 {
-
     // Is there something here?
     if (can_msg_buffer_fifo.head != can_msg_buffer_fifo.tail)
     {

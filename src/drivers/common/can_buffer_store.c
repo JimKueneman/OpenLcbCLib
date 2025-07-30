@@ -43,7 +43,7 @@
 #include "../../openlcb/openlcb_types.h"
 
 
-can_buffer_store_t _can_buffer_store;
+can_msg_array_t _can_buffer_store;
 uint16_olcb_t _can_buffer_store_message_allocated = 0;
 uint16_olcb_t _can_buffer_store_message_max_allocated = 0;
 
@@ -73,7 +73,7 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
 }
 
-can_msg_t* CanBufferStore_allocateBuffer(void) {
+can_msg_t* CanBufferStore_allocate_buffer(void) {
 
     for (olcb_int_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
@@ -99,7 +99,7 @@ can_msg_t* CanBufferStore_allocateBuffer(void) {
 
 }
 
-void CanBufferStore_freeBuffer(can_msg_t* msg) {
+void CanBufferStore_free_buffer(can_msg_t* msg) {
 
     if (!msg) return;
 

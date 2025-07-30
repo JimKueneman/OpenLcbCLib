@@ -46,13 +46,14 @@ extern "C" {
 
     // ************************ USER DEFINED VARIABLES *****************************
 
-#ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH
-#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 10 // USER DEFINED MAX VALUE = 0xFE = 254
+#ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH  // USER DEFINED MAX VALUE = 0xFE = 254
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 10 
 #endif
 
     // *********************END USER DEFINED VARIABLES *****************************
 
-#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 // add one slot to the fifo so it can be full without head == tail
+    // add one slot to the fifo so it can be full without head == tail
+#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 
 
 #define TX_CHANNEL_CAN_CONTROL 0
 #define TX_CHANNEL_OPENLCB_MSG 0
@@ -77,7 +78,7 @@ extern "C" {
         payload_bytes_can_t payload; // Payload bytes
     } can_msg_t;
 
-    typedef can_msg_t can_buffer_store_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
+    typedef can_msg_t can_msg_array_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
 
     typedef struct {
         openlcb_statemachine_worker_t *openlcb_worker;

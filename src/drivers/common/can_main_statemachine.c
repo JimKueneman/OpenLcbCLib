@@ -284,7 +284,7 @@ void _release_direct_tx_can_message(can_main_statemachine_t *can_helper)
 {
 
     can_helper->active_msg->state.addressed_direct_tx = FALSE;
-    CanBufferStore_freeBuffer(can_helper->active_msg);
+    CanBufferStore_free_buffer(can_helper->active_msg);
     can_helper->active_msg = (void *)0;
 }
 
@@ -364,7 +364,7 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
     if (active_can_msg_processiong_complete)
     {
 
-        CanBufferStore_freeBuffer(can_helper->active_msg);
+        CanBufferStore_free_buffer(can_helper->active_msg);
         can_helper->active_msg = (void *)0; // Clear the "flag" the next loop _pop_next_can_message() will get a new message)
     }
 

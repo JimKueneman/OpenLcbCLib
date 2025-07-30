@@ -72,7 +72,7 @@ uint32_olcb_t _oir_identifier(uint16_olcb_t source_alias) {
 
 openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti, uint16_olcb_t error_code) {
 
-    can_msg_t* can_msg_error = CanBufferStore_allocateBuffer();
+    can_msg_t* can_msg_error = CanBufferStore_allocate_buffer();
 
     if (can_msg_error) {
 
@@ -281,7 +281,7 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
 uint8_olcb_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
 
-    can_msg_t* new_can_msg = CanBufferStore_allocateBuffer();
+    can_msg_t* new_can_msg = CanBufferStore_allocate_buffer();
 
     if (!new_can_msg) {
 
