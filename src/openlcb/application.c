@@ -61,7 +61,7 @@ uint8_olcb_t Application_send_event_pc_report(openlcb_node_t *node, event_id_t e
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *) & payload;
-    msg.payload_size = sizeof (payload);
+    msg.payload_type = BASIC;
 
     Utilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_PC_EVENT_REPORT, 0);
 
@@ -82,7 +82,7 @@ uint8_olcb_t Application_send_teach_event(openlcb_node_t* node, event_id_t event
     payload_basic_t payload;
 
     msg.payload = (openlcb_payload_t *) & payload;
-    msg.payload_size = sizeof (payload);
+    msg.payload_type = BASIC;
 
     Utilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_EVENT_LEARN, 0);
 

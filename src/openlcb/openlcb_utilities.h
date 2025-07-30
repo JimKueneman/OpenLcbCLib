@@ -102,6 +102,8 @@ extern void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_bu
 
 extern event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
 
+extern uint16_olcb_t Utilities_payload_type_to_len(payload_type_enum_t payload_type);
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

@@ -75,19 +75,19 @@ void BufferStore_initialize(void) {
 
         if (i < USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
-            _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_BASIC;
+            _message_buffer.messages[i].payload_type = BASIC;
             _message_buffer.messages[i].payload = (openlcb_payload_t *) & _message_buffer.basic[i];
         } else if (i < USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
-            _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_DATAGRAM;
+            _message_buffer.messages[i].payload_type = DATAGRAM;
             _message_buffer.messages[i].payload = (openlcb_payload_t *) & _message_buffer.datagram[i - USER_DEFINED_BASIC_BUFFER_DEPTH];
         } else if (i < USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
-            _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_SNIP;
+            _message_buffer.messages[i].payload_type = SNIP;
             _message_buffer.messages[i].payload = (openlcb_payload_t *) & _message_buffer.snip[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH)];
         } else {
 
-            _message_buffer.messages[i].payload_size = LEN_MESSAGE_BYTES_STREAM;
+            _message_buffer.messages[i].payload_type = STREAM;
             _message_buffer.messages[i].payload = (openlcb_payload_t *) & _message_buffer.stream[i - (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH)];
         }
     }
@@ -114,9 +114,9 @@ void _update_buffer_telemetry(payload_type_enum_t payload_type) {
 
                 _buffer_store_basic_max_messages_allocated++;
                 break;
-            } else {
-                break; // GoogleTest likes this better for coverage metrics
             }
+            
+            break;
         case DATAGRAM:
 
             _buffer_store_datagram_messages_allocated++;
@@ -124,9 +124,9 @@ void _update_buffer_telemetry(payload_type_enum_t payload_type) {
 
                 _buffer_store_datagram_max_messages_allocated++;
                 break;
-            } else {
-                break; // GoogleTest likes this better for coverage metrics
             }
+            
+            break;    
         case SNIP:
 
             _buffer_store_snip_messages_allocated++;
@@ -134,9 +134,9 @@ void _update_buffer_telemetry(payload_type_enum_t payload_type) {
 
                 _buffer_store_snip_max_messages_allocated++;
                 break;
-            } else {
-                break; // GoogleTest likes this better for coverage metrics
             }
+            
+            break;
         case STREAM:
 
             _buffer_store_stream_messages_allocated++;
@@ -144,9 +144,9 @@ void _update_buffer_telemetry(payload_type_enum_t payload_type) {
 
                 _buffer_store_stream_max_messages_allocated++;
                 break;
-            } else {
-                break; // GoogleTest likes this better for coverage metrics
-            }
+            } 
+            
+            break;
         default:
             break;
     }
@@ -194,7 +194,7 @@ openlcb_msg_t *BufferStore_allocate_buffer(payload_type_enum_t payload_type) {
 
             _message_buffer.messages[i].state.allocated = TRUE;
 
-            _update_buffer_telemetry(_message_buffer.messages[i].payload_size);
+            _update_buffer_telemetry(_message_buffer.messages[i].payload_type);
 
             return &_message_buffer.messages[i];
         }
@@ -213,21 +213,21 @@ void BufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
     if (openlcb_msg->reference_count > 0)
         return;
 
-    switch (openlcb_msg->payload_size) {
+    switch (openlcb_msg->payload_type) {
 
-        case LEN_MESSAGE_BYTES_BASIC:
+        case BASIC:
             _buffer_store_basic_messages_allocated = _buffer_store_basic_messages_allocated - 1;
 
             break;
-        case LEN_MESSAGE_BYTES_DATAGRAM:
+        case DATAGRAM:
             _buffer_store_datagram_messages_allocated = _buffer_store_datagram_messages_allocated - 1;
 
             break;
-        case LEN_MESSAGE_BYTES_SNIP:
+        case SNIP:
             _buffer_store_snip_messages_allocated = _buffer_store_snip_messages_allocated - 1;
 
             break;
-        case LEN_MESSAGE_BYTES_STREAM:
+        case STREAM:
             _buffer_store_stream_messages_allocated = _buffer_store_stream_messages_allocated - 1;
 
             break;

@@ -40,6 +40,28 @@
 #include "openlcb_types.h"
 
 
+uint16_olcb_t Utilities_payload_type_to_len(payload_type_enum_t payload_type){
+    
+    switch (payload_type) {
+        
+        case BASIC:
+            return  USER_DEFINED_BASIC_BUFFER_DEPTH;
+
+        case DATAGRAM:
+            return USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
+            
+        case SNIP:
+            return USER_DEFINED_SNIP_BUFFER_DEPTH;
+          
+        case STREAM:
+            return USER_DEFINED_STREAM_BUFFER_DEPTH;
+            
+        default:
+            return 0;
+    }
+    
+}
+
 uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node) {
     
     uint32_olcb_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
@@ -55,14 +77,14 @@ void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* targe
 
     if (source && target) {
 
-        if (source->payload_size == target->payload_size) {
+        if (source->payload_type == target->payload_type) {
 
             target->dest_alias = source->dest_alias;
             target->dest_id = source->dest_id;
             target->mti = source->mti;
             target->payload = source->payload;
             target->payload_count = source->payload_count;
-            target->payload_size = source->payload_size;
+            target->payload_type = source->payload_type;
             target->source_alias = source->source_alias;
             target->source_id = source->source_id;
             target->state = source->state;
@@ -90,9 +112,12 @@ void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t so
 
 }
 
-void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) {
 
-    for (uint16_olcb_t i = 0; i < openlcb_msg->payload_size; i++)
+void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) {
+    
+    uint16_olcb_t data_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
+    
+    for (uint16_olcb_t i = 0; i < data_len; i++)
         *openlcb_msg->payload[i] = 0;
 
     openlcb_msg->payload_count = 0;
@@ -114,7 +139,7 @@ void Utilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, even
 
 void Utilities_copy_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target) {
 
-    if (source->payload_size == target->payload_size) {
+    if (source->payload_type == target->payload_type) {
 
         target->dest_alias = source->dest_alias;
         target->dest_id = source->dest_id;
@@ -149,10 +174,13 @@ void Utilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint32_
 uint16_olcb_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const char string[], uint16_olcb_t payload_index) {
 
     uint16_olcb_t counter = 0;
+    uint16_olcb_t payload_len = 0;
 
     while (string[counter] != 0x00) {
+        
+        payload_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
 
-        if ((counter + payload_index) < openlcb_msg->payload_size - 1) { // leave room for a null
+        if ((counter + payload_index) < payload_len - 1) { // leave room for a null
 
             *openlcb_msg->payload[counter + payload_index] = (uint8_olcb_t) string[counter];
             counter++;
@@ -172,10 +200,13 @@ uint16_olcb_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_ms
 uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlcb_msg, const uint8_olcb_t byte_array[], uint16_olcb_t payload_index, uint16_olcb_t requested_bytes) {
 
     uint16_olcb_t counter = 0;
+    uint16_olcb_t payload_len = 0;
 
+    payload_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
+    
     for (uint16_olcb_t i = 0; i < requested_bytes; i++) {
 
-        if ((i + payload_index) < openlcb_msg->payload_size) {
+        if ((i + payload_index) < payload_len) {
 
             *openlcb_msg->payload[i + payload_index] = byte_array[i];
             counter++;

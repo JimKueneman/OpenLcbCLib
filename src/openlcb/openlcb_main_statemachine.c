@@ -91,7 +91,7 @@ void MainStatemachine_initialize(
     _openlcb_helper.worker.timerticks = 0;
     _openlcb_helper.worker.state.inprocess = FALSE;
     _openlcb_helper.worker.payload = (openlcb_payload_t*) & _openlcb_helper.worker_buffer;
-    _openlcb_helper.worker.payload_size = LEN_MESSAGE_BYTES_STREAM;
+    _openlcb_helper.worker.payload_type = STREAM;   // make it the largest so it can fake as any
     _openlcb_helper.worker.state.allocated = TRUE;
 
 }

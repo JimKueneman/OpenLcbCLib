@@ -851,7 +851,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
         if (openlcb_msg)
         {
 
-            openlcb_msg->payload_size = 0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
             BufferStore_free_buffer(openlcb_msg);
             count = BufferStore_basic_messages_allocated();
             EXPECT_EQ(count, 1);
@@ -866,7 +866,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
         if (openlcb_msg)
         {
 
-            openlcb_msg->payload_size = 0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
             BufferStore_free_buffer(openlcb_msg);
             count = BufferStore_datagram_messages_allocated();
             EXPECT_EQ(count, 1);
@@ -880,7 +880,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
 
         if (openlcb_msg)
         {
-            openlcb_msg->payload_size = 0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
             BufferStore_free_buffer(openlcb_msg);
             count = BufferStore_snip_messages_allocated();
             EXPECT_EQ(count, 1);
@@ -894,10 +894,74 @@ TEST(OpenlcbBufferStore, corrupted_msg)
 
         if (openlcb_msg)
         {
-            openlcb_msg->payload_size = 0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
             BufferStore_free_buffer(openlcb_msg);
             count = BufferStore_stream_messages_allocated();
             EXPECT_EQ(count, 1);
         }
     }
+}
+
+TEST(OpenlcbBufferStore, max_messaages)
+{
+
+    openlcb_msg_t *openlcb_msg1;
+    openlcb_msg_t *openlcb_msg2;
+    openlcb_msg_t *openlcb_msg3;
+
+    BufferStore_initialize();
+
+    openlcb_msg1 = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg2 = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg3 = BufferStore_allocate_buffer(BASIC);
+
+    BufferStore_free_buffer(openlcb_msg1);
+
+    openlcb_msg1 = BufferStore_allocate_buffer(BASIC);
+
+    BufferStore_free_buffer(openlcb_msg1);
+    BufferStore_free_buffer(openlcb_msg2);
+    BufferStore_free_buffer(openlcb_msg3);
+
+    // Datagram
+
+    openlcb_msg1 = BufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg2 = BufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg3 = BufferStore_allocate_buffer(DATAGRAM);
+
+    BufferStore_free_buffer(openlcb_msg1);
+
+    openlcb_msg1 = BufferStore_allocate_buffer(DATAGRAM);
+
+    BufferStore_free_buffer(openlcb_msg1);
+    BufferStore_free_buffer(openlcb_msg2);
+    BufferStore_free_buffer(openlcb_msg3);
+
+    // SNIP
+
+    openlcb_msg1 = BufferStore_allocate_buffer(SNIP);
+    openlcb_msg2 = BufferStore_allocate_buffer(SNIP);
+    openlcb_msg3 = BufferStore_allocate_buffer(SNIP);
+
+    BufferStore_free_buffer(openlcb_msg1);
+
+    openlcb_msg1 = BufferStore_allocate_buffer(SNIP);
+
+    BufferStore_free_buffer(openlcb_msg1);
+    BufferStore_free_buffer(openlcb_msg2);
+    BufferStore_free_buffer(openlcb_msg3);
+
+    // Stream
+
+    openlcb_msg1 = BufferStore_allocate_buffer(STREAM);
+    openlcb_msg2 = BufferStore_allocate_buffer(STREAM);
+    openlcb_msg3 = BufferStore_allocate_buffer(STREAM);
+
+    BufferStore_free_buffer(openlcb_msg1);
+
+    openlcb_msg1 = BufferStore_allocate_buffer(STREAM);
+
+    BufferStore_free_buffer(openlcb_msg1);
+    BufferStore_free_buffer(openlcb_msg2);
+    BufferStore_free_buffer(openlcb_msg3);
 }
