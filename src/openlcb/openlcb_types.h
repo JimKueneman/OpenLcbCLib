@@ -152,8 +152,6 @@ extern "C" {
 
 #define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
-#define LEN_MESSAGE_FIFO_BUFFER (LEN_MESSAGE_BUFFER + 1) // add one slot to the fifo so it can be full without head == tail
-
     typedef enum {
         BASIC = LEN_MESSAGE_BYTES_BASIC,
         DATAGRAM = LEN_MESSAGE_BYTES_DATAGRAM,

@@ -115,7 +115,7 @@ void _update_buffer_telemetry(payload_type_enum_t payload_type) {
                 _buffer_store_basic_max_messages_allocated++;
                 break;
             } else {
-                break;  // GoogleTest likes this better for coverage metrics
+                break; // GoogleTest likes this better for coverage metrics
             }
         case DATAGRAM:
 
