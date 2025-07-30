@@ -51,6 +51,8 @@ add_subdirectory(${ROOT_DIR}/src/openlcb/ openlcb)
 set(LINK_LIBS ${LINK_LIBS}
     utilities
     drivers_common
+    drivers
+    openlcb
 )
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
