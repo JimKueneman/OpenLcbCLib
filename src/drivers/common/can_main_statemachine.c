@@ -44,6 +44,7 @@
 #include "../../openlcb/openlcb_tx_driver.h"
 #include "../../openlcb/protocol_message_network.h"
 #include "../../openlcb/protocol_datagram.h"
+#include "../../openlcb/protocol_datagram_handlers.h"
 #include "../../openlcb/application_callbacks.h"
 #include "can_types.h"
 #include "can_buffer_fifo.h"
@@ -391,7 +392,7 @@ uint8_olcb_t _resend_datagram_message_from_ack_failure_reply(can_main_statemachi
 
         if (next_node->state.openlcb_msg_handled) {
 
-            ProtocolDatagram_clear_resend_datagram_message(next_node);
+            ProtocolDatagramHandlers_clear_resend_datagram_message(next_node);
 
             return FALSE;
 

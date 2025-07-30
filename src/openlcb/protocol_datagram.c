@@ -47,6 +47,7 @@
 #include "../drivers/driver_mcu.h"
 #include "../drivers/driver_configuration_memory.h"
 #include "application_callbacks.h"
+
 #include "protocol_datagram_handlers.h"
 
 void ProtocolDatagram_initialize(void) {
@@ -55,47 +56,6 @@ void ProtocolDatagram_initialize(void) {
 
 }
 
-void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openlcb_node) {
-
-    if (openlcb_node->last_received_datagram) {
-
-        BufferStore_free_buffer(openlcb_node->last_received_datagram);
-
-        openlcb_node->last_received_datagram = (void*) 0;
-
-    }
-
-    openlcb_node->state.resend_datagram = FALSE;
-
-}
-
-void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
-
-    ProtocolDatagram_clear_resend_datagram_message(openlcb_node);
-
-    // Take a reference and store the sent message in case we have to resend it
-    BufferStore_inc_reference_count(openlcb_msg);
-
-    openlcb_node->last_received_datagram = openlcb_msg;
-
-    openlcb_node->state.openlcb_msg_handled = TRUE;
-
-
-}
-
-void ProtocolDatagram_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = TRUE;
-
-        if (!openlcb_node->state.resend_datagram) // if we are currently process a resend don't reload it
-
-            _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, openlcb_msg);
-
-    }
-
-}
 
 void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
