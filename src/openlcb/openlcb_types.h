@@ -48,7 +48,7 @@ extern "C" {
     // Total number of message buffers available for use
     // Note you can override these with Define Macros in your compiler
 
-    // The SUM of the next 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
+    // The SUM of the next 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254 (should never really need more than 10-20)
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
 #define USER_DEFINED_BASIC_BUFFER_DEPTH 32 // USER DEFINED
