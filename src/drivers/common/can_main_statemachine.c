@@ -374,7 +374,7 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
     // Are all the nodes finished handling the incoming Openlcb message?
     if (active_openlcb_msg_processing_complete) {
 
-        BufferStore_freeBuffer(can_helper->openlcb_worker->active_msg);
+        BufferStore_free_buffer(can_helper->openlcb_worker->active_msg);
         can_helper->openlcb_worker->active_msg = (void*) 0; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
 
     }

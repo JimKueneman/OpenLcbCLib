@@ -50,9 +50,9 @@ extern "C" {
 
 extern void BufferStore_initialize(void);
 
-extern openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size);
+extern openlcb_msg_t* BufferStore_allocate_buffer(enum payload_type_enum payload_type);
 
-extern void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg);
+extern void BufferStore_free_buffer(openlcb_msg_t* openlcb_msg);
 
 extern uint16_olcb_t BufferStore_basic_messages_allocated(void);
 

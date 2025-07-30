@@ -145,45 +145,29 @@ void _update_buffer_telemetry(uint16_olcb_t buffer_size) {
 
 }
 
-openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
+openlcb_msg_t* BufferStore_allocate_buffer(enum payload_type_enum payload_type) {
 
     uint8_olcb_t offset_start = 0;
     uint8_olcb_t offset_end = 0;
 
-    if (buffer_size <= LEN_MESSAGE_BYTES_BASIC) {
+    switch (payload_type) {
 
-        buffer_size = LEN_MESSAGE_BYTES_BASIC;
-
-    } else if (buffer_size <= LEN_MESSAGE_BYTES_DATAGRAM) {
-
-        buffer_size = LEN_MESSAGE_BYTES_DATAGRAM;
-
-    } else if (buffer_size <= LEN_MESSAGE_BYTES_SNIP) {
-
-        buffer_size = LEN_MESSAGE_BYTES_SNIP;
-
-    } else
-        buffer_size = LEN_MESSAGE_BYTES_STREAM;
-
-
-    switch (buffer_size) {
-
-        case LEN_MESSAGE_BYTES_BASIC:
+        case BASIC:
             offset_start = 0;
             offset_end = USER_DEFINED_BASIC_BUFFER_DEPTH;
 
             break;
-        case LEN_MESSAGE_BYTES_DATAGRAM:
+        case DATAGRAM:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
 
             break;
-        case LEN_MESSAGE_BYTES_SNIP:
+        case SNIP:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_SNIP_BUFFER_DEPTH;
 
             break;
-        case LEN_MESSAGE_BYTES_STREAM:
+        case STREAM:
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_STREAM_BUFFER_DEPTH;
 
@@ -209,31 +193,11 @@ openlcb_msg_t* BufferStore_allocateBuffer(uint16_olcb_t buffer_size) {
 
     }
 
-    // TODO: TEST ONLY
-
-    switch (buffer_size) {
-
-        case LEN_MESSAGE_BYTES_BASIC:
-            printf("Failed to allocated Basic\n");
-            break;
-        case LEN_MESSAGE_BYTES_DATAGRAM:
-            printf("Failed to allocated Datagram\n");
-            break;
-        case LEN_MESSAGE_BYTES_SNIP:
-            printf("Failed to allocated SNIP\n");
-            break;
-        case LEN_MESSAGE_BYTES_STREAM:
-            printf("Failed to allocated STREAM\n");
-            break;
-
-    }
-
-
     return (void*) 0;
 
 }
 
-void BufferStore_freeBuffer(openlcb_msg_t* openlcb_msg) {
+void BufferStore_free_buffer(openlcb_msg_t* openlcb_msg) {
 
     if (!openlcb_msg)
         return;

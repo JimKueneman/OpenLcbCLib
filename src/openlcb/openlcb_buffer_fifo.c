@@ -63,7 +63,7 @@ void BufferFifo_initialiaze(void) {
 
 }
 
-openlcb_msg_t* BufferFifo_push(uint16_olcb_t data_len) {
+openlcb_msg_t* BufferFifo_push(enum payload_type_enum payload_type) {
 
     uint8_olcb_t next = openlcb_msg_buffer_fifo.head + 1;
     if (next >= LEN_MESSAGE_FIFO_BUFFER)
@@ -71,7 +71,7 @@ openlcb_msg_t* BufferFifo_push(uint16_olcb_t data_len) {
 
     if (next != openlcb_msg_buffer_fifo.tail) {
 
-        openlcb_msg_t* new_msg = BufferStore_allocateBuffer(data_len);
+        openlcb_msg_t* new_msg = BufferStore_allocate_buffer(payload_type);
 
         if (!new_msg)
             return (void*) 0;

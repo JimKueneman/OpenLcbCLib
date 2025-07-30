@@ -118,7 +118,7 @@ extern "C" {
 #endif
 
 
-    
+
 
 
 #define FALSE 0
@@ -157,6 +157,14 @@ extern "C" {
 #define LEN_MESSAGE_BUFFER  (USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH + USER_DEFINED_STREAM_BUFFER_DEPTH)
 
 #define LEN_DATAGRAM_MAX_PAYLOAD       64   // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
+
+    enum payload_type_enum {
+        BASIC = LEN_MESSAGE_BYTES_BASIC,
+        DATAGRAM = LEN_MESSAGE_BYTES_DATAGRAM,
+        SNIP = LEN_MESSAGE_BYTES_SNIP,
+        STREAM = LEN_MESSAGE_BYTES_STREAM
+
+    };
 
     typedef uint8_olcb_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_olcb_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
