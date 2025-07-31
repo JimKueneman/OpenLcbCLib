@@ -52,7 +52,7 @@ extern "C"
     // The SUM of the next 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254 (should never really need more than 10-20)
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
-#define USER_DEFINED_BASIC_BUFFER_DEPTH 3 // USER DEFINED
+#define USER_DEFINED_BASIC_BUFFER_DEPTH 32 // USER DEFINED
 #endif
 
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
@@ -64,7 +64,7 @@ extern "C"
 #endif
 
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
-#define USER_DEFINED_STREAM_BUFFER_DEPTH 1 // USER DEFINED
+#define USER_DEFINED_STREAM_BUFFER_DEPTH 0 // USER DEFINED
 #endif
 
     // The SUM of the previous 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
