@@ -91,7 +91,7 @@ void MainStatemachine_initialize(
     _openlcb_helper.worker.timerticks = 0;
     _openlcb_helper.worker.state.inprocess = FALSE;
     _openlcb_helper.worker.payload = (openlcb_payload_t*) & _openlcb_helper.worker_buffer;
-    _openlcb_helper.worker.payload_type = STREAM;   // make it the largest so it can fake as any
+    _openlcb_helper.worker.payload_type = STREAM; // make it the largest so it can fake as any
     _openlcb_helper.worker.state.allocated = TRUE;
 
 }
@@ -198,7 +198,6 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
         }
         case MTI_EVENT_LEARN:
         {
-
             ProtocolEventTransport_handle_event_learn(openlcb_node, openlcb_msg, worker_msg);
             return;
         }
@@ -307,9 +306,9 @@ void MainStatemachine_run(void) {
 }
 
 openlcb_statemachine_worker_t* MainStatemachine_get_openlcb_helper(void) {
-    
+
     return &_openlcb_helper;
-    
+
 }
 
 void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {

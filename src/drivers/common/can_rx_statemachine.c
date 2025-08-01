@@ -209,7 +209,6 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
     if (BufferFifo_push(new_msg)) {
 
-        BufferStore_free_buffer(new_msg);
         return new_msg;
     }
 
