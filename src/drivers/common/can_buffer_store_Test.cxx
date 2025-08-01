@@ -40,6 +40,8 @@ TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
         EXPECT_EQ(can_msg->payload_count, 0);
 
         CanBufferStore_free_buffer(can_msg);
+
+        EXPECT_EQ(CanBufferStore_messages_allocated(), 0);
     }
 }
 
