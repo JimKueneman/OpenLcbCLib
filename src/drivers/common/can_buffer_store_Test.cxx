@@ -8,12 +8,12 @@ TEST(CAN_BufferStore, CanBufferStore_initialize)
     CanBufferStore_initialize();
 }
 
-TEST(CAN_BufferStore, CanBufferStore_allocateBuffer)
+TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
 {
 
     CanBufferStore_initialize();
 
-    can_msg_t *can_msg = CanBufferStore_allocateBuffer();
+    can_msg_t *can_msg = CanBufferStore_allocate_buffer();
 
     EXPECT_NE(can_msg, nullptr);
 
@@ -39,7 +39,7 @@ TEST(CAN_BufferStore, CanBufferStore_allocateBuffer)
         EXPECT_EQ(can_msg->identifier, 0);
         EXPECT_EQ(can_msg->payload_count, 0);
 
-        CanBufferStore_freeBuffer(can_msg);
+        CanBufferStore_free_buffer(can_msg);
     }
 }
 
@@ -48,7 +48,7 @@ TEST(CAN_BufferStore, CanBufferStore_clear_message)
 
     CanBufferStore_initialize();
 
-    can_msg_t *can_msg = CanBufferStore_allocateBuffer();
+    can_msg_t *can_msg = CanBufferStore_allocate_buffer();
 
     EXPECT_NE(can_msg, nullptr);
 
@@ -73,7 +73,7 @@ TEST(CAN_BufferStore, CanBufferStore_clear_message)
             EXPECT_EQ(can_msg->payload[i], 0);
         }
 
-        CanBufferStore_freeBuffer(can_msg);
+        CanBufferStore_free_buffer(can_msg);
     }
 }
 
@@ -85,16 +85,16 @@ TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++)
     {
 
-        can_msg_array[i] = CanBufferStore_allocateBuffer();
+        can_msg_array[i] = CanBufferStore_allocate_buffer();
 
         EXPECT_NE(can_msg_array[i], nullptr);
     }
 
-    can_msg = CanBufferStore_allocateBuffer();
+    can_msg = CanBufferStore_allocate_buffer();
 
     EXPECT_TRUE(can_msg == nullptr);
 
-    CanBufferStore_freeBuffer(can_msg_array[0]);
+    CanBufferStore_free_buffer(can_msg_array[0]);
 
     int count = CanBufferStore_messages_allocated();
 
@@ -103,7 +103,7 @@ TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
     for (int i = 1; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++)
     {
 
-        CanBufferStore_freeBuffer(can_msg_array[i]);
+        CanBufferStore_free_buffer(can_msg_array[i]);
 
         count = CanBufferStore_messages_allocated();
 
@@ -114,5 +114,5 @@ TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
 TEST(CAN_BufferStore, CanBufferStore_free_null_buffer)
 {
 
-    CanBufferStore_freeBuffer(nullptr);
+    CanBufferStore_free_buffer(nullptr);
 }

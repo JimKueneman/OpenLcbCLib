@@ -23,7 +23,7 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_push_pop)
     CanBufferFifo_initialize();
 
     // allocate and check a buffer
-    can_msg_t *new_msg = CanBufferStore_allocateBuffer();
+    can_msg_t *new_msg = CanBufferStore_allocate_buffer();
     EXPECT_NE(new_msg, nullptr);
 
     // push and check the return
@@ -53,7 +53,7 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_push_pop)
     EXPECT_EQ(popped_msg, new_msg);
 
     // free the message
-    CanBufferStore_freeBuffer(new_msg);
+    CanBufferStore_free_buffer(new_msg);
 }
 
 TEST(CAN_BufferFIFO, CAN_BufferFIFO_stress)
@@ -67,7 +67,7 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_stress)
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++)
     {
 
-        new_msg_array[i] = CanBufferStore_allocateBuffer();
+        new_msg_array[i] = CanBufferStore_allocate_buffer();
         EXPECT_NE(new_msg_array[i], nullptr);
     }
 
@@ -103,7 +103,7 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_stress)
     // Free the buffers
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++)
     {
-        CanBufferStore_freeBuffer(new_msg_array[i]);
+        CanBufferStore_free_buffer(new_msg_array[i]);
     }
 }
 
