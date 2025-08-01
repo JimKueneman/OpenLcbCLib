@@ -51,19 +51,31 @@ void CanUtilities_clear_can_message(can_msg_t *can_msg)
     }
 }
 
-uint16_olcb_t CanUtilities_extract_source_alias_from_can_message(can_msg_t *can_msg)
+uint16_olcb_t CanUtilities_extract_source_alias_from_can_identifier(can_msg_t *can_msg)
 {
+
+    if (!can_msg)
+    {
+
+        return 0;
+    }
 
     return (can_msg->identifier & 0x000000FFF);
 }
 
 uint16_olcb_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg)
 {
+    if (!can_msg)
+    {
+
+        return 0;
+    }
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE)
     {
 
     case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
+    case CAN_FRAME_TYPE_STREAM:
 
         if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT)
         {
@@ -80,7 +92,8 @@ uint16_olcb_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg
 
         return (can_msg->identifier >> 12) & 0x000000FFF;
 
-        // TODO: Handle Streams
+    default:
+        break;
     }
 
     return 0;
@@ -89,10 +102,17 @@ uint16_olcb_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg
 uint16_olcb_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg)
 {
 
+    if (!can_msg)
+    {
+
+        return 0;
+    }
+
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE)
     {
 
     case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
+    case CAN_FRAME_TYPE_STREAM:
 
         return (can_msg->identifier >> 12) & 0x0FFF;
 
@@ -103,32 +123,35 @@ uint16_olcb_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg)
 
         return MTI_DATAGRAM;
 
-    case CAN_FRAME_TYPE_STREAM:
-
-        // TODO: Figure out Streams
+    default:
 
         return 0;
     }
-
-    return 0;
 }
 
 uint8_olcb_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint8_olcb_t can_start_index)
 {
 
+    if ((!openlcb_msg) || (!can_msg) || (can_start_index >= 8))
+    {
+
+        return 0;
+    }
+
     uint8_olcb_t result = 0;
+    uint16_olcb_t buffer_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
 
     for (olcb_int_t i = can_start_index; i < can_msg->payload_count; i++)
     {
 
-        if (openlcb_msg->payload_count < openlcb_msg->payload_type)
+        if (openlcb_msg->payload_count < buffer_len)
         {
 
             *openlcb_msg->payload[openlcb_msg->payload_count] = can_msg->payload[i];
 
-            openlcb_msg->payload_count = openlcb_msg->payload_count + 1;
+            openlcb_msg->payload_count++;
 
-            result = result + 1;
+            result++;
         }
         else
 
@@ -141,12 +164,18 @@ uint8_olcb_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *o
 uint8_olcb_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint8_olcb_t can_start_index)
 {
 
+    if ((!openlcb_msg) || (!can_msg) || (can_start_index >= 8))
+    {
+
+        return 0;
+    }
+
     openlcb_msg->payload_count = 0; // replacing the contents so reset to index 0
 
     return CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, can_msg, can_start_index);
 }
 
-uint8_olcb_t CanUtilities_count_nulls_in_can_payload(can_msg_t *can_msg)
+uint8_olcb_t _count_nulls_in_can_payload(can_msg_t *can_msg)
 {
 
     uint8_olcb_t count = 0;
@@ -156,7 +185,7 @@ uint8_olcb_t CanUtilities_count_nulls_in_can_payload(can_msg_t *can_msg)
 
         if (can_msg->payload[i] == 0x00)
 
-            count = count + 1;
+            count++;
     };
 
     return count;
@@ -165,7 +194,13 @@ uint8_olcb_t CanUtilities_count_nulls_in_can_payload(can_msg_t *can_msg)
 uint8_olcb_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg)
 {
 
-    return CanUtilities_count_nulls_in_can_payload(can_msg) + Utilities_count_nulls_in_openlcb_payload(openlcb_msg);
+    if ((!openlcb_msg) || (!can_msg))
+    {
+
+        return 0;
+    }
+
+    return _count_nulls_in_can_payload(can_msg) + Utilities_count_nulls_in_openlcb_payload(openlcb_msg);
 }
 
 uint8_olcb_t CanUtilities_is_openlcb_message(can_msg_t *msg)
@@ -177,6 +212,12 @@ uint8_olcb_t CanUtilities_is_openlcb_message(can_msg_t *msg)
 uint64_olcb_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg)
 {
 
+    if (!can_msg)
+    {
+
+        return 0;
+    }
+
     return (
         ((uint64_olcb_t)can_msg->payload[0] << 40) |
         ((uint64_olcb_t)can_msg->payload[1] << 32) |
@@ -186,40 +227,16 @@ uint64_olcb_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg)
         ((uint64_olcb_t)can_msg->payload[5]));
 }
 
-uint16_olcb_t CanUtilties_extract_can_mti_from_can_identifier(can_msg_t *can_msg)
-{
-
-    if ((can_msg->identifier & MASK_CAN_FRAME_TYPE) == CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
-
-        return (can_msg->identifier >> 12) & 0x0FFF;
-
-    return 0;
-}
-
-uint16_olcb_t CanUtilities_is_dest_alias_in_can_payload(can_msg_t *can_msg)
-{
-
-    uint16_olcb_t result = FALSE;
-
-    if ((can_msg->identifier & MASK_CAN_FRAME_TYPE) == CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
-    {
-
-        if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT)
-
-            return TRUE; // TODO: Handle Streams
-    }
-
-    return result;
-}
-
 uint8_olcb_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint16_olcb_t openlcb_start_index, uint8_olcb_t can_start_index)
 {
 
-    can_msg->payload_count = 0;
+    if ((!openlcb_msg) || (!can_msg) || (openlcb_start_index >= openlcb_msg->payload_count) || (can_start_index >= 8))
+    {
 
-    if (openlcb_start_index >= openlcb_msg->payload_count)
         return 0;
+    }
 
+    can_msg->payload_count = 0;
     uint8_olcb_t count = 0;
 
     for (olcb_int_t i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++)
@@ -227,9 +244,9 @@ uint8_olcb_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *ope
 
         can_msg->payload[i] = *openlcb_msg->payload[openlcb_start_index];
 
-        openlcb_start_index = openlcb_start_index + 1;
+        openlcb_start_index++;
 
-        count = count + 1;
+        count++;
 
         // have we hit the end of the OpenLcb payload?
         if (openlcb_start_index >= openlcb_msg->payload_count)
@@ -240,15 +257,6 @@ uint8_olcb_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *ope
     }
 
     can_msg->payload_count = can_start_index + count;
-
-    // problem
-    if (can_msg->payload_count > LEN_CAN_BYTE_ARRAY)
-    {
-
-        can_msg->payload_count = 0;
-
-        return 0;
-    }
 
     return count;
 }
@@ -290,8 +298,13 @@ uint8_olcb_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_olc
     return 0;
 }
 
-void CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_olcb_t data)
+uint8_olcb_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_olcb_t data)
 {
+    if (!can_msg)
+    {
+
+        return FALSE;
+    }
 
     for (olcb_int_t i = 7; i >= 0; i--)
     {
@@ -301,15 +314,28 @@ void CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_olcb_t d
     }
 
     can_msg->payload_count = 8;
+
+    return TRUE;
 }
 
-void CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target)
+uint8_olcb_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target)
 {
+
+    if ((!can_msg_source) || (!can_msg_target))
+    {
+
+        return FALSE;
+    }
 
     can_msg_target->identifier = can_msg_source->identifier;
 
     for (olcb_int_t i = 0; i < can_msg_source->payload_count; i++)
+    {
+
         can_msg_target->payload[i] = can_msg_source->payload[i];
+    }
 
     can_msg_target->payload_count = can_msg_source->payload_count;
+
+    return TRUE;
 }

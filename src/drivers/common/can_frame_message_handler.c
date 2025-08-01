@@ -56,7 +56,7 @@ void _flush_alias_node_id_mappings(void) {
 
 uint8_olcb_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (can_node->alias == CanUtilities_extract_source_alias_from_can_message(can_msg)) {
+    if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
 
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | can_node->alias;
         CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
@@ -80,7 +80,7 @@ uint8_olcb_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t*
 
 uint8_olcb_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (can_node->alias == CanUtilities_extract_source_alias_from_can_message(can_msg)) {
+    if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
 
         worker_msg->payload_count = 0;
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_node->alias;
