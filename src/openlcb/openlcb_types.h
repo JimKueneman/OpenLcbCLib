@@ -64,7 +64,7 @@ extern "C"
 #endif
 
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
-#define USER_DEFINED_STREAM_BUFFER_DEPTH 0 // USER DEFINED
+#define USER_DEFINED_STREAM_BUFFER_DEPTH 1 // USER DEFINED
 #endif
 
     // The SUM of the previous 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254

@@ -45,16 +45,16 @@ uint16_olcb_t Utilities_payload_type_to_len(payload_type_enum_t payload_type){
     switch (payload_type) {
         
         case BASIC:
-            return  USER_DEFINED_BASIC_BUFFER_DEPTH;
+            return  LEN_MESSAGE_BYTES_BASIC;
 
         case DATAGRAM:
-            return USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
+            return LEN_MESSAGE_BYTES_DATAGRAM;
             
         case SNIP:
-            return USER_DEFINED_SNIP_BUFFER_DEPTH;
+            return LEN_MESSAGE_BYTES_SNIP;
           
         case STREAM:
-            return USER_DEFINED_STREAM_BUFFER_DEPTH;
+            return LEN_MESSAGE_BYTES_STREAM;
             
         default:
             return 0;
@@ -107,6 +107,13 @@ void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t so
         openlcb_msg->mti = mti;
         openlcb_msg->payload_count = payload_count;
         openlcb_msg->timerticks = 0;
+        
+        uint16_olcb_t data_count = Utilities_payload_type_to_len(openlcb_msg->payload_type);
+        
+        for (uint16_olcb_t i = 0; i < data_count; i++) {
+            
+            *openlcb_msg->payload[i] = 0x00;
+        }
 
     }
 
