@@ -37,11 +37,13 @@
 
 #include "../drivers/common/can_types.h"
 
-can_rx_callback_func_t can_rx_callback_func = (void*) 0;
-transmit_raw_can_frame_func_t transmit_raw_can_frame_func = (void*) 0;
-is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_func = (void*) 0;
-parameterless_callback_t pause_can_rx_func = (void*) 0;
-parameterless_callback_t resume_can_rx_func = (void*) 0;
+#include <stddef.h>
+
+can_rx_callback_func_t can_rx_callback_func = NULL;
+transmit_raw_can_frame_func_t transmit_raw_can_frame_func = NULL;
+is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_func = NULL;
+parameterless_callback_t pause_can_rx_func = NULL;
+parameterless_callback_t resume_can_rx_func = NULL;
 
 void DriverCan_initialization(
         transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,

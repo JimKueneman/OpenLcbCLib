@@ -218,7 +218,7 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
     if (openlcb_node->last_received_datagram) {
 
         BufferStore_free_buffer(openlcb_node->last_received_datagram);
-        openlcb_node->last_received_datagram = (void*) 0;
+        openlcb_node->last_received_datagram = NULL;
 
     }
 
@@ -244,7 +244,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
     } else {
 
         BufferStore_free_buffer(openlcb_node->last_received_datagram);
-        openlcb_node->last_received_datagram = (void*) 0;
+        openlcb_node->last_received_datagram = NULL;
 
     }
 

@@ -40,10 +40,11 @@
 // define FCY=40000000UL in the compiler macros so the delay, UART, etc calculations are correct  
 
 #include "../openlcb/openlcb_types.h"
+
+#include <stddef.h>
 #include "driver_100ms_clock.h"
 
-parameterless_callback_t reboot_callback_func = (void*) 0;
-;
+parameterless_callback_t reboot_callback_func = NULL;
 
 void DriverMcu_reboot(void) {
 

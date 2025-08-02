@@ -39,6 +39,8 @@
 
 #include "openlcb_buffer_fifo.h"
 
+#include <stddef.h>
+
 #include "openlcb_buffer_store.h"
 #include "openlcb_types.h"
 
@@ -58,7 +60,7 @@ void BufferFifo_initialize(void) {
 
     for (int_olcb_t i = 0; i < LEN_MESSAGE_FIFO_BUFFER; i++) {
 
-        openlcb_msg_buffer_fifo.list[i] = (void*) 0;
+        openlcb_msg_buffer_fifo.list[i] = NULL;
 
     }
 
@@ -71,7 +73,7 @@ openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
 
     if (!new_msg) {
 
-        return (void*) 0;
+        return NULL;
 
     }
 
@@ -88,7 +90,7 @@ openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
 
     }
 
-    return (void*) 0;
+    return NULL;
 
 }
 
@@ -96,7 +98,7 @@ openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
 
     if (!existing_msg) {
 
-        return (void*) 0;
+        return NULL;
 
     }
 
@@ -113,13 +115,13 @@ openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
 
     }
 
-    return (void*) 0;
+    return NULL;
 
 }
 
 openlcb_msg_t* BufferFifo_pop(void) {
 
-    openlcb_msg_t* result = (void*) 0;
+    openlcb_msg_t* result = NULL;
 
     if (openlcb_msg_buffer_fifo.head != openlcb_msg_buffer_fifo.tail) {
 

@@ -100,13 +100,13 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
             CanBufferStore_free_buffer(can_msg_error);
 
-            return (void*) 0;
+            return NULL;
 
         };
 
     }
 
-    return (void*) 0;
+    return NULL;
 
 }
 
@@ -143,7 +143,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_s
 
         BufferStore_free_buffer(result);
 
-        return (void*) 0;
+        return NULL;
     };
 
     return result;
@@ -201,7 +201,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
     if (!new_msg) {
 
-        return (void*) 0;
+        return NULL;
 
     }
 
@@ -219,8 +219,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
     }
 
-    return (void*) 0;
-
+    return NULL;
 }
 
 void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t data_type) {

@@ -34,14 +34,16 @@
  * @date 5 Dec 2024
  */
 
+#include <stddef.h>
+
 #include "../openlcb/openlcb_types.h"
 #include "../openlcb/openlcb_node.h"
 #include "../openlcb/protocol_datagram.h"
 #include "../openlcb/application_callbacks.h"
 
 
-parameterless_callback_t _pause_timer_callback_func = (void*) 0;
-parameterless_callback_t _resume_timer_callback_func = (void*) 0;
+parameterless_callback_t _pause_timer_callback_func = NULL;
+parameterless_callback_t _resume_timer_callback_func = NULL;
 
 void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
 

@@ -102,7 +102,7 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 
     }
 
-    return (void*) 0;
+    return NULL;
 
 }
 

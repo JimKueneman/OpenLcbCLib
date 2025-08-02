@@ -84,7 +84,7 @@ void MainStatemachine_initialize(
 
     }
 
-    _openlcb_helper.active_msg = (void*) 0;
+    _openlcb_helper.active_msg = NULL;
 
     _openlcb_helper.worker.source_alias = 0;
     _openlcb_helper.worker.source_id = 0;
@@ -282,7 +282,7 @@ void MainStatemachine_run(void) {
     //        // WARNING: The only time the message should be taken is if it was addressed to the node!!!
     //        if (openlcb_helper.active_msg->owner) {
     //            
-    //             openlcb_helper.active_msg = (void*) 0;
+    //             openlcb_helper.active_msg = NULL;
     //             break;
     //            
     //        }
@@ -301,7 +301,7 @@ void MainStatemachine_run(void) {
     //        
     //        BufferStore_freeBuffer(openlcb_helper.active_msg);
     //
-    //        openlcb_helper.active_msg = (void*) 0;
+    //        openlcb_helper.active_msg = NULL;
     //
     //    }
 

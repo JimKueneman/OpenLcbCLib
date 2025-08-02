@@ -34,6 +34,8 @@
 
 #include "openlcb_node.h"
 
+#include <stddef.h>
+
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 
@@ -62,8 +64,8 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->lock_node = 0;
     openlcb_node->index = 0;
 
-    openlcb_node->last_received_datagram = (void*) 0;
-    openlcb_node->last_received_optional_interaction = (void*) 0;
+    openlcb_node->last_received_datagram = NULL;
+    openlcb_node->last_received_optional_interaction = NULL;
 
     openlcb_node->consumers.count = 0;
     for (int_olcb_t i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {
@@ -116,8 +118,11 @@ openlcb_node_t* Node_get_first(uint8_olcb_t key) {
     node_enum_index_array[key] = 0;
 
 
-    if (openlcb_nodes.count == 0)
-        return (void*) 0;
+    if (openlcb_nodes.count == 0) {
+        
+        return NULL;
+        
+    }
 
     return (&openlcb_nodes.node[ node_enum_index_array[key] ]);
 
@@ -127,8 +132,11 @@ openlcb_node_t* Node_get_next(uint8_olcb_t key) {
 
     node_enum_index_array[key] = node_enum_index_array[key] + 1;
 
-    if (node_enum_index_array[key] >= openlcb_nodes.count)
-        return (void*) 0;
+    if (node_enum_index_array[key] >= openlcb_nodes.count) {
+        
+        return NULL;
+        
+    }
 
     return (&openlcb_nodes.node[node_enum_index_array[key]]);
 
@@ -200,7 +208,7 @@ openlcb_node_t* Node_allocate(uint64_olcb_t node_id, const node_parameters_t* no
 
     }
 
-    return (void*) 0;
+    return NULL;
 
 }
 
@@ -218,7 +226,7 @@ openlcb_node_t* Node_find_by_alias(uint16_olcb_t alias) {
 
     };
 
-    return (void*) 0;
+    return NULL;
 
 }
 
@@ -236,7 +244,7 @@ openlcb_node_t* Node_find_by_node_id(uint64_olcb_t nodeid) {
 
     };
 
-    return (void*) 0;
+    return NULL;
 }
 
 uint64_olcb_t Node_generate_seed(uint64_olcb_t start_seed) {

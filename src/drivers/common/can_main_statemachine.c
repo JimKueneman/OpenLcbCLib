@@ -76,7 +76,7 @@ void CanMainStatemachine_initialize(
 
     // Just use an existing openlcb_helper structure vs allocating another one
     _can_helper.openlcb_worker = MainStatemachine_get_openlcb_helper();
-    _can_helper.active_msg = (void*) 0;
+    _can_helper.active_msg = NULL;
     _can_helper.can_worker.state.allocated = TRUE;
     _can_helper.can_worker.state.addressed_direct_tx = FALSE;
     _can_helper.can_worker.identifier = 0x0000000000;
@@ -296,7 +296,7 @@ void _release_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
     can_helper->active_msg->state.addressed_direct_tx = FALSE;
     CanBufferStore_free_buffer(can_helper->active_msg);
-    can_helper->active_msg = (void*) 0;
+    can_helper->active_msg = NULL;
 
 }
 
@@ -377,7 +377,7 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
     if (active_can_msg_processiong_complete) {
 
         CanBufferStore_free_buffer(can_helper->active_msg);
-        can_helper->active_msg = (void*) 0; // Clear the "flag" the next loop _pop_next_can_message() will get a new message)
+        can_helper->active_msg = NULL; // Clear the "flag" the next loop _pop_next_can_message() will get a new message)
 
     }
 
@@ -385,7 +385,7 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
     if (active_openlcb_msg_processing_complete) {
 
         BufferStore_free_buffer(can_helper->openlcb_worker->active_msg);
-        can_helper->openlcb_worker->active_msg = (void*) 0; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
+        can_helper->openlcb_worker->active_msg = NULL; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
 
     }
 

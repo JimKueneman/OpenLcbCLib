@@ -85,7 +85,7 @@ const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* ope
 #endif
         default:
 
-            return (void*) 0;
+            return NULL;
 
     }
 
@@ -97,7 +97,7 @@ void ProtocolDatagramHandlers_clear_resend_datagram_message(openlcb_node_t* open
 
         BufferStore_free_buffer(openlcb_node->last_received_datagram);
 
-        openlcb_node->last_received_datagram = (void*) 0;
+        openlcb_node->last_received_datagram = NULL;
 
     }
 

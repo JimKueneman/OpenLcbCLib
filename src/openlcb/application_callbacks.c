@@ -36,25 +36,27 @@
 
 #include "application_callbacks.h"
 
+#include <stddef.h>
+
 #include "openlcb_types.h"
 
 
-callback_alias_change_t callback_alias_change_func = (void*) 0;
-callback_event_identified_t callback_event_consumer_identified_unknown_func = (void*) 0;
-callback_event_identified_t callback_event_consumer_identified_clear_func = (void*) 0;
-callback_event_identified_t callback_event_consumer_identified_set_func = (void*) 0;
-callback_event_identified_t callback_event_producer_identified_unknown_func = (void*) 0;
-callback_event_identified_t callback_event_producer_identified_clear_func = (void*) 0;
-callback_event_identified_t callback_event_producer_identified_set_func = (void*) 0;
-callback_event_pc_report_t callback_event_pc_report_func = (void*) 0;
-callback_event_pc_report_with_payload_t callback_event_pc_report_with_payload_func = (void*) 0;
-callback_event_identified_t callback_event_learn_func = (void*) 0;
-callback_config_mem_write_t callback_config_mem_write_func = (void*) 0;
-callback_config_mem_freeze_t callback_config_mem_freeze_firmware_update_func = (void*) 0;
-callback_config_mem_freeze_t callback_config_mem_unfreeze_firmware_update_func = (void*) 0;
-parameterless_callback_t callback_can_rx_func = (void*) 0;
-parameterless_callback_t callback_can_tx_func = (void*) 0;
-parameterless_callback_t callback_100ms_timer_func = (void*) 0;
+callback_alias_change_t callback_alias_change_func = NULL;
+callback_event_identified_t callback_event_consumer_identified_unknown_func = NULL;
+callback_event_identified_t callback_event_consumer_identified_clear_func = NULL;
+callback_event_identified_t callback_event_consumer_identified_set_func = NULL;
+callback_event_identified_t callback_event_producer_identified_unknown_func = NULL;
+callback_event_identified_t callback_event_producer_identified_clear_func = NULL;
+callback_event_identified_t callback_event_producer_identified_set_func = NULL;
+callback_event_pc_report_t callback_event_pc_report_func = NULL;
+callback_event_pc_report_with_payload_t callback_event_pc_report_with_payload_func = NULL;
+callback_event_identified_t callback_event_learn_func = NULL;
+callback_config_mem_write_t callback_config_mem_write_func = NULL;
+callback_config_mem_freeze_t callback_config_mem_freeze_firmware_update_func = NULL;
+callback_config_mem_freeze_t callback_config_mem_unfreeze_firmware_update_func = NULL;
+parameterless_callback_t callback_can_rx_func = NULL;
+parameterless_callback_t callback_can_tx_func = NULL;
+parameterless_callback_t callback_100ms_timer_func = NULL;
 
 
 void ApplicationCallbacks_set_100ms_timer(parameterless_callback_t callback_100ms_timer) {
