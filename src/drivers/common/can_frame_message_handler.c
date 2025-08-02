@@ -99,25 +99,31 @@ uint8_olcb_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t*
 
 void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (!_check_for_soft_alias_conflict(can_node, can_msg, worker_msg))
+    if (!_check_for_soft_alias_conflict(can_node, can_msg, worker_msg)) {
 
         can_node->state.can_msg_handled = TRUE;
+
+    }
 
 }
 
 void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg))
+    if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
 
         can_node->state.can_msg_handled = TRUE;
+
+    }
 
 }
 
 void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg))
+    if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
 
         can_node->state.can_msg_handled = TRUE;
+
+    }
 
 }
 
@@ -126,12 +132,17 @@ void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
     // Someone is requesting we reply with Alias Mapping Definitions for our Node(s)
 
-    if (can_msg->payload_count == 0)
+    if (can_msg->payload_count == 0) {
+
         _flush_alias_node_id_mappings();
 
-    if (_check_for_hard_alias_conflict(can_node, can_msg, worker_msg))
+    }
+
+    if (_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
 
         return;
+
+    }
 
     if ((can_msg->payload_count == 0) || (can_node->id == CanUtilities_extract_can_payload_as_node_id(can_msg))) {
 

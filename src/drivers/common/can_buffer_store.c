@@ -49,14 +49,18 @@ uint16_olcb_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize(void) {
 
-    for (olcb_int_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
+    for (int_olcb_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         _can_buffer_store[i].state.allocated = FALSE;
         _can_buffer_store[i].state.addressed_direct_tx = FALSE;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
-        for (olcb_int_t j = 0; j < LEN_CAN_BYTE_ARRAY; j++)
+
+        for (int_olcb_t j = 0; j < LEN_CAN_BYTE_ARRAY; j++) {
+
             _can_buffer_store[i].payload[j] = 0;
+
+        }
 
     }
 }
@@ -65,7 +69,8 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
     msg->identifier = 0;
     msg->payload_count = 0;
-    for (olcb_int_t i= 0; i < LEN_CAN_BYTE_ARRAY; i++) {
+
+    for (int_olcb_t i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
 
         msg->payload[i] = 0;
 
@@ -75,15 +80,17 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
 can_msg_t* CanBufferStore_allocate_buffer(void) {
 
-    for (olcb_int_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
+    for (int_olcb_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         if (!_can_buffer_store[i].state.allocated) {
 
             _can_buffer_store_message_allocated = _can_buffer_store_message_allocated + 1;
 
-            if (_can_buffer_store_message_allocated > _can_buffer_store_message_max_allocated)
+            if (_can_buffer_store_message_allocated > _can_buffer_store_message_max_allocated) {
+
                 _can_buffer_store_message_max_allocated = _can_buffer_store_message_allocated;
 
+            }
 
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
             _can_buffer_store[i].state.allocated = TRUE;
@@ -101,7 +108,11 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 
 void CanBufferStore_free_buffer(can_msg_t* msg) {
 
-    if (!msg) return;
+    if (!msg) {
+
+        return;
+
+    }
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->state.allocated = FALSE;

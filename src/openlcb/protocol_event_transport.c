@@ -74,7 +74,7 @@ void _encode_event_state(uint8_olcb_t* state_byte, uint8_olcb_t event_offset, ev
     // Clear the bits in that offset in the byte
     (*state_byte) = (*state_byte) & ~(0b00000011 << ((3 - event_offset) * 2));
     // Set the index offset to the new value
-    (*state_byte) = (*state_byte) | (uint8_olcb_t)((mask << (3 - event_offset) * 2));
+    (*state_byte) = (*state_byte) | (uint8_olcb_t) ((mask << (3 - event_offset) * 2));
 
 }
 
@@ -248,7 +248,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
         return;
 
     uint16_olcb_t event_index = 0;
- 
+
     if (Utilities_is_consumer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
 
         openlcb_node->state.openlcb_msg_handled = TRUE;
@@ -575,7 +575,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
 
         uint16_olcb_t payload_index = sizeof (eventid);
 
-        for (uint16_olcb_t i = 0; i < local_payload_count; i++) {
+        for (int_olcb_t i = 0; i < local_payload_count; i++) {
 
             local_payload[i] = *openlcb_msg->payload[payload_index];
             payload_index = payload_index + 1;

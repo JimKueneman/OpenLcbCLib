@@ -72,7 +72,7 @@ extern "C"
 
     extern uint8_olcb_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg);
 
-    extern uint8_olcb_t CanUtilities_is_openlcb_message(can_msg_t *msg);
+    extern uint8_olcb_t CanUtilities_is_openlcb_message(can_msg_t *can_msg);
 
 #ifdef __cplusplus
 }

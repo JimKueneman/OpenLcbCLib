@@ -39,38 +39,37 @@
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 
+uint16_olcb_t Utilities_payload_type_to_len(payload_type_enum_t payload_type) {
 
-uint16_olcb_t Utilities_payload_type_to_len(payload_type_enum_t payload_type){
-    
     switch (payload_type) {
-        
+
         case BASIC:
-            return  LEN_MESSAGE_BYTES_BASIC;
+            return LEN_MESSAGE_BYTES_BASIC;
 
         case DATAGRAM:
             return LEN_MESSAGE_BYTES_DATAGRAM;
-            
+
         case SNIP:
             return LEN_MESSAGE_BYTES_SNIP;
-          
+
         case STREAM:
             return LEN_MESSAGE_BYTES_STREAM;
-            
+
         default:
             return 0;
     }
-    
+
 }
 
 uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node) {
-    
+
     uint32_olcb_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
-    
+
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-       offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.low_address; 
-    
+        offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.low_address;
+
     return (offset_per_node * openlcb_node->index);
-    
+
 }
 
 void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t source_alias, uint64_olcb_t source_id, uint16_olcb_t dest_alias, uint64_olcb_t dest_id, uint16_olcb_t mti, uint16_olcb_t payload_count) {
@@ -84,11 +83,11 @@ void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t so
         openlcb_msg->mti = mti;
         openlcb_msg->payload_count = payload_count;
         openlcb_msg->timerticks = 0;
-        
+
         uint16_olcb_t data_count = Utilities_payload_type_to_len(openlcb_msg->payload_type);
-        
-        for (uint16_olcb_t i = 0; i < data_count; i++) {
-            
+
+        for (int_olcb_t i = 0; i < data_count; i++) {
+
             *openlcb_msg->payload[i] = 0x00;
         }
 
@@ -96,13 +95,15 @@ void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t so
 
 }
 
-
 void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) {
-    
+
     uint16_olcb_t data_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
-    
-    for (uint16_olcb_t i = 0; i < data_len; i++)
+
+    for (int_olcb_t i = 0; i < data_len; i++) {
+
         *openlcb_msg->payload[i] = 0;
+
+    }
 
     openlcb_msg->payload_count = 0;
 
@@ -110,7 +111,7 @@ void Utilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) {
 
 void Utilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, event_id_t event_id) {
 
-    for (olcb_int_t i = 7; i >= 0; i--) {
+    for (int_olcb_t i = 7; i >= 0; i--) {
 
         *openlcb_msg->payload[i] = event_id & 0xFF;
         event_id = event_id >> 8;
@@ -143,7 +144,7 @@ uint16_olcb_t Utilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_ms
     uint16_olcb_t payload_len = 0;
 
     while (string[counter] != 0x00) {
-        
+
         payload_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
 
         if ((counter + payload_index) < payload_len - 1) { // leave room for a null
@@ -169,7 +170,7 @@ uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlc
     uint16_olcb_t payload_len = 0;
 
     payload_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
-    
+
     for (uint16_olcb_t i = 0; i < requested_bytes; i++) {
 
         if ((i + payload_index) < payload_len) {
@@ -177,8 +178,11 @@ uint16_olcb_t Utilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* openlc
             *openlcb_msg->payload[i + payload_index] = byte_array[i];
             counter++;
 
-        } else
+        } else {
+
             break;
+
+        }
 
     }
 
@@ -190,7 +194,8 @@ void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_
 
     openlcb_msg->payload_count = 6 + index;
 
-    for (olcb_int_t i = 5; i >= 0; i--) {
+    for (int_olcb_t i = 5; i >= 0; i--) {
+
         *openlcb_msg->payload[i + index] = node_id & 0xFF;
         node_id = node_id >> 8;
 
@@ -261,7 +266,7 @@ uint8_olcb_t Utilities_count_nulls_in_openlcb_payload(openlcb_msg_t* openlcb_msg
 
     uint8_olcb_t count = 0;
 
-    for (uint16_olcb_t i = 0; i < openlcb_msg->payload_count; i++) {
+    for (int_olcb_t i = 0; i < openlcb_msg->payload_count; i++) {
 
         if (*openlcb_msg->payload[i] == 0x00)
 
@@ -283,21 +288,23 @@ uint8_olcb_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb
 
         return FALSE;
 
-    }
+}
 
+uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id, uint16_olcb_t *event_index) {
 
-uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id, uint16_olcb_t* event_index) {
+    uint16_olcb_t indexer = 0;
 
-    for (uint16_olcb_t i = 0; i < openlcb_node->producers.count; i++) {
+    for (int_olcb_t i = 0; i < openlcb_node->producers.count; i++) {
 
         if (i < USER_DEFINED_PRODUCER_COUNT)
 
             if (openlcb_node->producers.list[i] == event_id) {
-                
-                (*event_index) = i;
+
+                (*event_index) = indexer;
+                indexer++;
 
                 return TRUE;
-                
+
             }
 
 
@@ -309,16 +316,19 @@ uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlc
 
 uint8_olcb_t Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_olcb_t event_id, uint16_olcb_t* event_index) {
 
-    for (uint16_olcb_t i = 0; i < openlcb_node->consumers.count; i++) {
+    uint16_olcb_t indexer = 0;
+
+    for (int_olcb_t i = 0; i < openlcb_node->consumers.count; i++) {
 
         if (i < USER_DEFINED_CONSUMER_COUNT)
 
             if (openlcb_node->consumers.list[i] == event_id) {
-                
-                (*event_index) = i;
+
+                (*event_index) = indexer;
+                indexer++;
 
                 return TRUE;
-                
+
             }
 
     }
@@ -335,7 +345,7 @@ uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlc
 
         if (openlcb_node->state.openlcb_msg_handled)
 
-            return FALSE; 
+            return FALSE;
 
         else
 

@@ -42,22 +42,28 @@
 #include "../openlcb/openlcb_types.h"
 #include "driver_100ms_clock.h"
 
-parameterless_callback_t reboot_callback_func  = (void*) 0;;
-
+parameterless_callback_t reboot_callback_func = (void*) 0;
+;
 
 void DriverMcu_reboot(void) {
-    
-    if (reboot_callback_func)
+
+    if (reboot_callback_func) {
+
         reboot_callback_func();
-     
+
+    }
+
 }
 
 void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback) {
 
     reboot_callback_func = reboot_callback;
-    
-    if (mcu_setup_callback)
+
+    if (mcu_setup_callback) {
+
         mcu_setup_callback(Driver100msClock_get_sink());
-    
+
+    }
+
 }
 

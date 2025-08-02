@@ -57,33 +57,43 @@ void DriverCan_initialization(
 
 }
 
-
 uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t channel) {
 
-    if (is_can_tx_buffer_clear_func)
+    if (is_can_tx_buffer_clear_func) {
+
         return is_can_tx_buffer_clear_func(channel);
+
+    }
 
     return FALSE;
 }
 
 void DriverCan_pause_can_rx(void) {
 
-    if (pause_can_rx_func)
+    if (pause_can_rx_func) {
+
         pause_can_rx_func();
+
+    }
 
 }
 
 void DriverCan_resume_can_rx(void) {
 
-    if (resume_can_rx_func)
+    if (resume_can_rx_func) {
+
         resume_can_rx_func();
 
+    }
 }
 
 uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
 
-    if (transmit_raw_can_frame_func)
+    if (transmit_raw_can_frame_func) {
+
         return transmit_raw_can_frame_func(channel, msg);
+
+    }
 
     return FALSE;
 

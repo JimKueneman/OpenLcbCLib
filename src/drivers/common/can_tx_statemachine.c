@@ -110,13 +110,13 @@ uint8_olcb_t _transmit_can_frame(can_msg_t* can_msg) {
     printf("\n");
     PrintCanMsg(can_msg);
     printf("\n\n");
-    
+
     return TRUE;
 
 #else
-    
+
     parameterless_callback_t tx_callback = ApplicationCallbacks_get_can_tx();
-    
+
     uint8_olcb_t result = DriverCan_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
 
     if (tx_callback && result) {
@@ -124,7 +124,7 @@ uint8_olcb_t _transmit_can_frame(can_msg_t* can_msg) {
         tx_callback();
 
     }
-    
+
     return result;
 
 #endif
@@ -198,21 +198,23 @@ uint16_olcb_t _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_wo
 
     uint16_olcb_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
 
-    if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY)
+    if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) {
 
         _datagram_only_frame(openlcb_msg, can_msg_worker);
 
-    else if (openlcb_start_index < LEN_CAN_BYTE_ARRAY)
+    } else if (openlcb_start_index < LEN_CAN_BYTE_ARRAY) {
 
         _datagram_first_frame(openlcb_msg, can_msg_worker);
 
-    else if (openlcb_start_index + result < openlcb_msg->payload_count)
+    } else if (openlcb_start_index + result < openlcb_msg->payload_count) {
 
         _datagram_middle_frame(openlcb_msg, can_msg_worker);
 
-    else
+    } else {
 
         _datagram_last_frame(openlcb_msg, can_msg_worker);
+
+    }
 
     return result;
 
@@ -248,21 +250,23 @@ uint16_olcb_t _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* c
     uint16_olcb_t result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
 
 
-    if (openlcb_msg->payload_count <= 6) // Account for 2 bytes used for dest alias
+    if (openlcb_msg->payload_count <= 6) {// Account for 2 bytes used for dest alias
 
         _addressed_message_only_frame(openlcb_msg, can_msg_worker);
 
-    else if (openlcb_start_index < 6) // Account for 2 bytes used for dest alias
+    } else if (openlcb_start_index < 6) { // Account for 2 bytes used for dest alias
 
         _addressed_message_first_frame(openlcb_msg, can_msg_worker);
 
-    else if ((openlcb_start_index + result) < openlcb_msg->payload_count)
+    } else if ((openlcb_start_index + result) < openlcb_msg->payload_count) {
 
         _addressed_message_middle(can_msg_worker);
 
-    else
+    } else {
 
         _addressed_message_last(openlcb_msg, can_msg_worker);
+
+    }
 
     return result;
 }
@@ -271,31 +275,27 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 
     uint16_olcb_t result = 0;
 
-    if (!DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL))
+    if (!DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 
         return result;
 
+    }
 
     if (Utilities_is_addressed_openlcb_message(openlcb_msg)) {
 
         switch (openlcb_msg->mti) {
 
             case MTI_DATAGRAM:
-            {
                 result = _handle_datagram(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
-                break;
 
-            }
+                break;
 
             case MTI_STREAM_COMPLETE:
             case MTI_STREAM_INIT_REPLY:
             case MTI_STREAM_INIT_REQUEST:
             case MTI_STREAM_PROCEED:
-            {
 
                 break;
-
-            }
 
             default:
 
@@ -316,7 +316,7 @@ uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_
 }
 
 uint8_olcb_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg) {
-    
+
     return _transmit_can_frame(can_msg);
-    
+
 }

@@ -76,10 +76,15 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
     if (can_msg_error) {
 
-        if (mti == MTI_DATAGRAM)
+        if (mti == MTI_DATAGRAM) {
+
             can_msg_error->identifier = _ack_reject_identifier(source_alias);
-        else
+
+        } else {
+
             can_msg_error->identifier = _oir_identifier(source_alias);
+
+        }
 
         can_msg_error->payload[0] = (uint8_olcb_t) (dest_alias >> 8) & 0x00FF;
         can_msg_error->payload[1] = (uint8_olcb_t) dest_alias & 0x00FF;
@@ -96,6 +101,7 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
             CanBufferStore_free_buffer(can_msg_error);
 
             return (void*) 0;
+
         };
 
     }
@@ -210,6 +216,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
     if (BufferFifo_push(new_msg)) {
 
         return new_msg;
+
     }
 
     return (void*) 0;

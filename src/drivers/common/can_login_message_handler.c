@@ -76,8 +76,11 @@ void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     callback_alias_change_t alias_change_callback = ApplicationCallbacks_get_alias_change();
 
-    if (alias_change_callback)
+    if (alias_change_callback) {
+
         alias_change_callback(next_node->alias, next_node->id);
+
+    }
 
     next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_07;
 
@@ -89,8 +92,11 @@ void CanFrameMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t*
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((next_node->id >> 24) & 0xFFF000) | next_node->alias); // AA0203040506
 
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+
         next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_06;
+
+    }
 
 }
 
@@ -99,8 +105,11 @@ void CanFrameMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t*
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((next_node->id >> 12) & 0xFFF000) | next_node->alias);
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+
         next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_05;
+
+    }
 
 }
 
@@ -109,8 +118,11 @@ void CanFrameMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t*
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((next_node->id & 0xFFF000) | next_node->alias);
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+
         next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_04;
+
+    }
 
 }
 
@@ -119,15 +131,21 @@ void CanFrameMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t*
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((next_node->id << 12) & 0xFFF000) | next_node->alias);
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+
         next_node->state.run_state = RUNSTATE_WAIT_200ms;
+
+    }
 
 }
 
 void CanFrameMessageHandler_wait_200ms(openlcb_node_t* next_node) {
 
-    if (next_node->timerticks > 3)
+    if (next_node->timerticks > 3) {
+
         next_node->state.run_state = RUNSTATE_TRANSMIT_RESERVE_ID;
+
+    }
 
 }
 
@@ -136,8 +154,11 @@ void CanFrameMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* w
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | next_node->alias;
     worker_msg->payload_count = 0;
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+
         next_node->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
+
+    }
 
 }
 
@@ -170,8 +191,12 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
             );
 
 
-    if (next_node->parameters->protocol_support & PSI_SIMPLE)
+    if (next_node->parameters->protocol_support & PSI_SIMPLE) {
+
         openlcb_worker->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+
+    }
+
 
     Utilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
 
@@ -269,7 +294,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
                     next_node->state.initial_events_broadcast_complete = TRUE;
                     next_node->state.run_state = RUNSTATE_RUN;
-                    
+
                     printf("Login Complete\n");
 
                 }

@@ -66,30 +66,45 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->last_received_optional_interaction = (void*) 0;
 
     openlcb_node->consumers.count = 0;
-    for (olcb_int_t i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++)
+    for (int_olcb_t i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {
+
         openlcb_node->consumers.list[i] = 0;
 
+    }
+
+
     openlcb_node->producers.count = 0;
-    for (olcb_int_t i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++)
+    for (int_olcb_t i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++) {
+
         openlcb_node->producers.list[i] = 0;
+
+    }
 
 
     openlcb_node->producers.enumerator.running = FALSE;
     openlcb_node->consumers.enumerator.running = FALSE;
-    
-    for (olcb_int_t i = 0; i < sizeof(openlcb_node->producers.event_state_array); i++) // Unknown State
+
+    for (int_olcb_t i = 0; i < sizeof (openlcb_node->producers.event_state_array); i++) {// Unknown State
+
         openlcb_node->producers.event_state_array[i] = 0;
-    
-    for (olcb_int_t i = 0; i < sizeof(openlcb_node->consumers.event_state_array); i++)
+
+    }
+
+    for (int_olcb_t i = 0; i < sizeof (openlcb_node->consumers.event_state_array); i++) {
+
         openlcb_node->consumers.event_state_array[i] = 0;
-    
+
+    }
+
 }
 
 void Node_initialize(void) {
 
-    for (olcb_int_t i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++)
+    for (int_olcb_t i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
         _clear_node(&openlcb_nodes.node[i]);
+
+    }
 
     openlcb_nodes.count = 0;
 
@@ -122,26 +137,34 @@ openlcb_node_t* Node_get_next(uint8_olcb_t key) {
 void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     uint64_olcb_t node_id = openlcb_node->id << 16;
+    uint16_olcb_t indexer = 0;
 
     openlcb_node->consumers.count = 0;
-    for (uint16_olcb_t i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++)
+    for (int_olcb_t i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++) {
 
         if (i < USER_DEFINED_CONSUMER_COUNT) { // safety net
 
-            openlcb_node->consumers.list[i] = node_id + i;
+            openlcb_node->consumers.list[i] = node_id + indexer;
             openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
-            
+            indexer++;
+
         }
 
+    }
+
+    indexer = 0;
     openlcb_node->producers.count = 0;
-    for (uint16_olcb_t i = 0; i < openlcb_node->parameters->producer_count_autocreate; i++)
+    for (int_olcb_t i = 0; i < openlcb_node->parameters->producer_count_autocreate; i++) {
 
         if (i < USER_DEFINED_PRODUCER_COUNT) { // safety net
 
-            openlcb_node->producers.list[i] = node_id + i;
+            openlcb_node->producers.list[i] = node_id + indexer;
             openlcb_node->producers.count = openlcb_node->producers.count + 1;
-            
+            indexer++;
+
         }
+
+    }
 
 
     openlcb_node->consumers.enumerator.running = FALSE;
@@ -156,7 +179,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
 openlcb_node_t* Node_allocate(uint64_olcb_t node_id, const node_parameters_t* node_parameters) {
 
-    for (olcb_int_t i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
+    for (int_olcb_t i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
         if (!openlcb_nodes.node[i].state.allocated) {
 
@@ -183,7 +206,7 @@ openlcb_node_t* Node_allocate(uint64_olcb_t node_id, const node_parameters_t* no
 
 openlcb_node_t* Node_find_by_alias(uint16_olcb_t alias) {
 
-    for (olcb_int_t i = 0; i < openlcb_nodes.count; i++) {
+    for (int_olcb_t i = 0; i < openlcb_nodes.count; i++) {
 
         if (openlcb_nodes.node[i].state.permitted) {
 
@@ -201,7 +224,7 @@ openlcb_node_t* Node_find_by_alias(uint16_olcb_t alias) {
 
 openlcb_node_t* Node_find_by_node_id(uint64_olcb_t nodeid) {
 
-    for (olcb_int_t i = 0; i < openlcb_nodes.count; i++) {
+    for (int_olcb_t i = 0; i < openlcb_nodes.count; i++) {
 
         if (openlcb_nodes.node[i].state.permitted) {
 
@@ -245,7 +268,7 @@ uint16_olcb_t Node_generate_alias(uint64_olcb_t seed) {
 
 void Node_100ms_timer_tick(void) {
 
-    for (olcb_int_t i = 0; i < openlcb_nodes.count; i++) {
+    for (int_olcb_t i = 0; i < openlcb_nodes.count; i++) {
 
         openlcb_nodes.node[i].timerticks = openlcb_nodes.node[i].timerticks + 1;
 

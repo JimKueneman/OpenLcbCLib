@@ -43,44 +43,49 @@
 parameterless_callback_t _pause_timer_callback_func = (void*) 0;
 parameterless_callback_t _resume_timer_callback_func = (void*) 0;
 
-
 void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
-    
+
     _pause_timer_callback_func = pause_timer_callback;
     _resume_timer_callback_func = resume_timer_callback;
-       
+
 }
 
 void _100ms_clock_sink(void) {
-     
+
     Node_100ms_timer_tick();
     DatagramProtocol_100ms_time_tick();
-    
+
     if (ApplicationCallbacks_get_100ms_timer()) {
-        
+
         ApplicationCallbacks_get_100ms_timer()();
-        
+
     }
-    
+
 }
 
 parameterless_callback_t Driver100msClock_get_sink(void) {
-    
+
     return &_100ms_clock_sink;
-    
+
 }
 
 void Driver100msClock_pause_100ms_timer(void) {
-  
-    if (_pause_timer_callback_func)
+
+    if (_pause_timer_callback_func) {
+
         _pause_timer_callback_func();
-   
+
+    }
+
 }
 
 extern void Driver100msClock_resume_100ms_timer(void) {
-    
-    if (_resume_timer_callback_func)
+
+    if (_resume_timer_callback_func) {
+
         _resume_timer_callback_func();
-    
+
+    }
+
 }
 
