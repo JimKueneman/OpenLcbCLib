@@ -228,6 +228,7 @@ event_id_t Utilities_extract_event_id_from_openlcb_payload(openlcb_msg_t* openlc
             ((uint64_olcb_t) * openlcb_msg->payload[6] << 8) |
             ((uint64_olcb_t) * openlcb_msg->payload[7])
             );
+
 }
 
 uint16_olcb_t Utilities_extract_word_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_olcb_t offset) {
@@ -301,12 +302,12 @@ uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlc
             if (openlcb_node->producers.list[i] == event_id) {
 
                 (*event_index) = indexer;
-                indexer++;
 
                 return TRUE;
 
             }
 
+        indexer++;
 
     }
 
@@ -325,11 +326,12 @@ uint8_olcb_t Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlc
             if (openlcb_node->consumers.list[i] == event_id) {
 
                 (*event_index) = indexer;
-                indexer++;
 
                 return TRUE;
 
             }
+
+        indexer++;
 
     }
 
@@ -357,4 +359,61 @@ uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlc
 
     return FALSE;
 
+}
+
+node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index) {
+
+    return (
+            ((uint64_olcb_t) (*buffer)[0 + index] << 40) |
+            ((uint64_olcb_t) (*buffer)[1 + index] << 32) |
+            ((uint64_olcb_t) (*buffer)[2 + index] << 24) |
+            ((uint64_olcb_t) (*buffer)[3 + index] << 16) |
+            ((uint64_olcb_t) (*buffer)[4 + index] << 8) |
+            ((uint64_olcb_t) (*buffer)[5 + index])
+            );
+}
+
+uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index) {
+
+    return (
+            ((uint64_olcb_t) (*buffer)[0 + index] << 8) |
+            ((uint64_olcb_t) (*buffer)[1 + index])
+            );
+
+}
+
+void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index) {
+
+    for (int_olcb_t i = 5; i >= 0; i--) {
+
+        (*buffer)[i + index] = node_id & 0xFF;
+        node_id = node_id >> 8;
+
+    }
+
+}
+
+void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index) {
+
+
+    for (int_olcb_t i = 7; i >= 0; i--) {
+
+        (*buffer)[i + index] = event_id & 0xFF;
+        event_id = event_id >> 8;
+
+    }
+
+}
+
+event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index) {
+
+
+    event_id_t retval = 0L;
+
+    for (int_olcb_t i = 0; i <= 7; i++) {
+        retval = retval << 8;
+        retval |= (*buffer)[i + index] & 0xFF;
+    }
+
+    return retval;
 }

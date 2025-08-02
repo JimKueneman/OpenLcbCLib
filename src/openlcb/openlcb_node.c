@@ -154,9 +154,10 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
             openlcb_node->consumers.list[i] = node_id + indexer;
             openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
-            indexer++;
 
         }
+        
+        indexer++;
 
     }
 
@@ -168,9 +169,10 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
             openlcb_node->producers.list[i] = node_id + indexer;
             openlcb_node->producers.count = openlcb_node->producers.count + 1;
-            indexer++;
 
         }
+        
+        indexer++;
 
     }
 
