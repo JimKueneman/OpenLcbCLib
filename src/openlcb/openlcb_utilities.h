@@ -50,10 +50,6 @@ extern void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_ol
 
 extern void Utilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, event_id_t event_id);
 
-extern void Utilities_copy_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target);
-
-extern void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64_olcb_t data);
-
 extern void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint16_olcb_t index);
 
 extern void Utilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_olcb_t word, uint16_olcb_t index);
@@ -88,19 +84,7 @@ extern uint8_olcb_t Utilities_is_consumer_event_assigned_to_node(openlcb_node_t*
 
 extern uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
-extern void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target);
-
 extern uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* openlcb_node);
-
-extern node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
-
-extern uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
-
-extern void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index);
-
-extern void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index);
-
-extern event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index);
 
 extern uint16_olcb_t Utilities_payload_type_to_len(payload_type_enum_t payload_type);
 

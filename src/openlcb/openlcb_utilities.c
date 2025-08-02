@@ -73,29 +73,6 @@ uint32_olcb_t Utilities_calculate_memory_offset_into_node_space(openlcb_node_t* 
     
 }
 
-void Utilities_clone_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target) {
-
-    if (source && target) {
-
-        if (source->payload_type == target->payload_type) {
-
-            target->dest_alias = source->dest_alias;
-            target->dest_id = source->dest_id;
-            target->mti = source->mti;
-            target->payload = source->payload;
-            target->payload_count = source->payload_count;
-            target->payload_type = source->payload_type;
-            target->source_alias = source->source_alias;
-            target->source_id = source->source_id;
-            target->state = source->state;
-            target->timerticks = source->timerticks;
-
-        }
-
-    }
-
-}
-
 void Utilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_olcb_t source_alias, uint64_olcb_t source_id, uint16_olcb_t dest_alias, uint64_olcb_t dest_id, uint16_olcb_t mti, uint16_olcb_t payload_count) {
 
     if (openlcb_msg) {
@@ -141,24 +118,6 @@ void Utilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, even
     }
 
     openlcb_msg->payload_count = 8;
-
-}
-
-void Utilities_copy_openlcb_message(openlcb_msg_t* source, openlcb_msg_t* target) {
-
-    if (source->payload_type == target->payload_type) {
-
-        target->dest_alias = source->dest_alias;
-        target->dest_id = source->dest_id;
-        target->mti = source->mti;
-        target->payload_count = source->payload_count;
-        target->source_alias = source->source_alias;
-        target->source_id = source->source_id;
-
-        for (uint16_olcb_t i = 0; i < source->payload_count; i++)
-            *target->payload[i] = *source->payload[i];
-
-    }
 
 }
 
@@ -236,19 +195,6 @@ void Utilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_
         node_id = node_id >> 8;
 
     }
-
-}
-
-void Utilities_copy_64_bit_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint64_olcb_t data) {
-
-    for (olcb_int_t i = 7; i >= 0; i--) {
-
-        *openlcb_msg->payload[i] = data & 0xFF;
-        data = data >> 8;
-
-    }
-
-    openlcb_msg->payload_count = 8;
 
 }
 
@@ -401,62 +347,4 @@ uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlc
 
     return FALSE;
 
-}
-
-node_id_t Utilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index)
-{
-
-    return (
-        ((uint64_olcb_t)(*buffer)[0 + index] << 40) |
-        ((uint64_olcb_t)(*buffer)[1 + index] << 32) |
-        ((uint64_olcb_t)(*buffer)[2 + index] << 24) |
-        ((uint64_olcb_t)(*buffer)[3 + index] << 16) |
-        ((uint64_olcb_t)(*buffer)[4 + index] << 8) |
-        ((uint64_olcb_t)(*buffer)[5 + index])
-        );
-}
-
-uint16_olcb_t Utilities_extract_word_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_olcb_t index) 
-{  
-    return (
-        ((uint16_olcb_t)(*buffer)[0 + index] << 8) |
-        ((uint16_olcb_t)(*buffer)[1 + index])
-        );
-    
-}
-
-void Utilities_copy_node_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, node_id_t node_id, uint8_olcb_t index) {
-
-    for (olcb_int_t i = 5; i >= 0; i--) {
-        
-        (*buffer)[i + index] = node_id & 0xFF;
-        node_id = node_id >> 8;
-
-    }
-
-}
-
-void Utilities_copy_event_id_to_config_mem_buffer(configuration_memory_buffer_t *buffer, event_id_t event_id, uint8_olcb_t index) {
-  
-        
-    for (olcb_int_t i = 7; i >= 0; i--) {
-        
-        (*buffer)[i + index] = event_id & 0xFF;
-        event_id = event_id >> 8;
-
-    }
-
-}
-
-event_id_t Utilities_copy_config_mem_buffer_to_event_id(configuration_memory_buffer_t *buffer, uint8_olcb_t index) {
-    
-    
-    event_id_t retval = 0L;
-    
-    for (olcb_int_t i = 0; i <= 7; i++) {
-        retval = retval << 8;
-        retval |= (*buffer)[i + index] & 0xFF;
-    }
-    
-    return retval;
 }

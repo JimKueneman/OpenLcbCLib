@@ -199,20 +199,17 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
     }
 
-    if (new_msg) {
+    new_msg->source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    new_msg->dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    new_msg->mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    new_msg->dest_id = 0;
+    new_msg->source_id = 0;
+    new_msg->payload_count = 0;
+    CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-        new_msg->source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-        new_msg->dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-        new_msg->mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
-        new_msg->dest_id = 0;
-        new_msg->source_id = 0;
-        new_msg->payload_count = 0;
-        CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
-
-        BufferFifo_push(new_msg);
+    if (BufferFifo_push(new_msg)) {
 
         return new_msg;
-
     }
 
     return (void*) 0;
@@ -425,12 +422,12 @@ void _state_machine_incoming_can(uint8_olcb_t channel, can_msg_t* can_msg) {
 
             case CAN_FRAME_TYPE_DATAGRAM_ONLY:
 
-                _handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, LEN_MESSAGE_BYTES_BASIC);
+                _handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_FIRST:
 
-                _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, LEN_MESSAGE_BYTES_DATAGRAM);
+                _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
