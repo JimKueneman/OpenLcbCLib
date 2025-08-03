@@ -50,7 +50,7 @@ extern "C"
     // Total number of message buffers available for use
     // Note you can override these with Define Macros in your compiler
 
-    // The SUM of the next 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254 (should never really need more than 10-20)
+    // The SUM of the next 4 buffer defines must be no greater than 126 buffers for an 8 Bit processor (should never really need more than 10-20)
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
 #define USER_DEFINED_BASIC_BUFFER_DEPTH 32 // USER DEFINED
@@ -68,10 +68,10 @@ extern "C"
 #define USER_DEFINED_STREAM_BUFFER_DEPTH 1 // USER DEFINED
 #endif
 
-    // The SUM of the previous 4 buffer defines must be no greater than MAX LIMIT = 0xFE = 254
+    // The SUM of the previous 4 buffer defines must be no greater than  126
 
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH 1 // USER DEFINED   MAX LIMIT = 0xFE = 254
+#define USER_DEFINED_NODE_BUFFER_DEPTH 1 // USER DEFINED   Max for an 8 Bit processor is 126
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
@@ -85,11 +85,11 @@ extern "C"
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 #ifndef USER_DEFINED_PRODUCER_COUNT
-#define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED
+#define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED  Max for an 8 Bit processor is 126
 #endif
 
 #ifndef USER_DEFINED_CONSUMER_COUNT
-#define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED
+#define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED Max for an 8 Bit processor is 126
 #endif
 
 #else
@@ -103,16 +103,6 @@ extern "C"
 #define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION 60 - 1 // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
     // *********************END USER DEFINED VARIABLES *****************************
-
-#ifdef __PICC__
-    // Code specific to PIC10/12/16 devices compiled with XC8
-    typedef long int int_olcb_t;
-#elif defined(__XC8__)
-// Code specific to PIC18, PIC24, dsPIC33, or AVR devices compiled with XC8
-typedef long int int_olcb_t;
-#else
-typedef int int_olcb_t;
-#endif
 
 #define LOW 0
 #define HIGH 1

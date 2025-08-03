@@ -87,7 +87,7 @@ void CanMainStatemachine_initialize(
     _can_helper.can_worker.identifier = 0x0000000000;
     _can_helper.can_worker.payload_count = 0;
 
-    for (int_olcb_t i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
+    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
 
         _can_helper.can_worker.payload[i] = 0x00;
 

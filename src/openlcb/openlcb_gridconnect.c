@@ -92,21 +92,21 @@ uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gri
                     } else {
                         char _header_array[8];
 
-                        for (int_olcb_t i = 0; i < 8; i++) {
+                        for (int i = 0; i < 8; i++) {
 
                             _header_array[i] = '0';
 
                         }
 
                         int j = 0;
-                        for (int_olcb_t i = _receive_buffer_index - 1; i >= (11 - _receive_buffer_index); i--) {
+                        for (int i = _receive_buffer_index - 1; i >= (11 - _receive_buffer_index); i--) {
 
                             _header_array[j] = _receive_buffer[i];
                             j--;
 
                         }
 
-                        for (int_olcb_t i = 0; i < 8; i++) {
+                        for (int i = 0; i < 8; i++) {
 
                             _receive_buffer[2 + i] = _header_array[i];
 
@@ -138,7 +138,7 @@ uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gri
                     _receive_buffer[_receive_buffer_index + 1] = 0; // null
                     _current_state = GRIDCONNECT_STATE_SYNC_START;
 
-                    for (int_olcb_t i = 0; i < MAX_GRID_CONNECT_LEN; i++) {
+                    for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++) {
 
 
                         (*buffer)[i] = _receive_buffer[i];
@@ -172,7 +172,7 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
     uint8_t byte;
     char identifier_str[9]; // 8 + null
 
-    for (int_olcb_t i = 2; i < 10; i++) {
+    for (int i = 2; i < 10; i++) {
 
         identifier_str[i - 2] = (*gridconnect)[i];
 
@@ -214,7 +214,7 @@ void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_
     sprintf((char *) &temp_str, "%08lX", (unsigned long) can_msg->identifier);
     strcat((char *) gridconnect, (char *) &temp_str);
     strcat((char *) gridconnect, "N");
-    for (int_olcb_t i = 0; i < can_msg->payload_count; i++) {
+    for (int i = 0; i < can_msg->payload_count; i++) {
 
         sprintf((char *) &temp_str, "%02X", can_msg->payload[i]);
         strcat((char *) gridconnect, (char *) &temp_str);

@@ -52,7 +52,7 @@ void CanUtilities_clear_can_message(can_msg_t *can_msg) {
     can_msg->identifier = 0;
     can_msg->payload_count = 0;
 
-    for (int_olcb_t i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
+    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
 
         can_msg->payload[i] = 0x00;
 
@@ -132,7 +132,7 @@ uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *openlc
     uint8_t result = 0;
     uint16_t buffer_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
 
-    for (int_olcb_t i = can_start_index; i < can_msg->payload_count; i++) {
+    for (int i = can_start_index; i < can_msg->payload_count; i++) {
 
         if (openlcb_msg->payload_count < buffer_len) {
 
@@ -168,7 +168,7 @@ uint8_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
 
     uint8_t count = 0;
 
-    for (int_olcb_t i = 0; i < can_msg->payload_count; i++) {
+    for (int i = 0; i < can_msg->payload_count; i++) {
 
         if (can_msg->payload[i] == 0x00) {
 
@@ -215,7 +215,7 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
     can_msg->payload_count = 0;
     uint8_t count = 0;
 
-    for (int_olcb_t i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
+    for (int i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
 
         can_msg->payload[i] = *openlcb_msg->payload[openlcb_start_index];
 
@@ -259,7 +259,7 @@ uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_i
 
     can_msg->payload_count = 6 + start_offset;
 
-    for (int_olcb_t i = (start_offset + 5); i >= (0 + start_offset); i--) { // This is a count down...
+    for (int i = (start_offset + 5); i >= (0 + start_offset); i--) { // This is a count down...
 
         can_msg->payload[i] = node_id & 0xFF;
         node_id = node_id >> 8;
@@ -274,7 +274,7 @@ uint8_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t dat
 
     assert(can_msg);
 
-    for (int_olcb_t i = 7; i >= 0; i--) {
+    for (int i = 7; i >= 0; i--) {
 
         can_msg->payload[i] = data & 0xFF;
         data = data >> 8;
@@ -292,7 +292,7 @@ uint8_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_
 
     can_msg_target->identifier = can_msg_source->identifier;
 
-    for (int_olcb_t i = 0; i < can_msg_source->payload_count; i++) {
+    for (int i = 0; i < can_msg_source->payload_count; i++) {
 
         can_msg_target->payload[i] = can_msg_source->payload[i];
 

@@ -54,14 +54,14 @@ uint16_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize(void) {
 
-    for (int_olcb_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
+    for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         _can_buffer_store[i].state.allocated = false;
         _can_buffer_store[i].state.addressed_direct_tx = false;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
 
-        for (int_olcb_t j = 0; j < LEN_CAN_BYTE_ARRAY; j++) {
+        for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++) {
 
             _can_buffer_store[i].payload[j] = 0;
 
@@ -77,7 +77,7 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
     msg->identifier = 0;
     msg->payload_count = 0;
 
-    for (int_olcb_t i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
+    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
 
         msg->payload[i] = 0;
 
@@ -87,7 +87,7 @@ void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
 can_msg_t* CanBufferStore_allocate_buffer(void) {
 
-    for (int_olcb_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
+    for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         if (!_can_buffer_store[i].state.allocated) {
 
