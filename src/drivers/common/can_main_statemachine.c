@@ -80,7 +80,7 @@ void CanMainStatemachine_initialize(
     CanTxStatemachine_initialize();
 
     // Just use an existing openlcb_helper structure vs allocating another one
-    _can_helper.openlcb_worker = MainStatemachine_get_openlcb_helper();
+    _can_helper.openlcb_worker = OpenLcbMainStatemachine_get_openlcb_helper();
     _can_helper.active_msg = NULL;
     _can_helper.can_worker.state.allocated = true;
     _can_helper.can_worker.state.addressed_direct_tx = false;
@@ -272,7 +272,7 @@ uint8_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_hel
 
     Driver100msClock_pause_100ms_timer();
     DriverCan_pause_can_rx();
-    can_helper->openlcb_worker->active_msg = BufferFifo_pop();
+    can_helper->openlcb_worker->active_msg = OpenLcbBufferFifo_pop();
     DriverCan_resume_can_rx();
     Driver100msClock_resume_100ms_timer();
 
@@ -322,7 +322,7 @@ uint8_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_t* c
     
     if (can_helper->active_msg->state.addressed_direct_tx) {
 
-        openlcb_node_t* next_node = Node_get_first(0);
+        openlcb_node_t* next_node = OpenLcbNode_get_first(0);
 
         while (next_node) {
 
@@ -344,7 +344,7 @@ uint8_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_t* c
 
             }
 
-            next_node = Node_get_next(0);
+            next_node = OpenLcbNode_get_next(0);
 
         }
 
@@ -379,7 +379,7 @@ void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_t
 void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t* can_helper, uint8_t active_can_msg_processiong_complete, uint8_t active_openlcb_msg_processing_complete) {
 
     // Are all the nodes finished handling the incoming CAN message?
-    if (active_can_msg_processiong_complete) {
+    if (active_can_msg_processiong_complete && can_helper->active_msg) {
 
         CanBufferStore_free_buffer(can_helper->active_msg);
         can_helper->active_msg = NULL; // Clear the "flag" the next loop _pop_next_can_message() will get a new message)
@@ -387,9 +387,9 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
     }
 
     // Are all the nodes finished handling the incoming Openlcb message?
-    if (active_openlcb_msg_processing_complete) {
+    if (active_openlcb_msg_processing_complete && can_helper->openlcb_worker->active_msg) {
 
-        BufferStore_free_buffer(can_helper->openlcb_worker->active_msg);
+        OpenLcbBufferStore_free_buffer(can_helper->openlcb_worker->active_msg);
         can_helper->openlcb_worker->active_msg = NULL; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
 
     }
@@ -402,7 +402,7 @@ uint8_t _resend_datagram_message_from_ack_failure_reply(can_main_statemachine_t*
 
         next_node->state.openlcb_msg_handled = false;
 
-        MainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper->openlcb_worker->worker);
+        OpenLcbMainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper->openlcb_worker->worker);
 
         if (next_node->state.openlcb_msg_handled) {
 
@@ -426,7 +426,7 @@ uint8_t _resend_optional_message_from_oir_reply(can_main_statemachine_t* can_hel
 
         next_node->state.openlcb_msg_handled = false;
 
-        MainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper->openlcb_worker->worker);
+        OpenLcbMainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper->openlcb_worker->worker);
 
         if (next_node->state.openlcb_msg_handled) {
 
@@ -463,7 +463,7 @@ void _dispatch_next_openlcb_message_to_node(can_main_statemachine_t* can_helper,
 
     if (can_helper->openlcb_worker->active_msg) {
 
-        MainStatemachine_run_single_node(next_node, can_helper->openlcb_worker->active_msg, &can_helper->openlcb_worker->worker);
+        OpenLcbMainStatemachine_run_single_node(next_node, can_helper->openlcb_worker->active_msg, &can_helper->openlcb_worker->worker);
 
         if (!next_node->state.openlcb_msg_handled)
 
@@ -493,7 +493,7 @@ void CanMainStateMachine_run(void) {
 
     }
 
-    openlcb_node_t* next_node = Node_get_first(0);
+    openlcb_node_t* next_node = OpenLcbNode_get_first(0);
 
     while (next_node) {
 
@@ -530,7 +530,7 @@ void CanMainStateMachine_run(void) {
 
         }
 
-        next_node = Node_get_next(0);
+        next_node = OpenLcbNode_get_next(0);
     }
 
     _free_active_message_buffers_if_processing_complete(&_can_helper, is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);

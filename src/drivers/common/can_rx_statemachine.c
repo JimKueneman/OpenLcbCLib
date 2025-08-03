@@ -121,7 +121,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t* result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (result) {
 
@@ -129,7 +129,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_
 
     }
 
-    result = BufferStore_allocate_buffer(data_type);
+    result = OpenLcbBufferStore_allocate_buffer(data_type);
 
     if (!result) {
 
@@ -144,9 +144,9 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_
 
     CanUtilities_copy_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
 
-    if (!BufferList_add(result)) {
+    if (!OpenLcbBufferList_add(result)) {
 
-        BufferStore_free_buffer(result);
+        OpenLcbBufferStore_free_buffer(result);
 
         return NULL;
     };
@@ -161,7 +161,7 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t* result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!result) {
 
@@ -182,7 +182,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_i
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t * result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!result) {
 
@@ -193,8 +193,8 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_i
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
     result->state.inprocess = false;
 
-    BufferList_release(result);
-    BufferFifo_push_existing(result);
+    OpenLcbBufferList_release(result);
+    OpenLcbBufferFifo_push_existing(result);
 
     return result;
 
@@ -202,7 +202,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_i
 
 openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
 
-    openlcb_msg_t* new_msg = BufferStore_allocate_buffer(data_type);
+    openlcb_msg_t* new_msg = OpenLcbBufferStore_allocate_buffer(data_type);
 
     if (!new_msg) {
 
@@ -218,7 +218,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     new_msg->payload_count = 0;
     CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-    if (BufferFifo_push(new_msg)) {
+    if (OpenLcbBufferFifo_push(new_msg)) {
 
         return new_msg;
 
@@ -231,7 +231,7 @@ void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index,
 
     // Early implementations did not have the multi-frame bits to use... special case
 
-    openlcb_msg_t* openlcb_msg_inprocess = BufferList_find(
+    openlcb_msg_t* openlcb_msg_inprocess = OpenLcbBufferList_find(
             CanUtilities_extract_source_alias_from_can_identifier(can_msg),
             CanUtilties_extract_dest_alias_from_can_message(can_msg),
             CanUtilties_convert_can_mti_to_openlcb_mti(can_msg)

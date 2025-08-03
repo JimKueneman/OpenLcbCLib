@@ -51,33 +51,33 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void BufferStore_initialize(void);
+    extern void OpenLcbBufferStore_initialize(void);
 
-    extern openlcb_msg_t *BufferStore_allocate_buffer(payload_type_enum_t payload_type);
+    extern openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_type);
 
-    extern void BufferStore_free_buffer(openlcb_msg_t *openlcb_msg);
+    extern void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg);
 
-    extern void BufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg);
+    extern void OpenLcbBufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg);
 
-    extern uint16_t BufferStore_basic_messages_allocated(void);
+    extern uint16_t OpenLcbBufferStore_basic_messages_allocated(void);
 
-    extern uint16_t BufferStore_basic_messages_max_allocated(void);
+    extern uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void);
 
-    extern uint16_t BufferStore_datagram_messages_allocated(void);
+    extern uint16_t OpenLcbBufferStore_datagram_messages_allocated(void);
 
-    extern uint16_t BufferStore_datagram_messages_max_allocated(void);
+    extern uint16_t OpenLcbBufferStore_datagram_messages_max_allocated(void);
 
-    extern uint16_t BufferStore_snip_messages_allocated(void);
+    extern uint16_t OpenLcbBufferStore_snip_messages_allocated(void);
 
-    extern uint16_t BufferStore_snip_messages_max_allocated(void);
+    extern uint16_t OpenLcbBufferStore_snip_messages_max_allocated(void);
 
-    extern uint16_t BufferStore_stream_messages_allocated(void);
+    extern uint16_t OpenLcbBufferStore_stream_messages_allocated(void);
 
-    extern uint16_t BufferStore_stream_messages_max_allocated(void);
+    extern uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void);
 
-    extern void BufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg);
+    extern void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg);
 
-    void BufferStore_clear_max_allocated(void);
+    void OpenLcbBufferStore_clear_max_allocated(void);
 
 #ifdef __cplusplus
 }

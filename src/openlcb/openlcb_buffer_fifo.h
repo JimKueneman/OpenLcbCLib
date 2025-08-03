@@ -51,17 +51,17 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void BufferFifo_initialize(void);
+    extern void OpenLcbBufferFifo_initialize(void);
 
-    extern openlcb_msg_t *BufferFifo_push(openlcb_msg_t *new_msg);
+    extern openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
 
-    extern openlcb_msg_t *BufferFifo_push_existing(openlcb_msg_t *existing_msg);
+    extern openlcb_msg_t *OpenLcbBufferFifo_push_existing(openlcb_msg_t *existing_msg);
 
-    extern openlcb_msg_t *BufferFifo_pop(void);
+    extern openlcb_msg_t *OpenLcbBufferFifo_pop(void);
 
-    extern uint8_t BufferFifo_is_empty(void);
+    extern uint8_t OpenLcbBufferFifo_is_empty(void);
 
-    extern uint16_t BufferFifo_get_allocated_count(void);
+    extern uint16_t OpenLcbBufferFifo_get_allocated_count(void);
 
 #ifdef __cplusplus
 }

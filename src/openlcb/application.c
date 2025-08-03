@@ -69,9 +69,9 @@ uint8_t Application_send_event_pc_report(openlcb_node_t *node, event_id_t eventi
     msg.payload = (openlcb_payload_t *) & payload;
     msg.payload_type = BASIC;
 
-    Utilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_PC_EVENT_REPORT, 0);
+    OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_PC_EVENT_REPORT, 0);
 
-    Utilities_copy_event_id_to_openlcb_payload(&msg, eventid);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
 
     if (OpenLcbTxDriver_try_transmit(node, &msg)) {
 
@@ -90,9 +90,9 @@ uint8_t Application_send_teach_event(openlcb_node_t* node, event_id_t eventid) {
     msg.payload = (openlcb_payload_t *) & payload;
     msg.payload_type = BASIC;
 
-    Utilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_EVENT_LEARN, 0);
+    OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_EVENT_LEARN, 0);
 
-    Utilities_copy_event_id_to_openlcb_payload(&msg, eventid);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
 
     if (OpenLcbTxDriver_try_transmit(node, &msg)) {
 
@@ -109,7 +109,7 @@ uint16_t Application_read_configuration_memory(openlcb_node_t *node, uint32_t ad
     configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_read_callback();
 
     if (_getmem_callback)
-        return (_getmem_callback(Utilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+        return (_getmem_callback(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
 
     return false;
 }
@@ -119,7 +119,7 @@ uint16_t Application_write_configuration_memory(openlcb_node_t *node, uint32_t a
     configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_write_callback();
 
     if (_getmem_callback)
-        return (_getmem_callback(Utilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+        return (_getmem_callback(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
 
     return false;
 }

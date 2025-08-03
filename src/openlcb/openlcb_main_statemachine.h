@@ -51,7 +51,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void MainStatemachine_initialize(
+    extern void OpenLcbMainStatemachine_initialize(
             mcu_driver_callback_t mcu_setup_callback,
             parameterless_callback_t reboot_callback,
             configuration_mem_callback_t configuration_mem_read_callback,
@@ -60,11 +60,11 @@ extern "C" {
             parameterless_callback_t _100ms_clock_pause_callback,
             parameterless_callback_t _100ms_clock_resume_callback);
 
-    extern void MainStatemachine_run(void);
+    extern void OpenLcbMainStatemachine_run(void);
 
-    extern void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void OpenLcbMainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
     
-    openlcb_statemachine_worker_t* MainStatemachine_get_openlcb_helper(void);
+    openlcb_statemachine_worker_t* OpenLcbMainStatemachine_get_openlcb_helper(void);
 
 
 #ifdef	__cplusplus

@@ -138,7 +138,7 @@ void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
     }
 
-    Utilities_load_openlcb_message(
+    OpenLcbUtilities_load_openlcb_message(
             worker_msg,
             openlcb_node->alias,
             openlcb_node->id,
@@ -148,7 +148,7 @@ void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
             8
             );
 
-    Utilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[openlcb_node->producers.enumerator.enum_index]);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[openlcb_node->producers.enumerator.enum_index]);
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
@@ -174,7 +174,7 @@ void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
     }
 
-    Utilities_load_openlcb_message(
+    OpenLcbUtilities_load_openlcb_message(
             worker_msg,
             openlcb_node->alias,
             openlcb_node->id,
@@ -184,7 +184,7 @@ void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
             8
             );
 
-    Utilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[openlcb_node->consumers.enumerator.enum_index]);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[openlcb_node->consumers.enumerator.enum_index]);
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
@@ -254,7 +254,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
 
     uint16_t event_index = 0;
 
-    if (Utilities_is_consumer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
+    if (OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node, OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 
@@ -262,7 +262,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
 
     }
 
-    Utilities_load_openlcb_message(
+    OpenLcbUtilities_load_openlcb_message(
             worker_msg,
             openlcb_node->alias,
             openlcb_node->id,
@@ -272,7 +272,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
             8
             );
 
-    Utilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[event_index]);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[event_index]);
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
@@ -301,7 +301,7 @@ void ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t * 
 
     if (ApplicationCallbacks_get_consumer_identified_unknown()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_consumer_identified_unknown()(openlcb_node, &eventid);
 
@@ -321,7 +321,7 @@ void ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t * open
 
     if (ApplicationCallbacks_get_consumer_identified_set()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_consumer_identified_set()(openlcb_node, &eventid);
 
@@ -341,7 +341,7 @@ void ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t * op
 
     if (ApplicationCallbacks_get_consumer_identified_clear()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_consumer_identified_clear()(openlcb_node, &eventid);
 
@@ -373,7 +373,7 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
 
     uint16_t event_index;
 
-    if (Utilities_is_producer_event_assigned_to_node(openlcb_node, Utilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
+    if (OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node, OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg), &event_index) == 0) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 
@@ -381,7 +381,7 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
 
     }
 
-    Utilities_load_openlcb_message(
+    OpenLcbUtilities_load_openlcb_message(
             worker_msg,
             openlcb_node->alias,
             openlcb_node->id,
@@ -391,7 +391,7 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
             8
             );
 
-    Utilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[event_index]);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[event_index]);
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
@@ -420,7 +420,7 @@ void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t * 
 
     if (ApplicationCallbacks_get_producer_identified_unknown()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_producer_identified_unknown()(openlcb_node, &eventid);
 
@@ -440,7 +440,7 @@ void ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t * open
 
     if (ApplicationCallbacks_get_producer_identified_set()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_producer_identified_set()(openlcb_node, &eventid);
 
@@ -460,7 +460,7 @@ void ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * op
 
     if (ApplicationCallbacks_get_producer_identified_clear()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_producer_identified_clear()(openlcb_node, &eventid);
 
@@ -515,7 +515,7 @@ void ProtocolEventTransport_handle_identify_dest(openlcb_node_t * openlcb_node, 
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
-    if (Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+    if (OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {
 
         ProtocolEventTransport_handle_identify(openlcb_node, openlcb_msg, worker_msg);
 
@@ -531,7 +531,7 @@ void ProtocolEventTransport_handle_event_learn(openlcb_node_t * openlcb_node, op
 
     if (ApplicationCallbacks_get_event_learn()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_event_learn()(openlcb_node, &eventid);
 
@@ -552,7 +552,7 @@ void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node
 
     if (ApplicationCallbacks_get_event_pc_report()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         ApplicationCallbacks_get_event_pc_report()(openlcb_node, &eventid);
 
@@ -573,7 +573,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
 
     if (ApplicationCallbacks_get_event_pc_report_with_payload()) {
 
-        event_id_t eventid = Utilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
         event_payload_t local_payload;
         uint16_t local_payload_count = (openlcb_msg->payload_count - sizeof (eventid));

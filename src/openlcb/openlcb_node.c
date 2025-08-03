@@ -42,9 +42,9 @@
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 
-openlcb_nodes_t openlcb_nodes;
+openlcb_nodes_t _openlcb_nodes;
 
-uint16_t node_enum_index_array[6];
+uint16_t _node_enum_index_array[6];
 
 void _clear_node(openlcb_node_t* openlcb_node) {
 
@@ -103,45 +103,45 @@ void _clear_node(openlcb_node_t* openlcb_node) {
 
 }
 
-void Node_initialize(void) {
+void OpenLcbNode_initialize(void) {
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
-        _clear_node(&openlcb_nodes.node[i]);
+        _clear_node(&_openlcb_nodes.node[i]);
 
     }
 
-    openlcb_nodes.count = 0;
+    _openlcb_nodes.count = 0;
 
 
 }
 
-openlcb_node_t* Node_get_first(uint8_t key) {
+openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
 
-    node_enum_index_array[key] = 0;
+    _node_enum_index_array[key] = 0;
 
 
-    if (openlcb_nodes.count == 0) {
+    if (_openlcb_nodes.count == 0) {
         
         return NULL;
         
     }
 
-    return (&openlcb_nodes.node[ node_enum_index_array[key] ]);
+    return (&_openlcb_nodes.node[ _node_enum_index_array[key] ]);
 
 }
 
-openlcb_node_t* Node_get_next(uint8_t key) {
+openlcb_node_t* OpenLcbNode_get_next(uint8_t key) {
 
-    node_enum_index_array[key] = node_enum_index_array[key] + 1;
+    _node_enum_index_array[key] = _node_enum_index_array[key] + 1;
 
-    if (node_enum_index_array[key] >= openlcb_nodes.count) {
+    if (_node_enum_index_array[key] >= _openlcb_nodes.count) {
         
         return NULL;
         
     }
 
-    return (&openlcb_nodes.node[node_enum_index_array[key]]);
+    return (&_openlcb_nodes.node[_node_enum_index_array[key]]);
 
 }
 
@@ -190,24 +190,24 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
 }
 
-openlcb_node_t* Node_allocate(uint64_t node_id, const node_parameters_t* node_parameters) {
+openlcb_node_t* OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t* node_parameters) {
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
-        if (!openlcb_nodes.node[i].state.allocated) {
+        if (!_openlcb_nodes.node[i].state.allocated) {
 
-            _clear_node(&openlcb_nodes.node[i]);
+            _clear_node(&_openlcb_nodes.node[i]);
 
-            openlcb_nodes.node[i].parameters = node_parameters;
-            openlcb_nodes.node[i].state.allocated = true;
-            openlcb_nodes.node[i].id = node_id;
-            openlcb_nodes.node[i].index = (uint8_t) i;
+            _openlcb_nodes.node[i].parameters = node_parameters;
+            _openlcb_nodes.node[i].state.allocated = true;
+            _openlcb_nodes.node[i].id = node_id;
+            _openlcb_nodes.node[i].index = (uint8_t) i;
 
-            _generate_event_ids(&openlcb_nodes.node[i]);
+            _generate_event_ids(&_openlcb_nodes.node[i]);
 
-            openlcb_nodes.count = openlcb_nodes.count + 1;
+            _openlcb_nodes.count = _openlcb_nodes.count + 1;
 
-            return &openlcb_nodes.node[i];
+            return &_openlcb_nodes.node[i];
 
         }
 
@@ -217,15 +217,15 @@ openlcb_node_t* Node_allocate(uint64_t node_id, const node_parameters_t* node_pa
 
 }
 
-openlcb_node_t* Node_find_by_alias(uint16_t alias) {
+openlcb_node_t* OpenLcbNode_find_by_alias(uint16_t alias) {
 
-    for (int i = 0; i < openlcb_nodes.count; i++) {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        if (openlcb_nodes.node[i].state.permitted) {
+        if (_openlcb_nodes.node[i].state.permitted) {
 
-            if (openlcb_nodes.node[i].alias == alias)
+            if (_openlcb_nodes.node[i].alias == alias)
 
-                return &openlcb_nodes.node[i];
+                return &_openlcb_nodes.node[i];
 
         }
 
@@ -235,15 +235,15 @@ openlcb_node_t* Node_find_by_alias(uint16_t alias) {
 
 }
 
-openlcb_node_t* Node_find_by_node_id(uint64_t nodeid) {
+openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid) {
 
-    for (int i = 0; i < openlcb_nodes.count; i++) {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        if (openlcb_nodes.node[i].state.permitted) {
+        if (_openlcb_nodes.node[i].state.permitted) {
 
-            if (openlcb_nodes.node[i].id == nodeid)
+            if (_openlcb_nodes.node[i].id == nodeid)
 
-                return &openlcb_nodes.node[i];
+                return &_openlcb_nodes.node[i];
 
         }
 
@@ -252,7 +252,7 @@ openlcb_node_t* Node_find_by_node_id(uint64_t nodeid) {
     return NULL;
 }
 
-uint64_t Node_generate_seed(uint64_t start_seed) {
+uint64_t OpenLcbNode_generate_seed(uint64_t start_seed) {
 
     uint32_t lfsr1 = start_seed & 0xFFFFFF;
     uint32_t lfsr2 = (start_seed >> 24) & 0xFFFFFF;
@@ -270,7 +270,7 @@ uint64_t Node_generate_seed(uint64_t start_seed) {
 
 }
 
-uint16_t Node_generate_alias(uint64_t seed) {
+uint16_t OpenLcbNode_generate_alias(uint64_t seed) {
 
     uint32_t lfsr2 = seed & 0xFFFFFF;
     uint32_t lfsr1 = (seed >> 24) & 0xFFFFFF;
@@ -279,11 +279,11 @@ uint16_t Node_generate_alias(uint64_t seed) {
 
 }
 
-void Node_100ms_timer_tick(void) {
+void OpenLcbNode_100ms_timer_tick(void) {
 
-    for (int i = 0; i < openlcb_nodes.count; i++) {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        openlcb_nodes.node[i].timerticks = openlcb_nodes.node[i].timerticks + 1;
+        _openlcb_nodes.node[i].timerticks = _openlcb_nodes.node[i].timerticks + 1;
 
     };
 

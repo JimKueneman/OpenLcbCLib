@@ -50,17 +50,17 @@ extern "C"
 
     extern void BufferList_initialize(void);
 
-    extern openlcb_msg_t *BufferList_add(openlcb_msg_t *new_msg);
+    extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
-    extern openlcb_msg_t *BufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
+    extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
-    extern uint8_t BufferList_free(openlcb_msg_t *msg);
+    extern uint8_t OpenLcbBufferList_free(openlcb_msg_t *msg);
 
-    extern openlcb_msg_t *BufferList_release(openlcb_msg_t *msg);
+    extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 
-    extern openlcb_msg_t *BufferList_index_of(uint16_t index);
+    extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
-    extern uint8_t BufferList_is_empty(void);
+    extern uint8_t OpenLcbBufferList_is_empty(void);
 
 #ifdef __cplusplus
 }

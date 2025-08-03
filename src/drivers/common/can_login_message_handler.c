@@ -62,7 +62,7 @@
 void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
     next_node->seed = next_node->id;
-    next_node->alias = Node_generate_alias(next_node->seed);
+    next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
 
     next_node->state.run_state = RUNSTATE_GENERATE_ALIAS; // Jump over Generate Seed that only is if we have an Alias conflict and have to jump back
 
@@ -70,14 +70,14 @@ void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
 void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node) {
 
-    next_node->seed = Node_generate_seed(next_node->seed);
+    next_node->seed = OpenLcbNode_generate_seed(next_node->seed);
     next_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
 
 }
 
 void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
-    next_node->alias = Node_generate_alias(next_node->seed);
+    next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
 
     callback_alias_change_t alias_change_callback = ApplicationCallbacks_get_alias_change();
 
@@ -185,7 +185,7 @@ void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
 void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker) {
 
-    Utilities_load_openlcb_message(
+    OpenLcbUtilities_load_openlcb_message(
             openlcb_worker,
             next_node->alias,
             next_node->id,
@@ -203,7 +203,7 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
     }
 
 
-    Utilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
 
 
     if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {
@@ -225,7 +225,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
         if (next_node->producers.enumerator.enum_index < next_node->producers.count) {
 
-            Utilities_load_openlcb_message(
+            OpenLcbUtilities_load_openlcb_message(
                     openlcb_worker,
                     next_node->alias,
                     next_node->id,
@@ -235,7 +235,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
                     6
                     );
 
-            Utilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
+            OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
 
 
             if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {
@@ -275,7 +275,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
         if (next_node->consumers.enumerator.enum_index < next_node->consumers.count) {
 
-            Utilities_load_openlcb_message(
+            OpenLcbUtilities_load_openlcb_message(
                     openlcb_worker,
                     next_node->alias,
                     next_node->id,
@@ -285,7 +285,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
                     6
                     );
 
-            Utilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
+            OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
 
 
             if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {

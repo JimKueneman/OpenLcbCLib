@@ -166,28 +166,28 @@ void _datagram_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker)
 
 void _addressed_message_only_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
 
-    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_ONLY);
+    OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_ONLY);
     _transmit_can_frame(can_msg);
 
 }
 
 void _addressed_message_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
 
-    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FIRST);
+    OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FIRST);
     _transmit_can_frame(can_msg);
 
 }
 
 void _addressed_message_middle(can_msg_t* can_msg) {
 
-    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_MIDDLE);
+    OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_MIDDLE);
     _transmit_can_frame(can_msg);
 
 }
 
 void _addressed_message_last(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
 
-    Utilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FINAL);
+    OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FINAL);
     _transmit_can_frame(can_msg);
 
 }
@@ -286,7 +286,7 @@ uint16_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worke
 
     }
 
-    if (Utilities_is_addressed_openlcb_message(openlcb_msg)) {
+    if (OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg)) {
 
         switch (openlcb_msg->mti) {
 

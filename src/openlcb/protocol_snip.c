@@ -187,7 +187,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
         data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
 
-    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
+    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
     DriverConfigurationMemory_get_read_callback()(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));  
       
@@ -219,7 +219,7 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
     if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
         data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
 
-    data_address = data_address + Utilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
+    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
     DriverConfigurationMemory_get_read_callback()(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index])); 
    
@@ -247,14 +247,14 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
     if (openlcb_node->state.openlcb_msg_handled)
         return; // finished with the message
 
-    if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+    if (!OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 
         return;
     }
 
-    Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_SIMPLE_NODE_INFO_REPLY, 0);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_SIMPLE_NODE_INFO_REPLY, 0);
 
     uint16_t payload_index = 0;
 

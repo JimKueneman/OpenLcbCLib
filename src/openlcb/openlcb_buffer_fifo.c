@@ -60,7 +60,7 @@ typedef struct {
 
 openlcb_msg_fifo_t openlcb_msg_buffer_fifo;
 
-void BufferFifo_initialize(void) {
+void OpenLcbBufferFifo_initialize(void) {
 
     for (int i = 0; i < LEN_MESSAGE_FIFO_BUFFER; i++) {
 
@@ -73,7 +73,7 @@ void BufferFifo_initialize(void) {
 
 }
 
-openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
+openlcb_msg_t* OpenLcbBufferFifo_push(openlcb_msg_t* new_msg) {
 
     if (!new_msg) {
 
@@ -98,7 +98,7 @@ openlcb_msg_t* BufferFifo_push(openlcb_msg_t* new_msg) {
 
 }
 
-openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
+openlcb_msg_t* OpenLcbBufferFifo_push_existing(openlcb_msg_t* existing_msg) {
 
     if (!existing_msg) {
 
@@ -123,7 +123,7 @@ openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg) {
 
 }
 
-openlcb_msg_t* BufferFifo_pop(void) {
+openlcb_msg_t* OpenLcbBufferFifo_pop(void) {
 
     openlcb_msg_t* result = NULL;
 
@@ -142,13 +142,13 @@ openlcb_msg_t* BufferFifo_pop(void) {
 
 }
 
-uint8_t BufferFifo_is_empty(void) {
+uint8_t OpenLcbBufferFifo_is_empty(void) {
 
     return (openlcb_msg_buffer_fifo.head == openlcb_msg_buffer_fifo.tail);
 
 }
 
-uint16_t BufferFifo_get_allocated_count(void) {
+uint16_t OpenLcbBufferFifo_get_allocated_count(void) {
 
     if (openlcb_msg_buffer_fifo.tail > openlcb_msg_buffer_fifo.head) {
 

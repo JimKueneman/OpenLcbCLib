@@ -130,7 +130,7 @@ uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *openlc
     assert(openlcb_msg && can_msg && (can_start_index < 8));
 
     uint8_t result = 0;
-    uint16_t buffer_len = Utilities_payload_type_to_len(openlcb_msg->payload_type);
+    uint16_t buffer_len = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
 
     for (int i = can_start_index; i < can_msg->payload_count; i++) {
 
@@ -185,7 +185,7 @@ uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg
 
     assert(openlcb_msg && can_msg);
 
-    return _count_nulls_in_can_payload(can_msg) + Utilities_count_nulls_in_openlcb_payload(openlcb_msg);
+    return _count_nulls_in_can_payload(can_msg) + OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg);
 }
 
 uint8_t CanUtilities_is_openlcb_message(can_msg_t *can_msg) {

@@ -62,7 +62,7 @@
 
 openlcb_statemachine_worker_t _openlcb_helper;
 
-void MainStatemachine_initialize(
+void OpenLcbMainStatemachine_initialize(
         mcu_driver_callback_t mcu_setup_callback,
         parameterless_callback_t reboot_callback,
         configuration_mem_callback_t configuration_mem_read_callback,
@@ -72,11 +72,11 @@ void MainStatemachine_initialize(
         parameterless_callback_t _100ms_clock_resume_callback
         ) {
 
-    BufferStore_initialize();
+    OpenLcbBufferStore_initialize();
     BufferList_initialize();
-    BufferFifo_initialize();
+    OpenLcbBufferFifo_initialize();
 
-    Node_initialize();
+    OpenLcbNode_initialize();
     ProtocolDatagram_initialize();
 
     Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
@@ -251,7 +251,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
 }
 
-void MainStatemachine_run(void) {
+void OpenLcbMainStatemachine_run(void) {
     //
     //    uint8_t reset = false;
     //    
@@ -313,13 +313,13 @@ void MainStatemachine_run(void) {
 
 }
 
-openlcb_statemachine_worker_t* MainStatemachine_get_openlcb_helper(void) {
+openlcb_statemachine_worker_t* OpenLcbMainStatemachine_get_openlcb_helper(void) {
 
     return &_openlcb_helper;
 
 }
 
-void MainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+void OpenLcbMainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     _process_main_statemachine(openlcb_node, openlcb_msg, worker_msg);
 
