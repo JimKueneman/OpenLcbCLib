@@ -52,7 +52,7 @@
 
 #include "../drivers/driver_mcu.h"
 #include "../drivers/driver_configuration_memory.h"
-#include "application_callbacks.h"
+#include "openlcb_application_callbacks.h"
 
 
 
@@ -367,9 +367,9 @@ uint16_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, 
 
     uint16_t write_count = DriverConfigurationMemory_get_write_callback()(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
-    if (ApplicationCallbacks_get_config_mem_write()) {
+    if (OpenLcbApplicationCallbacks_get_config_mem_write()) {
 
-        ApplicationCallbacks_get_config_mem_write()(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+        OpenLcbApplicationCallbacks_get_config_mem_write()(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     }
     return write_count;
@@ -975,9 +975,9 @@ void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* ope
 
                 openlcb_node->state.openlcb_msg_handled = true;
 
-                if (ApplicationCallbacks_get_config_mem_unfreeze_firmware_update()) {
+                if (OpenLcbApplicationCallbacks_get_config_mem_unfreeze_firmware_update()) {
 
-                    ApplicationCallbacks_get_config_mem_unfreeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
+                    OpenLcbApplicationCallbacks_get_config_mem_unfreeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
 
                 }
 
@@ -1017,9 +1017,9 @@ void ProtocolDatagramHandlers_handle_memory_freeze_message(openlcb_node_t* openl
 
                 openlcb_node->state.openlcb_msg_handled = true;
 
-                if (ApplicationCallbacks_get_config_mem_freeze_firmware_update()) {
+                if (OpenLcbApplicationCallbacks_get_config_mem_freeze_firmware_update()) {
 
-                    ApplicationCallbacks_get_config_mem_freeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
+                    OpenLcbApplicationCallbacks_get_config_mem_freeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
 
                 }
 

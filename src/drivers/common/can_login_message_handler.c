@@ -49,7 +49,7 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_utilities.h"
 #include "../../openlcb/openlcb_main_statemachine.h"
-#include "../../openlcb/application_callbacks.h"
+#include "../../openlcb/openlcb_application_callbacks.h"
 #include "../../openlcb/protocol_event_transport.h"
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "can_tx_statemachine.h"
@@ -79,7 +79,7 @@ void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
 
-    callback_alias_change_t alias_change_callback = ApplicationCallbacks_get_alias_change();
+    callback_alias_change_t alias_change_callback = OpenLcbApplicationCallbacks_get_alias_change();
 
     if (alias_change_callback) {
 

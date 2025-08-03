@@ -50,7 +50,7 @@
 #include "../../openlcb/protocol_message_network.h"
 #include "../../openlcb/protocol_datagram.h"
 #include "../../openlcb/protocol_datagram_handlers.h"
-#include "../../openlcb/application_callbacks.h"
+#include "../../openlcb/openlcb_application_callbacks.h"
 #include "can_types.h"
 #include "can_buffer_fifo.h"
 #include "can_frame_message_handler.h"
@@ -244,7 +244,7 @@ uint8_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_helper)
 
     if (can_helper->active_msg) {
 
-        parameterless_callback_t rx_callback = ApplicationCallbacks_get_can_rx();
+        parameterless_callback_t rx_callback = OpenLcbApplicationCallbacks_get_can_rx();
 
         if (rx_callback) {
 
@@ -279,7 +279,7 @@ uint8_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_hel
 
     if (can_helper->openlcb_worker->active_msg) {
 
-        parameterless_callback_t rx_callback = ApplicationCallbacks_get_can_rx();
+        parameterless_callback_t rx_callback = OpenLcbApplicationCallbacks_get_can_rx();
 
         if (rx_callback) {
 

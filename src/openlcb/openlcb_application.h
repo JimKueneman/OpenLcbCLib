@@ -24,72 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file clock.c
+ * \file application.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * of a 100ms clock.  A new supported MCU/PC will create a file that handles the 
- * specifics then hook them into this file through #ifdefs
+ * Where most of the application layer code interfaces with the library
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 16 Jan 2025
  */
+
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __OPENLCB_APPLICATION__
+#define	__OPENLCB_APPLICATION__
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stddef.h>
 
-#include "../openlcb/openlcb_types.h"
-#include "../openlcb/openlcb_node.h"
-#include "../openlcb/protocol_datagram.h"
-#include "../openlcb/openlcb_application_callbacks.h"
+#include "openlcb_types.h"
+
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+    // Event ID helpers
+    extern void OpenLcbApplication_clear_consumer_eventids(openlcb_node_t* node);
+
+    extern void OpenLcbApplication_clear_producer_eventids(openlcb_node_t* node);
+
+    extern uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t* node, event_id_t eventid);
+
+    extern uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
+
+    extern uint8_t OpenLcbApplication_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
+    
+    extern uint8_t OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventid);
 
 
-parameterless_callback_t _pause_timer_callback_func = NULL;
-parameterless_callback_t _resume_timer_callback_func = NULL;
+    // Configuration Memory helpers
+    extern uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
+    extern uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    _pause_timer_callback_func = pause_timer_callback;
-    _resume_timer_callback_func = resume_timer_callback;
 
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
 
-void _100ms_clock_sink(void) {
-
-    OpenLcbNode_100ms_timer_tick();
-    DatagramProtocol_100ms_time_tick();
-
-    if (OpenLcbApplicationCallbacks_get_100ms_timer()) {
-
-        OpenLcbApplicationCallbacks_get_100ms_timer()();
-
-    }
-
-}
-
-parameterless_callback_t Driver100msClock_get_sink(void) {
-
-    return &_100ms_clock_sink;
-
-}
-
-void Driver100msClock_pause_100ms_timer(void) {
-
-    if (_pause_timer_callback_func) {
-
-        _pause_timer_callback_func();
-
-    }
-
-}
-
-extern void Driver100msClock_resume_100ms_timer(void) {
-
-    if (_resume_timer_callback_func) {
-
-        _resume_timer_callback_func();
-
-    }
-
-}
+#endif	/* __OPENLCB_APPLICATION__ */
 

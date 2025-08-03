@@ -51,7 +51,7 @@
 
 #include "../drivers/driver_mcu.h"
 #include "../drivers/driver_configuration_memory.h"
-#include "application_callbacks.h"
+#include "openlcb_application_callbacks.h"
 
 #include "protocol_datagram_handlers.h"
 

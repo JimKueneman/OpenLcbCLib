@@ -50,7 +50,7 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_utilities.h"
-#include "../../openlcb/application_callbacks.h"
+#include "../../openlcb/openlcb_application_callbacks.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "can_utilities.h"
@@ -120,7 +120,7 @@ uint8_t _transmit_can_frame(can_msg_t* can_msg) {
 
 #else
 
-    parameterless_callback_t tx_callback = ApplicationCallbacks_get_can_tx();
+    parameterless_callback_t tx_callback = OpenLcbApplicationCallbacks_get_can_tx();
 
     uint8_t result = DriverCan_transmit_raw_can_frame(TX_CHANNEL_OPENLCB_MSG, can_msg);
 
