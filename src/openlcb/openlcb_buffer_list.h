@@ -60,7 +60,7 @@ extern "C"
 
     extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
-    extern uint8_t OpenLcbBufferList_is_empty(void);
+    extern bool OpenLcbBufferList_is_empty(void);
 
 #ifdef __cplusplus
 }

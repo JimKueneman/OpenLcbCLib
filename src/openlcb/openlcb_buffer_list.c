@@ -153,7 +153,7 @@ openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index) {
     return openlcb_msg_buffer_list[index];
 }
 
-uint8_t OpenLcbBufferList_is_empty(void) {
+bool OpenLcbBufferList_is_empty(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 

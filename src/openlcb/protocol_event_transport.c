@@ -50,13 +50,6 @@
 #include "openlcb_tx_driver.h"
 #include "openlcb_application_callbacks.h"
 
-typedef enum {
-    EVENT_STATE_UNKNOWN,
-    EVENT_STATE_SET,
-    EVENT_STATE_CLEAR
-
-} event_enum_state_t;
-
 void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event_enum_state_t new_state) {
 
     uint8_t mask;
@@ -64,15 +57,22 @@ void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event_enum_s
     switch (new_state) {
 
         case EVENT_STATE_UNKNOWN:
+            
             mask = 0b11; // Set bit is what will be cleared gives 0b00)
             break;
+            
         case EVENT_STATE_SET: // Set bit is what will be cleared gives 0b01)
+            
             mask = 0b10;
             break;
+            
         case EVENT_STATE_CLEAR: // Set bit is what will be cleared gives 0b10)
+            
             mask = 0b01;
             break;
+            
         default:
+            
             mask = 0b00;
     }
 
@@ -106,11 +106,17 @@ event_enum_state_t _decode_event_state(uint8_t state_byte, uint8_t event_offset)
 
     switch ((state_byte << ((3 - event_offset) * 2)) & 0x03) {
 
-        case 0x00: return EVENT_STATE_UNKNOWN;
+        case 0x00: 
+            
+            return EVENT_STATE_UNKNOWN;
 
-        case 0x01: return EVENT_STATE_SET;
+        case 0x01: 
+            
+            return EVENT_STATE_SET;
 
-        case 0x02: return EVENT_STATE_CLEAR;
+        case 0x02: 
+            
+            return EVENT_STATE_CLEAR;
 
         default:
 

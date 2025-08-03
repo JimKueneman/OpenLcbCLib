@@ -55,9 +55,9 @@ extern "C" {
 
     extern uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
 
-    extern uint8_t OpenLcbApplication_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
+    extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
     
-    extern uint8_t OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventid);
+    extern bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventid);
 
 
     // Configuration Memory helpers

@@ -47,8 +47,6 @@
 
 void CanUtilities_clear_can_message(can_msg_t *can_msg) {
 
-    assert(can_msg);
-
     can_msg->identifier = 0;
     can_msg->payload_count = 0;
 
@@ -62,15 +60,11 @@ void CanUtilities_clear_can_message(can_msg_t *can_msg) {
 
 uint16_t CanUtilities_extract_source_alias_from_can_identifier(can_msg_t *can_msg) {
 
-    assert(can_msg);
-
     return (can_msg->identifier & 0x000000FFF);
 
 }
 
 uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
-
-    assert(can_msg);
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
@@ -103,8 +97,6 @@ uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
 
 uint16_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
 
-    assert(can_msg);
-
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
         case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
@@ -127,8 +119,6 @@ uint16_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
 }
 
 uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint8_t can_start_index) {
-
-    assert(openlcb_msg && can_msg && (can_start_index < 8));
 
     uint8_t result = 0;
     uint16_t buffer_len = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
@@ -155,8 +145,6 @@ uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *openlc
 
 uint8_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint8_t can_start_index) {
 
-    assert(openlcb_msg && can_msg && (can_start_index < 8));
-
     openlcb_msg->payload_count = 0; // replacing the contents so reset to index 0
 
     return CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, can_msg, can_start_index);
@@ -164,8 +152,6 @@ uint8_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_
 }
 
 uint8_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
-
-    assert(can_msg);
 
     uint8_t count = 0;
 
@@ -184,15 +170,11 @@ uint8_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
 
 uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg) {
 
-    assert(openlcb_msg && can_msg);
-
     return _count_nulls_in_can_payload(can_msg) + OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg);
 
 }
 
-uint8_t CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
-
-    assert(can_msg);
+bool CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
 
     return (can_msg->identifier & CAN_OPENLCB_MSG) == CAN_OPENLCB_MSG;
 
@@ -200,7 +182,6 @@ uint8_t CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
 
 uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg) {
 
-    assert(can_msg);
 
     return (
             ((uint64_t) can_msg->payload[0] << 40) |
@@ -213,8 +194,6 @@ uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg) {
 }
 
 uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint16_t openlcb_start_index, uint8_t can_start_index) {
-
-    assert(openlcb_msg && can_msg && (openlcb_start_index < openlcb_msg->payload_count) && (can_start_index < 8));
 
     can_msg->payload_count = 0;
     uint8_t count = 0;
@@ -243,8 +222,6 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
 
 void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8) {
 
-    assert(can_msg);
-
     can_msg->identifier = identifier;
     can_msg->payload_count = payload_size;
     can_msg->payload[0] = byte1;
@@ -260,8 +237,6 @@ void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8
 
 uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset) {
 
-    assert(can_msg && (start_offset < 2));
-
     can_msg->payload_count = 6 + start_offset;
 
     for (int i = (start_offset + 5); i >= (0 + start_offset); i--) { // This is a count down...
@@ -275,9 +250,7 @@ uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_i
 
 }
 
-uint8_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t data) {
-
-    assert(can_msg);
+bool CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t data) {
 
     for (int i = 7; i >= 0; i--) {
 
@@ -291,9 +264,7 @@ uint8_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t dat
     return true;
 }
 
-uint8_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target) {
-
-    assert(can_msg_source && can_msg_target);
+bool CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target) {
 
     can_msg_target->identifier = can_msg_source->identifier;
 

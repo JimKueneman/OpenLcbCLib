@@ -277,7 +277,7 @@ void OpenLcbUtilities_set_multi_frame_flag(uint8_t* target, uint8_t flag) {
 
 }
 
-uint8_t OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t* openlcb_msg) {
+bool OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
     return ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT);
 
@@ -299,7 +299,7 @@ uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t* openlcb_m
 
 }
 
-uint8_t OpenLcbUtilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+bool OpenLcbUtilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
     if ((openlcb_node->alias == openlcb_msg->dest_alias) | (openlcb_node->id == openlcb_msg->dest_id))
 
@@ -311,7 +311,7 @@ uint8_t OpenLcbUtilities_is_message_for_node(openlcb_node_t* openlcb_node, openl
 
 }
 
-uint8_t OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t *event_index) {
+bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t *event_index) {
 
     uint16_t indexer = 0;
 
@@ -335,7 +335,7 @@ uint8_t OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* open
 
 }
 
-uint8_t OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t* event_index) {
+bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t* event_index) {
 
     uint16_t indexer = 0;
 
@@ -360,7 +360,7 @@ uint8_t OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* open
 
 }
 
-uint8_t OpenLcbUtilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+bool OpenLcbUtilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
 
     if (OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {

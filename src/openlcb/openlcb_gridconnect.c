@@ -54,11 +54,12 @@ uint8_t _receive_buffer_index = 0;
 
 gridconnect_buffer_t _receive_buffer;
 
-uint8_t _is_valid_hex_char(uint8_t next_byte) {
+bool _is_valid_hex_char(uint8_t next_byte) {
 
     return (((next_byte >= '0') && (next_byte <= '9')) ||
             ((next_byte >= 'A') && (next_byte <= 'F')) ||
             ((next_byte >= 'a') && (next_byte <= 'f')));
+    
 }
 
 uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer) {

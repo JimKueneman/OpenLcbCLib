@@ -41,8 +41,7 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
     // ************************ USER DEFINED VARIABLES *****************************
@@ -137,14 +136,20 @@ extern "C"
 
 #define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
-    typedef enum
-    {
+    typedef enum {
         BASIC,
         DATAGRAM,
         SNIP,
         STREAM
 
     } payload_type_enum_t;
+
+    typedef enum {
+        EVENT_STATE_UNKNOWN,
+        EVENT_STATE_SET,
+        EVENT_STATE_CLEAR
+
+    } event_enum_state_t;
 
     typedef uint8_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
@@ -163,14 +168,12 @@ extern "C"
 
     typedef uint8_t event_payload_t[255];
 
-    typedef struct
-    {
+    typedef struct {
         uint8_t allocated : 1; // message has been allocated and is in use
         uint8_t inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
     } openlcb_msg_state_t;
 
-    typedef struct
-    {
+    typedef struct {
         openlcb_msg_state_t state;
         uint16_t mti;
         uint16_t source_alias;
@@ -178,27 +181,25 @@ extern "C"
         node_id_t source_id;
         node_id_t dest_id;
         payload_type_enum_t payload_type; // How many bytes the payload can hold
-        uint16_t payload_count;      // valid bytes in payload
-        openlcb_payload_t *payload;       // pointer to one of the data structures in the message_buffer_t type.  Size depend of the buffer type and defined as payload_size
-        uint8_t timerticks;          // timeouts, etc
-        uint8_t reference_count;     // reference counted for garbage collection
+        uint16_t payload_count; // valid bytes in payload
+        openlcb_payload_t *payload; // pointer to one of the data structures in the message_buffer_t type.  Size depend of the buffer type and defined as payload_size
+        uint8_t timerticks; // timeouts, etc
+        uint8_t reference_count; // reference counted for garbage collection
     } openlcb_msg_t;
 
     typedef openlcb_msg_t openlcb_msg_array_t[LEN_MESSAGE_BUFFER];
 
-    typedef struct
-    {
-        openlcb_msg_array_t messages;            // array of openlcb message structures
-        openlcb_basic_data_buffer_t basic;       // array of basic arrays
+    typedef struct {
+        openlcb_msg_array_t messages; // array of openlcb message structures
+        openlcb_basic_data_buffer_t basic; // array of basic arrays
         openlcb_datagram_data_buffer_t datagram; // array of datagram arrays
-        openlcb_snip_data_buffer_t snip;         // array of snip arrays
-        openlcb_stream_data_buffer_t stream;     // array of stream arrays
+        openlcb_snip_data_buffer_t snip; // array of snip arrays
+        openlcb_stream_data_buffer_t stream; // array of stream arrays
     } message_buffer_t;
 
     // Defines a node for snip
 
-    typedef struct
-    {
+    typedef struct {
         uint8_t mfg_version;
         char name[LEN_SNIP_NAME];
         char model[LEN_SNIP_MODEL];
@@ -208,8 +209,7 @@ extern "C"
 
     } user_snip_struct_t;
 
-    typedef struct
-    {
+    typedef struct {
         uint8_t write_under_mask_supported : 1;
         uint8_t unaligned_reads_supported : 1;
         uint8_t unaligned_writes_supported : 1;
@@ -222,8 +222,7 @@ extern "C"
         char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];
     } user_configuration_options;
 
-    typedef struct
-    {
+    typedef struct {
         uint8_t present : 1;
         uint8_t read_only : 1;
         uint8_t low_address_valid : 1;
@@ -233,8 +232,7 @@ extern "C"
         char description[LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION];
     } user_address_space_info_t;
 
-    typedef struct
-    {
+    typedef struct {
         user_snip_struct_t snip;
         uint64_t protocol_support;
         uint8_t consumer_count_autocreate;
@@ -261,14 +259,12 @@ extern "C"
 
 #define EVENTS_ENCODED_IN_BYTE 4
 
-    typedef struct
-    {
+    typedef struct {
         uint8_t running : 1; // Alway, always, always reset these to false when you have finished processing a
-        uint8_t enum_index;  // allows a counter for enumerating the event ids
+        uint8_t enum_index; // allows a counter for enumerating the event ids
     } event_id_enum_t;
 
-    typedef struct
-    {
+    typedef struct {
         uint16_t count;
         event_id_t list[USER_DEFINED_CONSUMER_COUNT];
         event_id_enum_t enumerator;
@@ -276,8 +272,7 @@ extern "C"
 
     } event_id_consumer_list_t;
 
-    typedef struct
-    {
+    typedef struct {
         uint16_t count;
         event_id_t list[USER_DEFINED_PRODUCER_COUNT];
         event_id_enum_t enumerator;
@@ -285,24 +280,22 @@ extern "C"
 
     } event_id_producer_list_t;
 
-    typedef struct
-    {
-        uint8_t run_state : 5;                         // Run state... limits the number to how many bits here.... 32 possible states.
-        uint8_t allocated : 1;                         // Allocated to be used
-        uint8_t permitted : 1;                         // Has the CAN alias been allocated and the network notified
-        uint8_t initalized : 1;                        // Has the node been logged into the the network
+    typedef struct {
+        uint8_t run_state : 5; // Run state... limits the number to how many bits here.... 32 possible states.
+        uint8_t allocated : 1; // Allocated to be used
+        uint8_t permitted : 1; // Has the CAN alias been allocated and the network notified
+        uint8_t initalized : 1; // Has the node been logged into the the network
         uint8_t initial_events_broadcast_complete : 1; // has the node finished its initial broadcast of events?
-        uint8_t duplicate_id_detected : 1;             // Node has detected a duplicated Node ID and has sent the PCER
-        uint8_t can_msg_handled : 1;                   // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
-        uint8_t openlcb_msg_handled : 1;               // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
+        uint8_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
+        uint8_t can_msg_handled : 1; // allows message loops to know if this node has handled the can message that is currently being process so it knows when to move on to the next
+        uint8_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
         uint8_t openlcb_datagram_ack_sent : 1;
-        uint8_t resend_datagram : 1;         // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+        uint8_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint8_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint8_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;
 
-    typedef struct
-    {
+    typedef struct {
         openlcb_node_state_t state;
         uint64_t id;
         uint16_t alias;
@@ -311,22 +304,20 @@ extern "C"
         event_id_producer_list_t producers;
         const node_parameters_t *parameters;
         uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-        uint64_t lock_node;  // node that has this node locked
+        uint64_t lock_node; // node that has this node locked
         openlcb_msg_t *last_received_datagram;
         openlcb_msg_t *last_received_optional_interaction;
         uint8_t index; // what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
     } openlcb_node_t;
 
-    typedef struct
-    {
+    typedef struct {
         openlcb_node_t node[USER_DEFINED_NODE_BUFFER_DEPTH];
         uint16_t count; // How many have been allocated, you can not deallocate a node so one it is allocated it is there to the end (it can be not permitted)
         //  openlcb_msg_t* working_msg; // When a OpenLcb message is sent on CAN it may need to be taken apart and sent in various frames.  Once popped it is stored here as the current working message that is being sent out
 
     } openlcb_nodes_t;
 
-    typedef struct
-    {
+    typedef struct {
         openlcb_msg_t worker;
         payload_stream_t worker_buffer;
         openlcb_msg_t *active_msg;

@@ -94,9 +94,9 @@ extern "C" {
     // void func(uint8_t channel, can_msg_t* can_msg)
     typedef void (*can_rx_callback_func_t)(uint8_t, can_msg_t *);
 
-    typedef uint8_t(*transmit_raw_can_frame_func_t)(uint8_t, can_msg_t *);
+    typedef bool(*transmit_raw_can_frame_func_t)(uint8_t, can_msg_t *);
 
-    typedef uint8_t(*is_can_tx_buffer_clear_func_t)(uint16_t);
+    typedef bool(*is_can_tx_buffer_clear_func_t)(uint16_t);
 
     typedef void (*can_rx_driver_callback_t)(can_rx_callback_func_t);
 

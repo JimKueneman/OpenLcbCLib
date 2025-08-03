@@ -39,6 +39,10 @@
 #ifndef __DRIVER_CONFIGURATION_MEMORY__
 #define	__DRIVER_CONFIGURATION_MEMORY__
 
+
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../openlcb/openlcb_types.h"
 
 typedef uint16_t(*configuration_mem_callback_t) (uint32_t, uint16_t, configuration_memory_buffer_t*);

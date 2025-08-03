@@ -34,6 +34,7 @@
  * @date 5 Dec 2024
  */
 
+#include "driver_can.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -64,7 +65,7 @@ void DriverCan_initialization(
 
 }
 
-uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t channel) {
+bool DriverCan_is_can_tx_buffer_clear(uint16_t channel) {
 
     if (is_can_tx_buffer_clear_func) {
 
@@ -94,7 +95,7 @@ void DriverCan_resume_can_rx(void) {
     }
 }
 
-uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
+bool DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
     if (transmit_raw_can_frame_func) {
 

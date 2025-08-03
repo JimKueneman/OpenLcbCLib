@@ -118,42 +118,52 @@ void _update_buffer_telemetry(payload_type_enum_t payload_type) {
             if (_buffer_store_basic_messages_allocated > _buffer_store_basic_max_messages_allocated) {
 
                 _buffer_store_basic_max_messages_allocated++;
+                
                 break;
             }
 
             break;
+            
         case DATAGRAM:
 
             _buffer_store_datagram_messages_allocated++;
             if (_buffer_store_datagram_messages_allocated > _buffer_store_datagram_max_messages_allocated) {
 
                 _buffer_store_datagram_max_messages_allocated++;
+                
                 break;
             }
 
             break;
+            
         case SNIP:
 
             _buffer_store_snip_messages_allocated++;
             if (_buffer_store_snip_messages_allocated > _buffer_store_snip_max_messages_allocated) {
 
                 _buffer_store_snip_max_messages_allocated++;
+                
                 break;
             }
 
             break;
+            
         case STREAM:
 
             _buffer_store_stream_messages_allocated++;
             if (_buffer_store_stream_messages_allocated > _buffer_store_stream_max_messages_allocated) {
 
                 _buffer_store_stream_max_messages_allocated++;
+                
                 break;
             }
 
             break;
+            
         default:
+            
             break;
+            
     }
 }
 
@@ -165,28 +175,37 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_ty
     switch (payload_type) {
 
         case BASIC:
+            
             offset_start = 0;
             offset_end = USER_DEFINED_BASIC_BUFFER_DEPTH;
 
             break;
+            
         case DATAGRAM:
+            
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
 
             break;
+            
         case SNIP:
+            
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_SNIP_BUFFER_DEPTH;
 
             break;
+            
         case STREAM:
+            
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_STREAM_BUFFER_DEPTH;
 
             break;
 
         default:
+            
             return NULL;
+            
     }
 
     for (int i = offset_start; i < offset_end; i++) {
@@ -203,6 +222,7 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_ty
     }
 
     return NULL;
+    
 }
 
 void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
@@ -212,77 +232,98 @@ void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
 
     openlcb_msg->reference_count = openlcb_msg->reference_count - 1;
 
-    if (openlcb_msg->reference_count > 0)
+    if (openlcb_msg->reference_count > 0) {
+        
         return;
+        
+    }
 
     switch (openlcb_msg->payload_type) {
 
         case BASIC:
+            
             _buffer_store_basic_messages_allocated = _buffer_store_basic_messages_allocated - 1;
 
             break;
+            
         case DATAGRAM:
+            
             _buffer_store_datagram_messages_allocated = _buffer_store_datagram_messages_allocated - 1;
 
             break;
+            
         case SNIP:
+            
             _buffer_store_snip_messages_allocated = _buffer_store_snip_messages_allocated - 1;
 
             break;
+            
         case STREAM:
+            
             _buffer_store_stream_messages_allocated = _buffer_store_stream_messages_allocated - 1;
 
             break;
+            
     }
 
     openlcb_msg->reference_count = 0;
 
     openlcb_msg->state.allocated = false;
+    
 }
 
 uint16_t OpenLcbBufferStore_basic_messages_allocated(void) {
 
     return (_buffer_store_basic_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void) {
 
     return (_buffer_store_basic_max_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_datagram_messages_allocated(void) {
 
     return (_buffer_store_datagram_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_datagram_messages_max_allocated(void) {
 
     return (_buffer_store_datagram_max_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_snip_messages_allocated(void) {
 
     return (_buffer_store_snip_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_snip_messages_max_allocated(void) {
 
     return (_buffer_store_snip_max_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_stream_messages_allocated(void) {
 
     return (_buffer_store_stream_messages_allocated);
+    
 }
 
 uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void) {
 
     return (_buffer_store_stream_max_messages_allocated);
+    
 }
 
 void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg) {
 
     openlcb_msg->reference_count = openlcb_msg->reference_count + 1;
+    
 }
 
 void OpenLcbBufferStore_clear_max_allocated(void) {
@@ -291,4 +332,5 @@ void OpenLcbBufferStore_clear_max_allocated(void) {
     _buffer_store_datagram_max_messages_allocated = 0;
     _buffer_store_snip_max_messages_allocated = 0;
     _buffer_store_stream_max_messages_allocated = 0;
+    
 }

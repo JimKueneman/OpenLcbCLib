@@ -48,7 +48,7 @@
 
 #include "../drivers/common/can_tx_statemachine.h"
 
-uint8_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+bool OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
     can_msg_t worker_can_msg;
 

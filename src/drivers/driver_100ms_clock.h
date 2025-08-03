@@ -40,6 +40,9 @@
 #ifndef __DRIVER_100MS_CLOCK__
 #define	__DRIVER_100MS_CLOCK__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus

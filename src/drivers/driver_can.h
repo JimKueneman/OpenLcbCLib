@@ -40,6 +40,9 @@
 #ifndef __DRIVER_CAN__
 #define	__DRIVER_CAN__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../drivers/common/can_types.h"
 
 #ifdef	__cplusplus
@@ -53,13 +56,13 @@ extern "C" {
             parameterless_callback_t resume_can_rx_callback
             );
 
-    extern uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t channel);
+    extern bool DriverCan_is_can_tx_buffer_clear(uint16_t channel);
 
     extern void DriverCan_pause_can_rx(void);
 
     extern void DriverCan_resume_can_rx(void);
 
-    extern uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg);
+    extern bool DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg);
 
 
 #ifdef	__cplusplus

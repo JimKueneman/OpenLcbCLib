@@ -228,7 +228,7 @@ void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
 
 }
 
-uint8_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_helper) {
+bool _pop_next_can_helper_active_message(can_main_statemachine_t* can_helper) {
 
     if (can_helper->active_msg) {
 
@@ -262,7 +262,7 @@ uint8_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_helper)
 
 }
 
-uint8_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_helper) {
+bool _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_helper) {
 
     if (can_helper->openlcb_worker->active_msg) {
 
@@ -305,7 +305,7 @@ void _release_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
 }
 
-uint8_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_t* can_helper) {
+bool _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
     // Addressed Direct Tx messages are added by the CAN Rx statemachine , such as error messages created in response 
     // to out of order frames, etc so they just need to be sent out, if they were actually for a node alias
@@ -396,7 +396,7 @@ void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t
 
 }
 
-uint8_t _resend_datagram_message_from_ack_failure_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
+bool _resend_datagram_message_from_ack_failure_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
 
     if (next_node->state.resend_datagram && next_node->last_received_datagram) {
 
@@ -420,7 +420,7 @@ uint8_t _resend_datagram_message_from_ack_failure_reply(can_main_statemachine_t*
 
 }
 
-uint8_t _resend_optional_message_from_oir_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
+bool _resend_optional_message_from_oir_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
 
     if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
 
@@ -479,12 +479,12 @@ void CanMainStateMachine_run(void) {
     //    probably should have a separate loop to run the resends.....
     //    the can get the buffer handled flags screwed up....        
     //            
-    uint8_t is_newly_popped_can_active_msg = _pop_next_can_helper_active_message(&_can_helper);
-    uint8_t is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message(&_can_helper);
+    bool is_newly_popped_can_active_msg = _pop_next_can_helper_active_message(&_can_helper);
+    bool is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message(&_can_helper);
 
     // optimistic from the beginning
-    uint8_t is_active_can_msg_processiong_complete = true;
-    uint8_t is_active_openlcb_msg_processing_complete = true;
+    bool is_active_can_msg_processiong_complete = true;
+    bool is_active_openlcb_msg_processing_complete = true;
 
 
     if (_try_transmit_addressed_direct_tx_can_message(&_can_helper)) {
