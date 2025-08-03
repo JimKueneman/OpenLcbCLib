@@ -59,9 +59,9 @@ extern "C" {
 
     extern openlcb_msg_t *BufferFifo_pop(void);
 
-    extern uint8_olcb_t BufferFifo_is_empty(void);
+    extern uint8_t BufferFifo_is_empty(void);
 
-    extern uint16_olcb_t BufferFifo_get_allocated_count(void);
+    extern uint16_t BufferFifo_get_allocated_count(void);
 
 #ifdef __cplusplus
 }

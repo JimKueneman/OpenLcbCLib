@@ -53,13 +53,13 @@ extern "C" {
             parameterless_callback_t resume_can_rx_callback
             );
 
-    extern uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t channel);
+    extern uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t channel);
 
     extern void DriverCan_pause_can_rx(void);
 
     extern void DriverCan_resume_can_rx(void);
 
-    extern uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
+    extern uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg);
 
 
 #ifdef	__cplusplus

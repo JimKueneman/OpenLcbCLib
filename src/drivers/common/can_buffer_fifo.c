@@ -54,8 +54,8 @@
 
 typedef struct {
     can_msg_t *list[LEN_CAN_FIFO_BUFFER];
-    uint8_olcb_t head;
-    uint8_olcb_t tail;
+    uint8_t head;
+    uint8_t tail;
 } can_fifo_t;
 
 can_fifo_t can_msg_buffer_fifo;
@@ -77,7 +77,7 @@ bool CanBufferFifo_push(can_msg_t* new_msg) {
 
     assert(new_msg);
 
-    uint8_olcb_t next = can_msg_buffer_fifo.head + 1;
+    uint8_t next = can_msg_buffer_fifo.head + 1;
 
     if (next >= LEN_CAN_FIFO_BUFFER) {
 
@@ -123,13 +123,13 @@ can_msg_t *CanBufferFifo_pop(void) {
 
 }
 
-uint8_olcb_t CanBufferFifo_is_empty(void) {
+uint8_t CanBufferFifo_is_empty(void) {
 
     return can_msg_buffer_fifo.head == can_msg_buffer_fifo.tail;
 
 }
 
-uint16_olcb_t CanBufferFifo_get_allocated_count(void) {
+uint16_t CanBufferFifo_get_allocated_count(void) {
 
     if (can_msg_buffer_fifo.tail > can_msg_buffer_fifo.head) {
 

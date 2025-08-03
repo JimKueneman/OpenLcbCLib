@@ -49,8 +49,8 @@
 
 
 can_msg_array_t _can_buffer_store;
-uint16_olcb_t _can_buffer_store_message_allocated = 0;
-uint16_olcb_t _can_buffer_store_message_max_allocated = 0;
+uint16_t _can_buffer_store_message_allocated = 0;
+uint16_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize(void) {
 
@@ -123,13 +123,13 @@ void CanBufferStore_free_buffer(can_msg_t* msg) {
 
 }
 
-uint16_olcb_t CanBufferStore_messages_allocated(void) {
+uint16_t CanBufferStore_messages_allocated(void) {
 
     return _can_buffer_store_message_allocated;
 
 }
 
-uint16_olcb_t CanBufferStore_messages_max_allocated(void) {
+uint16_t CanBufferStore_messages_max_allocated(void) {
 
     return _can_buffer_store_message_max_allocated;
 

@@ -64,7 +64,7 @@ void DriverCan_initialization(
 
 }
 
-uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t channel) {
+uint8_t DriverCan_is_can_tx_buffer_clear(uint16_t channel) {
 
     if (is_can_tx_buffer_clear_func) {
 
@@ -94,7 +94,7 @@ void DriverCan_resume_can_rx(void) {
     }
 }
 
-uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
+uint8_t DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
     if (transmit_raw_can_frame_func) {
 

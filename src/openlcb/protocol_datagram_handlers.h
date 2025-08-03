@@ -46,19 +46,19 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-    extern void ProtocolDatagramHandlers_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space, uint8_olcb_t return_msg_ok, uint8_olcb_t return_msg_fail);
+    extern void ProtocolDatagramHandlers_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
 
-    extern void ProtocolDatagramHandlers_handle_memory_read_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space);
+    extern void ProtocolDatagramHandlers_handle_memory_read_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
 
-    extern void ProtocolDatagramHandlers_handle_memory_read_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space);
+    extern void ProtocolDatagramHandlers_handle_memory_read_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
 
-    extern void ProtocolDatagramHandlers_handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space, uint8_olcb_t return_msg_ok, uint8_olcb_t return_msg_fail);
+    extern void ProtocolDatagramHandlers_handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
 
-    extern void ProtocolDatagramHandlers_handle_memory_write_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space);
+    extern void ProtocolDatagramHandlers_handle_memory_write_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
 
-    extern void ProtocolDatagramHandlers_handle_memory_write_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space);
+    extern void ProtocolDatagramHandlers_handle_memory_write_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
 
-    extern void ProtocolDatagramHandlers_handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_olcb_t space, uint8_olcb_t return_msg_ok, uint8_olcb_t return_msg_fail);
+    extern void ProtocolDatagramHandlers_handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
 
     extern void ProtocolDatagramHandlers_handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
@@ -84,7 +84,7 @@ extern "C" {
 
     extern void ProtocolDatagramHandlers_handle_memory_factory_reset_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
 
-    extern void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_olcb_t error_code);
+    extern void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t error_code);
 
     extern void ProtocolDatagramHandlers_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
     

@@ -89,9 +89,9 @@ extern void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t* openlc
 
 extern void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern uint16_olcb_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint16_olcb_t event_index);
+extern uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint16_t event_index);
 
-extern uint16_olcb_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint16_olcb_t event_index);
+extern uint16_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint16_t event_index);
 
 #endif // SUPPORT_FIRMWARE_BOOTLOADER
 

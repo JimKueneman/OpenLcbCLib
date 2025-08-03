@@ -49,19 +49,19 @@
 
 #include "stdio.h" // printf
 
-uint8_olcb_t _current_state = GRIDCONNECT_STATE_SYNC_START;
-uint8_olcb_t _receive_buffer_index = 0;
+uint8_t _current_state = GRIDCONNECT_STATE_SYNC_START;
+uint8_t _receive_buffer_index = 0;
 
 gridconnect_buffer_t _receive_buffer;
 
-uint8_olcb_t _is_valid_hex_char(uint8_olcb_t next_byte) {
+uint8_t _is_valid_hex_char(uint8_t next_byte) {
 
     return (((next_byte >= '0') && (next_byte <= '9')) ||
             ((next_byte >= 'A') && (next_byte <= 'F')) ||
             ((next_byte >= 'a') && (next_byte <= 'f')));
 }
 
-uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next_byte, gridconnect_buffer_t *buffer) {
+uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer) {
 
     switch (_current_state) {
 
@@ -169,7 +169,7 @@ uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next
 
 void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg) {
     char byte_str[5]; // 2 + null
-    uint8_olcb_t byte;
+    uint8_t byte;
     char identifier_str[9]; // 8 + null
 
     for (int_olcb_t i = 2; i < 10; i++) {
@@ -181,10 +181,10 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
 
     char hex_it[64] = "0x";
     strcat(hex_it, identifier_str);
-    can_msg->identifier = (uint32_olcb_t) strtoul(hex_it, NULL, 0);
+    can_msg->identifier = (uint32_t) strtoul(hex_it, NULL, 0);
 
     unsigned long data_char_count = strlen((char *) gridconnect) - (12);
-    can_msg->payload_count = (uint8_olcb_t) (data_char_count / 2);
+    can_msg->payload_count = (uint8_t) (data_char_count / 2);
 
     int payload_index = 0;
     int i = 11;
@@ -195,7 +195,7 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
         byte_str[3] = (*gridconnect)[i + 1];
         byte_str[4] = 0;
 
-        byte = (uint8_olcb_t) strtoul(byte_str, NULL, 0);
+        byte = (uint8_t) strtoul(byte_str, NULL, 0);
         can_msg->payload[payload_index] = byte;
         payload_index++;
         i++;

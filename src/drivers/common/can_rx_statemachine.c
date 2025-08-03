@@ -61,21 +61,21 @@
 #define OFFSET_DEST_ID_IN_IDENTIFIER  0
 #define OFFSET_NO_DEST_ID             0
 
-const uint32_olcb_t OPENLCB_GLOBAL_ADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
+const uint32_t OPENLCB_GLOBAL_ADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
 
-uint32_olcb_t _ack_reject_identifier(uint16_olcb_t source_alias) {
+uint32_t _ack_reject_identifier(uint16_t source_alias) {
 
-    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_olcb_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12) | source_alias);
-
-}
-
-uint32_olcb_t _oir_identifier(uint16_olcb_t source_alias) {
-
-    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_olcb_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12) | source_alias);
+    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12) | source_alias);
 
 }
 
-openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti, uint16_olcb_t error_code) {
+uint32_t _oir_identifier(uint16_t source_alias) {
+
+    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12) | source_alias);
+
+}
+
+openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
 
     can_msg_t* can_msg_error = CanBufferStore_allocate_buffer();
 
@@ -91,10 +91,10 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
         }
 
-        can_msg_error->payload[0] = (uint8_olcb_t) (dest_alias >> 8) & 0x00FF;
-        can_msg_error->payload[1] = (uint8_olcb_t) dest_alias & 0x00FF;
-        can_msg_error->payload[2] = (uint8_olcb_t) (error_code >> 8) & 0x00FF;
-        can_msg_error->payload[3] = (uint8_olcb_t) error_code & 0x00FF;
+        can_msg_error->payload[0] = (uint8_t) (dest_alias >> 8) & 0x00FF;
+        can_msg_error->payload[1] = (uint8_t) dest_alias & 0x00FF;
+        can_msg_error->payload[2] = (uint8_t) (error_code >> 8) & 0x00FF;
+        can_msg_error->payload[3] = (uint8_t) error_code & 0x00FF;
 
         // Flag so it is directly sent out and not processed by nodes
         can_msg_error->state.addressed_direct_tx = true;
@@ -115,11 +115,11 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
 
 }
 
-openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t data_type) {
+openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
 
-    uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_olcb_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
@@ -155,11 +155,11 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_s
 
 }
 
-openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index) {
+openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
 
-    uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_olcb_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t* result = BufferList_find(source_alias, dest_alias, mti);
 
@@ -176,11 +176,11 @@ openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
 
 }
 
-openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index) {
+openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
 
-    uint16_olcb_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_olcb_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_olcb_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t * result = BufferList_find(source_alias, dest_alias, mti);
 
@@ -200,7 +200,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
 
 }
 
-openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t data_type) {
+openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
 
     openlcb_msg_t* new_msg = BufferStore_allocate_buffer(data_type);
 
@@ -227,7 +227,7 @@ openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_
     return NULL;
 }
 
-void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_index, payload_type_enum_t data_type) {
+void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 
@@ -259,7 +259,7 @@ void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_olcb_t can_buffer_start_i
 
 }
 
-uint16_olcb_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
+uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
     return (can_msg->identifier >> 12) & 0x0FFF;
 }
@@ -268,7 +268,7 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
     if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
 
-        uint16_olcb_t can_mti = _extract_can_mti_from_can_identifier(can_msg);
+        uint16_t can_mti = _extract_can_mti_from_can_identifier(can_msg);
 
         switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
 
@@ -317,7 +317,7 @@ void _handle_global_addressed_messages(can_msg_t* can_msg) {
 
 }
 
-uint8_olcb_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
+uint8_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
 
     can_msg_t* new_can_msg = CanBufferStore_allocate_buffer();
 
@@ -333,31 +333,31 @@ uint8_olcb_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
 
 }
 
-uint8_olcb_t _handle_rid_control_frame(can_msg_t* can_msg) {
+uint8_t _handle_rid_control_frame(can_msg_t* can_msg) {
 
     return (_allocate_copy_and_push_can_msg(can_msg));
 
 }
 
-uint8_olcb_t _handle_amd_control_frame(can_msg_t* can_msg) {
+uint8_t _handle_amd_control_frame(can_msg_t* can_msg) {
 
     return (_allocate_copy_and_push_can_msg(can_msg));
 
 }
 
-uint8_olcb_t _handle_ame_control_frame(can_msg_t* can_msg) {
+uint8_t _handle_ame_control_frame(can_msg_t* can_msg) {
 
     return (_allocate_copy_and_push_can_msg(can_msg));
 
 }
 
-uint8_olcb_t _handle_amr_control_frame(can_msg_t* can_msg) {
+uint8_t _handle_amr_control_frame(can_msg_t* can_msg) {
 
     return (_allocate_copy_and_push_can_msg(can_msg));
 
 }
 
-uint8_olcb_t _handle_incoming_cid(can_msg_t* can_msg) {
+uint8_t _handle_incoming_cid(can_msg_t* can_msg) {
 
     return (_allocate_copy_and_push_can_msg(can_msg));
 
@@ -420,7 +420,7 @@ void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
 
 }
 
-void _state_machine_incoming_can(uint8_olcb_t channel, can_msg_t* can_msg) {
+void _state_machine_incoming_can(uint8_t channel, can_msg_t* can_msg) {
 
     if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
 

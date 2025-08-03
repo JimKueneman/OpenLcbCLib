@@ -58,14 +58,14 @@
 // 0         10                28
 #define MAX_GRID_CONNECT_LEN 29
 
-typedef uint8_olcb_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
+typedef uint8_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
 
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    extern uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next_byte, gridconnect_buffer_t* buffer);
+    extern uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t* buffer);
     
     extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
 

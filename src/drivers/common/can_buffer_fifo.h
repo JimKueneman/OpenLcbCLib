@@ -56,9 +56,9 @@ extern "C" {
 
     extern can_msg_t *CanBufferFifo_pop(void);
 
-    extern uint8_olcb_t CanBufferFifo_is_empty(void);
+    extern uint8_t CanBufferFifo_is_empty(void);
 
-    extern uint16_olcb_t CanBufferFifo_get_allocated_count(void);
+    extern uint16_t CanBufferFifo_get_allocated_count(void);
 
 #ifdef __cplusplus
 }

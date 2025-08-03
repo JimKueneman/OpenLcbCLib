@@ -30,7 +30,7 @@ void Application_clear_producer_eventids(openlcb_node_t *node) {
         node->producers.count = 0;
 }
 
-uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t *node, event_id_t eventid) {
+uint16_t Application_register_consumer_eventid(openlcb_node_t *node, event_id_t eventid) {
 
     if (node) {
 
@@ -45,7 +45,7 @@ uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t *node, event_
     return 0xFFFF;
 }
 
-uint16_olcb_t Application_register_producer_eventid(openlcb_node_t *node, event_id_t eventid) {
+uint16_t Application_register_producer_eventid(openlcb_node_t *node, event_id_t eventid) {
 
     if (node) {
 
@@ -61,7 +61,7 @@ uint16_olcb_t Application_register_producer_eventid(openlcb_node_t *node, event_
     return 0xFFFF;
 }
 
-uint8_olcb_t Application_send_event_pc_report(openlcb_node_t *node, event_id_t eventid) {
+uint8_t Application_send_event_pc_report(openlcb_node_t *node, event_id_t eventid) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -82,7 +82,7 @@ uint8_olcb_t Application_send_event_pc_report(openlcb_node_t *node, event_id_t e
     return false;
 }
 
-uint8_olcb_t Application_send_teach_event(openlcb_node_t* node, event_id_t eventid) {
+uint8_t Application_send_teach_event(openlcb_node_t* node, event_id_t eventid) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -104,7 +104,7 @@ uint8_olcb_t Application_send_teach_event(openlcb_node_t* node, event_id_t event
 
 }
 
-uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer) {
+uint16_t Application_read_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
     configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_read_callback();
 
@@ -114,7 +114,7 @@ uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32
     return false;
 }
 
-uint16_olcb_t Application_write_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer) {
+uint16_t Application_write_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
     configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_write_callback();
 

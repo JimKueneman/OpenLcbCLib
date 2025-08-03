@@ -253,7 +253,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
 void MainStatemachine_run(void) {
     //
-    //    uint8_olcb_t reset = false;
+    //    uint8_t reset = false;
     //    
     //    if (!openlcb_helper.active_msg) {
     //
@@ -269,7 +269,7 @@ void MainStatemachine_run(void) {
     //        return;
     //
     //
-    //    uint8_olcb_t all_nodes_done = true;
+    //    uint8_t all_nodes_done = true;
     //    openlcb_node_t* next_node = Node_get_first(2);
     //
     //    while (next_node) {

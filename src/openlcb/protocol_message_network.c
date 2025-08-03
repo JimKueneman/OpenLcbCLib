@@ -103,10 +103,10 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     Utilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_PROTOCOL_SUPPORT_REPLY, 6);
 
-    uint64_olcb_t temp = openlcb_node->parameters->protocol_support;
+    uint64_t temp = openlcb_node->parameters->protocol_support;
 
     if ((openlcb_node->state.firmware_upgrade_active) && (openlcb_node->parameters->address_space_firmware.present))
-        temp = (temp & ~((uint64_olcb_t)PSI_FIRMWARE_UPGRADE)) | (uint64_olcb_t) PSI_FIRMWARE_UPGRADE_ACTIVE;
+        temp = (temp & ~((uint64_t)PSI_FIRMWARE_UPGRADE)) | (uint64_t) PSI_FIRMWARE_UPGRADE_ACTIVE;
 
     if (temp > 0)
 
@@ -114,12 +114,12 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
             temp = temp << 8;
 
-    *worker_msg->payload[0] = (uint8_olcb_t) (temp >> 56) & 0xFF;
-    *worker_msg->payload[1] = (uint8_olcb_t) (temp >> 48) & 0xFF;
-    *worker_msg->payload[2] = (uint8_olcb_t) (temp >> 40) & 0xFF;
-    *worker_msg->payload[3] = (uint8_olcb_t) (temp >> 32) & 0xFF;
-    *worker_msg->payload[4] = (uint8_olcb_t) (temp >> 24) & 0xFF;
-    *worker_msg->payload[5] = (uint8_olcb_t) (temp >> 16) & 0xFF;
+    *worker_msg->payload[0] = (uint8_t) (temp >> 56) & 0xFF;
+    *worker_msg->payload[1] = (uint8_t) (temp >> 48) & 0xFF;
+    *worker_msg->payload[2] = (uint8_t) (temp >> 40) & 0xFF;
+    *worker_msg->payload[3] = (uint8_t) (temp >> 32) & 0xFF;
+    *worker_msg->payload[4] = (uint8_t) (temp >> 24) & 0xFF;
+    *worker_msg->payload[5] = (uint8_t) (temp >> 16) & 0xFF;
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
@@ -229,7 +229,7 @@ void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t*
     if (openlcb_node->state.openlcb_msg_handled)
         return;
 
-    uint16_olcb_t should_resend = Utilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY;
+    uint16_t should_resend = Utilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY;
 
     if (should_resend && openlcb_node->last_received_optional_interaction) {
 

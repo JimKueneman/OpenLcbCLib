@@ -59,21 +59,21 @@ extern "C"
 
     extern void BufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg);
 
-    extern uint16_olcb_t BufferStore_basic_messages_allocated(void);
+    extern uint16_t BufferStore_basic_messages_allocated(void);
 
-    extern uint16_olcb_t BufferStore_basic_messages_max_allocated(void);
+    extern uint16_t BufferStore_basic_messages_max_allocated(void);
 
-    extern uint16_olcb_t BufferStore_datagram_messages_allocated(void);
+    extern uint16_t BufferStore_datagram_messages_allocated(void);
 
-    extern uint16_olcb_t BufferStore_datagram_messages_max_allocated(void);
+    extern uint16_t BufferStore_datagram_messages_max_allocated(void);
 
-    extern uint16_olcb_t BufferStore_snip_messages_allocated(void);
+    extern uint16_t BufferStore_snip_messages_allocated(void);
 
-    extern uint16_olcb_t BufferStore_snip_messages_max_allocated(void);
+    extern uint16_t BufferStore_snip_messages_max_allocated(void);
 
-    extern uint16_olcb_t BufferStore_stream_messages_allocated(void);
+    extern uint16_t BufferStore_stream_messages_allocated(void);
 
-    extern uint16_olcb_t BufferStore_stream_messages_max_allocated(void);
+    extern uint16_t BufferStore_stream_messages_max_allocated(void);
 
     extern void BufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg);
 

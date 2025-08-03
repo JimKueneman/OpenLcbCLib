@@ -41,7 +41,7 @@
 
 #include "../openlcb/openlcb_types.h"
 
-typedef uint16_olcb_t(*configuration_mem_callback_t) (uint32_olcb_t, uint16_olcb_t, configuration_memory_buffer_t*);
+typedef uint16_t(*configuration_mem_callback_t) (uint32_t, uint16_t, configuration_memory_buffer_t*);
 
 #ifdef	__cplusplus
 extern "C" {
