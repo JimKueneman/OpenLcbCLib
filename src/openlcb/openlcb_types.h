@@ -136,6 +136,8 @@ extern "C" {
 
 #define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
+#define LEN_EVENT_PAYLOAD 255
+
     typedef enum {
         BASIC,
         DATAGRAM,
@@ -166,7 +168,9 @@ extern "C" {
     typedef uint64_t event_id_t;
     typedef uint64_t node_id_t;
 
-    typedef uint8_t event_payload_t[255];
+    typedef uint8_t event_payload_t[LEN_EVENT_PAYLOAD];
+
+    typedef uint8_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
     typedef struct {
         uint8_t allocated : 1; // message has been allocated and is in use
@@ -324,10 +328,9 @@ extern "C" {
     } openlcb_statemachine_worker_t;
 
     typedef void (*parameterless_callback_t)(void);
-
+    typedef uint16_t(*configuration_mem_callback_t) (uint32_t, uint16_t, configuration_memory_buffer_t*);
     typedef void (*mcu_driver_callback_t)(parameterless_callback_t);
 
-    typedef uint8_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
 #ifdef __cplusplus
 }

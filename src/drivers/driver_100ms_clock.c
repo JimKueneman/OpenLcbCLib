@@ -34,6 +34,8 @@
  * @date 5 Dec 2024
  */
 
+#include "driver_100ms_clock.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>

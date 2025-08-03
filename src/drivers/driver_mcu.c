@@ -47,13 +47,13 @@
 
 #include "driver_100ms_clock.h"
 
-parameterless_callback_t reboot_callback_func = NULL;
+parameterless_callback_t _reboot_callback_func = NULL;
 
 void DriverMcu_reboot(void) {
 
-    if (reboot_callback_func) {
+    if (_reboot_callback_func) {
 
-        reboot_callback_func();
+        _reboot_callback_func();
 
     }
 
@@ -61,7 +61,7 @@ void DriverMcu_reboot(void) {
 
 void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback) {
 
-    reboot_callback_func = reboot_callback;
+    _reboot_callback_func = reboot_callback;
 
     if (mcu_setup_callback) {
 

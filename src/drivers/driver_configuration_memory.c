@@ -34,12 +34,13 @@
  * @date 5 Dec 2024
  */
 
+
+#include "driver_configuration_memory.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stddef.h>
-
-#include "driver_configuration_memory.h"
 
 
 configuration_mem_callback_t _configuration_mem_read_callback_func = NULL;
