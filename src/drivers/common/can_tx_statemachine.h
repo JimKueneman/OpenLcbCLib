@@ -53,7 +53,7 @@ extern "C" {
 extern void CanTxStatemachine_initialize(void);
 
 
-extern bool CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_t openlcb_payload_start_index);
+extern bool CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg_t* openlcb_msg);
 
 extern bool CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg);
  

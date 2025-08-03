@@ -206,7 +206,7 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
 
 
-    if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {
+    if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
 
         next_node->state.initalized = true;
         next_node->producers.enumerator.running = true;
@@ -238,7 +238,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
             OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
 
 
-            if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {
+            if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
 
                 next_node->producers.enumerator.enum_index = next_node->producers.enumerator.enum_index + 1;
 
@@ -288,7 +288,7 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
             OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
 
 
-            if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {
+            if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
 
                 next_node->consumers.enumerator.enum_index = next_node->consumers.enumerator.enum_index + 1;
 

@@ -199,38 +199,55 @@ void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can_msg_t*
 
 }
 
-bool _handle_datagram(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+bool _handle_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
-    uint16_t payload_byte_count = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+    bool result = false;
+    uint16_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
 
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) {
 
-        return _datagram_only_frame(openlcb_msg, can_msg_worker);
+        result = _datagram_only_frame(openlcb_msg, can_msg_worker);
 
-    } else if (openlcb_start_index < LEN_CAN_BYTE_ARRAY) {
+    } else if (*openlcb_start_index < LEN_CAN_BYTE_ARRAY) {
 
-        return _datagram_first_frame(openlcb_msg, can_msg_worker);
+        result = _datagram_first_frame(openlcb_msg, can_msg_worker);
 
-    } else if (openlcb_start_index + payload_byte_count < openlcb_msg->payload_count) {
+    } else if (*openlcb_start_index + len_msg_frame < openlcb_msg->payload_count) {
 
-        return _datagram_middle_frame(openlcb_msg, can_msg_worker);
+        result = _datagram_middle_frame(openlcb_msg, can_msg_worker);
 
     } else {
 
-        return _datagram_last_frame(openlcb_msg, can_msg_worker);
+        result = _datagram_last_frame(openlcb_msg, can_msg_worker);
 
     }
+    
+    if (result) {
+        
+        *openlcb_start_index = *openlcb_start_index + len_msg_frame;
+        
+    }
+    
+    return result;
 
 }
 
-bool _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+bool _handle_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
+    bool result = false;
+    
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) { // single frame
 
+        uint16_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);   
         can_msg_worker->identifier = _construct_unaddressed_message_identifier(openlcb_msg);
-        CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+      
+        result = _transmit_can_frame(can_msg_worker);
         
-        return _transmit_can_frame(can_msg_worker);
+        if (result) {
+            
+            *openlcb_start_index = *openlcb_start_index + len_msg_frame;
+                  
+        }
 
     } else { // multi frame
 
@@ -238,40 +255,48 @@ bool _handle_unaddressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_
 
     }
 
-    return false;
+    return result;
 
 }
 
-bool _handle_addressed_message(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t openlcb_start_index) {
+bool _handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
     _load_destination_address_in_payload(openlcb_msg, can_msg_worker);
 
 
     can_msg_worker->identifier = _construct_addressed_message_identifier(openlcb_msg);
-    uint16_t payload_byte_count = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
-
+    uint16_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
+    bool result = false;
 
     if (openlcb_msg->payload_count <= 6) {// Account for 2 bytes used for dest alias
 
-        return _addressed_message_only_frame(openlcb_msg, can_msg_worker);
+        result = _addressed_message_only_frame(openlcb_msg, can_msg_worker);
 
-    } else if (openlcb_start_index < 6) { // Account for 2 bytes used for dest alias
+    } else if (*openlcb_start_index < 6) { // Account for 2 bytes used for dest alias
 
-        return _addressed_message_first_frame(openlcb_msg, can_msg_worker);
+        result = _addressed_message_first_frame(openlcb_msg, can_msg_worker);
 
-    } else if ((openlcb_start_index + payload_byte_count) < openlcb_msg->payload_count) {
+    } else if ((*openlcb_start_index + openlcb_start_index) < openlcb_msg->payload_count) {
 
-        return _addressed_message_middle(can_msg_worker);
+        result = _addressed_message_middle(can_msg_worker);
 
     } else {
 
-        return _addressed_message_last(openlcb_msg, can_msg_worker);
+        result = _addressed_message_last(openlcb_msg, can_msg_worker);
 
     }
+    
+    if (result) {
+        
+        *openlcb_start_index = *openlcb_start_index + len_msg_frame;
+        
+    }
+    
+    return result;
 
 }
 
-bool CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_t openlcb_payload_start_index) {
+bool CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
     if (!DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
 
@@ -279,38 +304,49 @@ bool CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, o
 
     }
 
-    if (OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg)) {
+    can_msg_t worker_can_msg;
+    uint16_t payload_index = 0;
+    
+    // TODO: break the message into can frame and queue them in the can frame buffer for sending to not block the main loop here.
 
-        switch (openlcb_msg->mti) {
+    while (payload_index < openlcb_msg->payload_count) {
 
-            case MTI_DATAGRAM:
-                
-                return _handle_datagram(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
+        if (OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg)) {
 
-                break;
+            switch (openlcb_msg->mti) {
 
-            case MTI_STREAM_COMPLETE:
-            case MTI_STREAM_INIT_REPLY:
-            case MTI_STREAM_INIT_REQUEST:
-            case MTI_STREAM_PROCEED:
-                
-                return true;  // TODO:  Implement Streams
+                case MTI_DATAGRAM:
 
-                break;
+                     _handle_datagram_frame(openlcb_msg, &worker_can_msg, &payload_index);
 
-            default:
+                    break;
 
-                return _handle_addressed_message(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
+                case MTI_STREAM_COMPLETE:
+                case MTI_STREAM_INIT_REPLY:
+                case MTI_STREAM_INIT_REQUEST:
+                case MTI_STREAM_PROCEED:
 
-                break;
+                    return true; // TODO:  Implement Streams
+
+                    break;
+
+                default:
+
+                    _handle_addressed_msg_frame(openlcb_msg, &worker_can_msg, &payload_index);
+
+                    break;
+
+            }
+
+        } else {
+
+             _handle_unaddressed_msg_frame(openlcb_msg, &worker_can_msg, &payload_index);
 
         }
 
-    } else {
-
-        return _handle_unaddressed_message(openlcb_msg, can_msg_worker, openlcb_payload_start_index);
-
     }
+    
+    return true;
 
 }
 
