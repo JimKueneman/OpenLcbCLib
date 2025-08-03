@@ -56,7 +56,7 @@ void Driver100msClock_initialization(parameterless_callback_t pause_timer_callba
 
 }
 
-void _100ms_clock_sink(void) {
+void Driver100msClock_clock_tick_sink(void) {
 
     OpenLcbNode_100ms_timer_tick();
     DatagramProtocol_100ms_time_tick();
@@ -69,11 +69,6 @@ void _100ms_clock_sink(void) {
 
 }
 
-parameterless_callback_t Driver100msClock_get_sink(void) {
-
-    return &_100ms_clock_sink;
-
-}
 
 void Driver100msClock_pause_100ms_timer(void) {
 

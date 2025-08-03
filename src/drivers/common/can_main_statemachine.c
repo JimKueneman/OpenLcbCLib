@@ -443,7 +443,7 @@ bool _resend_optional_message_from_oir_reply(can_main_statemachine_t* can_helper
 
 }
 
-void _dispatch_next_can_message_to_node(can_main_statemachine_t* can_helper, openlcb_node_t* next_node, uint8_t* is_active_can_msg_processiong_complete) {
+void _dispatch_next_can_message_to_node(can_main_statemachine_t* can_helper, openlcb_node_t* next_node, bool* is_active_can_msg_processiong_complete) {
 
     if (can_helper->active_msg) {
 
@@ -459,7 +459,7 @@ void _dispatch_next_can_message_to_node(can_main_statemachine_t* can_helper, ope
 
 }
 
-void _dispatch_next_openlcb_message_to_node(can_main_statemachine_t* can_helper, openlcb_node_t* next_node, uint8_t* is_active_openlcb_msg_processiong_complete) {
+void _dispatch_next_openlcb_message_to_node(can_main_statemachine_t* can_helper, openlcb_node_t* next_node, bool* is_active_openlcb_msg_processiong_complete) {
 
     if (can_helper->openlcb_worker->active_msg) {
 

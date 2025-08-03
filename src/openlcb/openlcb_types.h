@@ -329,7 +329,6 @@ extern "C" {
 
     typedef void (*parameterless_callback_t)(void);
     typedef uint16_t(*configuration_mem_callback_t) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    typedef void (*mcu_driver_callback_t)(parameterless_callback_t _100ms_timer_callback);
 
 
 #ifdef __cplusplus

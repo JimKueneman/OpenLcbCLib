@@ -59,13 +59,13 @@ void DriverMcu_reboot(void) {
 
 }
 
-void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback) {
+void DriverMcu_initialization(parameterless_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback) {
 
     _reboot_callback_func = reboot_callback;
 
     if (mcu_setup_callback) {
 
-        mcu_setup_callback(Driver100msClock_get_sink());
+        mcu_setup_callback();
 
     }
 

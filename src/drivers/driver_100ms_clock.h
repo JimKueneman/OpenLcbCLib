@@ -56,7 +56,7 @@ extern void Driver100msClock_pause_100ms_timer(void);
 
 extern void Driver100msClock_resume_100ms_timer(void);
 
-extern parameterless_callback_t Driver100msClock_get_sink(void);
+extern void Driver100msClock_clock_tick_sink(void);
 
 #ifdef	__cplusplus
 }

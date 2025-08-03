@@ -50,7 +50,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void DriverMcu_initialization(mcu_driver_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback);
+    extern void DriverMcu_initialization(parameterless_callback_t mcu_setup_callback, parameterless_callback_t reboot_callback);
 
     extern void DriverMcu_reboot(void);
 

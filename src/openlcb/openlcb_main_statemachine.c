@@ -57,13 +57,11 @@
 #include "../drivers/driver_configuration_memory.h"
 #include "../drivers/driver_100ms_clock.h"
 
-#include "openlcb_main_statemachine.h"
-
 
 openlcb_statemachine_worker_t _openlcb_helper;
 
 void OpenLcbMainStatemachine_initialize(
-        mcu_driver_callback_t mcu_setup_callback,
+        parameterless_callback_t mcu_setup_callback,
         parameterless_callback_t reboot_callback,
         configuration_mem_callback_t configuration_mem_read_callback,
         configuration_mem_callback_t configuration_mem_write_callback,
