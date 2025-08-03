@@ -39,6 +39,9 @@
 #ifndef __OPENLCB_MAIN_STATEMACHINE__
 #define	__OPENLCB_MAIN_STATEMACHINE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 #include "../drivers/driver_configuration_memory.h"
 #include "../drivers/driver_100ms_clock.h"

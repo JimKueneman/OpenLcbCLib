@@ -37,6 +37,8 @@
 #ifndef __APPLICATION__
 #define	__APPLICATION__
 
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "openlcb_types.h"
 

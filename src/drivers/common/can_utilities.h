@@ -37,6 +37,9 @@
 #ifndef ___CAN_UTILITIES__
 #define ___CAN_UTILITIES__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 

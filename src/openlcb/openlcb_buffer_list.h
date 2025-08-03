@@ -38,6 +38,9 @@
 #ifndef __OPENLCB_LIST__
 #define __OPENLCB_LIST__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef __cplusplus

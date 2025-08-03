@@ -34,6 +34,9 @@
  * @date 5 Dec 2024
  */
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stddef.h>
 
 #include "driver_configuration_memory.h"

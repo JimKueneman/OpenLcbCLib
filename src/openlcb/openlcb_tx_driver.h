@@ -40,6 +40,9 @@
 #ifndef __OPENLCB_TX_DRIVER__
 #define	__OPENLCB_TX_DRIVER__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 #include "openlcb_node.h"
 

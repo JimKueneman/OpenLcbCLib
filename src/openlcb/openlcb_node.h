@@ -37,6 +37,9 @@
 #ifndef __OPENLCB_NODE__
 #define	__OPENLCB_NODE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
 #ifdef	__cplusplus

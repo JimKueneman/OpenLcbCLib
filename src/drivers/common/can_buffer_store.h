@@ -40,6 +40,9 @@
 #ifndef __CAN_BUFFER_STORE__
 #define	__CAN_BUFFER_STORE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 
 #ifdef	__cplusplus

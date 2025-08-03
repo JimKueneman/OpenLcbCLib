@@ -40,6 +40,9 @@
 #ifndef __CAN_LOGIN_MESSAGE_HANDLER__
 #define	__CAN_LOGIN_MESSAGE_HANDLER__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 

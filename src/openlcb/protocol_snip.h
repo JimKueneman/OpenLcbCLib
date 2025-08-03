@@ -40,6 +40,9 @@
 #ifndef __PROTOCOL_SNIP__
 #define	__PROTOCOL_SNIP__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef	__cplusplus

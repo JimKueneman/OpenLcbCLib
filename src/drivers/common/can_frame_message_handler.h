@@ -38,6 +38,9 @@
 #ifndef __CAN_MSG_HANDLER__
 #define	__CAN_MSG_HANDLER__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_node.h"

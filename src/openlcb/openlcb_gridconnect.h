@@ -43,6 +43,9 @@
 #ifndef __OPENLCB_GRIDCONNECT__
 #define	__OPENLCB_GRIDCONNECT__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 #include "../drivers/common/can_types.h"
 

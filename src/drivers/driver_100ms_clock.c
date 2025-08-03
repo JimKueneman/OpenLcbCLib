@@ -34,6 +34,8 @@
  * @date 5 Dec 2024
  */
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <stddef.h>
 
 #include "../openlcb/openlcb_types.h"

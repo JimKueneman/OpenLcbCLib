@@ -41,7 +41,10 @@
 
 #include "../openlcb/openlcb_types.h"
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <stddef.h>
+
 #include "driver_100ms_clock.h"
 
 parameterless_callback_t reboot_callback_func = NULL;

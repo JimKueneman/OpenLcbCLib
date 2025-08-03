@@ -40,6 +40,9 @@
 #ifndef __CAN_RX_STATEMACHINE__
 #define	__CAN_RX_STATEMACHINE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 
 #ifdef	__cplusplus

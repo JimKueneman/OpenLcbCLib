@@ -39,6 +39,9 @@
 #ifndef __PROTOCOL_MESSAGE_NETWORK__
 #define	__PROTOCOL_MESSAGE_NETWORK__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef	__cplusplus

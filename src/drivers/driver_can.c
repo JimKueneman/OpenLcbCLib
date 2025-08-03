@@ -35,11 +35,14 @@
  */
 
 
-#include "../drivers/common/can_types.h"
-
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdio.h> // printf
+
+#include "../drivers/common/can_types.h"
+
 
 can_rx_callback_func_t can_rx_callback_func = NULL;
 transmit_raw_can_frame_func_t transmit_raw_can_frame_func = NULL;

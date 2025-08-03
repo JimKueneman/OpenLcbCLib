@@ -41,6 +41,9 @@
 #ifndef __OPENLCB_BUFFER_STORE__
 #define __OPENLCB_BUFFER_STORE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef __cplusplus

@@ -38,6 +38,9 @@
 #ifndef __CAN_MAIN_STATEMACHINE__
 #define	__CAN_MAIN_STATEMACHINE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../common/can_types.h"
 
 #ifdef	__cplusplus

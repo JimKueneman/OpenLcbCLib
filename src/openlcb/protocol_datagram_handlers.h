@@ -36,6 +36,9 @@
 #ifndef __PROTOCOL_DATAGRAM_HANDLERS__
 #define	__PROTOCOL_DATAGRAM_HANDLERS__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef	__cplusplus

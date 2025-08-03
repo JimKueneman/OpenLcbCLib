@@ -37,6 +37,7 @@
 #ifndef __OPENLCB_TYPES__
 #define __OPENLCB_TYPES__
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus

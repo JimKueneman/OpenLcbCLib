@@ -42,6 +42,9 @@
 #ifndef __OPENLCB_FIFO__
 #define __OPENLCB_FIFO__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef __cplusplus

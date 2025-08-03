@@ -38,6 +38,9 @@
 #ifndef __OPENLCB_UTILITIES__
 #define	__OPENLCB_UTILITIES__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 

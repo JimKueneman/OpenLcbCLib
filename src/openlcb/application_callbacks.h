@@ -38,6 +38,9 @@
 #ifndef __CALLBACK_HOOKS__
 #define	__CALLBACK_HOOKS__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../openlcb/openlcb_types.h"
 
 

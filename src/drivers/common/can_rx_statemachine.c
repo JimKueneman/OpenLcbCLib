@@ -40,6 +40,8 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdio.h> // printf
 
 #include "../../drivers/driver_can.h"

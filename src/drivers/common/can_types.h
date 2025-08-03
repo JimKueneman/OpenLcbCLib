@@ -38,6 +38,9 @@
 #ifndef __CAN_TYPES__
 #define __CAN_TYPES__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus

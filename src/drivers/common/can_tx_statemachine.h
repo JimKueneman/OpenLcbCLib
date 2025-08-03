@@ -39,6 +39,9 @@
 #ifndef __CAN_TX_STATEMACHINE__
 #define	__CAN_TX_STATEMACHINE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 

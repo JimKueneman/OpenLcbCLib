@@ -39,6 +39,9 @@
 #ifndef __PROTOCOL_DATAGRAM__
 #define	__PROTOCOL_DATAGRAM__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
 
 #ifdef	__cplusplus

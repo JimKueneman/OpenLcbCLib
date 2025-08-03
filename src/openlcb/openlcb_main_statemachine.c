@@ -38,6 +38,8 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdio.h> // printf
 
 #include "openlcb_buffer_store.h"

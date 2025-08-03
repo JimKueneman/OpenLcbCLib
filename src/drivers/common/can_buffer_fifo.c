@@ -40,6 +40,8 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdio.h> // printf
 
 #include "can_types.h"
@@ -71,13 +73,9 @@ void CanBufferFifo_initialize(void) {
 
 }
 
-uint8_olcb_t CanBufferFifo_push(can_msg_t* new_msg) {
+bool CanBufferFifo_push(can_msg_t* new_msg) {
 
-    if (!new_msg) {
-
-        return false;
-
-    }
+    assert(new_msg);
 
     uint8_olcb_t next = can_msg_buffer_fifo.head + 1;
 
