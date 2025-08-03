@@ -71,11 +71,11 @@ extern void CanFrameMessageHandler_transmit_rid(openlcb_node_t* next_node, can_m
 
 extern void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker);
+extern void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
-extern void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker);
+extern void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
-extern void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker);
+extern void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
 
 #ifdef	__cplusplus

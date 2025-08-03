@@ -182,44 +182,83 @@ void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
     switch (openlcb_node->state.run_state) {
 
         case RUNSTATE_INIT:
+            
             CanLoginMessageHandler_init(openlcb_node);
+            
             return;
+            
         case RUNSTATE_GENERATE_SEED:
+            
             CanFrameMessageHandler_generate_seed(openlcb_node);
+            
             return;
+            
         case RUNSTATE_GENERATE_ALIAS:
+            
             CanFrameMessageHandler_generate_alias(openlcb_node);
+            
             return;
+            
         case RUNSTATE_SEND_CHECK_ID_07:
+            
             CanFrameMessageHandler_transmit_cid07(openlcb_node, can_msg);
+            
             return;
+            
         case RUNSTATE_SEND_CHECK_ID_06:
+            
             CanFrameMessageHandler_transmit_cid06(openlcb_node, can_msg);
+            
             return;
+            
         case RUNSTATE_SEND_CHECK_ID_05:
+            
             CanFrameMessageHandler_transmit_cid05(openlcb_node, can_msg);
+            
             return;
+            
         case RUNSTATE_SEND_CHECK_ID_04:
+            
             CanFrameMessageHandler_transmit_cid04(openlcb_node, can_msg);
+            
             return;
+            
         case RUNSTATE_WAIT_200ms:
+            
             CanFrameMessageHandler_wait_200ms(openlcb_node);
+            
             return;
+            
         case RUNSTATE_TRANSMIT_RESERVE_ID:
+            
             CanFrameMessageHandler_transmit_rid(openlcb_node, can_msg);
+            
             return;
+            
         case RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION:
+            
             CanFrameMessageHandler_transmit_amd(openlcb_node, can_msg);
+            
             return;
+            
         case RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE:
-            CanFrameMessageHandler_transmit_initialization_complete(openlcb_node, can_msg, openlcb_msg);
+            
+            CanFrameMessageHandler_transmit_initialization_complete(openlcb_node, openlcb_msg);
+            
             return;
+            
         case RUNSTATE_TRANSMIT_PRODUCER_EVENTS:
-            CanFrameMessageHandler_transmit_producer_events(openlcb_node, can_msg, openlcb_msg);
+            
+            CanFrameMessageHandler_transmit_producer_events(openlcb_node, openlcb_msg);
+            
             return;
+            
         case RUNSTATE_TRANSMIT_CONSUMER_EVENTS:
-            CanFrameMessageHandler_transmit_consumer_events(openlcb_node, can_msg, openlcb_msg);
+            
+            CanFrameMessageHandler_transmit_consumer_events(openlcb_node, openlcb_msg);
+            
             return;
+            
         case RUNSTATE_RUN:
 
             return;

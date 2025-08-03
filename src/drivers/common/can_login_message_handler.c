@@ -183,7 +183,7 @@ void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
 }
 
-void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker) {
+void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
     OpenLcbUtilities_load_openlcb_message(
             openlcb_worker,
@@ -217,7 +217,7 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
 
 }
 
-void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker) {
+void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
@@ -267,7 +267,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
 }
 
-void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, can_msg_t* can_worker, openlcb_msg_t* openlcb_worker) {
+void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
