@@ -45,8 +45,6 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-#include "../../openlcb/openlcb_types.h"
-#include "../../openlcb/openlcb_defines.h"
 #include "can_buffer_store.h"
 
 // add one slot to the fifo so it can be full without head == tail

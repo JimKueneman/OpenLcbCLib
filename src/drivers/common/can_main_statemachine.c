@@ -41,16 +41,6 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../../openlcb/openlcb_types.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_buffer_store.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_main_statemachine.h"
-#include "../../openlcb/openlcb_tx_driver.h"
-#include "../../openlcb/protocol_message_network.h"
-#include "../../openlcb/protocol_datagram.h"
-#include "../../openlcb/protocol_datagram_handlers.h"
-#include "../../openlcb/openlcb_application_callbacks.h"
 #include "can_types.h"
 #include "can_buffer_fifo.h"
 #include "can_frame_message_handler.h"
@@ -58,8 +48,20 @@
 #include "can_login_message_handler.h"
 #include "can_tx_statemachine.h"
 #include "can_rx_statemachine.h"
+
 #include "../driver_can.h"
 #include "../driver_100ms_clock.h"
+
+#include "../../openlcb/openlcb_defines.h"
+#include "../../openlcb/openlcb_buffer_store.h"
+#include "../../openlcb/openlcb_buffer_fifo.h"
+#include "../../openlcb/openlcb_main_statemachine.h"
+#include "../../openlcb/protocol_message_network.h"
+#include "../../openlcb/protocol_datagram.h"
+#include "../../openlcb/protocol_datagram_handlers.h"
+#include "../../openlcb/openlcb_application_callbacks.h"
+
+
 
 
 can_main_statemachine_t _can_helper;

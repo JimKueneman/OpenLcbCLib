@@ -43,21 +43,19 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../../openlcb/openlcb_types.h"
+#include "can_types.h"
+
+#include "can_utilities.h"
+#include "can_tx_statemachine.h"
+
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_node.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_utilities.h"
-#include "../../openlcb/openlcb_main_statemachine.h"
 #include "../../openlcb/openlcb_application_callbacks.h"
 #include "../../openlcb/protocol_event_transport.h"
-#include "../../openlcb/openlcb_buffer_store.h"
-#include "can_tx_statemachine.h"
-#include "can_utilities.h"
-#include "can_buffer_fifo.h"
-#include "can_frame_message_handler.h"
-#include "can_buffer_store.h"
-#include "../driver_mcu.h"
+
+
+
 
 void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 

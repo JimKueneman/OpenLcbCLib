@@ -43,9 +43,6 @@
 #include <stdint.h>
 
 #include "openlcb_types.h"
-#include "../drivers/driver_configuration_memory.h"
-#include "../drivers/driver_100ms_clock.h"
-#include "../drivers/driver_can.h"
 
 #ifdef	__cplusplus
 extern "C" {

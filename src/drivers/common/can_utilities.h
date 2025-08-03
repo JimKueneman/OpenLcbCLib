@@ -41,7 +41,6 @@
 #include <stdint.h>
 
 #include "can_types.h"
-#include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
 extern "C"

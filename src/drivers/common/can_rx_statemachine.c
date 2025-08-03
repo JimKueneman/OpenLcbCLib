@@ -44,17 +44,15 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../../drivers/driver_can.h"
-#include "../../openlcb/openlcb_types.h"
+#include "can_types.h"
+#include "can_buffer_store.h"
+#include "can_buffer_fifo.h"
+#include "can_utilities.h"
+
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_node.h"
-#include "can_buffer_store.h"
-#include "can_buffer_fifo.h"
-#include "can_utilities.h"
-#include "can_types.h"
 
 
 #define OFFSET_DEST_ID_IN_PAYLOAD     2

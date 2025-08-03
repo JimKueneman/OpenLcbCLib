@@ -43,7 +43,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../drivers/common/can_types.h"
+#include "common/can_types.h"
 
 #ifdef	__cplusplus
 extern "C" {

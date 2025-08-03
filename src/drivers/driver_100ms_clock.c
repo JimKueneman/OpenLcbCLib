@@ -40,7 +40,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "../openlcb/openlcb_types.h"
 #include "../openlcb/openlcb_node.h"
 #include "../openlcb/protocol_datagram.h"
 #include "../openlcb/openlcb_application_callbacks.h"

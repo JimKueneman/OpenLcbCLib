@@ -43,12 +43,11 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-#include "can_buffer_store.h"
 #include "can_utilities.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_node.h"
-#include "../../openlcb/openlcb_utilities.h"
 #include "can_tx_statemachine.h"
+
+#include "../../openlcb/openlcb_defines.h"
+
 
 void _flush_alias_node_id_mappings(void) {
 

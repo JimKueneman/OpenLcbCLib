@@ -41,7 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../common/can_types.h"
+#include "can_types.h"
 
 #ifdef	__cplusplus
 extern "C" {

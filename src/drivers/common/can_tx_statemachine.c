@@ -43,19 +43,11 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../../openlcb/openlcb_types.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_buffer_store.h"
-#include "../../openlcb/openlcb_buffer_list.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_node.h"
-#include "../../openlcb/openlcb_utilities.h"
-#include "../../openlcb/openlcb_application_callbacks.h"
-#include "can_buffer_store.h"
-#include "can_buffer_fifo.h"
-#include "can_utilities.h"
 #include "can_types.h"
 #include "../driver_can.h"
+#include "can_utilities.h"
+#include "../../openlcb/openlcb_utilities.h"
+#include "../../openlcb/openlcb_application_callbacks.h"
 
 
 // #define CAN_TX_TEST
@@ -202,7 +194,7 @@ void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can_msg_t*
 bool _handle_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
     bool result = false;
-    uint16_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
+    uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
 
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) {
 
@@ -238,7 +230,7 @@ bool _handle_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_ms
     
     if (openlcb_msg->payload_count <= LEN_CAN_BYTE_ARRAY) { // single frame
 
-        uint16_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);   
+        uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);   
         can_msg_worker->identifier = _construct_unaddressed_message_identifier(openlcb_msg);
       
         result = _transmit_can_frame(can_msg_worker);
@@ -265,7 +257,7 @@ bool _handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_
 
 
     can_msg_worker->identifier = _construct_addressed_message_identifier(openlcb_msg);
-    uint16_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
+    uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITH_DEST_ADDRESS);
     bool result = false;
 
     if (openlcb_msg->payload_count <= 6) {// Account for 2 bytes used for dest alias
@@ -276,7 +268,7 @@ bool _handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_
 
         result = _addressed_message_first_frame(openlcb_msg, can_msg_worker);
 
-    } else if ((*openlcb_start_index + openlcb_start_index) < openlcb_msg->payload_count) {
+    } else if ((*openlcb_start_index + len_msg_frame) < openlcb_msg->payload_count) {
 
         result = _addressed_message_middle(can_msg_worker);
 

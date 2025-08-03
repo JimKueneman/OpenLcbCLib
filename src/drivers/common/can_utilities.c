@@ -40,9 +40,8 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../../openlcb/openlcb_types.h"
-#include "../../openlcb/openlcb_defines.h"
 #include "can_types.h"
+
 #include "../../openlcb/openlcb_utilities.h"
 
 void CanUtilities_clear_can_message(can_msg_t *can_msg) {
