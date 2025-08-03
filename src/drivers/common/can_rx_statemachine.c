@@ -38,7 +38,10 @@
 
 #include "can_rx_statemachine.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "../../drivers/driver_can.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
@@ -92,7 +95,7 @@ openlcb_msg_t* _send_reject(uint16_olcb_t source_alias, uint16_olcb_t dest_alias
         can_msg_error->payload[3] = (uint8_olcb_t) error_code & 0x00FF;
 
         // Flag so it is directly sent out and not processed by nodes
-        can_msg_error->state.addressed_direct_tx = TRUE;
+        can_msg_error->state.addressed_direct_tx = true;
 
         can_msg_error->payload_count = 4;
 
@@ -135,7 +138,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_s
     result->mti = mti;
     result->source_alias = source_alias;
     result->dest_alias = dest_alias;
-    result->state.inprocess = TRUE;
+    result->state.inprocess = true;
 
     CanUtilities_copy_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
 
@@ -186,7 +189,7 @@ openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_olcb_t can_buffer_st
     }
 
     CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
-    result->state.inprocess = FALSE;
+    result->state.inprocess = false;
 
     BufferList_release(result);
     BufferFifo_push_existing(result);
@@ -318,7 +321,7 @@ uint8_olcb_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
 
     if (!new_can_msg) {
 
-        return FALSE;
+        return false;
 
     }
 

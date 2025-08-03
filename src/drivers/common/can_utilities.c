@@ -35,6 +35,8 @@
 #include "can_utilities.h"
 
 #include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
@@ -169,7 +171,7 @@ uint8_olcb_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
         if (can_msg->payload[i] == 0x00) {
 
             count++;
-            
+
         }
 
     };
@@ -279,7 +281,7 @@ uint8_olcb_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_
 
     can_msg->payload_count = 8;
 
-    return TRUE;
+    return true;
 }
 
 uint8_olcb_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target) {
@@ -296,5 +298,5 @@ uint8_olcb_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t 
 
     can_msg_target->payload_count = can_msg_source->payload_count;
 
-    return TRUE;
+    return true;
 }

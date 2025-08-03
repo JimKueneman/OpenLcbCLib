@@ -35,7 +35,10 @@
 
 #include "can_main_statemachine.h"
 
-#include "stdio.h"  // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_buffer_store.h"
@@ -77,8 +80,8 @@ void CanMainStatemachine_initialize(
     // Just use an existing openlcb_helper structure vs allocating another one
     _can_helper.openlcb_worker = MainStatemachine_get_openlcb_helper();
     _can_helper.active_msg = NULL;
-    _can_helper.can_worker.state.allocated = TRUE;
-    _can_helper.can_worker.state.addressed_direct_tx = FALSE;
+    _can_helper.can_worker.state.allocated = true;
+    _can_helper.can_worker.state.addressed_direct_tx = false;
     _can_helper.can_worker.identifier = 0x0000000000;
     _can_helper.can_worker.payload_count = 0;
 
@@ -110,13 +113,13 @@ void _run_can_frame_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
             case CAN_CONTROL_FRAME_CID2:
             case CAN_CONTROL_FRAME_CID1:
 
-                openlcb_node->state.can_msg_handled = TRUE;
+                openlcb_node->state.can_msg_handled = true;
 
                 return;
 
             default:
 
-                openlcb_node->state.can_msg_handled = TRUE;
+                openlcb_node->state.can_msg_handled = true;
 
                 return;
 
@@ -156,13 +159,13 @@ void _run_can_frame_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
             case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
                 // Advanced feature for gateways/routers/etc.
 
-                openlcb_node->state.can_msg_handled = TRUE;
+                openlcb_node->state.can_msg_handled = true;
 
                 return;
 
             default:
 
-                openlcb_node->state.can_msg_handled = TRUE;
+                openlcb_node->state.can_msg_handled = true;
 
                 return;
 
@@ -227,7 +230,7 @@ uint8_olcb_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_he
 
     if (can_helper->active_msg) {
         
-        return FALSE;
+        return false;
         
     }
 
@@ -247,11 +250,11 @@ uint8_olcb_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_he
 
         }
 
-        return TRUE;
+        return true;
 
     } else {
 
-        return FALSE;
+        return false;
 
     }
 
@@ -261,7 +264,7 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* ca
 
     if (can_helper->openlcb_worker->active_msg) {
         
-        return FALSE;
+        return false;
         
     }
 
@@ -282,11 +285,11 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* ca
 
         }
 
-        return TRUE;
+        return true;
 
     } else {
 
-        return FALSE;
+        return false;
 
     }
 
@@ -294,7 +297,7 @@ uint8_olcb_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* ca
 
 void _release_direct_tx_can_message(can_main_statemachine_t* can_helper) {
 
-    can_helper->active_msg->state.addressed_direct_tx = FALSE;
+    can_helper->active_msg->state.addressed_direct_tx = false;
     CanBufferStore_free_buffer(can_helper->active_msg);
     can_helper->active_msg = NULL;
 
@@ -311,7 +314,7 @@ uint8_olcb_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine
 
     if (!can_helper->active_msg) {
 
-        return FALSE;
+        return false;
         
     }
     
@@ -329,11 +332,11 @@ uint8_olcb_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine
 
                         _release_direct_tx_can_message(can_helper);
 
-                        return TRUE;
+                        return true;
 
                     }
 
-                    return TRUE; // still trying but did not make it yet.
+                    return true; // still trying but did not make it yet.
 
                 }
 
@@ -346,11 +349,11 @@ uint8_olcb_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine
         // Was not for us
         _release_direct_tx_can_message(can_helper);
 
-        return TRUE;
+        return true;
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
@@ -358,14 +361,14 @@ void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_o
 
     if (newly_popped_can_active_msg) {
 
-        next_node->state.can_msg_handled = FALSE;
+        next_node->state.can_msg_handled = false;
 
     }
 
     if (newly_popped_openlcb_active_msg) {
 
-        next_node->state.openlcb_datagram_ack_sent = FALSE;
-        next_node->state.openlcb_msg_handled = FALSE;
+        next_node->state.openlcb_datagram_ack_sent = false;
+        next_node->state.openlcb_msg_handled = false;
 
     }
 
@@ -395,7 +398,7 @@ uint8_olcb_t _resend_datagram_message_from_ack_failure_reply(can_main_statemachi
 
     if (next_node->state.resend_datagram && next_node->last_received_datagram) {
 
-        next_node->state.openlcb_msg_handled = FALSE;
+        next_node->state.openlcb_msg_handled = false;
 
         MainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper->openlcb_worker->worker);
 
@@ -403,15 +406,15 @@ uint8_olcb_t _resend_datagram_message_from_ack_failure_reply(can_main_statemachi
 
             ProtocolDatagramHandlers_clear_resend_datagram_message(next_node);
 
-            return FALSE;
+            return false;
 
         }
 
-        return TRUE; // need to retry
+        return true; // need to retry
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
@@ -419,7 +422,7 @@ uint8_olcb_t _resend_optional_message_from_oir_reply(can_main_statemachine_t* ca
 
     if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
 
-        next_node->state.openlcb_msg_handled = FALSE;
+        next_node->state.openlcb_msg_handled = false;
 
         MainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper->openlcb_worker->worker);
 
@@ -427,14 +430,14 @@ uint8_olcb_t _resend_optional_message_from_oir_reply(can_main_statemachine_t* ca
 
             ProtocolMessageNetwork_clear_resend_optional_message(next_node);
 
-            return FALSE;
+            return false;
         }
 
-        return TRUE; // need to retry
+        return true; // need to retry
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
@@ -446,7 +449,7 @@ void _dispatch_next_can_message_to_node(can_main_statemachine_t* can_helper, ope
 
         if (!next_node->state.can_msg_handled) {
 
-            *is_active_can_msg_processiong_complete = FALSE;
+            *is_active_can_msg_processiong_complete = false;
             
         }
 
@@ -462,7 +465,7 @@ void _dispatch_next_openlcb_message_to_node(can_main_statemachine_t* can_helper,
 
         if (!next_node->state.openlcb_msg_handled)
 
-            *is_active_openlcb_msg_processiong_complete = FALSE;
+            *is_active_openlcb_msg_processiong_complete = false;
 
     }
 
@@ -478,8 +481,8 @@ void CanMainStateMachine_run(void) {
     uint8_olcb_t is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message(&_can_helper);
 
     // optimistic from the beginning
-    uint8_olcb_t is_active_can_msg_processiong_complete = TRUE;
-    uint8_olcb_t is_active_openlcb_msg_processing_complete = TRUE;
+    uint8_olcb_t is_active_can_msg_processiong_complete = true;
+    uint8_olcb_t is_active_openlcb_msg_processing_complete = true;
 
 
     if (_try_transmit_addressed_direct_tx_can_message(&_can_helper)) {

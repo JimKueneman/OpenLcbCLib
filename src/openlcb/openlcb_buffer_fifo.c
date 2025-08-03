@@ -39,7 +39,9 @@
 
 #include "openlcb_buffer_fifo.h"
 
-#include <stddef.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 
 #include "openlcb_buffer_store.h"
 #include "openlcb_types.h"

@@ -36,7 +36,10 @@
 
 #include "openlcb_main_statemachine.h"
 
-#include "stdio.h"  // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_buffer_store.h"
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
@@ -92,10 +95,10 @@ void MainStatemachine_initialize(
     _openlcb_helper.worker.dest_id = 0;
     _openlcb_helper.worker.mti = 0;
     _openlcb_helper.worker.timerticks = 0;
-    _openlcb_helper.worker.state.inprocess = FALSE;
+    _openlcb_helper.worker.state.inprocess = false;
     _openlcb_helper.worker.payload = (openlcb_payload_t*) & _openlcb_helper.worker_buffer;
     _openlcb_helper.worker.payload_type = STREAM; // make it the largest so it can fake as any
-    _openlcb_helper.worker.state.allocated = TRUE;
+    _openlcb_helper.worker.state.allocated = true;
 
 }
 
@@ -248,7 +251,7 @@ void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
 void MainStatemachine_run(void) {
     //
-    //    uint8_olcb_t reset = FALSE;
+    //    uint8_olcb_t reset = false;
     //    
     //    if (!openlcb_helper.active_msg) {
     //
@@ -256,7 +259,7 @@ void MainStatemachine_run(void) {
     //        openlcb_helper.active_msg = BufferFifo_pop();
     //        McuDriver_resume_can_rx();
     //        
-    //        reset = TRUE;
+    //        reset = true;
     //
     //    }
     //
@@ -264,7 +267,7 @@ void MainStatemachine_run(void) {
     //        return;
     //
     //
-    //    uint8_olcb_t all_nodes_done = TRUE;
+    //    uint8_olcb_t all_nodes_done = true;
     //    openlcb_node_t* next_node = Node_get_first(2);
     //
     //    while (next_node) {
@@ -272,7 +275,7 @@ void MainStatemachine_run(void) {
     //        
     //        
     //        if (reset)
-    //            next_node->state.openlcb_msg_handled = FALSE;
+    //            next_node->state.openlcb_msg_handled = false;
     //      
     //        _process_main_statemachine(next_node, openlcb_helper.active_msg);
     //       
@@ -289,7 +292,7 @@ void MainStatemachine_run(void) {
     //       
     //        if (!next_node->state.openlcb_msg_handled) {
     //            
-    //           all_nodes_done = FALSE;
+    //           all_nodes_done = false;
     //                 
     //        }
     //            

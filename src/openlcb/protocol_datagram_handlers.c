@@ -36,7 +36,11 @@
 
 #include "protocol_datagram_handlers.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
+
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_fifo.h"
@@ -101,7 +105,7 @@ void ProtocolDatagramHandlers_clear_resend_datagram_message(openlcb_node_t* open
 
     }
 
-    openlcb_node->state.resend_datagram = FALSE;
+    openlcb_node->state.resend_datagram = false;
 
 }
 
@@ -114,7 +118,7 @@ void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node_t* op
 
     openlcb_node->last_received_datagram = openlcb_msg;
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 
 }
@@ -123,7 +127,7 @@ void ProtocolDatagramHandlers_try_transmit(openlcb_node_t* openlcb_node, openlcb
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
         if (!openlcb_node->state.resend_datagram) // if we are currently process a resend don't reload it
 
@@ -140,7 +144,7 @@ void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openl
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
 
 }
@@ -154,7 +158,7 @@ void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openl
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
-        openlcb_node->state.openlcb_datagram_ack_sent = TRUE;
+        openlcb_node->state.openlcb_datagram_ack_sent = true;
 
 }
 
@@ -512,7 +516,7 @@ void ProtocolDatagramHandlers_handle_memory_read_reply_ok_message(openlcb_node_t
 
     // Reply if we sent a Memory Read Message
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -529,7 +533,7 @@ void ProtocolDatagramHandlers_handle_memory_read_reply_fail_message(openlcb_node
 
     // Reply if we sent a Memory Read Message
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -686,7 +690,7 @@ void ProtocolDatagramHandlers_handle_memory_write_reply_ok_message(openlcb_node_
 
     // Reply if we sent a Memory Write Message
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -702,7 +706,7 @@ void ProtocolDatagramHandlers_handle_memory_write_reply_fail_message(openlcb_nod
 
     // Reply if we sent a Memory Write Message
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -782,7 +786,7 @@ void ProtocolDatagramHandlers_handle_memory_options_reply_message(openlcb_node_t
 
     // Reply if we sent a Memory Get Options Message
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 #endif
@@ -808,7 +812,7 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_message(openl
     if (target_space)
         invalid_space = (!target_space->present);
     else
-        invalid_space = TRUE;
+        invalid_space = true;
 
 
     if (invalid_space) {
@@ -823,7 +827,7 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_message(openl
         worker_msg->payload_count = 8;
 
         if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
-            openlcb_node->state.openlcb_msg_handled = TRUE;
+            openlcb_node->state.openlcb_msg_handled = true;
 
         return;
 
@@ -874,7 +878,7 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_not_pre
 
     // Reply if we sent a Memory Address Space Info message and the space was not present
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 #endif
@@ -893,7 +897,7 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present
 
     // Reply if we sent a Memory Address Space Info message and the space was present
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 #endif
@@ -948,7 +952,7 @@ void ProtocolDatagramHandlers_handle_memory_get_unique_id_message(openlcb_node_t
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 #endif
@@ -967,7 +971,7 @@ void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* ope
 
             } else {
 
-                openlcb_node->state.openlcb_msg_handled = TRUE;
+                openlcb_node->state.openlcb_msg_handled = true;
 
                 if (ApplicationCallbacks_get_config_mem_unfreeze_firmware_update()) {
 
@@ -991,7 +995,7 @@ void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* ope
 
     } else
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -1009,7 +1013,7 @@ void ProtocolDatagramHandlers_handle_memory_freeze_message(openlcb_node_t* openl
 
             } else {
 
-                openlcb_node->state.openlcb_msg_handled = TRUE;
+                openlcb_node->state.openlcb_msg_handled = true;
 
                 if (ApplicationCallbacks_get_config_mem_freeze_firmware_update()) {
 
@@ -1033,7 +1037,7 @@ void ProtocolDatagramHandlers_handle_memory_freeze_message(openlcb_node_t* openl
 
     } else
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
 
 }
@@ -1048,7 +1052,7 @@ void ProtocolDatagramHandlers_handle_memory_update_complete_message(openlcb_node
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -1066,7 +1070,7 @@ void ProtocolDatagramHandlers_handle_memory_reset_reboot_message(openlcb_node_t*
 
     DriverMcu_reboot();
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 #endif
@@ -1090,7 +1094,7 @@ void ProtocolDatagramHandlers_handle_memory_factory_reset_message(openlcb_node_t
         
     }
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 #endif

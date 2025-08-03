@@ -37,7 +37,9 @@
 
 #include "../drivers/common/can_types.h"
 
-#include <stddef.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 
 can_rx_callback_func_t can_rx_callback_func = NULL;
 transmit_raw_can_frame_func_t transmit_raw_can_frame_func = NULL;
@@ -67,7 +69,7 @@ uint8_olcb_t DriverCan_is_can_tx_buffer_clear(uint16_olcb_t channel) {
 
     }
 
-    return FALSE;
+    return false;
 }
 
 void DriverCan_pause_can_rx(void) {
@@ -97,6 +99,6 @@ uint8_olcb_t DriverCan_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* m
 
     }
 
-    return FALSE;
+    return false;
 
 }

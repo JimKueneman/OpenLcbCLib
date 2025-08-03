@@ -38,7 +38,10 @@
 
 #include "can_buffer_store.h"
 
-#include "stdio.h"  // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
@@ -51,8 +54,8 @@ void CanBufferStore_initialize(void) {
 
     for (int_olcb_t i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
-        _can_buffer_store[i].state.allocated = FALSE;
-        _can_buffer_store[i].state.addressed_direct_tx = FALSE;
+        _can_buffer_store[i].state.allocated = false;
+        _can_buffer_store[i].state.addressed_direct_tx = false;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
 
@@ -93,8 +96,8 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
             }
 
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
-            _can_buffer_store[i].state.allocated = TRUE;
-            _can_buffer_store[i].state.addressed_direct_tx = FALSE;
+            _can_buffer_store[i].state.allocated = true;
+            _can_buffer_store[i].state.addressed_direct_tx = false;
 
             return &_can_buffer_store[i];
 
@@ -115,8 +118,8 @@ void CanBufferStore_free_buffer(can_msg_t* msg) {
     }
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
-    msg->state.allocated = FALSE;
-    msg->state.addressed_direct_tx = FALSE;
+    msg->state.allocated = false;
+    msg->state.addressed_direct_tx = false;
 
 }
 

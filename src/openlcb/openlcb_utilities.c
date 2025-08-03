@@ -35,7 +35,10 @@
 
 #include "openlcb_utilities.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 
@@ -283,11 +286,11 @@ uint8_olcb_t Utilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb
 
     if ((openlcb_node->alias == openlcb_msg->dest_alias) | (openlcb_node->id == openlcb_msg->dest_id))
 
-        return TRUE;
+        return true;
 
     else
 
-        return FALSE;
+        return false;
 
 }
 
@@ -303,7 +306,7 @@ uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlc
 
                 (*event_index) = indexer;
 
-                return TRUE;
+                return true;
 
             }
 
@@ -311,7 +314,7 @@ uint8_olcb_t Utilities_is_producer_event_assigned_to_node(openlcb_node_t* openlc
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
@@ -327,7 +330,7 @@ uint8_olcb_t Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlc
 
                 (*event_index) = indexer;
 
-                return TRUE;
+                return true;
 
             }
 
@@ -335,7 +338,7 @@ uint8_olcb_t Utilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlc
 
     }
 
-    return FALSE;
+    return false;
 
 
 }
@@ -347,17 +350,17 @@ uint8_olcb_t Utilities_addressed_message_needs_processing(openlcb_node_t* openlc
 
         if (openlcb_node->state.openlcb_msg_handled)
 
-            return FALSE;
+            return false;
 
         else
 
-            return TRUE;
+            return true;
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
-    return FALSE;
+    return false;
 
 }
 

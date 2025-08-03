@@ -36,7 +36,9 @@
 
 #include "protocol_snip.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -245,7 +247,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
     if (!Utilities_is_message_for_node(openlcb_node, openlcb_msg)) {
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
         return;
     }
@@ -274,7 +276,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
         if (!openlcb_node->state.resend_optional_message) // if we are currently processing a resend don't reload it
 

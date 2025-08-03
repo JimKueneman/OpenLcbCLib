@@ -36,6 +36,10 @@
 
 #include "can_frame_message_handler.h"
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "can_types.h"
 #include "can_buffer_store.h"
 #include "can_utilities.h"
@@ -63,18 +67,18 @@ uint8_olcb_t _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t*
 
         if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
 
-            can_node->state.can_msg_handled = TRUE;
+            can_node->state.can_msg_handled = true;
             can_node->state.permitted = 0;
             can_node->state.initalized = 0;
             can_node->state.run_state = RUNSTATE_GENERATE_SEED;
 
         }
 
-        return TRUE;
+        return true;
 
     } else
 
-        return FALSE;
+        return false;
 
 }
 
@@ -87,13 +91,13 @@ uint8_olcb_t _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t*
 
         if (CanTxStatemachine_try_transmit_can_message(worker_msg))
 
-            can_node->state.can_msg_handled = TRUE;
+            can_node->state.can_msg_handled = true;
 
-        return TRUE;
+        return true;
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
@@ -101,7 +105,7 @@ void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
     if (!_check_for_soft_alias_conflict(can_node, can_msg, worker_msg)) {
 
-        can_node->state.can_msg_handled = TRUE;
+        can_node->state.can_msg_handled = true;
 
     }
 
@@ -111,7 +115,7 @@ void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
     if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
 
-        can_node->state.can_msg_handled = TRUE;
+        can_node->state.can_msg_handled = true;
 
     }
 
@@ -121,7 +125,7 @@ void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
     if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
 
-        can_node->state.can_msg_handled = TRUE;
+        can_node->state.can_msg_handled = true;
 
     }
 
@@ -151,13 +155,13 @@ void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
         if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
 
-            can_node->state.can_msg_handled = TRUE;
+            can_node->state.can_msg_handled = true;
 
         }
 
     } else {
 
-        can_node->state.can_msg_handled = TRUE;
+        can_node->state.can_msg_handled = true;
 
     }
 
@@ -167,6 +171,6 @@ void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
     // printf("AMR\n");
 
-    can_node->state.can_msg_handled = TRUE;
+    can_node->state.can_msg_handled = true;
 
 }

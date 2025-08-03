@@ -37,7 +37,10 @@
 
 #include "openlcb_tx_driver.h"
 
-#include "stdio.h"  // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_types.h"
 #include "openlcb_node.h"
 
@@ -60,7 +63,7 @@ uint8_olcb_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_
         
     }
     
-    return TRUE;
+    return true;
     
     
 }

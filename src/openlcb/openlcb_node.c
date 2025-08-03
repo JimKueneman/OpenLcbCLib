@@ -34,7 +34,9 @@
 
 #include "openlcb_node.h"
 
-#include <stddef.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
@@ -49,17 +51,17 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->id = 0;
     openlcb_node->seed = 0;
     openlcb_node->state.run_state = RUNSTATE_INIT;
-    openlcb_node->state.allocated = FALSE;
-    openlcb_node->state.duplicate_id_detected = FALSE;
-    openlcb_node->state.initial_events_broadcast_complete = FALSE;
-    openlcb_node->state.initalized = FALSE;
-    openlcb_node->state.permitted = FALSE;
-    openlcb_node->state.can_msg_handled = FALSE;
-    openlcb_node->state.openlcb_msg_handled = FALSE;
-    openlcb_node->state.openlcb_datagram_ack_sent = FALSE;
-    openlcb_node->state.resend_datagram = FALSE;
-    openlcb_node->state.resend_optional_message = FALSE;
-    openlcb_node->state.firmware_upgrade_active = FALSE;
+    openlcb_node->state.allocated = false;
+    openlcb_node->state.duplicate_id_detected = false;
+    openlcb_node->state.initial_events_broadcast_complete = false;
+    openlcb_node->state.initalized = false;
+    openlcb_node->state.permitted = false;
+    openlcb_node->state.can_msg_handled = false;
+    openlcb_node->state.openlcb_msg_handled = false;
+    openlcb_node->state.openlcb_datagram_ack_sent = false;
+    openlcb_node->state.resend_datagram = false;
+    openlcb_node->state.resend_optional_message = false;
+    openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->timerticks = 0;
     openlcb_node->lock_node = 0;
     openlcb_node->index = 0;
@@ -83,8 +85,8 @@ void _clear_node(openlcb_node_t* openlcb_node) {
     }
 
 
-    openlcb_node->producers.enumerator.running = FALSE;
-    openlcb_node->consumers.enumerator.running = FALSE;
+    openlcb_node->producers.enumerator.running = false;
+    openlcb_node->consumers.enumerator.running = false;
 
     for (int_olcb_t i = 0; i < sizeof (openlcb_node->producers.event_state_array); i++) {// Unknown State
 
@@ -177,10 +179,10 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
     }
 
 
-    openlcb_node->consumers.enumerator.running = FALSE;
+    openlcb_node->consumers.enumerator.running = false;
     openlcb_node->consumers.enumerator.enum_index = 0;
 
-    openlcb_node->producers.enumerator.running = FALSE;
+    openlcb_node->producers.enumerator.running = false;
     openlcb_node->producers.enumerator.enum_index = 0;
 
 
@@ -196,7 +198,7 @@ openlcb_node_t* Node_allocate(uint64_olcb_t node_id, const node_parameters_t* no
             _clear_node(&openlcb_nodes.node[i]);
 
             openlcb_nodes.node[i].parameters = node_parameters;
-            openlcb_nodes.node[i].state.allocated = TRUE;
+            openlcb_nodes.node[i].state.allocated = true;
             openlcb_nodes.node[i].id = node_id;
             openlcb_nodes.node[i].index = (uint8_olcb_t) i;
 

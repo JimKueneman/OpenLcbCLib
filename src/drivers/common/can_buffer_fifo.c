@@ -38,6 +38,10 @@
 
 #include "can_buffer_fifo.h"
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
@@ -71,7 +75,7 @@ uint8_olcb_t CanBufferFifo_push(can_msg_t* new_msg) {
 
     if (!new_msg) {
 
-        return FALSE;
+        return false;
 
     }
 
@@ -89,11 +93,11 @@ uint8_olcb_t CanBufferFifo_push(can_msg_t* new_msg) {
 
         can_msg_buffer_fifo.head = next;
 
-        return TRUE;
+        return true;
 
     }
 
-    return FALSE;
+    return false;
 
 }
 

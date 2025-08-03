@@ -36,7 +36,10 @@
 
 #include "protocol_datagram.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_fifo.h"
@@ -222,8 +225,8 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
 
     }
 
-    openlcb_node->state.resend_datagram = FALSE;
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.resend_datagram = false;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -237,7 +240,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
         if (openlcb_node->last_received_datagram) {
 
-            openlcb_node->state.resend_datagram = TRUE;
+            openlcb_node->state.resend_datagram = true;
 
         }
 
@@ -248,7 +251,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 

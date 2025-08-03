@@ -37,7 +37,10 @@
 
 #include "can_login_message_handler.h"
 
-#include "stdio.h"  // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_node.h"
@@ -170,8 +173,8 @@ void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
     if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
 
-        next_node->state.initial_events_broadcast_complete = FALSE;
-        next_node->state.permitted = TRUE;
+        next_node->state.initial_events_broadcast_complete = false;
+        next_node->state.permitted = true;
         next_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
 
     }
@@ -203,8 +206,8 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
 
     if (CanTxStatemachine_try_transmit_openlcb_message(can_worker, openlcb_worker, 0)) {
 
-        next_node->state.initalized = TRUE;
-        next_node->producers.enumerator.running = TRUE;
+        next_node->state.initalized = true;
+        next_node->producers.enumerator.running = true;
         next_node->producers.enumerator.enum_index = 0;
         next_node->state.run_state = RUNSTATE_TRANSMIT_PRODUCER_EVENTS;
 
@@ -240,9 +243,9 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
                 if (next_node->producers.enumerator.enum_index >= next_node->producers.count) {
 
                     next_node->producers.enumerator.enum_index = 0;
-                    next_node->producers.enumerator.running = FALSE;
+                    next_node->producers.enumerator.running = false;
                     next_node->consumers.enumerator.enum_index = 0;
-                    next_node->consumers.enumerator.running = TRUE;
+                    next_node->consumers.enumerator.running = true;
 
                     next_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
 
@@ -289,10 +292,10 @@ void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
                 if (next_node->consumers.enumerator.enum_index >= next_node->consumers.count) {
 
-                    next_node->consumers.enumerator.running = FALSE;
+                    next_node->consumers.enumerator.running = false;
                     next_node->consumers.enumerator.enum_index = 0;
 
-                    next_node->state.initial_events_broadcast_complete = TRUE;
+                    next_node->state.initial_events_broadcast_complete = true;
                     next_node->state.run_state = RUNSTATE_RUN;
 
                     printf("Login Complete\n");

@@ -7,6 +7,10 @@
 
 #include "application.h"
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_types.h"
 #include "../drivers/driver_configuration_memory.h"
 #include "openlcb_utilities.h"
@@ -69,11 +73,11 @@ uint8_olcb_t Application_send_event_pc_report(openlcb_node_t *node, event_id_t e
 
     if (OpenLcbTxDriver_try_transmit(node, &msg)) {
 
-        return TRUE;
+        return true;
 
     }
 
-    return FALSE;
+    return false;
 }
 
 uint8_olcb_t Application_send_teach_event(openlcb_node_t* node, event_id_t eventid) {
@@ -90,11 +94,11 @@ uint8_olcb_t Application_send_teach_event(openlcb_node_t* node, event_id_t event
 
     if (OpenLcbTxDriver_try_transmit(node, &msg)) {
 
-        return TRUE;
+        return true;
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
@@ -105,7 +109,7 @@ uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32
     if (_getmem_callback)
         return (_getmem_callback(Utilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
 
-    return FALSE;
+    return false;
 }
 
 uint16_olcb_t Application_write_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer) {
@@ -115,5 +119,5 @@ uint16_olcb_t Application_write_configuration_memory(openlcb_node_t *node, uint3
     if (_getmem_callback)
         return (_getmem_callback(Utilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
 
-    return FALSE;
+    return false;
 }

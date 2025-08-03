@@ -35,6 +35,10 @@
 
 #include "openlcb_buffer_list.h"
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_types.h"
 #include "openlcb_buffer_store.h"
 
@@ -93,7 +97,7 @@ openlcb_msg_t *BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_al
 uint8_olcb_t BufferList_free(openlcb_msg_t *msg) {
 
     if (!msg)
-        return FALSE;
+        return false;
 
     for (int_olcb_t i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
@@ -103,13 +107,13 @@ uint8_olcb_t BufferList_free(openlcb_msg_t *msg) {
 
             BufferStore_free_buffer(msg);
 
-            return TRUE;
+            return true;
 
         }
 
     }
 
-    return FALSE;
+    return false;
 }
 
 openlcb_msg_t *BufferList_release(openlcb_msg_t *msg) {
@@ -149,11 +153,11 @@ uint8_olcb_t BufferList_is_empty(void) {
 
         if (openlcb_msg_buffer_list[i] != (void *) 0) {
 
-            return FALSE;
+            return false;
 
         }
 
     }
 
-    return TRUE;
+    return true;
 }

@@ -37,7 +37,10 @@
 
 #include "can_tx_statemachine.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_buffer_store.h"
@@ -111,7 +114,7 @@ uint8_olcb_t _transmit_can_frame(can_msg_t* can_msg) {
     PrintCanMsg(can_msg);
     printf("\n\n");
 
-    return TRUE;
+    return true;
 
 #else
 

@@ -117,9 +117,6 @@ typedef long int int_olcb_t;
 typedef int int_olcb_t;
 #endif
 
-#define FALSE 0
-#define TRUE 1
-
 #define LOW 0
 #define HIGH 1
 
@@ -279,7 +276,7 @@ typedef int int_olcb_t;
 
     typedef struct
     {
-        uint8_olcb_t running : 1; // Alway, always, always reset these to FALSE when you have finished processing a
+        uint8_olcb_t running : 1; // Alway, always, always reset these to false when you have finished processing a
         uint8_olcb_t enum_index;  // allows a counter for enumerating the event ids
     } event_id_enum_t;
 

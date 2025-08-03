@@ -36,7 +36,9 @@
  * @date 11 Dec 2024
  */
 
-#include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
 #include <stdlib.h>
 #include <string.h>
 #include "openlcb_gridconnect.h"
@@ -141,7 +143,7 @@ uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next
 
                     }
 
-                    return TRUE;
+                    return true;
                 }
             } else {
 
@@ -160,7 +162,7 @@ uint8_olcb_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_olcb_t next
             break;
     }
 
-    return FALSE;
+    return false;
 }
 
 void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg) {

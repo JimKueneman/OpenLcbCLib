@@ -36,7 +36,10 @@
 
 #include "protocol_message_network.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_fifo.h"
@@ -53,7 +56,7 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
 
     if (openlcb_node->state.duplicate_id_detected) { // Already handled this once
 
-        openlcb_node->state.openlcb_msg_handled = TRUE; // Done with the message
+        openlcb_node->state.openlcb_msg_handled = true; // Done with the message
 
         return;
 
@@ -64,8 +67,8 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
-        openlcb_node->state.duplicate_id_detected = TRUE;
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.duplicate_id_detected = true;
+        openlcb_node->state.openlcb_msg_handled = true;
 
     }
 
@@ -84,7 +87,7 @@ void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
     }
 
@@ -118,7 +121,7 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -136,7 +139,7 @@ void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t* openlcb
 
         else
 
-            openlcb_node->state.openlcb_msg_handled = TRUE; // Done with the message  
+            openlcb_node->state.openlcb_msg_handled = true; // Done with the message  
 
     } else
 
@@ -154,7 +157,7 @@ void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_node_t* open
 
     else
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -169,7 +172,7 @@ void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
 
     else
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -185,7 +188,7 @@ void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* openlcb_no
 
     if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
-        openlcb_node->state.openlcb_msg_handled = TRUE;
+        openlcb_node->state.openlcb_msg_handled = true;
 
     }
 
@@ -201,7 +204,7 @@ void ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node_t* openlc
 
     }
 
-    openlcb_node->state.resend_optional_message = FALSE;
+    openlcb_node->state.resend_optional_message = false;
 
 }
 
@@ -214,7 +217,7 @@ void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openl
 
     openlcb_node->last_received_optional_interaction = openlcb_msg;
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -230,7 +233,7 @@ void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t*
 
         if (Utilities_extract_word_from_openlcb_payload(openlcb_msg, 2) == openlcb_node->last_received_optional_interaction->mti) {
 
-            openlcb_node->state.resend_optional_message = TRUE;
+            openlcb_node->state.resend_optional_message = true;
 
         } else {
 
@@ -244,7 +247,7 @@ void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t*
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = TRUE;
+    openlcb_node->state.openlcb_msg_handled = true;
 
 
 }

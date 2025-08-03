@@ -38,7 +38,10 @@
 
 #include "openlcb_buffer_store.h"
 
-#include "stdio.h" // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdio.h> // printf
+
 #include "openlcb_types.h"
 
 message_buffer_t _message_buffer;
@@ -63,8 +66,8 @@ void BufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg) {
     openlcb_msg->payload_count = 0;
     openlcb_msg->timerticks = 0;
     openlcb_msg->reference_count = 0;
-    openlcb_msg->state.allocated = FALSE;
-    openlcb_msg->state.inprocess = FALSE;
+    openlcb_msg->state.allocated = false;
+    openlcb_msg->state.inprocess = false;
 }
 
 void BufferStore_initialize(void) {
@@ -190,7 +193,7 @@ openlcb_msg_t *BufferStore_allocate_buffer(payload_type_enum_t payload_type) {
 
             BufferStore_clear_openlcb_message(&_message_buffer.messages[i]);
             _message_buffer.messages[i].reference_count = 1;
-            _message_buffer.messages[i].state.allocated = TRUE;
+            _message_buffer.messages[i].state.allocated = true;
             _update_buffer_telemetry(_message_buffer.messages[i].payload_type);
 
             return &_message_buffer.messages[i];
@@ -232,7 +235,7 @@ void BufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
 
     openlcb_msg->reference_count = 0;
 
-    openlcb_msg->state.allocated = FALSE;
+    openlcb_msg->state.allocated = false;
 }
 
 uint16_olcb_t BufferStore_basic_messages_allocated(void) {
