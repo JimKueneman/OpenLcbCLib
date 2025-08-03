@@ -50,16 +50,18 @@ void BufferList_initialize(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        openlcb_msg_buffer_list[i] = (void *) 0;
+        openlcb_msg_buffer_list[i] = NULL;
 
     }
+
 }
 
 openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg) {
 
     if (!new_msg) {
 
-        return (void *) 0;
+        return NULL;
+
     }
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
@@ -74,7 +76,7 @@ openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg) {
 
     }
 
-    return (void *) 0;
+    return NULL;
 }
 
 openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti) {
@@ -85,15 +87,17 @@ openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias
 
             if ((openlcb_msg_buffer_list[i]->dest_alias == dest_alias) &&
                     (openlcb_msg_buffer_list[i]->source_alias == source_alias) &&
-                    (openlcb_msg_buffer_list[i]->mti == mti))
+                    (openlcb_msg_buffer_list[i]->mti == mti)) {
 
                 return openlcb_msg_buffer_list[i];
+
+            }
 
         }
 
     }
 
-    return (void *) 0;
+    return NULL;
 }
 
 uint8_t OpenLcbBufferList_free(openlcb_msg_t *msg) {
@@ -105,7 +109,7 @@ uint8_t OpenLcbBufferList_free(openlcb_msg_t *msg) {
 
         if (openlcb_msg_buffer_list[i] == msg) {
 
-            openlcb_msg_buffer_list[i] = (void *) 0;
+            openlcb_msg_buffer_list[i] = NULL;
 
             OpenLcbBufferStore_free_buffer(msg);
 
@@ -121,13 +125,13 @@ uint8_t OpenLcbBufferList_free(openlcb_msg_t *msg) {
 openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
 
     if (!msg)
-        return (void *) 0;
+        return NULL;
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
         if (openlcb_msg_buffer_list[i] == msg) {
 
-            openlcb_msg_buffer_list[i] = (void *) 0;
+            openlcb_msg_buffer_list[i] = NULL;
 
             return msg;
 
@@ -135,14 +139,14 @@ openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
 
     }
 
-    return (void *) 0;
+    return NULL;
 }
 
 openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index) {
 
     if (index >= LEN_MESSAGE_BUFFER) {
 
-        return (void *) 0;
+        return NULL;
 
     }
 
@@ -153,7 +157,7 @@ uint8_t OpenLcbBufferList_is_empty(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        if (openlcb_msg_buffer_list[i] != (void *) 0) {
+        if (openlcb_msg_buffer_list[i] != NULL) {
 
             return false;
 

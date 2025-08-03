@@ -186,7 +186,7 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_ty
             break;
 
         default:
-            return (void *) 0;
+            return NULL;
     }
 
     for (int i = offset_start; i < offset_end; i++) {
@@ -202,7 +202,7 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_ty
         }
     }
 
-    return (void *) 0;
+    return NULL;
 }
 
 void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {

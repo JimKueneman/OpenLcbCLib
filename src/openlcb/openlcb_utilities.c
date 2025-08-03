@@ -52,18 +52,23 @@ uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum_t payload_type) 
     switch (payload_type) {
 
         case BASIC:
+
             return LEN_MESSAGE_BYTES_BASIC;
 
         case DATAGRAM:
+
             return LEN_MESSAGE_BYTES_DATAGRAM;
 
         case SNIP:
+
             return LEN_MESSAGE_BYTES_SNIP;
 
         case STREAM:
+
             return LEN_MESSAGE_BYTES_STREAM;
 
         default:
+
             return 0;
     }
 
@@ -73,8 +78,11 @@ uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t
 
     uint32_t offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address;
 
-    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
+    if (openlcb_node->parameters->address_space_config_memory.low_address_valid) {
+
         offset_per_node = openlcb_node->parameters->address_space_config_memory.highest_address - openlcb_node->parameters->address_space_config_memory.low_address;
+
+    }
 
     return (offset_per_node * openlcb_node->index);
 
@@ -97,6 +105,7 @@ void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t 
         for (int i = 0; i < data_count; i++) {
 
             *openlcb_msg->payload[i] = 0x00;
+
         }
 
     }
@@ -160,8 +169,11 @@ uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_
             *openlcb_msg->payload[counter + payload_index] = (uint8_t) string[counter];
             counter++;
 
-        } else
+        } else {
+
             break;
+
+        }
 
     }
 
@@ -204,7 +216,7 @@ void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg
 
     for (int i = 5; i >= 0; i--) {
 
-        *openlcb_msg->payload[(uint16_t)i + index] = node_id & 0xFF;
+        *openlcb_msg->payload[(uint16_t) i + index] = node_id & 0xFF;
         node_id = node_id >> 8;
 
     }

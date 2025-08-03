@@ -62,43 +62,41 @@ parameterless_callback_t callback_can_rx_func = NULL;
 parameterless_callback_t callback_can_tx_func = NULL;
 parameterless_callback_t callback_100ms_timer_func = NULL;
 
-
 void OpenLcbApplicationCallbacks_set_100ms_timer(parameterless_callback_t callback_100ms_timer) {
-    
-   callback_100ms_timer_func = callback_100ms_timer;
-   
+
+    callback_100ms_timer_func = callback_100ms_timer;
+
 }
 
 parameterless_callback_t OpenLcbApplicationCallbacks_get_100ms_timer(void) {
-    
+
     return callback_100ms_timer_func;
-    
+
 }
 
 void OpenLcbApplicationCallbacks_set_can_tx(parameterless_callback_t callback_can_tx) {
-    
-   callback_can_tx_func = callback_can_tx;
-   
+
+    callback_can_tx_func = callback_can_tx;
+
 }
 
 parameterless_callback_t OpenLcbApplicationCallbacks_get_can_tx(void) {
-    
+
     return callback_can_tx_func;
-    
+
 }
 
 void OpenLcbApplicationCallbacks_set_can_rx(parameterless_callback_t callback_can_rx) {
-    
+
     callback_can_rx_func = callback_can_rx;
-    
+
 }
 
 parameterless_callback_t OpenLcbApplicationCallbacks_get_can_rx(void) {
-    
-    return callback_can_rx_func;
-    
-}
 
+    return callback_can_rx_func;
+
+}
 
 void OpenLcbApplicationCallbacks_set_alias_change(callback_alias_change_t alias_change_callback) {
 
@@ -221,38 +219,37 @@ callback_event_pc_report_t OpenLcbApplicationCallbacks_get_event_learn(void) {
 }
 
 void OpenLcbApplication_Callbacks_set_config_mem_write(callback_config_mem_write_t config_mem_write_callback) {
-    
+
     callback_config_mem_write_func = config_mem_write_callback;
-    
+
 }
 
 callback_config_mem_write_t OpenLcbApplicationCallbacks_get_config_mem_write(void) {
-    
+
     return callback_config_mem_write_func;
-    
+
 }
 
-
 void OpenLcbApplicationCallbacks_set_config_mem_freeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_freeze) {
-  
+
     callback_config_mem_freeze_firmware_update_func = callback_config_mem_freeze;
-    
+
 }
 
 callback_config_mem_freeze_t OpenLcbApplicationCallbacks_get_config_mem_freeze_firmware_update(void) {
-    
-   return callback_config_mem_freeze_firmware_update_func; 
-    
+
+    return callback_config_mem_freeze_firmware_update_func;
+
 }
 
 void OpenLcbApplicationCallbacks_set_config_mem_unfreeze_firmware_update(callback_config_mem_freeze_t callback_config_mem_unfreeze) {
-  
+
     callback_config_mem_unfreeze_firmware_update_func = callback_config_mem_unfreeze;
-    
+
 }
 
 callback_config_mem_freeze_t OpenLcbApplicationCallbacks_get_config_mem_unfreeze_firmware_update(void) {
-    
-   return callback_config_mem_unfreeze_firmware_update_func; 
-    
+
+    return callback_config_mem_unfreeze_firmware_update_func;
+
 }

@@ -149,6 +149,7 @@ openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_
         OpenLcbBufferStore_free_buffer(result);
 
         return NULL;
+
     };
 
     return result;
@@ -387,11 +388,11 @@ void _handle_incoming_can_variable_field(can_msg_t* can_msg) {
             _handle_amr_control_frame(can_msg);
             break;
 
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0:
+        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
         case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
         case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
         case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
-            // Advanced feature for gateways/routers/etc.
+
             break;
 
     }

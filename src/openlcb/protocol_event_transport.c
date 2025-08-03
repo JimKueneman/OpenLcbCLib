@@ -122,13 +122,17 @@ event_enum_state_t _decode_event_state(uint8_t state_byte, uint8_t event_offset)
 
 void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
 
-    if (!openlcb_node->producers.enumerator.running)
+    }
+
+    if (!openlcb_node->producers.enumerator.running) {
 
         openlcb_node->producers.enumerator.running = true; // Kick off the enumeration next loop
 
+    }
 
     if (openlcb_node->producers.enumerator.enum_index >= openlcb_node->producers.count) {
 
@@ -150,20 +154,27 @@ void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[openlcb_node->producers.enumerator.enum_index]);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->producers.enumerator.enum_index = openlcb_node->producers.enumerator.enum_index + 1;
+
+    }
 
 }
 
 void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
 
-    if (!openlcb_node->consumers.enumerator.running)
+    }
+
+    if (!openlcb_node->consumers.enumerator.running) {
 
         openlcb_node->consumers.enumerator.running = true; // Kick off the enumeration next loop
+
+    }
 
 
     if (openlcb_node->consumers.enumerator.enum_index >= openlcb_node->consumers.count) {
@@ -186,9 +197,11 @@ void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[openlcb_node->consumers.enumerator.enum_index]);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg))
+    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->consumers.enumerator.enum_index = openlcb_node->consumers.enumerator.enum_index + 1;
+
+    }
 
 }
 
@@ -249,8 +262,11 @@ uint16_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t*
 void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     uint16_t event_index = 0;
 
@@ -283,21 +299,18 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
 }
 
 void ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("consumer range\n");
-#endif
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("consumer unknown\n");
-#endif
 
     if (OpenLcbApplicationCallbacks_get_consumer_identified_unknown()) {
 
@@ -307,17 +320,18 @@ void ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t * 
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("consumer set\n");
-#endif
+
 
     if (OpenLcbApplicationCallbacks_get_consumer_identified_set()) {
 
@@ -327,8 +341,11 @@ void ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t * open
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
@@ -347,8 +364,11 @@ void ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t * op
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
@@ -359,8 +379,11 @@ void ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t *
     printf("consumer reserved\n");
 #endif
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
@@ -368,8 +391,11 @@ void ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t *
 
 void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     uint16_t event_index;
 
@@ -402,21 +428,18 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
 }
 
 void ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("producer range\n");
-#endif
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("producer unknown\n");
-#endif
 
     if (OpenLcbApplicationCallbacks_get_producer_identified_unknown()) {
 
@@ -426,17 +449,17 @@ void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t * 
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("producer set\n");
-#endif
 
     if (OpenLcbApplicationCallbacks_get_producer_identified_set()) {
 
@@ -446,17 +469,17 @@ void ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t * open
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-#ifdef PRINT_EVENT_MSG
-    printf("producer clear\n");
-#endif
 
     if (OpenLcbApplicationCallbacks_get_producer_identified_clear()) {
 
@@ -466,8 +489,11 @@ void ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * op
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
@@ -475,12 +501,11 @@ void ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * op
 
 void ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-#ifdef PRINT_EVENT_MSG
-    printf("producer identified\n");
-#endif
+    if (openlcb_node->state.openlcb_msg_handled) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
@@ -488,8 +513,11 @@ void ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t *
 
 void ProtocolEventTransport_handle_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     if (openlcb_node->producers.enumerator.enum_index < openlcb_node->producers.count) {
 
@@ -512,8 +540,11 @@ void ProtocolEventTransport_handle_identify(openlcb_node_t* openlcb_node, openlc
 
 void ProtocolEventTransport_handle_identify_dest(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     if (OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {
 
@@ -537,18 +568,17 @@ void ProtocolEventTransport_handle_event_learn(openlcb_node_t * openlcb_node, op
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
-#ifdef PRINT_EVENT_MSG
-    printf("PCER no payload\n");
-#endif
 
     if (OpenLcbApplicationCallbacks_get_event_pc_report()) {
 
@@ -558,18 +588,17 @@ void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
-#ifdef PRINT_EVENT_MSG
-    printf("PCER payload\n");
-#endif
 
     if (OpenLcbApplicationCallbacks_get_event_pc_report_with_payload()) {
 
@@ -591,8 +620,11 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
 
     }
 
-    if (openlcb_node->state.openlcb_msg_handled)
+    if (openlcb_node->state.openlcb_msg_handled) {
+
         return;
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 

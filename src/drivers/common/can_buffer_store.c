@@ -68,10 +68,11 @@ void CanBufferStore_initialize(void) {
         }
 
     }
+
 }
 
 void CanBufferStore_clear_can_message(can_msg_t* msg) {
-    
+
     assert(msg);
 
     msg->identifier = 0;

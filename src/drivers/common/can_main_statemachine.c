@@ -231,9 +231,9 @@ void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_ms
 uint8_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_helper) {
 
     if (can_helper->active_msg) {
-        
+
         return false;
-        
+
     }
 
     Driver100msClock_pause_100ms_timer();
@@ -265,9 +265,9 @@ uint8_t _pop_next_can_helper_active_message(can_main_statemachine_t* can_helper)
 uint8_t _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_helper) {
 
     if (can_helper->openlcb_worker->active_msg) {
-        
+
         return false;
-        
+
     }
 
     Driver100msClock_pause_100ms_timer();
@@ -317,9 +317,9 @@ uint8_t _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_t* c
     if (!can_helper->active_msg) {
 
         return false;
-        
+
     }
-    
+
     if (can_helper->active_msg->state.addressed_direct_tx) {
 
         openlcb_node_t* next_node = OpenLcbNode_get_first(0);
@@ -452,7 +452,7 @@ void _dispatch_next_can_message_to_node(can_main_statemachine_t* can_helper, ope
         if (!next_node->state.can_msg_handled) {
 
             *is_active_can_msg_processiong_complete = false;
-            
+
         }
 
     }
@@ -505,14 +505,14 @@ void CanMainStateMachine_run(void) {
             if (_resend_datagram_message_from_ack_failure_reply(&_can_helper, next_node)) {
 
                 break;
-                
+
             }
 
             // these need to get out asap so don't waste time processing normal messages below until we can get these out
             if (_resend_optional_message_from_oir_reply(&_can_helper, next_node)) {
 
                 break;
-                
+
             }
 
             _dispatch_next_can_message_to_node(&_can_helper, next_node, &is_active_can_msg_processiong_complete);

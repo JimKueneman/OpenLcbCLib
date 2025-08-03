@@ -64,7 +64,7 @@ void CanBufferFifo_initialize(void) {
 
     for (int i = 0; i < LEN_CAN_FIFO_BUFFER; i++) {
 
-        can_msg_buffer_fifo.list[i] = (void *) 0;
+        can_msg_buffer_fifo.list[i] = NULL;
 
     }
 
@@ -88,7 +88,6 @@ bool CanBufferFifo_push(can_msg_t* new_msg) {
     if (next != can_msg_buffer_fifo.tail) {
 
         can_msg_buffer_fifo.list[can_msg_buffer_fifo.head] = new_msg;
-
         can_msg_buffer_fifo.head = next;
 
         return true;
@@ -104,9 +103,7 @@ can_msg_t *CanBufferFifo_pop(void) {
     if (can_msg_buffer_fifo.head != can_msg_buffer_fifo.tail) {
 
         can_msg_t *msg = can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail];
-
-        can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail] = (void *) 0;
-
+        can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail] = NULL;
         can_msg_buffer_fifo.tail = can_msg_buffer_fifo.tail + 1;
 
         if (can_msg_buffer_fifo.tail >= LEN_CAN_FIFO_BUFFER) {
@@ -119,7 +116,7 @@ can_msg_t *CanBufferFifo_pop(void) {
 
     }
 
-    return (void *) 0;
+    return NULL;
 
 }
 

@@ -20,14 +20,21 @@
 
 void OpenLcbApplication_clear_consumer_eventids(openlcb_node_t *node) {
 
-    if (node)
+    if (node) {
         node->consumers.count = 0;
+
+    }
+
 }
 
 void OpenLcbApplication_clear_producer_eventids(openlcb_node_t *node) {
 
-    if (node)
+    if (node) {
+
         node->producers.count = 0;
+
+    }
+
 }
 
 uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t *node, event_id_t eventid) {
@@ -108,8 +115,11 @@ uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *node, uint
 
     configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_read_callback();
 
-    if (_getmem_callback)
+    if (_getmem_callback) {
+
         return (_getmem_callback(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+
+    }
 
     return false;
 }
@@ -118,8 +128,11 @@ uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *node, uin
 
     configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_write_callback();
 
-    if (_getmem_callback)
+    if (_getmem_callback) {
+
         return (_getmem_callback(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+
+    }
 
     return false;
 }

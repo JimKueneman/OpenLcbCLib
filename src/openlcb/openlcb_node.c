@@ -122,9 +122,9 @@ openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
 
 
     if (_openlcb_nodes.count == 0) {
-        
+
         return NULL;
-        
+
     }
 
     return (&_openlcb_nodes.node[ _node_enum_index_array[key] ]);
@@ -136,9 +136,9 @@ openlcb_node_t* OpenLcbNode_get_next(uint8_t key) {
     _node_enum_index_array[key] = _node_enum_index_array[key] + 1;
 
     if (_node_enum_index_array[key] >= _openlcb_nodes.count) {
-        
+
         return NULL;
-        
+
     }
 
     return (&_openlcb_nodes.node[_node_enum_index_array[key]]);
@@ -159,7 +159,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
             openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
 
         }
-        
+
         indexer++;
 
     }
@@ -174,7 +174,7 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
             openlcb_node->producers.count = openlcb_node->producers.count + 1;
 
         }
-        
+
         indexer++;
 
     }
@@ -185,8 +185,6 @@ void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->producers.enumerator.enum_index = 0;
-
-
 
 }
 
@@ -223,9 +221,11 @@ openlcb_node_t* OpenLcbNode_find_by_alias(uint16_t alias) {
 
         if (_openlcb_nodes.node[i].state.permitted) {
 
-            if (_openlcb_nodes.node[i].alias == alias)
+            if (_openlcb_nodes.node[i].alias == alias) {
 
                 return &_openlcb_nodes.node[i];
+
+            }
 
         }
 
@@ -241,9 +241,11 @@ openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid) {
 
         if (_openlcb_nodes.node[i].state.permitted) {
 
-            if (_openlcb_nodes.node[i].id == nodeid)
+            if (_openlcb_nodes.node[i].id == nodeid) {
 
                 return &_openlcb_nodes.node[i];
+
+            }
 
         }
 

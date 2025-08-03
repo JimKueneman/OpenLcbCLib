@@ -122,6 +122,7 @@ uint16_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
         default:
 
             return 0;
+
     }
 }
 
@@ -186,6 +187,7 @@ uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg
     assert(openlcb_msg && can_msg);
 
     return _count_nulls_in_can_payload(can_msg) + OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg);
+
 }
 
 uint8_t CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
@@ -193,6 +195,7 @@ uint8_t CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
     assert(can_msg);
 
     return (can_msg->identifier & CAN_OPENLCB_MSG) == CAN_OPENLCB_MSG;
+
 }
 
 uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg) {
@@ -206,6 +209,7 @@ uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg) {
             ((uint64_t) can_msg->payload[3] << 16) |
             ((uint64_t) can_msg->payload[4] << 8) |
             ((uint64_t) can_msg->payload[5]));
+
 }
 
 uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint16_t openlcb_start_index, uint8_t can_start_index) {
@@ -251,6 +255,7 @@ void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8
     can_msg->payload[5] = byte6;
     can_msg->payload[6] = byte7;
     can_msg->payload[7] = byte8;
+
 }
 
 uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset) {
