@@ -204,7 +204,7 @@ void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg
 
     for (int i = 5; i >= 0; i--) {
 
-        *openlcb_msg->payload[i + index] = node_id & 0xFF;
+        *openlcb_msg->payload[(uint16_t)i + index] = node_id & 0xFF;
         node_id = node_id >> 8;
 
     }
