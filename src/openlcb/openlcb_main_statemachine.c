@@ -42,20 +42,20 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
+#include "../drivers/driver_mcu.h"
+#include "../drivers/driver_configuration_memory.h"
+#include "../drivers/driver_100ms_clock.h"
+
 #include "openlcb_buffer_store.h"
-#include "openlcb_types.h"
+#include "openlcb_buffer_list.h"
 #include "openlcb_defines.h"
 #include "openlcb_node.h"
 #include "openlcb_buffer_fifo.h"
-#include "openlcb_utilities.h"
 #include "protocol_event_transport.h"
 #include "protocol_message_network.h"
 #include "protocol_datagram.h"
 #include "protocol_snip.h"
-#include "../drivers/driver_mcu.h"
-#include "../openlcb/openlcb_buffer_list.h"
-#include "../drivers/driver_configuration_memory.h"
-#include "../drivers/driver_100ms_clock.h"
+
 
 
 openlcb_statemachine_worker_t _openlcb_helper;

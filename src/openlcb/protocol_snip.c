@@ -44,8 +44,7 @@
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-//#include "openlcb_buffer_fifo.h"
-//#include "openlcb_buffer_store.h"
+
 #include "openlcb_tx_driver.h"
 #include "../drivers/driver_configuration_memory.h"
 #include "protocol_message_network.h"

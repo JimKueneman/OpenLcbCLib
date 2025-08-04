@@ -44,15 +44,7 @@
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "openlcb_buffer_fifo.h"
 #include "openlcb_buffer_store.h"
-#include "openlcb_tx_driver.h"
-#include "protocol_snip.h"
-
-#include "../drivers/driver_mcu.h"
-#include "../drivers/driver_configuration_memory.h"
-#include "openlcb_application_callbacks.h"
-
 #include "protocol_datagram_handlers.h"
 
 void ProtocolDatagram_initialize(void) {

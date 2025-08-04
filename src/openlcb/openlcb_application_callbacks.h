@@ -41,7 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../openlcb/openlcb_types.h"
+#include "openlcb_types.h"
 
 
 #ifdef	__cplusplus

@@ -44,11 +44,9 @@
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "openlcb_buffer_fifo.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_tx_driver.h"
-#include "../drivers/driver_100ms_clock.h"
-#include "../drivers/driver_can.h"
+
 
 void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 

@@ -13,8 +13,9 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "openlcb_types.h"
 #include "../drivers/driver_configuration_memory.h"
+
+#include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_tx_driver.h"
 

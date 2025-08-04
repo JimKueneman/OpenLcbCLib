@@ -45,8 +45,9 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "openlcb_buffer_store.h"
 #include "openlcb_types.h"
+#include "openlcb_buffer_store.h"
+
 
 
 #define LEN_MESSAGE_FIFO_BUFFER (LEN_MESSAGE_BUFFER + 1) // add one slot to the fifo so it can be full without head == tail
