@@ -49,12 +49,11 @@
 
 #include "stdio.h" // printf
 
-uint8_t _current_state = GRIDCONNECT_STATE_SYNC_START;
-uint8_t _receive_buffer_index = 0;
+static uint8_t _current_state = GRIDCONNECT_STATE_SYNC_START;
+static uint8_t _receive_buffer_index = 0;
+static gridconnect_buffer_t _receive_buffer;
 
-gridconnect_buffer_t _receive_buffer;
-
-bool _is_valid_hex_char(uint8_t next_byte) {
+static bool _is_valid_hex_char(uint8_t next_byte) {
 
     return (((next_byte >= '0') && (next_byte <= '9')) ||
             ((next_byte >= 'A') && (next_byte <= 'F')) ||

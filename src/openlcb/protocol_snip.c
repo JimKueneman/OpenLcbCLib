@@ -49,7 +49,7 @@
 #include "../drivers/driver_configuration_memory.h"
 #include "protocol_message_network.h"
 
-uint16_t _load_null(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index) {
+static uint16_t _load_null(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index) {
 
     *worker_msg->payload[payload_index] = 0x00;
 

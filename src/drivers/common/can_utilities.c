@@ -150,7 +150,7 @@ uint8_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_
 
 }
 
-uint8_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
+static uint8_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
 
     uint8_t count = 0;
 

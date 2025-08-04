@@ -48,7 +48,7 @@
 #include "openlcb_tx_driver.h"
 
 
-void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+static void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (openlcb_node->state.openlcb_msg_handled) {
 
@@ -77,7 +77,7 @@ void _send_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlc
 
 }
 
-void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+static void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (openlcb_node->state.openlcb_msg_handled) {
 

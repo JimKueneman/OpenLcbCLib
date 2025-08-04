@@ -183,12 +183,12 @@ Any function/variable that is accessed outside the module it through the header 
    can_msg_t* CanBufferStore_allocate_buffer(void);
 ~~~
 
-Variables used as function parameters or global variable are lower case and separated by underscores.  If the function or variable is local to module then it also begins with an underscore as in the example.
+Variables used as function parameters or global variable are lower case and separated by underscores.  If the function or variable is local to module then it also begins with an underscore as in the example.  All internally used variables and functions will be defined as *static*.
 
 ~~~
-  openlcb_nodes_t _openlcb_nodes;
+  static openlcb_nodes_t _openlcb_nodes;
 
-  void _generate_event_ids(openlcb_node_t* openlcb_node) {
+  static void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
 
   }

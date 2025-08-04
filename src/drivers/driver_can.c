@@ -44,12 +44,10 @@
 
 #include "../drivers/common/can_types.h"
 
-
-can_rx_callback_func_t can_rx_callback_func = NULL;
-transmit_raw_can_frame_func_t transmit_raw_can_frame_func = NULL;
-is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_func = NULL;
-parameterless_callback_t pause_can_rx_func = NULL;
-parameterless_callback_t resume_can_rx_func = NULL;
+static transmit_raw_can_frame_func_t _transmit_raw_can_frame_func = NULL;
+static is_can_tx_buffer_clear_func_t _is_can_tx_buffer_clear_func = NULL;
+static parameterless_callback_t _pause_can_rx_func = NULL;
+static parameterless_callback_t _resume_can_rx_func = NULL;
 
 void DriverCan_initialization(
         transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
@@ -58,18 +56,18 @@ void DriverCan_initialization(
         parameterless_callback_t resume_can_rx_callback
         ) {
 
-    transmit_raw_can_frame_func = transmit_raw_can_frame_callback;
-    is_can_tx_buffer_clear_func = is_can_tx_buffer_clear_callback;
-    pause_can_rx_func = pause_can_rx_callback;
-    resume_can_rx_func = resume_can_rx_callback;
+    _transmit_raw_can_frame_func = transmit_raw_can_frame_callback;
+    _is_can_tx_buffer_clear_func = is_can_tx_buffer_clear_callback;
+    _pause_can_rx_func = pause_can_rx_callback;
+    _resume_can_rx_func = resume_can_rx_callback;
 
 }
 
 bool DriverCan_is_can_tx_buffer_clear(uint16_t channel) {
 
-    if (is_can_tx_buffer_clear_func) {
+    if (_is_can_tx_buffer_clear_func) {
 
-        return is_can_tx_buffer_clear_func(channel);
+        return _is_can_tx_buffer_clear_func(channel);
 
     }
 
@@ -78,9 +76,9 @@ bool DriverCan_is_can_tx_buffer_clear(uint16_t channel) {
 
 void DriverCan_pause_can_rx(void) {
 
-    if (pause_can_rx_func) {
+    if (_pause_can_rx_func) {
 
-        pause_can_rx_func();
+        _pause_can_rx_func();
 
     }
 
@@ -88,18 +86,18 @@ void DriverCan_pause_can_rx(void) {
 
 void DriverCan_resume_can_rx(void) {
 
-    if (resume_can_rx_func) {
+    if (_resume_can_rx_func) {
 
-        resume_can_rx_func();
+        _resume_can_rx_func();
 
     }
 }
 
 bool DriverCan_transmit_raw_can_frame(uint8_t channel, can_msg_t* msg) {
 
-    if (transmit_raw_can_frame_func) {
+    if (_transmit_raw_can_frame_func) {
 
-        return transmit_raw_can_frame_func(channel, msg);
+        return _transmit_raw_can_frame_func(channel, msg);
 
     }
 

@@ -43,9 +43,9 @@
 #include <stddef.h>
 
 
-configuration_mem_callback_t _configuration_mem_read_callback_func = NULL;
-configuration_mem_callback_t _configuration_mem_write_callback_func = NULL;
-parameterless_callback_t _configuration_mem_factory_reset_func = NULL;
+static configuration_mem_callback_t _configuration_mem_read_callback_func = NULL;
+static configuration_mem_callback_t _configuration_mem_write_callback_func = NULL;
+static parameterless_callback_t _configuration_mem_factory_reset_func = NULL;
 
 void DriverConfigurationMemory_initialization(
         configuration_mem_callback_t configuration_mem_read_callback,

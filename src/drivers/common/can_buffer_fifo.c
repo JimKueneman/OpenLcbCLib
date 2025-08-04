@@ -56,7 +56,7 @@ typedef struct {
     uint8_t tail;
 } can_fifo_t;
 
-can_fifo_t can_msg_buffer_fifo;
+static can_fifo_t can_msg_buffer_fifo;
 
 void CanBufferFifo_initialize(void) {
 

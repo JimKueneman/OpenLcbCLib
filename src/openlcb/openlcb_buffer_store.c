@@ -46,17 +46,17 @@
 
 #include "openlcb_types.h"
 
-message_buffer_t _message_buffer;
+static message_buffer_t _message_buffer;
 
-uint16_t _buffer_store_basic_messages_allocated = 0;
-uint16_t _buffer_store_datagram_messages_allocated = 0;
-uint16_t _buffer_store_snip_messages_allocated = 0;
-uint16_t _buffer_store_stream_messages_allocated = 0;
+static uint16_t _buffer_store_basic_messages_allocated = 0;
+static uint16_t _buffer_store_datagram_messages_allocated = 0;
+static uint16_t _buffer_store_snip_messages_allocated = 0;
+static uint16_t _buffer_store_stream_messages_allocated = 0;
 
-uint16_t _buffer_store_basic_max_messages_allocated = 0;
-uint16_t _buffer_store_datagram_max_messages_allocated = 0;
-uint16_t _buffer_store_snip_max_messages_allocated = 0;
-uint16_t _buffer_store_stream_max_messages_allocated = 0;
+static uint16_t _buffer_store_basic_max_messages_allocated = 0;
+static uint16_t _buffer_store_datagram_max_messages_allocated = 0;
+static uint16_t _buffer_store_snip_max_messages_allocated = 0;
+static uint16_t _buffer_store_stream_max_messages_allocated = 0;
 
 void OpenLcbBufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg) {
 
@@ -106,9 +106,10 @@ void OpenLcbBufferStore_initialize(void) {
     _buffer_store_datagram_max_messages_allocated = 0;
     _buffer_store_snip_max_messages_allocated = 0;
     _buffer_store_stream_max_messages_allocated = 0;
+    
 }
 
-void _update_buffer_telemetry(payload_type_enum_t payload_type) {
+static void _update_buffer_telemetry(payload_type_enum_t payload_type) {
 
     switch (payload_type) {
 

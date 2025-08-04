@@ -58,8 +58,8 @@ extern "C" {
 
     extern void CanMainStateMachine_run(void);
 
-
-    extern can_main_statemachine_t _can_helper;
+    // do not use, for debug access
+    extern can_main_statemachine_t CanMainStatemachine_can_helper;
 
 #ifdef	__cplusplus
 }

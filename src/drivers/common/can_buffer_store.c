@@ -48,9 +48,9 @@
 #include "../../openlcb/openlcb_types.h"
 
 
-can_msg_array_t _can_buffer_store;
-uint16_t _can_buffer_store_message_allocated = 0;
-uint16_t _can_buffer_store_message_max_allocated = 0;
+static can_msg_array_t _can_buffer_store;
+static uint16_t _can_buffer_store_message_allocated = 0;
+static uint16_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize(void) {
 

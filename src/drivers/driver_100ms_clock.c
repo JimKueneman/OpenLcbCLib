@@ -45,8 +45,8 @@
 #include "../openlcb/openlcb_application_callbacks.h"
 
 
-parameterless_callback_t _pause_timer_callback_func = NULL;
-parameterless_callback_t _resume_timer_callback_func = NULL;
+static parameterless_callback_t _pause_timer_callback_func = NULL;
+static parameterless_callback_t _resume_timer_callback_func = NULL;
 
 void Driver100msClock_initialization(parameterless_callback_t pause_timer_callback, parameterless_callback_t resume_timer_callback) {
 

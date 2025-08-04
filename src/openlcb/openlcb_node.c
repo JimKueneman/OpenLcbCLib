@@ -42,11 +42,10 @@
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 
-openlcb_nodes_t _openlcb_nodes;
+static openlcb_nodes_t _openlcb_nodes;
+static uint16_t _node_enum_index_array[6];
 
-uint16_t _node_enum_index_array[6];
-
-void _clear_node(openlcb_node_t* openlcb_node) {
+static void _clear_node(openlcb_node_t* openlcb_node) {
 
     openlcb_node->alias = 0;
     openlcb_node->id = 0;
@@ -145,7 +144,7 @@ openlcb_node_t* OpenLcbNode_get_next(uint8_t key) {
 
 }
 
-void _generate_event_ids(openlcb_node_t* openlcb_node) {
+static void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
     uint64_t node_id = openlcb_node->id << 16;
     uint16_t indexer = 0;

@@ -58,7 +58,7 @@
 
 
 
-openlcb_statemachine_worker_t _openlcb_helper;
+static openlcb_statemachine_worker_t _openlcb_helper;
 
 void OpenLcbMainStatemachine_initialize(
         parameterless_callback_t mcu_setup_callback,
@@ -102,7 +102,7 @@ void OpenLcbMainStatemachine_initialize(
 
 }
 
-void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+static void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     switch (openlcb_msg->mti) {
 

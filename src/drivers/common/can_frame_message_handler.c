@@ -49,7 +49,7 @@
 #include "../../openlcb/openlcb_defines.h"
 
 
-void _flush_alias_node_id_mappings(void) {
+static void _flush_alias_node_id_mappings(void) {
 
     int i = 0;
 
@@ -59,7 +59,7 @@ void _flush_alias_node_id_mappings(void) {
 
 }
 
-bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+static bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
     if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
 
@@ -83,7 +83,7 @@ bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg
 
 }
 
-bool _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+static bool _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
     if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
 

@@ -50,7 +50,7 @@
 #include "openlcb_tx_driver.h"
 #include "openlcb_application_callbacks.h"
 
-void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event_enum_state_t new_state) {
+static void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event_enum_state_t new_state) {
 
     uint8_t mask;
 
@@ -83,7 +83,7 @@ void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event_enum_s
 
 }
 
-void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+static void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
 
     uint8_t* event_byte_ptr = &openlcb_node->consumers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
@@ -92,7 +92,7 @@ void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_in
 
 }
 
-void _encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+static void _encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
 
     uint8_t* event_byte_ptr = &openlcb_node->producers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
@@ -101,7 +101,7 @@ void _encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_in
 
 }
 
-event_enum_state_t _decode_event_state(uint8_t state_byte, uint8_t event_offset) {
+static event_enum_state_t _decode_event_state(uint8_t state_byte, uint8_t event_offset) {
 
 
     switch ((state_byte << ((3 - event_offset) * 2)) & 0x03) {
@@ -126,7 +126,7 @@ event_enum_state_t _decode_event_state(uint8_t state_byte, uint8_t event_offset)
 
 }
 
-void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+static void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (openlcb_node->state.openlcb_msg_handled) {
 
@@ -168,7 +168,7 @@ void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_ms
 
 }
 
-void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+static void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
     if (openlcb_node->state.openlcb_msg_handled) {
 
