@@ -48,14 +48,38 @@
 
 #include "../../openlcb/openlcb_defines.h"
 
-// Required external function calls:
-//
-// CanUtilities_extract_source_alias_from_can_identifier();
-// CanUtilities_copy_node_id_to_payload();
-// CanTxStatemachine_try_transmit_can_message();
-//
-//
+/* 
+ *  Usage for the interface, in your main application define a structure for a function jump table located in flash with the const keyword
+ * 
+ * const can_frame_message_handler_interface_t can_frame_message_handler_interface = {           
+ *   .copy_node_id_to_payload = &CanUtilities_copy_node_id_to_payload,                                   // OpenLcbCLib/src/drivers/common/can_utilities.h  
+ *   .extract_can_payload_as_node_id = &CanUtilities_extract_can_payload_as_node_id,                     // OpenLcbCLib/src/drivers/common/can_utilities.h
+ *   .extract_source_alias_from_can_identifier = &CanUtilities_extract_source_alias_from_can_identifier, // OpenLcbCLib/src/drivers/common/can_utilities.h
+ *   .try_transmit_can_message = &CanTxStatemachine_try_transmit_can_message                             // OpenLcbCLib/src/drivers/common/can_tx_statemachine.h"
+ * };
+ * 
+ *   Then call CanFrameMessageHandler_initialize with a pointer to this structure.  This allows a test to be 
+ *   performed on this module by sending in addresses of stub functions that can do what is need to test the 
+ *   core module.
+ * 
+ *    int main(void) {
+ *   
+ *        CanFrameMessageHandler_initialize(&can_frame_message_handler_interface);
+ *        .....
+ *      
+ *     }
+ * 
+ *    This allows a different set of functions to be used to perform tests on this module
+ * 
+ */
 
+static const can_frame_message_handler_interface_t* _interface;
+
+void CanFrameMessageHandler_initialize(const can_frame_message_handler_interface_t* interface) {
+    
+    _interface = interface;
+    
+}
 
 static void _flush_alias_node_id_mappings(void) {
 
@@ -69,12 +93,12 @@ static void _flush_alias_node_id_mappings(void) {
 
 static bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
+    if (can_node->alias == _interface->extract_source_alias_from_can_identifier(can_msg)) {
 
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | can_node->alias;
-        CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
+        _interface->copy_node_id_to_payload(worker_msg, can_node->id, 0);
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+        if (_interface->try_transmit_can_message(worker_msg)) {
 
             can_node->state.can_msg_handled = true;
             can_node->state.permitted = 0;
@@ -93,12 +117,12 @@ static bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* 
 
 static bool _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
+    if (can_node->alias == _interface->extract_source_alias_from_can_identifier(can_msg)) {
 
         worker_msg->payload_count = 0;
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_node->alias;
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+        if (_interface->try_transmit_can_message(worker_msg))
 
             can_node->state.can_msg_handled = true;
 
@@ -157,12 +181,12 @@ void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
     }
 
-    if ((can_msg->payload_count == 0) || (can_node->id == CanUtilities_extract_can_payload_as_node_id(can_msg))) {
+    if ((can_msg->payload_count == 0) || (can_node->id == _interface->extract_can_payload_as_node_id(can_msg))) {
 
-        CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
+        _interface->copy_node_id_to_payload(worker_msg, can_node->id, 0);
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_node->alias;
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+        if (_interface->try_transmit_can_message(worker_msg)) {
 
             can_node->state.can_msg_handled = true;
 

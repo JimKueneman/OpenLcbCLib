@@ -35,8 +35,8 @@
  */
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_MSG_HANDLER__
-#define	__CAN_MSG_HANDLER__
+#ifndef __CAN_FRAME_MESSAGE_HANDLER__
+#define	__CAN_FRAME_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -44,25 +44,37 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_node.h"
 
+
+// function interface for can_frame_frame_handler.h/c
+
+typedef struct {
+    uint16_t(*extract_source_alias_from_can_identifier)(can_msg_t *can_msg);
+    uint8_t(*copy_node_id_to_payload)(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset);
+    bool (*try_transmit_can_message)(can_msg_t* can_msg);
+    uint64_t(*extract_can_payload_as_node_id)(can_msg_t *can_msg);
+
+} can_frame_message_handler_interface_t;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+    extern void CanFrameMessageHandler_initialize(const can_frame_message_handler_interface_t* interface);
 
-extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) ;
+    extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_MSG_HANDLER__ */
+#endif	/* __CAN_FRAME_MESSAGE_HANDLER__ */
 
