@@ -48,13 +48,13 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void BufferList_initialize(void);
+    extern void OpenLcbBufferList_initialize(void);
 
     extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
     extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
-    extern uint8_t OpenLcbBufferList_free(openlcb_msg_t *msg);
+    extern bool OpenLcbBufferList_free(openlcb_msg_t *msg);
 
     extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 

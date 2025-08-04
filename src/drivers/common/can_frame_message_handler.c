@@ -48,6 +48,14 @@
 
 #include "../../openlcb/openlcb_defines.h"
 
+// Required external function calls:
+//
+// CanUtilities_extract_source_alias_from_can_identifier();
+// CanUtilities_copy_node_id_to_payload();
+// CanTxStatemachine_try_transmit_can_message();
+//
+//
+
 
 static void _flush_alias_node_id_mappings(void) {
 

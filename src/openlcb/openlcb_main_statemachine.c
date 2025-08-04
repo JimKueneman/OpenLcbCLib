@@ -71,7 +71,7 @@ void OpenLcbMainStatemachine_initialize(
         ) {
 
     OpenLcbBufferStore_initialize();
-    BufferList_initialize();
+    OpenLcbBufferList_initialize();
     OpenLcbBufferFifo_initialize();
 
     OpenLcbNode_initialize();
