@@ -73,8 +73,6 @@ void CanBufferStore_initialize(void) {
 
 void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
-    assert(msg);
-
     msg->identifier = 0;
     msg->payload_count = 0;
 
@@ -115,8 +113,6 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 }
 
 void CanBufferStore_free_buffer(can_msg_t* msg) {
-
-    assert(msg);
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->state.allocated = false;

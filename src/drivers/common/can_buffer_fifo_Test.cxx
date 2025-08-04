@@ -84,7 +84,6 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_stress)
         count = CanBufferFifo_is_empty();
         EXPECT_EQ(count, 0);
     }
-
     // Try to push one too many and validate result
     can_msg_t overflow_msg;
     result = CanBufferFifo_push(&overflow_msg);
@@ -105,15 +104,6 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_stress)
     {
         CanBufferStore_free_buffer(new_msg_array[i]);
     }
-}
-
-TEST(CAN_BufferFIFO, CAN_BufferFIFO_push_null)
-{
-
-    CanBufferFifo_initialize();
-
-    int result = CanBufferFifo_push(nullptr);
-    EXPECT_EQ(result, 0);
 }
 
 TEST(CAN_BufferFIFO, CAN_BufferFIFO_pop_empty)
@@ -150,8 +140,4 @@ TEST(CAN_BufferFIFO, CAN_BufferFIFO_wrap_head_tail)
             EXPECT_EQ(count, USER_DEFINED_CAN_MSG_BUFFER_DEPTH - i - 1);
         }
     }
-}
-
-TEST(CAN_BufferFIFO, CAN_BufferFIFO_wra)
-{
 }

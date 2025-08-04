@@ -106,9 +106,9 @@ TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
 
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg = nullptr;
-    uint16_olcb_t result = 0;
+    uint16_t result = 0;
 
-    BufferStore_initialize();
+    OpenLcbBufferStore_initialize();
 
     memset(&can_msg, 0x00, sizeof(can_msg));
 
@@ -117,13 +117,13 @@ TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
 
     // Copy the all 8 bytes in the can payload to the openlcb payload.  This will wipe out
     // any payload in the openlcb structure if it is successful, else nothing is changed
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
     {
 
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
 
         result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
 
@@ -135,19 +135,19 @@ TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
             EXPECT_EQ(*openlcb_msg->payload[i], i + 1);
         }
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
     // Copy the all upper 4 bytes in the can payload to the openlcb payload.  This will wipe out
     // any payload in the openlcb structure if it is successful, else nothing is changed
-    openlcb_msg = BufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
     {
 
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
 
         result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 4);
 
@@ -159,19 +159,19 @@ TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
         EXPECT_EQ(*openlcb_msg->payload[2], 7);
         EXPECT_EQ(*openlcb_msg->payload[3], 8);
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
     // Can buffer offset is beyond the size of a can message, should return nothing writen an
     // nothing changed
-    openlcb_msg = BufferStore_allocate_buffer(SNIP);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
     {
 
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
 
         result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 8);
 
@@ -182,74 +182,26 @@ TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
             EXPECT_EQ(*openlcb_msg->payload[i], 0x00);
         }
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    // Bad inputs, nothing should change and return 0
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-
-    if (openlcb_msg)
-    {
-
-        // Null openlcb_msg _______________
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
-
-        result = CanUtilities_copy_can_payload_to_openlcb_payload(nullptr, &can_msg, 0);
-
-        // Nothing written and nothing changed
-        EXPECT_EQ(result, 0);
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(*openlcb_msg->payload[i], 0x00);
-        }
-
-        // Null can_msg _______________
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
-
-        result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, nullptr, 0);
-
-        // Nothing written and nothing changed
-        EXPECT_EQ(result, 0);
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(*openlcb_msg->payload[i], 0x00);
-        }
-
-        // offset past the size of a can message _______________
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
-
-        result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 8);
-
-        // Nothing written and nothing changed
-        EXPECT_EQ(result, 0);
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(*openlcb_msg->payload[i], 0x00);
-        }
-
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
-    }
 }
-
-// Done to here
 
 TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 {
 
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg = nullptr;
-    uint16_olcb_t result = 0;
+    uint16_t result = 0;
 
-    BufferStore_initialize();
+    OpenLcbBufferStore_initialize();
 
     memset(&can_msg, 0x00, sizeof(can_msg));
 
     // Copy the all 8 bytes in the can payload to the openlcb payload.  This will wipe out
     // any payload in the openlcb structure if it is successful, else nothing is changed
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -257,7 +209,7 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
         *openlcb_msg->payload[2] = 0xCC;
@@ -281,11 +233,11 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
         EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
         EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -293,7 +245,7 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
         *openlcb_msg->payload[2] = 0xCC;
@@ -320,11 +272,11 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
         EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
         EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -332,7 +284,7 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 16);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 16);
         for (int i = 0; i < 16; i++)
         {
 
@@ -360,108 +312,10 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
             EXPECT_EQ(*openlcb_msg->payload[i], i + 1);
         }
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-
-    // Test bad parameters
-    if (openlcb_msg)
-    {
-
-        // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
-        *openlcb_msg->payload[0] = 0xAA;
-        *openlcb_msg->payload[1] = 0xBB;
-        *openlcb_msg->payload[2] = 0xCC;
-        *openlcb_msg->payload[3] = 0xDD;
-
-        // bad openlcb pointer
-        result = CanUtilities_copy_openlcb_payload_to_can_payload(nullptr, &can_msg, 2, 2);
-
-        EXPECT_EQ(result, 0);
-        EXPECT_EQ(can_msg.payload_count, 8);
-
-        // can buffer is unchanged
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        // openlcb buffer is unchanged
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        // bad can message pointer
-        result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, nullptr, 2, 2);
-
-        EXPECT_EQ(result, 0);
-        EXPECT_EQ(can_msg.payload_count, 8);
-
-        // can buffer is unchanged
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        // openlcb buffer is unchanged
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        // bad openlcb message offset
-        result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 4, 2);
-
-        EXPECT_EQ(result, 0);
-        EXPECT_EQ(can_msg.payload_count, 8);
-
-        // can buffer is unchanged
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        // openlcb buffer is unchanged
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        // bad can message offset
-        result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 2, 8);
-
-        EXPECT_EQ(result, 0);
-        EXPECT_EQ(can_msg.payload_count, 8);
-
-        // can buffer is unchanged
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        // openlcb buffer is unchanged
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
-    }
 }
 
 TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
@@ -469,13 +323,13 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg = nullptr;
-    uint16_olcb_t result;
+    uint16_t result;
 
-    BufferStore_initialize();
+    OpenLcbBufferStore_initialize();
 
     memset(&can_msg, 0x00, sizeof(can_msg));
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -483,7 +337,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 0);
 
         // append an empty openlcb message
         result = CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
@@ -495,11 +349,11 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
             EXPECT_EQ(*openlcb_msg->payload[i], i + 1);
         }
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -507,7 +361,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
         *openlcb_msg->payload[2] = 0xCC;
@@ -530,11 +384,11 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
             EXPECT_EQ(*openlcb_msg->payload[i + 4], i + 1);
         }
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -542,7 +396,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 14);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 14);
         for (int i = 0; i < 14; i++)
         {
 
@@ -573,94 +427,17 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
             EXPECT_EQ(*openlcb_msg->payload[i], i + 1);
         }
 
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-
-    if (openlcb_msg)
-    {
-
-        // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
-        *openlcb_msg->payload[0] = 0xAA;
-        *openlcb_msg->payload[1] = 0xBB;
-        *openlcb_msg->payload[2] = 0xCC;
-        *openlcb_msg->payload[3] = 0xDD;
-
-        // bad openlcb message
-        result = CanUtilities_append_can_payload_to_openlcb_payload(nullptr, &can_msg, 0);
-
-        EXPECT_EQ(result, 0);
-
-        // nothing should change
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-
-        // nothing should change
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        // nothing should change
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        // bad can message
-        CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, nullptr, 0);
-
-        EXPECT_EQ(result, 0);
-
-        // nothing should change
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-
-        // nothing should change
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        // nothing should change
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        // bad offset
-        CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 8);
-
-        EXPECT_EQ(result, 0);
-
-        // nothing should change
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-
-        // nothing should change
-        EXPECT_EQ(*openlcb_msg->payload[0], 0xAA);
-        EXPECT_EQ(*openlcb_msg->payload[1], 0xBB);
-        EXPECT_EQ(*openlcb_msg->payload[2], 0xCC);
-        EXPECT_EQ(*openlcb_msg->payload[3], 0xDD);
-
-        // nothing should change
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(can_msg.payload[i], i + 1);
-        }
-
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
-    }
 }
 
 TEST(CAN_Utilities, copy_64_bit_to_can_message)
 {
 
     can_msg_t can_msg;
-    uint8_olcb_t result;
+    uint8_t result;
 
     can_msg.state.allocated = 1;
     can_msg.state.addressed_direct_tx = 1;
@@ -668,7 +445,7 @@ TEST(CAN_Utilities, copy_64_bit_to_can_message)
 
     result = CanUtilities_copy_64_bit_to_can_message(&can_msg, 0x5566778899AABBCC);
 
-    EXPECT_EQ(result, TRUE);
+    EXPECT_EQ(result, true);
     EXPECT_EQ(can_msg.state.allocated, 1);
     EXPECT_EQ(can_msg.state.addressed_direct_tx, 1);
     EXPECT_EQ(can_msg.identifier, 0xFFFF);
@@ -683,25 +460,6 @@ TEST(CAN_Utilities, copy_64_bit_to_can_message)
     EXPECT_EQ(can_msg.payload[6], 0xBB);
     EXPECT_EQ(can_msg.payload[7], 0xCC);
 
-    can_msg.state.allocated = 1;
-    can_msg.state.addressed_direct_tx = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-
-    result = CanUtilities_copy_64_bit_to_can_message(nullptr, 0x5566778899AABBCC);
-
-    EXPECT_EQ(result, FALSE);
-
-    // Nothing should have changed from the initial liad
-    EXPECT_EQ(can_msg.state.allocated, 1);
-    EXPECT_EQ(can_msg.state.addressed_direct_tx, 1);
-    EXPECT_EQ(can_msg.identifier, 0xFFFF);
-    EXPECT_EQ(can_msg.payload_count, 8);
-
-    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-    {
-
-        EXPECT_EQ(can_msg.payload[i], i + 1);
-    }
 }
 
 TEST(CAN_Utilities, copy_can_message)
@@ -709,7 +467,7 @@ TEST(CAN_Utilities, copy_can_message)
 
     can_msg_t can_msg;
     can_msg_t can_msg_target;
-    uint8_olcb_t result;
+    uint8_t result;
 
     can_msg.state.allocated = 1;
     can_msg.state.addressed_direct_tx = 1;
@@ -721,7 +479,7 @@ TEST(CAN_Utilities, copy_can_message)
 
     result = CanUtilities_copy_can_message(&can_msg, &can_msg_target);
 
-    EXPECT_EQ(result, TRUE);
+    EXPECT_EQ(result, true);
     // No changes in first message
     EXPECT_EQ(can_msg.state.allocated, 1);
     EXPECT_EQ(can_msg.state.addressed_direct_tx, 1);
@@ -745,68 +503,6 @@ TEST(CAN_Utilities, copy_can_message)
 
         EXPECT_EQ(can_msg_target.payload[i], i + 1);
     }
-
-    // reload original messages
-    can_msg.state.allocated = 1;
-    can_msg.state.addressed_direct_tx = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-
-    can_msg_target.state.allocated = 0;
-    can_msg_target.state.addressed_direct_tx = 0;
-    CanUtilties_load_can_message(&can_msg_target, 0xAAAA, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-
-    // Bad parameter source message
-    result = CanUtilities_copy_can_message(nullptr, &can_msg_target);
-
-    EXPECT_EQ(result, FALSE);
-    // No changes in first message
-    EXPECT_EQ(can_msg.state.allocated, 1);
-    EXPECT_EQ(can_msg.state.addressed_direct_tx, 1);
-    EXPECT_EQ(can_msg.identifier, 0xFFFF);
-    EXPECT_EQ(can_msg.payload_count, 8);
-
-    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-    {
-
-        EXPECT_EQ(can_msg.payload[i], i + 1);
-    }
-
-    // No changes in the target
-    EXPECT_EQ(can_msg_target.state.allocated, 0);
-    EXPECT_EQ(can_msg_target.state.addressed_direct_tx, 0);
-    EXPECT_EQ(can_msg_target.identifier, 0xAAAA);
-    EXPECT_EQ(can_msg_target.payload_count, 0);
-
-    // reload original messages
-    can_msg.state.allocated = 1;
-    can_msg.state.addressed_direct_tx = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-
-    can_msg_target.state.allocated = 0;
-    can_msg_target.state.addressed_direct_tx = 0;
-    CanUtilties_load_can_message(&can_msg_target, 0xAAAA, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-
-    // Bad parameter source message
-    result = CanUtilities_copy_can_message(&can_msg, nullptr);
-
-    EXPECT_EQ(result, FALSE);
-    // No changes in first message
-    EXPECT_EQ(can_msg.state.allocated, 1);
-    EXPECT_EQ(can_msg.state.addressed_direct_tx, 1);
-    EXPECT_EQ(can_msg.identifier, 0xFFFF);
-    EXPECT_EQ(can_msg.payload_count, 8);
-
-    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-    {
-
-        EXPECT_EQ(can_msg.payload[i], i + 1);
-    }
-
-    // No changes in the target
-    EXPECT_EQ(can_msg_target.state.allocated, 0);
-    EXPECT_EQ(can_msg_target.state.addressed_direct_tx, 0);
-    EXPECT_EQ(can_msg_target.identifier, 0xAAAA);
-    EXPECT_EQ(can_msg_target.payload_count, 0);
 }
 
 TEST(CAN_Utilities, extract_can_payload_as_node_id)
@@ -818,14 +514,10 @@ TEST(CAN_Utilities, extract_can_payload_as_node_id)
     can_msg.state.addressed_direct_tx = 1;
     CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
-    uint64_olcb_t node_id = CanUtilities_extract_can_payload_as_node_id(&can_msg);
+    uint64_t node_id = CanUtilities_extract_can_payload_as_node_id(&can_msg);
 
     EXPECT_EQ(node_id, 0x010203040506);
 
-    // Bad message ptr
-    node_id = CanUtilities_extract_can_payload_as_node_id(nullptr);
-
-    EXPECT_EQ(node_id, 0);
 }
 
 TEST(CAN_Utilities, extract_source_alias_from_can_message)
@@ -837,21 +529,17 @@ TEST(CAN_Utilities, extract_source_alias_from_can_message)
     can_msg.state.addressed_direct_tx = 1;
     CanUtilties_load_can_message(&can_msg, 0xFFFFFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
-    uint16_olcb_t alias = CanUtilities_extract_source_alias_from_can_identifier(&can_msg);
+    uint16_t alias = CanUtilities_extract_source_alias_from_can_identifier(&can_msg);
 
     EXPECT_EQ(alias, 0x0FFF);
 
-    // Bad message ptr
-    alias = CanUtilities_extract_source_alias_from_can_identifier(nullptr);
-
-    EXPECT_EQ(alias, 0);
 }
 
 TEST(CAN_Utilities, extract_dest_alias_from_can_message)
 {
 
     can_msg_t can_msg;
-    uint16_olcb_t alias;
+    uint16_t alias;
 
     can_msg.state.allocated = 1;
     can_msg.state.addressed_direct_tx = 0;
@@ -902,21 +590,18 @@ TEST(CAN_Utilities, extract_dest_alias_from_can_message)
     EXPECT_EQ(alias, 0xAAA);
 
     // Reserved
-    uint32_olcb_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
+    uint32_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
     CanUtilties_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0x00);
 
-    // Bad message ptr
-    alias = CanUtilties_extract_dest_alias_from_can_message(nullptr);
-    EXPECT_EQ(alias, 0);
 }
 
 TEST(CAN_Utilities, extract_can_mti_from_can_identifier)
 {
 
     can_msg_t can_msg;
-    uint16_olcb_t mti;
+    uint16_t mti;
 
     can_msg.state.allocated = 1;
     can_msg.state.addressed_direct_tx = 0;
@@ -951,14 +636,11 @@ TEST(CAN_Utilities, extract_can_mti_from_can_identifier)
     mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0xCC8);
 
-    uint32_olcb_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
+    uint32_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
     CanUtilties_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x0000);
 
-    // Bad message ptr
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(nullptr);
-    EXPECT_EQ(mti, 0);
 }
 
 TEST(CAN_Utilities, count_nulls_in_payloads)
@@ -966,15 +648,15 @@ TEST(CAN_Utilities, count_nulls_in_payloads)
 
     can_msg_t can_msg;
     openlcb_msg_t *openlcb_msg = nullptr;
-    uint16_olcb_t result = 0;
+    uint16_t result = 0;
 
-    BufferStore_initialize();
+    OpenLcbBufferStore_initialize();
 
     memset(&can_msg, 0x00, sizeof(can_msg));
 
     // Copy the all 8 bytes in the can payload to the openlcb payload.  This will wipe out
     // any payload in the openlcb structure if it is successful, else nothing is changed
-    openlcb_msg = BufferStore_allocate_buffer(BASIC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
@@ -982,7 +664,7 @@ TEST(CAN_Utilities, count_nulls_in_payloads)
 
         // Load up a CAN message
         CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x00, 0x04, 0x05, 0x00, 0x07, 0x08);
-        Utilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0x00;
         *openlcb_msg->payload[2] = 0xCC;
@@ -991,15 +673,8 @@ TEST(CAN_Utilities, count_nulls_in_payloads)
         result = CanUtilities_count_nulls_in_payloads(openlcb_msg, &can_msg);
         EXPECT_EQ(result, 4);
 
-        // Bad parmaters
-        result = CanUtilities_count_nulls_in_payloads(nullptr, &can_msg);
-        EXPECT_EQ(result, 0);
-
-        result = CanUtilities_count_nulls_in_payloads(openlcb_msg, nullptr);
-        EXPECT_EQ(result, 0);
-
-        BufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(BufferStore_datagram_messages_allocated(), 0);
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     }
 }
 

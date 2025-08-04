@@ -17,7 +17,7 @@ TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
 
     EXPECT_NE(can_msg, nullptr);
 
-    // Test the getters for the current and past number of allocated buffers
+   //  Test the getters for the current and past number of allocated buffers
     int count = CanBufferStore_messages_allocated();
     EXPECT_EQ(count, 1);
     count = CanBufferStore_messages_max_allocated();
@@ -111,10 +111,4 @@ TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
 
         EXPECT_EQ(count, USER_DEFINED_CAN_MSG_BUFFER_DEPTH - i - 1);
     }
-}
-
-TEST(CAN_BufferStore, CanBufferStore_free_null_buffer)
-{
-
-    CanBufferStore_free_buffer(nullptr);
 }

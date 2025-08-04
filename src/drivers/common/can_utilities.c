@@ -236,6 +236,11 @@ void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8
 
 uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset) {
 
+    if (start_offset > 2) {
+        
+        return 0;
+        
+    }
     can_msg->payload_count = 6 + start_offset;
 
     for (int i = (start_offset + 5); i >= (0 + start_offset); i--) { // This is a count down...

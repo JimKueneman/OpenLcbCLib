@@ -93,6 +93,10 @@ extern uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_
 
 extern uint16_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint16_t event_index);
 
+extern void ProtocolEventTransport_encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state);
+
+extern void ProtocolEventTransport_encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state);
+
 #endif // SUPPORT_FIRMWARE_BOOTLOADER
 
 #ifdef	__cplusplus

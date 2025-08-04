@@ -1,21 +1,21 @@
 project(openlcb C)
 
 set(SOURCES 
-openlcb_application_callbacks.c 
-openlcb_application.c 
-openlcb_buffer_fifo.c 
-openlcb_buffer_list.c 
-openlcb_buffer_store.c 
-openlcb_gridconnect.c 
-openlcb_main_statemachine.c 
-openlcb_node.c 
-openlcb_tx_driver.c 
-openlcb_utilities.c 
-protocol_datagram_handlers.c 
-protocol_datagram.c 
-protocol_event_transport.c 
-protocol_message_network.c 
-protocol_snip.c
+    openlcb_application_callbacks.c 
+    openlcb_application.c 
+    openlcb_buffer_fifo.c 
+    openlcb_buffer_list.c 
+    openlcb_buffer_store.c 
+    openlcb_gridconnect.c 
+    openlcb_main_statemachine.c 
+    openlcb_node.c 
+    openlcb_tx_driver.c 
+    openlcb_utilities.c 
+    protocol_datagram_handlers.c 
+    protocol_datagram.c 
+    protocol_event_transport.c 
+    protocol_message_network.c 
+    protocol_snip.c
 )
 
 

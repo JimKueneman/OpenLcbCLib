@@ -1,6 +1,17 @@
 project(drivers_common C)
 
-set(SOURCES can_buffer_fifo.c can_buffer_store.c can_frame_message_handler.c can_login_message_handler.c can_main_statemachine.c can_rx_statemachine.c can_rx_statemachine.c can_tx_statemachine.c can_utilities.c)
+set(
+SOURCES 
+    can_buffer_fifo.c 
+    can_buffer_store.c 
+    can_frame_message_handler.c 
+    can_login_message_handler.c 
+    can_main_statemachine.c 
+    can_rx_statemachine.c 
+    can_rx_statemachine.c 
+    can_tx_statemachine.c 
+    can_utilities.c
+)
 
 
 if (${GTEST})

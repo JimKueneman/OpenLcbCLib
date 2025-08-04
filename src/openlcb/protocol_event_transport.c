@@ -83,7 +83,7 @@ static void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event
 
 }
 
-static void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+void ProtocolEventTransport_encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
 
     uint8_t* event_byte_ptr = &openlcb_node->consumers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
@@ -92,7 +92,7 @@ static void _encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t e
 
 }
 
-static void _encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+void ProtocolEventTransport_encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
 
     uint8_t* event_byte_ptr = &openlcb_node->producers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte

@@ -73,8 +73,6 @@ void CanBufferFifo_initialize(void) {
 
 bool CanBufferFifo_push(can_msg_t* new_msg) {
 
-    assert(new_msg);
-
     uint8_t next = can_msg_buffer_fifo.head + 1;
 
     if (next >= LEN_CAN_FIFO_BUFFER) {

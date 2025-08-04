@@ -1,6 +1,11 @@
 project(drivers C)
 
-set(SOURCES driver_100ms_clock.c driver_can.c driver_configuration_memory.c driver_mcu.c)
+set(
+    SOURCES driver_100ms_clock.c 
+    driver_can.c 
+    driver_configuration_memory.c 
+    driver_mcu.c
+)
 
 
 if (${GTEST})
