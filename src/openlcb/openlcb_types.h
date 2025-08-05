@@ -49,28 +49,29 @@ extern "C" {
     // Total number of message buffers available for use
     // Note you can override these with Define Macros in your compiler
 
-    // The SUM of the next 4 buffer defines must be no greater than 126 buffers for an 8 Bit processor (should never really need more than 10-20)
+     // The SUM of the previous 4 buffer defines must be no greater than 126 for an 8 bit processor (8 bit signed integer) 
+    //  Should never really need more than 10-20
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
-#define USER_DEFINED_BASIC_BUFFER_DEPTH 32 // USER DEFINED
+#define USER_DEFINED_BASIC_BUFFER_DEPTH 32 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #endif
 
 #ifndef USER_DEFINED_DATAGRAM_BUFFER_DEPTH
-#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH 4 // USER DEFINED
+#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH 4 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #endif
 
 #ifndef USER_DEFINED_SNIP_BUFFER_DEPTH
-#define USER_DEFINED_SNIP_BUFFER_DEPTH 4 // USER DEFINED
+#define USER_DEFINED_SNIP_BUFFER_DEPTH 4 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #endif
 
 #ifndef USER_DEFINED_STREAM_BUFFER_DEPTH
-#define USER_DEFINED_STREAM_BUFFER_DEPTH 1 // USER DEFINED
+#define USER_DEFINED_STREAM_BUFFER_DEPTH 1 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #endif
 
-    // The SUM of the previous 4 buffer defines must be no greater than  126
+    // The SUM of the previous 4 buffer defines must be no greater than 126 for an 8 bit processor (8 bit signed integer)
 
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH 1 // USER DEFINED   Max for an 8 Bit processor is 126
+#define USER_DEFINED_NODE_BUFFER_DEPTH 4 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work 
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
@@ -83,12 +84,12 @@ extern "C" {
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-#ifndef USER_DEFINED_PRODUCER_COUNT
-#define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED  Max for an 8 Bit processor is 126
+#ifndef USER_DEFINED_PRODUCER_COUNT    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work 
+#define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED Max of 126 for an 8 bit processor (8 bit signed integer)
 #endif
 
-#ifndef USER_DEFINED_CONSUMER_COUNT
-#define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED Max for an 8 Bit processor is 126
+#ifndef USER_DEFINED_CONSUMER_COUNT    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
+#define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED Max of 126 for an 8 bit processor (8 bit signed integer)
 #endif
 
 #else
