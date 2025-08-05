@@ -90,23 +90,19 @@ uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t
 
 void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti, uint16_t payload_count) {
 
-    if (openlcb_msg) {
+    openlcb_msg->dest_alias = dest_alias;
+    openlcb_msg->dest_id = dest_id;
+    openlcb_msg->source_alias = source_alias;
+    openlcb_msg->source_id = source_id;
+    openlcb_msg->mti = mti;
+    openlcb_msg->payload_count = payload_count;
+    openlcb_msg->timerticks = 0;
 
-        openlcb_msg->dest_alias = dest_alias;
-        openlcb_msg->dest_id = dest_id;
-        openlcb_msg->source_alias = source_alias;
-        openlcb_msg->source_id = source_id;
-        openlcb_msg->mti = mti;
-        openlcb_msg->payload_count = payload_count;
-        openlcb_msg->timerticks = 0;
+    uint16_t data_count = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
 
-        uint16_t data_count = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
+    for (int i = 0; i < data_count; i++) {
 
-        for (int i = 0; i < data_count; i++) {
-
-            *openlcb_msg->payload[i] = 0x00;
-
-        }
+        *openlcb_msg->payload[i] = 0x00;
 
     }
 
@@ -160,9 +156,9 @@ uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_
     uint16_t counter = 0;
     uint16_t payload_len = 0;
 
-    while (string[counter] != 0x00) {
+    payload_len = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
 
-        payload_len = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
+    while (string[counter] != 0x00) {
 
         if ((counter + payload_index) < payload_len - 1) { // leave room for a null
 
@@ -211,8 +207,6 @@ uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* open
 }
 
 void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, node_id_t node_id, uint16_t index) {
-
-    openlcb_msg->payload_count = 6 + index;
 
     for (int i = 5; i >= 0; i--) {
 
@@ -273,6 +267,10 @@ uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t* open
 
 void OpenLcbUtilities_set_multi_frame_flag(uint8_t* target, uint8_t flag) {
 
+    // Clear the upper nibble 
+    *target = *target & 0x0F;
+    
+    // Set the flag in the upper nibble
     *target = *target | flag;
 
 }

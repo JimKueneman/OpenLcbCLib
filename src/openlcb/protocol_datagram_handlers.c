@@ -1055,7 +1055,7 @@ void ProtocolDatagramHandlers_handle_memory_reserve_lock_message(openlcb_node_t*
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 8);
 
     *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
     *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
