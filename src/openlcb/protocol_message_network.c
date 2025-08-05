@@ -85,7 +85,7 @@ static void _send_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* 
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_VERIFIED_NODE_ID, 3);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_VERIFIED_NODE_ID, 6);
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->id, 0);
 
     if (openlcb_node->parameters->protocol_support & PSI_SIMPLE)
