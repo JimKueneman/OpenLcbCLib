@@ -56,6 +56,13 @@
 //
 //
 
+static can_frame_message_handler_interface_t *_interface;
+
+void CanFrameMessageHandler_initialize(const can_frame_message_handler_interface_t* interface) {
+    
+    _interface = (can_frame_message_handler_interface_t*) interface;
+    
+}
 
 static void _flush_alias_node_id_mappings(void) {
 
