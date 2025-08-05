@@ -5,10 +5,10 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_node.h"
 
-const node_parameters_t node_parameters = {
+node_parameters_t node_parameters = {
 
-    .consumer_count_autocreate = 0,
-    .producer_count_autocreate = 0,
+    .consumer_count_autocreate = 10,
+    .producer_count_autocreate = 10,
 
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = "GoogleTest",
@@ -42,9 +42,9 @@ const node_parameters_t node_parameters = {
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
     .address_space_configuration_definition.read_only = 1,
     .address_space_configuration_definition.present = 1,
-    .address_space_configuration_definition.low_address_valid = 0,      // assume the low address starts at 0
-    .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 9881 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
+    .address_space_configuration_definition.low_address_valid = 0, // assume the low address starts at 0
+    .address_space_configuration_definition.low_address = 0,       // ignored if low_address_valid is false
+    .address_space_configuration_definition.highest_address = 0,   // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
     .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
@@ -60,9 +60,9 @@ const node_parameters_t node_parameters = {
     // Space 0xFD
     .address_space_config_memory.read_only = 0,
     .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 0,        // assume the low address starts at 0
-    .address_space_config_memory.low_address = 0,              // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0xFFFFFFFF, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.low_address_valid = 0,   // assume the low address starts at 0
+    .address_space_config_memory.low_address = 0,         // ignored if low_address_valid is false
+    .address_space_config_memory.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -541,6 +541,58 @@ TEST(OpenLcbUtilities, clear_openlcb_message_payload)
     }
 }
 
+TEST(OpenLcbUtilities, extract_node_id_from_openlcb_payload)
+{
+
+    OpenLcbBufferStore_initialize();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    if (openlcb_msg)
+    {
+#define LEN_BUFFER 16
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+
+        EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
+        EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
+        EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
+        EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
+        EXPECT_EQ(openlcb_msg->mti, 0x899);
+        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+
+        for (int i = 0; i < LEN_BUFFER; i++)
+        {
+
+            *openlcb_msg->payload[i] = i + 1;
+        }
+
+        event_id_t event_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(openlcb_msg, 0);
+
+        EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
+        EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
+        EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
+        EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
+        EXPECT_EQ(openlcb_msg->mti, 0x899);
+        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_TRUE(event_id == 0x010203040506);
+        EXPECT_TRUE(openlcb_msg->state.allocated);
+
+        event_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(openlcb_msg, 6);
+
+        EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
+        EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
+        EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
+        EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
+        EXPECT_EQ(openlcb_msg->mti, 0x899);
+        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_TRUE(event_id == 0x0708090A0B0C);
+        EXPECT_TRUE(openlcb_msg->state.allocated);
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+}
+
 TEST(OpenLcbUtilities, extract_event_id_from_openlcb_payload)
 {
 
@@ -834,7 +886,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
             openlcb_msg->dest_alias = 0x222;
             openlcb_msg->dest_id = 0x8899AABBCCDDEEFF;
 
-            EXPECT_FALSE(OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg));
+            EXPECT_FALSE(OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg));
 
             openlcb_msg->source_alias = NODE_ALIAS;
             openlcb_msg->source_id = 0x0102030405060708;
@@ -842,7 +894,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
             openlcb_msg->dest_alias = 0x222;
             openlcb_msg->dest_id = 0x8899AABBCCDDEEFF;
 
-            EXPECT_FALSE(OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg));
+            EXPECT_FALSE(OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg));
 
             openlcb_msg->source_alias = 0x111;
             openlcb_msg->source_id = NODE_ID;
@@ -850,7 +902,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
             openlcb_msg->dest_alias = 0x222;
             openlcb_msg->dest_id = 0x8899AABBCCDDEEFF;
 
-            EXPECT_FALSE(OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg));
+            EXPECT_FALSE(OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg));
 
             openlcb_msg->source_alias = 0x111;
             openlcb_msg->source_id = 0x0102030405060708;
@@ -858,7 +910,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
             openlcb_msg->dest_alias = 0x222;
             openlcb_msg->dest_id = NODE_ID;
 
-            EXPECT_TRUE(OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg));
+            EXPECT_TRUE(OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg));
 
             openlcb_msg->source_alias = 0x111;
             openlcb_msg->source_id = 0x0102030405060708;
@@ -866,7 +918,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
             openlcb_msg->dest_alias = NODE_ALIAS;
             openlcb_msg->dest_id = 0x8899AABBCCDDEEFF;
 
-            EXPECT_TRUE(OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg));
+            EXPECT_TRUE(OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg));
 
             openlcb_msg->source_alias = 0x111;
             openlcb_msg->source_id = 0x0102030405060708;
@@ -874,9 +926,348 @@ TEST(OpenLcbUtilities, is_message_for_node)
             openlcb_msg->dest_alias = NODE_ALIAS;
             openlcb_msg->dest_id = NODE_ID;
 
-            EXPECT_TRUE(OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg));
+            EXPECT_TRUE(OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg));
         }
 
         OpenLcbBufferStore_free_buffer(openlcb_msg);
     }
+}
+
+TEST(OpenLcbUtilities, is_producer_event_assigned_to_node)
+{
+
+    OpenLcbNode_initialize();
+    openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &node_parameters);
+
+    EXPECT_NE(openlcb_node, nullptr);
+
+    if (openlcb_node)
+    {
+        uint16_t event_index = 0;
+
+        uint64_t event_id = 0x0102030405060000;
+
+        for (int i = 0; i < 10; i++)
+        {
+
+            EXPECT_TRUE(OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node, event_id, &event_index));
+            EXPECT_EQ(event_index, i);
+
+            event_id++;
+        }
+
+        // now past the last defined event
+        for (int i = 0; i < 10; i++)
+        {
+
+            EXPECT_FALSE(OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node, event_id, &event_index));
+
+            event_id++;
+        }
+    }
+}
+
+TEST(OpenLcbUtilities, consumer_event_assigned_to_node)
+{
+
+    OpenLcbNode_initialize();
+    openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &node_parameters);
+
+    EXPECT_NE(openlcb_node, nullptr);
+
+    if (openlcb_node)
+    {
+        uint16_t event_index = 0;
+
+        uint64_t event_id = 0x0102030405060000;
+
+        for (int i = 0; i < 10; i++)
+        {
+
+            EXPECT_TRUE(OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node, event_id, &event_index));
+            EXPECT_EQ(event_index, i);
+
+            event_id++;
+        }
+
+        // now past the last defined event
+        for (int i = 0; i < 10; i++)
+        {
+
+            EXPECT_FALSE(OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node, event_id, &event_index));
+
+            event_id++;
+        }
+    }
+}
+
+TEST(OpenLcbUtilities, addressed_message_needs_processing)
+{
+
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize();
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    if (openlcb_msg)
+    {
+#define NODE_ID 0x1122334455667788
+#define NODE_ALIAS 0x444
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0xAABBCCDDEEFF, 0xBBB, 0x010203040506, 0x914, LEN_BUFFER);
+
+        openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &node_parameters);
+        openlcb_node->alias = 0x914;
+
+        EXPECT_NE(openlcb_node, nullptr);
+
+        if (openlcb_node)
+        {
+            // The message dest is our node id and alias
+            openlcb_msg->dest_id = 0x010203040506;
+            openlcb_msg->dest_alias = 0x914;
+            // the message has not been handled
+            openlcb_node->state.openlcb_msg_handled = false;
+            EXPECT_TRUE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+            //  the message has been handled
+            openlcb_node->state.openlcb_msg_handled = true;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+
+            // The message dest is our alias only
+            openlcb_msg->dest_id = 0;
+            openlcb_msg->dest_alias = 0x914;
+            // the message has not been handled
+            openlcb_node->state.openlcb_msg_handled = false;
+            EXPECT_TRUE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+            //  the message has been handled
+            openlcb_node->state.openlcb_msg_handled = true;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+
+            // The message dest is our node id only
+            openlcb_msg->dest_id = 0x010203040506;
+            openlcb_msg->dest_alias = 0;
+            // the message has not been handled
+            openlcb_node->state.openlcb_msg_handled = false;
+            EXPECT_TRUE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+            //  the message has been handled
+            openlcb_node->state.openlcb_msg_handled = true;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+
+            // The message dest is not our node id only
+            openlcb_msg->dest_id = 0x010203040506 + 1;
+            openlcb_msg->dest_alias = 0;
+            // the message has not been handled
+            openlcb_node->state.openlcb_msg_handled = false;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+            //  the message has been handled
+            openlcb_node->state.openlcb_msg_handled = true;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+
+            // The message dest is not our alias only
+            openlcb_msg->dest_id = 0;
+            openlcb_msg->dest_alias = 0x914 + 1;
+            // the message has not been handled
+            openlcb_node->state.openlcb_msg_handled = false;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+            //  the message has been handled
+            openlcb_node->state.openlcb_msg_handled = true;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+
+            // The message dest is not our alias or node id
+            openlcb_msg->dest_id = 0x010203040506 + 1;
+            openlcb_msg->dest_alias = 0x914 + 1;
+            // the message has not been handled
+            openlcb_node->state.openlcb_msg_handled = false;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+            //  the message has been handled
+            openlcb_node->state.openlcb_msg_handled = true;
+            EXPECT_FALSE(OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg));
+        }
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+}
+
+TEST(OpenLcbUtilities, calculate_memory_offset_into_node_space)
+{
+
+    OpenLcbNode_initialize();
+
+    node_parameters.address_space_config_memory.low_address_valid = false;
+    node_parameters.address_space_config_memory.low_address = 0; // ignored if low_address_valid is false
+    node_parameters.address_space_config_memory.highest_address = 0x200;
+    openlcb_node_t *openlcb_node1 = OpenLcbNode_allocate(0x010203040506 + 0, &node_parameters);
+    EXPECT_NE(openlcb_node1, nullptr);
+    openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(0x010203040506 + 1, &node_parameters);
+    EXPECT_NE(openlcb_node2, nullptr);
+    openlcb_node_t *openlcb_node3 = OpenLcbNode_allocate(0x010203040506 + 2, &node_parameters);
+    EXPECT_NE(openlcb_node3, nullptr);
+    openlcb_node_t *openlcb_node4 = OpenLcbNode_allocate(0x010203040506 + 3, &node_parameters);
+    EXPECT_NE(openlcb_node4, nullptr);
+
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node1), 0);
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node2), 0x200);
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node3), 0x400);
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node4), 0x600);
+
+    node_parameters.address_space_config_memory.low_address_valid = true;
+    node_parameters.address_space_config_memory.low_address = 0x200;
+    node_parameters.address_space_config_memory.highest_address = 0x300;
+
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node1), 0);
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node2), 0x100);
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node3), 0x200);
+    EXPECT_EQ(OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node4), 0x300);
+}
+
+TEST(OpenLcbUtilities, payload_type_to_le)
+{
+
+    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(BASIC), LEN_MESSAGE_BYTES_BASIC);
+    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(DATAGRAM), LEN_MESSAGE_BYTES_DATAGRAM);
+    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(SNIP), LEN_MESSAGE_BYTES_SNIP);
+    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(STREAM), LEN_MESSAGE_BYTES_STREAM);
+    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len((payload_type_enum_t)10), 0);
+}
+
+TEST(OpenLcbUtilities, extract_node_id_from_config_mem_buffer)
+{
+
+    configuration_memory_buffer_t buffer;
+
+    for (int i = 0; i < 6; i++)
+    {
+
+        buffer[i] = i + 1;
+    }
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_config_mem_buffer(&buffer, 0), 0x010203040506);
+
+    // offset 4
+    for (int i = 0; i < 6; i++)
+    {
+
+        buffer[i + 4] = i + 1;
+    }
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_config_mem_buffer(&buffer, 4), 0x010203040506);
+    EXPECT_EQ(buffer[0], 0x01);
+    EXPECT_EQ(buffer[1], 0x02);
+    EXPECT_EQ(buffer[2], 0x03);
+    EXPECT_EQ(buffer[3], 0x04);
+}
+
+TEST(OpenLcbUtilities, extract_word_from_config_mem_buffer)
+{
+
+    configuration_memory_buffer_t buffer;
+
+    for (int i = 0; i < 2; i++)
+    {
+
+        buffer[i] = i + 1;
+    }
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_config_mem_buffer(&buffer, 0), 0x0102);
+
+    // offset 4
+    for (int i = 0; i < 2; i++)
+    {
+
+        buffer[i + 4] = i + 1;
+    }
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_config_mem_buffer(&buffer, 4), 0x0102);
+    EXPECT_EQ(buffer[0], 0x01);
+    EXPECT_EQ(buffer[1], 0x02);
+}
+
+TEST(OpenLcbUtilities, copy_node_id_to_config_mem_buffer)
+{
+
+    configuration_memory_buffer_t buffer;
+
+    OpenLcbUtilities_copy_node_id_to_config_mem_buffer(&buffer, 0x010203040506, 0);
+
+    for (int i = 0; i < 6; i++)
+    {
+
+        EXPECT_EQ(buffer[i], i + 1);
+    }
+
+    OpenLcbUtilities_copy_node_id_to_config_mem_buffer(&buffer, 0x010203040506, 6);
+
+    for (int i = 0; i < 6; i++)
+    {
+
+        EXPECT_EQ(buffer[i + 6], i + 1);
+    }
+
+    EXPECT_EQ(buffer[0], 0x01);
+    EXPECT_EQ(buffer[1], 0x02);
+    EXPECT_EQ(buffer[2], 0x03);
+    EXPECT_EQ(buffer[3], 0x04);
+    EXPECT_EQ(buffer[4], 0x05);
+    EXPECT_EQ(buffer[5], 0x06);
+}
+
+TEST(OpenLcbUtilities, copy_event_id_to_config_mem_buffer)
+{
+
+    configuration_memory_buffer_t buffer;
+
+    OpenLcbUtilities_copy_event_id_to_config_mem_buffer(&buffer, 0x0102030405060708, 0);
+
+    for (int i = 0; i < 8; i++)
+    {
+
+        EXPECT_EQ(buffer[i], i + 1);
+    }
+
+    OpenLcbUtilities_copy_event_id_to_config_mem_buffer(&buffer, 0x0102030405060708, 10);
+
+    for (int i = 0; i < 8; i++)
+    {
+
+        EXPECT_EQ(buffer[i + 10], i + 1);
+    }
+
+    // original should not be touched
+    EXPECT_EQ(buffer[0], 0x01);
+    EXPECT_EQ(buffer[1], 0x02);
+    EXPECT_EQ(buffer[2], 0x03);
+    EXPECT_EQ(buffer[3], 0x04);
+    EXPECT_EQ(buffer[4], 0x05);
+    EXPECT_EQ(buffer[5], 0x06);
+    EXPECT_EQ(buffer[6], 0x07);
+    EXPECT_EQ(buffer[7], 0x08);
+}
+
+TEST(OpenLcbUtilities, copy_config_mem_buffer_to_event_id)
+{
+
+    configuration_memory_buffer_t buffer;
+    event_id_t event_id;
+
+    for (int i = 0; i < 8; i++)
+    {
+
+        buffer[i] = i + 1;
+    }
+    event_id = OpenLcbUtilities_copy_config_mem_buffer_to_event_id(&buffer, 0);
+    EXPECT_EQ(event_id, 0x0102030405060708);
+
+    for (int i = 0; i < 8; i++)
+    {
+
+        buffer[i + 10] = i + 1;
+    }
+    event_id = OpenLcbUtilities_copy_config_mem_buffer_to_event_id(&buffer, 10);
+    EXPECT_EQ(event_id, 0x0102030405060708);
+
+    // original should not be touched
+    EXPECT_EQ(buffer[0], 0x01);
+    EXPECT_EQ(buffer[1], 0x02);
+    EXPECT_EQ(buffer[2], 0x03);
+    EXPECT_EQ(buffer[3], 0x04);
+    EXPECT_EQ(buffer[4], 0x05);
+    EXPECT_EQ(buffer[5], 0x06);
+    EXPECT_EQ(buffer[6], 0x07);
+    EXPECT_EQ(buffer[7], 0x08);
 }
