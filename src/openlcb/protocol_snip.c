@@ -277,7 +277,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
     }
 
-    if (!OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+    if (!OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 

@@ -79,11 +79,11 @@ extern bool OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t* openlcb
 
 extern void OpenLcbUtilities_set_multi_frame_flag( uint8_t* target,  uint8_t flag);  // MULTIFRAME_ONLY, MULTIFRAME_FIRST, MULTIFRAME_MIDDLE, MULTIFRAME_FINAL
 
-extern bool OpenLcbUtilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
+extern bool OpenLcbUtilities_is_addressed_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
-extern bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t* event_index);
+extern bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, event_id_t event_id, uint16_t* event_index);
 
-extern bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t* event_index);
+extern bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, event_id_t event_id, uint16_t* event_index);
 
 extern bool OpenLcbUtilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 

@@ -552,7 +552,7 @@ void ProtocolEventTransport_handle_identify_dest(openlcb_node_t * openlcb_node, 
 
     }
 
-    if (OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+    if (OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg)) {
 
         ProtocolEventTransport_handle_identify(openlcb_node, openlcb_msg, worker_msg);
 

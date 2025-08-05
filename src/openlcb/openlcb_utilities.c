@@ -269,7 +269,7 @@ void OpenLcbUtilities_set_multi_frame_flag(uint8_t* target, uint8_t flag) {
 
     // Clear the upper nibble 
     *target = *target & 0x0F;
-    
+
     // Set the flag in the upper nibble
     *target = *target | flag;
 
@@ -297,7 +297,7 @@ uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t* openlcb_m
 
 }
 
-bool OpenLcbUtilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+bool OpenLcbUtilities_is_addressed_message_for_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
     if ((openlcb_node->alias == openlcb_msg->dest_alias) | (openlcb_node->id == openlcb_msg->dest_id))
 
@@ -309,23 +309,17 @@ bool OpenLcbUtilities_is_message_for_node(openlcb_node_t* openlcb_node, openlcb_
 
 }
 
-bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t *event_index) {
-
-    uint16_t indexer = 0;
+bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb_node, event_id_t event_id, uint16_t *event_index) {
 
     for (int i = 0; i < openlcb_node->producers.count; i++) {
 
-        if (i < USER_DEFINED_PRODUCER_COUNT)
+        if (openlcb_node->producers.list[i] == event_id) {
 
-            if (openlcb_node->producers.list[i] == event_id) {
+            (*event_index) = i;
 
-                (*event_index) = indexer;
+            return true;
 
-                return true;
-
-            }
-
-        indexer++;
+        }
 
     }
 
@@ -333,35 +327,28 @@ bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb
 
 }
 
-bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, uint64_t event_id, uint16_t* event_index) {
-
-    uint16_t indexer = 0;
+bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb_node, event_id_t event_id, uint16_t* event_index) {
 
     for (int i = 0; i < openlcb_node->consumers.count; i++) {
 
-        if (i < USER_DEFINED_CONSUMER_COUNT)
+        if (openlcb_node->consumers.list[i] == event_id) {
 
-            if (openlcb_node->consumers.list[i] == event_id) {
+            (*event_index) = i;
 
-                (*event_index) = indexer;
+            return true;
 
-                return true;
-
-            }
-
-        indexer++;
+        }
 
     }
 
     return false;
-
 
 }
 
 bool OpenLcbUtilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
 
-    if (OpenLcbUtilities_is_message_for_node(openlcb_node, openlcb_msg)) {
+    if (OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg)) {
 
         if (openlcb_node->state.openlcb_msg_handled)
 
