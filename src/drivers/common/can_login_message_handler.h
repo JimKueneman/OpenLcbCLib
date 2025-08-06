@@ -53,29 +53,29 @@ extern "C" {
 
 extern void CanLoginMessageHandler_init(openlcb_node_t* next_node);
 
-extern void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node);
+extern void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node);
 
-extern void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node);
+extern void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node);
 
-extern void CanFrameMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t* worker_msg);
+extern void CanLoginMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t* worker_msg);
+extern void CanLoginMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t* worker_msg);
+extern void CanLoginMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t* worker_msg);
+extern void CanLoginMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_wait_200ms(openlcb_node_t* next_node);
+extern void CanLoginMessageHandler_wait_200ms(openlcb_node_t* next_node);
 
-extern void CanFrameMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* worker_msg);
+extern void CanLoginMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg);
+extern void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+extern void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
-extern void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+extern void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
-extern void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+extern void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
 
 #ifdef	__cplusplus

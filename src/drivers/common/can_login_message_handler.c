@@ -68,7 +68,7 @@ void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
 }
 
-void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node) {
+void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node) {
 
     OpenLcbNode_clear_alias_mapping(next_node->index);
     
@@ -77,7 +77,7 @@ void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node) {
 
 }
 
-void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
+void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
 
@@ -93,7 +93,7 @@ void CanFrameMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
 }
 
-void CanFrameMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t* worker_msg) {
+void CanLoginMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t* worker_msg) {
 
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((next_node->id >> 24) & 0xFFF000) | next_node->alias); // AA0203040506
@@ -107,7 +107,7 @@ void CanFrameMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t*
 
 }
 
-void CanFrameMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t* worker_msg) {
+void CanLoginMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t* worker_msg) {
 
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((next_node->id >> 12) & 0xFFF000) | next_node->alias);
@@ -120,7 +120,7 @@ void CanFrameMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t*
 
 }
 
-void CanFrameMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t* worker_msg) {
+void CanLoginMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t* worker_msg) {
 
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((next_node->id & 0xFFF000) | next_node->alias);
@@ -133,7 +133,7 @@ void CanFrameMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t*
 
 }
 
-void CanFrameMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t* worker_msg) {
+void CanLoginMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t* worker_msg) {
 
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((next_node->id << 12) & 0xFFF000) | next_node->alias);
@@ -146,7 +146,7 @@ void CanFrameMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t*
 
 }
 
-void CanFrameMessageHandler_wait_200ms(openlcb_node_t* next_node) {
+void CanLoginMessageHandler_wait_200ms(openlcb_node_t* next_node) {
 
     if (next_node->timerticks > 3) {
 
@@ -156,7 +156,7 @@ void CanFrameMessageHandler_wait_200ms(openlcb_node_t* next_node) {
 
 }
 
-void CanFrameMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* worker_msg) {
+void CanLoginMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* worker_msg) {
 
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | next_node->alias;
     worker_msg->payload_count = 0;
@@ -169,7 +169,7 @@ void CanFrameMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* w
 
 }
 
-void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg) {
+void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg) {
 
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | next_node->alias;
     CanUtilities_copy_node_id_to_payload(worker_msg, next_node->id, 0);
@@ -188,7 +188,7 @@ void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
 }
 
-void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
+void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
     OpenLcbUtilities_load_openlcb_message(
             openlcb_worker,
@@ -222,7 +222,7 @@ void CanFrameMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
 
 }
 
-void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
+void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
@@ -272,7 +272,7 @@ void CanFrameMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
 }
 
-void CanFrameMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
+void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
