@@ -55,8 +55,6 @@
 #include "../../openlcb/protocol_event_transport.h"
 
 
-
-
 void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
     OpenLcbNode_clear_alias_mapping(next_node->index);
@@ -190,16 +188,7 @@ void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
 void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
-    OpenLcbUtilities_load_openlcb_message(
-            openlcb_worker,
-            next_node->alias,
-            next_node->id,
-            0,
-            0,
-            MTI_INITIALIZATION_COMPLETE,
-            6
-            );
-
+    OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
 
     if (next_node->parameters->protocol_support & PSI_SIMPLE) {
 
@@ -207,9 +196,7 @@ void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
 
     }
 
-
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
-
 
     if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
 
@@ -230,18 +217,10 @@ void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
         if (next_node->producers.enumerator.enum_index < next_node->producers.count) {
 
-            OpenLcbUtilities_load_openlcb_message(
-                    openlcb_worker,
-                    next_node->alias,
-                    next_node->id,
-                    0,
-                    0,
-                    ProtocolEventTransport_extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index),
-                    6
-                    );
-
+            uint16_t event_mti = ProtocolEventTransport_extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index);
+            
+            OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias,next_node->id, 0, 0, event_mti, 6);
             OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
-
 
             if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
 
@@ -280,18 +259,10 @@ void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
         if (next_node->consumers.enumerator.enum_index < next_node->consumers.count) {
 
-            OpenLcbUtilities_load_openlcb_message(
-                    openlcb_worker,
-                    next_node->alias,
-                    next_node->id,
-                    0,
-                    0,
-                    ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index),
-                    6
-                    );
-
+            uint16_t event_mti = ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index)
+            
+            OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, event_mti, 6);
             OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
-
 
             if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
 
