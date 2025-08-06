@@ -59,6 +59,16 @@ extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_
 
 extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
 
+extern openlcb_msg_t* CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+
+extern openlcb_msg_t* CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index);
+
+extern openlcb_msg_t* CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index);
+
+extern openlcb_msg_t* CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+
+extern void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+
 
 #ifdef	__cplusplus
 }

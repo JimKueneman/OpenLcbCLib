@@ -259,7 +259,7 @@ void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
         if (next_node->consumers.enumerator.enum_index < next_node->consumers.count) {
 
-            uint16_t event_mti = ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index)
+            uint16_t event_mti = ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index);
             
             OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, event_mti, 6);
             OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
