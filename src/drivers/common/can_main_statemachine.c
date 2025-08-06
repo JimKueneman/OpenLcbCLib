@@ -109,7 +109,7 @@ static void _run_can_frame_statemachine(openlcb_node_t* openlcb_node, can_msg_t*
             case CAN_CONTROL_FRAME_CID5:
             case CAN_CONTROL_FRAME_CID4:
 
-                CanFrameMessageHandler_cid(openlcb_node, can_msg, worker_msg);
+       //         CanFrameMessageHandler_cid(openlcb_node, can_msg, worker_msg);
 
                 return;
 

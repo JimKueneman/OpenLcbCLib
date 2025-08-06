@@ -58,64 +58,9 @@
 #define OFFSET_DEST_ID_IN_IDENTIFIER  0
 #define OFFSET_NO_DEST_ID             0
 
-
-
 static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
     return (can_msg->identifier >> 12) & 0x0FFF;
-}
-
-static void _run_global_addressed_messages_statemachine(can_msg_t* can_msg) {
-
-    if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
-
-        uint16_t can_mti = _extract_can_mti_from_can_identifier(can_msg);
-
-        switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
-
-            case MULTIFRAME_ONLY:
-
-                if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
-
-                    CanFrameMessageHandler_handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
-
-                } else
-
-                    CanFrameMessageHandler_handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
-
-                break;
-
-            case MULTIFRAME_FIRST:
-
-                if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY)
-
-                    CanFrameMessageHandler_handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
-
-                else
-
-                    // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
-                    CanFrameMessageHandler_handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
-
-                break;
-
-            case MULTIFRAME_MIDDLE:
-
-                CanFrameMessageHandler_handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
-
-                break;
-
-            case MULTIFRAME_FINAL:
-
-                CanFrameMessageHandler_handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
-
-                break;
-        }
-    } else { // No Destination Address
-
-        CanFrameMessageHandler_handle_single_frame(can_msg, OFFSET_NO_DEST_ID, BASIC);
-
-    }
-
 }
 
 static uint8_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
@@ -164,123 +109,170 @@ static uint8_t _handle_incoming_cid(can_msg_t* can_msg) {
 
 }
 
-static void _run_incoming_can_variable_field_statemachine(can_msg_t* can_msg) {
-
-    switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
-
-        case CAN_CONTROL_FRAME_RID: // Reserve ID
-
-            _handle_rid_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
-
-            _handle_amd_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_AME:
-
-            _handle_ame_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_AMR:
-
-            _handle_amr_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
-
-            break;
-
-    }
-
-}
-
-static void _run_incoming_can_frame_sequence_number_statemachine(can_msg_t* can_msg) {
-
-    switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
-
-        case CAN_CONTROL_FRAME_CID7:
-        case CAN_CONTROL_FRAME_CID6:
-        case CAN_CONTROL_FRAME_CID5:
-        case CAN_CONTROL_FRAME_CID4:
-
-            _handle_incoming_cid(can_msg);
-
-            return;
-
-        case CAN_CONTROL_FRAME_CID3:
-        case CAN_CONTROL_FRAME_CID2:
-        case CAN_CONTROL_FRAME_CID1:
-
-            return;
-    }
-
-}
-
 static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg_t* can_msg) {
 
-    if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
+    if (CanUtilities_is_openlcb_message(can_msg)) { 
+        
+        //  Handle pure OpenLCB Messages
 
         switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
             case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
 
-                _run_global_addressed_messages_statemachine(can_msg);
-                
+                if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
+
+                    uint16_t can_mti = _extract_can_mti_from_can_identifier(can_msg);
+
+                    switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
+
+                        case MULTIFRAME_ONLY:
+
+                            if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
+
+                                CanFrameMessageHandler_handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
+
+                            } else
+
+                                CanFrameMessageHandler_handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
+
+                            break;
+
+                        case MULTIFRAME_FIRST:
+
+                            if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY)
+
+                                CanFrameMessageHandler_handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
+
+                            else
+
+                                // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
+                                CanFrameMessageHandler_handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
+
+                            break;
+
+                        case MULTIFRAME_MIDDLE:
+
+                            CanFrameMessageHandler_handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
+
+                            break;
+
+                        case MULTIFRAME_FINAL:
+
+                            CanFrameMessageHandler_handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
+
+                            break;
+                    }
+                } else { // No Destination Address
+
+                    CanFrameMessageHandler_handle_single_frame(can_msg, OFFSET_NO_DEST_ID, BASIC);
+
+                }
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_ONLY:
 
                 CanFrameMessageHandler_handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
-                
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_FIRST:
 
                 CanFrameMessageHandler_handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
-                
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
 
                 CanFrameMessageHandler_handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
-                
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_FINAL:
 
                 CanFrameMessageHandler_handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
-                
+
                 break;
 
             case CAN_FRAME_TYPE_RESERVED:
 
                 break;
-                
+
             case CAN_FRAME_TYPE_STREAM:
 
                 break;
         }
 
-    } else { // CAN Control Messages
+    } else { 
+        
+        // CAN Control Messages
 
-        if (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+        switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
-            _run_incoming_can_frame_sequence_number_statemachine(can_msg);
+            case 0:
 
-        } else {
+                switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
-            _run_incoming_can_variable_field_statemachine(can_msg);
+                    case CAN_CONTROL_FRAME_CID7:
+                    case CAN_CONTROL_FRAME_CID6:
+                    case CAN_CONTROL_FRAME_CID5:
+                    case CAN_CONTROL_FRAME_CID4:
+
+                        _handle_incoming_cid(can_msg);
+
+                        return;
+
+                    case CAN_CONTROL_FRAME_CID3:
+                    case CAN_CONTROL_FRAME_CID2:
+                    case CAN_CONTROL_FRAME_CID1:
+
+                        return;
+                }
+
+                break;
+
+            default:
+
+                switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
+
+                    case CAN_CONTROL_FRAME_RID: // Reserve ID
+
+                        _handle_rid_control_frame(can_msg);
+                        break;
+
+                    case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
+
+                        _handle_amd_control_frame(can_msg);
+                        break;
+
+                    case CAN_CONTROL_FRAME_AME:
+
+                        _handle_ame_control_frame(can_msg);
+                        break;
+
+                    case CAN_CONTROL_FRAME_AMR:
+
+                        _handle_amr_control_frame(can_msg);
+                        break;
+
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
+
+                        // Do nothing
+                        break;
+
+                }
+
+                break;
+
 
         }
 
-    };
+    }
 
-};
+}
 
 // Call on startup to initialize variables and callbacks
 

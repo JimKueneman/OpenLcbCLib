@@ -98,25 +98,6 @@ static bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* 
 
 }
 
-static bool _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
-
-    if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
-
-        worker_msg->payload_count = 0;
-        worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_node->alias;
-
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg))
-
-            can_node->state.can_msg_handled = true;
-
-        return true;
-
-    }
-
-    return false;
-
-}
-
 static uint32_t _ack_reject_identifier(uint16_t source_alias) {
 
     return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12) | source_alias);
@@ -169,12 +150,37 @@ static openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, u
 
 }
 
-void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
-
-    if (!_check_for_soft_alias_conflict(can_node, can_msg, worker_msg)) {
-
-        can_node->state.can_msg_handled = true;
-
+void CanFrameMessageHandler_cid(can_msg_t* can_msg) {
+    
+    // Do we care about this alias?
+    
+    printf("CanFrameMessageHandler_cid\n");
+    
+    alias_mapping_t *mapping = OpenLcbNode_find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+    
+    
+    // Nope, move along
+    
+    if (!mapping) {
+        
+        return;
+        
+    }
+    
+    // We care, fight back
+    
+    can_msg_t* new_msg = CanBufferStore_allocate_buffer();
+    
+    assert(new_msg);  // should never happen
+    
+    if (new_msg) {
+          
+        new_msg->state.addressed_direct_tx = true;
+        new_msg->payload_count = 0;
+        new_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | mapping->alias;
+        
+        CanBufferFifo_push(new_msg);
+        
     }
 
 }
