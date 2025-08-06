@@ -64,6 +64,16 @@ extern uint16_t OpenLcbNode_generate_alias(uint64_t seed);
 
 extern void OpenLcbNode_100ms_timer_tick(void);
 
+// Only to be called from the main message loop
+
+extern void OpenLcbNode_set_alias_mapping(uint8_t index, node_id_t node_id, uint16_t alias);
+
+extern void OpenLcbNode_clear_alias_mapping(uint8_t index);
+
+// Only to be called from the thread/interrupt that is used for physical layer incoming messages on the CAN Rx defined through the driver_can.h
+
+extern alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16_t alias);
+
 
 #ifdef	__cplusplus
 }

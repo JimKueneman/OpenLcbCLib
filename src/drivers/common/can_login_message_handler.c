@@ -59,6 +59,8 @@
 
 void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
+    OpenLcbNode_clear_alias_mapping(next_node->index);
+    
     next_node->seed = next_node->id;
     next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
 
@@ -68,6 +70,8 @@ void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
 void CanFrameMessageHandler_generate_seed(openlcb_node_t* next_node) {
 
+    OpenLcbNode_clear_alias_mapping(next_node->index);
+    
     next_node->seed = OpenLcbNode_generate_seed(next_node->seed);
     next_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
 
@@ -158,7 +162,7 @@ void CanFrameMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* w
     worker_msg->payload_count = 0;
 
     if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
-
+        
         next_node->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
 
     }
@@ -175,6 +179,9 @@ void CanFrameMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
         next_node->state.initial_events_broadcast_complete = false;
         next_node->state.permitted = true;
+        
+        OpenLcbNode_set_alias_mapping(next_node->index, next_node->id, next_node->alias);
+         
         next_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
 
     }

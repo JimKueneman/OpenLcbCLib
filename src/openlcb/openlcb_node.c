@@ -42,8 +42,15 @@
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 
+#include "../drivers/driver_can.h"
+
 static openlcb_nodes_t _openlcb_nodes;
 static uint16_t _node_enum_index_array[6];
+
+// Used by the interrupt state-machines to see if messages are for our nodes
+// Makes it easier to deal with not having to block the interrupts on every access
+// the node structures, this array is to be used by the incoming message interrupt only
+static alias_mapping_t _alias_mapping[USER_DEFINED_NODE_BUFFER_DEPTH];
 
 static void _clear_node(openlcb_node_t* openlcb_node) {
 
@@ -107,6 +114,8 @@ void OpenLcbNode_initialize(void) {
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
         _clear_node(&_openlcb_nodes.node[i]);
+        _alias_mapping[i].alias = 0;
+        _alias_mapping[i].node_id = 0;
 
     }
 
@@ -288,4 +297,80 @@ void OpenLcbNode_100ms_timer_tick(void) {
 
     };
 
+}
+
+void OpenLcbNode_set_alias_mapping(uint8_t index, node_id_t node_id, uint16_t alias) {
+
+    if (index >= USER_DEFINED_NODE_BUFFER_DEPTH) {
+
+        return;
+
+    }
+
+    DriverCan_pause_can_rx();
+    _alias_mapping[index].alias = alias;
+    _alias_mapping[index].node_id = node_id;
+    DriverCan_resume_can_rx();
+
+}
+
+void OpenLcbNode_clear_alias_mapping(uint8_t index) {
+
+    if (index >= USER_DEFINED_NODE_BUFFER_DEPTH) {
+
+        return;
+
+    }
+
+    DriverCan_pause_can_rx();
+    _alias_mapping[index].alias = 0;
+    _alias_mapping[index].node_id = 0;
+    DriverCan_resume_can_rx();
+
+}
+
+static alias_mapping_t *_find_mapping_by_alias(uint16_t alias) {
+
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
+
+        if (_alias_mapping[i].alias == alias) {
+            
+            return &_alias_mapping[i];
+        }
+
+    }
+    
+    return NULL;
+
+}
+
+static alias_mapping_t *_find_mapping_by_node_id(node_id_t node_id) {
+
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
+
+        if (_alias_mapping[i].node_id == node_id) {
+            
+            return &_alias_mapping[i];
+            
+        }
+
+    }
+    
+    return NULL;
+
+}
+
+alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16_t alias) {
+
+    if ((node_id) && (!alias)) {
+
+        return _find_mapping_by_node_id(node_id);
+
+    } else if ((!node_id) && (alias)) {
+
+        return _find_mapping_by_alias(alias);
+
+    }
+    
+    return NULL;
 }
