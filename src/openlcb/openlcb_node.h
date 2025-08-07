@@ -70,9 +70,13 @@ extern void OpenLcbNode_set_alias_mapping(uint8_t index, node_id_t node_id, uint
 
 extern void OpenLcbNode_clear_alias_mapping(uint8_t index);
 
+extern void OpenLcbNode_check_and_handle_duplicate_alias(openlcb_node_t* openlcb_node);
+
 // Only to be called from the thread/interrupt that is used for physical layer incoming messages on the CAN Rx defined through the driver_can.h
 
 extern alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16_t alias);
+
+extern bool OpenLcbNode_set_mapping_duplicate_alias_detected(uint16_t node_alias);
 
 
 #ifdef	__cplusplus

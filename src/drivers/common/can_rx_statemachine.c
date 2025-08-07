@@ -103,16 +103,10 @@ static uint8_t _handle_amr_control_frame(can_msg_t* can_msg) {
 
 }
 
-static uint8_t _handle_incoming_cid(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
 static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg_t* can_msg) {
 
-    if (CanUtilities_is_openlcb_message(can_msg)) { 
-        
+    if (CanUtilities_is_openlcb_message(can_msg)) {
+
         //  Handle pure OpenLCB Messages
 
         switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
@@ -203,56 +197,38 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
                 break;
         }
 
-    } else { 
-        
+    } else {
+
         // CAN Control Messages
 
         switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
             case 0:
 
-                switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
-
-                    case CAN_CONTROL_FRAME_CID7:
-                    case CAN_CONTROL_FRAME_CID6:
-                    case CAN_CONTROL_FRAME_CID5:
-                    case CAN_CONTROL_FRAME_CID4:
-
-                        _handle_incoming_cid(can_msg);
-
-                        return;
-
-                    case CAN_CONTROL_FRAME_CID3:
-                    case CAN_CONTROL_FRAME_CID2:
-                    case CAN_CONTROL_FRAME_CID1:
-
-                        return;
-                }
-
-                break;
-
-            default:
-
                 switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
 
                     case CAN_CONTROL_FRAME_RID: // Reserve ID
 
+                        
                         _handle_rid_control_frame(can_msg);
                         break;
 
                     case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
 
                         _handle_amd_control_frame(can_msg);
+                        
                         break;
 
                     case CAN_CONTROL_FRAME_AME:
 
                         _handle_ame_control_frame(can_msg);
+                        
                         break;
 
                     case CAN_CONTROL_FRAME_AMR:
 
                         _handle_amr_control_frame(can_msg);
+                        
                         break;
 
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
@@ -263,12 +239,39 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
                         // Do nothing
                         break;
 
+                    default:
+
+                        // Do nothing
+                        break; // default
+
                 }
 
                 break;
 
+            default:
 
-        }
+                switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+
+                    case CAN_CONTROL_FRAME_CID7:
+                    case CAN_CONTROL_FRAME_CID6:
+                    case CAN_CONTROL_FRAME_CID5:
+                    case CAN_CONTROL_FRAME_CID4:
+
+                        
+                        CanFrameMessageHandler_cid(can_msg);
+
+                        break;
+
+                    case CAN_CONTROL_FRAME_CID3:
+                    case CAN_CONTROL_FRAME_CID2:
+                    case CAN_CONTROL_FRAME_CID1:
+
+                        break;
+                }
+
+                break; // default
+
+        } // CAN control messages
 
     }
 

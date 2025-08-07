@@ -369,7 +369,7 @@ static bool _try_transmit_addressed_direct_tx_can_message(can_main_statemachine_
 
             if (next_node->state.run_state == RUNSTATE_RUN) {
 
-                if (can_helper->active_msg->identifier && 0xFFF == next_node->alias) {
+                if ((can_helper->active_msg->identifier & 0xFFF) == next_node->alias) {
 
                     if (CanTxStatemachine_try_transmit_can_message(can_helper->active_msg)) {
 
@@ -537,6 +537,10 @@ void CanMainStateMachine_run(void) {
     openlcb_node_t* next_node = OpenLcbNode_get_first(0);
 
     while (next_node) {
+        
+        DriverCan_pause_can_rx();
+        OpenLcbNode_check_and_handle_duplicate_alias(next_node);
+        DriverCan_resume_can_rx();
 
         _reset_message_handled_flags_if_required(next_node, is_newly_popped_can_active_msg, is_newly_popped_openlcb_active_msg);
 

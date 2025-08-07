@@ -63,7 +63,6 @@
 
 const uint32_t OPENLCB_GLOBAL_ADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
 
-
 static void _flush_alias_node_id_mappings(void) {
 
     int i = 0;
@@ -151,51 +150,118 @@ static openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, u
 }
 
 void CanFrameMessageHandler_cid(can_msg_t* can_msg) {
-    
-    // Do we care about this alias?
-    
-    printf("CanFrameMessageHandler_cid\n");
-    
+
+    // CanFrameTransfers.pdf 6.2.5 
+    // If the frame is a Check ID (CID) frame, send a Reserve ID (RID) frame in response.
+    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
+    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
+    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
+    //    ID alias.
+    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
+    //    immediately stop using the matching Node ID alias.
+    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
+    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
+
+    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
+    // reallocate the alias.
+
+    // Do we care about this alias? Note mapping is only valid for permitted nodes
+
     alias_mapping_t *mapping = OpenLcbNode_find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
-    
-    
+
+
     // Nope, move along
-    
+
     if (!mapping) {
-        
+
         return;
-        
+
     }
-    
+
     // We care, fight back
-    
+
     can_msg_t* new_msg = CanBufferStore_allocate_buffer();
-    
-    assert(new_msg);  // should never happen
-    
+
+    assert(new_msg); // should never happen
+
     if (new_msg) {
-          
+
         new_msg->state.addressed_direct_tx = true;
         new_msg->payload_count = 0;
         new_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | mapping->alias;
-        
+
         CanBufferFifo_push(new_msg);
-        
+
     }
 
 }
 
 void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
+    // CanFrameTransfers.pdf 6.2.5 
+    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
+    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
+    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
+    //    ID alias.
+    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
+    //    immediately stop using the matching Node ID alias.
+    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
+    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
 
-        can_node->state.can_msg_handled = true;
+    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
+    // reallocate the alias.
+
+    // Do we care about this alias? Note mapping is only valid for permitted nodes
+
+    alias_mapping_t *mapping = OpenLcbNode_find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+
+
+    // Nope, move along
+
+    if (!mapping) {
+
+        return;
+
+    }
+
+    // We care, fight back
+
+    can_msg_t* new_msg = CanBufferStore_allocate_buffer();
+
+    assert(new_msg); // should never happen
+
+    if (new_msg) {
+
+        // reset
+        new_msg->state.addressed_direct_tx = true;
+        new_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | mapping->alias;
+        CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
+
+
+        bool success = CanBufferFifo_push(new_msg);
+
+        assert(success); // should never happen
+        
+        OpenLcbNode_set_mapping_duplicate_alias_detected(mapping->alias);
 
     }
 
 }
 
 void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+
+    // CanFrameTransfers.pdf 6.2.5 
+    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
+    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
+    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
+    //    ID alias.
+    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
+    //    immediately stop using the matching Node ID alias.
+    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
+    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
+
+    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
+    // reallocate the alias.
 
     if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
 
@@ -207,6 +273,18 @@ void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
 void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
+    // CanFrameTransfers.pdf 6.2.5 
+    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
+    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
+    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
+    //    ID alias.
+    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
+    //    immediately stop using the matching Node ID alias.
+    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
+    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
+
+    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
+    // reallocate the alias.
 
     // Someone is requesting we reply with Alias Mapping Definitions for our Node(s)
 
@@ -243,7 +321,18 @@ void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, ca
 
 void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
 
-    // printf("AMR\n");
+    // CanFrameTransfers.pdf 6.2.5 
+    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
+    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
+    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
+    //    ID alias.
+    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
+    //    immediately stop using the matching Node ID alias.
+    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
+    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
+
+    // Need access to the permitted state AND able to flag the node that a problem has occurred and need to
+    // reallocate the alias.
 
     can_node->state.can_msg_handled = true;
 
