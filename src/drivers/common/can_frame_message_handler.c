@@ -53,402 +53,291 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 
-// Required external function calls:
-//
-// CanUtilities_extract_source_alias_from_can_identifier();
-// CanUtilities_copy_node_id_to_payload();
-// CanTxStatemachine_try_transmit_can_message();
-//
-//
 
-const uint32_t OPENLCB_GLOBAL_ADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
 
-static void _flush_alias_node_id_mappings(void) {
+#define _OPENLCB_GLOBAL_ADDRESSED (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
 
-    int i = 0;
+#define _DATAGRAM_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12))
+#define _OPTIONAL_INTERACTION_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12))
 
-    i = i + 1;
 
-    //   TODO:  
+static interface_can_frame_message_handler_t *_interface;
+
+void CanFrameMessageHandler_initialize(const interface_can_frame_message_handler_t *interface) {
+
+    _interface = (interface_can_frame_message_handler_t*) interface;
 
 }
 
-static bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+static void _allocate_and_push(uint32_t identifier, uint8_t buffer_count, payload_bytes_can_t *buffer) {
 
-    if (can_node->alias == CanUtilities_extract_source_alias_from_can_identifier(can_msg)) {
+    can_msg_t* new_msg = CanBufferStore_allocate_buffer();
 
-        worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | can_node->alias;
-        CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
+    if (new_msg) {
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+        new_msg->payload_count = buffer_count;
+        new_msg->identifier = identifier;
 
-            can_node->state.can_msg_handled = true;
-            can_node->state.permitted = 0;
-            can_node->state.initalized = 0;
-            can_node->state.run_state = RUNSTATE_GENERATE_SEED;
+        for (int i = 0; i < buffer_count; i++) {
+
+            new_msg->payload[i] = (*buffer)[i];
 
         }
 
-        return true;
+        if (!CanBufferFifo_push(new_msg)) {
 
-    } else
-
-        return false;
-
-}
-
-static uint32_t _ack_reject_identifier(uint16_t source_alias) {
-
-    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12) | source_alias);
-
-}
-
-static uint32_t _oir_identifier(uint16_t source_alias) {
-
-    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12) | source_alias);
-
-}
-
-static openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
-
-    can_msg_t* can_msg_error = CanBufferStore_allocate_buffer();
-
-    if (can_msg_error) {
-
-        if (mti == MTI_DATAGRAM) {
-
-            can_msg_error->identifier = _ack_reject_identifier(source_alias);
-
-        } else {
-
-            can_msg_error->identifier = _oir_identifier(source_alias);
+            CanBufferStore_free_buffer(new_msg);
 
         }
-
-        can_msg_error->payload[0] = (uint8_t) (dest_alias >> 8) & 0x00FF;
-        can_msg_error->payload[1] = (uint8_t) dest_alias & 0x00FF;
-        can_msg_error->payload[2] = (uint8_t) (error_code >> 8) & 0x00FF;
-        can_msg_error->payload[3] = (uint8_t) error_code & 0x00FF;
-
-        // Flag so it is directly sent out and not processed by nodes
-        can_msg_error->state.addressed_direct_tx = true;
-
-        can_msg_error->payload_count = 4;
-
-        if (!CanBufferFifo_push(can_msg_error)) {
-
-            CanBufferStore_free_buffer(can_msg_error);
-
-            return NULL;
-
-        };
 
     }
 
-    return NULL;
+}
+
+static void _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
+
+    payload_bytes_can_t buffer;
+
+    buffer[0] = (uint8_t) (dest_alias >> 8) & 0x00FF;
+    buffer[1] = (uint8_t) dest_alias & 0x00FF;
+    buffer[2] = (uint8_t) (error_code >> 8) & 0x00FF;
+    buffer[3] = (uint8_t) error_code & 0x00FF;
+
+    if (mti == MTI_DATAGRAM) {
+
+        _allocate_and_push((_DATAGRAM_REJECT_REPLY | source_alias), 4, &buffer);
+
+    } else {
+
+        _allocate_and_push((_OPTIONAL_INTERACTION_REJECT_REPLY | source_alias), 4, &buffer);
+
+    }
+
+}
+
+bool _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg_t* can_msg) {
+
+    payload_bytes_can_t buffer;
+
+    // Check for duplicate Alias 
+    alias_mapping_t *mapping = _interface->find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+
+    if (mapping) {
+
+        CanUtilities_copy_node_id_to_can_payload_buffer(mapping->node_id, &buffer);
+        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | mapping->alias, 6, &buffer);
+        _interface->set_mapping_duplicate_alias_detected(mapping->alias);
+        
+        return true;
+
+    }
+    
+    return false;
 
 }
 
 void CanFrameMessageHandler_cid(can_msg_t* can_msg) {
 
-    // CanFrameTransfers.pdf 6.2.5 
-    // If the frame is a Check ID (CID) frame, send a Reserve ID (RID) frame in response.
-    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
-    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
-    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
-    //    ID alias.
-    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
-    //    immediately stop using the matching Node ID alias.
-    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
-    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
-
-    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
-    // reallocate the alias.
-
-    // Do we care about this alias? Note mapping is only valid for permitted nodes
-
-    alias_mapping_t *mapping = OpenLcbNode_find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+    // Check for duplicate Alias 
+    alias_mapping_t *mapping = _interface->find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
 
 
-    // Nope, move along
+    if (mapping) {
 
-    if (!mapping) {
-
-        return;
-
-    }
-
-    // We care, fight back
-
-    can_msg_t* new_msg = CanBufferStore_allocate_buffer();
-
-    assert(new_msg); // should never happen
-
-    if (new_msg) {
-
-        new_msg->state.addressed_direct_tx = true;
-        new_msg->payload_count = 0;
-        new_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | mapping->alias;
-
-        CanBufferFifo_push(new_msg);
+        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | mapping->alias, 0, NULL);
 
     }
 
 }
 
-void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+void CanFrameMessageHandler_rid(can_msg_t* can_msg) {
 
-    // CanFrameTransfers.pdf 6.2.5 
-    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
-    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
-    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
-    //    ID alias.
-    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
-    //    immediately stop using the matching Node ID alias.
-    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
-    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
+    // Check for duplicate Alias 
+    _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
 
-    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
-    // reallocate the alias.
+}
 
-    // Do we care about this alias? Note mapping is only valid for permitted nodes
+void CanFrameMessageHandler_amd(can_msg_t* can_msg) {
 
-    alias_mapping_t *mapping = OpenLcbNode_find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+    // Check for duplicate Alias 
+    _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
+    
+}
 
+void CanFrameMessageHandler_ame(can_msg_t* can_msg) {
 
-    // Nope, move along
+    payload_bytes_can_t buffer;
+    alias_mapping_t *mapping = NULL;
 
-    if (!mapping) {
+    // Check for duplicate Alias  
+    if (_test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg)) {
 
         return;
 
     }
 
-    // We care, fight back
+    if (can_msg->payload_count > 0) {
 
-    can_msg_t* new_msg = CanBufferStore_allocate_buffer();
+        mapping = _interface->find_alias_mapping(CanUtilities_extract_can_payload_as_node_id(can_msg), 0);
 
-    assert(new_msg); // should never happen
+        if (mapping) {
 
-    if (new_msg) {
+            CanUtilities_copy_node_id_to_can_payload_buffer(mapping->node_id, &buffer);
+            _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | mapping->alias, 6, &buffer);
 
-        // reset
-        new_msg->state.addressed_direct_tx = true;
-        new_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | mapping->alias;
-        CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
-
-
-        bool success = CanBufferFifo_push(new_msg);
-
-        assert(success); // should never happen
-        
-        OpenLcbNode_set_mapping_duplicate_alias_detected(mapping->alias);
-
-    }
-
-}
-
-void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
-
-    // CanFrameTransfers.pdf 6.2.5 
-    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
-    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
-    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
-    //    ID alias.
-    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
-    //    immediately stop using the matching Node ID alias.
-    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
-    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
-
-    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
-    // reallocate the alias.
-
-    if (!_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
-
-        can_node->state.can_msg_handled = true;
-
-    }
-
-}
-
-void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
-
-    // CanFrameTransfers.pdf 6.2.5 
-    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
-    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
-    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
-    //    ID alias.
-    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
-    //    immediately stop using the matching Node ID alias.
-    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
-    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
-
-    // Need access to the permitted state AND be able to flag the node that a problem has occurred and need to
-    // reallocate the alias.
-
-    // Someone is requesting we reply with Alias Mapping Definitions for our Node(s)
-
-    if (can_msg->payload_count == 0) {
-
-        _flush_alias_node_id_mappings();
-
-    }
-
-    if (_check_for_hard_alias_conflict(can_node, can_msg, worker_msg)) {
-
-        return;
-
-    }
-
-    if ((can_msg->payload_count == 0) || (can_node->id == CanUtilities_extract_can_payload_as_node_id(can_msg))) {
-
-        CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
-        worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_node->alias;
-
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
-
-            can_node->state.can_msg_handled = true;
+            return;
 
         }
 
-    } else {
+    }
 
-        can_node->state.can_msg_handled = true;
+    uint16_t node_count = _interface->mapping_count();
+
+    for (uint16_t i = 0; i < node_count; i++) {
+
+        mapping = _interface->alias_mapping(i);
+
+        CanUtilities_copy_node_id_to_can_payload_buffer(mapping->node_id, &buffer);
+        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | mapping->alias, 6, &buffer);
 
     }
 
 }
 
-void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+void CanFrameMessageHandler_amr(can_msg_t* can_msg) {
 
-    // CanFrameTransfers.pdf 6.2.5 
-    // If the frame is not a Check ID (CID) frame, the node is in Permitted state, and the received
-    //    source Node ID alias is the current Node ID alias of the node, the node shall immediately
-    //    transition to Inhibited state, send an AMR frame to release and then stop using the current Node
-    //    ID alias.
-    // If the frame is not a Check ID (CID) frame and the node is not in Permitted state, the node shall
-    //    immediately stop using the matching Node ID alias.
-    // If the frame is not a Check ID (CID) frame and the received source Node ID alias is not the
-    //current Node ID alias of the node, the node shall immediately stop using the matching node ID alias.
-
-    // Need access to the permitted state AND able to flag the node that a problem has occurred and need to
-    // reallocate the alias.
-
-    can_node->state.can_msg_handled = true;
+    _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
 
 }
 
-openlcb_msg_t* CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t* new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
-    if (result) {
+    if (new_msg) {
 
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
     }
 
-    result = OpenLcbBufferStore_allocate_buffer(data_type);
+    new_msg = OpenLcbBufferStore_allocate_buffer(data_type);
 
-    if (!result) {
+    if (!new_msg) {
 
-        return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+        _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
+
+        return;
 
     }
 
-    result->mti = mti;
-    result->source_alias = source_alias;
-    result->dest_alias = dest_alias;
-    result->state.inprocess = true;
+    new_msg->mti = mti;
+    new_msg->source_alias = source_alias;
+    new_msg->dest_alias = dest_alias;
+    new_msg->state.inprocess = true;
 
-    CanUtilities_copy_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
+    CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-    if (!OpenLcbBufferList_add(result)) {
+    if (!OpenLcbBufferList_add(new_msg)) {
 
-        OpenLcbBufferStore_free_buffer(result);
+        OpenLcbBufferStore_free_buffer(new_msg);
 
-        return NULL;
+        return;
 
     };
 
-    return result;
+    return;
 
 }
 
-openlcb_msg_t* CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t* result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t* new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
-    if (!result) {
+    if (!new_msg) {
 
-        return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+
+        return;
 
     }
 
+    CanUtilities_append_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-    CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
-
-    return result;
+    return;
 
 }
 
-openlcb_msg_t* CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
     uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
 
-    openlcb_msg_t * result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t * new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
-    if (!result) {
+    if (!new_msg) {
 
-        return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+
+        return;
 
     }
 
-    CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
-    result->state.inprocess = false;
+    CanUtilities_append_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
+    new_msg->state.inprocess = false;
 
-    OpenLcbBufferList_release(result);
-    OpenLcbBufferFifo_push_existing(result);
+    OpenLcbBufferList_release(new_msg);
+    OpenLcbBufferFifo_push_existing(new_msg);
 
-    return result;
+    return;
 
 }
 
-openlcb_msg_t* CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+    
+
+    uint16_t dest_alias =  CanUtilties_extract_dest_alias_from_can_message(can_msg);
+ 
+    // Check if the frame is for us or not
+    if (dest_alias > 0) {
+        
+        if (!_interface->find_alias_mapping(0, dest_alias)) {
+            
+            return;
+            
+        }
+        
+    }
 
     openlcb_msg_t* new_msg = OpenLcbBufferStore_allocate_buffer(data_type);
 
     if (!new_msg) {
 
-        return NULL;
+        return;
 
     }
 
     new_msg->source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    new_msg->dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    new_msg->dest_alias = dest_alias;
     new_msg->mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
     new_msg->dest_id = 0;
     new_msg->source_id = 0;
     new_msg->payload_count = 0;
     CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-    if (OpenLcbBufferFifo_push(new_msg)) {
+    if (!OpenLcbBufferFifo_push(new_msg)) {
 
-        return new_msg;
+        OpenLcbBufferStore_free_buffer(new_msg);
 
     }
-
-    return NULL;
 
 }
 

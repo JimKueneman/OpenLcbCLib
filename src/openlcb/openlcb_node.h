@@ -78,6 +78,10 @@ extern alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16
 
 extern bool OpenLcbNode_set_mapping_duplicate_alias_detected(uint16_t node_alias);
 
+extern uint16_t OpenLcbNode_mapping_count(void);
+
+extern alias_mapping_t *OpenLcbNode_alias_mapping(uint16_t index);
+
 
 #ifdef	__cplusplus
 }

@@ -74,7 +74,9 @@ extern "C"
     extern uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg);
 
     extern bool CanUtilities_is_openlcb_message(can_msg_t *can_msg);
-
+    
+    extern void CanUtilities_copy_node_id_to_can_payload_buffer(node_id_t node_id, payload_bytes_can_t *buffer);
+    
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -341,6 +341,7 @@ static alias_mapping_t *_find_mapping_by_alias(uint16_t alias) {
         if (_alias_mappings[i].alias == alias) {
 
             return &_alias_mappings[i];
+            
         }
 
     }
@@ -382,13 +383,12 @@ alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16_t alia
 
 bool OpenLcbNode_set_mapping_duplicate_alias_detected(uint16_t node_alias) {
 
-
     for (int i = 0; i < LEN_DUPLICATE_ALIAS_BUFFER; i++) {
 
         if (_duplicate_alias_buffer[i] == 0) {
 
             _duplicate_alias_buffer[i] = node_alias;
-            
+
             _duplicate_alias_count++;
 
             return true;
@@ -400,31 +400,42 @@ bool OpenLcbNode_set_mapping_duplicate_alias_detected(uint16_t node_alias) {
 }
 
 void OpenLcbNode_check_and_handle_duplicate_alias(openlcb_node_t* openlcb_node) {
-    
+
     if (_duplicate_alias_count == 0) {
-        
+
         return;
-        
+
     }
-    
+
     for (int i = 0; i < LEN_DUPLICATE_ALIAS_BUFFER; i++) {
 
         if ((_duplicate_alias_buffer[i]) == openlcb_node->alias) {
-            
+
             // release any messages being handled
             openlcb_node->state.can_msg_handled = true;
             openlcb_node->state.openlcb_msg_handled = true;
-            
+
             openlcb_node->state.permitted = 0;
             openlcb_node->state.initalized = 0;
             openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
-            
-            _duplicate_alias_buffer[i] = 0;         
-            _duplicate_alias_count --;
- 
+
+            _duplicate_alias_buffer[i] = 0;
+            _duplicate_alias_count--;
+
             break;
 
         }
     }
-    
+
+}
+
+uint16_t OpenLcbNode_mapping_count(void) {
+
+    return _openlcb_nodes.count;
+
+}
+
+alias_mapping_t *OpenLcbNode_alias_mapping(uint16_t index) {
+
+    return &_alias_mappings[index];
 }

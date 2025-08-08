@@ -71,7 +71,6 @@ extern "C" {
 
     typedef struct {
         uint8_t allocated : 1;
-        uint8_t addressed_direct_tx : 1; // If set the CAN statemachine will directly send it assuming all the source/dest/mti/data is all set up.  Used for sending errors found during Can multi-frame reception
     } can_msg_state_t;
 
     typedef struct {
@@ -85,8 +84,6 @@ extern "C" {
 
     typedef struct {
         openlcb_statemachine_worker_t *openlcb_worker;
-        can_msg_t can_worker;
-        can_msg_t *active_msg;
     } can_main_statemachine_t;
 
     // Assign the function pointer to where the incoming CAN messages should be dispatched to.

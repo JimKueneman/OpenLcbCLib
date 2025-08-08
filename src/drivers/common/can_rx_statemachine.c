@@ -52,8 +52,6 @@
 
 #include "../../openlcb/openlcb_defines.h"
 
-
-
 #define OFFSET_DEST_ID_IN_PAYLOAD     2
 #define OFFSET_DEST_ID_IN_IDENTIFIER  0
 #define OFFSET_NO_DEST_ID             0
@@ -61,46 +59,6 @@
 static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
     return (can_msg->identifier >> 12) & 0x0FFF;
-}
-
-static uint8_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
-
-    can_msg_t* new_can_msg = CanBufferStore_allocate_buffer();
-
-    if (!new_can_msg) {
-
-        return false;
-
-    }
-
-    CanUtilities_copy_can_message(can_msg, new_can_msg);
-
-    return (CanBufferFifo_push(new_can_msg));
-
-}
-
-static uint8_t _handle_rid_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_amd_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_ame_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_amr_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
 }
 
 static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg_t* can_msg) {
@@ -209,25 +167,25 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                     case CAN_CONTROL_FRAME_RID: // Reserve ID
 
-                        
-                        _handle_rid_control_frame(can_msg);
+                        CanFrameMessageHandler_cid(can_msg);
+
                         break;
 
                     case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
 
-                        _handle_amd_control_frame(can_msg);
+                        CanFrameMessageHandler_amd(can_msg);
                         
                         break;
 
                     case CAN_CONTROL_FRAME_AME:
 
-                        _handle_ame_control_frame(can_msg);
+                        CanFrameMessageHandler_ame(can_msg);
                         
                         break;
 
                     case CAN_CONTROL_FRAME_AMR:
 
-                        _handle_amr_control_frame(can_msg);
+                        CanFrameMessageHandler_amr(can_msg);
                         
                         break;
 

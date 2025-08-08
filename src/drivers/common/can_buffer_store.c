@@ -43,6 +43,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h> // printf
+#include <string.h>
 
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
@@ -53,11 +54,10 @@ static uint16_t _can_buffer_store_message_allocated = 0;
 static uint16_t _can_buffer_store_message_max_allocated = 0;
 
 void CanBufferStore_initialize(void) {
-
+    
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         _can_buffer_store[i].state.allocated = false;
-        _can_buffer_store[i].state.addressed_direct_tx = false;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
 
@@ -99,8 +99,8 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
             }
 
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
-            _can_buffer_store[i].state.allocated = true;
-            _can_buffer_store[i].state.addressed_direct_tx = false;
+            
+             _can_buffer_store[i].state.allocated = true;
 
             return &_can_buffer_store[i];
 
@@ -116,7 +116,6 @@ void CanBufferStore_free_buffer(can_msg_t* msg) {
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->state.allocated = false;
-    msg->state.addressed_direct_tx = false;
 
 }
 

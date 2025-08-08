@@ -237,9 +237,9 @@ void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8
 uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset) {
 
     if (start_offset > 2) {
-        
+
         return 0;
-        
+
     }
     can_msg->payload_count = 6 + start_offset;
 
@@ -282,3 +282,16 @@ bool CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg
 
     return true;
 }
+
+void CanUtilities_copy_node_id_to_can_payload_buffer(node_id_t node_id, payload_bytes_can_t *buffer) {
+
+    for (int i = 5; i > -1; i--) {
+
+        (*buffer)[i] = (uint8_t) (node_id & 0xFF);
+
+        node_id = node_id >> 8;
+
+    }
+
+}
+

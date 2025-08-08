@@ -338,7 +338,6 @@ extern "C" {
         
     } alias_mapping_t;
     
-    
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
