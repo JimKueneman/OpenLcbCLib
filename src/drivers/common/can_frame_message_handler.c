@@ -84,11 +84,8 @@ static void _allocate_and_push(uint32_t identifier, uint8_t buffer_count, payloa
 
         }
 
-        if (!CanBufferFifo_push(new_msg)) {
-
-            CanBufferStore_free_buffer(new_msg);
-
-        }
+        // Can not fail Fifo is as large as the number of buffers
+        CanBufferFifo_push(new_msg);
 
     }
 
@@ -140,7 +137,6 @@ void CanFrameMessageHandler_cid(can_msg_t* can_msg) {
 
     // Check for duplicate Alias 
     alias_mapping_t *mapping = _interface->find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
-
 
     if (mapping) {
 
@@ -253,16 +249,9 @@ void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_b
 
     CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-    if (!OpenLcbBufferList_add(new_msg)) {
-
-        OpenLcbBufferStore_free_buffer(new_msg);
-
-        return;
-
-    };
-    
-    return;
-
+    // Can not fail List is as large as the number of buffers
+    OpenLcbBufferList_add(new_msg);
+   
 }
 
 void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
@@ -333,8 +322,6 @@ void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_bu
     OpenLcbBufferList_release(new_msg);
     OpenLcbBufferFifo_push_existing(new_msg);
 
-    return;
-
 }
 
 void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
@@ -369,12 +356,9 @@ void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_
     new_msg->payload_count = 0;
     CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
 
-    if (!OpenLcbBufferFifo_push(new_msg)) {
-
-        OpenLcbBufferStore_free_buffer(new_msg);
-
-    }
-
+    // Can not fail List is as large as the number of buffers
+    OpenLcbBufferFifo_push(new_msg);
+   
 }
 
 void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
@@ -404,8 +388,5 @@ void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t c
             CanFrameMessageHandler_handle_last_frame(can_msg, can_buffer_start_index);
 
     };
-
-    return;
-
 
 }
