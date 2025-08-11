@@ -211,11 +211,23 @@ void CanFrameMessageHandler_amr(can_msg_t* can_msg) {
 }
 
 void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+    
+    uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
+    
+        // Check if the frame is for us or not
+    if (dest_alias > 0) {
+        
+        if (!_interface->find_alias_mapping(0, dest_alias)) {
+            
+            return;
+            
+        }
+        
+    }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
-
+    uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
+    
     openlcb_msg_t* new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (new_msg) {
@@ -223,8 +235,8 @@ void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_b
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
     }
-
-    new_msg = OpenLcbBufferStore_allocate_buffer(data_type);
+   
+    new_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
     if (!new_msg) {
 
@@ -233,7 +245,7 @@ void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_b
         return;
 
     }
-
+   
     new_msg->mti = mti;
     new_msg->source_alias = source_alias;
     new_msg->dest_alias = dest_alias;
@@ -248,22 +260,34 @@ void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_b
         return;
 
     };
-
+    
     return;
 
 }
 
 void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+    
+    uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
+    
+        // Check if the frame is for us or not
+    if (dest_alias > 0) {
+        
+        if (!_interface->find_alias_mapping(0, dest_alias)) {
+            
+            return;
+            
+        }
+        
+    }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t* new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!new_msg) {
 
-        _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
         return;
 
@@ -276,16 +300,28 @@ void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_
 }
 
 void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+    
+    uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
+    
+        // Check if the frame is for us or not
+    if (dest_alias > 0) {
+        
+        if (!_interface->find_alias_mapping(0, dest_alias)) {
+            
+            return;
+            
+        }
+        
+    }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t * new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!new_msg) {
 
-        _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
+        _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
         return;
 
@@ -304,7 +340,7 @@ void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_bu
 void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
     
 
-    uint16_t dest_alias =  CanUtilties_extract_dest_alias_from_can_message(can_msg);
+    uint16_t dest_alias =  CanUtilities_extract_dest_alias_from_can_message(can_msg);
  
     // Check if the frame is for us or not
     if (dest_alias > 0) {
@@ -317,7 +353,7 @@ void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_
         
     }
 
-    openlcb_msg_t* new_msg = OpenLcbBufferStore_allocate_buffer(data_type);
+    openlcb_msg_t* new_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
     if (!new_msg) {
 
@@ -327,7 +363,7 @@ void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_
 
     new_msg->source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     new_msg->dest_alias = dest_alias;
-    new_msg->mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
+    new_msg->mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
     new_msg->dest_id = 0;
     new_msg->source_id = 0;
     new_msg->payload_count = 0;
@@ -347,8 +383,8 @@ void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t c
 
     openlcb_msg_t* openlcb_msg_inprocess = OpenLcbBufferList_find(
             CanUtilities_extract_source_alias_from_can_identifier(can_msg),
-            CanUtilties_extract_dest_alias_from_can_message(can_msg),
-            CanUtilties_convert_can_mti_to_openlcb_mti(can_msg)
+            CanUtilities_extract_dest_alias_from_can_message(can_msg),
+            CanUtilities_convert_can_mti_to_openlcb_mti(can_msg)
             );
 
 

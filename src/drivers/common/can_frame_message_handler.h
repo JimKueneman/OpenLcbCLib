@@ -51,9 +51,10 @@ extern "C" {
     typedef struct {
         
         alias_mapping_t *(*find_alias_mapping)(node_id_t node_id, uint16_t alias);
-        void (*set_mapping_duplicate_alias_detected)(uint16_t node_alias);
+        bool (*set_mapping_duplicate_alias_detected)(uint16_t node_alias);
         uint16_t(*mapping_count)(void);
         alias_mapping_t *(*alias_mapping)(uint16_t index);
+        openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum_t payload_type);
 
     } interface_can_frame_message_handler_t;
 

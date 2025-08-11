@@ -37,7 +37,7 @@ TEST(CAN_Utilities, load_can_message)
     memset(&can_msg, 0x00, sizeof(can_msg));
 
     can_msg.state.allocated = 1;
-    CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+    CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
 
     EXPECT_EQ(can_msg.state.allocated, 1);
     EXPECT_EQ(can_msg.identifier, 0xABAB);
@@ -103,7 +103,7 @@ TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
     memset(&can_msg, 0x00, sizeof(can_msg));
 
     // Load up a CAN message
-    CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
     // Copy the all 8 bytes in the can payload to the openlcb payload.  This will wipe out
     // any payload in the openlcb structure if it is successful, else nothing is changed
@@ -197,7 +197,7 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
@@ -233,7 +233,7 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
@@ -272,7 +272,7 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 16);
         for (int i = 0; i < 16; i++)
         {
@@ -324,7 +324,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 0);
 
         // append an empty openlcb message
@@ -348,7 +348,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
@@ -383,7 +383,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 14);
         for (int i = 0; i < 14; i++)
         {
@@ -427,7 +427,7 @@ TEST(CAN_Utilities, copy_64_bit_to_can_message)
     uint8_t result;
 
     can_msg.state.allocated = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanUtilities_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
     result = CanUtilities_copy_64_bit_to_can_message(&can_msg, 0x5566778899AABBCC);
 
@@ -454,10 +454,10 @@ TEST(CAN_Utilities, copy_can_message)
     uint8_t result;
 
     can_msg.state.allocated = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanUtilities_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
     can_msg_target.state.allocated = 0;
-    CanUtilties_load_can_message(&can_msg_target, 0xAAAA, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    CanUtilities_load_can_message(&can_msg_target, 0xAAAA, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
 
     result = CanUtilities_copy_can_message(&can_msg, &can_msg_target);
 
@@ -491,7 +491,7 @@ TEST(CAN_Utilities, extract_can_payload_as_node_id)
     can_msg_t can_msg;
 
     can_msg.state.allocated = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanUtilities_load_can_message(&can_msg, 0xFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
     uint64_t node_id = CanUtilities_extract_can_payload_as_node_id(&can_msg);
 
@@ -504,7 +504,7 @@ TEST(CAN_Utilities, extract_source_alias_from_can_message)
     can_msg_t can_msg;
 
     can_msg.state.allocated = 1;
-    CanUtilties_load_can_message(&can_msg, 0xFFFFFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
+    CanUtilities_load_can_message(&can_msg, 0xFFFFFFFF, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
     uint16_t alias = CanUtilities_extract_source_alias_from_can_identifier(&can_msg);
 
@@ -520,54 +520,54 @@ TEST(CAN_Utilities, extract_dest_alias_from_can_message)
     can_msg.state.allocated = 1;
 
     // initialize complete, no dest address
-    CanUtilties_load_can_message(&can_msg, 0x19100AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19100AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0x000);
 
     // Verify Node ID Number Addressed , dest address in first byte of data
-    CanUtilties_load_can_message(&can_msg, 0x19488AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19488AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // Protocol Support Addressed , dest address in first byte of data
-    CanUtilties_load_can_message(&can_msg, 0x19828AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19828AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // CAN-Datagram Content (one frame)  , dest address in identifier
-    CanUtilties_load_can_message(&can_msg, 0x1AAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1AAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // CAN-Datagram Content (first frame)  , dest address in identifier
-    CanUtilties_load_can_message(&can_msg, 0x1BAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1BAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // CAN-Datagram Content (middle frame)  , dest address in identifier
-    CanUtilties_load_can_message(&can_msg, 0x1CAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1CAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // CAN-Datagram Content (last frame)  , dest address in identifier
-    CanUtilties_load_can_message(&can_msg, 0x1DAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1DAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // Stream Initiate Request , dest address in identifier
-    CanUtilties_load_can_message(&can_msg, 0x19CC8AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19CC8AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // Stream Data Proceed  , dest address in identifier
-    CanUtilties_load_can_message(&can_msg, 0x19888AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19888AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0xAAA);
 
     // Reserved
     uint32_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
-    CanUtilties_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    alias = CanUtilties_extract_dest_alias_from_can_message(&can_msg);
+    CanUtilities_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    alias = CanUtilities_extract_dest_alias_from_can_message(&can_msg);
     EXPECT_EQ(alias, 0x00);
 }
 
@@ -580,38 +580,38 @@ TEST(CAN_Utilities, extract_can_mti_from_can_identifier)
     can_msg.state.allocated = 1;
 
     // initialize complete, mti
-    CanUtilties_load_can_message(&can_msg, 0x19100AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19100AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x100);
 
     // CAN-Datagram Content (one frame)  , mti
-    CanUtilties_load_can_message(&can_msg, 0x1AAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1AAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x1C48);
 
     // CAN-Datagram Content (first frame)   ,mti
-    CanUtilties_load_can_message(&can_msg, 0x1BAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1BAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x1C48);
 
     // CAN-Datagram Content (middle frame)  , mti
-    CanUtilties_load_can_message(&can_msg, 0x1CAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1CAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x1C48);
 
     // CAN-Datagram Content (last frame)  , mti
-    CanUtilties_load_can_message(&can_msg, 0x1DAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x1DAAABBB, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x1C48);
 
     // Stream Initiate Request , mti
-    CanUtilties_load_can_message(&can_msg, 0x19CC8AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, 0x19CC8AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0xCC8);
 
     uint32_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
-    CanUtilties_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    mti = CanUtilties_convert_can_mti_to_openlcb_mti(&can_msg);
+    CanUtilities_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0x0000);
 }
 
@@ -635,7 +635,7 @@ TEST(CAN_Utilities, count_nulls_in_payloads)
     {
 
         // Load up a CAN message
-        CanUtilties_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x00, 0x04, 0x05, 0x00, 0x07, 0x08);
+        CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x00, 0x04, 0x05, 0x00, 0x07, 0x08);
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0x00;
@@ -657,12 +657,12 @@ TEST(CAN_Utilities, is_openlcb_message)
 
     can_msg.state.allocated = 1;
 
-    CanUtilties_load_can_message(&can_msg, 0x19100AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    CanUtilities_load_can_message(&can_msg, 0x19100AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     EXPECT_TRUE(CanUtilities_is_openlcb_message(&can_msg));
 
-    CanUtilties_load_can_message(&can_msg, 0x17050AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    CanUtilities_load_can_message(&can_msg, 0x17050AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     EXPECT_FALSE(CanUtilities_is_openlcb_message(&can_msg));
 
-    CanUtilties_load_can_message(&can_msg, 0x10701AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    CanUtilities_load_can_message(&can_msg, 0x10701AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     EXPECT_FALSE(CanUtilities_is_openlcb_message(&can_msg));
 }

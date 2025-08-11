@@ -63,7 +63,7 @@ uint16_t CanUtilities_extract_source_alias_from_can_identifier(can_msg_t *can_ms
 
 }
 
-uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
+uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
@@ -94,7 +94,7 @@ uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
     return 0;
 }
 
-uint16_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
+uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
@@ -219,7 +219,7 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
     return count;
 }
 
-void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8) {
+void CanUtilities_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8) {
 
     can_msg->identifier = identifier;
     can_msg->payload_count = payload_size;
