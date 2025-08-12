@@ -57,6 +57,8 @@ static alias_mapping_t _alias_mappings[USER_DEFINED_NODE_BUFFER_DEPTH];
 static uint16_t _duplicate_alias_buffer[LEN_DUPLICATE_ALIAS_BUFFER];
 static uint8_t _duplicate_alias_count = 0;
 
+static interface_openlcb_node_t *_interface;
+
 static void _clear_node(openlcb_node_t* openlcb_node) {
 
     openlcb_node->alias = 0;
@@ -114,7 +116,9 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
 
 }
 
-void OpenLcbNode_initialize(void) {
+void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
+    
+    _interface = (interface_openlcb_node_t*) interface;
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
@@ -311,10 +315,12 @@ void OpenLcbNode_set_alias_mapping(uint8_t index, node_id_t node_id, uint16_t al
 
     }
 
-    DriverCan_pause_can_rx();
+    _interface->pause_can_rx();
+    
     _alias_mappings[index].alias = alias;
     _alias_mappings[index].node_id = node_id;
-    DriverCan_resume_can_rx();
+    
+    _interface->resume_can_rx();
 
 }
 
@@ -326,11 +332,12 @@ void OpenLcbNode_clear_alias_mapping(uint8_t index) {
 
     }
 
-    DriverCan_pause_can_rx();
+    _interface->pause_can_rx();
+    
     _alias_mappings[index].alias = 0;
     _alias_mappings[index].node_id = 0;
 
-    DriverCan_resume_can_rx();
+    _interface->resume_can_rx();
 
 }
 
@@ -407,6 +414,8 @@ void OpenLcbNode_check_and_handle_duplicate_alias(openlcb_node_t* openlcb_node) 
 
     }
 
+    _interface->pause_can_rx();
+    
     for (int i = 0; i < LEN_DUPLICATE_ALIAS_BUFFER; i++) {
 
         if ((_duplicate_alias_buffer[i]) == openlcb_node->alias) {
@@ -426,6 +435,8 @@ void OpenLcbNode_check_and_handle_duplicate_alias(openlcb_node_t* openlcb_node) 
 
         }
     }
+    
+    _interface->resume_can_rx();
 
 }
 

@@ -50,32 +50,47 @@
 extern "C" {
 #endif /* __cplusplus */
 
+    typedef struct {
+        bool (*try_transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+        bool (*try_transmit_can_message)(can_msg_t* can_msg);
+        uint64_t (*generate_seed)(uint64_t start_seed);
+        uint16_t (*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
+        uint16_t (*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
+        void (*clear_alias_mapping)(uint8_t index);
+        uint16_t (*generate_alias)(uint64_t seed);
+        void (*set_alias_mapping)(uint8_t index, node_id_t node_id, uint16_t alias);
+        callback_alias_change_t (*get_alias_change)(void);
 
-extern void CanLoginMessageHandler_init(openlcb_node_t* next_node);
+    } interface_can_login_message_handler_t;
+    
+    
+    extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 
-extern void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_init(openlcb_node_t* next_node);
 
-extern void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node);
 
-extern void CanLoginMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t* worker_msg);
+    extern void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node);
 
-extern void CanLoginMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t* worker_msg);
+    extern void CanLoginMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanLoginMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t* worker_msg);
+    extern void CanLoginMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanLoginMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t* worker_msg);
+    extern void CanLoginMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanLoginMessageHandler_wait_200ms(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanLoginMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* worker_msg);
+    extern void CanLoginMessageHandler_wait_200ms(openlcb_node_t* next_node);
 
-extern void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg);
+    extern void CanLoginMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+    extern void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* worker_msg);
 
-extern void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+    extern void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
-extern void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+    extern void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+
+    extern void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
 
 
 #ifdef	__cplusplus

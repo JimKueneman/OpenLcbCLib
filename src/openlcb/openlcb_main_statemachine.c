@@ -74,7 +74,6 @@ void OpenLcbMainStatemachine_initialize(
     OpenLcbBufferList_initialize();
     OpenLcbBufferFifo_initialize();
 
-    OpenLcbNode_initialize();
     ProtocolDatagram_initialize();
 
     Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);

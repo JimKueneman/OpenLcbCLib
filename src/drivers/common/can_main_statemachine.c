@@ -48,6 +48,7 @@
 #include "can_login_message_handler.h"
 #include "can_tx_statemachine.h"
 #include "can_rx_statemachine.h"
+#include "can_login_statemachine.h"
 
 #include "../driver_can.h"
 #include "../driver_100ms_clock.h"
@@ -80,96 +81,6 @@ void CanMainStatemachine_initialize(
 
     // Just use an existing openlcb_helper structure vs allocating another one
     CanMainStatemachine_can_helper.openlcb_worker = OpenLcbMainStatemachine_get_openlcb_helper();
-
-}
-
-static void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
-
-    switch (openlcb_node->state.run_state) {
-
-        case RUNSTATE_INIT:
-
-            CanLoginMessageHandler_init(openlcb_node);
-
-            return;
-
-        case RUNSTATE_GENERATE_SEED:
-
-            CanLoginMessageHandler_generate_seed(openlcb_node);
-
-            return;
-
-        case RUNSTATE_GENERATE_ALIAS:
-
-            CanLoginMessageHandler_generate_alias(openlcb_node);
-
-            return;
-
-        case RUNSTATE_SEND_CHECK_ID_07:
-
-            CanLoginMessageHandler_transmit_cid07(openlcb_node, can_msg);
-
-            return;
-
-        case RUNSTATE_SEND_CHECK_ID_06:
-
-            CanLoginMessageHandler_transmit_cid06(openlcb_node, can_msg);
-
-            return;
-
-        case RUNSTATE_SEND_CHECK_ID_05:
-
-            CanLoginMessageHandler_transmit_cid05(openlcb_node, can_msg);
-
-            return;
-
-        case RUNSTATE_SEND_CHECK_ID_04:
-
-            CanLoginMessageHandler_transmit_cid04(openlcb_node, can_msg);
-
-            return;
-
-        case RUNSTATE_WAIT_200ms:
-
-            CanLoginMessageHandler_wait_200ms(openlcb_node);
-
-            return;
-
-        case RUNSTATE_TRANSMIT_RESERVE_ID:
-
-            CanLoginMessageHandler_transmit_rid(openlcb_node, can_msg);
-
-            return;
-
-        case RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION:
-
-            CanLoginMessageHandler_transmit_amd(openlcb_node, can_msg);
-
-            return;
-
-        case RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE:
-
-            CanLoginMessageHandler_transmit_initialization_complete(openlcb_node, openlcb_msg);
-
-            return;
-
-        case RUNSTATE_TRANSMIT_PRODUCER_EVENTS:
-
-            CanLoginMessageHandler_transmit_producer_events(openlcb_node, openlcb_msg);
-
-            return;
-
-        case RUNSTATE_TRANSMIT_CONSUMER_EVENTS:
-
-            CanLoginMessageHandler_transmit_consumer_events(openlcb_node, openlcb_msg);
-
-            return;
-
-        case RUNSTATE_RUN:
-
-            return;
-
-    }
 
 }
 
@@ -353,7 +264,7 @@ void CanMainStateMachine_run(void) {
 
 
             // Process any login states
-            _run_can_login_statemachine(next_node, &can_helper, &CanMainStatemachine_can_helper.openlcb_worker->worker);
+            CanLoginStateMachine_run(next_node, &can_helper, &CanMainStatemachine_can_helper.openlcb_worker->worker);
 
         }
 

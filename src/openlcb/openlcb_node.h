@@ -42,11 +42,20 @@
 
 #include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
+
+    typedef struct {
+
+        void (*pause_can_rx)(void);
+        void (*resume_can_rx)(void);
+
+    } interface_openlcb_node_t;
+    
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
     
-extern void OpenLcbNode_initialize(void);
+extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
 
 extern openlcb_node_t* OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t* node_parameters);
 
