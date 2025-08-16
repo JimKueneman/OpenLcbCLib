@@ -61,6 +61,7 @@
 #include "../../openlcb/protocol_datagram.h"
 #include "../../openlcb/protocol_datagram_handlers.h"
 #include "../../openlcb/openlcb_application_callbacks.h"
+#include "../../drivers/common/can_login_statemachine.h"
 
 can_main_statemachine_t CanMainStatemachine_can_helper;
 
@@ -76,7 +77,6 @@ void CanMainStatemachine_initialize(
 
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
-    CanRxStatemachine_initialize(can_rx_driver_callback);
     CanTxStatemachine_initialize();
 
     // Just use an existing openlcb_helper structure vs allocating another one

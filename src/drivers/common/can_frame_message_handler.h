@@ -71,6 +71,8 @@ extern "C" {
     extern void CanFrameMessageHandler_ame(can_msg_t* can_msg);
 
     extern void CanFrameMessageHandler_amr(can_msg_t* can_msg);
+    
+    extern void CanFrameMessageHandler_error_information_report(can_msg_t* can_msg);
 
     extern void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
 
@@ -81,6 +83,8 @@ extern "C" {
     extern void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
 
     extern void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    
+    extern void CanFrameMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
 
 
 #ifdef	__cplusplus

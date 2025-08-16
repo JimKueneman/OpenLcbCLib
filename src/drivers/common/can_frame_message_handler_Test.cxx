@@ -5,7 +5,6 @@
 #include "can_frame_message_handler.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
-#include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_buffer_store.h"
 #include "../../openlcb/openlcb_buffer_fifo.h"
@@ -104,7 +103,6 @@ void global_initialize(void)
 
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
-    OpenLcbNode_initialize();
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();

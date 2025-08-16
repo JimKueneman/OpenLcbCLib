@@ -35,12 +35,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif /* __cplusplus */
-
-    // This is a guard condition so that contents of this file are not included
+   // This is a guard condition so that contents of this file are not included
     // more than once.
 #ifndef __OPENLCB_DEFINES__
 #define __OPENLCB_DEFINES__
@@ -374,6 +369,12 @@ extern "C"
 #define ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS 0x00     // 0
 #define ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS 0x01        // 1
 #define ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS 0x40 // 64
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 
 #ifdef __cplusplus
 }

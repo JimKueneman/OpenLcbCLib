@@ -206,6 +206,12 @@ void CanFrameMessageHandler_amr(can_msg_t* can_msg) {
 
 }
 
+void CanFrameMessageHandler_error_information_report(can_msg_t* can_msg) {
+    
+    _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
+    
+}
+
 void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
     
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
@@ -389,4 +395,9 @@ void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t c
 
     };
 
+}
+
+void CanFrameMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+    
+    
 }

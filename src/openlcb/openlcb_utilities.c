@@ -122,6 +122,21 @@ void OpenLcbUtilities_clear_openlcb_message_payload(openlcb_msg_t* openlcb_msg) 
 
 }
 
+void OpenLcbUtilities_clear_openlcb_message(openlcb_msg_t *openlcb_msg) {
+
+    openlcb_msg->dest_alias = 0;
+    openlcb_msg->dest_id = 0;
+    openlcb_msg->source_alias = 0;
+    openlcb_msg->source_id = 0;
+    openlcb_msg->mti = 0;
+    openlcb_msg->payload_count = 0;
+    openlcb_msg->timerticks = 0;
+    openlcb_msg->reference_count = 0;
+    openlcb_msg->state.allocated = false;
+    openlcb_msg->state.inprocess = false;
+
+}
+
 void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg, event_id_t event_id) {
 
     for (int i = 7; i >= 0; i--) {
