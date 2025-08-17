@@ -44,8 +44,6 @@
 
 #include "can_types.h"
 #include "can_utilities.h"
-#include "can_tx_statemachine.h"
-
 #include "../../openlcb/openlcb_defines.h"
 
 // Required external function calls:
@@ -56,6 +54,13 @@
 //
 //
 
+static can_frame_message_handler_interface_t *_interface;
+
+void CanFrameMessageHandler_initialize(const can_frame_message_handler_interface_t* interface) {
+    
+    _interface = (can_frame_message_handler_interface_t*) interface;
+    
+}
 
 static void _flush_alias_node_id_mappings(void) {
 
@@ -74,7 +79,7 @@ static bool _check_for_hard_alias_conflict(openlcb_node_t* can_node, can_msg_t* 
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | can_node->alias;
         CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+        if (_interface->try_transmit_can_message(worker_msg)) {
 
             can_node->state.can_msg_handled = true;
             can_node->state.permitted = 0;
@@ -98,9 +103,11 @@ static bool _check_for_soft_alias_conflict(openlcb_node_t* can_node, can_msg_t* 
         worker_msg->payload_count = 0;
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_node->alias;
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg))
+        if (_interface->try_transmit_can_message(worker_msg)) {
 
             can_node->state.can_msg_handled = true;
+            
+        }
 
         return true;
 
@@ -162,7 +169,7 @@ void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, ca
         CanUtilities_copy_node_id_to_payload(worker_msg, can_node->id, 0);
         worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_node->alias;
 
-        if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+        if (_interface->try_transmit_can_message(worker_msg)) {
 
             can_node->state.can_msg_handled = true;
 

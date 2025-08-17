@@ -44,20 +44,27 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_node.h"
 
+typedef struct {
+    bool (*try_transmit_can_message)(can_msg_t* can_msg);
+
+} can_frame_message_handler_interface_t;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 
-extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) ;
+    extern void CanFrameMessageHandler_initialize(const can_frame_message_handler_interface_t* interface);
 
-extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
+    extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
+
+    extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
 
 #ifdef	__cplusplus
