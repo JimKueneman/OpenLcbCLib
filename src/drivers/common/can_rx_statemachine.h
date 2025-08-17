@@ -46,7 +46,7 @@
 #include "can_types.h"
 
 typedef struct {
-    void (*can_rx_set_target_callback) (can_rx_callback_func_t);
+    void (*can_rx_register_target_callback) (can_rx_callback_func_t); 
     void (*handle_can_legacy_snip)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
     void (*handle_single_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
     void (*handle_first_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);

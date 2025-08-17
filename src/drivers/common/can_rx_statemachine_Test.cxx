@@ -21,7 +21,7 @@ bool can_amr_called = false;
 bool can_error_information_report_called = false;
 bool can_stream_called = false;
 
-void CanRxCallback_set_target(can_rx_callback_func_t can_rx_callback)
+void CanRxCallback_register_target(can_rx_callback_func_t can_rx_callback)
 {
 
     _can_rx_target = can_rx_callback;
@@ -118,7 +118,7 @@ void _reset_variables(void)
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 
-    .can_rx_set_target_callback = &CanRxCallback_set_target,
+    .can_rx_register_target_callback = &CanRxCallback_register_target,
     .handle_can_legacy_snip = &CanFrameMessageHandler_handle_can_legacy_snip,
     .handle_single_frame = &CanFrameMessageHandler_handle_single_frame,
     .handle_first_frame = &CanFrameMessageHandler_handle_first_frame,
@@ -136,7 +136,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine_nulls = {
 
-    .can_rx_set_target_callback = &CanRxCallback_set_target,
+    .can_rx_register_target_callback = &CanRxCallback_register_target,
     .handle_can_legacy_snip = nullptr,
     .handle_single_frame = nullptr,
     .handle_first_frame = nullptr,
@@ -152,7 +152,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine_nulls = {
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine_null_rx_target = {
 
-    .can_rx_set_target_callback = nullptr,
+    .can_rx_register_target_callback = nullptr,
     .handle_can_legacy_snip = nullptr,
     .handle_single_frame = nullptr,
     .handle_first_frame = nullptr,

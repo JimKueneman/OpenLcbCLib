@@ -320,9 +320,9 @@ void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interfa
 
     _interface_can_rx_statemachine = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
     
-    if (interface_can_rx_statemachine->can_rx_set_target_callback) {
+    if (interface_can_rx_statemachine->can_rx_register_target_callback) {
 
-      interface_can_rx_statemachine->can_rx_set_target_callback(&_state_machine_incoming_can_driver_callback);
+      interface_can_rx_statemachine->can_rx_register_target_callback(&_state_machine_incoming_can_driver_callback);
       
     }
 
