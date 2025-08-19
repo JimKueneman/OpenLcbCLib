@@ -42,11 +42,20 @@
 
 #include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
+
+    typedef struct {
+
+        void (*pause_can_rx)(void);
+        void (*resume_can_rx)(void);
+
+    } interface_openlcb_node_t;
+    
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
     
-extern void OpenLcbNode_initialize(void);
+extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
 
 extern openlcb_node_t* OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t* node_parameters);
 
@@ -63,6 +72,24 @@ extern uint64_t OpenLcbNode_generate_seed(uint64_t start_seed);
 extern uint16_t OpenLcbNode_generate_alias(uint64_t seed);
 
 extern void OpenLcbNode_100ms_timer_tick(void);
+
+// Only to be called from the main message loop
+
+extern void OpenLcbNode_set_alias_mapping(uint8_t index, node_id_t node_id, uint16_t alias);
+
+extern void OpenLcbNode_clear_alias_mapping(uint8_t index);
+
+extern void OpenLcbNode_check_and_handle_duplicate_alias(openlcb_node_t* openlcb_node);
+
+// Only to be called from the thread/interrupt that is used for physical layer incoming messages on the CAN Rx defined through the driver_can.h
+
+extern alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16_t alias);
+
+extern bool OpenLcbNode_set_mapping_duplicate_alias_detected(uint16_t node_alias);
+
+extern uint16_t OpenLcbNode_mapping_count(void);
+
+extern alias_mapping_t *OpenLcbNode_alias_mapping(uint16_t index);
 
 
 #ifdef	__cplusplus

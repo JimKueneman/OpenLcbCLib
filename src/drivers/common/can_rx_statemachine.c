@@ -45,440 +45,286 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-#include "can_buffer_store.h"
-#include "can_buffer_fifo.h"
 #include "can_utilities.h"
 
 #include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_buffer_store.h"
-#include "../../openlcb/openlcb_buffer_list.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
-
 
 #define OFFSET_DEST_ID_IN_PAYLOAD     2
 #define OFFSET_DEST_ID_IN_IDENTIFIER  0
 #define OFFSET_NO_DEST_ID             0
 
-const uint32_t OPENLCB_GLOBAL_ADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
-
-static uint32_t _ack_reject_identifier(uint16_t source_alias) {
-
-    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12) | source_alias);
-
-}
-
-static uint32_t _oir_identifier(uint16_t source_alias) {
-
-    return (OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12) | source_alias);
-
-}
-
-static openlcb_msg_t* _send_reject(uint16_t source_alias, uint16_t dest_alias, uint16_t mti, uint16_t error_code) {
-
-    can_msg_t* can_msg_error = CanBufferStore_allocate_buffer();
-
-    if (can_msg_error) {
-
-        if (mti == MTI_DATAGRAM) {
-
-            can_msg_error->identifier = _ack_reject_identifier(source_alias);
-
-        } else {
-
-            can_msg_error->identifier = _oir_identifier(source_alias);
-
-        }
-
-        can_msg_error->payload[0] = (uint8_t) (dest_alias >> 8) & 0x00FF;
-        can_msg_error->payload[1] = (uint8_t) dest_alias & 0x00FF;
-        can_msg_error->payload[2] = (uint8_t) (error_code >> 8) & 0x00FF;
-        can_msg_error->payload[3] = (uint8_t) error_code & 0x00FF;
-
-        // Flag so it is directly sent out and not processed by nodes
-        can_msg_error->state.addressed_direct_tx = true;
-
-        can_msg_error->payload_count = 4;
-
-        if (!CanBufferFifo_push(can_msg_error)) {
-
-            CanBufferStore_free_buffer(can_msg_error);
-
-            return NULL;
-
-        };
-
-    }
-
-    return NULL;
-
-}
-
-static openlcb_msg_t* _handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
-
-    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
-
-    openlcb_msg_t* result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
-
-    if (result) {
-
-        return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
-
-    }
-
-    result = OpenLcbBufferStore_allocate_buffer(data_type);
-
-    if (!result) {
-
-        return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
-
-    }
-
-    result->mti = mti;
-    result->source_alias = source_alias;
-    result->dest_alias = dest_alias;
-    result->state.inprocess = true;
-
-    CanUtilities_copy_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
-
-    if (!OpenLcbBufferList_add(result)) {
-
-        OpenLcbBufferStore_free_buffer(result);
-
-        return NULL;
-
-    };
-
-    return result;
-
-}
-
-static openlcb_msg_t* _handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
-
-    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
-
-    openlcb_msg_t* result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
-
-    if (!result) {
-
-        return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
-
-    }
-
-
-    CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
-
-    return result;
-
-}
-
-static openlcb_msg_t* _handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
-
-    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    uint16_t dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    uint16_t mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
-
-    openlcb_msg_t * result = OpenLcbBufferList_find(source_alias, dest_alias, mti);
-
-    if (!result) {
-
-        return _send_reject(source_alias, dest_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
-
-    }
-
-    CanUtilities_append_can_payload_to_openlcb_payload(result, can_msg, can_buffer_start_index);
-    result->state.inprocess = false;
-
-    OpenLcbBufferList_release(result);
-    OpenLcbBufferFifo_push_existing(result);
-
-    return result;
-
-}
-
-static openlcb_msg_t* _handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
-
-    openlcb_msg_t* new_msg = OpenLcbBufferStore_allocate_buffer(data_type);
-
-    if (!new_msg) {
-
-        return NULL;
-
-    }
-
-    new_msg->source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    new_msg->dest_alias = CanUtilties_extract_dest_alias_from_can_message(can_msg);
-    new_msg->mti = CanUtilties_convert_can_mti_to_openlcb_mti(can_msg);
-    new_msg->dest_id = 0;
-    new_msg->source_id = 0;
-    new_msg->payload_count = 0;
-    CanUtilities_copy_can_payload_to_openlcb_payload(new_msg, can_msg, can_buffer_start_index);
-
-    if (OpenLcbBufferFifo_push(new_msg)) {
-
-        return new_msg;
-
-    }
-
-    return NULL;
-}
-
-static void _handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
-
-    // Early implementations did not have the multi-frame bits to use... special case
-
-    openlcb_msg_t* openlcb_msg_inprocess = OpenLcbBufferList_find(
-            CanUtilities_extract_source_alias_from_can_identifier(can_msg),
-            CanUtilties_extract_dest_alias_from_can_message(can_msg),
-            CanUtilties_convert_can_mti_to_openlcb_mti(can_msg)
-            );
-
-
-    if (!openlcb_msg_inprocess) { // Do we have one in process?
-
-        _handle_first_frame(can_msg, can_buffer_start_index, data_type);
-
-    } else { // Yes we have one in process   
-
-
-        if (CanUtilities_count_nulls_in_payloads(openlcb_msg_inprocess, can_msg) < 6)
-
-            _handle_middle_frame(can_msg, can_buffer_start_index);
-
-        else
-
-            _handle_last_frame(can_msg, can_buffer_start_index);
-
-    };
-
-    return;
-
-}
+static interface_can_rx_statemachine_t *_interface_can_rx_statemachine;
 
 static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
     return (can_msg->identifier >> 12) & 0x0FFF;
 }
 
-static void _handle_global_addressed_messages(can_msg_t* can_msg) {
+static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg_t* can_msg) {
 
-    if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
+    if (CanUtilities_is_openlcb_message(can_msg)) {
 
-        uint16_t can_mti = _extract_can_mti_from_can_identifier(can_msg);
-
-        switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
-
-            case MULTIFRAME_ONLY:
-
-                if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
-
-                    _handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
-
-                } else
-
-                    _handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
-
-                break;
-
-            case MULTIFRAME_FIRST:
-
-                if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY)
-
-                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
-
-                else
-
-                    // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
-                    _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
-
-                break;
-
-            case MULTIFRAME_MIDDLE:
-
-                _handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
-
-                break;
-
-            case MULTIFRAME_FINAL:
-
-                _handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
-
-                break;
-        }
-    } else { // No Destination Address
-
-        _handle_single_frame(can_msg, OFFSET_NO_DEST_ID, BASIC);
-
-    }
-
-}
-
-static uint8_t _allocate_copy_and_push_can_msg(can_msg_t* can_msg) {
-
-    can_msg_t* new_can_msg = CanBufferStore_allocate_buffer();
-
-    if (!new_can_msg) {
-
-        return false;
-
-    }
-
-    CanUtilities_copy_can_message(can_msg, new_can_msg);
-
-    return (CanBufferFifo_push(new_can_msg));
-
-}
-
-static uint8_t _handle_rid_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_amd_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_ame_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_amr_control_frame(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static uint8_t _handle_incoming_cid(can_msg_t* can_msg) {
-
-    return (_allocate_copy_and_push_can_msg(can_msg));
-
-}
-
-static void _handle_incoming_can_variable_field(can_msg_t* can_msg) {
-
-    switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
-
-        case CAN_CONTROL_FRAME_RID: // Reserve ID
-
-            _handle_rid_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
-
-            _handle_amd_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_AME:
-
-            _handle_ame_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_AMR:
-
-            _handle_amr_control_frame(can_msg);
-            break;
-
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
-        case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
-
-            break;
-
-    }
-
-}
-
-static void _handle_incoming_can_frame_sequence_number(can_msg_t* can_msg) {
-
-    switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
-
-        case CAN_CONTROL_FRAME_CID7:
-        case CAN_CONTROL_FRAME_CID6:
-        case CAN_CONTROL_FRAME_CID5:
-        case CAN_CONTROL_FRAME_CID4:
-
-            _handle_incoming_cid(can_msg);
-
-            return;
-
-        case CAN_CONTROL_FRAME_CID3:
-        case CAN_CONTROL_FRAME_CID2:
-        case CAN_CONTROL_FRAME_CID1:
-
-            return;
-    }
-
-}
-
-static void _state_machine_incoming_can(uint8_t channel, can_msg_t* can_msg) {
-
-    if (CanUtilities_is_openlcb_message(can_msg)) { // Only handle OpenLCB Messages
+        //  Handle pure OpenLCB Messages
 
         switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
             case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
 
-                _handle_global_addressed_messages(can_msg);
+                if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
+
+                    uint16_t can_mti = _extract_can_mti_from_can_identifier(can_msg);
+
+                    switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
+
+                        case MULTIFRAME_ONLY:
+
+                            if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
+
+                                if (_interface_can_rx_statemachine->handle_can_legacy_snip) {
+
+                                    _interface_can_rx_statemachine->handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
+
+                                }
+
+                            } else {
+    
+                                if (_interface_can_rx_statemachine->handle_single_frame) {
+
+                                    _interface_can_rx_statemachine->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
+
+                                }
+
+                            }
+
+                            break;
+
+                        case MULTIFRAME_FIRST:
+
+                            if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
+
+                                if (_interface_can_rx_statemachine->handle_first_frame) {
+
+                                    _interface_can_rx_statemachine->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
+
+                                }
+
+                            } else {
+
+                                if (_interface_can_rx_statemachine->handle_first_frame) {
+
+                                    // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
+                                    _interface_can_rx_statemachine->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
+
+                                }
+
+                            }
+
+                            break;
+
+                        case MULTIFRAME_MIDDLE:
+
+                            if (_interface_can_rx_statemachine->handle_middle_frame) {
+
+                                _interface_can_rx_statemachine->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
+
+                            }
+
+                            break;
+
+                        case MULTIFRAME_FINAL:
+
+                            if (_interface_can_rx_statemachine->handle_last_frame) {
+
+                                _interface_can_rx_statemachine->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
+
+                            }
+
+                            break;
+                    }
+                } else { // No Destination Address
+
+                    if (_interface_can_rx_statemachine->handle_single_frame) {
+
+                        _interface_can_rx_statemachine->handle_single_frame(can_msg, OFFSET_NO_DEST_ID, BASIC);
+
+                    }
+
+                }
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_ONLY:
 
-                _handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
+                if (_interface_can_rx_statemachine->handle_single_frame) {
+
+                    _interface_can_rx_statemachine->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
+
+                }
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_FIRST:
 
-                _handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
+                if (_interface_can_rx_statemachine->handle_first_frame) {
+
+                    _interface_can_rx_statemachine->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
+
+                }
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
 
-                _handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+                if (_interface_can_rx_statemachine->handle_middle_frame) {
+
+                    _interface_can_rx_statemachine->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+
+                }
+
                 break;
 
             case CAN_FRAME_TYPE_DATAGRAM_FINAL:
 
-                _handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+                if (_interface_can_rx_statemachine->handle_last_frame) {
+
+                    _interface_can_rx_statemachine->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+
+                }
+
                 break;
 
             case CAN_FRAME_TYPE_RESERVED:
 
                 break;
+
             case CAN_FRAME_TYPE_STREAM:
+                
+                if (_interface_can_rx_statemachine->handle_stream) {
+
+                    _interface_can_rx_statemachine->handle_stream(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
+
+                }
 
                 break;
         }
 
-    } else { // CAN Control Messages
+    } else {
 
-        if (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+        // CAN Control Messages
 
-            _handle_incoming_can_frame_sequence_number(can_msg);
+        switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
-        } else {
+            case 0:
+                
+                switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
+                    
 
-            _handle_incoming_can_variable_field(can_msg);
+                    case CAN_CONTROL_FRAME_RID: // Reserve ID
 
-        }
+                        if (_interface_can_rx_statemachine->handle_rid) {
 
-    };
+                            _interface_can_rx_statemachine->handle_rid(can_msg);
 
-};
+                        }
+
+                        break;
+
+                    case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
+
+                        if (_interface_can_rx_statemachine->handle_amd) {
+
+                            _interface_can_rx_statemachine->handle_amd(can_msg);
+
+                        }
+
+                        break;
+
+                    case CAN_CONTROL_FRAME_AME:  
+                        
+                        if (_interface_can_rx_statemachine->handle_ame) {
+  
+                            _interface_can_rx_statemachine->handle_ame(can_msg);
+
+                        }
+
+                        break;
+
+                    case CAN_CONTROL_FRAME_AMR:
+ 
+                        if (_interface_can_rx_statemachine->handle_amr) {
+
+                            _interface_can_rx_statemachine->handle_amr(can_msg);
+
+                        }
+
+                        break;
+
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
+                    case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
+
+                        if (_interface_can_rx_statemachine->handle_error_information_report) {
+                       
+                            _interface_can_rx_statemachine->handle_error_information_report(can_msg);
+                        
+                        }
+                        
+                        break;
+
+                    default:
+
+                        // Do nothing
+                        break; // default
+
+                }
+
+                break;
+
+            default:
+
+                switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+
+                    case CAN_CONTROL_FRAME_CID7:
+                    case CAN_CONTROL_FRAME_CID6:
+                    case CAN_CONTROL_FRAME_CID5:
+                    case CAN_CONTROL_FRAME_CID4:
+
+
+                        if (_interface_can_rx_statemachine->handle_cid) {
+                       
+                            _interface_can_rx_statemachine->handle_cid(can_msg);
+                        
+                        }
+
+                        break;
+
+                    case CAN_CONTROL_FRAME_CID3:
+                    case CAN_CONTROL_FRAME_CID2:
+                    case CAN_CONTROL_FRAME_CID1:
+
+                        break;
+                }
+
+                break; // default
+
+        } // CAN control messages
+
+    }
+
+}
 
 // Call on startup to initialize variables and callbacks
 
-void CanRxStatemachine_initialize(can_rx_driver_callback_t can_rx_driver_callback) {
+void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine) {
 
-    can_rx_driver_callback(&_state_machine_incoming_can);
+    _interface_can_rx_statemachine = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
+    
+    if (interface_can_rx_statemachine->can_rx_register_target_callback) {
+
+      interface_can_rx_statemachine->can_rx_register_target_callback(&_state_machine_incoming_can_driver_callback);
+      
+    }
 
 }
 

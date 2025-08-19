@@ -97,6 +97,18 @@ node_parameters_t node_parameters = {
 
 };
 
+void PauseCanRx(void)
+{
+}
+
+void ResumeCanRx(void)
+{
+}
+
+const interface_openlcb_node_t _interface_openlcb_node{
+    .pause_can_rx = &PauseCanRx,
+    .resume_can_rx = &ResumeCanRx};
+
 TEST(OpenLcbUtilities, load_openlcb_message)
 {
 
@@ -859,7 +871,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
 {
 
     OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
 
     openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
 
@@ -936,7 +948,7 @@ TEST(OpenLcbUtilities, is_message_for_node)
 TEST(OpenLcbUtilities, is_producer_event_assigned_to_node)
 {
 
-    OpenLcbNode_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
     openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &node_parameters);
 
     EXPECT_NE(openlcb_node, nullptr);
@@ -970,7 +982,7 @@ TEST(OpenLcbUtilities, is_producer_event_assigned_to_node)
 TEST(OpenLcbUtilities, consumer_event_assigned_to_node)
 {
 
-    OpenLcbNode_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
     openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &node_parameters);
 
     EXPECT_NE(openlcb_node, nullptr);
@@ -1005,7 +1017,7 @@ TEST(OpenLcbUtilities, addressed_message_needs_processing)
 {
 
     OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
 
     openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
 
@@ -1091,7 +1103,7 @@ TEST(OpenLcbUtilities, addressed_message_needs_processing)
 TEST(OpenLcbUtilities, calculate_memory_offset_into_node_space)
 {
 
-    OpenLcbNode_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
 
     node_parameters.address_space_config_memory.low_address_valid = false;
     node_parameters.address_space_config_memory.low_address = 0; // ignored if low_address_valid is false

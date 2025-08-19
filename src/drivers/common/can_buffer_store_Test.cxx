@@ -1,7 +1,7 @@
 #include "test/main_Test.hxx"
 
-#include "drivers/common/can_buffer_store.h"
-#include "drivers/common/can_types.h"
+#include "can_buffer_store.h"
+#include "can_types.h"
 
 TEST(CAN_BufferStore, CanBufferStore_initialize)
 {
@@ -17,7 +17,7 @@ TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
 
     EXPECT_NE(can_msg, nullptr);
 
-   //  Test the getters for the current and past number of allocated buffers
+    //  Test the getters for the current and past number of allocated buffers
     int count = CanBufferStore_messages_allocated();
     EXPECT_EQ(count, 1);
     count = CanBufferStore_messages_max_allocated();
@@ -34,7 +34,6 @@ TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
     {
 
         EXPECT_EQ(can_msg->state.allocated, 1);
-        EXPECT_EQ(can_msg->state.addressed_direct_tx, 0);
 
         EXPECT_EQ(can_msg->identifier, 0);
         EXPECT_EQ(can_msg->payload_count, 0);
@@ -81,6 +80,8 @@ TEST(CAN_BufferStore, CanBufferStore_clear_message)
 
 TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
 {
+    CanBufferStore_initialize();
+
     can_msg_t *can_msg_array[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
     can_msg_t *can_msg;
 

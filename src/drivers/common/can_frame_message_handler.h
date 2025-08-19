@@ -35,8 +35,8 @@
  */
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_MSG_HANDLER__
-#define	__CAN_MSG_HANDLER__
+#ifndef __CAN_FRAME_MESSAGE_HANDLER__
+#define	__CAN_FRAME_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -44,32 +44,52 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_node.h"
 
-typedef struct {
-    bool (*try_transmit_can_message)(can_msg_t* can_msg);
-
-} can_frame_message_handler_interface_t;
-
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+    typedef struct {
+        
+        alias_mapping_t *(*find_alias_mapping)(node_id_t node_id, uint16_t alias);
+        bool (*set_mapping_duplicate_alias_detected)(uint16_t node_alias);
+        uint16_t(*mapping_count)(void);
+        alias_mapping_t *(*alias_mapping)(uint16_t index);
+        openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum_t payload_type);
 
-    extern void CanFrameMessageHandler_initialize(const can_frame_message_handler_interface_t* interface);
+    } interface_can_frame_message_handler_t;
 
-    extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-    extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
 
-    extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
+    extern void CanFrameMessageHandler_initialize(const interface_can_frame_message_handler_t *interface);
 
-    extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
+    extern void CanFrameMessageHandler_cid(can_msg_t* can_msg);
 
-    extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg);
+    extern void CanFrameMessageHandler_rid(can_msg_t* can_msg);
+
+    extern void CanFrameMessageHandler_amd(can_msg_t* can_msg);
+
+    extern void CanFrameMessageHandler_ame(can_msg_t* can_msg);
+
+    extern void CanFrameMessageHandler_amr(can_msg_t* can_msg);
+    
+    extern void CanFrameMessageHandler_error_information_report(can_msg_t* can_msg);
+
+    extern void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+
+    extern void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t offset);
+
+    extern void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t offset);
+
+    extern void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+
+    extern void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    
+    extern void CanFrameMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
 
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_MSG_HANDLER__ */
+#endif	/* __CAN_FRAME_MESSAGE_HANDLER__ */
 

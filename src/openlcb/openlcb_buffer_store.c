@@ -45,6 +45,7 @@
 #include <stdio.h> // printf
 
 #include "openlcb_types.h"
+#include "openlcb_utilities.h"
 
 static message_buffer_t _message_buffer;
 
@@ -58,25 +59,12 @@ static uint16_t _buffer_store_datagram_max_messages_allocated = 0;
 static uint16_t _buffer_store_snip_max_messages_allocated = 0;
 static uint16_t _buffer_store_stream_max_messages_allocated = 0;
 
-void OpenLcbBufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg) {
-
-    openlcb_msg->dest_alias = 0;
-    openlcb_msg->dest_id = 0;
-    openlcb_msg->source_alias = 0;
-    openlcb_msg->source_id = 0;
-    openlcb_msg->mti = 0;
-    openlcb_msg->payload_count = 0;
-    openlcb_msg->timerticks = 0;
-    openlcb_msg->reference_count = 0;
-    openlcb_msg->state.allocated = false;
-    openlcb_msg->state.inprocess = false;
-}
 
 void OpenLcbBufferStore_initialize(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        OpenLcbBufferStore_clear_openlcb_message(&_message_buffer.messages[i]);
+        OpenLcbUtilities_clear_openlcb_message(&_message_buffer.messages[i]);
 
         if (i < USER_DEFINED_BASIC_BUFFER_DEPTH) {
 
@@ -213,7 +201,7 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_ty
 
         if (!_message_buffer.messages[i].state.allocated) {
 
-            OpenLcbBufferStore_clear_openlcb_message(&_message_buffer.messages[i]);
+            OpenLcbUtilities_clear_openlcb_message(&_message_buffer.messages[i]);
             _message_buffer.messages[i].reference_count = 1;
             _message_buffer.messages[i].state.allocated = true;
             _update_buffer_telemetry(_message_buffer.messages[i].payload_type);

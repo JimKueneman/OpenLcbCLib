@@ -42,8 +42,22 @@
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 
+#include "../drivers/driver_can.h"
+
 static openlcb_nodes_t _openlcb_nodes;
 static uint16_t _node_enum_index_array[6];
+
+// Used by the interrupt state-machines to see if messages are for our nodes
+// Makes it easier to deal with not having to block the interrupts on every access
+// the node structures, this array is to be used by the incoming message interrupt only
+static alias_mapping_t _alias_mappings[USER_DEFINED_NODE_BUFFER_DEPTH];
+
+#define LEN_DUPLICATE_ALIAS_BUFFER 4
+
+static uint16_t _duplicate_alias_buffer[LEN_DUPLICATE_ALIAS_BUFFER];
+static uint8_t _duplicate_alias_count = 0;
+
+static interface_openlcb_node_t *_interface;
 
 static void _clear_node(openlcb_node_t* openlcb_node) {
 
@@ -102,16 +116,19 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
 
 }
 
-void OpenLcbNode_initialize(void) {
+void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
+    
+    _interface = (interface_openlcb_node_t*) interface;
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
         _clear_node(&_openlcb_nodes.node[i]);
+        _alias_mappings[i].alias = 0;
+        _alias_mappings[i].node_id = 0;
 
     }
 
     _openlcb_nodes.count = 0;
-
 
 }
 
@@ -288,4 +305,148 @@ void OpenLcbNode_100ms_timer_tick(void) {
 
     };
 
+}
+
+void OpenLcbNode_set_alias_mapping(uint8_t index, node_id_t node_id, uint16_t alias) {
+
+    if (index >= USER_DEFINED_NODE_BUFFER_DEPTH) {
+
+        return;
+
+    }
+
+    _interface->pause_can_rx();
+    
+    _alias_mappings[index].alias = alias;
+    _alias_mappings[index].node_id = node_id;
+    
+    _interface->resume_can_rx();
+
+}
+
+void OpenLcbNode_clear_alias_mapping(uint8_t index) {
+
+    if (index >= USER_DEFINED_NODE_BUFFER_DEPTH) {
+
+        return;
+
+    }
+
+    _interface->pause_can_rx();
+    
+    _alias_mappings[index].alias = 0;
+    _alias_mappings[index].node_id = 0;
+
+    _interface->resume_can_rx();
+
+}
+
+static alias_mapping_t *_find_mapping_by_alias(uint16_t alias) {
+
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
+
+        if (_alias_mappings[i].alias == alias) {
+
+            return &_alias_mappings[i];
+            
+        }
+
+    }
+
+    return NULL;
+
+}
+
+static alias_mapping_t *_find_mapping_by_node_id(node_id_t node_id) {
+
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
+
+        if (_alias_mappings[i].node_id == node_id) {
+
+            return &_alias_mappings[i];
+
+        }
+
+    }
+
+    return NULL;
+
+}
+
+alias_mapping_t *OpenLcbNode_find_alias_mapping(node_id_t node_id, uint16_t alias) {
+
+    if ((node_id) && (!alias)) {
+
+        return _find_mapping_by_node_id(node_id);
+
+    } else if ((!node_id) && (alias)) {
+
+        return _find_mapping_by_alias(alias);
+
+    }
+
+    return NULL;
+}
+
+bool OpenLcbNode_set_mapping_duplicate_alias_detected(uint16_t node_alias) {
+
+    for (int i = 0; i < LEN_DUPLICATE_ALIAS_BUFFER; i++) {
+
+        if (_duplicate_alias_buffer[i] == 0) {
+
+            _duplicate_alias_buffer[i] = node_alias;
+
+            _duplicate_alias_count++;
+
+            return true;
+
+        }
+    }
+
+    return false;
+}
+
+void OpenLcbNode_check_and_handle_duplicate_alias(openlcb_node_t* openlcb_node) {
+
+    if (_duplicate_alias_count == 0) {
+
+        return;
+
+    }
+
+    _interface->pause_can_rx();
+    
+    for (int i = 0; i < LEN_DUPLICATE_ALIAS_BUFFER; i++) {
+
+        if ((_duplicate_alias_buffer[i]) == openlcb_node->alias) {
+
+            // release any messages being handled
+            openlcb_node->state.can_msg_handled = true;
+            openlcb_node->state.openlcb_msg_handled = true;
+
+            openlcb_node->state.permitted = 0;
+            openlcb_node->state.initalized = 0;
+            openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
+
+            _duplicate_alias_buffer[i] = 0;
+            _duplicate_alias_count--;
+
+            break;
+
+        }
+    }
+    
+    _interface->resume_can_rx();
+
+}
+
+uint16_t OpenLcbNode_mapping_count(void) {
+
+    return _openlcb_nodes.count;
+
+}
+
+alias_mapping_t *OpenLcbNode_alias_mapping(uint16_t index) {
+
+    return &_alias_mappings[index];
 }

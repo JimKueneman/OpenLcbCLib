@@ -44,23 +44,24 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-
 #include "can_utilities.h"
-#include "can_tx_statemachine.h"
-
 #include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_utilities.h"
-#include "../../openlcb/openlcb_application_callbacks.h"
-#include "../../openlcb/protocol_event_transport.h"
 
 
+static interface_can_login_message_handler_t* _interface;
 
+void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface) {
+
+    _interface = (interface_can_login_message_handler_t*) interface;
+
+}
 
 void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
+    _interface->clear_alias_mapping(next_node->index);
+
     next_node->seed = next_node->id;
-    next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
 
     next_node->state.run_state = RUNSTATE_GENERATE_ALIAS; // Jump over Generate Seed that only is if we have an Alias conflict and have to jump back
 
@@ -68,16 +69,18 @@ void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
 void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node) {
 
-    next_node->seed = OpenLcbNode_generate_seed(next_node->seed);
+    _interface->clear_alias_mapping(next_node->index);
+
+    next_node->seed = _interface->generate_seed(next_node->seed);
     next_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
 
 }
 
 void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
-    next_node->alias = OpenLcbNode_generate_alias(next_node->seed);
+    next_node->alias = _interface->generate_alias(next_node->seed);
 
-    callback_alias_change_t alias_change_callback = OpenLcbApplicationCallbacks_get_alias_change();
+    callback_alias_change_t alias_change_callback = _interface->get_alias_change();
 
     if (alias_change_callback) {
 
@@ -95,7 +98,7 @@ void CanLoginMessageHandler_transmit_cid07(openlcb_node_t* next_node, can_msg_t*
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((next_node->id >> 24) & 0xFFF000) | next_node->alias); // AA0203040506
 
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+    if (_interface->try_transmit_can_message(worker_msg)) {
 
         next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_06;
 
@@ -108,7 +111,7 @@ void CanLoginMessageHandler_transmit_cid06(openlcb_node_t* next_node, can_msg_t*
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((next_node->id >> 12) & 0xFFF000) | next_node->alias);
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+    if (_interface->try_transmit_can_message(worker_msg)) {
 
         next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_05;
 
@@ -121,7 +124,7 @@ void CanLoginMessageHandler_transmit_cid05(openlcb_node_t* next_node, can_msg_t*
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((next_node->id & 0xFFF000) | next_node->alias);
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+    if (_interface->try_transmit_can_message(worker_msg)) {
 
         next_node->state.run_state = RUNSTATE_SEND_CHECK_ID_04;
 
@@ -134,7 +137,7 @@ void CanLoginMessageHandler_transmit_cid04(openlcb_node_t* next_node, can_msg_t*
     worker_msg->payload_count = 0;
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((next_node->id << 12) & 0xFFF000) | next_node->alias);
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+    if (_interface->try_transmit_can_message(worker_msg)) {
 
         next_node->state.run_state = RUNSTATE_WAIT_200ms;
 
@@ -157,7 +160,7 @@ void CanLoginMessageHandler_transmit_rid(openlcb_node_t* next_node, can_msg_t* w
     worker_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | next_node->alias;
     worker_msg->payload_count = 0;
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+    if (_interface->try_transmit_can_message(worker_msg)) {
 
         next_node->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
 
@@ -171,10 +174,13 @@ void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
     CanUtilities_copy_node_id_to_payload(worker_msg, next_node->id, 0);
 
 
-    if (CanTxStatemachine_try_transmit_can_message(worker_msg)) {
+    if (_interface->try_transmit_can_message(worker_msg)) {
 
         next_node->state.initial_events_broadcast_complete = false;
         next_node->state.permitted = true;
+
+        _interface->set_alias_mapping(next_node->index, next_node->id, next_node->alias);
+
         next_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
 
     }
@@ -183,16 +189,7 @@ void CanLoginMessageHandler_transmit_amd(openlcb_node_t* next_node, can_msg_t* w
 
 void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker) {
 
-    OpenLcbUtilities_load_openlcb_message(
-            openlcb_worker,
-            next_node->alias,
-            next_node->id,
-            0,
-            0,
-            MTI_INITIALIZATION_COMPLETE,
-            6
-            );
-
+    OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
 
     if (next_node->parameters->protocol_support & PSI_SIMPLE) {
 
@@ -200,11 +197,9 @@ void CanLoginMessageHandler_transmit_initialization_complete(openlcb_node_t* nex
 
     }
 
-
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_worker, next_node->id, 0);
 
-
-    if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
+    if (_interface->try_transmit_openlcb_message(openlcb_worker)) {
 
         next_node->state.initalized = true;
         next_node->producers.enumerator.running = true;
@@ -219,41 +214,33 @@ void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node, 
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-    if (next_node->producers.enumerator.running) {
+    if (next_node->producers.count > 0) {
 
-        if (next_node->producers.enumerator.enum_index < next_node->producers.count) {
+        uint16_t event_mti = _interface->extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index);
 
-            OpenLcbUtilities_load_openlcb_message(
-                    openlcb_worker,
-                    next_node->alias,
-                    next_node->id,
-                    0,
-                    0,
-                    ProtocolEventTransport_extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index),
-                    6
-                    );
+        OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, event_mti, 8);
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
 
-            OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
+        if (_interface->try_transmit_openlcb_message(openlcb_worker)) {
 
+            next_node->producers.enumerator.enum_index++;
 
-            if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
+            if (next_node->producers.enumerator.enum_index >= next_node->producers.count) {
 
-                next_node->producers.enumerator.enum_index = next_node->producers.enumerator.enum_index + 1;
+                next_node->producers.enumerator.enum_index = 0;
+                next_node->producers.enumerator.running = false;
+                next_node->consumers.enumerator.enum_index = 0;
+                next_node->consumers.enumerator.running = true;
 
-                if (next_node->producers.enumerator.enum_index >= next_node->producers.count) {
-
-                    next_node->producers.enumerator.enum_index = 0;
-                    next_node->producers.enumerator.running = false;
-                    next_node->consumers.enumerator.enum_index = 0;
-                    next_node->consumers.enumerator.running = true;
-
-                    next_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
-
-                }
+                next_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
 
             }
 
         }
+
+    } else {
+
+        next_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
 
     }
 
@@ -269,44 +256,35 @@ void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node, 
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
-    if (next_node->consumers.enumerator.running) {
+    if (next_node->consumers.count > 0) {
 
-        if (next_node->consumers.enumerator.enum_index < next_node->consumers.count) {
+        uint16_t event_mti = _interface->extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index);
 
-            OpenLcbUtilities_load_openlcb_message(
-                    openlcb_worker,
-                    next_node->alias,
-                    next_node->id,
-                    0,
-                    0,
-                    ProtocolEventTransport_extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index),
-                    6
-                    );
+        OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, event_mti, 8);
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
 
-            OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
+        if (_interface->try_transmit_openlcb_message(openlcb_worker)) {
 
+            next_node->consumers.enumerator.enum_index++;
 
-            if (CanTxStatemachine_try_transmit_openlcb_message(openlcb_worker)) {
+            if (next_node->consumers.enumerator.enum_index >= next_node->consumers.count) {
 
-                next_node->consumers.enumerator.enum_index = next_node->consumers.enumerator.enum_index + 1;
+                next_node->consumers.enumerator.running = false;
+                next_node->consumers.enumerator.enum_index = 0;
 
-                if (next_node->consumers.enumerator.enum_index >= next_node->consumers.count) {
-
-                    next_node->consumers.enumerator.running = false;
-                    next_node->consumers.enumerator.enum_index = 0;
-
-                    next_node->state.initial_events_broadcast_complete = true;
-                    next_node->state.run_state = RUNSTATE_RUN;
-
-                    printf("Login Complete\n");
-
-                }
+                next_node->state.initial_events_broadcast_complete = true;
+                next_node->state.run_state = RUNSTATE_RUN;
 
             }
 
         }
 
+    } else {
+
+        next_node->state.run_state = RUNSTATE_RUN;
+
     }
+
 
 #else
 

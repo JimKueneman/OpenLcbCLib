@@ -57,8 +57,6 @@ extern "C"
 
     extern void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg);
 
-    extern void OpenLcbBufferStore_clear_openlcb_message(openlcb_msg_t *openlcb_msg);
-
     extern uint16_t OpenLcbBufferStore_basic_messages_allocated(void);
 
     extern uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void);

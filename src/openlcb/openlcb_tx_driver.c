@@ -54,7 +54,7 @@ bool OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* o
     // TODO:  I don't like this coupling into the CAN drivers here... need to come up with a better way so this file does not need to access
     //        the can driver files... maybe a callback function that connects this library to the desired TX driver... need to think about it.
         
-        return CanTxStatemachine_try_transmit_openlcb_message(openlcb_msg);
+        return CanTxStatemachine_transmit_openlcb_message(openlcb_msg);
 
 
 }

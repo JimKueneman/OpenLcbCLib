@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,51 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_tx_statemachine.h
+ * \file can_login_statemachine.h
  *
- * Takes an OpenLcb message structure and splits it into CAN frames to transmit if 
- * necessary, else it packs up the CAN frame from the message structure and send it
- * to the CAN Driver to transmit on the physical layer.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 12 Aug 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_TX_STATEMACHINE__
-#define	__CAN_TX_STATEMACHINE__
-
-#include <stdbool.h>
-#include <stdint.h>
+#ifndef __CAN_LOGIN_STATEMACHINE__
+#define	__CAN_LOGIN_STATEMACHINE__
 
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    typedef struct {
-        bool (*is_tx_buffer_empty)(void);
-        bool (*handle_addressed_msg_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-        bool (*handle_unaddressed_msg_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-        bool (*handle_datagram_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-        bool (*handle_stream_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-        bool (*handle_can_frame)(can_msg_t* can_msg);
-    } interface_can_tx_statemachine_t;
-
-
-    extern void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interface_can_tx_statemachine);
-
-    extern bool CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t* openlcb_msg);
-
-    extern bool CanTxStatemachine_transmit_can_message(can_msg_t* can_msg);
+    extern void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* can_msg, openlcb_msg_t* openlcb_msg);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-
-#endif	/* __CAN_TX_STATEMACHINE__ */
+#endif	/* __CAN_LOGIN_STATEMACHINE__ */
 

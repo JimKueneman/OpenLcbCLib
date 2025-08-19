@@ -24,53 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_rx_statemachine.h
+ * \file can_tx_message_handler.h
  *
- * Handles the raw CAN frame structures and Pushes them onto the FIFO stack to be
- * processed in the main loop.  If the message is across multiple CAN frames it uses 
- * the Buffer List to hold the OpenLcb message as it builds it through gathering the
- * various CAN frames that make it up.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Aug 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_RX_STATEMACHINE__
-#define	__CAN_RX_STATEMACHINE__
+#ifndef __CAN_TX_MESSAGE_HANDLER__
+#define	__CAN_TX_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "can_types.h"
+#include "../../openlcb/openlcb_types.h"
 
 typedef struct {
-    void (*can_rx_register_target_callback) (can_rx_callback_func_t); 
-    void (*handle_can_legacy_snip)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
-    void (*handle_single_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
-    void (*handle_first_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
-    void (*handle_middle_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
-    void (*handle_last_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
-    void (*handle_stream)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
-    void (*handle_cid)(can_msg_t* can_msg);
-    void (*handle_rid)(can_msg_t* can_msg);
-    void (*handle_ame)(can_msg_t* can_msg);
-    void (*handle_amd)(can_msg_t* can_msg);
-    void (*handle_amr)(can_msg_t* can_msg);
-    void (*handle_error_information_report)(can_msg_t* can_msg);
+    
+    bool (*transmit_can_frame)(can_msg_t* can_msg);
+    void (*application_callback_tx)(void);
+    
+} interface_can_tx_message_handler_t;
 
-} interface_can_rx_statemachine_t;
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+    extern void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler);
 
-    extern void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine);
-
+    extern bool CanTxMessageHandler_handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_handle_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_handle_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_handle_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_handle_can_frame(can_msg_t* can_msg);
+   
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_RX_STATEMACHINE__ */
+#endif	/* XC_HEADER_TEMPLATE_H */
 

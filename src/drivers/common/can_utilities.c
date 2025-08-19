@@ -63,7 +63,7 @@ uint16_t CanUtilities_extract_source_alias_from_can_identifier(can_msg_t *can_ms
 
 }
 
-uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
+uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
@@ -94,7 +94,7 @@ uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
     return 0;
 }
 
-uint16_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
+uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
@@ -196,6 +196,11 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
 
     can_msg->payload_count = 0;
     uint8_t count = 0;
+    
+    if (openlcb_msg->payload_count == 0) {
+        
+        return 0;
+    }
 
     for (int i = can_start_index; i < LEN_CAN_BYTE_ARRAY; i++) {
 
@@ -219,7 +224,7 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
     return count;
 }
 
-void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8) {
+void CanUtilities_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8) {
 
     can_msg->identifier = identifier;
     can_msg->payload_count = payload_size;
@@ -237,9 +242,9 @@ void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8
 uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset) {
 
     if (start_offset > 2) {
-        
+
         return 0;
-        
+
     }
     can_msg->payload_count = 6 + start_offset;
 
@@ -282,3 +287,16 @@ bool CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg
 
     return true;
 }
+
+void CanUtilities_copy_node_id_to_can_payload_buffer(node_id_t node_id, payload_bytes_can_t *buffer) {
+
+    for (int i = 5; i > -1; i--) {
+
+        (*buffer)[i] = (uint8_t) (node_id & 0xFF);
+
+        node_id = node_id >> 8;
+
+    }
+
+}
+

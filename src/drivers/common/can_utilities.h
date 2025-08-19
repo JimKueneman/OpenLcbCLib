@@ -49,7 +49,7 @@ extern "C"
 
     extern void CanUtilities_clear_can_message(can_msg_t *can_msg);
    
-    extern void CanUtilties_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8);
+    extern void CanUtilities_load_can_message(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8);
    
     extern uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_id, uint8_t start_offset);
     
@@ -67,14 +67,16 @@ extern "C"
 
     extern uint16_t CanUtilities_extract_source_alias_from_can_identifier(can_msg_t *can_msg);
 
-    extern uint16_t CanUtilties_extract_dest_alias_from_can_message(can_msg_t *can_msg);
+    extern uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg);
 
-    extern uint16_t CanUtilties_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg);
+    extern uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg);
 
     extern uint8_t CanUtilities_count_nulls_in_payloads(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg);
 
     extern bool CanUtilities_is_openlcb_message(can_msg_t *can_msg);
-
+    
+    extern void CanUtilities_copy_node_id_to_can_payload_buffer(node_id_t node_id, payload_bytes_can_t *buffer);
+    
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
