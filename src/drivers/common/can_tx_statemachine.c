@@ -44,10 +44,8 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-#include "../driver_can.h"
-#include "can_utilities.h"
+#include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_utilities.h"
-#include "can_tx_message_handler.h"
 
 
 interface_can_tx_statemachine_t *_interface_can_tx_statemachine;

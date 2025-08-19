@@ -40,11 +40,31 @@
 #include "../../openlcb/openlcb_types.h"
 
 
+typedef struct {
+    
+     void (*init)(openlcb_node_t* next_node);
+     void (*generate_seed)(openlcb_node_t* next_node);
+     void (*generate_alias)(openlcb_node_t* next_node);
+     void (*transmit_cid07)(openlcb_node_t* next_node, can_msg_t* worker_msg);
+     void (*transmit_cid06)(openlcb_node_t* next_node, can_msg_t* worker_msg);
+     void (*transmit_cid05)(openlcb_node_t* next_node, can_msg_t* worker_msg);
+     void (*transmit_cid04)(openlcb_node_t* next_node, can_msg_t* worker_msg);
+     void (*wait_200ms)(openlcb_node_t* next_node);
+     void (*transmit_rid)(openlcb_node_t* next_node, can_msg_t* worker_msg);
+     void (*transmit_amd)(openlcb_node_t* next_node, can_msg_t* worker_msg);
+     void (*transmit_initialization_complete)(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+     void (*transmit_producer_events)(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+     void (*transmit_consumer_events)(openlcb_node_t* next_node, openlcb_msg_t* openlcb_worker);
+    
+} interface_can_login_state_machine_t;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+    extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
 
-    extern void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* can_msg, openlcb_msg_t* openlcb_msg);
+    extern void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* worker_can_msg, openlcb_msg_t* worker_openlcb_msg);
 
 #ifdef	__cplusplus
 }
