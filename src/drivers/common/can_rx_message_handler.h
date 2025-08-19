@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_frame_message_hander.h
+ * \file can_rx_message_hander.h
  *
  * As CAN only frame messages come in they need to be processed by the node(s) to see
  * if there is a response required.  These are the handlers called by the CAN main
@@ -35,8 +35,8 @@
  */
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_FRAME_MESSAGE_HANDLER__
-#define	__CAN_FRAME_MESSAGE_HANDLER__
+#ifndef __CAN_RX_MESSAGE_HANDLER__
+#define	__CAN_RX_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -60,31 +60,31 @@ extern "C" {
 
 
 
-    extern void CanFrameMessageHandler_initialize(const interface_can_frame_message_handler_t *interface);
+    extern void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface);
 
-    extern void CanFrameMessageHandler_cid(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_cid(can_msg_t* can_msg);
 
-    extern void CanFrameMessageHandler_rid(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_rid(can_msg_t* can_msg);
 
-    extern void CanFrameMessageHandler_amd(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_amd(can_msg_t* can_msg);
 
-    extern void CanFrameMessageHandler_ame(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_ame(can_msg_t* can_msg);
 
-    extern void CanFrameMessageHandler_amr(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_amr(can_msg_t* can_msg);
     
-    extern void CanFrameMessageHandler_error_information_report(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_error_information_report(can_msg_t* can_msg);
 
-    extern void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
 
-    extern void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t offset);
+    extern void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t offset);
 
-    extern void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t offset);
+    extern void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t offset);
 
-    extern void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
 
-    extern void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
     
-    extern void CanFrameMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
 
 
 #ifdef	__cplusplus

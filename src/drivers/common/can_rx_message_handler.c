@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_frame_message_hander.c
+ * \file can_rx_message_hander.c
  *
  * As CAN only frame messages come in they need to be processed by the node(s) to see
  * if there is a response required.  These are the handlers called by the CAN main
@@ -34,7 +34,7 @@
  * @date 5 Dec 2024
  */
 
-#include "can_frame_message_handler.h"
+#include "can_rx_message_handler.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -63,7 +63,7 @@
 
 static interface_can_frame_message_handler_t *_interface;
 
-void CanFrameMessageHandler_initialize(const interface_can_frame_message_handler_t *interface) {
+void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface) {
 
     _interface = (interface_can_frame_message_handler_t*) interface;
 
@@ -133,7 +133,7 @@ bool _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_fl
 
 }
 
-void CanFrameMessageHandler_cid(can_msg_t* can_msg) {
+void CanRxMessageHandler_cid(can_msg_t* can_msg) {
 
     // Check for duplicate Alias 
     alias_mapping_t *mapping = _interface->find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
@@ -146,21 +146,21 @@ void CanFrameMessageHandler_cid(can_msg_t* can_msg) {
 
 }
 
-void CanFrameMessageHandler_rid(can_msg_t* can_msg) {
+void CanRxMessageHandler_rid(can_msg_t* can_msg) {
 
     // Check for duplicate Alias 
     _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
 
 }
 
-void CanFrameMessageHandler_amd(can_msg_t* can_msg) {
+void CanRxMessageHandler_amd(can_msg_t* can_msg) {
 
     // Check for duplicate Alias 
     _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
     
 }
 
-void CanFrameMessageHandler_ame(can_msg_t* can_msg) {
+void CanRxMessageHandler_ame(can_msg_t* can_msg) {
 
     payload_bytes_can_t buffer;
     alias_mapping_t *mapping = NULL;
@@ -200,19 +200,19 @@ void CanFrameMessageHandler_ame(can_msg_t* can_msg) {
 
 }
 
-void CanFrameMessageHandler_amr(can_msg_t* can_msg) {
+void CanRxMessageHandler_amr(can_msg_t* can_msg) {
 
     _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
 
 }
 
-void CanFrameMessageHandler_error_information_report(can_msg_t* can_msg) {
+void CanRxMessageHandler_error_information_report(can_msg_t* can_msg) {
     
     _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
     
 }
 
-void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
     
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     
@@ -260,7 +260,7 @@ void CanFrameMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_b
    
 }
 
-void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
     
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     
@@ -294,7 +294,7 @@ void CanFrameMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_
 
 }
 
-void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
     
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     
@@ -330,7 +330,7 @@ void CanFrameMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_bu
 
 }
 
-void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
     
 
     uint16_t dest_alias =  CanUtilities_extract_dest_alias_from_can_message(can_msg);
@@ -367,7 +367,7 @@ void CanFrameMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_
    
 }
 
-void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 
@@ -380,24 +380,24 @@ void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t c
 
     if (!openlcb_msg_inprocess) { // Do we have one in process?
 
-        CanFrameMessageHandler_handle_first_frame(can_msg, can_buffer_start_index, data_type);
+        CanRxMessageHandler_handle_first_frame(can_msg, can_buffer_start_index, data_type);
 
     } else { // Yes we have one in process   
 
 
         if (CanUtilities_count_nulls_in_payloads(openlcb_msg_inprocess, can_msg) < 6)
 
-            CanFrameMessageHandler_handle_middle_frame(can_msg, can_buffer_start_index);
+            CanRxMessageHandler_handle_middle_frame(can_msg, can_buffer_start_index);
 
         else
 
-            CanFrameMessageHandler_handle_last_frame(can_msg, can_buffer_start_index);
+            CanRxMessageHandler_handle_last_frame(can_msg, can_buffer_start_index);
 
     };
 
 }
 
-void CanFrameMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
     
     
 }

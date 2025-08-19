@@ -43,7 +43,7 @@
 
 #include "can_types.h"
 #include "can_buffer_fifo.h"
-#include "can_frame_message_handler.h"
+#include "can_rx_message_handler.h"
 #include "can_buffer_store.h"
 #include "can_login_message_handler.h"
 #include "can_tx_statemachine.h"
