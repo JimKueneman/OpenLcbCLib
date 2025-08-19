@@ -107,7 +107,7 @@ void global_initialize(void)
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
 
-    CanFrameMessageHandler_initialize(&can_frame_message_handler_interface);
+    CanRxMessageHandler_initialize(&can_frame_message_handler_interface);
 
     duplicate_alias = 0;
 }
@@ -186,7 +186,7 @@ TEST(CanFrameMessageHandler, cid)
     // No conflict
     can_msg.identifier = 0x17050AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_cid(&can_msg);
+    CanRxMessageHandler_cid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -196,7 +196,7 @@ TEST(CanFrameMessageHandler, cid)
     // No conflict
     can_msg.identifier = 0x16050AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_cid(&can_msg);
+    CanRxMessageHandler_cid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -206,7 +206,7 @@ TEST(CanFrameMessageHandler, cid)
     // No conflict
     can_msg.identifier = 0x15050AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_cid(&can_msg);
+    CanRxMessageHandler_cid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -216,7 +216,7 @@ TEST(CanFrameMessageHandler, cid)
     // No conflict
     can_msg.identifier = 0x17040AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_cid(&can_msg);
+    CanRxMessageHandler_cid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -226,7 +226,7 @@ TEST(CanFrameMessageHandler, cid)
     // Cause a conflict
     can_msg.identifier = 0x17050AAA;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_cid(&can_msg);
+    CanRxMessageHandler_cid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x10700AAA, 0, nullptr));
@@ -237,7 +237,7 @@ TEST(CanFrameMessageHandler, cid)
     // Cause a conflict
     can_msg.identifier = 0x17040777;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_cid(&can_msg);
+    CanRxMessageHandler_cid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x10700777, 0, nullptr));
@@ -258,7 +258,7 @@ TEST(CanFrameMessageHandler, rid)
     duplicate_alias = 0;
     can_msg.identifier = 0x10700AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_rid(&can_msg);
+    CanRxMessageHandler_rid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -268,7 +268,7 @@ TEST(CanFrameMessageHandler, rid)
     // Cause a conflict
     can_msg.identifier = 0x10700AAA;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_rid(&can_msg);
+    CanRxMessageHandler_rid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x05};
@@ -281,7 +281,7 @@ TEST(CanFrameMessageHandler, rid)
     duplicate_alias = 0;
     can_msg.identifier = 0x10700777;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_rid(&can_msg);
+    CanRxMessageHandler_rid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes1[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x02};
@@ -303,7 +303,7 @@ TEST(CanFrameMessageHandler, amd)
     duplicate_alias = 0;
     can_msg.identifier = 0x10701AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_amd(&can_msg);
+    CanRxMessageHandler_amd(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -313,7 +313,7 @@ TEST(CanFrameMessageHandler, amd)
     // Cause a conflict
     can_msg.identifier = 0x10701AAA;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_amd(&can_msg);
+    CanRxMessageHandler_amd(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x05};
@@ -326,7 +326,7 @@ TEST(CanFrameMessageHandler, amd)
     duplicate_alias = 0;
     can_msg.identifier = 0x10701777;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_rid(&can_msg);
+    CanRxMessageHandler_rid(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes1[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x02};
@@ -348,7 +348,7 @@ TEST(CanFrameMessageHandler, ame)
     duplicate_alias = 0;
     can_msg.identifier = 0x10702AAA;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_ame(&can_msg);
+    CanRxMessageHandler_ame(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x05};
@@ -361,7 +361,7 @@ TEST(CanFrameMessageHandler, ame)
     // Request one of our nodes 0x010203040503
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x10702AAB, 6, 0x01, 0x02, 0x03, 0x04, 0x05, 0x03, 0x00, 0x00);
-    CanFrameMessageHandler_ame(&can_msg);
+    CanRxMessageHandler_ame(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes10[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x03};
@@ -375,7 +375,7 @@ TEST(CanFrameMessageHandler, ame)
     duplicate_alias = 0;
     can_msg.identifier = 0x10702AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_ame(&can_msg);
+    CanRxMessageHandler_ame(&can_msg);
     EXPECT_EQ(CanBufferFifo_get_allocated_count(), MAPPING_COUNT);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
@@ -424,7 +424,7 @@ TEST(CanFrameMessageHandler, amr)
     duplicate_alias = 0;
     can_msg.identifier = 0x10703AAA;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_amr(&can_msg);
+    CanRxMessageHandler_amr(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     uint8_t bytes6[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x05};
@@ -437,7 +437,7 @@ TEST(CanFrameMessageHandler, amr)
     duplicate_alias = 0;
     can_msg.identifier = 0x10703AAB;
     can_msg.payload_count = 0;
-    CanFrameMessageHandler_amr(&can_msg);
+    CanRxMessageHandler_amr(&can_msg);
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_EQ(outgoing_can_msg, nullptr);
     EXPECT_EQ(duplicate_alias, 0);
@@ -458,7 +458,7 @@ TEST(CanFrameMessageHandler, handle_single_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x196686BE, 8, 0x0A, 0xAA, 0x54, 0x58, 0x20, 0x00, 0x00, 0x00);
     fail_buffer = true;
-    CanFrameMessageHandler_handle_single_frame(&can_msg, 2, BASIC);
+    CanRxMessageHandler_handle_single_frame(&can_msg, 2, BASIC);
     fail_buffer = false;
     EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -470,7 +470,7 @@ TEST(CanFrameMessageHandler, handle_single_frame)
     // [[196686be] 0A AA 54 58 20 00 00 00]  R:  ProtocolSupportReply with payload 54 58 20 00 00 00
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x196686BE, 8, 0x0A, 0xAA, 0x54, 0x58, 0x20, 0x00, 0x00, 0x00);
-    CanFrameMessageHandler_handle_single_frame(&can_msg, 2, BASIC);
+    CanRxMessageHandler_handle_single_frame(&can_msg, 2, BASIC);
     outgoing_openlcb_msg = OpenLcbBufferFifo_pop();
     EXPECT_NE(outgoing_openlcb_msg, nullptr);
     uint8_t bytes[6] = {0x54, 0x58, 0x20, 0x00, 0x00, 0x00};
@@ -482,7 +482,7 @@ TEST(CanFrameMessageHandler, handle_single_frame)
     // [[196686be] 0A AB 54 58 20 00 00 00]  R:  ProtocolSupportReply with payload 54 58 20 00 00 00
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x196686BE, 8, 0x0A, 0xAB, 0x54, 0x58, 0x20, 0x00, 0x00, 0x00);
-    CanFrameMessageHandler_handle_single_frame(&can_msg, 2, BASIC);
+    CanRxMessageHandler_handle_single_frame(&can_msg, 2, BASIC);
     outgoing_openlcb_msg = OpenLcbBufferFifo_pop();
     EXPECT_EQ(outgoing_openlcb_msg, nullptr);
     // **************************************************************************************************
@@ -492,7 +492,7 @@ TEST(CanFrameMessageHandler, handle_single_frame)
     // [[195476be]  Producer Identified Unknown for EventID:05.01.01.01.07.FF.00.25
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x195476BE, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x25);
-    CanFrameMessageHandler_handle_single_frame(&can_msg, 0, BASIC);
+    CanRxMessageHandler_handle_single_frame(&can_msg, 0, BASIC);
     outgoing_openlcb_msg = OpenLcbBufferFifo_pop();
     EXPECT_NE(outgoing_openlcb_msg, nullptr);
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -505,7 +505,7 @@ TEST(CanFrameMessageHandler, handle_single_frame)
     // [1a5556eb]f 20 61 00 00 00 00 08   ]  Datagram: (7) 20.61.0.0.0.0.8
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1A5556BE, 7, 0x20, 0x61, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00);
-    CanFrameMessageHandler_handle_single_frame(&can_msg, 0, BASIC);
+    CanRxMessageHandler_handle_single_frame(&can_msg, 0, BASIC);
     outgoing_openlcb_msg = OpenLcbBufferFifo_pop();
     EXPECT_NE(outgoing_openlcb_msg, nullptr);
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -519,7 +519,7 @@ TEST(CanFrameMessageHandler, handle_single_frame)
     // [1a5546eb]f 20 61 00 00 00 00 08   ]  Datagram: (7) 20.61.0.0.0.0.8
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1a5546BE, 7, 0x20, 0x61, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00);
-    CanFrameMessageHandler_handle_single_frame(&can_msg, 0, BASIC);
+    CanRxMessageHandler_handle_single_frame(&can_msg, 0, BASIC);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
     // **************************************************************************************************
@@ -537,7 +537,7 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x4F, 0x37, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
     EXPECT_EQ(duplicate_alias, 0x00);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -553,7 +553,7 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
 
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
     openlcb_msg = OpenLcbBufferList_find(0x6be, 0x0999, 0xa08);
     EXPECT_NE(openlcb_msg, nullptr);
@@ -575,10 +575,10 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
 
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
 
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
 
@@ -606,7 +606,7 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
 
     fail_buffer = true;
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
     fail_buffer = false;
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -637,7 +637,7 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     // [[1bf376be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1bf376be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
 
     EXPECT_EQ(duplicate_alias, 0x00);
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -651,7 +651,7 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1b6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
 
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
     openlcb_msg = OpenLcbBufferList_find(0x06be, 0x0666, MTI_DATAGRAM);
     EXPECT_NE(openlcb_msg, nullptr);
@@ -671,11 +671,11 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1b6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
 
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
     EXPECT_TRUE(CanBufferFifo_is_empty());
 
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
 
@@ -703,7 +703,7 @@ TEST(CanFrameMessageHandler, handle_first_frame)
     CanUtilities_load_can_message(&can_msg, 0x1b6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
 
     fail_buffer = true;
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, DATAGRAM);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, DATAGRAM);
     fail_buffer = false;
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -738,7 +738,7 @@ TEST(CanFrameMessageHandler, handle_middle_frame)
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xCF, 0x37, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     EXPECT_EQ(duplicate_alias, 0x00);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -750,7 +750,7 @@ TEST(CanFrameMessageHandler, handle_middle_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
 
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
 
@@ -777,7 +777,7 @@ TEST(CanFrameMessageHandler, handle_middle_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
 
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
@@ -806,7 +806,7 @@ TEST(CanFrameMessageHandler, handle_middle_frame)
     // [[1bf376be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1cf376be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 0);
 
     EXPECT_EQ(duplicate_alias, 0x00);
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -819,7 +819,7 @@ TEST(CanFrameMessageHandler, handle_middle_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1c6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
 
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 0);
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
 
@@ -852,7 +852,7 @@ TEST(CanFrameMessageHandler, handle_last_frame)
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x8F, 0x37, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-    CanFrameMessageHandler_handle_last_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_last_frame(&can_msg, 2);
     EXPECT_EQ(duplicate_alias, 0x00);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -864,7 +864,7 @@ TEST(CanFrameMessageHandler, handle_last_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x89, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
 
-    CanFrameMessageHandler_handle_last_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_last_frame(&can_msg, 2);
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
 
@@ -890,7 +890,7 @@ TEST(CanFrameMessageHandler, handle_last_frame)
     // [[1bf376be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1cf376be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-    CanFrameMessageHandler_handle_last_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_last_frame(&can_msg, 0);
 
     EXPECT_EQ(duplicate_alias, 0x00);
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -903,7 +903,7 @@ TEST(CanFrameMessageHandler, handle_last_frame)
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1c6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
 
-    CanFrameMessageHandler_handle_last_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_last_frame(&can_msg, 0);
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_FALSE(CanBufferFifo_is_empty());
 
@@ -933,27 +933,27 @@ TEST(CanFrameMessageHandler, multi_frame_sequence_snip)
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x6E, 0x67, 0x70, 0x65, 0x61, 0x6B);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x20, 0x45, 0x6E, 0x67, 0x69, 0x6E);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x65, 0x65, 0x72, 0x69, 0x6E, 0x67);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x00, 0x54, 0x75, 0x72, 0x6E, 0x6F);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x75, 0x74, 0x42, 0x6F, 0x73, 0x73);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x00, 0x56, 0x65, 0x72, 0x73, 0x69);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x6F, 0x6E, 0x20, 0x32, 0x00, 0x32);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x30, 0x32, 0x35, 0x30, 0x38, 0x30);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0xC9, 0x99, 0x37, 0x2E, 0x30, 0x37, 0x35, 0x37);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 2);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x89, 0x99, 0x31, 0x38, 0x00, 0x02, 0x00, 0x00);
-    CanFrameMessageHandler_handle_last_frame(&can_msg, 2);
+    CanRxMessageHandler_handle_last_frame(&can_msg, 2);
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -995,13 +995,13 @@ TEST(CanFrameMessageHandler, multi_frame_sequence_datagram)
     //[[1d7776be] 22 20                  ]  R: 05.01.01.01.07.FF - 02.01.12.FE.83.2E Datagram: (26) 20.53.0.0.0.0.3C.3F.78.6D.6C.20.76.65.72.73.69.6F.6E.3D.22.31.2E.30.22.20
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x1b7776be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-    CanFrameMessageHandler_handle_first_frame(&can_msg, 0, SNIP);
+    CanRxMessageHandler_handle_first_frame(&can_msg, 0, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x1c7776be, 8, 0x78, 0x6D, 0x6C, 0x20, 0x76, 0x65, 0x72, 0x73);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 0);
     CanUtilities_load_can_message(&can_msg, 0x1c7776be, 8, 0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x31, 0x2E, 0x30);
-    CanFrameMessageHandler_handle_middle_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_middle_frame(&can_msg, 0);
     CanUtilities_load_can_message(&can_msg, 0x1d7776be, 2, 0x22, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    CanFrameMessageHandler_handle_last_frame(&can_msg, 0);
+    CanRxMessageHandler_handle_last_frame(&can_msg, 0);
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_TRUE(CanBufferFifo_is_empty());
@@ -1033,27 +1033,27 @@ TEST(CanFrameMessageHandler, multi_frame_sequence_legacy_snip)
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     duplicate_alias = 0;
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x6E, 0x67, 0x70, 0x65, 0x61, 0x6B);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x20, 0x45, 0x6E, 0x67, 0x69, 0x6E);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x65, 0x65, 0x72, 0x69, 0x6E, 0x67);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x00, 0x54, 0x75, 0x72, 0x6E, 0x6F);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x75, 0x74, 0x42, 0x6F, 0x73, 0x73);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x00, 0x56, 0x65, 0x72, 0x73, 0x69);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x6F, 0x6E, 0x20, 0x32, 0x00, 0x32);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x30, 0x32, 0x35, 0x30, 0x38, 0x30);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x37, 0x2E, 0x30, 0x37, 0x35, 0x37);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x09, 0x99, 0x31, 0x38, 0x00, 0x02, 0x00, 0x00);
-    CanFrameMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
+    CanRxMessageHandler_handle_can_legacy_snip(&can_msg, 2, SNIP);
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
     EXPECT_TRUE(CanBufferFifo_is_empty());
