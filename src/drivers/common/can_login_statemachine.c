@@ -52,7 +52,7 @@ void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *
 
 }
 
-void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* worker_can_msg, openlcb_msg_t* worker_openlcb_msg) {
+void CanLoginStateMachine_run(openlcb_node_t* openlcb_node) {
 
 
 
@@ -78,25 +78,25 @@ void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* worker_ca
 
         case RUNSTATE_SEND_CHECK_ID_07:
 
-            _interface->transmit_cid07(openlcb_node, worker_can_msg);
+            _interface->transmit_cid07(openlcb_node);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_06:
 
-            _interface->transmit_cid06(openlcb_node, worker_can_msg);
+            _interface->transmit_cid06(openlcb_node);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_05:
 
-            _interface->transmit_cid05(openlcb_node, worker_can_msg);
+            _interface->transmit_cid05(openlcb_node);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_04:
 
-            _interface->transmit_cid04(openlcb_node, worker_can_msg);
+            _interface->transmit_cid04(openlcb_node);
 
             return;
 
@@ -108,31 +108,31 @@ void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* worker_ca
 
         case RUNSTATE_TRANSMIT_RESERVE_ID:
 
-            _interface->transmit_rid(openlcb_node, worker_can_msg);
+            _interface->transmit_rid(openlcb_node);
 
             return;
 
         case RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION:
 
-            _interface->transmit_amd(openlcb_node, worker_can_msg);
+            _interface->transmit_amd(openlcb_node);
 
             return;
 
         case RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE:
 
-            _interface->transmit_initialization_complete(openlcb_node, worker_openlcb_msg);
+            _interface->transmit_initialization_complete(openlcb_node);
 
             return;
 
         case RUNSTATE_TRANSMIT_PRODUCER_EVENTS:
 
-            _interface->transmit_producer_events(openlcb_node, worker_openlcb_msg);
+            _interface->transmit_producer_events(openlcb_node);
 
             return;
 
         case RUNSTATE_TRANSMIT_CONSUMER_EVENTS:
 
-            _interface->transmit_consumer_events(openlcb_node, worker_openlcb_msg);
+            _interface->transmit_consumer_events(openlcb_node);
 
             return;
 

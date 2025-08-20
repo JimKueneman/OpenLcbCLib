@@ -49,11 +49,9 @@ extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        
-        alias_mapping_t *(*find_alias_mapping)(node_id_t node_id, uint16_t alias);
-        bool (*set_mapping_duplicate_alias_detected)(uint16_t node_alias);
-        uint16_t(*mapping_count)(void);
-        alias_mapping_t *(*alias_mapping)(uint16_t index);
+        openlcb_node_t *(*find_by_alias)(uint16_t alias);
+        openlcb_node_t* (*get_first)(uint8_t key);
+        openlcb_node_t* (*get_next)(uint8_t key);
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum_t payload_type);
 
     } interface_can_frame_message_handler_t;
@@ -71,7 +69,7 @@ extern "C" {
     extern void CanRxMessageHandler_ame(can_msg_t* can_msg);
 
     extern void CanRxMessageHandler_amr(can_msg_t* can_msg);
-    
+
     extern void CanRxMessageHandler_error_information_report(can_msg_t* can_msg);
 
     extern void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
@@ -83,7 +81,7 @@ extern "C" {
     extern void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
 
     extern void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
-    
+
     extern void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
 
 

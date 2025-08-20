@@ -117,18 +117,24 @@ bool _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_fl
     payload_bytes_can_t buffer;
 
     // Check for duplicate Alias 
-    alias_mapping_t *mapping = _interface->find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+    openlcb_node_t *openlcb_node = _interface->find_by_alias(CanUtilities_extract_source_alias_from_can_identifier(can_msg));
 
-    if (mapping) {
+    if (openlcb_node) {
 
-        CanUtilities_copy_node_id_to_can_payload_buffer(mapping->node_id, &buffer);
-        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | mapping->alias, 6, &buffer);
-        _interface->set_mapping_duplicate_alias_detected(mapping->alias);
-        
+        if (openlcb_node->state.permitted) {
+
+            CanUtilities_copy_node_id_to_can_payload_buffer(openlcb_node->id, &buffer);
+            _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | openlcb_node->alias, 6, &buffer);
+
+        }
+
+        // Flag for handling in the main loop
+        openlcb_node->state.duplicate_alias_detected = true;
+  
+
         return true;
-
     }
-    
+
     return false;
 
 }
@@ -136,11 +142,11 @@ bool _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_fl
 void CanRxMessageHandler_cid(can_msg_t* can_msg) {
 
     // Check for duplicate Alias 
-    alias_mapping_t *mapping = _interface->find_alias_mapping(0, CanUtilities_extract_source_alias_from_can_identifier(can_msg));
+    openlcb_node_t *openlcb_node = _interface->find_by_alias(CanUtilities_extract_source_alias_from_can_identifier(can_msg));
 
-    if (mapping) {
+    if (openlcb_node) {
 
-        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | mapping->alias, 0, NULL);
+        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | openlcb_node->alias, 0, NULL);
 
     }
 
@@ -157,29 +163,28 @@ void CanRxMessageHandler_amd(can_msg_t* can_msg) {
 
     // Check for duplicate Alias 
     _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
-    
+
 }
 
 void CanRxMessageHandler_ame(can_msg_t* can_msg) {
-
-    payload_bytes_can_t buffer;
-    alias_mapping_t *mapping = NULL;
-
     // Check for duplicate Alias  
     if (_test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg)) {
 
         return;
 
     }
+    
+    payload_bytes_can_t buffer;
+    openlcb_node_t *openlcb_node = NULL;
 
     if (can_msg->payload_count > 0) {
 
-        mapping = _interface->find_alias_mapping(CanUtilities_extract_can_payload_as_node_id(can_msg), 0);
+        openlcb_node = _interface->find_by_alias(CanUtilities_extract_can_payload_as_node_id(can_msg));
 
-        if (mapping) {
-
-            CanUtilities_copy_node_id_to_can_payload_buffer(mapping->node_id, &buffer);
-            _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | mapping->alias, 6, &buffer);
+        if (openlcb_node) {
+            
+             CanUtilities_copy_node_id_to_can_payload_buffer(openlcb_node->id, &buffer);
+            _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | openlcb_node->alias, 6, &buffer);
 
             return;
 
@@ -187,15 +192,15 @@ void CanRxMessageHandler_ame(can_msg_t* can_msg) {
 
     }
 
-    uint16_t node_count = _interface->mapping_count();
-
-    for (uint16_t i = 0; i < node_count; i++) {
-
-        mapping = _interface->alias_mapping(i);
-
-        CanUtilities_copy_node_id_to_can_payload_buffer(mapping->node_id, &buffer);
-        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | mapping->alias, 6, &buffer);
-
+    openlcb_node = _interface->get_first(100);
+    
+    while (openlcb_node) {
+        
+        CanUtilities_copy_node_id_to_can_payload_buffer(openlcb_node->id, &buffer);
+        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | openlcb_node->alias, 6, &buffer);
+        
+        openlcb_node = _interface->get_next(100);
+        
     }
 
 }
@@ -207,29 +212,29 @@ void CanRxMessageHandler_amr(can_msg_t* can_msg) {
 }
 
 void CanRxMessageHandler_error_information_report(can_msg_t* can_msg) {
-    
+
     _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_flag(can_msg);
-    
+
 }
 
 void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
-    
+
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
-    
-        // Check if the frame is for us or not
+
+    // Check if the frame is for us or not
     if (dest_alias > 0) {
-        
-        if (!_interface->find_alias_mapping(0, dest_alias)) {
-            
+
+        if (!_interface->find_by_alias(dest_alias)) {
+
             return;
-            
+
         }
-        
+
     }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
-    
+
     openlcb_msg_t* new_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (new_msg) {
@@ -237,7 +242,7 @@ void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buff
         return _send_reject(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
     }
-   
+
     new_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
     if (!new_msg) {
@@ -247,7 +252,7 @@ void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buff
         return;
 
     }
-   
+
     new_msg->mti = mti;
     new_msg->source_alias = source_alias;
     new_msg->dest_alias = dest_alias;
@@ -257,22 +262,22 @@ void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buff
 
     // Can not fail List is as large as the number of buffers
     OpenLcbBufferList_add(new_msg);
-   
+
 }
 
 void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
-    
+
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
-    
-        // Check if the frame is for us or not
+
+    // Check if the frame is for us or not
     if (dest_alias > 0) {
-        
-        if (!_interface->find_alias_mapping(0, dest_alias)) {
-            
+
+        if (!_interface->find_by_alias(dest_alias)) {
+
             return;
-            
+
         }
-        
+
     }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
@@ -295,18 +300,18 @@ void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buf
 }
 
 void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
-    
+
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
-    
-        // Check if the frame is for us or not
+
+    // Check if the frame is for us or not
     if (dest_alias > 0) {
-        
-        if (!_interface->find_alias_mapping(0, dest_alias)) {
-            
+
+        if (!_interface->find_by_alias(dest_alias)) {
+
             return;
-            
+
         }
-        
+
     }
 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
@@ -331,19 +336,19 @@ void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffe
 }
 
 void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
-    
 
-    uint16_t dest_alias =  CanUtilities_extract_dest_alias_from_can_message(can_msg);
- 
+
+    uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
+
     // Check if the frame is for us or not
     if (dest_alias > 0) {
-        
-        if (!_interface->find_alias_mapping(0, dest_alias)) {
-            
+
+        if (!_interface->find_by_alias(dest_alias)) {
+
             return;
-            
+
         }
-        
+
     }
 
     openlcb_msg_t* new_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
@@ -364,7 +369,7 @@ void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buf
 
     // Can not fail List is as large as the number of buffers
     OpenLcbBufferFifo_push(new_msg);
-   
+
 }
 
 void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
@@ -398,6 +403,6 @@ void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_
 }
 
 void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
-    
-    
+
+
 }

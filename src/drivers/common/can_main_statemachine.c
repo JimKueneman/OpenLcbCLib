@@ -48,6 +48,7 @@
 
 
 static interface_can_main_statemachine_t *_interface;
+static can_msg_t *current_outgoing_can_msg = NULL;
 
 void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine) {
 
@@ -56,61 +57,92 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 }
 
 static void _process_outgoing_can_msgs(void) {
-    
-     if (_interface->is_tx_buffer_empty) {
+
+    if (current_outgoing_can_msg == NULL) {
 
         _interface->pause_100ms_timer();
         _interface->pause_can_rx();
-        can_msg_t *can_msg = CanBufferFifo_pop();
+        current_outgoing_can_msg = CanBufferFifo_pop();
         _interface->resume_can_rx();
         _interface->resume_100ms_timer();
 
-        if (can_msg) {
-         
-            _interface->transmit_frame(can_msg);
+        if (!current_outgoing_can_msg) {
+
+            return;
 
         }
 
+        if (_interface->transmit_can_frame(current_outgoing_can_msg)) {
+
+            current_outgoing_can_msg = NULL;
+
+        };
+
     }
-    
+
+}
+
+static void _handle_duplicate_alias_detected(openlcb_node_t *openlcb_node) {
+
+    _interface->pause_can_rx();
+
+    openlcb_node->state.permitted = false;
+    openlcb_node->state.initalized = false;
+    openlcb_node->state.openlcb_msg_handled = true;
+    openlcb_node->state.initial_events_broadcast_complete = false;
+    openlcb_node->state.duplicate_id_detected = false;
+    openlcb_node->state.duplicate_alias_detected = false;
+    openlcb_node->state.firmware_upgrade_active = false;
+    openlcb_node->state.resend_datagram = false;
+    openlcb_node->state.resend_optional_message = false;
+    openlcb_node->state.openlcb_datagram_ack_sent = false;
+    OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
+    openlcb_node->last_received_datagram = NULL;
+    OpenLcbBufferStore_free_buffer(openlcb_node->last_received_optional_interaction);
+    openlcb_node->last_received_optional_interaction = NULL;
+    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias   
+
+    _interface->resume_can_rx();
+
 }
 
 void CanMainStateMachine_run(void) {
-    
-    can_msg_t can_msg;
-    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-   
-    if (!openlcb_msg) {
-        
-         _process_outgoing_can_msgs();
-         
-        return;
-        
+
+    _process_outgoing_can_msgs();
+
+    openlcb_node_t *openlcb_node = _interface->node_get_first(0);
+
+    while (openlcb_node) {
+
+        _process_outgoing_can_msgs();
+
+        if (openlcb_node->state.duplicate_alias_detected) {
+
+            _handle_duplicate_alias_detected(openlcb_node);
+
+        }
+
+        if (openlcb_node->state.run_state < RUNSTATE_RUN) {
+
+            openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+            if (openlcb_msg) {
+
+                _interface->login_statemachine_run(openlcb_node, openlcb_msg);
+
+                OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+            }
+
+        } else {
+
+            _interface->openlcb_main_statemachine_run_single_node(openlcb_node);
+
+        }
+
+        openlcb_node = _interface->node_get_next(0);
     }
-    
-    
-   openlcb_node_t *openlcb_node = _interface->node_get_first(0);
-   
-   while (openlcb_node) {
-       
-       _process_outgoing_can_msgs();
-       
-       if (openlcb_node->state.run_state < RUNSTATE_RUN) {
-           
-           _interface->login_statemachine_run(openlcb_node, &can_msg, openlcb_msg);
-           
-       } else {
-        
-           _interface->openlcb_main_statemachine_run_single_node(openlcb_node);
-           
-       }
-       
-       openlcb_node = _interface->node_get_next(0);
-   }
-   
-   _process_outgoing_can_msgs();
-   
-   OpenLcbBufferStore_free_buffer(openlcb_msg);
+
 }
 
 

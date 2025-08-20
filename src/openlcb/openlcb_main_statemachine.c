@@ -103,6 +103,12 @@ void OpenLcbMainStatemachine_initialize(
 
 static void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
+    
+    return;
+    
+    
+    
+    
     switch (openlcb_msg->mti) {
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
@@ -317,7 +323,7 @@ openlcb_statemachine_worker_t* OpenLcbMainStatemachine_get_openlcb_helper(void) 
 
 void OpenLcbMainStatemachine_run_single_node(openlcb_node_t* openlcb_node) {
 
-//    _process_main_statemachine(openlcb_node, openlcb_msg, worker_msg);
+    _process_main_statemachine(openlcb_node, NULL, NULL);
 
 }
 

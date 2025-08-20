@@ -103,22 +103,22 @@ void _generate_alias(openlcb_node_t *next_node)
     _generate_alias_called = true;
 }
 
-void _transmit_cid07(openlcb_node_t *next_node, can_msg_t *worker_msg)
+void _transmit_cid07(openlcb_node_t *next_node)
 {
     _transmit_cid07_called = true;
 }
 
-void _transmit_cid06(openlcb_node_t *next_node, can_msg_t *worker_msg)
+void _transmit_cid06(openlcb_node_t *next_node)
 {
     _transmit_cid06_called = true;
 }
 
-void _transmit_cid05(openlcb_node_t *next_node, can_msg_t *worker_msg)
+void _transmit_cid05(openlcb_node_t *next_node)
 {
     _transmit_cid05_called = true;
 }
 
-void _transmit_cid04(openlcb_node_t *next_node, can_msg_t *worker_msg)
+void _transmit_cid04(openlcb_node_t *next_node)
 {
 
     _transmit_cid04_called = true;
@@ -130,31 +130,31 @@ void _wait_200ms(openlcb_node_t *next_node)
     _wait_200ms_called = true;
 }
 
-void _transmit_rid(openlcb_node_t *next_node, can_msg_t *worker_msg)
+void _transmit_rid(openlcb_node_t *next_node)
 {
 
     _transmit_rid_called = true;
 }
 
-void _transmit_amd(openlcb_node_t *next_node, can_msg_t *worker_msg)
+void _transmit_amd(openlcb_node_t *next_node)
 {
 
     _transmit_amd_called = true;
 }
 
-void _transmit_initialization_complete(openlcb_node_t *next_node, openlcb_msg_t *openlcb_worker)
+void _transmit_initialization_complete(openlcb_node_t *next_node)
 {
 
     _transmit_initialization_complete_called = true;
 }
 
-void _transmit_producer_events(openlcb_node_t *next_node, openlcb_msg_t *openlcb_worker)
+void _transmit_producer_events(openlcb_node_t *next_node)
 {
 
     _transmit_producer_events_called = true;
 }
 
-void _transmit_consumer_events(openlcb_node_t *next_node, openlcb_msg_t *openlcb_worker)
+void _transmit_consumer_events(openlcb_node_t *next_node)
 {
 
     _transmit_consumer_events_called = true;
@@ -230,269 +230,261 @@ TEST(CanLoginStateMachine, run)
     _reset_variables();
 
     openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    openlcb_msg_t *worker_openlcb_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
-    can_msg_t worker_can_msg;
 
     EXPECT_NE(openlcb_node, nullptr);
-    EXPECT_NE(worker_openlcb_msg, nullptr);
 
-    if (worker_openlcb_msg)
-    {
-        openlcb_node->state.run_state = RUNSTATE_INIT;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_TRUE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_INIT;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_TRUE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_TRUE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_TRUE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_TRUE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_TRUE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_07;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_TRUE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_07;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_TRUE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_06;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_TRUE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_06;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_TRUE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_05;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_TRUE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_05;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_TRUE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_04;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_TRUE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_04;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_TRUE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_TRUE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_TRUE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_TRANSMIT_RESERVE_ID;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_TRUE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_TRANSMIT_RESERVE_ID;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_TRUE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_TRUE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_TRUE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_TRUE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_TRUE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_TRANSMIT_PRODUCER_EVENTS;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_TRUE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_TRANSMIT_PRODUCER_EVENTS;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_TRUE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_RUN;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_RUN;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_TRUE(_transmit_consumer_events_called);
-        _reset_variables();
+    openlcb_node->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_TRUE(_transmit_consumer_events_called);
+    _reset_variables();
 
-        openlcb_node->state.run_state = 31; // Invalid
-        CanLoginStateMachine_run(openlcb_node, &worker_can_msg, worker_openlcb_msg);
-        EXPECT_FALSE(_init_called);
-        EXPECT_FALSE(_generate_seed_called);
-        EXPECT_FALSE(_generate_alias_called);
-        EXPECT_FALSE(_transmit_cid07_called);
-        EXPECT_FALSE(_transmit_cid06_called);
-        EXPECT_FALSE(_transmit_cid05_called);
-        EXPECT_FALSE(_transmit_cid04_called);
-        EXPECT_FALSE(_wait_200ms_called);
-        EXPECT_FALSE(_transmit_rid_called);
-        EXPECT_FALSE(_transmit_amd_called);
-        EXPECT_FALSE(_transmit_initialization_complete_called);
-        EXPECT_FALSE(_transmit_producer_events_called);
-        EXPECT_FALSE(_transmit_consumer_events_called);
-        _reset_variables();
-
-        OpenLcbBufferStore_free_buffer(worker_openlcb_msg);
-    }
+    openlcb_node->state.run_state = 31; // Invalid
+    CanLoginStateMachine_run(openlcb_node);
+    EXPECT_FALSE(_init_called);
+    EXPECT_FALSE(_generate_seed_called);
+    EXPECT_FALSE(_generate_alias_called);
+    EXPECT_FALSE(_transmit_cid07_called);
+    EXPECT_FALSE(_transmit_cid06_called);
+    EXPECT_FALSE(_transmit_cid05_called);
+    EXPECT_FALSE(_transmit_cid04_called);
+    EXPECT_FALSE(_wait_200ms_called);
+    EXPECT_FALSE(_transmit_rid_called);
+    EXPECT_FALSE(_transmit_amd_called);
+    EXPECT_FALSE(_transmit_initialization_complete_called);
+    EXPECT_FALSE(_transmit_producer_events_called);
+    EXPECT_FALSE(_transmit_consumer_events_called);
+    _reset_variables();
 }

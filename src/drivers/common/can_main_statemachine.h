@@ -52,12 +52,12 @@ extern "C" {
         void (*resume_can_rx)(void);
         void (*pause_100ms_timer)(void);
         void (*resume_100ms_timer)(void);
-        bool (*transmit_frame)(can_msg_t* msg);
+        bool (*transmit_can_frame)(can_msg_t* msg);
         bool (*is_tx_buffer_empty)(void);
 
         openlcb_node_t *(*node_get_first)(uint8_t key);
         openlcb_node_t *(*node_get_next)(uint8_t key);
-        void (*login_statemachine_run)(openlcb_node_t* openlcb_node, can_msg_t* worker_can_msg, openlcb_msg_t* worker_openlcb_msg);
+        void (*login_statemachine_run)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_openlcb_msg);
         void (*openlcb_main_statemachine_run_single_node)(openlcb_node_t* openlcb_node);
 
     } interface_can_main_statemachine_t;

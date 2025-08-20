@@ -14,15 +14,13 @@
 #include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_utilities.h"
 
-bool _alias_mapping_cleared = false;
-int _alias_mapping_index_cleared = -1;
 bool _alias_change_callback_called = false;
 uint16_t _alias_change_callback_alias = 0;
 uint64_t _alias_change_callback_node_id = 0;
 bool _alias_change_callback_enabled = false;
 bool _try_transmit_can_msg_enabled = false;
 bool _try_transmit_can_msg_called = false;
-can_msg_t *_try_transmit_can_msg = nullptr;
+can_msg_t _try_transmit_can_msg;
 bool _try_transmit_openlcb_msg_enabled = false;
 bool _try_transmit_openlcb_msg_called = false;
 openlcb_msg_t *_try_transmit_openlcb_msg = nullptr;
@@ -103,6 +101,7 @@ bool try_transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
     if (_try_transmit_openlcb_msg_enabled)
     {
 
+        OpenLcbBufferStore_inc_reference_count(openlcb_msg);
         _try_transmit_openlcb_msg = openlcb_msg;
 
         return true;
@@ -120,12 +119,10 @@ bool try_transmit_can_message(can_msg_t *can_msg)
     if (_try_transmit_can_msg_enabled)
     {
 
-        _try_transmit_can_msg = can_msg;
+        CanUtilities_copy_can_message(can_msg, &_try_transmit_can_msg);
 
         return true;
     }
-
-    _try_transmit_can_msg = nullptr;
 
     return false;
 }
@@ -159,13 +156,6 @@ uint16_t extract_consumer_event_state_mti(openlcb_node_t *openlcb_node, uint16_t
     return 0;
 }
 
-void clear_alias_mapping(uint8_t index)
-{
-
-    _alias_mapping_cleared = true;
-    _alias_mapping_index_cleared = index;
-}
-
 uint16_t generate_alias(uint64_t seed)
 {
 
@@ -173,10 +163,6 @@ uint16_t generate_alias(uint64_t seed)
     uint32_t lfsr1 = (seed >> 24) & 0xFFFFFF;
 
     return (uint16_t)((lfsr1 ^ lfsr2 ^ (lfsr1 >> 12) ^ (lfsr2 >> 12)) & 0x0FFF);
-}
-
-void set_alias_mapping(uint8_t index, node_id_t node_id, uint16_t alias)
-{
 }
 
 void alias_change_callback(uint16_t alias, uint64_t node_id)
@@ -206,14 +192,11 @@ interface_can_login_message_handler_t interface_can_login_message_handler;
 
 void _global_initialize(void)
 {
-
-    interface_can_login_message_handler.clear_alias_mapping = &clear_alias_mapping;
     interface_can_login_message_handler.extract_consumer_event_state_mti = &extract_consumer_event_state_mti;
     interface_can_login_message_handler.extract_producer_event_state_mti = &extract_producer_event_state_mti;
     interface_can_login_message_handler.generate_alias = &generate_alias;
     interface_can_login_message_handler.generate_seed = &generate_seed;
     interface_can_login_message_handler.get_alias_change = &get_alias_change;
-    interface_can_login_message_handler.set_alias_mapping = &set_alias_mapping;
     interface_can_login_message_handler.try_transmit_can_message = &try_transmit_can_message;
     interface_can_login_message_handler.try_transmit_openlcb_message = &try_transmit_openlcb_message;
 
@@ -229,17 +212,17 @@ void _global_initialize(void)
 void _global_reset_variables(void)
 {
 
-    _alias_mapping_cleared = false;
-    _alias_mapping_index_cleared = -1;
     _alias_change_callback_called = false;
     _alias_change_callback_alias = 0;
     _alias_change_callback_node_id = 0;
     _alias_change_callback_enabled = false;
     _try_transmit_can_msg_enabled = false;
     _try_transmit_can_msg_called = false;
-    _try_transmit_can_msg = nullptr;
+    CanUtilities_clear_can_message(&_try_transmit_can_msg);
     _try_transmit_openlcb_msg_enabled = false;
     _try_transmit_openlcb_msg_called = false;
+
+    OpenLcbBufferStore_free_buffer(_try_transmit_openlcb_msg);
     _try_transmit_openlcb_msg = nullptr;
 }
 
@@ -261,7 +244,6 @@ openlcb_node_t *_create_openlcb_node(node_id_t node_id, uint16_t producer_count,
     result->state.initalized = false;
     result->state.initial_events_broadcast_complete = false;
     result->state.duplicate_id_detected = false;
-    result->state.can_msg_handled = true;
     result->state.openlcb_msg_handled = true;
     result->state.resend_datagram = false;
     result->state.resend_optional_message = false;
@@ -334,8 +316,6 @@ TEST(CanLoginMessageHandler, init)
     CanLoginMessageHandler_init(openlcb_node);
     EXPECT_EQ(openlcb_node->seed, NODE_ID);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_GENERATE_ALIAS);
-    EXPECT_EQ(_alias_mapping_index_cleared, 0);
-    EXPECT_TRUE(_alias_mapping_cleared);
 
     _openlcb_node_free(openlcb_node);
 }
@@ -355,8 +335,6 @@ TEST(CanLoginMessageHandler, generate_seed)
     CanLoginMessageHandler_generate_seed(openlcb_node);
     EXPECT_NE(openlcb_node->seed, NODE_ID);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_GENERATE_ALIAS);
-    EXPECT_EQ(_alias_mapping_index_cleared, 2);
-    EXPECT_TRUE(_alias_mapping_cleared);
 
     _openlcb_node_free(openlcb_node);
 }
@@ -401,31 +379,26 @@ TEST(CanLoginMessageHandler, transmit_cid07)
 #define NODE_ID 0x010203040506
 #define NODE_ALIAS 0xAAA
 
-    can_msg_t worker_can_msg;
-
     _global_initialize();
     _global_reset_variables();
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
 
-    CanUtilities_clear_can_message(&worker_can_msg);
     openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_07;
     openlcb_node->alias = NODE_ALIAS;
 
-    CanLoginMessageHandler_transmit_cid07(openlcb_node, &worker_can_msg);
-    EXPECT_NE(_try_transmit_can_msg, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid07(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_07);
 
     _global_reset_variables();
 
     _try_transmit_can_msg_enabled = true;
-    CanLoginMessageHandler_transmit_cid07(openlcb_node, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid07(openlcb_node);
 
     EXPECT_TRUE(_try_transmit_can_msg_called);
-    EXPECT_NE(_try_transmit_can_msg, nullptr);
-    EXPECT_EQ(_try_transmit_can_msg->payload_count, 0);
-    EXPECT_EQ(_try_transmit_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((openlcb_node->id >> 24) & 0xFFF000) | openlcb_node->alias));
+    EXPECT_EQ(_try_transmit_can_msg.payload_count, 0);
+    EXPECT_EQ(_try_transmit_can_msg.identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((openlcb_node->id >> 24) & 0xFFF000) | openlcb_node->alias));
 
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_06);
 
@@ -437,29 +410,24 @@ TEST(CanLoginMessageHandler, transmit_cid06)
 
 #define NODE_ID 0x010203040506
 
-    can_msg_t worker_can_msg;
-
     _global_initialize();
     _global_reset_variables();
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
 
-    CanUtilities_clear_can_message(&worker_can_msg);
     openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_06;
 
-    CanLoginMessageHandler_transmit_cid06(openlcb_node, &worker_can_msg);
-    EXPECT_NE(_try_transmit_can_msg, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid06(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_06);
 
     _global_reset_variables();
 
     _try_transmit_can_msg_enabled = true;
-    CanLoginMessageHandler_transmit_cid06(openlcb_node, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid06(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
-    EXPECT_NE(_try_transmit_can_msg, nullptr);
-    EXPECT_EQ(_try_transmit_can_msg->payload_count, 0);
-    EXPECT_EQ(_try_transmit_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((openlcb_node->id >> 12) & 0xFFF000) | openlcb_node->alias));
+    EXPECT_EQ(_try_transmit_can_msg.payload_count, 0);
+    EXPECT_EQ(_try_transmit_can_msg.identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((openlcb_node->id >> 12) & 0xFFF000) | openlcb_node->alias));
 
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_05);
 
@@ -471,29 +439,24 @@ TEST(CanLoginMessageHandler, transmit_cid05)
 
 #define NODE_ID 0x010203040506
 
-    can_msg_t worker_can_msg;
-
     _global_initialize();
     _global_reset_variables();
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
 
-    CanUtilities_clear_can_message(&worker_can_msg);
     openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_05;
 
-    CanLoginMessageHandler_transmit_cid05(openlcb_node, &worker_can_msg);
-    EXPECT_NE(_try_transmit_can_msg, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid05(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_05);
 
     _global_reset_variables();
 
     _try_transmit_can_msg_enabled = true;
-    CanLoginMessageHandler_transmit_cid05(openlcb_node, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid05(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
-    EXPECT_NE(_try_transmit_can_msg, nullptr);
-    EXPECT_EQ(_try_transmit_can_msg->payload_count, 0);
-    EXPECT_EQ(_try_transmit_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((openlcb_node->id & 0xFFF000) | openlcb_node->alias));
+    EXPECT_EQ(_try_transmit_can_msg.payload_count, 0);
+    EXPECT_EQ(_try_transmit_can_msg.identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((openlcb_node->id & 0xFFF000) | openlcb_node->alias));
 
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_04);
 
@@ -505,29 +468,24 @@ TEST(CanLoginMessageHandler, transmit_cid04)
 
 #define NODE_ID 0x010203040506
 
-    can_msg_t worker_can_msg;
-
     _global_initialize();
     _global_reset_variables();
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
 
-    CanUtilities_clear_can_message(&worker_can_msg);
     openlcb_node->state.run_state = RUNSTATE_SEND_CHECK_ID_04;
 
-    CanLoginMessageHandler_transmit_cid04(openlcb_node, &worker_can_msg);
-    EXPECT_NE(_try_transmit_can_msg, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid04(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_04);
 
     _global_reset_variables();
 
     _try_transmit_can_msg_enabled = true;
-    CanLoginMessageHandler_transmit_cid04(openlcb_node, &worker_can_msg);
+    CanLoginMessageHandler_transmit_cid04(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
-    EXPECT_NE(_try_transmit_can_msg, nullptr);
-    EXPECT_EQ(_try_transmit_can_msg->payload_count, 0);
-    EXPECT_EQ(_try_transmit_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((openlcb_node->id << 12) & 0xFFF000) | openlcb_node->alias));
+    EXPECT_EQ(_try_transmit_can_msg.payload_count, 0);
+    EXPECT_EQ(_try_transmit_can_msg.identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((openlcb_node->id << 12) & 0xFFF000) | openlcb_node->alias));
 
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
 
@@ -577,29 +535,24 @@ TEST(CanLoginMessageHandler, transmit_rid)
 
 #define NODE_ID 0x010203040506
 
-    can_msg_t worker_can_msg;
-
     _global_initialize();
     _global_reset_variables();
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
 
-    CanUtilities_clear_can_message(&worker_can_msg);
     openlcb_node->state.run_state = RUNSTATE_TRANSMIT_RESERVE_ID;
 
-    CanLoginMessageHandler_transmit_rid(openlcb_node, &worker_can_msg);
-    EXPECT_NE(_try_transmit_can_msg, &worker_can_msg);
+    CanLoginMessageHandler_transmit_rid(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_RESERVE_ID);
 
     _global_reset_variables();
 
     _try_transmit_can_msg_enabled = true;
-    CanLoginMessageHandler_transmit_rid(openlcb_node, &worker_can_msg);
+    CanLoginMessageHandler_transmit_rid(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
-    EXPECT_NE(_try_transmit_can_msg, nullptr);
-    EXPECT_EQ(_try_transmit_can_msg->payload_count, 0);
-    EXPECT_EQ(_try_transmit_can_msg->identifier, (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | openlcb_node->alias));
+    EXPECT_EQ(_try_transmit_can_msg.payload_count, 0);
+    EXPECT_EQ(_try_transmit_can_msg.identifier, (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | openlcb_node->alias));
     EXPECT_FALSE(openlcb_node->state.initalized);
     EXPECT_FALSE(openlcb_node->state.permitted);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION);
@@ -612,30 +565,26 @@ TEST(CanLoginMessageHandler, transmit_amd)
 
 #define NODE_ID 0x010203040506
 
-    can_msg_t worker_can_msg;
-
     _global_initialize();
     _global_reset_variables();
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
 
-    CanUtilities_clear_can_message(&worker_can_msg);
     openlcb_node->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
 
-    CanLoginMessageHandler_transmit_amd(openlcb_node, &worker_can_msg);
-    EXPECT_NE(_try_transmit_can_msg, &worker_can_msg);
+    CanLoginMessageHandler_transmit_amd(openlcb_node);
+
     EXPECT_TRUE(_try_transmit_can_msg_called);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION);
 
     _global_reset_variables();
 
     _try_transmit_can_msg_enabled = true;
-    CanLoginMessageHandler_transmit_amd(openlcb_node, &worker_can_msg);
+    CanLoginMessageHandler_transmit_amd(openlcb_node);
     EXPECT_TRUE(_try_transmit_can_msg_called);
-    EXPECT_NE(_try_transmit_can_msg, nullptr);
-    EXPECT_EQ(_try_transmit_can_msg->payload_count, 6);
-    EXPECT_EQ(CanUtilities_extract_can_payload_as_node_id(_try_transmit_can_msg), NODE_ID);
-    EXPECT_EQ(_try_transmit_can_msg->identifier, (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | openlcb_node->alias));
+    EXPECT_EQ(_try_transmit_can_msg.payload_count, 6);
+    EXPECT_EQ(CanUtilities_extract_can_payload_as_node_id(&_try_transmit_can_msg), NODE_ID);
+    EXPECT_EQ(_try_transmit_can_msg.identifier, (RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | openlcb_node->alias));
     EXPECT_FALSE(openlcb_node->state.initalized);
     EXPECT_TRUE(openlcb_node->state.permitted);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE);
@@ -649,29 +598,14 @@ TEST(CanLoginMessageHandler, initialization_complete)
 #define NODE_ID 0x010203040506
 #define ALIAS 0xAAA
 
-    openlcb_msg_t worker_openlcb_msg;
-    openlcb_basic_data_buffer_t worker_buffer;
-
     _global_initialize();
     _global_reset_variables();
-
-    worker_openlcb_msg.dest_alias = 0;
-    worker_openlcb_msg.dest_id = 0;
-    worker_openlcb_msg.source_alias = 0;
-    worker_openlcb_msg.source_id = 0;
-    worker_openlcb_msg.mti = 0;
-    worker_openlcb_msg.payload_count = 0;
-    worker_openlcb_msg.timerticks = 0;
-    worker_openlcb_msg.reference_count = 0;
-    worker_openlcb_msg.state.allocated = false;
-    worker_openlcb_msg.state.inprocess = false;
-    worker_openlcb_msg.payload = (openlcb_payload_t *)&worker_buffer;
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
     openlcb_node->alias = ALIAS;
 
     openlcb_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
-    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node);
     EXPECT_TRUE(_try_transmit_openlcb_msg_called);
     EXPECT_EQ(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE);
@@ -679,7 +613,7 @@ TEST(CanLoginMessageHandler, initialization_complete)
     _global_reset_variables();
 
     openlcb_node->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
-    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node);
     EXPECT_TRUE(_try_transmit_openlcb_msg_called);
     EXPECT_EQ(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE);
@@ -687,7 +621,7 @@ TEST(CanLoginMessageHandler, initialization_complete)
     _global_reset_variables();
 
     _try_transmit_openlcb_msg_enabled = true;
-    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node);
     EXPECT_TRUE(_try_transmit_openlcb_msg_called);
     EXPECT_NE(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(_try_transmit_openlcb_msg->mti, MTI_INITIALIZATION_COMPLETE);
@@ -702,7 +636,7 @@ TEST(CanLoginMessageHandler, initialization_complete)
 
     _try_transmit_openlcb_msg_enabled = true;
     _node_parameters_main_node.protocol_support = _node_parameters_main_node.protocol_support | PSI_SIMPLE;
-    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_initialization_complete(openlcb_node);
     EXPECT_TRUE(_try_transmit_openlcb_msg_called);
     EXPECT_NE(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(_try_transmit_openlcb_msg->mti, MTI_INITIALIZATION_COMPLETE_SIMPLE);
@@ -722,23 +656,8 @@ TEST(CanLoginMessageHandler, transmit_producer_events)
 #define NODE_ID 0x010203040506
 #define ALIAS 0xAAA
 
-    openlcb_msg_t worker_openlcb_msg;
-    openlcb_basic_data_buffer_t worker_buffer;
-
     _global_initialize();
     _global_reset_variables();
-
-    worker_openlcb_msg.dest_alias = 0;
-    worker_openlcb_msg.dest_id = 0;
-    worker_openlcb_msg.source_alias = 0;
-    worker_openlcb_msg.source_id = 0;
-    worker_openlcb_msg.mti = 0;
-    worker_openlcb_msg.payload_count = 0;
-    worker_openlcb_msg.timerticks = 0;
-    worker_openlcb_msg.reference_count = 0;
-    worker_openlcb_msg.state.allocated = false;
-    worker_openlcb_msg.state.inprocess = false;
-    worker_openlcb_msg.payload = (openlcb_payload_t *)&worker_buffer;
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
     openlcb_node->alias = ALIAS;
@@ -750,7 +669,7 @@ TEST(CanLoginMessageHandler, transmit_producer_events)
     // *******************************************************************************************
     // Test with the transmit buffer busy
     // *******************************************************************************************
-    CanLoginMessageHandler_transmit_producer_events(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_producer_events(openlcb_node);
     EXPECT_TRUE(_try_transmit_openlcb_msg_called);
     EXPECT_EQ(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_PRODUCER_EVENTS);
@@ -765,10 +684,10 @@ TEST(CanLoginMessageHandler, transmit_producer_events)
     while (openlcb_node->state.run_state == RUNSTATE_TRANSMIT_PRODUCER_EVENTS)
     {
 
-        CanLoginMessageHandler_transmit_producer_events(openlcb_node, &worker_openlcb_msg);
+        CanLoginMessageHandler_transmit_producer_events(openlcb_node);
         EXPECT_TRUE(_try_transmit_openlcb_msg_called);
         EXPECT_NE(_try_transmit_openlcb_msg, nullptr);
-        EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(&worker_openlcb_msg), (uint64_t)(NODE_ID << 16) + offset);
+        EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(_try_transmit_openlcb_msg), (uint64_t)(NODE_ID << 16) + offset);
         offset++;
     }
 
@@ -788,7 +707,7 @@ TEST(CanLoginMessageHandler, transmit_producer_events)
     // Test with no events defined for the node
     // *******************************************************************************************
     _try_transmit_openlcb_msg_enabled = true;
-    CanLoginMessageHandler_transmit_producer_events(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_producer_events(openlcb_node);
     EXPECT_FALSE(_try_transmit_openlcb_msg_called);
     EXPECT_EQ(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_CONSUMER_EVENTS);
@@ -804,23 +723,8 @@ TEST(CanLoginMessageHandler, transmit_consumer_events)
 #define NODE_ID 0x010203040506
 #define ALIAS 0xAAA
 
-    openlcb_msg_t worker_openlcb_msg;
-    openlcb_basic_data_buffer_t worker_buffer;
-
     _global_initialize();
     _global_reset_variables();
-
-    worker_openlcb_msg.dest_alias = 0;
-    worker_openlcb_msg.dest_id = 0;
-    worker_openlcb_msg.source_alias = 0;
-    worker_openlcb_msg.source_id = 0;
-    worker_openlcb_msg.mti = 0;
-    worker_openlcb_msg.payload_count = 0;
-    worker_openlcb_msg.timerticks = 0;
-    worker_openlcb_msg.reference_count = 0;
-    worker_openlcb_msg.state.allocated = false;
-    worker_openlcb_msg.state.inprocess = false;
-    worker_openlcb_msg.payload = (openlcb_payload_t *)&worker_buffer;
 
     openlcb_node_t *openlcb_node = _create_openlcb_node(NODE_ID, 3, 4);
     openlcb_node->alias = ALIAS;
@@ -832,7 +736,7 @@ TEST(CanLoginMessageHandler, transmit_consumer_events)
     // *******************************************************************************************
     // Test with the transmit buffer busy
     // *******************************************************************************************
-    CanLoginMessageHandler_transmit_consumer_events(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_consumer_events(openlcb_node);
     EXPECT_TRUE(_try_transmit_openlcb_msg_called);
     EXPECT_EQ(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_TRANSMIT_CONSUMER_EVENTS);
@@ -848,10 +752,10 @@ TEST(CanLoginMessageHandler, transmit_consumer_events)
     while (openlcb_node->state.run_state == RUNSTATE_TRANSMIT_CONSUMER_EVENTS)
     {
 
-        CanLoginMessageHandler_transmit_consumer_events(openlcb_node, &worker_openlcb_msg);
+        CanLoginMessageHandler_transmit_consumer_events(openlcb_node);
         EXPECT_TRUE(_try_transmit_openlcb_msg_called);
         EXPECT_NE(_try_transmit_openlcb_msg, nullptr);
-        EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(&worker_openlcb_msg), (uint64_t)(NODE_ID << 16) + offset);
+        EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(_try_transmit_openlcb_msg), (uint64_t)(NODE_ID << 16) + offset);
         offset++;
     }
 
@@ -872,7 +776,7 @@ TEST(CanLoginMessageHandler, transmit_consumer_events)
     // Test with no events defined for the node
     // *******************************************************************************************
     _try_transmit_openlcb_msg_enabled = true;
-    CanLoginMessageHandler_transmit_consumer_events(openlcb_node, &worker_openlcb_msg);
+    CanLoginMessageHandler_transmit_consumer_events(openlcb_node);
     EXPECT_FALSE(_try_transmit_openlcb_msg_called);
     EXPECT_EQ(_try_transmit_openlcb_msg, nullptr);
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_RUN);
