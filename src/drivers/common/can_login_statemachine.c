@@ -44,11 +44,11 @@
 #include "../../openlcb/openlcb_defines.h"
 
 
-interface_can_login_state_machine_t *_interface_can_login_state_machine;
+static interface_can_login_state_machine_t *_interface;
 
 void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine) {
 
-    _interface_can_login_state_machine = (interface_can_login_state_machine_t*) interface_can_login_state_machine;
+    _interface = (interface_can_login_state_machine_t*) interface_can_login_state_machine;
 
 }
 
@@ -60,79 +60,79 @@ void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t* worker_ca
 
         case RUNSTATE_INIT:
 
-            _interface_can_login_state_machine->init(openlcb_node);
+            _interface->init(openlcb_node);
 
             return;
 
         case RUNSTATE_GENERATE_SEED:
 
-            _interface_can_login_state_machine->generate_seed(openlcb_node);
+            _interface->generate_seed(openlcb_node);
 
             return;
 
         case RUNSTATE_GENERATE_ALIAS:
 
-            _interface_can_login_state_machine->generate_alias(openlcb_node);
+            _interface->generate_alias(openlcb_node);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_07:
 
-            _interface_can_login_state_machine->transmit_cid07(openlcb_node, worker_can_msg);
+            _interface->transmit_cid07(openlcb_node, worker_can_msg);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_06:
 
-            _interface_can_login_state_machine->transmit_cid06(openlcb_node, worker_can_msg);
+            _interface->transmit_cid06(openlcb_node, worker_can_msg);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_05:
 
-            _interface_can_login_state_machine->transmit_cid05(openlcb_node, worker_can_msg);
+            _interface->transmit_cid05(openlcb_node, worker_can_msg);
 
             return;
 
         case RUNSTATE_SEND_CHECK_ID_04:
 
-            _interface_can_login_state_machine->transmit_cid04(openlcb_node, worker_can_msg);
+            _interface->transmit_cid04(openlcb_node, worker_can_msg);
 
             return;
 
         case RUNSTATE_WAIT_200ms:
 
-            _interface_can_login_state_machine->wait_200ms(openlcb_node);
+            _interface->wait_200ms(openlcb_node);
 
             return;
 
         case RUNSTATE_TRANSMIT_RESERVE_ID:
 
-            _interface_can_login_state_machine->transmit_rid(openlcb_node, worker_can_msg);
+            _interface->transmit_rid(openlcb_node, worker_can_msg);
 
             return;
 
         case RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION:
 
-            _interface_can_login_state_machine->transmit_amd(openlcb_node, worker_can_msg);
+            _interface->transmit_amd(openlcb_node, worker_can_msg);
 
             return;
 
         case RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE:
 
-            _interface_can_login_state_machine->transmit_initialization_complete(openlcb_node, worker_openlcb_msg);
+            _interface->transmit_initialization_complete(openlcb_node, worker_openlcb_msg);
 
             return;
 
         case RUNSTATE_TRANSMIT_PRODUCER_EVENTS:
 
-            _interface_can_login_state_machine->transmit_producer_events(openlcb_node, worker_openlcb_msg);
+            _interface->transmit_producer_events(openlcb_node, worker_openlcb_msg);
 
             return;
 
         case RUNSTATE_TRANSMIT_CONSUMER_EVENTS:
 
-            _interface_can_login_state_machine->transmit_consumer_events(openlcb_node, worker_openlcb_msg);
+            _interface->transmit_consumer_events(openlcb_node, worker_openlcb_msg);
 
             return;
 

@@ -60,7 +60,7 @@ extern "C" {
 
     extern void OpenLcbMainStatemachine_run(void);
 
-    extern void OpenLcbMainStatemachine_run_single_node(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void OpenLcbMainStatemachine_run_single_node(openlcb_node_t* openlcb_node);
 
     openlcb_statemachine_worker_t* OpenLcbMainStatemachine_get_openlcb_helper(void);
 

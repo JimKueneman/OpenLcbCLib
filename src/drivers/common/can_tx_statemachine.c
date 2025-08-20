@@ -48,11 +48,11 @@
 #include "../../openlcb/openlcb_utilities.h"
 
 
-interface_can_tx_statemachine_t *_interface_can_tx_statemachine;
+static interface_can_tx_statemachine_t *_interface;
 
 void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interface_can_tx_statemachine) {
 
-    _interface_can_tx_statemachine = (interface_can_tx_statemachine_t*) interface_can_tx_statemachine;
+    _interface = (interface_can_tx_statemachine_t*) interface_can_tx_statemachine;
 
 }
 
@@ -65,7 +65,7 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
 
             case MTI_DATAGRAM:
 
-                return _interface_can_tx_statemachine->handle_datagram_frame(openlcb_msg, worker_can_msg, payload_index);
+                return _interface->handle_datagram_frame(openlcb_msg, worker_can_msg, payload_index);
 
                 break;
 
@@ -74,13 +74,13 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
             case MTI_STREAM_INIT_REQUEST:
             case MTI_STREAM_PROCEED:
 
-                return _interface_can_tx_statemachine->handle_stream_frame(openlcb_msg, worker_can_msg, payload_index);
+                return _interface->handle_stream_frame(openlcb_msg, worker_can_msg, payload_index);
 
                 break;
 
             default:
                 
-                return _interface_can_tx_statemachine->handle_addressed_msg_frame(openlcb_msg, worker_can_msg, payload_index);
+                return _interface->handle_addressed_msg_frame(openlcb_msg, worker_can_msg, payload_index);
 
                 break;
 
@@ -88,7 +88,7 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
 
     } else {
 
-        return _interface_can_tx_statemachine->handle_unaddressed_msg_frame(openlcb_msg, worker_can_msg, payload_index);
+        return _interface->handle_unaddressed_msg_frame(openlcb_msg, worker_can_msg, payload_index);
 
     }
 
@@ -96,7 +96,7 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
 
 bool CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
-    if (!_interface_can_tx_statemachine->is_tx_buffer_empty()) {
+    if (!_interface->is_tx_buffer_empty()) {
 
         return false;
 
@@ -127,6 +127,6 @@ bool CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
 bool CanTxStatemachine_transmit_can_message(can_msg_t* can_msg) {
 
-    return _interface_can_tx_statemachine->handle_can_frame(can_msg);
+    return _interface->handle_can_frame(can_msg);
 
 }

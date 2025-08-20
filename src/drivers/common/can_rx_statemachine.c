@@ -53,7 +53,7 @@
 #define OFFSET_DEST_ID_IN_IDENTIFIER  0
 #define OFFSET_NO_DEST_ID             0
 
-static interface_can_rx_statemachine_t *_interface_can_rx_statemachine;
+static interface_can_rx_statemachine_t *_interface;
 
 static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
@@ -80,17 +80,17 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                             if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
 
-                                if (_interface_can_rx_statemachine->handle_can_legacy_snip) {
+                                if (_interface->handle_can_legacy_snip) {
 
-                                    _interface_can_rx_statemachine->handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
+                                    _interface->handle_can_legacy_snip(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
 
                                 }
 
                             } else {
     
-                                if (_interface_can_rx_statemachine->handle_single_frame) {
+                                if (_interface->handle_single_frame) {
 
-                                    _interface_can_rx_statemachine->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
+                                    _interface->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
 
                                 }
 
@@ -102,18 +102,18 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                             if (can_mti == MTI_SIMPLE_NODE_INFO_REPLY) {
 
-                                if (_interface_can_rx_statemachine->handle_first_frame) {
+                                if (_interface->handle_first_frame) {
 
-                                    _interface_can_rx_statemachine->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
+                                    _interface->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, SNIP);
 
                                 }
 
                             } else {
 
-                                if (_interface_can_rx_statemachine->handle_first_frame) {
+                                if (_interface->handle_first_frame) {
 
                                     // TODO: This could be dangerous if a future message used more than 2 frames.... (larger than LEN_MESSAGE_BYTES_BASIC)
-                                    _interface_can_rx_statemachine->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
+                                    _interface->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD, BASIC);
 
                                 }
 
@@ -123,9 +123,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                         case MULTIFRAME_MIDDLE:
 
-                            if (_interface_can_rx_statemachine->handle_middle_frame) {
+                            if (_interface->handle_middle_frame) {
 
-                                _interface_can_rx_statemachine->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
+                                _interface->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
 
                             }
 
@@ -133,9 +133,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                         case MULTIFRAME_FINAL:
 
-                            if (_interface_can_rx_statemachine->handle_last_frame) {
+                            if (_interface->handle_last_frame) {
 
-                                _interface_can_rx_statemachine->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
+                                _interface->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_PAYLOAD);
 
                             }
 
@@ -143,9 +143,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
                     }
                 } else { // No Destination Address
 
-                    if (_interface_can_rx_statemachine->handle_single_frame) {
+                    if (_interface->handle_single_frame) {
 
-                        _interface_can_rx_statemachine->handle_single_frame(can_msg, OFFSET_NO_DEST_ID, BASIC);
+                        _interface->handle_single_frame(can_msg, OFFSET_NO_DEST_ID, BASIC);
 
                     }
 
@@ -155,9 +155,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
             case CAN_FRAME_TYPE_DATAGRAM_ONLY:
 
-                if (_interface_can_rx_statemachine->handle_single_frame) {
+                if (_interface->handle_single_frame) {
 
-                    _interface_can_rx_statemachine->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
+                    _interface->handle_single_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, BASIC);
 
                 }
 
@@ -165,9 +165,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
             case CAN_FRAME_TYPE_DATAGRAM_FIRST:
 
-                if (_interface_can_rx_statemachine->handle_first_frame) {
+                if (_interface->handle_first_frame) {
 
-                    _interface_can_rx_statemachine->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
+                    _interface->handle_first_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, DATAGRAM);
 
                 }
 
@@ -175,9 +175,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
             case CAN_FRAME_TYPE_DATAGRAM_MIDDLE:
 
-                if (_interface_can_rx_statemachine->handle_middle_frame) {
+                if (_interface->handle_middle_frame) {
 
-                    _interface_can_rx_statemachine->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+                    _interface->handle_middle_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
 
                 }
 
@@ -185,9 +185,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
             case CAN_FRAME_TYPE_DATAGRAM_FINAL:
 
-                if (_interface_can_rx_statemachine->handle_last_frame) {
+                if (_interface->handle_last_frame) {
 
-                    _interface_can_rx_statemachine->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
+                    _interface->handle_last_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER);
 
                 }
 
@@ -199,9 +199,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
             case CAN_FRAME_TYPE_STREAM:
                 
-                if (_interface_can_rx_statemachine->handle_stream) {
+                if (_interface->handle_stream) {
 
-                    _interface_can_rx_statemachine->handle_stream(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
+                    _interface->handle_stream(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
 
                 }
 
@@ -221,9 +221,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                     case CAN_CONTROL_FRAME_RID: // Reserve ID
 
-                        if (_interface_can_rx_statemachine->handle_rid) {
+                        if (_interface->handle_rid) {
 
-                            _interface_can_rx_statemachine->handle_rid(can_msg);
+                            _interface->handle_rid(can_msg);
 
                         }
 
@@ -231,9 +231,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                     case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
 
-                        if (_interface_can_rx_statemachine->handle_amd) {
+                        if (_interface->handle_amd) {
 
-                            _interface_can_rx_statemachine->handle_amd(can_msg);
+                            _interface->handle_amd(can_msg);
 
                         }
 
@@ -241,9 +241,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                     case CAN_CONTROL_FRAME_AME:  
                         
-                        if (_interface_can_rx_statemachine->handle_ame) {
+                        if (_interface->handle_ame) {
   
-                            _interface_can_rx_statemachine->handle_ame(can_msg);
+                            _interface->handle_ame(can_msg);
 
                         }
 
@@ -251,9 +251,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
                     case CAN_CONTROL_FRAME_AMR:
  
-                        if (_interface_can_rx_statemachine->handle_amr) {
+                        if (_interface->handle_amr) {
 
-                            _interface_can_rx_statemachine->handle_amr(can_msg);
+                            _interface->handle_amr(can_msg);
 
                         }
 
@@ -264,9 +264,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
 
-                        if (_interface_can_rx_statemachine->handle_error_information_report) {
+                        if (_interface->handle_error_information_report) {
                        
-                            _interface_can_rx_statemachine->handle_error_information_report(can_msg);
+                            _interface->handle_error_information_report(can_msg);
                         
                         }
                         
@@ -291,9 +291,9 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
                     case CAN_CONTROL_FRAME_CID4:
 
 
-                        if (_interface_can_rx_statemachine->handle_cid) {
+                        if (_interface->handle_cid) {
                        
-                            _interface_can_rx_statemachine->handle_cid(can_msg);
+                            _interface->handle_cid(can_msg);
                         
                         }
 
@@ -318,7 +318,7 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 
 void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine) {
 
-    _interface_can_rx_statemachine = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
+    _interface = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
     
     if (interface_can_rx_statemachine->can_rx_register_target_callback) {
 

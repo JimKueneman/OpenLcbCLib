@@ -27,11 +27,11 @@ const uint32_t OPENLCB_MESSAGE_DATAGRAM_LAST_FRAME = RESERVED_TOP_BIT | CAN_OPEN
 const uint32_t OPENLCB_MESSAGE_DATAGRAM_UNADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
 const uint32_t OPENLCB_MESSAGE_DATAGRAM_ADDRESSED = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED;
 
-interface_can_tx_message_handler_t *_interface_can_tx_message_handler;
+static interface_can_tx_message_handler_t *_interface;
 
 void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler) {
 
-    _interface_can_tx_message_handler = (interface_can_tx_message_handler_t*) interface_can_tx_message_handler;
+    _interface = (interface_can_tx_message_handler_t*) interface_can_tx_message_handler;
 
 }
 
@@ -74,11 +74,11 @@ static uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_m
 static bool _transmit_can_frame(can_msg_t* can_msg) {
 
 
-    bool result = _interface_can_tx_message_handler->transmit_can_frame(can_msg);
+    bool result = _interface->transmit_can_frame(can_msg);
 
-    if (_interface_can_tx_message_handler->application_callback_tx && result) {
+    if (_interface->application_callback_tx && result) {
 
-        _interface_can_tx_message_handler->application_callback_tx();
+        _interface->application_callback_tx();
 
     }
 

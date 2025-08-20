@@ -47,19 +47,24 @@
 extern "C" {
 #endif /* __cplusplus */
 
+    typedef struct {
+        void (*pause_can_rx)(void);
+        void (*resume_can_rx)(void);
+        void (*pause_100ms_timer)(void);
+        void (*resume_100ms_timer)(void);
+        bool (*transmit_frame)(can_msg_t* msg);
+        bool (*is_tx_buffer_empty)(void);
 
-    extern void CanMainStatemachine_initialize(
-            can_rx_driver_callback_t can_rx_driver_callback,
-            transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
-            is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
-            parameterless_callback_t pause_can_rx_callback,
-            parameterless_callback_t resume_can_rx_callback
-            );
+        openlcb_node_t *(*node_get_first)(uint8_t key);
+        openlcb_node_t *(*node_get_next)(uint8_t key);
+        void (*login_statemachine_run)(openlcb_node_t* openlcb_node, can_msg_t* worker_can_msg, openlcb_msg_t* worker_openlcb_msg);
+        void (*openlcb_main_statemachine_run_single_node)(openlcb_node_t* openlcb_node);
+
+    } interface_can_main_statemachine_t;
+
+    extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
 
     extern void CanMainStateMachine_run(void);
-
-    // do not use, for debug access
-    extern can_main_statemachine_t CanMainStatemachine_can_helper;
 
 #ifdef	__cplusplus
 }

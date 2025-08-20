@@ -42,233 +42,284 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-#include "can_buffer_fifo.h"
-#include "can_rx_message_handler.h"
-#include "can_buffer_store.h"
-#include "can_login_message_handler.h"
-#include "can_tx_statemachine.h"
-#include "can_rx_statemachine.h"
-#include "can_login_statemachine.h"
-
-#include "../driver_can.h"
-#include "../driver_100ms_clock.h"
-
 #include "../../openlcb/openlcb_defines.h"
+#include "can_buffer_fifo.h"
 #include "../../openlcb/openlcb_buffer_store.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_main_statemachine.h"
-#include "../../openlcb/protocol_message_network.h"
-#include "../../openlcb/protocol_datagram.h"
-#include "../../openlcb/protocol_datagram_handlers.h"
-#include "../../openlcb/openlcb_application_callbacks.h"
-#include "../../drivers/common/can_login_statemachine.h"
 
-can_main_statemachine_t CanMainStatemachine_can_helper;
 
-void CanMainStatemachine_initialize(
-        can_rx_driver_callback_t can_rx_driver_callback,
-        transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
-        is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
-        parameterless_callback_t pause_can_rx_callback,
-        parameterless_callback_t resume_can_rx_callback
-        ) {
+static interface_can_main_statemachine_t *_interface;
 
-    DriverCan_initialization(transmit_raw_can_frame_callback, is_can_tx_buffer_clear_callback, pause_can_rx_callback, resume_can_rx_callback);
+void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine) {
 
+    _interface = (interface_can_main_statemachine_t*) interface_can_main_statemachine;
+
+}
+
+static void _process_outgoing_can_msgs(void) {
     
- 
-    // Just use an existing openlcb_helper structure vs allocating another one
-    CanMainStatemachine_can_helper.openlcb_worker = OpenLcbMainStatemachine_get_openlcb_helper();
+     if (_interface->is_tx_buffer_empty) {
 
-}
+        _interface->pause_100ms_timer();
+        _interface->pause_can_rx();
+        can_msg_t *can_msg = CanBufferFifo_pop();
+        _interface->resume_can_rx();
+        _interface->resume_100ms_timer();
 
-bool _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_helper) {
-
-    if (can_helper->openlcb_worker->active_msg) {
-
-        return false;
-
-    }
-
-    Driver100msClock_pause_100ms_timer();
-    DriverCan_pause_can_rx();
-    can_helper->openlcb_worker->active_msg = OpenLcbBufferFifo_pop();
-    DriverCan_resume_can_rx();
-    Driver100msClock_resume_100ms_timer();
-
-
-    if (can_helper->openlcb_worker->active_msg) {
-
-        parameterless_callback_t rx_callback = OpenLcbApplicationCallbacks_get_can_rx();
-
-        if (rx_callback) {
-
-            rx_callback();
+        if (can_msg) {
+         
+            _interface->transmit_frame(can_msg);
 
         }
 
-        return true;
-
-    } else {
-
-        return false;
-
     }
-
-}
-
-static void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_t newly_popped_openlcb_active_msg) {
-
-    if (newly_popped_openlcb_active_msg) {
-
-        next_node->state.openlcb_datagram_ack_sent = false;
-        next_node->state.openlcb_msg_handled = false;
-
-    }
-
-}
-
-static void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t* can_helper, uint8_t active_openlcb_msg_processing_complete) {
-
-    // Are all the nodes finished handling the incoming Openlcb message?
-    if (active_openlcb_msg_processing_complete && can_helper->openlcb_worker->active_msg) {
-
-        OpenLcbBufferStore_free_buffer(can_helper->openlcb_worker->active_msg);
-        can_helper->openlcb_worker->active_msg = NULL; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
-
-    }
-
-}
-
-static bool _resend_datagram_message_from_ack_failure_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
-
-    if (next_node->state.resend_datagram && next_node->last_received_datagram) {
-
-        next_node->state.openlcb_msg_handled = false;
-
-        OpenLcbMainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper->openlcb_worker->worker);
-
-        if (next_node->state.openlcb_msg_handled) {
-
-            ProtocolDatagramHandlers_clear_resend_datagram_message(next_node);
-
-            return false;
-
-        }
-
-        return true; // need to retry
-
-    }
-
-    return false;
-
-}
-
-static bool _resend_optional_message_from_oir_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
-
-    if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
-
-        next_node->state.openlcb_msg_handled = false;
-
-        OpenLcbMainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper->openlcb_worker->worker);
-
-        if (next_node->state.openlcb_msg_handled) {
-
-            ProtocolMessageNetwork_clear_resend_optional_message(next_node);
-
-            return false;
-        }
-
-        return true; // need to retry
-
-    }
-
-    return false;
-
-}
-
-static void _dispatch_next_openlcb_message_to_node(can_main_statemachine_t* can_helper, openlcb_node_t* next_node, bool* is_active_openlcb_msg_processiong_complete) {
-
-    if (can_helper->openlcb_worker->active_msg) {
-
-        OpenLcbMainStatemachine_run_single_node(next_node, can_helper->openlcb_worker->active_msg, &can_helper->openlcb_worker->worker);
-
-        if (!next_node->state.openlcb_msg_handled)
-
-            *is_active_openlcb_msg_processiong_complete = false;
-
-    }
-
+    
 }
 
 void CanMainStateMachine_run(void) {
     
-    
-    // CAN Fifo Buffer only contains messages that are ready for sending 
-    
-    if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
+    can_msg_t can_msg;
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+   
+    if (!openlcb_msg) {
         
-        
-        can_msg_t *can_msg = CanBufferFifo_pop();
-        
-        if (can_msg) {
-            
-            DriverCan_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
-            
-            return;
-             
-        }
+         _process_outgoing_can_msgs();
+         
+        return;
         
     }
-
-    can_msg_t can_helper;
     
-    bool is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message(&CanMainStatemachine_can_helper);
-
-    // optimistic from the beginning
-    bool is_active_openlcb_msg_processing_complete = true;
-
-    openlcb_node_t* next_node = OpenLcbNode_get_first(0);
-
-    while (next_node) {
-
-        DriverCan_pause_can_rx();
-        OpenLcbNode_check_and_handle_duplicate_alias(next_node);
-        DriverCan_resume_can_rx();
-
-        _reset_message_handled_flags_if_required(next_node, is_newly_popped_openlcb_active_msg);
-
-        if (next_node->state.run_state == RUNSTATE_RUN) { // process any incoming messages that were popped if the node is initialized
-
-            // these need to get out asap so don't waste time processing normal messages below until we can get these out
-            if (_resend_datagram_message_from_ack_failure_reply(&CanMainStatemachine_can_helper, next_node)) {
-
-                break;
-
-            }
-
-            // these need to get out asap so don't waste time processing normal messages below until we can get these out
-            if (_resend_optional_message_from_oir_reply(&CanMainStatemachine_can_helper, next_node)) {
-
-                break;
-
-            }
-
-            _dispatch_next_openlcb_message_to_node(&CanMainStatemachine_can_helper, next_node, &is_active_openlcb_msg_processing_complete);
-
-        } else {
-
-            // We don't process any OpenLCB messages since we can't reply until after the node is initialized anyway
-
-
-            // Process any login states
-            CanLoginStateMachine_run(next_node, &can_helper, &CanMainStatemachine_can_helper.openlcb_worker->worker);
-
-        }
-
-        next_node = OpenLcbNode_get_next(0);
-    }
-
-    _free_active_message_buffers_if_processing_complete(&CanMainStatemachine_can_helper, is_active_openlcb_msg_processing_complete);
-
+    
+   openlcb_node_t *openlcb_node = _interface->node_get_first(0);
+   
+   while (openlcb_node) {
+       
+       _process_outgoing_can_msgs();
+       
+       if (openlcb_node->state.run_state < RUNSTATE_RUN) {
+           
+           _interface->login_statemachine_run(openlcb_node, &can_msg, openlcb_msg);
+           
+       } else {
+        
+           _interface->openlcb_main_statemachine_run_single_node(openlcb_node);
+           
+       }
+       
+       openlcb_node = _interface->node_get_next(0);
+   }
+   
+   _process_outgoing_can_msgs();
+   
+   OpenLcbBufferStore_free_buffer(openlcb_msg);
 }
+
+
+//can_main_statemachine_t CanMainStatemachine_can_helper;
+//
+//void CanMainStatemachine_initialize(
+//        can_rx_driver_callback_t can_rx_driver_callback,
+//        transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
+//        is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
+//        parameterless_callback_t pause_can_rx_callback,
+//        parameterless_callback_t resume_can_rx_callback
+//        ) {
+//
+//    DriverCan_initialization(transmit_raw_can_frame_callback, is_can_tx_buffer_clear_callback, pause_can_rx_callback, resume_can_rx_callback);
+//
+//    
+// 
+//    // Just use an existing openlcb_helper structure vs allocating another one
+//    CanMainStatemachine_can_helper.openlcb_worker = OpenLcbMainStatemachine_get_openlcb_helper();
+//
+//}
+//
+//bool _pop_next_openlcb_worker_active_message(can_main_statemachine_t* can_helper) {
+//
+//    if (can_helper->openlcb_worker->active_msg) {
+//
+//        return false;
+//
+//    }
+//
+//    Driver100msClock_pause_100ms_timer();
+//    DriverCan_pause_can_rx();
+//    can_helper->openlcb_worker->active_msg = OpenLcbBufferFifo_pop();
+//    DriverCan_resume_can_rx();
+//    Driver100msClock_resume_100ms_timer();
+//
+//
+//    if (can_helper->openlcb_worker->active_msg) {
+//
+//        parameterless_callback_t rx_callback = OpenLcbApplicationCallbacks_get_can_rx();
+//
+//        if (rx_callback) {
+//
+//            rx_callback();
+//
+//        }
+//
+//        return true;
+//
+//    } else {
+//
+//        return false;
+//
+//    }
+//
+//}
+//
+//static void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_t newly_popped_openlcb_active_msg) {
+//
+//    if (newly_popped_openlcb_active_msg) {
+//
+//        next_node->state.openlcb_datagram_ack_sent = false;
+//        next_node->state.openlcb_msg_handled = false;
+//
+//    }
+//
+//}
+//
+//static void _free_active_message_buffers_if_processing_complete(can_main_statemachine_t* can_helper, uint8_t active_openlcb_msg_processing_complete) {
+//
+//    // Are all the nodes finished handling the incoming Openlcb message?
+//    if (active_openlcb_msg_processing_complete && can_helper->openlcb_worker->active_msg) {
+//
+//        OpenLcbBufferStore_free_buffer(can_helper->openlcb_worker->active_msg);
+//        can_helper->openlcb_worker->active_msg = NULL; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
+//
+//    }
+//
+//}
+//
+//static bool _resend_datagram_message_from_ack_failure_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
+//
+//    if (next_node->state.resend_datagram && next_node->last_received_datagram) {
+//
+//        next_node->state.openlcb_msg_handled = false;
+//
+//        OpenLcbMainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper->openlcb_worker->worker);
+//
+//        if (next_node->state.openlcb_msg_handled) {
+//
+//            ProtocolDatagramHandlers_clear_resend_datagram_message(next_node);
+//
+//            return false;
+//
+//        }
+//
+//        return true; // need to retry
+//
+//    }
+//
+//    return false;
+//
+//}
+//
+//static bool _resend_optional_message_from_oir_reply(can_main_statemachine_t* can_helper, openlcb_node_t* next_node) {
+//
+//    if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
+//
+//        next_node->state.openlcb_msg_handled = false;
+//
+//        OpenLcbMainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper->openlcb_worker->worker);
+//
+//        if (next_node->state.openlcb_msg_handled) {
+//
+//            ProtocolMessageNetwork_clear_resend_optional_message(next_node);
+//
+//            return false;
+//        }
+//
+//        return true; // need to retry
+//
+//    }
+//
+//    return false;
+//
+//}
+//
+//static void _dispatch_next_openlcb_message_to_node(can_main_statemachine_t* can_helper, openlcb_node_t* next_node, bool* is_active_openlcb_msg_processiong_complete) {
+//
+//    if (can_helper->openlcb_worker->active_msg) {
+//
+//        OpenLcbMainStatemachine_run_single_node(next_node, can_helper->openlcb_worker->active_msg, &can_helper->openlcb_worker->worker);
+//
+//        if (!next_node->state.openlcb_msg_handled)
+//
+//            *is_active_openlcb_msg_processiong_complete = false;
+//
+//    }
+//
+//}
+//
+//void CanMainStateMachine_run(void) {
+//    
+//    
+//    // CAN Fifo Buffer only contains messages that are ready for sending 
+//    
+//    if (DriverCan_is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL)) {
+//        
+//        
+//        can_msg_t *can_msg = CanBufferFifo_pop();
+//        
+//        if (can_msg) {
+//            
+//            DriverCan_transmit_raw_can_frame(TX_CHANNEL_CAN_CONTROL, can_msg);
+//            
+//            return;
+//             
+//        }
+//        
+//    }
+//
+//    can_msg_t can_helper;
+//    
+//    bool is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message(&CanMainStatemachine_can_helper);
+//
+//    // optimistic from the beginning
+//    bool is_active_openlcb_msg_processing_complete = true;
+//
+//    openlcb_node_t* next_node = OpenLcbNode_get_first(0);
+//
+//    while (next_node) {
+//
+//        DriverCan_pause_can_rx();
+//        OpenLcbNode_check_and_handle_duplicate_alias(next_node);
+//        DriverCan_resume_can_rx();
+//
+//        _reset_message_handled_flags_if_required(next_node, is_newly_popped_openlcb_active_msg);
+//
+//        if (next_node->state.run_state == RUNSTATE_RUN) { // process any incoming messages that were popped if the node is initialized
+//
+//            // these need to get out asap so don't waste time processing normal messages below until we can get these out
+//            if (_resend_datagram_message_from_ack_failure_reply(&CanMainStatemachine_can_helper, next_node)) {
+//
+//                break;
+//
+//            }
+//
+//            // these need to get out asap so don't waste time processing normal messages below until we can get these out
+//            if (_resend_optional_message_from_oir_reply(&CanMainStatemachine_can_helper, next_node)) {
+//
+//                break;
+//
+//            }
+//
+//            _dispatch_next_openlcb_message_to_node(&CanMainStatemachine_can_helper, next_node, &is_active_openlcb_msg_processing_complete);
+//
+//        } else {
+//
+//            // We don't process any OpenLCB messages since we can't reply until after the node is initialized anyway
+//
+//
+//            // Process any login states
+//            CanLoginStateMachine_run(next_node, &can_helper, &CanMainStatemachine_can_helper.openlcb_worker->worker);
+//
+//        }
+//
+//        next_node = OpenLcbNode_get_next(0);
+//    }
+//
+//    _free_active_message_buffers_if_processing_complete(&CanMainStatemachine_can_helper, is_active_openlcb_msg_processing_complete);
+//
+//}
