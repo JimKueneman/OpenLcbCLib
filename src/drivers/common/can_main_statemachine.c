@@ -124,15 +124,8 @@ void CanMainStateMachine_run(void) {
 
         if (openlcb_node->state.run_state < RUNSTATE_RUN) {
 
-            openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+            _interface->login_statemachine_run(openlcb_node);
 
-            if (openlcb_msg) {
-
-                _interface->login_statemachine_run(openlcb_node, openlcb_msg);
-
-                OpenLcbBufferStore_free_buffer(openlcb_msg);
-
-            }
 
         } else {
 

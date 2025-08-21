@@ -63,9 +63,9 @@
 
 static interface_can_frame_message_handler_t *_interface;
 
-void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface) {
+void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface_can_frame_message_handler) {
 
-    _interface = (interface_can_frame_message_handler_t*) interface;
+    _interface = (interface_can_frame_message_handler_t*) interface_can_frame_message_handler;
 
 }
 
@@ -118,11 +118,11 @@ bool _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_fl
 
     // Check for duplicate Alias 
     openlcb_node_t *openlcb_node = _interface->find_by_alias(CanUtilities_extract_source_alias_from_can_identifier(can_msg));
-
+    
     if (openlcb_node) {
 
         if (openlcb_node->state.permitted) {
-
+  
             CanUtilities_copy_node_id_to_can_payload_buffer(openlcb_node->id, &buffer);
             _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | openlcb_node->alias, 6, &buffer);
 
@@ -131,8 +131,8 @@ bool _test_for_duplicate_alias_then_send_amr_and_set_duplicate_alias_detected_fl
         // Flag for handling in the main loop
         openlcb_node->state.duplicate_alias_detected = true;
   
-
         return true;
+        
     }
 
     return false;
@@ -146,7 +146,7 @@ void CanRxMessageHandler_cid(can_msg_t* can_msg) {
 
     if (openlcb_node) {
 
-        _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | openlcb_node->alias, 0, NULL);
+       _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | openlcb_node->alias, 0, NULL);
 
     }
 
@@ -179,7 +179,7 @@ void CanRxMessageHandler_ame(can_msg_t* can_msg) {
 
     if (can_msg->payload_count > 0) {
 
-        openlcb_node = _interface->find_by_alias(CanUtilities_extract_can_payload_as_node_id(can_msg));
+        openlcb_node = _interface->find_by_node_id(CanUtilities_extract_can_payload_as_node_id(can_msg));
 
         if (openlcb_node) {
             
@@ -195,7 +195,7 @@ void CanRxMessageHandler_ame(can_msg_t* can_msg) {
     openlcb_node = _interface->get_first(100);
     
     while (openlcb_node) {
-        
+     
         CanUtilities_copy_node_id_to_can_payload_buffer(openlcb_node->id, &buffer);
         _allocate_and_push(RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | openlcb_node->alias, 6, &buffer);
         

@@ -107,7 +107,7 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
 }
 
 void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
-    
+
     _interface = (interface_openlcb_node_t*) interface;
 
     for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
@@ -220,21 +220,17 @@ openlcb_node_t* OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t* 
 }
 
 openlcb_node_t* OpenLcbNode_find_by_alias(uint16_t alias) {
-
+    
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        if (_openlcb_nodes.node[i].state.permitted) {
+        if (_openlcb_nodes.node[i].alias == alias) {
 
-            if (_openlcb_nodes.node[i].alias == alias) {
-
-                return &_openlcb_nodes.node[i];
-
-            }
+            return &_openlcb_nodes.node[i];
 
         }
 
     };
-
+    
     return NULL;
 
 }
@@ -243,13 +239,9 @@ openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid) {
 
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        if (_openlcb_nodes.node[i].state.permitted) {
+        if (_openlcb_nodes.node[i].id == nodeid) {
 
-            if (_openlcb_nodes.node[i].id == nodeid) {
-
-                return &_openlcb_nodes.node[i];
-
-            }
+            return &_openlcb_nodes.node[i];
 
         }
 

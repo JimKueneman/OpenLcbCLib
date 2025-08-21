@@ -50,6 +50,7 @@ extern "C" {
 
     typedef struct {
         openlcb_node_t *(*find_by_alias)(uint16_t alias);
+        openlcb_node_t *(*find_by_node_id)(node_id_t node_id);
         openlcb_node_t* (*get_first)(uint8_t key);
         openlcb_node_t* (*get_next)(uint8_t key);
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum_t payload_type);
@@ -58,7 +59,7 @@ extern "C" {
 
 
 
-    extern void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface);
+    extern void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface_can_frame_message_handler);
 
     extern void CanRxMessageHandler_cid(can_msg_t* can_msg);
 

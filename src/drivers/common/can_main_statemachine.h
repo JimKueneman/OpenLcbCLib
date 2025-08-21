@@ -57,7 +57,7 @@ extern "C" {
 
         openlcb_node_t *(*node_get_first)(uint8_t key);
         openlcb_node_t *(*node_get_next)(uint8_t key);
-        void (*login_statemachine_run)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_openlcb_msg);
+        void (*login_statemachine_run)(openlcb_node_t* openlcb_node);
         void (*openlcb_main_statemachine_run_single_node)(openlcb_node_t* openlcb_node);
 
     } interface_can_main_statemachine_t;
