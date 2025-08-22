@@ -13,8 +13,6 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../drivers/driver_configuration_memory.h"
-
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 
@@ -121,11 +119,9 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventi
 
 uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-    configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_read_callback();
+    if (_interface->configuration_memory_read) {
 
-    if (_getmem_callback) {
-
-        return (_getmem_callback(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+        return (_interface->configuration_memory_read(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
 
     }
 
@@ -134,11 +130,9 @@ uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *node, uint
 
 uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-    configuration_mem_callback_t _getmem_callback = DriverConfigurationMemory_get_write_callback();
+    if (_interface->configuration_memory_write) {
 
-    if (_getmem_callback) {
-
-        return (_getmem_callback(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
+        return (_interface->configuration_memory_write(OpenLcbUtilities_calculate_memory_offset_into_node_space(node) + address, count, buffer));
 
     }
 

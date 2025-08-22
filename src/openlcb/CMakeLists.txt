@@ -8,8 +8,7 @@ set(SOURCES
     openlcb_buffer_store.c 
     openlcb_gridconnect.c 
     openlcb_main_statemachine.c 
-    openlcb_node.c 
-    openlcb_tx_driver.c 
+    openlcb_node.c  
     openlcb_utilities.c 
     protocol_datagram_handlers.c 
     protocol_datagram.c 
@@ -30,7 +29,6 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/openlcb_gridconnect_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_main_statemachine_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_node_Test.cxx
-    ${ROOT_DIR}/src/openlcb/openlcb_tx_driver_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_utilities_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_datagram_handlers_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_datagram_Test.cxx

@@ -54,9 +54,9 @@
 static interface_openlcb_protocol_datagram_handler_t *_interface;
 
 void ProtocolDatagramHandlers_initialize(const interface_openlcb_protocol_datagram_handler_t *interface_openlcb_protocol_datagram_handler) {
-    
+
     _interface = (interface_openlcb_protocol_datagram_handler_t*) interface_openlcb_protocol_datagram_handler;
-    
+
 }
 
 static const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
@@ -268,7 +268,7 @@ static uint16_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_
 
     data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    return reply_payload_index + DriverConfigurationMemory_get_read_callback()(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
+    return reply_payload_index + _interface->configuration_memory_read(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
 #endif
@@ -436,11 +436,11 @@ static uint16_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb
 
     data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
 
-    uint16_t write_count = DriverConfigurationMemory_get_write_callback()(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    uint16_t write_count = _interface->configuration_memory_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
-    if (OpenLcbApplicationCallbacks_get_config_mem_write()) {
+    if (_interface->callback_config_mem_write) {
 
-        OpenLcbApplicationCallbacks_get_config_mem_write()(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+        _interface->callback_config_mem_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     }
 
@@ -1200,7 +1200,11 @@ void ProtocolDatagramHandlers_handle_memory_reset_reboot_message(openlcb_node_t*
 
     }
 
-    DriverMcu_reboot();
+    if (_interface->reboot) {
+
+        _interface->reboot();
+
+    }
 
     openlcb_node->state.openlcb_msg_handled = true;
 
@@ -1220,9 +1224,9 @@ void ProtocolDatagramHandlers_handle_memory_factory_reset_message(openlcb_node_t
 
     }
 
-    if (DriverConfigurationMemory_get_factory_reset_callback()) {
+    if (_interface->callback_configuration_memory_factory_reset) {
 
-        DriverConfigurationMemory_get_factory_reset_callback()();
+        _interface->callback_configuration_memory_factory_reset();
 
     }
 

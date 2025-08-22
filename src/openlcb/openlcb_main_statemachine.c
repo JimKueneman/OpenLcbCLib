@@ -76,9 +76,9 @@ void OpenLcbMainStatemachine_initialize(
 
     ProtocolDatagram_initialize();
 
-    Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
-    DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback, configuration_factory_reset_callback);
-    DriverMcu_initialization(mcu_setup_callback, reboot_callback);
+  //  Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
+  //  DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback, configuration_factory_reset_callback);
+  //  DriverMcu_initialization(mcu_setup_callback, reboot_callback);
 
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++) {
 
