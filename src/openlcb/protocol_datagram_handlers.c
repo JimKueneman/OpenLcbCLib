@@ -49,9 +49,15 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
-#include "openlcb_tx_driver.h"
 #include "protocol_snip.h"
 
+static interface_openlcb_protocol_datagram_handler_t *_interface;
+
+void ProtocolDatagramHandlers_initialize(const interface_openlcb_protocol_datagram_handler_t *interface_openlcb_protocol_datagram_handler) {
+    
+    _interface = (interface_openlcb_protocol_datagram_handler_t*) interface_openlcb_protocol_datagram_handler;
+    
+}
 
 static const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
@@ -131,7 +137,7 @@ static void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_nod
 
 void ProtocolDatagramHandlers_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (_interface->transmit_openlcb_message(worker_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 
@@ -148,7 +154,7 @@ void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openl
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
     OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, error_code, 0);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (_interface->transmit_openlcb_message(worker_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 
@@ -163,7 +169,7 @@ static void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t
     *worker_msg->payload[0] = (uint8_t) reply_pending_code;
     worker_msg->payload_count = 1;
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (_interface->transmit_openlcb_message(worker_msg)) {
 
         openlcb_node->state.openlcb_datagram_ack_sent = true;
 
@@ -944,7 +950,7 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_message(openl
 
         worker_msg->payload_count = 8;
 
-        if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+        if (_interface->transmit_openlcb_message(worker_msg)) {
 
             openlcb_node->state.openlcb_msg_handled = true;
 

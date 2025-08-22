@@ -127,24 +127,6 @@ bool try_transmit_can_message(can_msg_t *can_msg)
     return false;
 }
 
-uint64_t generate_seed(uint64_t start_seed)
-{
-
-    uint32_t lfsr1 = start_seed & 0xFFFFFF;
-    uint32_t lfsr2 = (start_seed >> 24) & 0xFFFFFF;
-
-    uint32_t temp1 = ((lfsr1 << 9) | ((lfsr2 >> 15) & 0x1FF)) & 0xFFFFFF;
-    uint32_t temp2 = (lfsr2 << 9) & 0xFFFFFF;
-
-    lfsr1 = lfsr1 + temp1 + 0x1B0CA3L;
-    lfsr2 = lfsr2 + temp2 + 0x7A4BA9L;
-
-    lfsr1 = (lfsr1 & 0xFFFFFF) + ((lfsr2 & 0xFF000000) >> 24);
-    lfsr2 = lfsr2 & 0xFFFFFF;
-
-    return ((uint64_t)lfsr1 << 24) | lfsr2;
-}
-
 uint16_t extract_producer_event_state_mti(openlcb_node_t *openlcb_node, uint16_t event_index)
 {
 
@@ -154,15 +136,6 @@ uint16_t extract_consumer_event_state_mti(openlcb_node_t *openlcb_node, uint16_t
 {
 
     return 0;
-}
-
-uint16_t generate_alias(uint64_t seed)
-{
-
-    uint32_t lfsr2 = seed & 0xFFFFFF;
-    uint32_t lfsr1 = (seed >> 24) & 0xFFFFFF;
-
-    return (uint16_t)((lfsr1 ^ lfsr2 ^ (lfsr1 >> 12) ^ (lfsr2 >> 12)) & 0x0FFF);
 }
 
 void alias_change_callback(uint16_t alias, uint64_t node_id)
@@ -194,8 +167,6 @@ void _global_initialize(void)
 {
     interface_can_login_message_handler.extract_consumer_event_state_mti = &extract_consumer_event_state_mti;
     interface_can_login_message_handler.extract_producer_event_state_mti = &extract_producer_event_state_mti;
-    interface_can_login_message_handler.generate_alias = &generate_alias;
-    interface_can_login_message_handler.generate_seed = &generate_seed;
     interface_can_login_message_handler.get_alias_change = &get_alias_change;
     interface_can_login_message_handler.try_transmit_can_message = &try_transmit_can_message;
     interface_can_login_message_handler.try_transmit_openlcb_message = &try_transmit_openlcb_message;

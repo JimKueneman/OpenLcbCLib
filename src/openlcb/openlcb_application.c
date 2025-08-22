@@ -81,7 +81,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t ev
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
 
-    if (OpenLcbTxDriver_try_transmit(node, &msg)) {
+    if (OpenLcbTxDriver_transmit(node, &msg)) {
 
         return true;
 
@@ -102,7 +102,7 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventi
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
 
-    if (OpenLcbTxDriver_try_transmit(node, &msg)) {
+    if (OpenLcbTxDriver_transmit(node, &msg)) {
 
         return true;
 

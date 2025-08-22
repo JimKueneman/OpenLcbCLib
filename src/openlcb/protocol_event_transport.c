@@ -160,7 +160,7 @@ static void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[openlcb_node->producers.enumerator.enum_index]);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (OpenLcbTxDriver_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->producers.enumerator.enum_index = openlcb_node->producers.enumerator.enum_index + 1;
 
@@ -203,7 +203,7 @@ static void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[openlcb_node->consumers.enumerator.enum_index]);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (OpenLcbTxDriver_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->consumers.enumerator.enum_index = openlcb_node->consumers.enumerator.enum_index + 1;
 
@@ -296,7 +296,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[event_index]);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (OpenLcbTxDriver_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 
@@ -425,7 +425,7 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[event_index]);
 
-    if (OpenLcbTxDriver_try_transmit(openlcb_node, worker_msg)) {
+    if (OpenLcbTxDriver_transmit(openlcb_node, worker_msg)) {
 
         openlcb_node->state.openlcb_msg_handled = true;
 

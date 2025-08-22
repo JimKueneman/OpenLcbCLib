@@ -47,10 +47,10 @@
 #include "openlcb_buffer_store.h"
 #include "protocol_datagram_handlers.h"
 
+
 void ProtocolDatagram_initialize(void) {
-
-
-
+    
+    
 }
 
 void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {

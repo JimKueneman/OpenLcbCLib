@@ -106,8 +106,8 @@ void ResumeCanRx(void)
 }
 
 const interface_openlcb_node_t _interface_openlcb_node{
-    .pause_can_rx = &PauseCanRx,
-    .resume_can_rx = &ResumeCanRx};
+    .locklist = &PauseCanRx,
+    .unlocklist = &ResumeCanRx};
 
 TEST(OpenLcbUtilities, load_openlcb_message)
 {

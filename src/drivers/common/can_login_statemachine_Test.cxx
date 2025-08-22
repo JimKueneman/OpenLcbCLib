@@ -205,8 +205,8 @@ void _resume_can_rx(void)
 }
 
 const interface_openlcb_node_t interface_openlcb_node = {
-    .pause_can_rx = &_pause_can_rx,
-    .resume_can_rx = &_resume_can_rx};
+    .locklist = &_pause_can_rx,
+    .unlocklist = &_resume_can_rx};
 
 void _initialize(void)
 {

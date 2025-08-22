@@ -13,9 +13,6 @@
 
 bool fail_buffer = false;
 
-interface_can_frame_message_handler_t can_frame_message_handler_interface;
-interface_openlcb_node_t interface_openlcb_node;
-
 node_parameters_t _node_parameters_main_node = {
 
     .consumer_count_autocreate = 0,
@@ -107,17 +104,25 @@ void resume_can_rx(void)
 {
 }
 
+const interface_can_frame_message_handler_t can_frame_message_handler_interface = {
+
+    .openlcb_buffer_store_allocate_buffer = &openlcb_buffer_store_allocate_buffer,
+    .find_by_alias = &OpenLcbNode_find_by_alias,
+    .find_by_node_id = &OpenLcbNode_find_by_node_id,
+    .get_first = &OpenLcbNode_get_first,
+    .get_next = &OpenLcbNode_get_next
+
+};
+
+const interface_openlcb_node_t interface_openlcb_node = {
+
+    .locklist = &pause_can_rx,
+    .unlocklist = &resume_can_rx
+
+};
+
 void global_initialize(void)
 {
-    can_frame_message_handler_interface.openlcb_buffer_store_allocate_buffer = &openlcb_buffer_store_allocate_buffer;
-    can_frame_message_handler_interface.find_by_alias = &OpenLcbNode_find_by_alias;
-    can_frame_message_handler_interface.find_by_node_id = &OpenLcbNode_find_by_node_id;
-    can_frame_message_handler_interface.get_first = &OpenLcbNode_get_first;
-    can_frame_message_handler_interface.get_next = &OpenLcbNode_get_next;
-
-    interface_openlcb_node.pause_can_rx = &pause_can_rx;
-    interface_openlcb_node.resume_can_rx = &resume_can_rx;
-
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
@@ -444,6 +449,23 @@ TEST(CanRxMessageHandler, ame)
     node1->alias = 0xAAA;
     openlcb_node_t *node2 = OpenLcbNode_allocate(0x010203040507, &_node_parameters_main_node);
     node2->alias = 0x777;
+
+    // ************************************************************************
+    // Not a conflict nor for us
+    // ************************************************************************
+
+    node1->state.permitted = true;
+    node2->state.permitted = true;
+
+    CanUtilities_load_can_message(&can_msg, 0x10702AAB, 6, 0x99, 0x02, 0x03, 0x04, 0x05, 0x07, 0x00, 0x00);
+    CanRxMessageHandler_ame(&can_msg);
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_EQ(outgoing_can_msg, nullptr);
+
+    EXPECT_FALSE(node1->state.duplicate_alias_detected);
+    EXPECT_FALSE(node2->state.duplicate_alias_detected);
+
+    // ************************************************************************
 
     // ************************************************************************
     // Cause a conflict permitted
@@ -1134,4 +1156,88 @@ TEST(CanRxMessageHandler, multi_frame_sequence_legacy_snip)
     OpenLcbBufferList_free(openlcb_msg);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
+}
+
+TEST(CanRxMessageHandler, error_information_report)
+{
+
+    can_msg_t can_msg;
+    can_msg_t *outgoing_can_msg;
+
+    global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+    node1->alias = 0xAAA;
+    openlcb_node_t *node2 = OpenLcbNode_allocate(0x010203040507, &_node_parameters_main_node);
+    node2->alias = 0x777;
+
+    // ************************************************************************
+    // No conflict
+    // ************************************************************************
+    can_msg.identifier = 0x10710AAB;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_error_information_report(&can_msg);
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_EQ(outgoing_can_msg, nullptr);
+    EXPECT_FALSE(node1->state.duplicate_alias_detected);
+    EXPECT_FALSE(node2->state.duplicate_alias_detected);
+    // ************************************************************************
+
+    // ************************************************************************
+    // Cause a conflict, but not permittted
+    // ************************************************************************
+    can_msg.identifier = 0x10710AAA;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_error_information_report(&can_msg);
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_EQ(outgoing_can_msg, nullptr);
+    EXPECT_TRUE(node1->state.duplicate_alias_detected);
+    EXPECT_FALSE(node2->state.duplicate_alias_detected);
+    // ************************************************************************
+
+    // ************************************************************************
+    // Cause a conflict, permittted
+    // ************************************************************************
+    node1->state.permitted = true;
+    node2->state.permitted = true;
+
+    can_msg.identifier = 0x10710AAA;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_error_information_report(&can_msg);
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_NE(outgoing_can_msg, nullptr);
+
+    uint8_t bytes[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+    EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x10703AAA, 6, bytes));
+    EXPECT_TRUE(node1->state.duplicate_alias_detected);
+    EXPECT_FALSE(node2->state.duplicate_alias_detected);
+
+    node1->state.duplicate_alias_detected = false;
+    node2->state.duplicate_alias_detected = false;
+    // ************************************************************************
+
+    // ************************************************************************
+    // Cause a conflict permitted
+    // ************************************************************************
+    can_msg.identifier = 0x10714777;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_error_information_report(&can_msg);
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_NE(outgoing_can_msg, nullptr);
+    uint8_t bytes1[6] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x07};
+    EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x10703777, 6, bytes1));
+    EXPECT_FALSE(node1->state.duplicate_alias_detected);
+    EXPECT_TRUE(node2->state.duplicate_alias_detected);
+
+    node1->state.duplicate_alias_detected = false;
+    node2->state.duplicate_alias_detected = false;
+
+    // ************************************************************************
+}
+
+TEST(CanRxMessageHandler, handle_stream)
+{
+    can_msg_t can_msg;
+
+    CanRxMessageHandler_handle_stream(&can_msg, 0, STREAM);
 }

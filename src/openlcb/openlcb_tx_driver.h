@@ -50,7 +50,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern bool OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
+extern bool OpenLcbTxDriver_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
 
 #ifdef	__cplusplus

@@ -52,6 +52,33 @@
 
 static interface_can_login_message_handler_t* _interface;
 
+static uint64_t _generate_seed(uint64_t start_seed) {
+
+    uint32_t lfsr1 = start_seed & 0xFFFFFF;
+    uint32_t lfsr2 = (start_seed >> 24) & 0xFFFFFF;
+
+    uint32_t temp1 = ((lfsr1 << 9) | ((lfsr2 >> 15) & 0x1FF)) & 0xFFFFFF;
+    uint32_t temp2 = (lfsr2 << 9) & 0xFFFFFF;
+
+    lfsr1 = lfsr1 + temp1 + 0x1B0CA3L;
+    lfsr2 = lfsr2 + temp2 + 0x7A4BA9L;
+
+    lfsr1 = (lfsr1 & 0xFFFFFF) + ((lfsr2 & 0xFF000000) >> 24);
+    lfsr2 = lfsr2 & 0xFFFFFF;
+
+    return ( (uint64_t) lfsr1 << 24) | lfsr2;
+
+}
+
+static uint16_t _generate_alias(uint64_t seed) {
+
+    uint32_t lfsr2 = seed & 0xFFFFFF;
+    uint32_t lfsr1 = (seed >> 24) & 0xFFFFFF;
+
+    return ( lfsr1 ^ lfsr2 ^ (lfsr1 >> 12) ^ (lfsr2 >> 12)) & 0x0FFF;
+
+}
+
 void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface) {
 
     _interface = (interface_can_login_message_handler_t*) interface;
@@ -68,14 +95,14 @@ void CanLoginMessageHandler_init(openlcb_node_t* next_node) {
 
 void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node) {
 
-    next_node->seed = _interface->generate_seed(next_node->seed);
+    next_node->seed = _generate_seed(next_node->seed);
     next_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
 
 }
 
 void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
-    next_node->alias = _interface->generate_alias(next_node->seed);
+    next_node->alias = _generate_alias(next_node->seed);
 
     callback_alias_change_t alias_change_callback = _interface->get_alias_change();
 

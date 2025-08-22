@@ -45,6 +45,7 @@
 #include "../../openlcb/openlcb_defines.h"
 #include "can_buffer_fifo.h"
 #include "../../openlcb/openlcb_buffer_store.h"
+#include "can_buffer_store.h"
 
 
 static interface_can_main_statemachine_t *_interface;
@@ -66,17 +67,17 @@ static void _process_outgoing_can_msgs(void) {
         _interface->resume_can_rx();
         _interface->resume_100ms_timer();
 
-        if (!current_outgoing_can_msg) {
+    }
 
-            return;
-
-        }
+    if (current_outgoing_can_msg) {
 
         if (_interface->transmit_can_frame(current_outgoing_can_msg)) {
 
+            CanBufferStore_free_buffer(current_outgoing_can_msg);
+            
             current_outgoing_can_msg = NULL;
 
-        };
+        }
 
     }
 

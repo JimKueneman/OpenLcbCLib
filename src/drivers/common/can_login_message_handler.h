@@ -53,10 +53,8 @@ extern "C" {
     typedef struct {
         bool (*try_transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
         bool (*try_transmit_can_message)(can_msg_t* can_msg);
-        uint64_t (*generate_seed)(uint64_t start_seed);
         uint16_t (*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
-        uint16_t (*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);   
-        uint16_t (*generate_alias)(uint64_t seed);   
+        uint16_t (*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);     
         callback_alias_change_t (*get_alias_change)(void);
 
     } interface_can_login_message_handler_t;

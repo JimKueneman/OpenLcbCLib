@@ -48,7 +48,7 @@
 
 #include "../drivers/common/can_tx_statemachine.h"
 
-bool OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
+bool OpenLcbTxDriver_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
 
     // TODO:  I don't like this coupling into the CAN drivers here... need to come up with a better way so this file does not need to access

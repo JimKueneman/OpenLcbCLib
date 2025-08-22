@@ -54,7 +54,6 @@ extern "C" {
         void (*resume_100ms_timer)(void);
         bool (*transmit_can_frame)(can_msg_t* msg);
         bool (*is_tx_buffer_empty)(void);
-
         openlcb_node_t *(*node_get_first)(uint8_t key);
         openlcb_node_t *(*node_get_next)(uint8_t key);
         void (*login_statemachine_run)(openlcb_node_t* openlcb_node);

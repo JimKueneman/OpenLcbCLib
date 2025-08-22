@@ -200,15 +200,17 @@ openlcb_node_t* OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t* 
 
             _clear_node(&_openlcb_nodes.node[i]);
 
-            _openlcb_nodes.node[i].parameters = node_parameters;
-            _openlcb_nodes.node[i].state.allocated = true;
+            _openlcb_nodes.node[i].parameters = node_parameters;  
             _openlcb_nodes.node[i].id = node_id;
             _openlcb_nodes.node[i].index = (uint8_t) i;
 
             _generate_event_ids(&_openlcb_nodes.node[i]);
 
-            _openlcb_nodes.count = _openlcb_nodes.count + 1;
+            _openlcb_nodes.count++;
 
+            // last step is to mark it allocated
+            _openlcb_nodes.node[i].state.allocated = true;
+            
             return &_openlcb_nodes.node[i];
 
         }
@@ -248,33 +250,6 @@ openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid) {
     };
 
     return NULL;
-}
-
-uint64_t OpenLcbNode_generate_seed(uint64_t start_seed) {
-
-    uint32_t lfsr1 = start_seed & 0xFFFFFF;
-    uint32_t lfsr2 = (start_seed >> 24) & 0xFFFFFF;
-
-    uint32_t temp1 = ((lfsr1 << 9) | ((lfsr2 >> 15) & 0x1FF)) & 0xFFFFFF;
-    uint32_t temp2 = (lfsr2 << 9) & 0xFFFFFF;
-
-    lfsr1 = lfsr1 + temp1 + 0x1B0CA3L;
-    lfsr2 = lfsr2 + temp2 + 0x7A4BA9L;
-
-    lfsr1 = (lfsr1 & 0xFFFFFF) + ((lfsr2 & 0xFF000000) >> 24);
-    lfsr2 = lfsr2 & 0xFFFFFF;
-
-    return ( (uint64_t) lfsr1 << 24) | lfsr2;
-
-}
-
-uint16_t OpenLcbNode_generate_alias(uint64_t seed) {
-
-    uint32_t lfsr2 = seed & 0xFFFFFF;
-    uint32_t lfsr1 = (seed >> 24) & 0xFFFFFF;
-
-    return ( lfsr1 ^ lfsr2 ^ (lfsr1 >> 12) ^ (lfsr2 >> 12)) & 0x0FFF;
-
 }
 
 void OpenLcbNode_100ms_timer_tick(void) {

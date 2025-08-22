@@ -100,7 +100,7 @@ can_msg_t *CanBufferFifo_pop(void) {
 
         can_msg_t *msg = can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail];
         can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail] = NULL;
-        can_msg_buffer_fifo.tail = can_msg_buffer_fifo.tail + 1;
+        can_msg_buffer_fifo.tail++;
 
         if (can_msg_buffer_fifo.tail >= LEN_CAN_FIFO_BUFFER) {
 
