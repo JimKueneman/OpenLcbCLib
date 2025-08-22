@@ -17,7 +17,14 @@
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "openlcb_tx_driver.h"
+
+static interface_openlcb_application_t *_interface;
+
+void OpenLcbApplication_initialize(const interface_openlcb_application_t *interface_openlcb_application) {
+    
+    _interface = (interface_openlcb_application_t*) interface_openlcb_application;
+    
+}
 
 void OpenLcbApplication_clear_consumer_eventids(openlcb_node_t *node) {
 
@@ -81,7 +88,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t ev
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
 
-    if (OpenLcbTxDriver_transmit(node, &msg)) {
+    if (_interface->transmit_openlcb_message(&msg)) {
 
         return true;
 
@@ -102,7 +109,7 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventi
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
 
-    if (OpenLcbTxDriver_transmit(node, &msg)) {
+    if (_interface->transmit_openlcb_message(&msg)) {
 
         return true;
 

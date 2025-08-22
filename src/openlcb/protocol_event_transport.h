@@ -49,11 +49,18 @@
 
 #include "openlcb_types.h"
 
+typedef struct {
+    bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+
+} interface_openlcb_protocol_event_transport_t;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
+    
+extern void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_transport_t *interface_openlcb_protocol_event_transport);
     
 extern void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 

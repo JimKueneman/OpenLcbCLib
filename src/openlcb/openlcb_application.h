@@ -42,9 +42,17 @@
 
 #include "openlcb_types.h"
 
+typedef struct {
+    
+    bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+
+} interface_openlcb_application_t;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+    extern void OpenLcbApplication_initialize(const interface_openlcb_application_t *interface_openlcb_application);
 
     // Event ID helpers
     extern void OpenLcbApplication_clear_consumer_eventids(openlcb_node_t* node);
