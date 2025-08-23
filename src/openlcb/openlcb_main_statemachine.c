@@ -85,12 +85,6 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
 static void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-
-    return;
-
-
-
-
     switch (openlcb_msg->mti) {
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
