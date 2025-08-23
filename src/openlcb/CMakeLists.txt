@@ -1,7 +1,6 @@
 project(openlcb C)
 
 set(SOURCES 
-    openlcb_application_callbacks.c 
     openlcb_application.c 
     openlcb_buffer_fifo.c 
     openlcb_buffer_list.c 
@@ -21,7 +20,6 @@ set(SOURCES
 if (${GTEST})
 set(TESTS ${TESTS}
     
-    ${ROOT_DIR}/src/openlcb/openlcb_application_callbacks_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_application_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_buffer_fifo_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_buffer_list_Test.cxx

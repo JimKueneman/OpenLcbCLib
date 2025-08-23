@@ -17,7 +17,6 @@
 bool _alias_change_callback_called = false;
 uint16_t _alias_change_callback_alias = 0;
 uint64_t _alias_change_callback_node_id = 0;
-bool _alias_change_callback_enabled = false;
 bool _try_transmit_can_msg_enabled = false;
 bool _try_transmit_can_msg_called = false;
 can_msg_t _try_transmit_can_msg;
@@ -138,27 +137,11 @@ uint16_t extract_consumer_event_state_mti(openlcb_node_t *openlcb_node, uint16_t
     return 0;
 }
 
-void alias_change_callback(uint16_t alias, uint64_t node_id)
+void on_alias_change(uint16_t alias, uint64_t node_id)
 {
-
     _alias_change_callback_called = true;
     _alias_change_callback_alias = alias;
     _alias_change_callback_node_id = node_id;
-}
-
-callback_alias_change_t get_alias_change(void)
-{
-
-    if (_alias_change_callback_enabled)
-    {
-
-        return &alias_change_callback;
-    }
-    else
-    {
-
-        return nullptr;
-    }
 }
 
 interface_can_login_message_handler_t interface_can_login_message_handler;
@@ -167,7 +150,7 @@ void _global_initialize(void)
 {
     interface_can_login_message_handler.extract_consumer_event_state_mti = &extract_consumer_event_state_mti;
     interface_can_login_message_handler.extract_producer_event_state_mti = &extract_producer_event_state_mti;
-    interface_can_login_message_handler.get_alias_change = &get_alias_change;
+    interface_can_login_message_handler.on_alias_change = &on_alias_change;
     interface_can_login_message_handler.try_transmit_can_message = &try_transmit_can_message;
     interface_can_login_message_handler.try_transmit_openlcb_message = &try_transmit_openlcb_message;
 
@@ -186,7 +169,6 @@ void _global_reset_variables(void)
     _alias_change_callback_called = false;
     _alias_change_callback_alias = 0;
     _alias_change_callback_node_id = 0;
-    _alias_change_callback_enabled = false;
     _try_transmit_can_msg_enabled = false;
     _try_transmit_can_msg_called = false;
     CanUtilities_clear_can_message(&_try_transmit_can_msg);
@@ -326,10 +308,9 @@ TEST(CanLoginMessageHandler, generate_alias)
 
     EXPECT_EQ(openlcb_node->state.run_state, RUNSTATE_SEND_CHECK_ID_07);
     EXPECT_NE(openlcb_node->alias, 0);
-    EXPECT_FALSE(_alias_change_callback_called);
+    EXPECT_TRUE(_alias_change_callback_called);
 
     _global_reset_variables();
-    _alias_change_callback_enabled = true;
     openlcb_node->seed = NODE_ID;
     openlcb_node->alias = 0;
 
