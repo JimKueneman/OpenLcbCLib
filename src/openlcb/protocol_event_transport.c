@@ -47,7 +47,7 @@
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "openlcb_application_callbacks.h"
+
 
 static interface_openlcb_protocol_event_transport_t *_interface;
 
@@ -325,11 +325,11 @@ void ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t * open
 
 void ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_consumer_identified_unknown()) {
+    if (_interface->on_consumer_identified_unknown) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_consumer_identified_unknown()(openlcb_node, &eventid);
+        _interface->on_consumer_identified_unknown(openlcb_node, &eventid);
 
     }
 
@@ -346,11 +346,11 @@ void ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t * 
 void ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
 
-    if (OpenLcbApplicationCallbacks_get_consumer_identified_set()) {
+    if (_interface->on_consumer_identified_set) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_consumer_identified_set()(openlcb_node, &eventid);
+        _interface->on_consumer_identified_set(openlcb_node, &eventid);
 
     }
 
@@ -369,11 +369,11 @@ void ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t * op
     printf("consumer clear\n");
 #endif
 
-    if (OpenLcbApplicationCallbacks_get_consumer_identified_clear()) {
+    if (_interface->on_consumer_identified_clear) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_consumer_identified_clear()(openlcb_node, &eventid);
+        _interface->on_consumer_identified_set(openlcb_node, &eventid);
 
     }
 
@@ -454,11 +454,11 @@ void ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t * open
 
 void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_producer_identified_unknown()) {
+    if (_interface->on_producer_identified_unknown) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_producer_identified_unknown()(openlcb_node, &eventid);
+        _interface->on_producer_identified_unknown(openlcb_node, &eventid);
 
     }
 
@@ -474,11 +474,11 @@ void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t * 
 
 void ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_producer_identified_set()) {
+    if (_interface->on_producer_identified_set) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_producer_identified_set()(openlcb_node, &eventid);
+        _interface->on_producer_identified_set(openlcb_node, &eventid);
 
     }
 
@@ -494,11 +494,11 @@ void ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t * open
 
 void ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_producer_identified_clear()) {
+    if (_interface->on_producer_identified_clear) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_producer_identified_clear()(openlcb_node, &eventid);
+        _interface->on_producer_identified_clear(openlcb_node, &eventid);
 
     }
 
@@ -573,11 +573,11 @@ void ProtocolEventTransport_handle_identify_dest(openlcb_node_t * openlcb_node, 
 
 void ProtocolEventTransport_handle_event_learn(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_event_learn()) {
+    if (_interface->on_event_learn) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_event_learn()(openlcb_node, &eventid);
+        _interface->on_event_learn(openlcb_node, &eventid);
 
     }
 
@@ -593,11 +593,11 @@ void ProtocolEventTransport_handle_event_learn(openlcb_node_t * openlcb_node, op
 
 void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_event_pc_report()) {
+    if (_interface->on_pc_event_report) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        OpenLcbApplicationCallbacks_get_event_pc_report()(openlcb_node, &eventid);
+        _interface->on_pc_event_report(openlcb_node, &eventid);
 
     }
 
@@ -613,7 +613,7 @@ void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node
 
 void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (OpenLcbApplicationCallbacks_get_event_pc_report_with_payload()) {
+    if (_interface->on_pc_event_report_with_payload) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
@@ -629,7 +629,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *
 
         }
 
-        OpenLcbApplicationCallbacks_get_event_pc_report_with_payload()(openlcb_node, &eventid, local_payload_count, &local_payload);
+        _interface->on_pc_event_report_with_payload(openlcb_node, &eventid, local_payload_count, &local_payload);
 
     }
 

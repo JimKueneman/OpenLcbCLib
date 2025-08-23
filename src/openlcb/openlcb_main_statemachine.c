@@ -42,10 +42,6 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../drivers/driver_mcu.h"
-#include "../drivers/driver_configuration_memory.h"
-#include "../drivers/driver_100ms_clock.h"
-
 #include "openlcb_buffer_store.h"
 #include "openlcb_buffer_list.h"
 #include "openlcb_defines.h"
@@ -60,25 +56,11 @@
 
 static openlcb_statemachine_worker_t _openlcb_helper;
 
-void OpenLcbMainStatemachine_initialize(
-        parameterless_callback_t mcu_setup_callback,
-        parameterless_callback_t reboot_callback,
-        configuration_mem_callback_t configuration_mem_read_callback,
-        configuration_mem_callback_t configuration_mem_write_callback,
-        parameterless_callback_t configuration_factory_reset_callback,
-        parameterless_callback_t _100ms_clock_pause_callback,
-        parameterless_callback_t _100ms_clock_resume_callback
-        ) {
+static interface_openlcb_main_statemachine_t* _interface;
 
-    OpenLcbBufferStore_initialize();
-    OpenLcbBufferList_initialize();
-    OpenLcbBufferFifo_initialize();
+void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
 
-    ProtocolDatagram_initialize();
-
-  //  Driver100msClock_initialization(_100ms_clock_pause_callback, _100ms_clock_resume_callback);
-  //  DriverConfigurationMemory_initialization(configuration_mem_read_callback, configuration_mem_write_callback, configuration_factory_reset_callback);
-  //  DriverMcu_initialization(mcu_setup_callback, reboot_callback);
+    _interface = (interface_openlcb_main_statemachine_t*) interface_openlcb_main_statemachine;
 
     for (int i = 0; i < LEN_MESSAGE_BYTES_STREAM; i++) {
 
@@ -103,149 +85,285 @@ void OpenLcbMainStatemachine_initialize(
 
 static void _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    
+
     return;
-    
-    
-    
-    
+
+
+
+
     switch (openlcb_msg->mti) {
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
 
-            ProtocolSnip_handle_simple_node_info_request(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->snip_simple_node_info_request) {
+
+                _interface->snip_simple_node_info_request(openlcb_node, openlcb_msg, worker_msg);
+                
+            }
+
             return;
 
         case MTI_PROTOCOL_SUPPORT_INQUIRY:
 
-            ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->message_network_protocol_support_inquiry) {
+
+                _interface->message_network_protocol_support_inquiry(openlcb_node, openlcb_msg, worker_msg);
+                
+            }
+
             return;
 
         case MTI_VERIFY_NODE_ID_ADDRESSED:
 
-            ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->message_network_verify_node_id_addressed) {
+                
+                _interface->message_network_verify_node_id_addressed(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+   
             return;
 
         case MTI_VERIFY_NODE_ID_GLOBAL:
+            
+            if (_interface->message_network_verify_node_id_global) {
+                
+                _interface->message_network_verify_node_id_global(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_VERIFIED_NODE_ID:
+            
+            
+            if (_interface->message_network_verified_node_id_addressed) {
+                
+                _interface->message_network_verify_node_id_global(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolMessageNetwork_handle_verified_node_id(openlcb_node, openlcb_msg, worker_msg);
             return;
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
         case MTI_CONSUMER_IDENTIFY:
 
-            ProtocolEventTransport_handle_consumer_identify(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->event_transport_consumer_identify) {
+                
+                _interface->event_transport_consumer_identify(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+         
             return;
 
         case MTI_CONSUMER_IDENTIFY_RANGE:
 
-            ProtocolEventTransport_handle_consumer_identify_range(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->event_transport_consumer_identify_range) {
+                
+                _interface->event_transport_consumer_identify_range(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+        
             return;
 
         case MTI_CONSUMER_IDENTIFIED_UNKNOWN:
+            
+            if (_interface->event_transport_consumer_identified_unknown) {
+                
+                _interface->event_transport_consumer_identified_unknown(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_CONSUMER_IDENTIFIED_SET:
+            
+            if (_interface->event_transport_consumer_identified_set) {
+                
+                _interface->event_transport_consumer_identified_set(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_consumer_identified_set(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_CONSUMER_IDENTIFIED_CLEAR:
+            
+            if (_interface->event_transport_consumer_identified_clear) {
+                
+                _interface->event_transport_consumer_identified_clear(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_CONSUMER_IDENTIFIED_RESERVED:
-
-            ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node, openlcb_msg, worker_msg);
+            
+            if (_interface->event_transport_consumer_identified_reserved) {
+                
+                _interface->event_transport_consumer_identified_reserved(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+            
             return;
 
         case MTI_PRODUCER_IDENTIFY:
 
-            ProtocolEventTransport_handle_producer_identify(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->event_transport_producer_identify) {
+                
+                _interface->event_transport_producer_identify(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+      
             return;
 
         case MTI_PRODUCER_IDENTIFY_RANGE:
-
-            ProtocolEventTransport_handle_producer_identify_range(openlcb_node, openlcb_msg, worker_msg);
+            
+            if (_interface->event_transport_producer_identify_range) {
+                
+                _interface->event_transport_producer_identify_range(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+  
             return;
 
         case MTI_PRODUCER_IDENTIFIED_UNKNOWN:
+            
+            if (_interface->event_transport_producer_identified_unknown) {
+                
+                _interface->event_transport_producer_identified_unknown(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_PRODUCER_IDENTIFIED_SET:
 
-            ProtocolEventTransport_handle_producer_identified_set(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->event_transport_producer_identified_set) {
+                
+                _interface->event_transport_producer_identified_set(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+            
             return;
 
         case MTI_PRODUCER_IDENTIFIED_CLEAR:
+            
+            if (_interface->event_transport_producer_identified_clear) {
+                
+                _interface->event_transport_producer_identified_clear(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_producer_identified_clear(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_PRODUCER_IDENTIFIED_RESERVED:
+            
+            if (_interface->event_transport_producer_identified_reserved) {
+                
+                _interface->event_transport_producer_identified_reserved(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_EVENTS_IDENTIFY_DEST:
+            
+            if (_interface->event_transport_identify_dest) {
+                
+                _interface->event_transport_identify_dest(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_identify_dest(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_EVENTS_IDENTIFY:
+            
+            if (_interface->event_transport_identify) {
+                
+                _interface->event_transport_identify(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_identify(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_EVENT_LEARN:
+            
+            if (_interface->event_transport_learn) {
+                
+                _interface->event_transport_learn(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_event_learn(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_PC_EVENT_REPORT:
 
-            ProtocolEventTransport_handle_pc_event_report(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->event_transport_pc_report) {
+                
+                _interface->event_transport_pc_report(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+
             return;
 
         case MTI_PC_EVENT_REPORT_WITH_PAYLOAD:
+            
+            if (_interface->event_transport_pc_report_with_payload) {
+                
+                _interface->event_transport_pc_report_with_payload(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node, openlcb_msg, worker_msg);
             return;
 
 #endif // SUPPORT_FIRMWARE_BOOTLOADER
         case MTI_DATAGRAM:
 
-            ProtocolDatagram_handle_datagram(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->datagram) {
+                
+                _interface->datagram(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+            
             return;
 
         case MTI_DATAGRAM_OK_REPLY:
+            
+            if (_interface->datagram_ok_reply) {
+                
+                _interface->datagram_ok_reply(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            Protocol_Datagram_handle_datagram_ok_reply(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_DATAGRAM_REJECTED_REPLY:
+            
+            if (_interface->datagram_rejected_reply) {
+                
+                _interface->datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
 
-            ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg);
             return;
 
         case MTI_OPTIONAL_INTERACTION_REJECTED:
 
-            ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->optional_interaction_rejected) {
+                
+                _interface->optional_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+
             return;
 
         default:
 
-            ProtocolMessageNetwork_send_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
+            if (_interface->send_interaction_rejected) {
+                
+                _interface->send_interaction_rejected(openlcb_node, openlcb_msg, worker_msg);
+            
+            }
+        
             return;
 
     }

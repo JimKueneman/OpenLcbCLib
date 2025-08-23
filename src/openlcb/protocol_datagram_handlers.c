@@ -42,14 +42,9 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "../drivers/driver_mcu.h"
-#include "../drivers/driver_configuration_memory.h"
-
-#include "openlcb_application_callbacks.h"
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
-#include "protocol_snip.h"
 
 static interface_openlcb_protocol_datagram_handler_t *_interface;
 
@@ -288,23 +283,23 @@ static uint16_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node
 
         case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
 
-            return ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
 
-            return ProtocolSnip_load_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
 
-            return ProtocolSnip_load_model(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_model(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
 
-            return ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
 
-            return ProtocolSnip_load_software_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_software_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         default:
 
@@ -330,15 +325,15 @@ static uint16_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openl
 
         case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
 
-            return ProtocolSnip_load_user_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_user_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
 
-            return ProtocolSnip_load_user_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_user_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
 
-            return ProtocolSnip_load_user_description(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+            return _interface->snip_load_user_description(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
 
         default:
 
@@ -438,9 +433,9 @@ static uint16_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb
 
     uint16_t write_count = _interface->configuration_memory_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
-    if (_interface->callback_config_mem_write) {
+    if (_interface->on_config_mem_write) {
 
-        _interface->callback_config_mem_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+        _interface->on_config_mem_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     }
 
@@ -1105,9 +1100,9 @@ void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* ope
 
                 openlcb_node->state.openlcb_msg_handled = true;
 
-                if (OpenLcbApplicationCallbacks_get_config_mem_unfreeze_firmware_update()) {
+                if (_interface->onconfig_mem_unfreeze_firmware_update) {
 
-                    OpenLcbApplicationCallbacks_get_config_mem_unfreeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
+                    _interface->onconfig_mem_unfreeze_firmware_update(openlcb_node, openlcb_msg, worker_msg);
 
                 }
 
@@ -1147,9 +1142,9 @@ void ProtocolDatagramHandlers_handle_memory_freeze_message(openlcb_node_t* openl
 
                 openlcb_node->state.openlcb_msg_handled = true;
 
-                if (OpenLcbApplicationCallbacks_get_config_mem_freeze_firmware_update()) {
+                if (_interface->onconfig_mem_freeze_firmware_update) {
 
-                    OpenLcbApplicationCallbacks_get_config_mem_freeze_firmware_update()(openlcb_node, openlcb_msg, worker_msg);
+                    _interface->onconfig_mem_freeze_firmware_update(openlcb_node, openlcb_msg, worker_msg);
 
                 }
 
@@ -1224,9 +1219,9 @@ void ProtocolDatagramHandlers_handle_memory_factory_reset_message(openlcb_node_t
 
     }
 
-    if (_interface->callback_configuration_memory_factory_reset) {
+    if (_interface->on_configuration_memory_factory_reset) {
 
-        _interface->callback_configuration_memory_factory_reset();
+        _interface->on_configuration_memory_factory_reset();
 
     }
 

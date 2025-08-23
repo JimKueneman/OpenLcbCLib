@@ -338,25 +338,6 @@ extern "C" {
     } alias_mapping_t;
 
 
-
-    // Node Alias and Node ID
-    typedef void (*callback_alias_change_t) (uint16_t alias, uint64_t node_id);
-
-    // Incoming Event
-    typedef void (*callback_event_identified_t)(openlcb_node_t* openlcb_node, event_id_t* event_id);
-
-    // Incoming PCR Event
-    typedef void (*callback_event_pc_report_t)(openlcb_node_t* openlcb_node, event_id_t* event_id);
-
-    // Incoming PCR Event with Payload
-    typedef void (*callback_event_pc_report_with_payload_t)(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload);
-
-    // Configuration Memory Write occured
-    typedef void (*callback_config_mem_write_t)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
-
-    // Configuration Memory Freeze
-    typedef void(*callback_config_mem_freeze_t)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

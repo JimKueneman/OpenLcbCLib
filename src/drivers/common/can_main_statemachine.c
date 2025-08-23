@@ -42,10 +42,11 @@
 #include <stdio.h> // printf
 
 #include "can_types.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "can_buffer_fifo.h"
-#include "../../openlcb/openlcb_buffer_store.h"
 #include "can_buffer_store.h"
+#include "can_buffer_fifo.h"
+#include "../../openlcb/openlcb_defines.h"
+#include "../../openlcb/openlcb_buffer_store.h"
+
 
 
 static interface_can_main_statemachine_t *_interface;

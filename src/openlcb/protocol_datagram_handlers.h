@@ -42,15 +42,25 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    
     bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
-    uint16_t (*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    uint16_t (*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    void (*configuration_memory_factory_reset)(void);
-    void (*callback_configuration_memory_factory_reset)(void);
-    void (*callback_config_mem_write)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer); 
+    uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t(*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     void (*reboot)(void);
-   
+    void (*configuration_memory_factory_reset)(void);
+    uint16_t(*snip_load_manufacturer_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_model)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_hardware_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_software_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_user_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_user_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    uint16_t(*snip_load_user_description)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    // Callback events
+    void (*on_configuration_memory_factory_reset)(void);
+    void (*on_config_mem_write)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
+    void (*onconfig_mem_freeze_firmware_update) (openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    void (*onconfig_mem_unfreeze_firmware_update) (openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+
 } interface_openlcb_protocol_datagram_handler_t;
 
 
@@ -58,7 +68,7 @@ typedef struct {
 extern "C" {
 #endif /* __cplusplus */
 
-    
+
     extern void ProtocolDatagramHandlers_initialize(const interface_openlcb_protocol_datagram_handler_t *interface_openlcb_protocol_datagram_handler);
 
     extern void ProtocolDatagramHandlers_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
@@ -102,7 +112,7 @@ extern "C" {
     extern void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t error_code);
 
     extern void ProtocolDatagramHandlers_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
-    
+
     extern void ProtocolDatagramHandlers_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 #ifdef	__cplusplus

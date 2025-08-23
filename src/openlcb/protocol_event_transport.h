@@ -51,6 +51,17 @@
 
 typedef struct {
     bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+    // Callback events
+    void (*on_consumer_identified_unknown)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_consumer_identified_set)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_consumer_identified_clear)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_producer_identified_unknown)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_producer_identified_set)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_producer_identified_clear)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_event_learn)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_pc_event_report)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_pc_event_report_with_payload)(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload);
+    
 
 } interface_openlcb_protocol_event_transport_t;
 

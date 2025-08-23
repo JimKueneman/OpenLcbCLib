@@ -46,7 +46,6 @@
 
 #include "can_types.h"
 #include "can_utilities.h"
-
 #include "../../openlcb/openlcb_defines.h"
 
 #define OFFSET_DEST_ID_IN_PAYLOAD     2

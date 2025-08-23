@@ -104,11 +104,9 @@ void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node) {
 
     next_node->alias = _generate_alias(next_node->seed);
 
-    callback_alias_change_t alias_change_callback = _interface->get_alias_change();
+    if (_interface->on_alias_change) {
 
-    if (alias_change_callback) {
-
-        alias_change_callback(next_node->alias, next_node->id);
+        _interface->on_alias_change(next_node->alias, next_node->id);
 
     }
 

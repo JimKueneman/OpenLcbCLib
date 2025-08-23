@@ -44,7 +44,6 @@
 
 #include "can_types.h"
 #include "can_utilities.h"
-#include "can_tx_statemachine.h"
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 

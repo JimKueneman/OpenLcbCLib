@@ -43,10 +43,7 @@
 #include <stdio.h> // printf
 
 #include "openlcb_types.h"
-
 #include "openlcb_utilities.h"
-#include "../drivers/driver_configuration_memory.h"
-#include "protocol_message_network.h"
 
 
 static interface_openlcb_protocol_snip_t *_interface;
@@ -326,7 +323,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
         if (!openlcb_node->state.resend_optional_message) // if we are currently processing a resend don't reload it
 
-            ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node, openlcb_msg);
+            _interface->buffer_optional_interaction_message_for_resend(openlcb_node, openlcb_msg);
 
     }
 

@@ -42,8 +42,6 @@
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 
-#include "../drivers/driver_can.h"
-
 static openlcb_nodes_t _openlcb_nodes;
 static uint16_t _node_enum_index_array[6];
 
