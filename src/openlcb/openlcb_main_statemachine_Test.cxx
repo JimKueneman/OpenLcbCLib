@@ -243,6 +243,43 @@ bool _CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
     return true;
 }
 
+bool _OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+{
+
+    return false;
+}
+
+bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg)
+{
+
+    return false;
+}
+openlcb_msg_t *_OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t *active_incoming_msg)
+{
+
+    return nullptr;
+}
+bool _OpenLcbMainStatemachine_try_reprocess_active_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
+{
+
+    return false;
+}
+bool _OpenLcbMainStatemachine_process_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
+{
+
+    return false;
+}
+bool _OpenLcbMainStatemachine_try_process_first_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
+{
+
+    return false;
+}
+bool _OpenLcbMainStatemachine_try_process_next_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
+{
+
+    return false;
+}
+
 void lock_node_list(void)
 {
 
@@ -291,13 +328,13 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .unlock_openlcb_buffer_fifo = &_ExampleDrivers_unlock_can_buffer_fifo,
 
     // use the internal default functions
-    .process_main_statemachine = NULL,
-    .does_node_process_msg = NULL,
-    .try_free_current_and_pop_next_incoming_msg = NULL,
-    .try_reprocess_active_node = NULL,
-    .process_node = NULL,
-    .try_process_first_node = NULL,
-    .try_process_next_node = NULL};
+    .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
+    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg,
+    .try_free_current_and_pop_next_incoming_msg = _OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg,
+    .try_reprocess_active_node = _OpenLcbMainStatemachine_try_reprocess_active_node,
+    .process_node = _OpenLcbMainStatemachine_process_node,
+    .try_process_first_node = _OpenLcbMainStatemachine_try_process_first_node,
+    .try_process_next_node = _OpenLcbMainStatemachine_try_process_next_node};
 
 interface_openlcb_node_t interface_openlcb_node = {
 
@@ -339,14 +376,14 @@ TEST(OpenLcbMainStatemachine, run)
     // OpenLcbMainStatemachine_run();
     // ************************************************************************
 
-    // openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    // node1->alias = 0xAAA;
+    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+    node1->alias = 0xAAA;
 
     // ************************************************************************
     // One in Node List
     // ************************************************************************
 
-    // OpenLcbMainStatemachine_run();
+    //  OpenLcbMainStatemachine_run();
     //  ************************************************************************
 
     // TODO: as of Aug 23 this function does nothing
@@ -355,13 +392,13 @@ TEST(OpenLcbMainStatemachine, run)
 TEST(OpenLcbMainStatemachine, run_single_node)
 {
 
-    // _reset_variables();
-    // _global_initialize();
+    _reset_variables();
+    _global_initialize();
 
-    // openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    // node1->alias = 0xAAA;
+    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+    node1->alias = 0xAAA;
 
-    // EXPECT_NE(node1, nullptr);
+    //  EXPECT_NE(node1, nullptr);
 
     // OpenLcbMainStatemachine_run_single_node(node1);
 
