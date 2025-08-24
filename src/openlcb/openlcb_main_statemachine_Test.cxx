@@ -4,11 +4,13 @@
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
 #include "openlcb_node.h"
+#include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_buffer_fifo.h"
 
 bool lock_node_list_called = false;
 bool unlock_node_list_called = false;
+bool allow_successful_transmit = true;
 
 node_parameters_t _node_parameters_main_node = {
 
@@ -240,44 +242,57 @@ openlcb_node_t *_OpenLcbNode_get_next(uint8_t key)
 bool _CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
 {
 
-    return true;
+    if (allow_successful_transmit)
+    {
+        return true;
+    }
+    else
+    {
+
+        return false;
+    }
 }
 
 bool _OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
-    return false;
+    return OpenLcbMainStatemachine_process_main_statemachine(openlcb_node, incoming_msg, outgoing_msg);
 }
 
 bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg)
 {
 
-    return false;
+    return OpenLcbMainStatemachine_does_node_process_msg(openlcb_node, openlcb_msg);
 }
+
 openlcb_msg_t *_OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t *active_incoming_msg)
 {
 
-    return nullptr;
+    return OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(active_incoming_msg);
 }
+
 bool _OpenLcbMainStatemachine_try_reprocess_active_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
 {
 
-    return false;
+    return OpenLcbMainStatemachine_try_reprocess_active_node(active_node, active_incoming_msg, active_outgoing_msg);
 }
+
 bool _OpenLcbMainStatemachine_process_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
 {
 
-    return false;
+    return OpenLcbMainStatemachine_process_node(active_node, active_incoming_msg, active_outgoing_msg);
 }
+
 bool _OpenLcbMainStatemachine_try_process_first_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
 {
 
-    return false;
+    return OpenLcbMainStatemachine_try_process_first_node(active_node, active_incoming_msg, active_outgoing_msg);
 }
+
 bool _OpenLcbMainStatemachine_try_process_next_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg)
 {
 
-    return false;
+    return OpenLcbMainStatemachine_try_process_next_node(active_node, active_incoming_msg, active_outgoing_msg);
 }
 
 void lock_node_list(void)
@@ -346,6 +361,7 @@ void _reset_variables(void)
 
     lock_node_list_called = false;
     unlock_node_list_called = false;
+    allow_successful_transmit = true;
 }
 
 void _global_initialize(void)
@@ -362,6 +378,161 @@ TEST(OpenLcbMainStatemachine, initialize)
 
     _reset_variables();
     _global_initialize();
+}
+
+TEST(OpenLcbMainStatemachine, does_node_process_msg)
+{
+
+#define SOURCE_ALIAS 0x455
+#define SOURCE_ID 0x010203040506
+#define DEST_ALIAS 0x455
+#define DEST_ID 0x060504030201
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        // Initization Complete but node not in initialized state
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+
+        // Initization Complete but node in initialized state
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+
+        // Verify ID Addressed to us
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+
+        // Verify ID not Addressed to us
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, 0x488, 0);
+        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+
+        // Datagram for us
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x1C48, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+
+        // Datagram not for us
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 2, DEST_ID + 2, 0x1C48, 0);
+        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+}
+
+TEST(OpenLcbMainStatemachine, try_transmit_active_msg)
+{
+
+#define SOURCE_ALIAS 0x455
+#define SOURCE_ID 0x010203040506
+#define DEST_ALIAS 0x455
+#define DEST_ID 0x060504030201
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        // Initization Complete
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        allow_successful_transmit = true;
+        EXPECT_TRUE(OpenLcbMainStatemachine_try_transmit_active_msg(openlcb_msg));
+
+        // Initization Complete
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        allow_successful_transmit = false;
+        EXPECT_FALSE(OpenLcbMainStatemachine_try_transmit_active_msg(openlcb_msg));
+        allow_successful_transmit = true;
+        EXPECT_TRUE(OpenLcbMainStatemachine_try_transmit_active_msg(openlcb_msg));
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg);
+    }
+}
+
+TEST(OpenLcbMainStatemachine, try_free_current_and_pop_next_incoming_msg)
+{
+
+#define SOURCE_ALIAS 0x455
+#define SOURCE_ID 0x010203040506
+#define DEST_ALIAS 0x455
+#define DEST_ID 0x060504030201
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *openlcb_msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *active_msg = nullptr;
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg1, nullptr);
+    EXPECT_NE(openlcb_msg2, nullptr);
+
+    if (openlcb_msg1 && openlcb_msg2)
+    {
+        // pass in a null and the FIFO is empty
+        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(active_msg);
+        EXPECT_EQ(active_msg, nullptr);
+
+        OpenLcbBufferFifo_push(openlcb_msg1);
+        EXPECT_FALSE(OpenLcbBufferFifo_is_empty());
+
+        // pass in a null and the FIFO contains 1 message
+        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(active_msg);
+        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+        EXPECT_EQ(active_msg, openlcb_msg1);
+
+        // pass in a message and the FIFO is empty
+        EXPECT_TRUE(openlcb_msg1->state.allocated);
+        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg1);
+        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+        EXPECT_EQ(active_msg, nullptr);
+        EXPECT_FALSE(openlcb_msg1->state.allocated);
+
+        openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+        // pass in a message and the FIFO has 1
+        EXPECT_TRUE(openlcb_msg1->state.allocated);
+        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+        OpenLcbBufferFifo_push(openlcb_msg1);
+        EXPECT_FALSE(OpenLcbBufferFifo_is_empty());
+
+        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg2);
+        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
+        EXPECT_EQ(active_msg, openlcb_msg1);
+        EXPECT_FALSE(openlcb_msg2->state.allocated);
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg1);
+        // openlcb_msg2 has been freed already
+    }
 }
 
 TEST(OpenLcbMainStatemachine, run)
