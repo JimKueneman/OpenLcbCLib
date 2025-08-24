@@ -34,7 +34,7 @@
  * @date 5 Dec 2024
  */
 
-#include "protocol_datagram_handlers.h"
+#include "protocol_datagram_config_mem_handler.h"
 
 #include <assert.h>
 #include <stdbool.h>
