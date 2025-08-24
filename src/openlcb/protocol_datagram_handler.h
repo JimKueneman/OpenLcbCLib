@@ -36,8 +36,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __PROTOCOL_DATAGRAM__
-#define	__PROTOCOL_DATAGRAM__
+#ifndef __PROTOCOL_DATAGRAM_HANDLER__
+#define	__PROTOCOL_DATAGRAM_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -88,5 +88,5 @@ extern void DatagramProtocol_100ms_time_tick(void);
 }
 #endif /* __cplusplus */
 
-#endif	/* __PROTOCOL_DATAGRAM__ */
+#endif	/* __PROTOCOL_DATAGRAM_HANDLER__ */
 
