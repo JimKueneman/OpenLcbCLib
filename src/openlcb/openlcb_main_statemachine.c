@@ -47,10 +47,7 @@
 #include "openlcb_buffer_list.h"
 #include "openlcb_defines.h"
 #include "openlcb_buffer_fifo.h"
-#include "protocol_event_transport.h"
-#include "protocol_message_network.h"
-#include "protocol_datagram.h"
-#include "protocol_snip.h"
+
 
 
 static interface_openlcb_main_statemachine_t* _interface;

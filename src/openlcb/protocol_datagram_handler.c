@@ -47,15 +47,15 @@
 #include "openlcb_buffer_store.h"
 
 
-static interface_protocol_datagram_t *_interface;
+static interface_protocol_datagram_handler_t *_interface;
 
-void ProtocolDatagram_initialize(const interface_protocol_datagram_t *interface_protocol_datagram) {
+void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface_protocol_datagram_handler) {
 
-    _interface = (interface_protocol_datagram_t*) interface_protocol_datagram;
+    _interface = (interface_protocol_datagram_handler_t*) interface_protocol_datagram_handler;
 
 }
 
-void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+void ProtocolDatagramHandler_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
     switch (*openlcb_msg->payload[0]) {
 
@@ -485,7 +485,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
 }
 
-void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+void Protocol_DatagramHandler_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
     if (openlcb_node->last_received_datagram) {
 
@@ -498,7 +498,7 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
 
 }
 
-void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+void ProtocolDatagramHandler_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
     if (OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
 
@@ -517,7 +517,7 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
 
 }
 
-void DatagramProtocol_100ms_time_tick(void) {
+void ProtocolDatagramHandler_100ms_time_tick(void) {
 
 
 }
