@@ -45,7 +45,11 @@
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 #include "../../openlcb/openlcb_defines.h"
+#include "../../openlcb/openlcb_utilities.h"
 #include "../../openlcb/openlcb_buffer_store.h"
+
+// TODO Get this out of here
+#include "../../openlcb/openlcb_node.h"
 
 
 
@@ -62,11 +66,9 @@ static void _process_outgoing_can_msgs(void) {
 
     if (current_outgoing_can_msg == NULL) {
 
-        _interface->pause_100ms_timer();
-        _interface->pause_can_rx();
+        _interface->lock_can_buffer_fifo();
         current_outgoing_can_msg = CanBufferFifo_pop();
-        _interface->resume_can_rx();
-        _interface->resume_100ms_timer();
+        _interface->unlock_can_buffer_fifo();
 
     }
 
@@ -86,12 +88,10 @@ static void _process_outgoing_can_msgs(void) {
 
 static void _handle_duplicate_alias_detected(openlcb_node_t *openlcb_node) {
 
-    _interface->pause_can_rx();
+    _interface->lock_can_buffer_fifo();
 
     openlcb_node->state.permitted = false;
     openlcb_node->state.initalized = false;
-    openlcb_node->state.openlcb_msg_handled = true;
-    openlcb_node->state.initial_events_broadcast_complete = false;
     openlcb_node->state.duplicate_id_detected = false;
     openlcb_node->state.duplicate_alias_detected = false;
     openlcb_node->state.firmware_upgrade_active = false;
@@ -104,7 +104,7 @@ static void _handle_duplicate_alias_detected(openlcb_node_t *openlcb_node) {
     openlcb_node->last_received_optional_interaction = NULL;
     openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias   
 
-    _interface->resume_can_rx();
+    _interface->unlock_can_buffer_fifo();
 
 }
 

@@ -59,7 +59,13 @@ static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
     return (can_msg->identifier >> 12) & 0x0FFF;
 }
 
-static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg_t* can_msg) {
+void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
+    
+    if (_interface->on_receive) {
+        
+        _interface->on_receive();
+        
+    }
 
     if (CanUtilities_is_openlcb_message(can_msg)) {
 
@@ -318,12 +324,6 @@ static void _state_machine_incoming_can_driver_callback(uint8_t channel, can_msg
 void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine) {
 
     _interface = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
-    
-    if (interface_can_rx_statemachine->can_rx_register_target_callback) {
-
-      interface_can_rx_statemachine->can_rx_register_target_callback(&_state_machine_incoming_can_driver_callback);
-      
-    }
 
 }
 

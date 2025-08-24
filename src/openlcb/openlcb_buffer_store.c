@@ -216,8 +216,11 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_ty
 
 void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
 
-    if (!openlcb_msg)
+    if (!openlcb_msg) {
+        
         return;
+        
+    }
 
     openlcb_msg->reference_count = openlcb_msg->reference_count - 1;
 

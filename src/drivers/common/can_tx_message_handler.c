@@ -76,9 +76,9 @@ static bool _transmit_can_frame(can_msg_t* can_msg) {
 
     bool result = _interface->transmit_can_frame(can_msg);
 
-    if (_interface->application_callback_tx && result) {
+    if (_interface->on_transmit && result) {
 
-        _interface->application_callback_tx();
+        _interface->on_transmit();
 
     }
 

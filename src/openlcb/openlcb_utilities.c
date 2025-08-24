@@ -43,6 +43,7 @@
 
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
+#include "openlcb_buffer_store.h"
 
 
 //FIND ALL THE FUNCTIONS THAT SHOULD RETURN BOOL
@@ -355,27 +356,6 @@ bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb
         }
 
     }
-
-    return false;
-
-}
-
-bool OpenLcbUtilities_addressed_message_needs_processing(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
-
-
-    if (OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg)) {
-
-        if (openlcb_node->state.openlcb_msg_handled)
-
-            return false;
-
-        else
-
-            return true;
-
-    }
-
-    openlcb_node->state.openlcb_msg_handled = true;
 
     return false;
 

@@ -44,6 +44,8 @@
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
+#include "openlcb_buffer_store.h"
+#include "openlcb_buffer_list.h"
 
 
 static interface_openlcb_protocol_snip_t *_interface;
@@ -274,27 +276,11 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
 
 }
 
-void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-
-    if (!OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg)) {
-
-        return;
-
-    }
+bool ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
     
-//    if (openlcb_node->state.openlcb_msg_handled) {
-//
-//        return; // finished with the message
-//
-//    }
-//
-//    if (!OpenLcbUtilities_is_addressed_message_for_node(openlcb_node, openlcb_msg)) {
-//
-//        openlcb_node->state.openlcb_msg_handled = true;
-//
-//        return;
-//    }
-
+   
+    // maybe set the worker message to SNIP buffer type...
+    
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_SIMPLE_NODE_INFO_REPLY, 0);
 
     uint16_t payload_index = 0;
@@ -317,15 +303,10 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, 
 
     worker_msg->payload_count = payload_index;
 
-    if (_interface->transmit_openlcb_message(worker_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = true;
-
-        if (!openlcb_node->state.resend_optional_message) // if we are currently processing a resend don't reload it
-
-            _interface->buffer_optional_interaction_message_for_resend(openlcb_node, openlcb_msg);
-
-    }
+    // TODO SETUP FOR RESET IF OIR
+    
+    
+    return true;
 
 }
 

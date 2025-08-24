@@ -54,7 +54,7 @@ extern "C" {
         openlcb_node_t* (*get_first)(uint8_t key);
         openlcb_node_t* (*get_next)(uint8_t key);
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum_t payload_type);
-
+        
     } interface_can_frame_message_handler_t;
 
 

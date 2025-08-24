@@ -86,8 +86,6 @@ extern "C" {
 
     extern bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t *event_index);
 
-    extern bool OpenLcbUtilities_addressed_message_needs_processing(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg);
-
     extern uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t *openlcb_node);
 
     extern uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum_t payload_type);

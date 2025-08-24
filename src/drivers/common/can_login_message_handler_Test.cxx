@@ -151,8 +151,8 @@ void _global_initialize(void)
     interface_can_login_message_handler.extract_consumer_event_state_mti = &extract_consumer_event_state_mti;
     interface_can_login_message_handler.extract_producer_event_state_mti = &extract_producer_event_state_mti;
     interface_can_login_message_handler.on_alias_change = &on_alias_change;
-    interface_can_login_message_handler.try_transmit_can_message = &try_transmit_can_message;
-    interface_can_login_message_handler.try_transmit_openlcb_message = &try_transmit_openlcb_message;
+    interface_can_login_message_handler.transmit_can_message = &try_transmit_can_message;
+    interface_can_login_message_handler.transmit_openlcb_message = &try_transmit_openlcb_message;
 
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
@@ -195,9 +195,7 @@ openlcb_node_t *_create_openlcb_node(node_id_t node_id, uint16_t producer_count,
     result->state.allocated = true;
     result->state.permitted = false;
     result->state.initalized = false;
-    result->state.initial_events_broadcast_complete = false;
     result->state.duplicate_id_detected = false;
-    result->state.openlcb_msg_handled = true;
     result->state.resend_datagram = false;
     result->state.resend_optional_message = false;
     result->state.firmware_upgrade_active = false;

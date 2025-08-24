@@ -290,11 +290,9 @@ extern "C" {
         uint8_t allocated : 1; // Allocated to be used
         uint8_t permitted : 1; // Has the CAN alias been allocated and the network notified
         uint8_t initalized : 1; // Has the node been logged into the the network
-        uint8_t initial_events_broadcast_complete : 1; // has the node finished its initial broadcast of events?
         uint8_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
         uint8_t duplicate_alias_detected : 1; // Can engine has detected a duplicate alias and flagged it for reallocation
-        uint8_t openlcb_msg_handled : 1; // allows message loops to know if this node has handled the openlcb message that is currently being process so it knows when to move on to the next
-        uint8_t openlcb_datagram_ack_sent : 1;
+        uint8_t openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack to say it was successfully received then the actual response.  This tracks which state the node is in
         uint8_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint8_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint8_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode

@@ -125,22 +125,17 @@ static void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_nod
 
     openlcb_node->last_received_datagram = openlcb_msg;
 
-    openlcb_node->state.openlcb_msg_handled = true;
-
-
 }
 
 void ProtocolDatagramHandlers_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (_interface->transmit_openlcb_message(worker_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = true;
-
-        if (!openlcb_node->state.resend_datagram) // if we are currently process a resend don't reload it
-
-            _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, openlcb_msg);
-
-    }
+//    if (_interface->transmit_openlcb_message(worker_msg)) {
+//
+//        if (!openlcb_node->state.resend_datagram) // if we are currently process a resend don't reload it
+//
+          _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_node, openlcb_msg);
+//
+//    }
 
 }
 
@@ -148,12 +143,6 @@ void ProtocolDatagramHandlers_send_datagram_rejected_reply(openlcb_node_t* openl
 
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
     OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, error_code, 0);
-
-    if (_interface->transmit_openlcb_message(worker_msg)) {
-
-        openlcb_node->state.openlcb_msg_handled = true;
-
-    }
 
 }
 
@@ -163,12 +152,6 @@ static void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t
 
     *worker_msg->payload[0] = (uint8_t) reply_pending_code;
     worker_msg->payload_count = 1;
-
-    if (_interface->transmit_openlcb_message(worker_msg)) {
-
-        openlcb_node->state.openlcb_datagram_ack_sent = true;
-
-    }
 }
 
 static uint16_t _validate_memory_read_space_parameters(const user_address_space_info_t* space_info, uint32_t data_address, uint16_t* requested_byte_count) {
@@ -540,7 +523,6 @@ static uint16_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t*
 }
 
 
-#ifndef BOOTLOADER_ONLY
 // Memory read handlers
 
 void ProtocolDatagramHandlers_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
@@ -598,10 +580,6 @@ void ProtocolDatagramHandlers_handle_memory_read_reply_ok_message(openlcb_node_t
 
     }
 
-    // Reply if we sent a Memory Read Message
-
-    openlcb_node->state.openlcb_msg_handled = true;
-
 }
 
 void ProtocolDatagramHandlers_handle_memory_read_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
@@ -614,14 +592,8 @@ void ProtocolDatagramHandlers_handle_memory_read_reply_fail_message(openlcb_node
         return;
 
     }
-
-    // Reply if we sent a Memory Read Message
-
-    openlcb_node->state.openlcb_msg_handled = true;
-
+    
 }
-
-#endif // BOOTLOADER_ONLY
 
 
 // Memory write handlers
@@ -671,8 +643,6 @@ void ProtocolDatagramHandlers_handle_memory_write_message(openlcb_node_t* openlc
     ProtocolDatagramHandlers_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
@@ -760,8 +730,6 @@ void ProtocolDatagramHandlers_handle_memory_write_under_mask_message(openlcb_nod
 
 }
 
-#endif
-
 void ProtocolDatagramHandlers_handle_memory_write_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
@@ -771,10 +739,6 @@ void ProtocolDatagramHandlers_handle_memory_write_reply_ok_message(openlcb_node_
         return;
 
     }
-
-    // Reply if we sent a Memory Write Message
-
-    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
@@ -788,15 +752,10 @@ void ProtocolDatagramHandlers_handle_memory_write_reply_fail_message(openlcb_nod
 
     }
 
-    // Reply if we sent a Memory Write Message
-
-    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 // Other memory access handlers
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -882,10 +841,6 @@ void ProtocolDatagramHandlers_handle_memory_options_cmd_message(openlcb_node_t* 
     ProtocolDatagramHandlers_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
-#endif
-
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_options_reply_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -898,15 +853,7 @@ void ProtocolDatagramHandlers_handle_memory_options_reply_message(openlcb_node_t
 
     }
 
-    // Reply if we sent a Memory Get Options Message
-
-    openlcb_node->state.openlcb_msg_handled = true;
-
 }
-#endif
-
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
@@ -944,12 +891,6 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_message(openl
         *worker_msg->payload[7] = 0x01;
 
         worker_msg->payload_count = 8;
-
-        if (_interface->transmit_openlcb_message(worker_msg)) {
-
-            openlcb_node->state.openlcb_msg_handled = true;
-
-        }
 
         return;
 
@@ -989,9 +930,6 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_message(openl
     ProtocolDatagramHandlers_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
-#endif
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_not_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1003,14 +941,9 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_not_pre
 
     }
 
-    // Reply if we sent a Memory Address Space Info message and the space was not present
-
-    openlcb_node->state.openlcb_msg_handled = true;
-
 }
-#endif
 
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+
 
 void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1022,15 +955,7 @@ void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present
 
     }
 
-    // Reply if we sent a Memory Address Space Info message and the space was present
-
-    openlcb_node->state.openlcb_msg_handled = true;
-
 }
-#endif
-
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1065,9 +990,7 @@ void ProtocolDatagramHandlers_handle_memory_reserve_lock_message(openlcb_node_t*
     ProtocolDatagramHandlers_try_transmit(openlcb_node, openlcb_msg, worker_msg);
 
 }
-#endif
 
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_get_unique_id_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1078,11 +1001,7 @@ void ProtocolDatagramHandlers_handle_memory_get_unique_id_message(openlcb_node_t
         return;
 
     }
-
-    openlcb_node->state.openlcb_msg_handled = true;
-
 }
-#endif
 
 void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1098,7 +1017,7 @@ void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* ope
 
             } else {
 
-                openlcb_node->state.openlcb_msg_handled = true;
+              
 
                 if (_interface->onconfig_mem_unfreeze_firmware_update) {
 
@@ -1120,9 +1039,9 @@ void ProtocolDatagramHandlers_handle_memory_unfreeze_message(openlcb_node_t* ope
 
         return;
 
-    } else
+    } else {
 
-        openlcb_node->state.openlcb_msg_handled = true;
+    }
 
 }
 
@@ -1139,8 +1058,7 @@ void ProtocolDatagramHandlers_handle_memory_freeze_message(openlcb_node_t* openl
                 return;
 
             } else {
-
-                openlcb_node->state.openlcb_msg_handled = true;
+      
 
                 if (_interface->onconfig_mem_freeze_firmware_update) {
 
@@ -1162,10 +1080,11 @@ void ProtocolDatagramHandlers_handle_memory_freeze_message(openlcb_node_t* openl
 
         return;
 
-    } else
+    } else {
 
-        openlcb_node->state.openlcb_msg_handled = true;
+        
 
+    }
 
 }
 
@@ -1179,11 +1098,8 @@ void ProtocolDatagramHandlers_handle_memory_update_complete_message(openlcb_node
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = true;
-
+   
 }
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1201,12 +1117,8 @@ void ProtocolDatagramHandlers_handle_memory_reset_reboot_message(openlcb_node_t*
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = true;
 
 }
-#endif
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
 
 void ProtocolDatagramHandlers_handle_memory_factory_reset_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
@@ -1225,7 +1137,6 @@ void ProtocolDatagramHandlers_handle_memory_factory_reset_message(openlcb_node_t
 
     }
 
-    openlcb_node->state.openlcb_msg_handled = true;
+   
 
 }
-#endif

@@ -116,8 +116,8 @@ const interface_can_frame_message_handler_t can_frame_message_handler_interface 
 
 const interface_openlcb_node_t interface_openlcb_node = {
 
-    .locklist = &pause_can_rx,
-    .unlocklist = &resume_can_rx
+    .lock_node_list = &pause_can_rx,
+    .unlock_node_list = &resume_can_rx
 
 };
 

@@ -46,7 +46,6 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
     uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     void (*buffer_optional_interaction_message_for_resend)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
@@ -58,7 +57,7 @@ extern "C" {
 
     extern void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_openlcb_protocol_snip);
 
-    extern void ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
 
     extern uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
 

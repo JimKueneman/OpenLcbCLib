@@ -51,10 +51,12 @@ extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        bool (*try_transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
-        bool (*try_transmit_can_message)(can_msg_t* can_msg);
+        bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+        bool (*transmit_can_message)(can_msg_t* can_msg);
         uint16_t (*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
-        uint16_t (*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);     
+        uint16_t (*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
+        
+         // Callback events
         void (*on_alias_change)(uint16_t alias, uint64_t node_id);
 
     } interface_can_login_message_handler_t;

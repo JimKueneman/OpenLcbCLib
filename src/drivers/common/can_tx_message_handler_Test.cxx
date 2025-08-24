@@ -71,11 +71,11 @@ bool compare_can_msg(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_si
 
 const interface_can_tx_message_handler_t interface_can_tx_message_handler{
     .transmit_can_frame = &_transmit_can_frame,
-    .application_callback_tx = &_application_callback_tx};
+    .on_transmit = &_application_callback_tx};
 
 const interface_can_tx_message_handler_t interface_can_tx_message_handler_no_callback{
     .transmit_can_frame = &_transmit_can_frame,
-    .application_callback_tx = nullptr};
+    .on_transmit = nullptr};
 
 void _reset_variables(void)
 {

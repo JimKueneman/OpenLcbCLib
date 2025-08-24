@@ -46,7 +46,6 @@
 #include "can_types.h"
 
 typedef struct {
-    void (*can_rx_register_target_callback) (can_rx_callback_func_t); 
     void (*handle_can_legacy_snip)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
     void (*handle_single_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
     void (*handle_first_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
@@ -59,6 +58,8 @@ typedef struct {
     void (*handle_amd)(can_msg_t* can_msg);
     void (*handle_amr)(can_msg_t* can_msg);
     void (*handle_error_information_report)(can_msg_t* can_msg);
+    // Callback events
+    void (*on_receive)(void);
 
 } interface_can_rx_statemachine_t;
 
@@ -67,6 +68,8 @@ extern "C" {
 #endif /* __cplusplus */
 
     extern void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine);
+    
+    extern void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg);
 
 #ifdef	__cplusplus
 }

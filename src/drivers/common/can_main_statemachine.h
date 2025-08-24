@@ -48,10 +48,8 @@ extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        void (*pause_can_rx)(void);
-        void (*resume_can_rx)(void);
-        void (*pause_100ms_timer)(void);
-        void (*resume_100ms_timer)(void);
+        void (*lock_can_buffer_fifo)(void);
+        void (*unlock_can_buffer_fifo)(void);
         bool (*transmit_can_frame)(can_msg_t* msg);
         bool (*is_tx_buffer_empty)(void);
         openlcb_node_t *(*node_get_first)(uint8_t key);

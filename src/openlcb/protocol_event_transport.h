@@ -50,7 +50,7 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+
     // Callback events
     void (*on_consumer_identified_unknown)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_consumer_identified_set)(openlcb_node_t* openlcb_node, event_id_t* event_id);
@@ -73,39 +73,39 @@ extern "C" {
     
 extern void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_transport_t *interface_openlcb_protocol_event_transport);
     
-extern void ProtocolEventTransport_handle_consumer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_consumer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_producer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_producer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_identify_dest(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_identify_dest(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_event_learn(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_event_learn(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_pc_event_report(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_pc_event_report(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
 extern uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint16_t event_index);
 

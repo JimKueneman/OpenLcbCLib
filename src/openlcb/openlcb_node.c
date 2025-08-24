@@ -41,9 +41,11 @@
 
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
+#include "openlcb_utilities.h"
+#include "openlcb_buffer_store.h"
 
 static openlcb_nodes_t _openlcb_nodes;
-static uint16_t _node_enum_index_array[6];
+static uint16_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
 
 static interface_openlcb_node_t *_interface;
 
@@ -56,10 +58,8 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.allocated = false;
     openlcb_node->state.duplicate_id_detected = false;
     openlcb_node->state.duplicate_alias_detected = false;
-    openlcb_node->state.initial_events_broadcast_complete = false;
     openlcb_node->state.initalized = false;
     openlcb_node->state.permitted = false;
-    openlcb_node->state.openlcb_msg_handled = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;
     openlcb_node->state.resend_datagram = false;
     openlcb_node->state.resend_optional_message = false;
@@ -78,14 +78,12 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
 
     }
 
-
     openlcb_node->producers.count = 0;
     for (int i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++) {
 
         openlcb_node->producers.list[i] = 0;
 
     }
-
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
@@ -259,3 +257,4 @@ void OpenLcbNode_100ms_timer_tick(void) {
     };
 
 }
+

@@ -6,8 +6,6 @@
 #include "can_utilities.h"
 #include "../../openlcb/openlcb_defines.h"
 
-can_rx_callback_func_t _can_rx_target = nullptr;
-
 bool can_legacy_snip_called = false;
 bool can_single_frame_called = false;
 bool can_first_frame_called = false;
@@ -20,12 +18,6 @@ bool can_amd_called = false;
 bool can_amr_called = false;
 bool can_error_information_report_called = false;
 bool can_stream_called = false;
-
-void CanRxCallback_register_target(can_rx_callback_func_t can_rx_callback)
-{
-
-    _can_rx_target = can_rx_callback;
-}
 
 void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type)
 {
@@ -118,7 +110,6 @@ void _reset_variables(void)
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 
-    .can_rx_register_target_callback = &CanRxCallback_register_target,
     .handle_can_legacy_snip = &CanFrameMessageHandler_handle_can_legacy_snip,
     .handle_single_frame = &CanFrameMessageHandler_handle_single_frame,
     .handle_first_frame = &CanFrameMessageHandler_handle_first_frame,
@@ -136,7 +127,6 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine_nulls = {
 
-    .can_rx_register_target_callback = &CanRxCallback_register_target,
     .handle_can_legacy_snip = nullptr,
     .handle_single_frame = nullptr,
     .handle_first_frame = nullptr,
@@ -152,7 +142,6 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine_nulls = {
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine_null_rx_target = {
 
-    .can_rx_register_target_callback = nullptr,
     .handle_can_legacy_snip = nullptr,
     .handle_single_frame = nullptr,
     .handle_first_frame = nullptr,
@@ -174,7 +163,7 @@ void _test_snip_request(can_msg_t *can_msg)
     // ************************************************************************
     uint32_t identifier = 0x19DE8AAA;
     CanUtilities_load_can_message(can_msg, identifier, 2, 0x0F, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_TRUE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -199,7 +188,7 @@ void _test_legacy_snip(can_msg_t *can_msg)
     uint32_t identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x0F, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_TRUE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -224,7 +213,7 @@ void _test_snip_framing_bits(can_msg_t *can_msg)
     uint32_t identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x4F, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_TRUE(can_first_frame_called);
@@ -245,7 +234,7 @@ void _test_snip_framing_bits(can_msg_t *can_msg)
     identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0xCF, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -266,7 +255,7 @@ void _test_snip_framing_bits(can_msg_t *can_msg)
     identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x8F, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -291,7 +280,7 @@ void _test_datagram_framing(can_msg_t *can_msg)
     uint32_t identifier = 0x1AFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_TRUE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -312,7 +301,7 @@ void _test_datagram_framing(can_msg_t *can_msg)
     identifier = 0x1BFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_TRUE(can_first_frame_called);
@@ -333,7 +322,7 @@ void _test_datagram_framing(can_msg_t *can_msg)
     identifier = 0x1CFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -354,7 +343,7 @@ void _test_datagram_framing(can_msg_t *can_msg)
     identifier = 0x1DFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -376,7 +365,7 @@ void _test_traction_control(can_msg_t *can_msg)
     uint32_t identifier = 0x195BE6BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x4A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_TRUE(can_first_frame_called);
@@ -392,7 +381,7 @@ void _test_traction_control(can_msg_t *can_msg)
     identifier = 0x195BE6BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x8A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -413,7 +402,7 @@ void _test_verify_id(can_msg_t *can_msg)
     uint32_t identifier = 0x194906BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_TRUE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -434,7 +423,7 @@ void _test_reserved(can_msg_t *can_msg)
     uint32_t identifier = 0x1EAAA6BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -455,7 +444,7 @@ void _test_stream(can_msg_t *can_msg)
     uint32_t identifier = 0x1FAAA6BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -478,7 +467,7 @@ void _test_cid(can_msg_t *can_msg)
     uint32_t identifier = 0x170506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -499,7 +488,7 @@ void _test_cid(can_msg_t *can_msg)
     identifier = 0x160506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -520,7 +509,7 @@ void _test_cid(can_msg_t *can_msg)
     identifier = 0x150506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -541,7 +530,7 @@ void _test_cid(can_msg_t *can_msg)
     identifier = 0x140506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -562,7 +551,7 @@ void _test_cid(can_msg_t *can_msg)
     identifier = 0x130506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -583,7 +572,7 @@ void _test_cid(can_msg_t *can_msg)
     identifier = 0x120506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -604,7 +593,7 @@ void _test_cid(can_msg_t *can_msg)
     identifier = 0x110506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -625,7 +614,7 @@ void _test_rid(can_msg_t *can_msg)
     uint32_t identifier = 0x107006BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -645,7 +634,7 @@ void _test_amd(can_msg_t *can_msg)
     uint32_t identifier = 0x107016BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -665,7 +654,7 @@ void _test_ame(can_msg_t *can_msg)
     uint32_t identifier = 0x107026BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -686,7 +675,7 @@ void _test_amr(can_msg_t *can_msg)
     uint32_t identifier = 0x107036BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -707,7 +696,7 @@ void _test_error_info_report(can_msg_t *can_msg)
     uint32_t identifier = 0x107106BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -724,7 +713,7 @@ void _test_error_info_report(can_msg_t *can_msg)
     identifier = 0x107116BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -741,7 +730,7 @@ void _test_error_info_report(can_msg_t *can_msg)
     identifier = 0x107126BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -758,7 +747,7 @@ void _test_error_info_report(can_msg_t *can_msg)
     identifier = 0x107136BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -780,7 +769,7 @@ void _test_snip_request_nulls(can_msg_t *can_msg)
     // ************************************************************************
     uint32_t identifier = 0x19DE8AAA;
     CanUtilities_load_can_message(can_msg, identifier, 2, 0x0F, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 }
@@ -794,7 +783,7 @@ void _test_legacy_snip_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x0F, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 }
@@ -808,7 +797,7 @@ void _test_snip_framing_bits_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x4F, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -818,7 +807,7 @@ void _test_snip_framing_bits_nulls(can_msg_t *can_msg)
     identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0xCF, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -828,7 +817,7 @@ void _test_snip_framing_bits_nulls(can_msg_t *can_msg)
     identifier = 0x19A08AAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x8F, 0xFF, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 }
@@ -842,7 +831,7 @@ void _test_datagram_framing_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x1AFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -852,7 +841,7 @@ void _test_datagram_framing_nulls(can_msg_t *can_msg)
     identifier = 0x1BFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -862,7 +851,7 @@ void _test_datagram_framing_nulls(can_msg_t *can_msg)
     identifier = 0x1CFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -872,7 +861,7 @@ void _test_datagram_framing_nulls(can_msg_t *can_msg)
     identifier = 0x1DFFFAAA;
     CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
 
     // ************************************************************************
@@ -884,7 +873,7 @@ void _test_stream_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x1FAAA6BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
@@ -905,12 +894,12 @@ void _test_traction_control_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x195BE6BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x4A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     identifier = 0x195BE6BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x8A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 void _test_verify_id_nulls(can_msg_t *can_msg)
@@ -919,7 +908,7 @@ void _test_verify_id_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x194906BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 void _test_cid_nulls(can_msg_t *can_msg)
@@ -930,7 +919,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x170506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -940,7 +929,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     identifier = 0x160506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -950,7 +939,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     identifier = 0x150506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -960,7 +949,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     identifier = 0x140506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -970,7 +959,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     identifier = 0x130506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -980,7 +969,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     identifier = 0x120506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 
@@ -990,7 +979,7 @@ void _test_cid_nulls(can_msg_t *can_msg)
     identifier = 0x110506BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     // ************************************************************************
 }
@@ -1000,7 +989,7 @@ void _test_rid_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x107006BE;
     CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 void _test_amd_nulls(can_msg_t *can_msg)
@@ -1008,7 +997,7 @@ void _test_amd_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x107016BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 void _test_ame_nulls(can_msg_t *can_msg)
@@ -1016,7 +1005,7 @@ void _test_ame_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x107026BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 void _test_amr_nulls(can_msg_t *can_msg)
@@ -1025,7 +1014,7 @@ void _test_amr_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x107036BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 void _test_error_info_report_nulls(can_msg_t *can_msg)
@@ -1034,22 +1023,22 @@ void _test_error_info_report_nulls(can_msg_t *can_msg)
     uint32_t identifier = 0x107106BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     identifier = 0x107116BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     identifier = 0x107126BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 
     identifier = 0x107136BE;
     CanUtilities_load_can_message(can_msg, identifier, 6, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
     _reset_variables();
-    _can_rx_target(0, can_msg);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
 TEST(CanRxStatemachine, initialize)
@@ -1059,9 +1048,6 @@ TEST(CanRxStatemachine, initialize)
 
     _reset_variables();
     CanRxStatemachine_initialize(&interface_can_rx_statemachine);
-
-    EXPECT_NE(_can_rx_target, nullptr);
-
     _test_snip_request(&can_msg);
     _test_legacy_snip(&can_msg);
     _test_snip_framing_bits(&can_msg);

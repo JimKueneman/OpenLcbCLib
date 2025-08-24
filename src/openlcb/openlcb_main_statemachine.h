@@ -46,33 +46,46 @@
 
 typedef struct {
     
-    void (*snip_simple_node_info_request)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*message_network_protocol_support_inquiry)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*message_network_verify_node_id_addressed)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*message_network_verify_node_id_global)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*message_network_verified_node_id_addressed)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_consumer_identify)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_consumer_identify_range)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_consumer_identified_unknown)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_consumer_identified_set)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_consumer_identified_clear)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_consumer_identified_reserved)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_producer_identify)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_producer_identify_range)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_producer_identified_unknown)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_producer_identified_set)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_producer_identified_clear)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_producer_identified_reserved)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);  
-    void (*event_transport_identify_dest)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_identify)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_learn)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_pc_report)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*event_transport_pc_report_with_payload)(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*datagram)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    void (*datagram_ok_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    void (*datagram_rejected_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    void (*optional_interaction_rejected)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    void (*send_interaction_rejected)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    // SNIP
+    bool (*snip_simple_node_info_request)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    
+    // MESSAGE NETWORK
+    bool (*message_network_protocol_support_inquiry)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*message_network_verify_node_id_addressed)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*message_network_verify_node_id_global)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*message_network_verified_node_id_addressed)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*optional_interaction_rejected)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    
+    // EVENTS
+    bool (*event_transport_consumer_identify)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_consumer_identify_range)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_consumer_identified_unknown)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_consumer_identified_set)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_consumer_identified_clear)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_consumer_identified_reserved)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_producer_identify)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_producer_identify_range)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_producer_identified_unknown)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_producer_identified_set)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_producer_identified_clear)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_producer_identified_reserved)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);  
+    bool (*event_transport_identify_dest)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_identify)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_learn)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_pc_report)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    bool (*event_transport_pc_report_with_payload)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    // DATAGRAM
+    void (*datagram)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
+    void (*datagram_ok_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
+    void (*datagram_rejected_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
+    
+    
+    void (*send_interaction_rejected)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    openlcb_node_t *(*node_get_first)(uint8_t key);
+    openlcb_node_t *(*node_get_next)(uint8_t key);
+    bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
+    void (*lock_openlcb_buffer_fifo)(void);
+    void (*unlock_openlcb_buffer_fifo)(void);
     
     
 } interface_openlcb_main_statemachine_t;
@@ -86,8 +99,6 @@ extern "C" {
     extern void OpenLcbMainStatemachine_run(void);
 
     extern void OpenLcbMainStatemachine_run_single_node(openlcb_node_t* openlcb_node);
-
-    openlcb_statemachine_worker_t* OpenLcbMainStatemachine_get_openlcb_helper(void);
 
 
 #ifdef	__cplusplus

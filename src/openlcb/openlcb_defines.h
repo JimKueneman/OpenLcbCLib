@@ -370,6 +370,10 @@
 #define ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS 0x01        // 1
 #define ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS 0x40 // 64
 
+
+#define MAX_NODE_ENUM_KEY_VALUES 6
+#define OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX 0
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -8,11 +8,10 @@
 
 #include "../../openlcb/openlcb_node.h"
 #include "../../openlcb/openlcb_defines.h"
+#include "../../openlcb/openlcb_utilities.h"
 
-bool pause_can_rx_called = false;
-bool resume_can_rx_called = false;
-bool pause_100ms_timer_called = false;
-bool resume_100ms_timer_called = false;
+bool lock_can_buffer_called = false;
+bool unlock_can_buffer_called = false;
 bool transmit_can_frame_called = false;
 bool is_tx_buffer_empty_called = false;
 bool node_get_first_called = false;
@@ -95,28 +94,16 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void pause_can_rx(void)
+void lock_can_buffer(void)
 {
 
-    pause_can_rx_called = true;
+    lock_can_buffer_called = true;
 }
 
-void resume_can_rx(void)
+void unlock_can_buffer(void)
 {
 
-    resume_can_rx_called = true;
-}
-
-void pause_100ms_timer(void)
-{
-
-    pause_100ms_timer_called = true;
-}
-
-void resume_100ms_timer(void)
-{
-
-    resume_100ms_timer_called = true;
+    unlock_can_buffer_called = true;
 }
 
 bool transmit_can_frame(can_msg_t *msg)
@@ -172,13 +159,13 @@ void openlcb_main_statemachine_run_single_node(openlcb_node_t *openlcb_node)
     openlcb_main_statemachine_run_single_node_called = true;
 }
 
-void pause_can_rx_node(void)
+void lock_node_list(void)
 {
 
     pause_can_rx_node_called = true;
 }
 
-void resume_can_rx_node(void)
+void unlock_node_list(void)
 {
 
     resume_can_rx_node_called = true;
@@ -186,10 +173,8 @@ void resume_can_rx_node(void)
 
 const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
-    .pause_can_rx = &pause_can_rx,
-    .resume_can_rx = &resume_can_rx,
-    .pause_100ms_timer = &pause_100ms_timer,
-    .resume_100ms_timer = &resume_100ms_timer,
+    .lock_can_buffer_fifo = &lock_can_buffer,
+    .unlock_can_buffer_fifo = &unlock_can_buffer,
     .transmit_can_frame = &transmit_can_frame,
     .is_tx_buffer_empty = &is_tx_buffer_empty,
     .node_get_first = &node_get_first,
@@ -199,8 +184,8 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
 interface_openlcb_node_t interface_openlcb_node = {
 
-    .locklist = &pause_can_rx_node,
-    .unlocklist = &resume_can_rx_node};
+    .lock_node_list = &lock_node_list,
+    .unlock_node_list = &unlock_node_list};
 
 bool compare_can_msg(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t bytes[])
 {
@@ -239,10 +224,8 @@ void _global_initialize(void)
 void _reset_variables(void)
 {
 
-    pause_can_rx_called = false;
-    resume_can_rx_called = false;
-    pause_100ms_timer_called = false;
-    resume_100ms_timer_called = false;
+    lock_can_buffer_called = false;
+    unlock_can_buffer_called = false;
     transmit_can_frame_called = false;
     is_tx_buffer_empty_called = false;
     node_get_first_called = false;
@@ -310,10 +293,9 @@ TEST(CanMainStatemachine, process_outgoing_can_message)
     CanMainStateMachine_run();
     EXPECT_TRUE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called);
-    EXPECT_TRUE(pause_can_rx_called);
-    EXPECT_TRUE(resume_can_rx_called);
-    EXPECT_TRUE(pause_100ms_timer_called);
-    EXPECT_TRUE(resume_100ms_timer_called);
+    EXPECT_TRUE(lock_can_buffer_called);
+    EXPECT_TRUE(unlock_can_buffer_called);
+
     EXPECT_TRUE(transmit_can_frame_called);
     EXPECT_TRUE(transmit_can_frame_successful);
 
@@ -323,10 +305,8 @@ TEST(CanMainStatemachine, process_outgoing_can_message)
     CanMainStateMachine_run();
     EXPECT_TRUE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called);
-    EXPECT_TRUE(pause_can_rx_called);
-    EXPECT_TRUE(resume_can_rx_called);
-    EXPECT_TRUE(pause_100ms_timer_called);
-    EXPECT_TRUE(resume_100ms_timer_called);
+    EXPECT_TRUE(lock_can_buffer_called);
+    EXPECT_TRUE(unlock_can_buffer_called);
     EXPECT_TRUE(transmit_can_frame_called);
     EXPECT_TRUE(transmit_can_frame_successful);
     EXPECT_TRUE(compare_can_msg(&transmitted_can_msg, 0x19170AAA, 0, nullptr));
@@ -355,10 +335,8 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
     CanMainStateMachine_run();
     EXPECT_TRUE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called); // have no nodes allocated
-    EXPECT_TRUE(pause_can_rx_called);
-    EXPECT_TRUE(resume_can_rx_called);
-    EXPECT_TRUE(pause_100ms_timer_called);
-    EXPECT_TRUE(resume_100ms_timer_called);
+    EXPECT_TRUE(lock_can_buffer_called);
+    EXPECT_TRUE(unlock_can_buffer_called);
     EXPECT_TRUE(transmit_can_frame_called);
     EXPECT_FALSE(transmit_can_frame_successful);
     _reset_variables();
@@ -367,11 +345,9 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
 
     CanMainStateMachine_run();
     EXPECT_TRUE(node_get_first_called);
-    EXPECT_FALSE(node_get_next_called);      // have no nodes allocated
-    EXPECT_FALSE(pause_can_rx_called);       // Msg was popped previous run and had to wait
-    EXPECT_FALSE(resume_can_rx_called);      // Msg was popped previous run and had to wait
-    EXPECT_FALSE(pause_100ms_timer_called);  // Msg was popped previous run and had to wait
-    EXPECT_FALSE(resume_100ms_timer_called); // Msg was popped previous run and had to wait
+    EXPECT_FALSE(node_get_next_called);     // have no nodes allocated
+    EXPECT_FALSE(lock_can_buffer_called);   // Msg was popped previous run and had to wait
+    EXPECT_FALSE(unlock_can_buffer_called); // Msg was popped previous run and had to wait
     EXPECT_TRUE(transmit_can_frame_called);
     EXPECT_TRUE(transmit_can_frame_successful);
     EXPECT_TRUE(compare_can_msg(&transmitted_can_msg, 0x19490AAA, 0, nullptr));
@@ -380,10 +356,8 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
     CanMainStateMachine_run();
     EXPECT_TRUE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called); // have no nodes allocated
-    EXPECT_TRUE(pause_can_rx_called);
-    EXPECT_TRUE(resume_can_rx_called);
-    EXPECT_TRUE(pause_100ms_timer_called);
-    EXPECT_TRUE(resume_100ms_timer_called);
+    EXPECT_TRUE(lock_can_buffer_called);
+    EXPECT_TRUE(unlock_can_buffer_called);
     EXPECT_TRUE(transmit_can_frame_called);
     EXPECT_TRUE(transmit_can_frame_successful);
     EXPECT_TRUE(compare_can_msg(&transmitted_can_msg, 0x19170AAA, 0, nullptr));
@@ -404,12 +378,10 @@ TEST(CanMainStatemachine, duplicate_alias)
     node1->state.duplicate_alias_detected = true;
 
     CanMainStateMachine_run();
-    EXPECT_TRUE(pause_can_rx_called);
-    EXPECT_TRUE(resume_can_rx_called);
+    EXPECT_TRUE(lock_can_buffer);
+    EXPECT_TRUE(unlock_can_buffer_called);
     EXPECT_FALSE(node1->state.permitted);
     EXPECT_FALSE(node1->state.initalized);
-    EXPECT_TRUE(node1->state.openlcb_msg_handled);
-    EXPECT_FALSE(node1->state.initial_events_broadcast_complete);
     EXPECT_FALSE(node1->state.duplicate_id_detected);
     EXPECT_FALSE(node1->state.duplicate_alias_detected);
     EXPECT_FALSE(node1->state.firmware_upgrade_active);

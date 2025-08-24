@@ -57,19 +57,12 @@ void ProtocolDatagram_initialize(const interface_protocol_datagram_t *interface_
 
 void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-    if (!OpenLcbUtilities_addressed_message_needs_processing(openlcb_node, openlcb_msg)) {
-
-        return;
-
-    }
-
     switch (*openlcb_msg->payload[0]) {
 
         case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?
 
             switch (*openlcb_msg->payload[1]) {
 
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
                 case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
 
                     if (_interface->memory_read_message) {
@@ -186,7 +179,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                     }
 
                     return;
-#endif // SUPPORT_FIRMWARE_BOOTLOADER
+
                 case DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6:
 
                     if (_interface->memory_write_message) {
@@ -197,7 +190,6 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
                     return;
 
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
                 case DATAGRAM_MEMORY_WRITE_SPACE_FD:
 
                     if (_interface->memory_write_message) {
@@ -416,7 +408,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                     }
 
                     return;
-#endif
+
                 case DATAGRAM_MEMORY_CONFIGURATION_UNFREEZE:
 
                     if (_interface->memory_unfreeze_message) {
@@ -436,8 +428,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                     }
 
                     return;
-
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
+                    
                 case DATAGRAM_MEMORY_CONFIGURATION_UPDATE_COMPLETE:
 
                     if (_interface->memory_update_complete_message) {
@@ -467,7 +458,7 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
                     }
 
                     return;
-#endif
+
                 default:
 
                     if (_interface->send_datagram_rejected_reply) {
@@ -496,12 +487,6 @@ void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_
 
 void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
-    if (openlcb_node->state.openlcb_msg_handled) {
-
-        return;
-
-    }
-
     if (openlcb_node->last_received_datagram) {
 
         OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
@@ -510,18 +495,10 @@ void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, op
     }
 
     openlcb_node->state.resend_datagram = false;
-    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 
 void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
-
-    if (openlcb_node->state.openlcb_msg_handled) {
-
-        return;
-
-    }
-
 
     if (OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
 
@@ -537,8 +514,6 @@ void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_nod
         openlcb_node->last_received_datagram = NULL;
 
     }
-
-    openlcb_node->state.openlcb_msg_handled = true;
 
 }
 

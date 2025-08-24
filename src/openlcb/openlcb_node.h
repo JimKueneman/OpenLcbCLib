@@ -42,33 +42,30 @@
 
 #include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
+typedef struct {
+    void (*lock_node_list)(void);
+    void (*unlock_node_list)(void);
 
-    typedef struct {
+} interface_openlcb_node_t;
 
-        void (*locklist)(void);
-        void (*unlocklist)(void);
-
-    } interface_openlcb_node_t;
-    
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
-extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
 
-extern openlcb_node_t* OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t* node_parameters);
+    extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
 
-extern openlcb_node_t* OpenLcbNode_get_first(uint8_t key);
+    extern openlcb_node_t* OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t* node_parameters);
 
-extern openlcb_node_t* OpenLcbNode_get_next(uint8_t key);
+    extern openlcb_node_t* OpenLcbNode_get_first(uint8_t key);
 
-extern openlcb_node_t* OpenLcbNode_find_by_alias(uint16_t alias);
+    extern openlcb_node_t* OpenLcbNode_get_next(uint8_t key);
 
-extern openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid);
+    extern openlcb_node_t* OpenLcbNode_find_by_alias(uint16_t alias);
 
-extern void OpenLcbNode_100ms_timer_tick(void);
+    extern openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid);
 
+    extern void OpenLcbNode_100ms_timer_tick(void);
 
 #ifdef	__cplusplus
 }

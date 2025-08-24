@@ -42,7 +42,6 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    bool (*transmit_openlcb_message)(openlcb_msg_t* openlcb_msg);
     uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     uint16_t(*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     void (*reboot)(void);
