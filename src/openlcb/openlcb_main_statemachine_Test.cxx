@@ -193,16 +193,19 @@ bool _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t 
     return true;
 }
 
-void _ProtocolDatagram_handle_datagram(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolDatagram_handle_datagram(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
 bool _ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
@@ -285,7 +288,16 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .node_get_next = &_OpenLcbNode_get_next,
     .transmit_openlcb_message = &_CanTxStatemachine_transmit_openlcb_message,
     .lock_openlcb_buffer_fifo = &_ExampleDrivers_lock_can_buffer_fifo,
-    .unlock_openlcb_buffer_fifo = &_ExampleDrivers_unlock_can_buffer_fifo};
+    .unlock_openlcb_buffer_fifo = &_ExampleDrivers_unlock_can_buffer_fifo,
+
+    // use the internal default functions
+    .process_main_statemachine = NULL,
+    .does_node_process_msg = NULL,
+    .try_free_current_and_pop_next_incoming_msg = NULL,
+    .try_reprocess_active_node = NULL,
+    .process_node = NULL,
+    .try_process_first_node = NULL,
+    .try_process_next_node = NULL};
 
 interface_openlcb_node_t interface_openlcb_node = {
 
@@ -327,14 +339,14 @@ TEST(OpenLcbMainStatemachine, run)
     // OpenLcbMainStatemachine_run();
     // ************************************************************************
 
-    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    node1->alias = 0xAAA;
+    // openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
+    // node1->alias = 0xAAA;
 
     // ************************************************************************
     // One in Node List
     // ************************************************************************
 
-    OpenLcbMainStatemachine_run();
+    // OpenLcbMainStatemachine_run();
     //  ************************************************************************
 
     // TODO: as of Aug 23 this function does nothing

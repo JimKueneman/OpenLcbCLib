@@ -9,8 +9,8 @@ set(SOURCES
     openlcb_main_statemachine.c 
     openlcb_node.c  
     openlcb_utilities.c 
-    protocol_datagram_handlers.c 
-    protocol_datagram.c 
+    protocol_datagram_handler.c 
+    protocol_datagram_config_mem_handler.c 
     protocol_event_transport.c 
     protocol_message_network.c 
     protocol_snip.c
@@ -28,8 +28,8 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/openlcb_main_statemachine_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_node_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_utilities_Test.cxx
-    ${ROOT_DIR}/src/openlcb/protocol_datagram_handlers_Test.cxx
-    ${ROOT_DIR}/src/openlcb/protocol_datagram_Test.cxx
+    ${ROOT_DIR}/src/openlcb/protocol_datagram_handler_Test.cxx
+    ${ROOT_DIR}/src/openlcb/protocol_datagram_config_mem_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_event_transport_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_message_network_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_snip_Test.cxx

@@ -58,7 +58,7 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
 }
 
-static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
+bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
 
     // TODO TEMPRARY
 
@@ -201,7 +201,7 @@ static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg
 
             if (_interface->event_transport_producer_identified_unknown) {
 
-               return  _interface->event_transport_producer_identified_unknown(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_producer_identified_unknown(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -241,7 +241,7 @@ static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg
 
             if (_interface->event_transport_identify_dest) {
 
-               return  _interface->event_transport_identify_dest(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_identify_dest(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -251,7 +251,7 @@ static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg
 
             if (_interface->event_transport_identify) {
 
-               return  _interface->event_transport_identify(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_identify(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -261,7 +261,7 @@ static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg
 
             if (_interface->event_transport_learn) {
 
-               return  _interface->event_transport_learn(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_learn(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -281,7 +281,7 @@ static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg
 
             if (_interface->event_transport_pc_report_with_payload) {
 
-               return  _interface->event_transport_pc_report_with_payload(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_pc_report_with_payload(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -342,7 +342,7 @@ static bool _process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg
 
 }
 
-bool _process_msg_on_node(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg) {
+bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg) {
 
     return ( (openlcb_node->state.initalized) &&
             (((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
@@ -351,7 +351,7 @@ bool _process_msg_on_node(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_m
 
 }
 
-bool _try_transmit_active_msg(openlcb_msg_t *active_outgoing_msg) {
+bool OpenLcbMainStatemachine_try_transmit_active_msg(openlcb_msg_t *active_outgoing_msg) {
 
     if (active_outgoing_msg) {
 
@@ -367,31 +367,33 @@ bool _try_transmit_active_msg(openlcb_msg_t *active_outgoing_msg) {
 
 }
 
-void _try_free_current_and_pop_next_incoming_msg(openlcb_msg_t **active_incoming_msg) {
+openlcb_msg_t *OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t *active_incoming_msg) {
 
     _interface->lock_openlcb_buffer_fifo();
-    OpenLcbBufferStore_free_buffer(*active_incoming_msg); // When we reach a repeat of the nodes the previous message should have been completely handled
-    *active_incoming_msg = OpenLcbBufferFifo_pop();
+    OpenLcbBufferStore_free_buffer(active_incoming_msg); // When we reach a repeat of the nodes the previous message should have been completely handled
+    openlcb_msg_t *result = OpenLcbBufferFifo_pop();
     _interface->unlock_openlcb_buffer_fifo();
+
+    return result;
 
 }
 
-bool _try_reprocess_active_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
+bool OpenLcbMainStatemachine_try_reprocess_active_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
 
     if (!active_node->state.initalized) {
 
-        return _process_main_statemachine(active_node, active_incoming_msg, active_outgoing_msg);
+        return _interface->process_main_statemachine(active_node, active_incoming_msg, active_outgoing_msg);
 
     }
 
     return true;
 }
 
-bool _process_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
+bool OpenLcbMainStatemachine_process_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
 
-    if (_process_msg_on_node(active_node, active_incoming_msg)) {
+    if (_interface->does_node_process_msg(active_node, active_incoming_msg)) {
 
-        return _process_main_statemachine(active_node, active_incoming_msg, active_outgoing_msg);
+        return _interface->process_main_statemachine(active_node, active_incoming_msg, active_outgoing_msg);
 
     }
 
@@ -399,7 +401,7 @@ bool _process_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_m
 
 }
 
-bool _try_process_first_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
+bool OpenLcbMainStatemachine_try_process_first_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
 
     *active_node = _interface->node_get_first(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
 
@@ -410,11 +412,11 @@ bool _try_process_first_node(openlcb_node_t **active_node, openlcb_msg_t *active
 
     }
 
-    return _process_node(*active_node, active_incoming_msg, active_outgoing_msg);
+    return _interface->process_node(*active_node, active_incoming_msg, active_outgoing_msg);
 
 }
 
-bool _try_process_next_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
+bool OpenLcbMainStatemachine_try_process_next_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
 
     *active_node = _interface->node_get_next(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
 
@@ -425,7 +427,7 @@ bool _try_process_next_node(openlcb_node_t **active_node, openlcb_msg_t *active_
 
     }
 
-    return _process_node(*active_node, active_incoming_msg, active_outgoing_msg);
+    return _interface->process_node(*active_node, active_incoming_msg, active_outgoing_msg);
 
 }
 
@@ -449,22 +451,22 @@ void OpenLcbMainStatemachine_run(void) {
 
     // The message must be transmitted before the statemachine will continue
     if (outgoing_msg_valid) {
-        
-        if (_try_transmit_active_msg(outgoing_msg)) {
+
+        if (_interface->try_transmit_active_msg(outgoing_msg)) {
 
             outgoing_msg_valid = false;
 
         } else {
-            
+
             return;
-            
-        }   
-        
+
+        }
+
     }
 
     if (reprocess_active_node) {
 
-        reprocess_active_node = !_try_reprocess_active_node(active_node, active_incoming_msg, outgoing_msg);
+        reprocess_active_node = !_interface->try_reprocess_active_node(active_node, active_incoming_msg, outgoing_msg);
 
         return;
 
@@ -473,13 +475,20 @@ void OpenLcbMainStatemachine_run(void) {
     if (!active_node) {
 
         reprocess_active_node = false;
-        _try_free_current_and_pop_next_incoming_msg(&active_incoming_msg);
-        outgoing_msg_valid = _try_process_first_node(&active_node, active_incoming_msg, outgoing_msg);
+        active_incoming_msg = _interface->try_free_current_and_pop_next_incoming_msg(active_incoming_msg);
+
+        if (!active_incoming_msg) {
+
+            return;
+
+        }
+
+        outgoing_msg_valid = _interface->try_process_first_node(&active_node, active_incoming_msg, outgoing_msg);
 
     } else {
 
         reprocess_active_node = false;
-        outgoing_msg_valid = _try_process_next_node(&active_node, active_incoming_msg, outgoing_msg);
+        outgoing_msg_valid = _interface->try_process_next_node(&active_node, active_incoming_msg, outgoing_msg);
 
     }
 
@@ -487,7 +496,7 @@ void OpenLcbMainStatemachine_run(void) {
 
 void OpenLcbMainStatemachine_run_single_node(openlcb_node_t * openlcb_node) {
 
-    _process_main_statemachine(openlcb_node, NULL, NULL);
+    OpenLcbMainStatemachine_process_main_statemachine(openlcb_node, NULL, NULL);
 
 }
 
