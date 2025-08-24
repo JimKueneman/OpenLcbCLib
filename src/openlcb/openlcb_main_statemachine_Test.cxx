@@ -108,71 +108,89 @@ bool _ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t *openlcb_nod
     return true;
 }
 
-void _ProtocolEventTransport_handle_consumer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_producer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_identify_dest(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_identify_dest(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_event_learn(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_event_learn(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
-void _ProtocolEventTransport_handle_pc_event_report(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_pc_event_report(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
-void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+
+bool _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
+    return true;
 }
 
 void _ProtocolDatagram_handle_datagram(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
