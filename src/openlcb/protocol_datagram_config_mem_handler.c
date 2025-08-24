@@ -139,8 +139,11 @@ void ProtocolDatagramConfigMemHandler_try_transmit(openlcb_node_t* openlcb_node,
 
 }
 
-void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t error_code) {
+bool ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t error_code) {
 
+    return true;
+    
+    
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
     OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, error_code, 0);
 
@@ -525,13 +528,15 @@ static uint16_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t*
 
 // Memory read handlers
 
-void ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+      //  return;
 
     }
 
@@ -570,26 +575,29 @@ void ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t*
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_read_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+     //   return;
 
     }
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_read_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
+    return true;
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+   //     return;
 
     }
     
@@ -598,13 +606,15 @@ void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_fail_message(open
 
 // Memory write handlers
 
-void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+   //     return;
 
     }
 
@@ -644,9 +654,11 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_node_t
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
 
+    return true;
+    
     uint8_t reply_payload_index = 6;
     uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
 
@@ -669,7 +681,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
 
         ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
-        return;
+   //     return;
 
     }
 
@@ -677,7 +689,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+   //     return;
 
     }
 
@@ -730,25 +742,29 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_write_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+   //     return;
 
     }
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_write_reply_fail_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space) {
 
+    return true;
+   
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+//        return;
 
     }
 
@@ -757,14 +773,16 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_fail_message(ope
 
 // Other memory access handlers
 
-void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
+    return true;
+    
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+   //     return;
 
     }
 
@@ -842,26 +860,30 @@ void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_options_reply_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_options_reply_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+   //     return;
 
     }
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+  //      return;
 
     }
 
@@ -892,7 +914,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
 
         worker_msg->payload_count = 8;
 
-        return;
+ //       return;
 
     }
 
@@ -931,13 +953,15 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_reply_not_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_reply_not_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+  //      return;
 
     }
 
@@ -945,25 +969,30 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_reply
 
 
 
-void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+    //    return;
 
     }
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-        return;
+  //      return;
 
     }
 
@@ -992,19 +1021,24 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb
 }
 
 
-void ProtocolDatagramConfigMemHandler_handle_memory_get_unique_id_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_get_unique_id_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
+    
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED);
 
-        return;
+  //      return;
 
     }
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
+    
     if (*openlcb_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
 
         if (openlcb_node->parameters->address_space_firmware.present) {
@@ -1013,7 +1047,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_nod
 
                 _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-                return;
+      //          return;
 
             } else {
 
@@ -1025,7 +1059,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_nod
 
                 }
 
-                return;
+    //            return;
 
             }
 
@@ -1037,7 +1071,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_nod
 
         ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-        return;
+ //       return;
 
     } else {
 
@@ -1045,8 +1079,11 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_nod
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
+    
+    
     if (*openlcb_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
 
         if (openlcb_node->parameters->address_space_firmware.present) {
@@ -1055,7 +1092,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_
 
                 _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-                return;
+     //           return;
 
             } else {
       
@@ -1066,7 +1103,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_
 
                 }
 
-                return;
+   //             return;
 
             }
 
@@ -1078,7 +1115,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_
 
         ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-        return;
+  //      return;
 
     } else {
 
@@ -1088,26 +1125,32 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
+    
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+ //       return;
 
     }
 
    
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    
+    return true;
+    
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+ //       return;
 
     }
 
@@ -1120,14 +1163,15 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb
 
 }
 
-void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
+bool ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg) {
 
+    return true;
 
     if (!openlcb_node->state.openlcb_datagram_ack_sent) {
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, 0);
 
-        return;
+ //       return;
 
     }
 

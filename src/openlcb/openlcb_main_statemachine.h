@@ -75,9 +75,9 @@ typedef struct {
     bool (*event_transport_pc_report)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
     bool (*event_transport_pc_report_with_payload)(openlcb_node_t * openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
     // DATAGRAM
-    void (*datagram)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
-    void (*datagram_ok_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
-    void (*datagram_rejected_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
+    bool (*datagram)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
+    bool (*datagram_ok_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
+    bool (*datagram_rejected_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t * outgoing_msg);
     
     
     void (*send_interaction_rejected)(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
