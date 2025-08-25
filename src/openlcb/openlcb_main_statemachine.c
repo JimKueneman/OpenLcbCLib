@@ -62,7 +62,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
     // TODO TEMPRARY
 
-    return true;
+   // return true;
 
     switch (incoming_msg->mti) {
 
@@ -380,7 +380,7 @@ openlcb_msg_t *OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_ms
 
 bool OpenLcbMainStatemachine_try_reprocess_active_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg) {
 
-    if (!active_node->state.initalized) {
+    if (active_node->state.initalized) {
 
         return _interface->process_main_statemachine(active_node, active_incoming_msg, active_outgoing_msg);
 
@@ -406,7 +406,7 @@ bool OpenLcbMainStatemachine_try_process_first_node(openlcb_node_t **active_node
     *active_node = _interface->node_get_first(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
 
 
-    if (!*active_node || !active_incoming_msg) {
+    if (!active_node || !active_incoming_msg) {
 
         return false;
 

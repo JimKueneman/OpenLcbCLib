@@ -11,6 +11,9 @@
 bool lock_node_list_called = false;
 bool unlock_node_list_called = false;
 bool allow_successful_transmit = true;
+openlcb_node_t *openlcb_node_callback = nullptr;
+openlcb_msg_t *openlcb_msg_incoming_callback = nullptr;
+openlcb_msg_t *openlcb_msg_outgoing_callback = nullptr;
 
 node_parameters_t _node_parameters_main_node = {
 
@@ -256,6 +259,10 @@ bool _CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
 bool _OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
+    openlcb_node_callback = openlcb_node;
+    openlcb_msg_incoming_callback = incoming_msg;
+    openlcb_msg_outgoing_callback = outgoing_msg;
+
     return OpenLcbMainStatemachine_process_main_statemachine(openlcb_node, incoming_msg, outgoing_msg);
 }
 
@@ -362,6 +369,9 @@ void _reset_variables(void)
     lock_node_list_called = false;
     unlock_node_list_called = false;
     allow_successful_transmit = true;
+    openlcb_node_callback = nullptr;
+    openlcb_msg_incoming_callback = nullptr;
+    openlcb_msg_outgoing_callback = nullptr;
 }
 
 void _global_initialize(void)
@@ -450,12 +460,16 @@ TEST(OpenLcbMainStatemachine, try_transmit_active_msg)
     node1->alias = DEST_ALIAS;
 
     openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *null_msg = nullptr;
 
     EXPECT_NE(node1, nullptr);
     EXPECT_NE(openlcb_msg, nullptr);
 
     if (openlcb_msg)
     {
+
+        // null msg should return true so it won't block
+        EXPECT_TRUE(OpenLcbMainStatemachine_try_transmit_active_msg(null_msg));
 
         // Initization Complete
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
@@ -532,6 +546,129 @@ TEST(OpenLcbMainStatemachine, try_free_current_and_pop_next_incoming_msg)
 
         OpenLcbBufferStore_free_buffer(openlcb_msg1);
         // openlcb_msg2 has been freed already
+    }
+}
+
+TEST(OpenLcbMainStatemachine, try_reprocess_active_node)
+{
+
+#define SOURCE_ALIAS 0x455
+#define SOURCE_ID 0x010203040506
+#define DEST_ALIAS 0x455
+#define DEST_ID 0x060504030201
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *openlcb_msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg1, nullptr);
+    EXPECT_NE(openlcb_msg2, nullptr);
+
+    if (openlcb_msg1 && openlcb_msg2)
+    {
+
+        node1->state.initalized = false;
+        EXPECT_TRUE(OpenLcbMainStatemachine_try_reprocess_active_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_incoming_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, nullptr);
+
+        node1->state.initalized = true;
+        EXPECT_TRUE(OpenLcbMainStatemachine_try_reprocess_active_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, node1);
+        EXPECT_EQ(openlcb_msg_incoming_callback, openlcb_msg1);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, openlcb_msg2);
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg1);
+        OpenLcbBufferStore_free_buffer(openlcb_msg2);
+    }
+}
+
+TEST(OpenLcbMainStatemachine, process_node)
+{
+
+#define SOURCE_ALIAS 0x455
+#define SOURCE_ID 0x010203040506
+#define DEST_ALIAS 0x455
+#define DEST_ID 0x060504030201
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *openlcb_msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg1, nullptr);
+    EXPECT_NE(openlcb_msg2, nullptr);
+
+    if (openlcb_msg1 && openlcb_msg2)
+    {
+
+        // Initization Complete but node not in initialized state
+        node1->state.initalized = false;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_process_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_incoming_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, nullptr);
+
+        // Initization Complete but node in initialized state
+        _reset_variables();
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_process_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, node1);
+        EXPECT_EQ(openlcb_msg_incoming_callback, openlcb_msg1);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, openlcb_msg2);
+
+        // Verify ID Addressed to us
+        _reset_variables();
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_process_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, node1);
+        EXPECT_EQ(openlcb_msg_incoming_callback, openlcb_msg1);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, openlcb_msg2);
+
+        // Verify ID not Addressed to us
+        _reset_variables();
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, 0x488, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_process_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_incoming_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, nullptr);
+
+        // Datagram for us
+        _reset_variables();
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x1C48, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_process_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, node1);
+        EXPECT_EQ(openlcb_msg_incoming_callback, openlcb_msg1);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, openlcb_msg2);
+
+        // Datagram not for us
+        _reset_variables();
+        node1->state.initalized = true;
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 2, DEST_ID + 2, 0x1C48, 0);
+        EXPECT_TRUE(OpenLcbMainStatemachine_process_node(node1, openlcb_msg1, openlcb_msg2));
+        EXPECT_EQ(openlcb_node_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_incoming_callback, nullptr);
+        EXPECT_EQ(openlcb_msg_outgoing_callback, nullptr);
+
+        OpenLcbBufferStore_free_buffer(openlcb_msg1);
+        OpenLcbBufferStore_free_buffer(openlcb_msg2);
     }
 }
 
