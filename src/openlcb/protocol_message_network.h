@@ -65,7 +65,7 @@ extern "C" {
 
     extern bool ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
 
-    extern void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
+    extern void ProtocolMessageNetwork_load_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
 
     extern void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 

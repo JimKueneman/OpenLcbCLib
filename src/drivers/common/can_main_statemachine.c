@@ -129,10 +129,6 @@ void CanMainStateMachine_run(void) {
             _interface->login_statemachine_run(openlcb_node);
 
 
-        } else {
-
-            _interface->openlcb_main_statemachine_run_single_node(openlcb_node);
-
         }
 
         openlcb_node = _interface->node_get_next(0);

@@ -17,7 +17,6 @@ bool is_tx_buffer_empty_called = false;
 bool node_get_first_called = false;
 bool node_get_next_called = false;
 bool login_statemachine_run_called = false;
-bool openlcb_main_statemachine_run_single_node_called = false;
 bool transmit_can_frame_enabled = true;
 bool transmit_can_frame_successful = false;
 
@@ -154,11 +153,6 @@ void login_statemachine_run(openlcb_node_t *openlcb_node)
     login_statemachine_run_called = true;
 }
 
-void openlcb_main_statemachine_run_single_node(openlcb_node_t *openlcb_node)
-{
-    openlcb_main_statemachine_run_single_node_called = true;
-}
-
 void lock_node_list(void)
 {
 
@@ -179,8 +173,7 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .is_tx_buffer_empty = &is_tx_buffer_empty,
     .node_get_first = &node_get_first,
     .node_get_next = &node_get_next,
-    .login_statemachine_run = login_statemachine_run,
-    .openlcb_main_statemachine_run_single_node = &openlcb_main_statemachine_run_single_node};
+    .login_statemachine_run = login_statemachine_run};
 
 interface_openlcb_node_t interface_openlcb_node = {
 
@@ -231,7 +224,6 @@ void _reset_variables(void)
     node_get_first_called = false;
     node_get_next_called = false;
     login_statemachine_run_called = false;
-    openlcb_main_statemachine_run_single_node_called = false;
     transmit_can_frame_enabled = true;
     transmit_can_frame_successful = false;
 
@@ -390,65 +382,4 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_EQ(node1->last_received_datagram, nullptr);
     EXPECT_EQ(node1->last_received_optional_interaction, nullptr);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_GENERATE_SEED);
-}
-
-TEST(CanMainStatemachine, permitted_node)
-{
-
-    _global_initialize();
-    _reset_variables();
-
-    openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    node1->alias = 0xAAA;
-    node1->state.run_state = RUNSTATE_GENERATE_SEED;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_GENERATE_ALIAS;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_SEND_CHECK_ID_07;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_SEND_CHECK_ID_06;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_SEND_CHECK_ID_05;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_SEND_CHECK_ID_04;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_WAIT_200ms;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_TRANSMIT_RESERVE_ID;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_TRANSMIT_CONSUMER_EVENTS;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_TRANSMIT_PRODUCER_EVENTS;
-    CanMainStateMachine_run();
-    EXPECT_FALSE(openlcb_main_statemachine_run_single_node_called);
-
-    node1->state.run_state = RUNSTATE_RUN;
-    CanMainStateMachine_run();
-    EXPECT_TRUE(openlcb_main_statemachine_run_single_node_called);
 }

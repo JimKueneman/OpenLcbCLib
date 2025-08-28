@@ -158,7 +158,7 @@ bool ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
     return false;
 }
 
-void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
+void ProtocolMessageNetwork_load_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
 
     OpenLcbUtilities_load_openlcb_message(outgoing_msg, openlcb_node->alias, openlcb_node->id, incoming_msg->source_alias, incoming_msg->source_id, MTI_OPTIONAL_INTERACTION_REJECTED, 4);
     OpenLcbUtilities_copy_word_to_openlcb_payload(outgoing_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);

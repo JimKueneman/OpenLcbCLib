@@ -45,16 +45,27 @@
 #include "openlcb_types.h"
 
 typedef struct {
+    
+    // optional handlers
+    
     // SNIP
     bool (*snip_simple_node_info_request)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*snip_simple_node_info_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
 
     // MESSAGE NETWORK
+    bool (*message_network_initialization_complete)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*message_network_initialization_complete_simple)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_protocol_support_inquiry)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_verify_node_id_addressed)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_verify_node_id_global)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_verified_node_id_addressed)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
-    bool (*optional_interaction_rejected)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
-
+    bool (*message_network_optional_interaction_rejected)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*message_network_terminate_due_to_error)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
+    // PROTOCOL SUPPORT
+    bool (*protocol_support_inquiry)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*protocol_support_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
     // EVENTS
     bool (*event_transport_consumer_identify)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_consumer_identify_range)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
@@ -73,27 +84,40 @@ typedef struct {
     bool (*event_transport_learn)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_pc_report)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_pc_report_with_payload)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
+    // TRACTION
+    bool (*traction_control_command)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*traction_control_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
+    // TRACTION SNIP
+    bool (*simple_train_node_ident_info_request)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*simple_train_node_ident_info_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
     // DATAGRAM
     bool (*datagram)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*datagram_ok_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*datagram_rejected_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
+    // STREAM
+    bool (*stream_initiate_request)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*stream_initiate_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*stream_send_data)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*stream_data_proceed)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*stream_data_complete)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
 
-    void (*send_interaction_rejected)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    void (*load_interaction_rejected)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    
+    // required
+    bool (*transmit_openlcb_msg)(openlcb_msg_t *outgoing_msg);
     openlcb_node_t *(*node_get_first)(uint8_t key);
     openlcb_node_t *(*node_get_next)(uint8_t key);
-    bool (*transmit_openlcb_message)(openlcb_msg_t *openlcb_msg);
     void (*lock_openlcb_buffer_fifo)(void);
     void (*unlock_openlcb_buffer_fifo)(void);
-    bool (*try_transmit_active_msg)(openlcb_msg_t *active_outgoing_msg);
-
+    
     // for test injection, leave null to use the default functions
     bool (*process_main_statemachine)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*does_node_process_msg)(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg);
     openlcb_msg_t *(*try_free_current_and_pop_next_incoming_msg)(openlcb_msg_t *active_incoming_msg);
-    bool (*try_reprocess_active_node)(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-    bool (*process_node)(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-    bool (*try_process_first_node)(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-    bool (*try_process_next_node)(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
 
 } interface_openlcb_main_statemachine_t;
 
@@ -105,18 +129,11 @@ extern "C" {
 
     extern void OpenLcbMainStatemachine_run(void);
 
-    extern void OpenLcbMainStatemachine_run_single_node(openlcb_node_t *openlcb_node);
-
     // exposed for test
     extern bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
     extern bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg);
-    extern bool OpenLcbMainStatemachine_try_transmit_active_msg(openlcb_msg_t *active_outgoing_msg);
     extern openlcb_msg_t *OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t *active_incoming_msg);
-    extern bool OpenLcbMainStatemachine_try_reprocess_active_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-    extern bool OpenLcbMainStatemachine_process_node(openlcb_node_t *active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-    extern bool OpenLcbMainStatemachine_try_process_first_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-    extern bool OpenLcbMainStatemachine_try_process_next_node(openlcb_node_t **active_node, openlcb_msg_t *active_incoming_msg, openlcb_msg_t *active_outgoing_msg);
-
+    
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
