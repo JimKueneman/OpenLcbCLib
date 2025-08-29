@@ -378,7 +378,6 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_FALSE(node1->state.duplicate_alias_detected);
     EXPECT_FALSE(node1->state.firmware_upgrade_active);
     EXPECT_FALSE(node1->state.resend_datagram);
-    EXPECT_FALSE(node1->state.resend_optional_message);
     EXPECT_EQ(node1->last_received_datagram, nullptr);
     EXPECT_EQ(node1->last_received_optional_interaction, nullptr);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_GENERATE_SEED);

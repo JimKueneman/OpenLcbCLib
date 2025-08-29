@@ -62,7 +62,6 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.permitted = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;
     openlcb_node->state.resend_datagram = false;
-    openlcb_node->state.resend_optional_message = false;
     openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->timerticks = 0;
     openlcb_node->lock_node = 0;

@@ -96,7 +96,6 @@ static void _handle_duplicate_alias_detected(openlcb_node_t *openlcb_node) {
     openlcb_node->state.duplicate_alias_detected = false;
     openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->state.resend_datagram = false;
-    openlcb_node->state.resend_optional_message = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;
     OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
     openlcb_node->last_received_datagram = NULL;

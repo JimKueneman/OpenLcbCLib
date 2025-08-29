@@ -61,21 +61,18 @@ static bool _reprocess_active_node = false;
 void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
 
     _interface = (interface_openlcb_main_statemachine_t*) interface_openlcb_main_statemachine;
-   
-    _outgoing_msg.payload = (openlcb_payload_t*)&_outgoing_msg_payload;
+
+    _outgoing_msg.payload = (openlcb_payload_t*) & _outgoing_msg_payload;
     _outgoing_msg.payload_type = STREAM;
     OpenLcbUtilities_clear_openlcb_message(&_outgoing_msg);
     OpenLcbUtilities_clear_openlcb_message_payload(&_outgoing_msg);
     _outgoing_msg.state.allocated = true;
-    
+
 
 }
 
 bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
 
-    // TODO TEMPRARY
-
-    // return true;
 
     switch (incoming_msg->mti) {
 
@@ -84,6 +81,10 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
             if (_interface->snip_simple_node_info_request) {
 
                 return _interface->snip_simple_node_info_request(openlcb_node, incoming_msg, outgoing_msg);
+
+            } else {
+
+                _interface->load_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -129,6 +130,16 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
             }
 
             return true;
+            
+            case MTI_PROTOCOL_SUPPORT_REPLY:
+
+            if (_interface->message_network_protocol_support_reply) {
+
+                return _interface->message_network_protocol_support_reply(openlcb_node, incoming_msg, outgoing_msg);
+
+            }
+
+            return true;
 
         case MTI_VERIFY_NODE_ID_ADDRESSED:
 
@@ -165,7 +176,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->message_network_optional_interaction_rejected) {
 
-                _interface->message_network_optional_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->message_network_optional_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -176,7 +187,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->message_network_terminate_due_to_error) {
 
-                _interface->message_network_terminate_due_to_error(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->message_network_terminate_due_to_error(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -286,7 +297,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->event_transport_producer_identified_clear) {
 
-                _interface->event_transport_producer_identified_clear(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_producer_identified_clear(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -352,11 +363,59 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             return true;
 
+        case MTI_TRACTION_PROTOCOL:
+
+            if (_interface->traction_control_command) {
+
+                return _interface->traction_control_command(openlcb_node, incoming_msg, outgoing_msg);
+
+            } else {
+
+                _interface->load_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
+
+            }
+
+            return true;
+
+        case MTI_TRACTION_REPLY:
+
+            if (_interface->traction_control_reply) {
+
+                return _interface->traction_control_reply(openlcb_node, incoming_msg, outgoing_msg);
+
+            }
+
+            return true;
+
+        case MTI_SIMPLE_TRAIN_INFO_REQUEST:
+
+            if (_interface->simple_train_node_ident_info_request) {
+
+                return _interface->simple_train_node_ident_info_request(openlcb_node, incoming_msg, outgoing_msg);
+
+            } else {
+
+                _interface->load_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
+
+            }
+
+            return true;
+
+        case MTI_SIMPLE_TRAIN_INFO_REPLY:
+
+            if (_interface->simple_train_node_ident_info_reply) {
+
+                return _interface->simple_train_node_ident_info_reply(openlcb_node, incoming_msg, outgoing_msg);
+
+            }
+
+            return true;
+
         case MTI_DATAGRAM:
 
             if (_interface->datagram) {
 
-                _interface->datagram(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->datagram(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -366,7 +425,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->datagram_ok_reply) {
 
-                _interface->datagram_ok_reply(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->datagram_ok_reply(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -376,7 +435,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->datagram_rejected_reply) {
 
-                _interface->datagram_rejected_reply(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->datagram_rejected_reply(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -386,7 +445,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->stream_initiate_request) {
 
-                _interface->stream_initiate_request(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->stream_initiate_request(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -396,7 +455,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->stream_initiate_reply) {
 
-                _interface->stream_initiate_reply(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->stream_initiate_reply(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -406,7 +465,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->stream_send_data) {
 
-                _interface->stream_send_data(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->stream_send_data(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -416,7 +475,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->stream_data_proceed) {
 
-                _interface->stream_data_proceed(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->stream_data_proceed(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -426,7 +485,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             if (_interface->stream_data_complete) {
 
-                _interface->stream_data_complete(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->stream_data_complete(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -434,11 +493,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
         default:
 
-            if (_interface->load_interaction_rejected) {
-
-                _interface->load_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
-
-            }
+            _interface->load_interaction_rejected(openlcb_node, incoming_msg, outgoing_msg);
 
             return true;
 
@@ -447,7 +502,7 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
 }
 
-bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg) {
+bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t * openlcb_msg) {
 
     return ( (openlcb_node->state.initalized) &&
             (((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
@@ -456,7 +511,7 @@ bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node,
 
 }
 
-openlcb_msg_t *OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t *active_incoming_msg) {
+openlcb_msg_t * OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t * active_incoming_msg) {
 
     _interface->lock_openlcb_buffer_fifo();
     OpenLcbBufferStore_free_buffer(active_incoming_msg);
@@ -480,9 +535,6 @@ void OpenLcbMainStatemachine_run(void) {
 
     // The message must be transmitted before the statemachine will continue
     if (_outgoing_msg.mti > 0) {
-        
-        fprintf(stderr, "ptr: %p\n\n\n\n", _interface);
-        fprintf(stderr, "ptr: %p\n\n\n\n", _interface->lock_openlcb_buffer_fifo);
 
         if (_interface->transmit_openlcb_msg(&_outgoing_msg)) {
 

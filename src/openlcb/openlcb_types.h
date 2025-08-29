@@ -294,7 +294,6 @@ extern "C" {
         uint8_t duplicate_alias_detected : 1; // Can engine has detected a duplicate alias and flagged it for reallocation
         uint8_t openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack to say it was successfully received then the actual response.  This tracks which state the node is in
         uint8_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-        uint8_t resend_optional_message : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint8_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;
 

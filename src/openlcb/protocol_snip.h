@@ -47,7 +47,6 @@
 
 typedef struct {
     uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    void (*buffer_optional_interaction_message_for_resend)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
 
 } interface_openlcb_protocol_snip_t;
 

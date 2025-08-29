@@ -9,6 +9,7 @@
 #include "openlcb_buffer_fifo.h"
 
 uint16_t handler_mti = 0x00;
+bool load_interaction_rejected_called = false;
 bool reply_to_protocol_support_inquiry = false;
 bool force_process_statemachine_to_fail = false;
 bool transmit_openlcb_msg_called = false;
@@ -127,13 +128,24 @@ bool _ProtocolMessageNetwork_initialization_complete_simple(openlcb_node_t *open
 bool _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
+    fprintf(stderr, "\n_ProtocolMessageNetwork_handle_protocol_support_inquiry = called\n");
+
     handler_mti = incoming_msg->mti;
 
     if (reply_to_protocol_support_inquiry)
     {
 
+        fprintf(stderr, "\nreply_to_protocol_support_inquiry = true\n");
+
         outgoing_msg->mti = MTI_PROTOCOL_SUPPORT_REPLY;
     }
+
+    return true;
+}
+
+bool _ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+{
+    handler_mti = incoming_msg->mti;
 
     return true;
 }
@@ -171,22 +183,6 @@ bool _ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t
 }
 
 bool _ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
-{
-
-    handler_mti = incoming_msg->mti;
-
-    return true;
-}
-
-bool ProtocolMessageNetwork_handle__protocol_support_inquiry(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
-{
-
-    handler_mti = incoming_msg->mti;
-
-    return true;
-}
-
-bool ProtocolMessageNetwork_handle__protocol_support_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
     handler_mti = incoming_msg->mti;
@@ -383,10 +379,10 @@ bool _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t *openlcb_no
     return true;
 }
 
-void _ProtocolMessageNetwork_load_interaction_rejected(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _OpenLcbUtilities_load_interaction_rejected(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
-    handler_mti = incoming_msg->mti;
+    load_interaction_rejected_called = true;
 }
 
 bool _ProtocolStream_initiate_request(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
@@ -541,15 +537,14 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
 
     .message_network_initialization_complete = &_ProtocolMessageNetwork_initialization_complete,
     .message_network_initialization_complete_simple = &_ProtocolMessageNetwork_initialization_complete_simple,
-    .message_network_protocol_support_inquiry = &_ProtocolMessageNetwork_handle_protocol_support_inquiry,
     .message_network_verify_node_id_addressed = &_ProtocolMessageNetwork_handle_verify_node_id_addressed,
     .message_network_verify_node_id_global = &_ProtocolMessageNetwork_handle_verify_node_id_global,
     .message_network_verified_node_id_addressed = &_ProtocolMessageNetwork_handle_verified_node_id,
     .message_network_optional_interaction_rejected = &_ProtocolMessageNetwork_handle_optional_interaction_rejected,
     .message_network_terminate_due_to_error = &_ProtocolMessageNetwork_handle_terminate_due_to_error,
 
-    .protocol_support_inquiry = &ProtocolMessageNetwork_handle__protocol_support_inquiry,
-    .protocol_support_reply = &ProtocolMessageNetwork_handle__protocol_support_reply,
+    .message_network_protocol_support_inquiry = &_ProtocolMessageNetwork_handle_protocol_support_inquiry,
+    .message_network_protocol_support_reply = &_ProtocolMessageNetwork_handle_protocol_support_reply,
 
     .event_transport_consumer_identify = &_ProtocolEventTransport_handle_consumer_identify,
     .event_transport_consumer_identify_range = &_ProtocolEventTransport_handle_consumer_identify_range,
@@ -578,7 +573,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .datagram = &_ProtocolDatagram_handle_datagram,
     .datagram_ok_reply = &_Protocol_Datagram_handle_datagram_ok_reply,
     .datagram_rejected_reply = &_ProtocolDatagram_handle_datagram_rejected_reply,
-    .load_interaction_rejected = &_ProtocolMessageNetwork_load_interaction_rejected,
+    .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     .stream_initiate_request = &_ProtocolStream_initiate_request,
     .stream_initiate_reply = &_ProtocolStream_initiate_reply,
@@ -606,15 +601,14 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
 
     .message_network_initialization_complete = nullptr,
     .message_network_initialization_complete_simple = nullptr,
-    .message_network_protocol_support_inquiry = nullptr,
     .message_network_verify_node_id_addressed = nullptr,
     .message_network_verify_node_id_global = nullptr,
     .message_network_verified_node_id_addressed = nullptr,
     .message_network_optional_interaction_rejected = nullptr,
     .message_network_terminate_due_to_error = nullptr,
 
-    .protocol_support_inquiry = nullptr,
-    .protocol_support_reply = nullptr,
+    .message_network_protocol_support_inquiry = nullptr,
+    .message_network_protocol_support_reply = nullptr,
 
     .event_transport_consumer_identify = nullptr,
     .event_transport_consumer_identify_range = nullptr,
@@ -643,7 +637,6 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .datagram = nullptr,
     .datagram_ok_reply = nullptr,
     .datagram_rejected_reply = nullptr,
-    .load_interaction_rejected = nullptr,
 
     .stream_initiate_request = nullptr,
     .stream_initiate_reply = nullptr,
@@ -657,6 +650,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .transmit_openlcb_msg = &_CanTxStatemachine_transmit_openlcb_message,
     .lock_openlcb_buffer_fifo = &_ExampleDrivers_lock_can_buffer_fifo,
     .unlock_openlcb_buffer_fifo = &_ExampleDrivers_unlock_can_buffer_fifo,
+    .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     // use the internal default functions
     .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
@@ -671,6 +665,7 @@ interface_openlcb_node_t interface_openlcb_node = {
 void _reset_variables(void)
 {
 
+    load_interaction_rejected_called = false;
     reply_to_protocol_support_inquiry = false;
     transmit_openlcb_msg_called = false;
     try_free_current_and_pop_next_incoming_msg_called = false;
@@ -1120,6 +1115,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_TRUE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1135,6 +1131,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1150,6 +1147,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1165,6 +1163,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1180,6 +1179,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1195,6 +1195,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1210,6 +1211,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1225,6 +1227,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1240,6 +1243,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1255,6 +1259,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1270,6 +1275,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1285,6 +1291,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1300,6 +1307,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1315,6 +1323,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1330,6 +1339,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1345,6 +1355,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1360,6 +1371,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1375,6 +1387,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1390,6 +1403,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1405,6 +1419,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1420,6 +1435,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1435,6 +1451,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1450,6 +1467,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1465,6 +1483,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1480,6 +1499,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1495,6 +1515,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1510,6 +1531,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1525,6 +1547,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1540,6 +1563,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_TRUE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1555,6 +1579,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1570,6 +1595,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_TRUE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1585,6 +1611,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1600,6 +1627,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1615,6 +1643,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1630,6 +1659,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1645,6 +1675,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1660,6 +1691,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1675,6 +1707,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1690,6 +1723,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1705,6 +1739,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -1720,6 +1755,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, 0x00);
+    EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -2388,6 +2424,7 @@ TEST(OpenLcbMainStatemachine, handler_returns_openlcb_msg_to_transmit)
     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY, 0);
     OpenLcbBufferFifo_push(openlcb_msg1);
 
+    _reset_variables();
     reply_to_protocol_support_inquiry = true;
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, MTI_PROTOCOL_SUPPORT_INQUIRY);

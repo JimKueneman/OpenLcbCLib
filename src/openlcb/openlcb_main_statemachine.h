@@ -55,7 +55,6 @@ typedef struct {
     // MESSAGE NETWORK
     bool (*message_network_initialization_complete)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_initialization_complete_simple)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
-    bool (*message_network_protocol_support_inquiry)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_verify_node_id_addressed)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_verify_node_id_global)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_verified_node_id_addressed)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
@@ -63,8 +62,8 @@ typedef struct {
     bool (*message_network_terminate_due_to_error)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     
     // PROTOCOL SUPPORT
-    bool (*protocol_support_inquiry)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
-    bool (*protocol_support_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*message_network_protocol_support_inquiry)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*message_network_protocol_support_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     
     // EVENTS
     bool (*event_transport_consumer_identify)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);

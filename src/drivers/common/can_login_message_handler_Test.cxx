@@ -197,7 +197,6 @@ openlcb_node_t *_create_openlcb_node(node_id_t node_id, uint16_t producer_count,
     result->state.initalized = false;
     result->state.duplicate_id_detected = false;
     result->state.resend_datagram = false;
-    result->state.resend_optional_message = false;
     result->state.firmware_upgrade_active = false;
     result->id = node_id;
     result->alias = 0;
