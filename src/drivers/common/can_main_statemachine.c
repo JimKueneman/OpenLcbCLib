@@ -99,8 +99,6 @@ static void _handle_duplicate_alias_detected(openlcb_node_t *openlcb_node) {
     openlcb_node->state.openlcb_datagram_ack_sent = false;
     OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
     openlcb_node->last_received_datagram = NULL;
-    OpenLcbBufferStore_free_buffer(openlcb_node->last_received_optional_interaction);
-    openlcb_node->last_received_optional_interaction = NULL;
     openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias   
 
     _interface->unlock_can_buffer_fifo();

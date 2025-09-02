@@ -41,6 +41,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h> // printf
+#include <string.h>
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -51,164 +52,116 @@
 static interface_openlcb_protocol_snip_t *_interface;
 
 void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_openlcb_protocol_snip) {
-    
+
     _interface = (interface_openlcb_protocol_snip_t*) interface_openlcb_protocol_snip;
-    
-}
-
-static uint16_t _load_null(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index) {
-
-    *worker_msg->payload[payload_index] = 0x00;
-
-    return payload_index + 1;
 
 }
 
-uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+static void _process_snip_string(openlcb_msg_t* worker_msg, uint16_t *payload_offset, const char *str, uint16_t max_str_len, uint16_t *bytes_to_copy) {
 
-    if (requested_bytes == 0) {
+    bool result_is_null_terminated = false;
+    uint16_t string_length = strlen(str);
 
-        return 0;
+    if (string_length > max_str_len - 1) {
+
+        string_length = max_str_len - 1;
+        result_is_null_terminated = true;
+
+    } else {
+
+        result_is_null_terminated = string_length <= *bytes_to_copy;
 
     }
 
-    *worker_msg->payload[payload_index] = openlcb_node->parameters->snip.mfg_version;
+    if (result_is_null_terminated) {
 
-    return payload_index + 1;
+        memcpy(&worker_msg->payload[*payload_offset], str, string_length);
+        *payload_offset = *payload_offset + string_length;
+        *worker_msg->payload[*payload_offset] = 0x00;
+        (*payload_offset)++;
+        worker_msg->payload_count = worker_msg->payload_count + string_length + 1;
+
+    } else {
+
+        memcpy(&worker_msg->payload[*payload_offset], str, *bytes_to_copy);
+        *payload_offset = *payload_offset + *bytes_to_copy;
+        worker_msg->payload_count = worker_msg->payload_count + *bytes_to_copy;
+
+    }
 
 }
 
-uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+static uint8_t _process_snip_version(openlcb_msg_t* worker_msg, uint16_t *payload_offset, const uint8_t version) {
 
-    if (requested_bytes > LEN_SNIP_NAME - 1) { // need a null at the end
 
-        requested_bytes = LEN_SNIP_NAME - 1;
+    *worker_msg->payload[*payload_offset] = version;
+    worker_msg->payload_count++;
+    (*payload_offset)++;
 
-    }
+    return *payload_offset;
 
-    uint16_t string_index = 0;
-    while (openlcb_node->parameters->snip.name[string_index] != 0x00) {
-
-        if (string_index < requested_bytes) {
-
-            *worker_msg->payload[payload_index] = openlcb_node->parameters->snip.name[string_index];
-            payload_index++;
-            string_index++;
-
-        }
-
-    }
-
-    payload_index = _load_null(openlcb_node, worker_msg, payload_index);
-
-    return payload_index;
 
 }
 
-uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
 
-    if (requested_bytes > LEN_SNIP_MODEL - 1) { // need a null at the end
+    if (requested_bytes > 0) {
 
-        requested_bytes = LEN_SNIP_MODEL - 1;
-
-    }
-
-    uint16_t string_index = 0;
-    while (openlcb_node->parameters->snip.model[string_index] != 0x00) {
-
-        if (string_index < requested_bytes) {
-
-            *worker_msg->payload[payload_index] = openlcb_node->parameters->snip.model[string_index];
-            payload_index++;
-            string_index++;
-
-        }
+        return _process_snip_version(worker_msg, &payload_offset, openlcb_node->parameters->snip.mfg_version);
 
     }
 
-    payload_index = _load_null(openlcb_node, worker_msg, payload_index);
-
-    return payload_index;
+    return 0;
 
 }
 
-uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
 
-    assert(openlcb_node && worker_msg);
+    _process_snip_string(worker_msg, &payload_offset, openlcb_node->parameters->snip.name, LEN_SNIP_NAME_BUFFER, &requested_bytes);
 
-    if (requested_bytes > LEN_SNIP_HARDWARE_VERSION - 1) {// need a null at the end
-
-        requested_bytes = LEN_SNIP_HARDWARE_VERSION - 1;
-
-    }
-
-    uint16_t string_index = 0;
-    while (openlcb_node->parameters->snip.hardware_version[string_index] != 0x00) {
-
-        if (string_index < requested_bytes) {
-
-            *worker_msg->payload[payload_index] = openlcb_node->parameters->snip.hardware_version[string_index];
-            payload_index++;
-            string_index++;
-
-        }
-
-    }
-
-    payload_index = _load_null(openlcb_node, worker_msg, payload_index);
-
-    return payload_index;
+    return payload_offset;
 
 }
 
-uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
 
-    assert(openlcb_node && worker_msg);
+    _process_snip_string(worker_msg, &payload_offset, openlcb_node->parameters->snip.model, LEN_SNIP_MODEL_BUFFER, &requested_bytes);
 
-    if (requested_bytes > LEN_SNIP_SOFTWARE_VERSION - 1) { // need a null at the end
-
-        requested_bytes = LEN_SNIP_SOFTWARE_VERSION - 1;
-
-    }
-
-    uint16_t string_index = 0;
-    while (openlcb_node->parameters->snip.software_version[string_index] != 0x00) {
-
-        if (string_index < requested_bytes) {
-
-            *worker_msg->payload[payload_index] = openlcb_node->parameters->snip.software_version[string_index];
-            payload_index++;
-            string_index++;
-
-        }
-
-    }
-
-    payload_index = _load_null(openlcb_node, worker_msg, payload_index);
-
-    return payload_index;
+    return payload_offset;
 
 }
 
-uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
 
-    if (requested_bytes == 0) {
+    _process_snip_string(worker_msg, &payload_offset, openlcb_node->parameters->snip.hardware_version, LEN_SNIP_HARDWARE_VERSION_BUFFER, &requested_bytes);
 
-        return 0;
-
-    }
-
-    *worker_msg->payload[payload_index] = openlcb_node->parameters->snip.user_version;
-
-    return payload_index + 1;
+    return payload_offset;
 
 }
 
-uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
 
-    if (requested_bytes > LEN_SNIP_USER_NAME - 1)
-        requested_bytes = LEN_SNIP_USER_NAME - 1;
+    _process_snip_string(worker_msg, &payload_offset, openlcb_node->parameters->snip.software_version, LEN_SNIP_SOFTWARE_VERSION_BUFFER, &requested_bytes);
 
+    return payload_offset;
+
+}
+
+uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
+
+    if (requested_bytes > 0) {
+
+        return _process_snip_version(worker_msg, &payload_offset, openlcb_node->parameters->snip.user_version);
+
+    }
+
+    return 0;
+
+}
+
+uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
+
+    //  requested_bytes = _check_and_clip_requested_bytes(requested_bytes, LEN_SNIP_USER_NAME_BUFFER); // need a null at the end
 
     uint32_t data_address = 0; // User Name is always the first 63 Bytes in the Configuration Space
 
@@ -220,93 +173,105 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 
     data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
-    _interface->configuration_memory_read(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));
+    _interface->configuration_memory_read(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_offset]));
 
-    uint16_t original_payload_index = payload_index;
+    uint16_t original_payload_offset = payload_offset;
 
-    while ((*worker_msg->payload[payload_index] != 0x00)) {
+    while ((*worker_msg->payload[payload_offset] != 0x00)) {
 
-        if ((payload_index - original_payload_index) >= LEN_SNIP_USER_NAME) {
+        if ((payload_offset - original_payload_offset) >= LEN_SNIP_USER_NAME_BUFFER) {
 
-            *worker_msg->payload[payload_index] = 0x00;
+            *worker_msg->payload[payload_offset] = 0x00;
 
             break;
 
         }
 
-        payload_index++;
+        payload_offset++;
     }
 
-    return payload_index + 1; // add the null;
+    return payload_offset + 1; // add the null;
 
 }
 
-uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes) {
+uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes) {
 
-    if (requested_bytes > LEN_SNIP_USER_DESCRIPTION - 1) {
+    //  requested_bytes = _check_and_clip_requested_bytes(requested_bytes, LEN_SNIP_USER_DESCRIPTION_BUFFER); // need a null at the end
 
-        requested_bytes = LEN_SNIP_USER_DESCRIPTION - 1;
+    uint32_t data_address = LEN_SNIP_USER_NAME_BUFFER; // User Name is always the first 63 Bytes in the Configuration Space and Description next 64 bytes
+
+    if (openlcb_node->parameters->address_space_config_memory.low_address_valid) {
+
+        data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
 
     }
 
-    uint32_t data_address = LEN_SNIP_USER_NAME; // User Name is always the first 63 Bytes in the Configuration Space and Description next 64 bytes
-    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-        data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
 
     data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
-    _interface->configuration_memory_read(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_index]));
 
-    uint16_t original_payload_index = payload_index;
+    _interface->configuration_memory_read(data_address, requested_bytes, (configuration_memory_buffer_t*) (&worker_msg->payload[payload_offset]));
 
-    while ((*worker_msg->payload[payload_index] != 0x00)) {
+    uint16_t original_payload_offset = payload_offset;
 
-        if ((payload_index - original_payload_index) >= LEN_SNIP_USER_DESCRIPTION) {
+    while ((*worker_msg->payload[payload_offset] != 0x00)) {
 
-            *worker_msg->payload[payload_index] = 0x00;
+        if ((payload_offset - original_payload_offset) >= LEN_SNIP_USER_DESCRIPTION_BUFFER) {
+
+            *worker_msg->payload[payload_offset] = 0x00;
 
             break;
 
         }
 
-        payload_index++;
+        payload_offset++;
     }
 
-    return payload_index + 1; // add the null;
+    return payload_offset + 1; // add the null;
 
 }
 
 bool ProtocolSnip_handle_simple_node_info_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-    
-   
-    // maybe set the worker message to SNIP buffer type...
-    
+
+    uint16_t payload_offset = 0;
+
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_SIMPLE_NODE_INFO_REPLY, 0);
 
-    uint16_t payload_index = 0;
+    payload_offset = ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, payload_offset, 1);
+    payload_offset = ProtocolSnip_load_name(openlcb_node, worker_msg, payload_offset, LEN_SNIP_NAME_BUFFER - 1);
+    payload_offset = ProtocolSnip_load_model(openlcb_node, worker_msg, payload_offset, LEN_SNIP_MODEL_BUFFER - 1);
+    payload_offset = ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, payload_offset, LEN_SNIP_HARDWARE_VERSION_BUFFER - 1);
+    payload_offset = ProtocolSnip_load_software_version(openlcb_node, worker_msg, payload_offset, LEN_SNIP_SOFTWARE_VERSION_BUFFER - 1);
+    payload_offset = ProtocolSnip_load_user_version_id(openlcb_node, worker_msg, payload_offset, 1);
+    payload_offset = ProtocolSnip_load_user_name(openlcb_node, worker_msg, payload_offset, LEN_SNIP_USER_NAME_BUFFER - 1);
+    payload_offset = ProtocolSnip_load_user_description(openlcb_node, worker_msg, payload_offset, LEN_SNIP_USER_DESCRIPTION_BUFFER - 1);
 
-    payload_index = ProtocolSnip_load_manufacturer_version_id(openlcb_node, worker_msg, payload_index, 1);
+    worker_msg->payload_count = payload_offset;
 
-    payload_index = ProtocolSnip_load_name(openlcb_node, worker_msg, payload_index, LEN_SNIP_NAME);
-
-    payload_index = ProtocolSnip_load_model(openlcb_node, worker_msg, payload_index, LEN_SNIP_MODEL);
-
-    payload_index = ProtocolSnip_load_hardware_version(openlcb_node, worker_msg, payload_index, LEN_SNIP_HARDWARE_VERSION);
-
-    payload_index = ProtocolSnip_load_software_version(openlcb_node, worker_msg, payload_index, LEN_SNIP_SOFTWARE_VERSION);
-
-    payload_index = ProtocolSnip_load_user_version_id(openlcb_node, worker_msg, payload_index, 1);
-
-    payload_index = ProtocolSnip_load_user_name(openlcb_node, worker_msg, payload_index, LEN_SNIP_USER_NAME);
-
-    payload_index = ProtocolSnip_load_user_description(openlcb_node, worker_msg, payload_index, LEN_SNIP_USER_DESCRIPTION);
-
-    worker_msg->payload_count = payload_index;
-
-    // TODO SETUP FOR RESET IF OIR
-    
-    
     return true;
 
+}
+
+bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg) {
+
+    if (snip_reply_msg->payload_count > LEN_MESSAGE_BYTES_SNIP) { // serious issue if this occurs
+
+        return false;
+
+    }
+
+    if (snip_reply_msg->mti != MTI_SIMPLE_NODE_INFO_REPLY) {
+
+        return false;
+    }
+
+    uint16_t null_count = OpenLcbUtilities_count_nulls_in_openlcb_payload(snip_reply_msg);
+
+    if (null_count != 6) {
+
+        return false;
+    }
+
+    return true;
 }
 

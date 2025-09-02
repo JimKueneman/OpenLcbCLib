@@ -505,8 +505,11 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t * openlcb_msg) {
 
     return ( (openlcb_node->state.initalized) &&
-            (((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
-            (((openlcb_node->alias == openlcb_msg->dest_alias) || (openlcb_node->id == openlcb_msg->dest_id)) && ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT)))
+            (
+            ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
+            (((openlcb_node->alias == openlcb_msg->dest_alias) || (openlcb_node->id == openlcb_msg->dest_id)) && ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT)) ||
+            (openlcb_msg->mti == MTI_VERIFY_NODE_ID_GLOBAL)  // special case, the handler will decide if it should reply or not based on if there is a node id in the payload or not
+            )
             );
 
 }

@@ -68,7 +68,6 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->index = 0;
 
     openlcb_node->last_received_datagram = NULL;
-    openlcb_node->last_received_optional_interaction = NULL;
 
     openlcb_node->consumers.count = 0;
     for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {

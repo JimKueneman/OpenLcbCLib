@@ -64,6 +64,7 @@ typedef struct {
     // PROTOCOL SUPPORT
     bool (*message_network_protocol_support_inquiry)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*message_network_protocol_support_reply)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+   
     
     // EVENTS
     bool (*event_transport_consumer_identify)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);

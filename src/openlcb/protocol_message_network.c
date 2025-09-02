@@ -64,6 +64,7 @@ static bool _load_duplicate_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t*
 
     OpenLcbUtilities_load_openlcb_message(outgoing_msg, openlcb_node->alias, openlcb_node->id, incoming_msg->source_alias, incoming_msg->source_id, MTI_PC_EVENT_REPORT, 8);
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(outgoing_msg, EVENT_ID_DUPLICATE_NODE_DETECTED);
+    openlcb_node->state.duplicate_id_detected = true;
 
     return true;
 
@@ -88,35 +89,25 @@ bool ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* open
 
     uint64_t temp = openlcb_node->parameters->protocol_support;
 
-    if ((openlcb_node->state.firmware_upgrade_active) && (openlcb_node->parameters->address_space_firmware.present)) {
+    if (openlcb_node->state.firmware_upgrade_active) {
 
         temp = (temp & ~((uint64_t) PSI_FIRMWARE_UPGRADE)) | (uint64_t) PSI_FIRMWARE_UPGRADE_ACTIVE;
 
     }
 
-    if (temp > 0) {
-
-        while ((temp & 0xFF00000000000000) == 0) {
-
-            temp = temp << 8;
-
-        }
-
-    }
-
-    *outgoing_msg->payload[0] = (uint8_t) (temp >> 56) & 0xFF;
-    *outgoing_msg->payload[1] = (uint8_t) (temp >> 48) & 0xFF;
-    *outgoing_msg->payload[2] = (uint8_t) (temp >> 40) & 0xFF;
-    *outgoing_msg->payload[3] = (uint8_t) (temp >> 32) & 0xFF;
-    *outgoing_msg->payload[4] = (uint8_t) (temp >> 24) & 0xFF;
-    *outgoing_msg->payload[5] = (uint8_t) (temp >> 16) & 0xFF;
+    *outgoing_msg->payload[0] = (uint8_t) (temp >> 16) & 0xFF;
+    *outgoing_msg->payload[1] = (uint8_t) (temp >> 8) & 0xFF;
+    *outgoing_msg->payload[2] = (uint8_t) (temp >> 0) & 0xFF;
+    *outgoing_msg->payload[3] = 0;
+    *outgoing_msg->payload[4] = 0;
+    *outgoing_msg->payload[5] = 0;
 
     return true;
 
 }
 
-bool ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg)  {
-    
+bool ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
+
     return true;
 }
 
@@ -163,20 +154,3 @@ bool ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node
     return false;
 }
 
-bool ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg) {
-
-    uint16_t should_resend = OpenLcbUtilities_extract_word_from_openlcb_payload(incoming_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY;
-
-    if (should_resend && openlcb_node->last_received_optional_interaction) {
-
-        if (OpenLcbUtilities_extract_word_from_openlcb_payload(incoming_msg, 2) == openlcb_node->last_received_optional_interaction->mti) {
-           
-            return false;  // logic seems backwards here but was done to stay consistent with the other handlers
-
-        }
-
-    }
-  
-    return true; 
-
-}

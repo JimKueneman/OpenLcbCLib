@@ -110,16 +110,16 @@ extern "C" {
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
 
-    // Per the SNIP specification
-#define LEN_SNIP_NAME 41
-#define LEN_SNIP_MODEL 41
-#define LEN_SNIP_HARDWARE_VERSION 21
-#define LEN_SNIP_SOFTWARE_VERSION 21
+    // Per the SNIP specification, this is the number of bytes allocated _including_ the null so the string is limited to one less
+#define LEN_SNIP_NAME_BUFFER 41
+#define LEN_SNIP_MODEL_BUFFER 41
+#define LEN_SNIP_HARDWARE_VERSION_BUFFER 21
+#define LEN_SNIP_SOFTWARE_VERSION_BUFFER 21
 
-#define LEN_SNIP_USER_NAME 63
-#define LEN_SNIP_USER_DESCRIPTION 64
+#define LEN_SNIP_USER_NAME_BUFFER 63
+#define LEN_SNIP_USER_DESCRIPTION_BUFFER 64
 
-#define LEN_SNIP_USER_DATA (LEN_SNIP_USER_NAME + LEN_SNIP_USER_DESCRIPTION)
+#define LEN_SNIP_USER_DATA (LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER)
 
 #define LEN_SNIP_VERSION 1
 #define LEN_SNIP_USER_VERSION 1
@@ -203,13 +203,12 @@ extern "C" {
     } message_buffer_t;
 
     // Defines a node for snip
-
     typedef struct {
         uint8_t mfg_version;
-        char name[LEN_SNIP_NAME];
-        char model[LEN_SNIP_MODEL];
-        char hardware_version[LEN_SNIP_HARDWARE_VERSION];
-        char software_version[LEN_SNIP_SOFTWARE_VERSION];
+        char name[LEN_SNIP_NAME_BUFFER]; // really wanted checking here but it seem C compiler initializer work a bit differently... some include the null some don't so we can't make this fool proof
+        char model[LEN_SNIP_MODEL_BUFFER];
+        char hardware_version[LEN_SNIP_HARDWARE_VERSION_BUFFER];
+        char software_version[LEN_SNIP_SOFTWARE_VERSION_BUFFER];
         uint8_t user_version;
 
     } user_snip_struct_t;
@@ -308,7 +307,6 @@ extern "C" {
         uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
         uint64_t lock_node; // node that has this node locked
         openlcb_msg_t *last_received_datagram;
-        openlcb_msg_t *last_received_optional_interaction;
         uint8_t index; // what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
     } openlcb_node_t;
 

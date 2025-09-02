@@ -65,8 +65,6 @@ extern "C" {
 
     extern bool ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
 
-    extern bool ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* incoming_msg, openlcb_msg_t* outgoing_msg);
-
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

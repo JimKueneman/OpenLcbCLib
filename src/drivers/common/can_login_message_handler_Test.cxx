@@ -235,7 +235,6 @@ openlcb_node_t *_create_openlcb_node(node_id_t node_id, uint16_t producer_count,
     result->timerticks = 0;
     result->lock_node = 0;
     result->last_received_datagram = nullptr;
-    result->last_received_optional_interaction = nullptr;
 
     node_count++;
     return result;
