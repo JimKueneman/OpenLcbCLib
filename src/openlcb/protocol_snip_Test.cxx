@@ -1,4 +1,5 @@
 #include "test/main_Test.hxx"
+#include "string.h"
 
 #include "protocol_snip.h"
 
@@ -16,6 +17,9 @@
 #define DEST_ID 0x060504030201
 #define SNIP_NAME_FULL "0123456789012345678901234567890123456789"
 #define SNIP_MODEL "Test Model J"
+
+#define CONFIG_MEM_START_ADDRESS 0x100
+#define CONFIG_MEM_NODE_ADDRESS_ALLOCATION 0x200
 
 bool lock_node_list_called = false;
 bool unlock_node_list_called = false;
@@ -76,9 +80,87 @@ node_parameters_t _node_parameters_main_node = {
     // Space 0xFD
     .address_space_config_memory.read_only = 0,
     .address_space_config_memory.present = 0,
-    .address_space_config_memory.low_address_valid = 0,   // assume the low address starts at 0
-    .address_space_config_memory.low_address = 0,         // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.low_address_valid = 0,                                // assume the low address starts at 0
+    .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
+    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.description = "Configuration memory storage",
+
+    // Space 0xEF
+    .address_space_firmware.read_only = 0,
+    .address_space_firmware.present = 1,
+    .address_space_firmware.low_address_valid = 0,   // assume the low address starts at 0
+    .address_space_firmware.low_address = 0,         // ignored if low_address_valid is false
+    .address_space_firmware.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.description = "Firmware Bootloader",
+
+    .cdi =
+        {
+            // </cdi>
+        },
+
+};
+
+node_parameters_t _node_parameters_main_node_using_low_address = {
+
+    .consumer_count_autocreate = 0,
+    .producer_count_autocreate = 0,
+
+    .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
+    .snip.name = SNIP_NAME_FULL,
+    .snip.model = SNIP_MODEL,
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_FIRMWARE_UPGRADE |
+                         PSI_MEMORY_CONFIGURATION |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_ABBREVIATED_DEFAULT_CDI |
+                         PSI_SIMPLE_NODE_INFORMATION |
+                         PSI_CONFIGURATION_DESCRIPTION_INFO),
+
+    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+
+    .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
+    .configuration_options.read_from_user_space_0xfb_supported = 1,
+    .configuration_options.stream_read_write_supported = 0,
+    .configuration_options.unaligned_reads_supported = 1,
+    .configuration_options.unaligned_writes_supported = 1,
+    .configuration_options.write_to_user_space_0xfb_supported = 1,
+    .configuration_options.write_under_mask_supported = 1,
+    .configuration_options.description = "These are options that defined the memory space capabilities",
+
+    // Space 0xFF
+    // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so
+    //    make sure the CDI maps these 2 items to the first 128 bytes as well
+    .address_space_configuration_definition.read_only = 1,
+    .address_space_configuration_definition.present = 0,
+    .address_space_configuration_definition.low_address_valid = 0,   // assume the low address starts at 0
+    .address_space_configuration_definition.low_address = 0,         // ignored if low_address_valid is false
+    .address_space_configuration_definition.highest_address = 0x200, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
+    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.description = "Configuration definition info",
+
+    // Space 0xFE
+    .address_space_all.read_only = 1,
+    .address_space_all.present = 0,
+    .address_space_all.low_address_valid = 0, // assume the low address starts at 0
+    .address_space_all.low_address = 0,       // ignored if low_address_valid is false
+    .address_space_all.highest_address = 0,
+    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.description = "All memory Info",
+
+    // Space 0xFD
+    .address_space_config_memory.read_only = 0,
+    .address_space_config_memory.present = 1,
+    .address_space_config_memory.low_address_valid = 1,                                                           // assume the low address starts at 0
+    .address_space_config_memory.low_address = CONFIG_MEM_START_ADDRESS,                                          // ignored if low_address_valid is false
+    .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION + CONFIG_MEM_START_ADDRESS, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -115,17 +197,45 @@ interface_openlcb_node_t interface_openlcb_node = {
     .lock_node_list = &lock_node_list,
     .unlock_node_list = &unlock_node_list};
 
-uint16_t _configuration_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t config_read_type = 0;
+char simple_config_mem_string[] = "HiX";
+char max_user_name_config_mem_string[] = "01234567890123456789012345678901234567890123456789012345678901";         // 63 - 1 for null
+char max_user_description_config_mem_string[] = "012345678901234567890123456789012345678901234567890123456789012"; // 64 - 1 for null
+
+uint32_t config_read_address = 0;
+
+uint16_t
+_configuration_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
-    //  fprintf(stderr, "_configuration_memory_read: address (what we put in the array) = %08X, count = %d, buffer = %p\n", address, count, buffer);
+    config_read_address = address;
 
-    (*buffer)[0] = 'H';
-    (*buffer)[1] = 'i';
-    (*buffer)[2] = 'X';
-    (*buffer)[3] = 0x00;
+    fprintf(stderr, "config mem read \n\n");
+    fprintf(stderr, "config_read_type = %d \n\n", config_read_type);
 
-    return 3;
+    switch (config_read_type)
+    {
+
+    case 0:
+
+        memcpy((char *)buffer, &simple_config_mem_string[0], strlen(&simple_config_mem_string[0]) + 1);
+
+        return strlen(&simple_config_mem_string[0]);
+
+    case 1:
+
+        memcpy((char *)buffer, &max_user_name_config_mem_string[0], strlen(&max_user_name_config_mem_string[0]) + 1);
+
+        return strlen(&max_user_name_config_mem_string[0]);
+
+    case 2:
+
+        memcpy((char *)buffer, &max_user_description_config_mem_string[0], strlen(&max_user_description_config_mem_string[0]) + 1);
+
+        return strlen(&max_user_description_config_mem_string[0]);
+    }
+
+    return 0;
 }
 
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
@@ -137,6 +247,8 @@ void _reset_variables(void)
 
     lock_node_list_called = false;
     unlock_node_list_called = false;
+    config_read_address = 0;
+    config_read_type = 0;
 }
 
 void _global_initialize(void)
@@ -454,5 +566,136 @@ TEST(ProtocolSnip, load_versions_with_0_request_bytes)
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_version_id(node1, outgoing_msg, 0, 0), 0);
         EXPECT_EQ(outgoing_msg->payload_count, 0);
+    }
+}
+
+TEST(ProtocolSnip, load_user_name)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    openlcb_node_t *node2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node_using_low_address);
+    node1->alias = DEST_ALIAS + 1;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        // ********************************************************************
+        // First Node using simple 3 letter return of config mem
+        // ********************************************************************
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_name(node1, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), 3 + 1); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, 3 + 1);
+        EXPECT_EQ(config_read_address, 0); // includes null
+        // ********************************************************************
+
+        // ********************************************************************
+        // First Node using the optional beginning address for the configuration memory
+        // ********************************************************************
+        _reset_variables();
+        config_read_type = 1; // full length name
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_name(node1, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), LEN_SNIP_USER_NAME_BUFFER); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_NAME_BUFFER);
+        EXPECT_EQ(*outgoing_msg->payload[LEN_SNIP_USER_NAME_BUFFER - 1], 0x00); // includes null
+        EXPECT_EQ(config_read_address, 0x00);                                   // includes null
+        // ********************************************************************
+
+        // ********************************************************************
+        // Second Node using the optional beginning address for the configuration memory
+        // ********************************************************************
+        _reset_variables();
+        config_read_type = 1; // full length name
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_name(node2, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), LEN_SNIP_USER_NAME_BUFFER); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_NAME_BUFFER);
+        EXPECT_EQ(*outgoing_msg->payload[LEN_SNIP_USER_NAME_BUFFER - 1], 0x00);                        // includes null
+        EXPECT_EQ(config_read_address, CONFIG_MEM_START_ADDRESS + CONFIG_MEM_NODE_ADDRESS_ALLOCATION); // includes null
+        // ********************************************************************
+
+        // ********************************************************************
+        // First Node using the optional beginning address for the configuration memory but resulting string is too long (description string)
+        // ********************************************************************
+        _reset_variables();
+        config_read_type = 2; // over sized length name
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_name(node1, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), LEN_SNIP_USER_NAME_BUFFER); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_NAME_BUFFER);
+        EXPECT_EQ(*outgoing_msg->payload[LEN_SNIP_USER_NAME_BUFFER - 1], 0x00); // includes null
+        EXPECT_EQ(config_read_address, 0x00);                                   // includes null
+        // ********************************************************************
+    }
+}
+
+TEST(ProtocolSnip, load_user_description)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    openlcb_node_t *node2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node_using_low_address);
+    node1->alias = DEST_ALIAS + 1;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        // ********************************************************************
+        // First Node using simple 3 letter return of config mem
+        // ********************************************************************
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_description(node1, outgoing_msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER), 3 + 1); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, 3 + 1);
+        EXPECT_EQ(config_read_address, LEN_SNIP_USER_NAME_BUFFER); // includes null
+        // ********************************************************************
+
+        // ********************************************************************
+        // First Node using the optional beginning address for the configuration memory
+        // ********************************************************************
+        _reset_variables();
+        config_read_type = 2; // full length name
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_description(node1, outgoing_msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER), LEN_SNIP_USER_DESCRIPTION_BUFFER); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_DESCRIPTION_BUFFER);
+        EXPECT_EQ(*outgoing_msg->payload[LEN_SNIP_USER_DESCRIPTION_BUFFER - 1], 0x00); // includes null
+        EXPECT_EQ(config_read_address, LEN_SNIP_USER_NAME_BUFFER);                     // includes null
+        // ********************************************************************
+
+        // ********************************************************************
+        // Second Node using the optional beginning address for the configuration memory
+        // ********************************************************************
+        _reset_variables();
+        config_read_type = 2; // full length name
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        EXPECT_EQ(ProtocolSnip_load_user_description(node2, outgoing_msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER), LEN_SNIP_USER_DESCRIPTION_BUFFER); // includes null
+        EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_DESCRIPTION_BUFFER);
+        EXPECT_EQ(*outgoing_msg->payload[LEN_SNIP_USER_DESCRIPTION_BUFFER - 1], 0x00);                                             // includes null
+        EXPECT_EQ(config_read_address, LEN_SNIP_USER_NAME_BUFFER + CONFIG_MEM_START_ADDRESS + CONFIG_MEM_NODE_ADDRESS_ALLOCATION); // includes null
+        // ********************************************************************
     }
 }
