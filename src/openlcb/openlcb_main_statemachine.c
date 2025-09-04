@@ -130,8 +130,8 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
             }
 
             return true;
-            
-            case MTI_PROTOCOL_SUPPORT_REPLY:
+
+        case MTI_PROTOCOL_SUPPORT_REPLY:
 
             if (_interface->message_network_protocol_support_reply) {
 
@@ -203,11 +203,11 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             return true;
 
-        case MTI_CONSUMER_IDENTIFY_RANGE:
+        case MTI_CONSUMER_RANGE_IDENTIFIED:
 
-            if (_interface->event_transport_consumer_identify_range) {
+            if (_interface->event_transport_consumer_range_identified) {
 
-                return _interface->event_transport_consumer_identify_range(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_consumer_range_identified(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -263,11 +263,11 @@ bool OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t* openlcb_n
 
             return true;
 
-        case MTI_PRODUCER_IDENTIFY_RANGE:
+        case MTI_PRODUCER_RANGE_IDENTIFIED:
 
-            if (_interface->event_transport_producer_identify_range) {
+            if (_interface->event_transport_producer_range_identified) {
 
-                return _interface->event_transport_producer_identify_range(openlcb_node, incoming_msg, outgoing_msg);
+                return _interface->event_transport_producer_range_identified(openlcb_node, incoming_msg, outgoing_msg);
 
             }
 
@@ -508,7 +508,7 @@ bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node,
             (
             ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
             (((openlcb_node->alias == openlcb_msg->dest_alias) || (openlcb_node->id == openlcb_msg->dest_id)) && ((openlcb_msg->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT)) ||
-            (openlcb_msg->mti == MTI_VERIFY_NODE_ID_GLOBAL)  // special case, the handler will decide if it should reply or not based on if there is a node id in the payload or not
+            (openlcb_msg->mti == MTI_VERIFY_NODE_ID_GLOBAL) // special case, the handler will decide if it should reply or not based on if there is a node id in the payload or not
             )
             );
 
@@ -522,6 +522,17 @@ openlcb_msg_t * OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_m
     _interface->unlock_openlcb_buffer_fifo();
 
     return result;
+
+}
+
+static void _clear_outgoing_openlcb_msg(openlcb_msg_t *openlcb_msg) {
+
+    openlcb_msg->mti = 0x00;
+    openlcb_msg->payload_count = 0x00;
+    openlcb_msg->dest_alias = 0x00;
+    openlcb_msg->source_alias = 0x00;
+    openlcb_msg->dest_id = 0x00;
+    openlcb_msg->source_id = 0x00;
 
 }
 
@@ -577,6 +588,7 @@ void OpenLcbMainStatemachine_run(void) {
 
             if (_interface->does_node_process_msg(_active_node, _active_incoming_msg)) {
 
+                _clear_outgoing_openlcb_msg(&_outgoing_msg);
                 _reprocess_active_node = !_interface->process_main_statemachine(_active_node, _active_incoming_msg, &_outgoing_msg);
 
             }
@@ -596,6 +608,7 @@ void OpenLcbMainStatemachine_run(void) {
 
             if (_interface->does_node_process_msg(_active_node, _active_incoming_msg)) {
 
+                _clear_outgoing_openlcb_msg(&_outgoing_msg);
                 _reprocess_active_node = !_interface->process_main_statemachine(_active_node, _active_incoming_msg, &_outgoing_msg);
 
             }

@@ -68,13 +68,13 @@ typedef struct {
     
     // EVENTS
     bool (*event_transport_consumer_identify)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
-    bool (*event_transport_consumer_identify_range)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*event_transport_consumer_range_identified)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_consumer_identified_unknown)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_consumer_identified_set)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_consumer_identified_clear)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_consumer_identified_reserved)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_producer_identify)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
-    bool (*event_transport_producer_identify_range)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
+    bool (*event_transport_producer_range_identified)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_producer_identified_unknown)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_producer_identified_set)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);
     bool (*event_transport_producer_identified_clear)(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg);

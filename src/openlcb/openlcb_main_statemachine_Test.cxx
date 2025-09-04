@@ -198,7 +198,7 @@ bool _ProtocolEventTransport_handle_consumer_identify(openlcb_node_t *openlcb_no
     return true;
 }
 
-bool _ProtocolEventTransport_handle_consumer_identify_range(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_consumer_range_identified(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
     handler_mti = incoming_msg->mti;
@@ -243,7 +243,7 @@ bool _ProtocolEventTransport_handle_producer_identify(openlcb_node_t *openlcb_no
     return true;
 }
 
-bool _ProtocolEventTransport_handle_producer_identify_range(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+bool _ProtocolEventTransport_handle_producer_range_identified(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
 {
 
     handler_mti = incoming_msg->mti;
@@ -547,13 +547,13 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .message_network_protocol_support_reply = &_ProtocolMessageNetwork_handle_protocol_support_reply,
 
     .event_transport_consumer_identify = &_ProtocolEventTransport_handle_consumer_identify,
-    .event_transport_consumer_identify_range = &_ProtocolEventTransport_handle_consumer_identify_range,
+    .event_transport_consumer_range_identified = &_ProtocolEventTransport_handle_consumer_range_identified,
     .event_transport_consumer_identified_unknown = &_ProtocolEventTransport_handle_consumer_identified_unknown,
     .event_transport_consumer_identified_set = &_ProtocolEventTransport_handle_consumer_identified_set,
     .event_transport_consumer_identified_clear = &_ProtocolEventTransport_handle_consumer_identified_clear,
     .event_transport_consumer_identified_reserved = &_ProtocolEventTransport_handle_consumer_identified_reserved,
     .event_transport_producer_identify = &_ProtocolEventTransport_handle_producer_identify,
-    .event_transport_producer_identify_range = &_ProtocolEventTransport_handle_producer_identify_range,
+    .event_transport_producer_range_identified = &_ProtocolEventTransport_handle_producer_range_identified,
     .event_transport_producer_identified_unknown = &_ProtocolEventTransport_handle_producer_identified_unknown,
     .event_transport_producer_identified_set = &_ProtocolEventTransport_handle_producer_identified_set,
     .event_transport_producer_identified_clear = &_ProtocolEventTransport_handle_producer_identified_clear,
@@ -611,13 +611,13 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .message_network_protocol_support_reply = nullptr,
 
     .event_transport_consumer_identify = nullptr,
-    .event_transport_consumer_identify_range = nullptr,
+    .event_transport_consumer_range_identified = nullptr,
     .event_transport_consumer_identified_unknown = nullptr,
     .event_transport_consumer_identified_set = nullptr,
     .event_transport_consumer_identified_clear = nullptr,
     .event_transport_consumer_identified_reserved = nullptr,
     .event_transport_producer_identify = nullptr,
-    .event_transport_producer_identify_range = nullptr,
+    .event_transport_producer_range_identified = nullptr,
     .event_transport_producer_identified_unknown = nullptr,
     .event_transport_producer_identified_set = nullptr,
     .event_transport_producer_identified_clear = nullptr,
@@ -1297,11 +1297,11 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     // ************************************************************************
 
     // ************************************************************************
-    // MTI_CONSUMER_IDENTIFY_RANGE
+    // MTI_CONSUMER_RANGE_IDENTIFIED
     // ************************************************************************
     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg1, nullptr);
-    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY_RANGE, 0);
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED, 0);
     OpenLcbBufferFifo_push(openlcb_msg1);
 
     _reset_variables();
@@ -1313,7 +1313,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     // ************************************************************************
 
     // ************************************************************************
-    // MTI_CONSUMER_IDENTIFY_RANGE
+    // MTI_CONSUMER_IDENTIFIED_UNKNOWN
     // ************************************************************************
     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg1, nullptr);
@@ -1393,11 +1393,11 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     // ************************************************************************
 
     // ************************************************************************
-    // MTI_PRODUCER_IDENTIFY_RANGE
+    // MTI_PRODUCER_RANGE_IDENTIFIED
     // ************************************************************************
     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg1, nullptr);
-    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFY_RANGE, 0);
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED, 0);
     OpenLcbBufferFifo_push(openlcb_msg1);
 
     _reset_variables();
@@ -1952,16 +1952,16 @@ TEST(OpenLcbMainStatemachine, callback_handlers)
     // ************************************************************************
 
     // ************************************************************************
-    // MTI_CONSUMER_IDENTIFY_RANGE
+    // MTI_CONSUMER_RANGE_IDENTIFIED
     // ************************************************************************
     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg1, nullptr);
-    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY_RANGE, 0);
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED, 0);
     OpenLcbBufferFifo_push(openlcb_msg1);
 
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_EQ(handler_mti, MTI_CONSUMER_IDENTIFY_RANGE);
+    EXPECT_EQ(handler_mti, MTI_CONSUMER_RANGE_IDENTIFIED);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
@@ -2042,16 +2042,16 @@ TEST(OpenLcbMainStatemachine, callback_handlers)
     // ************************************************************************
 
     // ************************************************************************
-    // MTI_PRODUCER_IDENTIFY_RANGE
+    // MTI_PRODUCER_RANGE_IDENTIFIED
     // ************************************************************************
     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     EXPECT_NE(openlcb_msg1, nullptr);
-    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFY_RANGE, 0);
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED, 0);
     OpenLcbBufferFifo_push(openlcb_msg1);
 
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_EQ(handler_mti, MTI_PRODUCER_IDENTIFY_RANGE);
+    EXPECT_EQ(handler_mti, MTI_PRODUCER_RANGE_IDENTIFIED);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     // ************************************************************************
