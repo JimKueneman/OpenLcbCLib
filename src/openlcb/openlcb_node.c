@@ -86,15 +86,15 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
 
-    for (int i = 0; i < sizeof (openlcb_node->producers.event_state_array); i++) {// Unknown State
+    for (int i = 0; i < sizeof (openlcb_node->producers.event_status_array); i++) {// Unknown State
 
-        openlcb_node->producers.event_state_array[i] = 0;
+        openlcb_node->producers.event_status_array[i] = 0;
 
     }
 
-    for (int i = 0; i < sizeof (openlcb_node->consumers.event_state_array); i++) {
+    for (int i = 0; i < sizeof (openlcb_node->consumers.event_status_array); i++) {
 
-        openlcb_node->consumers.event_state_array[i] = 0;
+        openlcb_node->consumers.event_status_array[i] = 0;
 
     }
 

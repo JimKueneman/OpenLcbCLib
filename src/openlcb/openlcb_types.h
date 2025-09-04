@@ -148,9 +148,9 @@ extern "C" {
     } payload_type_enum_t;
 
     typedef enum {
-        EVENT_STATE_UNKNOWN,
-        EVENT_STATE_SET,
-        EVENT_STATE_CLEAR
+        EVENT_STATUS_UNKNOWN,
+        EVENT_STATUS_SET,
+        EVENT_STATUS_CLEAR
 
     } event_enum_state_t;
 
@@ -272,7 +272,7 @@ extern "C" {
         uint16_t count;
         event_id_t list[USER_DEFINED_CONSUMER_COUNT];
         event_id_enum_t enumerator;
-        uint8_t event_state_array[USER_DEFINED_CONSUMER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
+        uint8_t event_status_array[USER_DEFINED_CONSUMER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
 
     } event_id_consumer_list_t;
 
@@ -280,7 +280,7 @@ extern "C" {
         uint16_t count;
         event_id_t list[USER_DEFINED_PRODUCER_COUNT];
         event_id_enum_t enumerator;
-        uint8_t event_state_array[USER_DEFINED_PRODUCER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
+        uint8_t event_status_array[USER_DEFINED_PRODUCER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
 
     } event_id_producer_list_t;
 

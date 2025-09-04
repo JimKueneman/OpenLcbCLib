@@ -53,23 +53,23 @@ void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_tr
 
 }
 
-static void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event_enum_state_t new_state) {
+static void _encode_event_status(uint8_t* state_byte, uint8_t event_offset, event_enum_state_t new_status) {
 
     uint8_t mask;
 
-    switch (new_state) {
+    switch (new_status) {
 
-        case EVENT_STATE_UNKNOWN:
+        case EVENT_STATUS_UNKNOWN:
 
             mask = 0b11; // Set bit is what will be cleared gives 0b00)
             break;
 
-        case EVENT_STATE_SET: // Set bit is what will be cleared gives 0b01)
+        case EVENT_STATUS_SET: // Set bit is what will be cleared gives 0b01)
 
             mask = 0b10;
             break;
 
-        case EVENT_STATE_CLEAR: // Set bit is what will be cleared gives 0b10)
+        case EVENT_STATUS_CLEAR: // Set bit is what will be cleared gives 0b10)
 
             mask = 0b01;
             break;
@@ -86,21 +86,21 @@ static void _encode_event_state(uint8_t* state_byte, uint8_t event_offset, event
 
 }
 
-void ProtocolEventTransport_encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+void ProtocolEventTransport_encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_status) {
 
-    uint8_t* event_byte_ptr = &openlcb_node->consumers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
+    uint8_t* event_byte_ptr = &openlcb_node->consumers.event_status_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
 
-    _encode_event_state(event_byte_ptr, event_offset, new_state);
+    _encode_event_status(event_byte_ptr, event_offset, new_status);
 
 }
 
-void ProtocolEventTransport_encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state) {
+void ProtocolEventTransport_encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_status) {
 
-    uint8_t* event_byte_ptr = &openlcb_node->producers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
+    uint8_t* event_byte_ptr = &openlcb_node->producers.event_status_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
 
-    _encode_event_state(event_byte_ptr, event_offset, new_state);
+    _encode_event_status(event_byte_ptr, event_offset, new_status);
 
 }
 
@@ -111,19 +111,19 @@ static event_enum_state_t _decode_event_state(uint8_t state_byte, uint8_t event_
 
         case 0x00:
 
-            return EVENT_STATE_UNKNOWN;
+            return EVENT_STATUS_UNKNOWN;
 
         case 0x01:
 
-            return EVENT_STATE_SET;
+            return EVENT_STATUS_SET;
 
         case 0x02:
 
-            return EVENT_STATE_CLEAR;
+            return EVENT_STATUS_CLEAR;
 
         default:
 
-            return EVENT_STATE_UNKNOWN;
+            return EVENT_STATUS_UNKNOWN;
 
     }
 
@@ -146,7 +146,7 @@ static void _identify_producers(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node, openlcb_node->producers.enumerator.enum_index), 8);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node, openlcb_node->producers.enumerator.enum_index), 8);
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[openlcb_node->producers.enumerator.enum_index]);
     openlcb_node->producers.enumerator.enum_index = openlcb_node->producers.enumerator.enum_index + 1;
 
@@ -169,28 +169,28 @@ static void _identify_consumers(openlcb_node_t* openlcb_node, openlcb_msg_t* ope
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node, openlcb_node->consumers.enumerator.enum_index), 8);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_consumer_event_status_mti(openlcb_node, openlcb_node->consumers.enumerator.enum_index), 8);
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[openlcb_node->consumers.enumerator.enum_index]);
     openlcb_node->consumers.enumerator.enum_index = openlcb_node->consumers.enumerator.enum_index + 1;
 
 }
 
-uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t* openlcb_node, uint16_t event_index) {
+uint16_t ProtocolEventTransport_extract_consumer_event_status_mti(openlcb_node_t* openlcb_node, uint16_t event_index) {
 
-    uint8_t event_state = openlcb_node->consumers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE];
+    uint8_t event_state = openlcb_node->consumers.event_status_array[event_index / EVENTS_ENCODED_IN_BYTE];
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE;
 
     switch (_decode_event_state(event_state, event_offset)) {
 
-        case EVENT_STATE_UNKNOWN:
+        case EVENT_STATUS_UNKNOWN:
 
             return MTI_CONSUMER_IDENTIFIED_UNKNOWN;
 
-        case EVENT_STATE_SET:
+        case EVENT_STATUS_SET:
 
             return MTI_CONSUMER_IDENTIFIED_SET;
 
-        case EVENT_STATE_CLEAR:
+        case EVENT_STATUS_CLEAR:
 
             return MTI_CONSUMER_IDENTIFIED_CLEAR;
 
@@ -202,9 +202,9 @@ uint16_t ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node_t*
 
 }
 
-uint16_t ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node_t* openlcb_node, uint16_t event_index) {
+uint16_t ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node_t* openlcb_node, uint16_t event_index) {
 
-    uint8_t event_state = openlcb_node->producers.event_state_array[event_index / EVENTS_ENCODED_IN_BYTE];
+    uint8_t event_state = openlcb_node->producers.event_status_array[event_index / EVENTS_ENCODED_IN_BYTE];
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE;
 
     switch (_decode_event_state(event_state, event_offset)) {
@@ -240,7 +240,7 @@ bool ProtocolEventTransport_handle_consumer_identify(openlcb_node_t * openlcb_no
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_consumer_event_state_mti(openlcb_node, event_index), 8);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_consumer_event_status_mti(openlcb_node, event_index), 8);
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->consumers.list[event_index]);
 
     return true; //  done 
@@ -319,7 +319,7 @@ bool ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_producer_event_state_mti(openlcb_node, event_index), 8);
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node, event_index), 8);
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(worker_msg, openlcb_node->producers.list[event_index]);
 
     return true; //  done 
