@@ -1550,6 +1550,7 @@ TEST(OpenLcbMainStatemachine, null_handlers)
     EXPECT_FALSE(load_interaction_rejected_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
+
     // ************************************************************************
 
     // ************************************************************************

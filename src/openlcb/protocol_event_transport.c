@@ -41,6 +41,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h> // printf
+#include <string.h>
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -86,7 +87,7 @@ static void _encode_event_status(uint8_t* state_byte, uint8_t event_offset, even
 
 }
 
-void ProtocolEventTransport_encode_consumer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_status) {
+void ProtocolEventTransport_set_consumer_event_status(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_status) {
 
     uint8_t* event_byte_ptr = &openlcb_node->consumers.event_status_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
@@ -95,7 +96,7 @@ void ProtocolEventTransport_encode_consumer_event_state(openlcb_node_t* openlcb_
 
 }
 
-void ProtocolEventTransport_encode_producer_event_state(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_status) {
+void ProtocolEventTransport_set_producer_event_status(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_status) {
 
     uint8_t* event_byte_ptr = &openlcb_node->producers.event_status_array[event_index / EVENTS_ENCODED_IN_BYTE]; // Find the Byte that contain this events encoded state
     uint8_t event_offset = event_index % EVENTS_ENCODED_IN_BYTE; // Find the Offset of the encoded state within that byte
@@ -294,7 +295,7 @@ bool ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t * op
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
 
-        _interface->on_consumer_identified_set(openlcb_node, &eventid);
+        _interface->on_consumer_identified_clear(openlcb_node, &eventid);
 
     }
 
@@ -304,7 +305,15 @@ bool ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t * op
 
 bool ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    return true;  // done
+    if (_interface->on_consumer_identified_reserved) {
+
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+
+        _interface->on_consumer_identified_reserved(openlcb_node, &eventid);
+
+    }
+
+    return true; //  done 
 
 }
 
@@ -327,7 +336,7 @@ bool ProtocolEventTransport_handle_producer_identify(openlcb_node_t * openlcb_no
 }
 
 bool ProtocolEventTransport_handle_producer_range_identified(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
-    
+
     if (_interface->on_producer_range_identified) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
@@ -384,7 +393,15 @@ bool ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * op
 
 bool ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    return true; //  done  
+    if (_interface->on_producer_identified_reserved) {
+
+        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+
+        _interface->on_producer_identified_reserved(openlcb_node, &eventid);
+
+    }
+
+    return true; //  done 
 
 }
 
@@ -452,24 +469,25 @@ bool ProtocolEventTransport_handle_pc_event_report(openlcb_node_t * openlcb_node
 
 bool ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
+    if (openlcb_msg->payload_count < sizeof (event_id_t)) {
+        
+        return true;
+        
+    }
+    
     if (_interface->on_pc_event_report_with_payload) {
 
+        event_payload_t payload; 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
-
-        event_payload_t local_payload;
-        uint16_t local_payload_count = (openlcb_msg->payload_count - sizeof (eventid));
-
-        uint16_t payload_index = sizeof (eventid);
-
-        for (int i = 0; i < local_payload_count; i++) {
-
-            local_payload[i] = *openlcb_msg->payload[payload_index];
-            payload_index = payload_index + 1;
-
+        uint16_t payload_count = (openlcb_msg->payload_count - sizeof (eventid));
+        if (payload_count > LEN_EVENT_PAYLOAD) {
+            
+            payload_count = LEN_EVENT_PAYLOAD;
         }
 
-        _interface->on_pc_event_report_with_payload(openlcb_node, &eventid, local_payload_count, &local_payload);
+        memcpy(&payload, &openlcb_msg->payload[sizeof (event_id_t)], payload_count);
 
+        _interface->on_pc_event_report_with_payload(openlcb_node, &eventid, payload_count, (event_payload_t*) &openlcb_msg->payload[sizeof (event_id_t)]);
     }
 
     return true; //  done 

@@ -26,7 +26,7 @@
  *
  * \file protocol_event_transport.h
  *
- * Implementation of the Openlcb event protocol. Handlers are call from the 
+ * Implementation of the Openlcb event protocol. Handlers are call from the
  * openlcb_main_statemachine.c processing when a datagram message is being processed
  * from the FIFO buffer.
  *
@@ -40,88 +40,90 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __PROTOCOL_EVENT_TRANSPORT__
-#define	__PROTOCOL_EVENT_TRANSPORT__
+#define __PROTOCOL_EVENT_TRANSPORT__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "openlcb_types.h"
 
-typedef struct {
+typedef struct
+{
 
     // Callback events
     void (*on_consumer_range_identified)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_consumer_identified_unknown)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_consumer_identified_set)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_consumer_identified_clear)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_consumer_identified_reserved)(openlcb_node_t *openlcb_node, event_id_t *event_id);
     void (*on_producer_range_identified)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_producer_identified_unknown)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_producer_identified_set)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_producer_identified_clear)(openlcb_node_t* openlcb_node, event_id_t* event_id);
+    void (*on_producer_identified_reserved)(openlcb_node_t *openlcb_node, event_id_t *event_id);
     void (*on_event_learn)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_pc_event_report)(openlcb_node_t* openlcb_node, event_id_t* event_id);
     void (*on_pc_event_report_with_payload)(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload);
-    
 
 } interface_openlcb_protocol_event_transport_t;
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
 #ifndef SUPPORT_FIRMWARE_BOOTLOADER
-    
-extern void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_transport_t *interface_openlcb_protocol_event_transport);
-    
-extern bool ProtocolEventTransport_handle_consumer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern bool ProtocolEventTransport_handle_consumer_range_identified(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_transport_t *interface_openlcb_protocol_event_transport);
 
-extern bool ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_consumer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_consumer_range_identified(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_producer_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_producer_range_identified(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_producer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_producer_range_identified(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t * openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_identify_dest(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_identify(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_event_learn(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_identify_dest(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_pc_event_report(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern bool ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolEventTransport_handle_event_learn(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern uint16_t ProtocolEventTransport_extract_consumer_event_status_mti(openlcb_node_t* openlcb_node, uint16_t event_index);
+    extern bool ProtocolEventTransport_handle_pc_event_report(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern uint16_t ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node_t* openlcb_node, uint16_t event_index);
+    extern bool ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-extern void ProtocolEventTransport_encode_consumer_event_status(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state);
+    extern uint16_t ProtocolEventTransport_extract_consumer_event_status_mti(openlcb_node_t *openlcb_node, uint16_t event_index);
 
-extern void ProtocolEventTransport_encode_producer_event_status(openlcb_node_t* openlcb_node, uint8_t event_index, event_enum_state_t new_state);
+    extern uint16_t ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node_t *openlcb_node, uint16_t event_index);
+
+    extern void ProtocolEventTransport_set_consumer_event_status(openlcb_node_t *openlcb_node, uint8_t event_index, event_enum_state_t new_status);
+
+    extern void ProtocolEventTransport_set_producer_event_status(openlcb_node_t *openlcb_node, uint8_t event_index, event_enum_state_t new_status);
 
 #endif // SUPPORT_FIRMWARE_BOOTLOADER
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __PROTOCOL_EVENT_TRANSPORT__ */
-
+#endif /* __PROTOCOL_EVENT_TRANSPORT__ */

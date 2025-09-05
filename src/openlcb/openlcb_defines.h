@@ -111,8 +111,11 @@
 #define MTI_EVENTS_IDENTIFY_DEST 0x0968         // Databytes = Destination Alias
 #define MTI_EVENTS_IDENTIFY 0x0970              //
 #define MTI_EVENT_LEARN 0x0594                  // Databytes = EventID
-#define MTI_PC_EVENT_REPORT 0x05B4              // Databytes = EventID  (Infamouse PCER)
-#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD 0x0F14 // Databytes = EventID + 256 bytes of payload (Infamouse PCER)
+#define MTI_PC_EVENT_REPORT 0x05B4              // Databytes = EventID  (Infamous PCER)
+#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD 0x0F14 // Databytes = EventID + 256 bytes of payload (Infamous PCER)
+#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST 0x0F16 // CAN segmentation of message
+#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE 0x0F15 // CAN segmentation of message
+#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST 0x0F14  // CAN segmentation of message
 
 #define MTI_SIMPLE_NODE_INFO_REQUEST 0x0DE8 // Databytes = Destination Alias
 #define MTI_SIMPLE_NODE_INFO_REPLY 0x0A08   // Databytes = Destination Alias, ACDI Data

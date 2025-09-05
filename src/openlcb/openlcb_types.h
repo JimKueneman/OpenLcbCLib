@@ -137,7 +137,7 @@ extern "C" {
 
 #define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
-#define LEN_EVENT_PAYLOAD 255
+#define LEN_EVENT_PAYLOAD 256
 
     typedef enum {
         BASIC,
