@@ -82,21 +82,12 @@ extern "C" {
 #define USER_DEFINED_FDI_LENGTH 1000 // USER DEFINED
 #endif
 
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
-
 #ifndef USER_DEFINED_PRODUCER_COUNT    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work 
 #define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED Max of 126 for an 8 bit processor (8 bit signed integer)
 #endif
 
 #ifndef USER_DEFINED_CONSUMER_COUNT    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED Max of 126 for an 8 bit processor (8 bit signed integer)
-#endif
-
-#else
-
-#define USER_DEFINED_PRODUCER_COUNT 0
-#define USER_DEFINED_CONSUMER_COUNT 0
-
 #endif
 
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION 64 - 1       // space for null Size is limited by required return values - the max size of a datagram (72)
@@ -250,18 +241,14 @@ extern "C" {
         uint8_t consumer_count_autocreate;
         uint8_t producer_count_autocreate;
         uint8_t cdi[USER_DEFINED_CDI_LENGTH];
-#ifdef SUPPORT_TRACTION
         uint8_t fdi[USER_DEFINED_FDI_LENGTH];
-#endif
         user_address_space_info_t address_space_configuration_definition;
         user_address_space_info_t address_space_all;
         user_address_space_info_t address_space_config_memory;
         user_address_space_info_t address_space_acdi_manufacturer;
         user_address_space_info_t address_space_acdi_user;
-#ifdef SUPPORT_TRACTION
         user_address_space_info_t address_space_train_function_definition;
         user_address_space_info_t address_space_train_function_config_memory;
-#endif
         user_configuration_options configuration_options;
         user_address_space_info_t address_space_firmware;
 

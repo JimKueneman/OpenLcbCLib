@@ -74,8 +74,6 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-#ifndef SUPPORT_FIRMWARE_BOOTLOADER
-
     extern void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_transport_t *interface_openlcb_protocol_event_transport);
 
     extern bool ProtocolEventTransport_handle_consumer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
@@ -116,8 +114,6 @@ extern "C"
 
     extern uint16_t ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node_t *openlcb_node, uint16_t event_index);
 
-
-#endif // SUPPORT_FIRMWARE_BOOTLOADER
 
 #ifdef __cplusplus
 }
