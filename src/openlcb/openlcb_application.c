@@ -43,12 +43,13 @@ void OpenLcbApplication_clear_producer_eventids(openlcb_node_t *node) {
 
 }
 
-uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t *node, event_id_t eventid) {
+uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t *node, event_id_t event_id, event_status_enum event_status) {
 
     if (node) {
 
         if (node->consumers.count + 1 < USER_DEFINED_CONSUMER_COUNT) {
-            node->consumers.list[node->consumers.count] = eventid;
+            node->consumers.list[node->consumers.count].event = event_id;
+            node->consumers.list[node->consumers.count].status = event_status;
             node->consumers.count = node->consumers.count + 1;
 
             return (node->consumers.count);
@@ -58,13 +59,14 @@ uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t *node, even
     return 0xFFFF;
 }
 
-uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t *node, event_id_t eventid) {
+uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t *node, event_id_t event_id, event_status_enum event_status) {
 
     if (node) {
 
         if (node->producers.count + 1 < USER_DEFINED_PRODUCER_COUNT) {
 
-            node->producers.list[node->producers.count] = eventid;
+            node->producers.list[node->producers.count].event = event_id;
+            node->producers.list[node->producers.count].status = event_status;
             node->producers.count = node->producers.count + 1;
 
             return (node->producers.count);
@@ -74,7 +76,7 @@ uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t *node, even
     return 0xFFFF;
 }
 
-bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t eventid) {
+bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t event_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -84,7 +86,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t ev
 
     OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_PC_EVENT_REPORT, 0);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
 
     if (_interface->transmit_openlcb_message(&msg)) {
 
@@ -95,7 +97,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t ev
     return false;
 }
 
-bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventid) {
+bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t event_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -105,7 +107,7 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventi
 
     OpenLcbUtilities_load_openlcb_message(&msg, node->alias, node->id, 0, NULL_NODE_ID, MTI_EVENT_LEARN, 0);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, eventid);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
 
     if (_interface->transmit_openlcb_message(&msg)) {
 

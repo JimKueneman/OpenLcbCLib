@@ -53,7 +53,7 @@ extern "C"
 
     extern void OpenLcbBufferStore_initialize(void);
 
-    extern openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum_t payload_type);
+    extern openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type);
 
     extern void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg);
 

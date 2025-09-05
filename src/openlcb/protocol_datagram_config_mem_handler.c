@@ -1053,9 +1053,9 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_nod
 
               
 
-                if (_interface->onconfig_mem_unfreeze_firmware_update) {
+                if (_interface->on_config_mem_unfreeze_firmware_update) {
 
-                    _interface->onconfig_mem_unfreeze_firmware_update(openlcb_node, openlcb_msg, worker_msg);
+                    _interface->on_config_mem_unfreeze_firmware_update(openlcb_node, openlcb_msg, worker_msg);
 
                 }
 
@@ -1097,9 +1097,9 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_node_
             } else {
       
 
-                if (_interface->onconfig_mem_freeze_firmware_update) {
+                if (_interface->on_config_mem_freeze_firmware_update) {
 
-                    _interface->onconfig_mem_freeze_firmware_update(openlcb_node, openlcb_msg, worker_msg);
+                    _interface->on_config_mem_freeze_firmware_update(openlcb_node, openlcb_msg, worker_msg);
 
                 }
 

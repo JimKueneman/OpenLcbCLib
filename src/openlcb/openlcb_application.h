@@ -61,13 +61,13 @@ extern "C" {
 
     extern void OpenLcbApplication_clear_producer_eventids(openlcb_node_t* node);
 
-    extern uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t* node, event_id_t eventid);
+    extern uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t* node, event_id_t event_id, event_status_enum event_status);
 
-    extern uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
+    extern uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t* node, event_id_t event_id, event_status_enum event_status);
 
-    extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
+    extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t* node, event_id_t event_id);
     
-    extern bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t eventid);
+    extern bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t event_id);
 
 
     // Configuration Memory helpers

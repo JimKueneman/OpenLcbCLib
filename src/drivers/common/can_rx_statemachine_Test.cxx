@@ -19,19 +19,19 @@ bool can_amr_called = false;
 bool can_error_information_report_called = false;
 bool can_stream_called = false;
 
-void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type)
+void CanFrameMessageHandler_handle_can_legacy_snip(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type)
 {
 
     can_legacy_snip_called = true;
 }
 
-void CanFrameMessageHandler_handle_single_frame(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type)
+void CanFrameMessageHandler_handle_single_frame(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type)
 {
 
     can_single_frame_called = true;
 }
 
-void CanFrameMessageHandler_handle_first_frame(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type)
+void CanFrameMessageHandler_handle_first_frame(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type)
 {
 
     can_first_frame_called = true;
@@ -49,7 +49,7 @@ void CanFrameMessageHandler_handle_last_frame(can_msg_t *can_msg, uint8_t can_bu
     can_last_frame_called = true;
 }
 
-void CanFrameMessageHandler_stream(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type)
+void CanFrameMessageHandler_stream(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type)
 {
 
     can_stream_called = true;

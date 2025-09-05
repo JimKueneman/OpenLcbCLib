@@ -72,31 +72,21 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->consumers.count = 0;
     for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {
 
-        openlcb_node->consumers.list[i] = 0;
+        openlcb_node->consumers.list[i].event = 0;
+        openlcb_node->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
 
     }
 
     openlcb_node->producers.count = 0;
     for (int i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++) {
 
-        openlcb_node->producers.list[i] = 0;
+        openlcb_node->producers.list[i].event = 0;
+        openlcb_node->producers.list[i].status = EVENT_STATUS_UNKNOWN;
 
     }
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
-
-    for (int i = 0; i < sizeof (openlcb_node->producers.event_status_array); i++) {// Unknown State
-
-        openlcb_node->producers.event_status_array[i] = 0;
-
-    }
-
-    for (int i = 0; i < sizeof (openlcb_node->consumers.event_status_array); i++) {
-
-        openlcb_node->consumers.event_status_array[i] = 0;
-
-    }
 
 }
 
@@ -153,7 +143,7 @@ static void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
         if (i < USER_DEFINED_CONSUMER_COUNT) { // safety net
 
-            openlcb_node->consumers.list[i] = node_id + indexer;
+            openlcb_node->consumers.list[i].event = node_id + indexer;
             openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
 
         }
@@ -168,7 +158,7 @@ static void _generate_event_ids(openlcb_node_t* openlcb_node) {
 
         if (i < USER_DEFINED_PRODUCER_COUNT) { // safety net
 
-            openlcb_node->producers.list[i] = node_id + indexer;
+            openlcb_node->producers.list[i].event = node_id + indexer;
             openlcb_node->producers.count = openlcb_node->producers.count + 1;
 
         }

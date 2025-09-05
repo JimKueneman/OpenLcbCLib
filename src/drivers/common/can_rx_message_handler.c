@@ -218,7 +218,7 @@ void CanRxMessageHandler_error_information_report(can_msg_t* can_msg) {
 
 }
 
-void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
 
@@ -326,7 +326,7 @@ void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffe
 
 }
 
-void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
@@ -363,7 +363,7 @@ void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buf
 
 }
 
-void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 
@@ -393,7 +393,7 @@ void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_
 
 }
 
-void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type) {
+void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
 
 }

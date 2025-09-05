@@ -81,7 +81,7 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-openlcb_msg_t *openlcb_buffer_store_allocate_buffer(payload_type_enum_t payload_type)
+openlcb_msg_t *openlcb_buffer_store_allocate_buffer(payload_type_enum payload_type)
 {
 
     if (!fail_buffer)

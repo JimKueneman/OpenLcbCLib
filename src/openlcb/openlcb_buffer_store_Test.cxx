@@ -783,7 +783,7 @@ TEST(OpenlcbBufferStore, bad_allocation)
 
     openlcb_msg_t *openlcb_msg;
 
-    openlcb_msg = OpenLcbBufferStore_allocate_buffer((payload_type_enum_t)0xFFFC);
+    openlcb_msg = OpenLcbBufferStore_allocate_buffer((payload_type_enum)0xFFFC);
     EXPECT_EQ(openlcb_msg, nullptr);
 }
 
@@ -851,7 +851,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
         if (openlcb_msg)
         {
 
-            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum)0xFFFF;
             OpenLcbBufferStore_free_buffer(openlcb_msg);
             count = OpenLcbBufferStore_basic_messages_allocated();
             EXPECT_EQ(count, 1);
@@ -866,7 +866,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
         if (openlcb_msg)
         {
 
-            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum)0xFFFF;
             OpenLcbBufferStore_free_buffer(openlcb_msg);
             count = OpenLcbBufferStore_datagram_messages_allocated();
             EXPECT_EQ(count, 1);
@@ -880,7 +880,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
 
         if (openlcb_msg)
         {
-            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum)0xFFFF;
             OpenLcbBufferStore_free_buffer(openlcb_msg);
             count = OpenLcbBufferStore_snip_messages_allocated();
             EXPECT_EQ(count, 1);
@@ -894,7 +894,7 @@ TEST(OpenlcbBufferStore, corrupted_msg)
 
         if (openlcb_msg)
         {
-            openlcb_msg->payload_type = (payload_type_enum_t)0xFFFF;
+            openlcb_msg->payload_type = (payload_type_enum)0xFFFF;
             OpenLcbBufferStore_free_buffer(openlcb_msg);
             count = OpenLcbBufferStore_stream_messages_allocated();
             EXPECT_EQ(count, 1);

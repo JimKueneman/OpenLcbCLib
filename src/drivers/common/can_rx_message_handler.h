@@ -53,7 +53,7 @@ extern "C" {
         openlcb_node_t *(*find_by_node_id)(node_id_t node_id);
         openlcb_node_t* (*get_first)(uint8_t key);
         openlcb_node_t* (*get_next)(uint8_t key);
-        openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum_t payload_type);
+        openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum payload_type);
         
     } interface_can_frame_message_handler_t;
 
@@ -73,17 +73,17 @@ extern "C" {
 
     extern void CanRxMessageHandler_error_information_report(can_msg_t* can_msg);
 
-    extern void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
     extern void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t offset);
 
     extern void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t offset);
 
-    extern void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
-    extern void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
-    extern void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+    extern void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
 
 
 #ifdef	__cplusplus

@@ -57,8 +57,8 @@ typedef struct {
     // Callback events
     void (*on_configuration_memory_factory_reset)(void);
     void (*on_config_mem_write)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
-    void (*onconfig_mem_freeze_firmware_update) (openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    void (*onconfig_mem_unfreeze_firmware_update) (openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    void (*on_config_mem_freeze_firmware_update) (openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    void (*on_config_mem_unfreeze_firmware_update) (openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
 
 } interface_openlcb_protocol_datagram_config_mem_handler_t;
 

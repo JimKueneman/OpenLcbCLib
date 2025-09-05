@@ -145,14 +145,14 @@ extern "C" {
         SNIP,
         STREAM
 
-    } payload_type_enum_t;
+    } payload_type_enum;
 
     typedef enum {
         EVENT_STATUS_UNKNOWN,
         EVENT_STATUS_SET,
         EVENT_STATUS_CLEAR
 
-    } event_enum_state_t;
+    } event_status_enum;
 
     typedef uint8_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
@@ -167,6 +167,13 @@ extern "C" {
     typedef uint8_t openlcb_payload_t[1];
 
     typedef uint64_t event_id_t;
+
+    typedef struct {
+        event_id_t event;
+        event_status_enum status;
+
+    } event_id_struct_t;
+
     typedef uint64_t node_id_t;
 
     typedef uint8_t event_payload_t[LEN_EVENT_PAYLOAD];
@@ -185,7 +192,7 @@ extern "C" {
         uint16_t dest_alias;
         node_id_t source_id;
         node_id_t dest_id;
-        payload_type_enum_t payload_type; // How many bytes the payload can hold
+        payload_type_enum payload_type; // How many bytes the payload can hold
         uint16_t payload_count; // valid bytes in payload
         openlcb_payload_t *payload; // pointer to one of the data structures in the message_buffer_t type.  Size depend of the buffer type and defined as payload_size
         uint8_t timerticks; // timeouts, etc
@@ -203,6 +210,7 @@ extern "C" {
     } message_buffer_t;
 
     // Defines a node for snip
+
     typedef struct {
         uint8_t mfg_version;
         char name[LEN_SNIP_NAME_BUFFER]; // really wanted checking here but it seem C compiler initializer work a bit differently... some include the null some don't so we can't make this fool proof
@@ -261,8 +269,6 @@ extern "C" {
 
     // Event ID Structures
 
-#define EVENTS_ENCODED_IN_BYTE 4
-
     typedef struct {
         uint8_t running : 1; // Alway, always, always reset these to false when you have finished processing a
         uint8_t enum_index; // allows a counter for enumerating the event ids
@@ -270,17 +276,15 @@ extern "C" {
 
     typedef struct {
         uint16_t count;
-        event_id_t list[USER_DEFINED_CONSUMER_COUNT];
+        event_id_struct_t list[USER_DEFINED_CONSUMER_COUNT];
         event_id_enum_t enumerator;
-        uint8_t event_status_array[USER_DEFINED_CONSUMER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
 
     } event_id_consumer_list_t;
 
     typedef struct {
         uint16_t count;
-        event_id_t list[USER_DEFINED_PRODUCER_COUNT];
+        event_id_struct_t list[USER_DEFINED_PRODUCER_COUNT];
         event_id_enum_t enumerator;
-        uint8_t event_status_array[USER_DEFINED_PRODUCER_COUNT / EVENTS_ENCODED_IN_BYTE + 1]; // Can get 4 Event State encoded in a single byte but if it is an odd number may need and extra byte
 
     } event_id_producer_list_t;
 

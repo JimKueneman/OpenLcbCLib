@@ -88,7 +88,7 @@ extern "C" {
 
     extern uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t *openlcb_node);
 
-    extern uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum_t payload_type);
+    extern uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum payload_type);
 
     extern node_id_t OpenLcbUtilities_extract_node_id_from_config_mem_buffer(configuration_memory_buffer_t *buffer, uint8_t index);
 

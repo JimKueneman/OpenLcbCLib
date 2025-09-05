@@ -46,12 +46,12 @@
 #include "can_types.h"
 
 typedef struct {
-    void (*handle_can_legacy_snip)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
-    void (*handle_single_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
-    void (*handle_first_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+    void (*handle_can_legacy_snip)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
+    void (*handle_single_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
+    void (*handle_first_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     void (*handle_middle_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
     void (*handle_last_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
-    void (*handle_stream)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum_t data_type);
+    void (*handle_stream)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     void (*handle_cid)(can_msg_t* can_msg);
     void (*handle_rid)(can_msg_t* can_msg);
     void (*handle_ame)(can_msg_t* can_msg);

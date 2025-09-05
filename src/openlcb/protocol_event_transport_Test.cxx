@@ -607,6 +607,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
         // ********************************************************************
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
 
         for (int i = sizeof(event_id_t); i < LEN_EVENT_PAYLOAD + sizeof(event_id_t); i++)
         {
@@ -614,7 +615,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
             *openlcb_msg->payload[i] = i - sizeof(event_id_t);
         }
 
-        openlcb_msg->payload_count = LEN_EVENT_PAYLOAD + +sizeof(event_id_t);
+        openlcb_msg->payload_count = LEN_EVENT_PAYLOAD + sizeof(event_id_t);
 
         EXPECT_TRUE(ProtocolEventTransport_handle_pc_event_report_with_payload(node1, openlcb_msg, outgoing_msg));
         EXPECT_TRUE(on_pc_event_report_with_payload_called);
@@ -633,6 +634,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
         // ********************************************************************
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
 
         for (int i = sizeof(event_id_t); i < LEN_EVENT_PAYLOAD + sizeof(event_id_t); i++)
         {
@@ -640,7 +642,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
             *openlcb_msg->payload[i] = i - sizeof(event_id_t);
         }
 
-        openlcb_msg->payload_count = LEN_EVENT_PAYLOAD + +sizeof(event_id_t) + 1; // too many should clip it
+        openlcb_msg->payload_count = LEN_EVENT_PAYLOAD + sizeof(event_id_t) + 1; // too many should clip it
 
         EXPECT_TRUE(ProtocolEventTransport_handle_pc_event_report_with_payload(node1, openlcb_msg, outgoing_msg));
         EXPECT_TRUE(on_pc_event_report_with_payload_called);
@@ -651,6 +653,20 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
 
             EXPECT_EQ(event_with_payload[i], i);
         }
+
+        _reset_variables();
+        // ********************************************************************
+
+        // ********************************************************************
+        // ProtocolEventTransport_handle_pc_event_report_with_payload too few bytes
+        // ********************************************************************
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        openlcb_msg->payload_count = sizeof(event_id_t); // too few should fail
+
+        EXPECT_TRUE(ProtocolEventTransport_handle_pc_event_report_with_payload(node1, openlcb_msg, outgoing_msg));
+        EXPECT_FALSE(on_pc_event_report_with_payload_called);
 
         _reset_variables();
         // ********************************************************************
@@ -683,14 +699,482 @@ TEST(ProtocolEventTransport, set_consumer_event_status)
         for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
         {
 
-            ProtocolEventTransport_set_consumer_event_status(node1, 0, EVENT_STATUS_SET);
-            //     EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, 0), MTI_CONSUMER_IDENTIFIED_SET);
+            node1->consumers.list[i].status = EVENT_STATUS_SET;
+            EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, i), MTI_CONSUMER_IDENTIFIED_SET);
+            node1->consumers.list[i].status = EVENT_STATUS_CLEAR;
+            EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, i), MTI_CONSUMER_IDENTIFIED_CLEAR);
+            node1->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
+            EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, i), MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+            node1->consumers.list[i].status = (event_status_enum)100; // Force an invalid value
+            EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, i), MTI_CONSUMER_IDENTIFIED_UNKNOWN);
         }
 
-        ProtocolEventTransport_set_consumer_event_status(node1, 0, EVENT_STATUS_SET);
-        //  EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, 0), MTI_CONSUMER_IDENTIFIED_SET);
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->producers.list[i].status = EVENT_STATUS_SET;
+            EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, i), MTI_PRODUCER_IDENTIFIED_SET);
+            node1->producers.list[i].status = EVENT_STATUS_CLEAR;
+            EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, i), MTI_PRODUCER_IDENTIFIED_CLEAR);
+            node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
+            EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, i), MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+            node1->producers.list[i].status = (event_status_enum)100; // Force an invalid value
+            EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, i), MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+        }
 
         _reset_variables();
         // ********************************************************************
+    }
+}
+
+TEST(ProtocolEventTransport, handle_identify)
+{
+
+    bool done = false;
+    int counter = 0;
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, unknown
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
+            node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify(node1, openlcb_msg, outgoing_msg);
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                //        fprintf(stderr, "MTI: 0x%02X; 0x%02X\n", outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+        // ********************************************************************
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, set
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_SET;
+            node1->producers.list[i].status = EVENT_STATUS_SET;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify(node1, openlcb_msg, outgoing_msg);
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_SET);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_SET);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+
+        // ********************************************************************
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, clear
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_CLEAR;
+            node1->producers.list[i].status = EVENT_STATUS_CLEAR;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify(node1, openlcb_msg, outgoing_msg);
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_CLEAR);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_CLEAR);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+
+        // ********************************************************************
+    }
+}
+
+TEST(ProtocolEventTransport, handle_identify_with_dest)
+{
+
+    bool done = false;
+    int counter = 0;
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, unknown
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
+            node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY_DEST, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify_dest(node1, openlcb_msg, outgoing_msg);
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                //        fprintf(stderr, "MTI: 0x%02X; 0x%02X\n", outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+        // ********************************************************************
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, set
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_SET;
+            node1->producers.list[i].status = EVENT_STATUS_SET;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify_dest(node1, openlcb_msg, outgoing_msg);
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_SET);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_SET);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+
+        // ********************************************************************
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, clear
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_CLEAR;
+            node1->producers.list[i].status = EVENT_STATUS_CLEAR;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify_dest(node1, openlcb_msg, outgoing_msg);
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_CLEAR);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_CLEAR);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+
+        // ********************************************************************
+
+        // ********************************************************************
+        // OpenLcbUtilities_load_openlcb_message, unknown NOT ADDRESSED TO US
+        // ********************************************************************
+        for (int i = 0; i < AUTO_CREATE_EVENT_COUNT; i++)
+        {
+
+            node1->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
+            node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
+        }
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, MTI_EVENTS_IDENTIFY_DEST, 0);
+
+        counter = 0;
+        done = false;
+        while (!done)
+        {
+
+            if (counter == 0)
+            {
+
+                EXPECT_FALSE(done);
+            }
+
+            OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+            done = ProtocolEventTransport_handle_events_identify_dest(node1, openlcb_msg, outgoing_msg);
+
+            if (counter == 0)
+            {
+
+                EXPECT_TRUE(done);
+                counter = AUTO_CREATE_EVENT_COUNT * 2;
+            }
+
+            if (counter < AUTO_CREATE_EVENT_COUNT)
+            {
+
+                //        fprintf(stderr, "MTI: 0x%02X; 0x%02X\n", outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[counter].event);
+            }
+            else if (counter < (AUTO_CREATE_EVENT_COUNT * 2))
+            {
+                EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+                EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[counter - AUTO_CREATE_EVENT_COUNT].event);
+            }
+
+            counter++;
+        }
+
+        _reset_variables();
+        // ********************************************************************
+    }
+}
+
+TEST(ProtocolEventTransport, null_callbacks)
+{
+
+    _reset_variables();
+    _global_initialize_null_callbacks();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(openlcb_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    if (openlcb_msg)
+    {
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_consumer_identified_unknown(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_consumer_identified_unknown_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_consumer_identified_set(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_consumer_identified_set_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_consumer_identified_clear(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_consumer_identified_clear_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_consumer_identified_reserved(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_consumer_identified_reserved_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_producer_identified_unknown(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_producer_identified_unknown_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_producer_identified_set(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_producer_identified_set_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_producer_identified_clear(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_producer_identified_clear_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_producer_identified_reserved(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_producer_identified_reserved_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_event_learn(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_event_learn_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT, 0);
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_pc_event_report(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_pc_event_report_called);
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
+        openlcb_msg->payload_count = 34;
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_pc_event_report_with_payload(node1, openlcb_msg, outgoing_msg);
+        EXPECT_FALSE(on_pc_event_report_with_payload_called);
     }
 }

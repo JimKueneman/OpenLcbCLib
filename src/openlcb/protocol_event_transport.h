@@ -102,9 +102,9 @@ extern "C"
 
     extern bool ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-    extern bool ProtocolEventTransport_handle_identify_dest(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
+    extern bool ProtocolEventTransport_handle_events_identify_dest(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
-    extern bool ProtocolEventTransport_handle_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
+    extern bool ProtocolEventTransport_handle_events_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
     extern bool ProtocolEventTransport_handle_event_learn(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg);
 
@@ -116,9 +116,6 @@ extern "C"
 
     extern uint16_t ProtocolEventTransport_extract_producer_event_status_mti(openlcb_node_t *openlcb_node, uint16_t event_index);
 
-    extern void ProtocolEventTransport_set_consumer_event_status(openlcb_node_t *openlcb_node, uint8_t event_index, event_enum_state_t new_status);
-
-    extern void ProtocolEventTransport_set_producer_event_status(openlcb_node_t *openlcb_node, uint8_t event_index, event_enum_state_t new_status);
 
 #endif // SUPPORT_FIRMWARE_BOOTLOADER
 

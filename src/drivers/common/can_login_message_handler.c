@@ -268,7 +268,7 @@ void CanLoginMessageHandler_transmit_producer_events(openlcb_node_t* next_node) 
     uint16_t event_mti = _interface->extract_producer_event_state_mti(next_node, next_node->producers.enumerator.enum_index);
 
     OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, event_mti, 8);
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index]);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->producers.list[next_node->producers.enumerator.enum_index].event);
 
     if (_interface->transmit_openlcb_message(openlcb_worker)) {
 
@@ -311,7 +311,7 @@ void CanLoginMessageHandler_transmit_consumer_events(openlcb_node_t* next_node) 
     uint16_t event_mti = _interface->extract_consumer_event_state_mti(next_node, next_node->consumers.enumerator.enum_index);
 
     OpenLcbUtilities_load_openlcb_message(openlcb_worker, next_node->alias, next_node->id, 0, 0, event_mti, 8);
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index]);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_worker, next_node->consumers.list[next_node->consumers.enumerator.enum_index].event);
 
     if (_interface->transmit_openlcb_message(openlcb_worker)) {
 

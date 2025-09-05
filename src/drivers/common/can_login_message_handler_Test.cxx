@@ -208,29 +208,21 @@ openlcb_node_t *_create_openlcb_node(node_id_t node_id, uint16_t producer_count,
     for (int i = 0; i < consumer_count; i++)
     {
 
-        result->consumers.list[i] = (node_id << 16) + i;
+        result->consumers.list[i].event = (node_id << 16) + i;
+        result->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
     }
     result->consumers.enumerator.running = false;
     result->consumers.enumerator.enum_index = 0;
-    for (int i = 0; i < (USER_DEFINED_CONSUMER_COUNT / EVENTS_ENCODED_IN_BYTE + 1); i++)
-    {
-
-        result->consumers.event_status_array[i] = 0;
-    }
 
     result->producers.count = producer_count;
     for (int i = 0; i < producer_count; i++)
     {
 
-        result->producers.list[i] = (node_id << 16) + i;
+        result->producers.list[i].event = (node_id << 16) + i;
+        result->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
     }
     result->producers.enumerator.running = false;
     result->producers.enumerator.enum_index = 0;
-    for (int i = 0; i < (USER_DEFINED_CONSUMER_COUNT / EVENTS_ENCODED_IN_BYTE + 1); i++)
-    {
-
-        result->producers.event_status_array[i] = 0;
-    }
 
     result->timerticks = 0;
     result->lock_node = 0;

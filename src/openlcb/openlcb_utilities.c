@@ -48,7 +48,7 @@
 
 //FIND ALL THE FUNCTIONS THAT SHOULD RETURN BOOL
 
-uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum_t payload_type) {
+uint16_t OpenLcbUtilities_payload_type_to_len(payload_type_enum payload_type) {
 
     switch (payload_type) {
 
@@ -329,7 +329,7 @@ bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb
 
     for (int i = 0; i < openlcb_node->producers.count; i++) {
 
-        if (openlcb_node->producers.list[i] == event_id) {
+        if (openlcb_node->producers.list[i].event == event_id) {
 
             (*event_index) = i;
 
@@ -347,7 +347,7 @@ bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb
 
     for (int i = 0; i < openlcb_node->consumers.count; i++) {
 
-        if (openlcb_node->consumers.list[i] == event_id) {
+        if (openlcb_node->consumers.list[i].event == event_id) {
 
             (*event_index) = i;
 

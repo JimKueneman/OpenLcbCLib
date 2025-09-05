@@ -1139,7 +1139,7 @@ TEST(OpenLcbUtilities, payload_type_to_le)
     EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(DATAGRAM), LEN_MESSAGE_BYTES_DATAGRAM);
     EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(SNIP), LEN_MESSAGE_BYTES_SNIP);
     EXPECT_EQ(OpenLcbUtilities_payload_type_to_len(STREAM), LEN_MESSAGE_BYTES_STREAM);
-    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len((payload_type_enum_t)10), 0);
+    EXPECT_EQ(OpenLcbUtilities_payload_type_to_len((payload_type_enum)10), 0);
 }
 
 TEST(OpenLcbUtilities, extract_node_id_from_config_mem_buffer)
