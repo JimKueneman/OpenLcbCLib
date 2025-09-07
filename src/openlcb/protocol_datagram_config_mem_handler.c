@@ -78,15 +78,16 @@ static const user_address_space_info_t* _decode_to_space_definition(openlcb_node
 
             return&openlcb_node->parameters->address_space_acdi_user;
 
-        case ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
+        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             return &openlcb_node->parameters->address_space_train_function_definition;
 
-        case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
+        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             return &openlcb_node->parameters->address_space_train_function_config_memory;
 
         case ADDRESS_SPACE_FIRMWARE:
+            
             return &openlcb_node->parameters->address_space_firmware;
             
         default:
@@ -202,6 +203,7 @@ static uint16_t _validate_memory_write_space_parameters(const user_address_space
 static uint16_t _read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
     uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, data_address, &requested_byte_count);
+    
     if (invalid) {
 
         return invalid;
@@ -363,11 +365,11 @@ static uint16_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* 
 
             return _read_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, requested_byte_count);
 
-        case ADDRESS_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
+        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             return _read_memory_space_train_function_definition_info(openlcb_node, worker_msg, data_address, reply_payload_index, requested_byte_count);
 
-        case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
+        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             return _read_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, requested_byte_count);
 
@@ -471,7 +473,7 @@ static uint16_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t*
 
             return _write_memory_space_acdi_user(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
 
-        case ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
+        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             return _write_memory_space_train_function_configuration_memory(openlcb_node, worker_msg, data_address, reply_payload_index, data_count);
 
@@ -497,7 +499,7 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t*
 
         _send_datagram_ack_reply(openlcb_node, openlcb_msg, worker_msg, MTI_DATAGRAM_OK_REPLY_PENDING);
 
-      //  return;
+     //   return
 
     }
 
