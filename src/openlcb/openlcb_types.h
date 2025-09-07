@@ -247,8 +247,8 @@ extern "C" {
         user_address_space_info_t address_space_config_memory;
         user_address_space_info_t address_space_acdi_manufacturer;
         user_address_space_info_t address_space_acdi_user;
-        user_address_space_info_t address_space_train_function_definition;
-        user_address_space_info_t address_space_train_function_config_memory;
+        user_address_space_info_t address_space_traction_function_definition_info;
+        user_address_space_info_t address_space_traction_function_config_memory;
         user_configuration_options configuration_options;
         user_address_space_info_t address_space_firmware;
 
@@ -282,7 +282,7 @@ extern "C" {
         uint8_t initalized : 1; // Has the node been logged into the the network
         uint8_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
         uint8_t duplicate_alias_detected : 1; // Can engine has detected a duplicate alias and flagged it for reallocation
-        uint8_t openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack to say it was successfully received then the actual response.  This tracks which state the node is in
+        uint8_t openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack/nack to say it was successfully received (or not) then the actual response.  This tracks which state the node is in
         uint8_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
         uint8_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;

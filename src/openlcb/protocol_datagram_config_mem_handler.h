@@ -67,9 +67,20 @@ typedef struct {
 extern "C" {
 #endif /* __cplusplus */
 
-
     extern void ProtocolDatagramConfigMemHandler_initialize(const interface_openlcb_protocol_datagram_config_mem_handler_t *interface_openlcb_protocol_datagram_config_mem_handler);
 
+    
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_config_description_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_all_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_configuration_memory_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_acdi_manufacturer_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_acdi_user_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_definition_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern bool ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_config_memory_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    
+    
+    
+    
     extern bool ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
 
     extern bool ProtocolDatagramConfigMemHandler_handle_memory_read_reply_ok_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);

@@ -45,9 +45,7 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    
-    // obsolete
-    bool (*memory_read_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+   
     // Memory Read Address Space
     bool (*memory_read_space_config_description_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_all_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
@@ -57,9 +55,7 @@ typedef struct {
     bool (*memory_read_space_traction_function_definition_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_traction_function_config_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
    
-    // obsolete
-    bool (*memory_read_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
-    // Memory Read Replied Ok Address Space
+    // Memory Read Ok Ok Address Space
     bool (*memory_read_space_config_description_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_all_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_configuration_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
@@ -68,9 +64,7 @@ typedef struct {
     bool (*memory_read_space_traction_function_definition_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_traction_function_config_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
   
-    // obsolete
-    bool (*memory_read_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
-    // Memory Read Replied Failed Address Space
+    // Memory Read Failed Reply Address Space
     bool (*memory_read_space_config_description_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_all_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_configuration_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
@@ -79,40 +73,45 @@ typedef struct {
     bool (*memory_read_space_traction_function_definition_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_read_space_traction_function_config_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
 
-    
-    // obsolete
-    bool (*memory_write_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
     // Memory Write Address Space
+    bool (*memory_write_space_config_description_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_all_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_configuration_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_acdi_manufacturer_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_acdi_user_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_traction_function_definition_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_traction_function_config_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_firmware_upgrade_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    
-    // obsolete
-    bool (*memory_write_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
-    // Memory Write Reply Ok Address Space
+   
+    // Memory Write Ok Reply Address Space
+    bool (*memory_write_space_config_description_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_all_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_configuration_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_acdi_manufacturer_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_acdi_user_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_traction_function_definition_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_traction_function_config_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_firmware_upgrade_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-     
-    // obsolete
-    bool (*memory_write_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space);
-    // Memory Write Reply Fail Address Space
+   
+    // Memory Write Fail Reply Address Space
+    bool (*memory_write_space_config_description_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_all_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_configuration_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_acdi_manufacturer_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_acdi_user_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_traction_function_definition_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_space_traction_function_config_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_firmware_upgrade_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-      
-    // obsolete
-    bool (*memory_write_under_mask_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+    
     // Memory Write Under Mask Address Space
+    bool (*memory_write_under_mask_space_config_description_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_under_mask_space_all_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_under_mask_space_configuration_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_under_mask_space_acdi_manufacturer_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_under_mask_space_acdi_user_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_under_mask_space_traction_function_definition_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_under_mask_space_traction_function_config_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     bool (*memory_write_under_mask_space_firmware_upgrade_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
     
-    
+    // Commands
     bool (*memory_options_cmd_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
     bool (*memory_options_reply_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
     bool (*memory_get_address_space_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
@@ -140,9 +139,9 @@ extern void ProtocolDatagramHandler_initialize(const interface_protocol_datagram
 
 extern bool ProtocolDatagramHandler_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
    
-extern bool Protocol_DatagramHandler_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
 
-extern bool ProtocolDatagramHandler_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern bool ProtocolDatagramHandler_handle_datagram_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
     
 extern void ProtocolDatagramHandler_100ms_time_tick(void);
 
