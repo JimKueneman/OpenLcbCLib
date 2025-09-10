@@ -35,46 +35,46 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-   // This is a guard condition so that contents of this file are not included
-    // more than once.
+// This is a guard condition so that contents of this file are not included
+// more than once.
 #ifndef __OPENLCB_DEFINES__
 #define __OPENLCB_DEFINES__
 
-    // General boot initialization
+// General boot initialization
 #define RUNSTATE_INIT 0
-    // Generate the 48 bit seed to create the Alias from
+// Generate the 48 bit seed to create the Alias from
 #define RUNSTATE_GENERATE_SEED 1
-    // Generate the Alias
+// Generate the Alias
 #define RUNSTATE_GENERATE_ALIAS 2
-    // Send the 4 (CID) messages with the NodeID and suggested Alias
+// Send the 4 (CID) messages with the NodeID and suggested Alias
 #define RUNSTATE_SEND_CHECK_ID_07 3
 #define RUNSTATE_SEND_CHECK_ID_06 4
 #define RUNSTATE_SEND_CHECK_ID_05 5
 #define RUNSTATE_SEND_CHECK_ID_04 6
-    // Wait for 200ms to see if anyone objects.  They objection could occur in this or the previous state,
-    // if they do then jump back to RUNSTATE_GENERATE_SEED to try again
+// Wait for 200ms to see if anyone objects.  They objection could occur in this or the previous state,
+// if they do then jump back to RUNSTATE_GENERATE_SEED to try again
 #define RUNSTATE_WAIT_200ms 7
-    // Send the Alias Reserved message (AMR)
+// Send the Alias Reserved message (AMR)
 #define RUNSTATE_TRANSMIT_RESERVE_ID 8
-    // At this point the alias is reserved
-    // To "log in" send the (AMD) message, this sets the node to "Permitted" but still not OpenLCB "Initialized"
+// At this point the alias is reserved
+// To "log in" send the (AMD) message, this sets the node to "Permitted" but still not OpenLCB "Initialized"
 #define RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION 9
-    // At this point the CAN specific login is complete, the Alias is reserved and the node is ready to be an OpenLCB Node
+// At this point the CAN specific login is complete, the Alias is reserved and the node is ready to be an OpenLCB Node
 #define RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE 10
-    // Node is Initialized and can send any message, need to send the events we handle
+// Node is Initialized and can send any message, need to send the events we handle
 #define RUNSTATE_TRANSMIT_CONSUMER_EVENTS 11
-    // Node is Initialized and can send any message, need to send the events we handle
+// Node is Initialized and can send any message, need to send the events we handle
 #define RUNSTATE_TRANSMIT_PRODUCER_EVENTS 12
-    // Runs the message loop
+// Runs the message loop
 #define RUNSTATE_RUN 13
 
 #define RESERVED_TOP_BIT 0x10000000
-    // OpenLCB Message Mask CAN adaptation (MTI is only 12 bits (vs 16) with upper 4 redefined)
+// OpenLCB Message Mask CAN adaptation (MTI is only 12 bits (vs 16) with upper 4 redefined)
 #define CAN_OPENLCB_MSG 0x08000000 // 1 in the 27th bit is OpenLcb; 0 is a CAN frame
-    // Masks out the 3 Frame Type Bits
+// Masks out the 3 Frame Type Bits
 #define MASK_CAN_FRAME_SEQUENCE_NUMBER 0x07000000          // if not an OpenLcb message then this is the type of CAN frame it is
 #define MASK_CAN_FRAME_TYPE MASK_CAN_FRAME_SEQUENCE_NUMBER // if an OpenLcb frame the same 3 bits are the frame type
-    // Mask out the CAN adaptation 12 bit MTI
+// Mask out the CAN adaptation 12 bit MTI
 #define MASK_CAN_VARIABLE_FIELD 0x00FFF000
 
 #define CAN_FRAME_TYPE_GLOBAL_ADDRESSED 0x01000000
@@ -137,7 +137,7 @@
 #define MTI_DATAGRAM_OK_REPLY 0x0A28       // Databytes = Destination Alias
 #define MTI_DATAGRAM_REJECTED_REPLY 0x0A48 // Databytes = Destination Alias, Error Code
 
-    // Data field Masks
+// Data field Masks
 #define MASK_MULTIFRAME_BITS 0xF0
 
 #define MULTIFRAME_ONLY 0x00
@@ -154,9 +154,7 @@
 #define MASK_EVENT_PRESENT 0x00004
 #define MASK_PRIORITY_MODIFIER 0x00003
 
-    // OLD
-
-    // CAN MTI
+// CAN MTI
 
 #define CAN_CONTROL_FRAME_CID7 0x07000000 // First 12 Bits of 48 bit Node ID
 #define CAN_CONTROL_FRAME_CID6 0x06000000 // 2rd 12 Bits of 48 bit Node ID
@@ -175,13 +173,13 @@
 #define CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2 0x00712000
 #define CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3 0x00713000
 
-    // OpenLCB Message Masks Full MTI (16 bits)
+// OpenLCB Message Masks Full MTI (16 bits)
 #define MASK_OPENLCB_MSG_BIT 0x08000000
 #define MASK_RESERVED_2 0x04000000
 #define MASK_RESERVED_1 0x04000000
 #define MASK_SPECIAL 0x02000000
 
-    // OpenLCB Message Masks CAN adaptation in the Identifier
+// OpenLCB Message Masks CAN adaptation in the Identifier
 #define MASK_CAN_STREAM_OR_DATAGRAM 0x01000000
 #define MASK_CAN_PRIORITY 0x00C00000
 #define MASK_CAN_SIMPLE_PROTOCOL 0x00010000
@@ -190,12 +188,12 @@
 #define MASK_CAN_PRIORITY_MODIFIER 0x00003000
 #define MASK_CAN_SOURCE_ALIAS 0x00000FFF
 
-    // CAN Control Message Masks
+// CAN Control Message Masks
 #define MASK_CAN_CONTROL_VAR_FIELD 0x07FFF000
 #define MASK_CAN_CONTROL_FRAME_SEQUENCE 0x07000000
 #define MASK_CAN_CONTROL_NODEID 0x00FFF000
 
-    // Protocol Support
+// Protocol Support
 
 #define PSI_SIMPLE 0x800000
 #define PSI_DATAGRAM 0x400000
@@ -218,7 +216,7 @@
 #define PSI_FIRMWARE_UPGRADE 0x000020
 #define PSI_FIRMWARE_UPGRADE_ACTIVE 0x000010
 
-    // Well Known Events (auto routed between segments)
+// Well Known Events (auto routed between segments)
 
 #define EVENT_ID_EMERGENCY_OFF 0x010000000000FFFF
 #define EVENT_ID_CLEAR_EMERGENCY_OFF 0x010000000000FFFE
@@ -233,7 +231,7 @@
 #define EVENT_ID_LINK_ERROR_CODE_3 0x010000000000FF03
 #define EVENT_ID_LINK_ERROR_CODE_4 0x010000000000FF04
 
-    // Well Known Events (not auto routed between segments)
+// Well Known Events (not auto routed between segments)
 
 #define EVENT_ID_DUPLICATE_NODE_DETECTED 0x0101000000000201
 #define EVENT_ID_TRAIN 0x0101000000000303
@@ -256,10 +254,13 @@
 #define EVENT_TRAIN_SEARCH_SPACE 0x090099FF00000000
 
 #define ERROR_PERMANENT 0x1000
+#define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1001
+#define ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS 0x1002
+#define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY 0x1003
 #define ERROR_PERMANENT_SOURCE_NOT_PERMITTED 0x1020
 #define ERROR_PERMANENT_NOT_IMPLEMENTED 0x1040
-#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND 0x1041
-#define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND 0x1042
+#define ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN 0x1041
+#define ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN 0x1042
 #define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL 0x1043
 #define ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE 0x1044
 #define ERROR_PERMANENT_INVALID_ARGUMENTS 0x1080
@@ -376,6 +377,7 @@
 
 
 #define MAX_NODE_ENUM_KEY_VALUES 6
+
 #define OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX 0
 
 #ifdef __cplusplus

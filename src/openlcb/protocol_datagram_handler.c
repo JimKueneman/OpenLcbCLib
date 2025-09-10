@@ -89,7 +89,7 @@ static bool _handle_subcommand(openlcb_node_t* openlcb_node, openlcb_msg_t* open
 
     } else {
 
-        _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+        _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
         return true;
 
@@ -131,7 +131,7 @@ static bool _handle_read_address_space_at_offset_6(openlcb_node_t* openlcb_node,
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -173,7 +173,7 @@ static bool _handle_read_reply_ok_address_space_at_offset_6(openlcb_node_t* open
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -215,7 +215,7 @@ static bool _handle_read_reply_fail_address_space_at_offset_6(openlcb_node_t* op
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -257,7 +257,7 @@ static bool _handle_write_address_space_at_offset_6(openlcb_node_t* openlcb_node
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -299,7 +299,7 @@ static bool _handle_write_reply_ok_address_space_at_offset_6(openlcb_node_t* ope
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -341,7 +341,7 @@ static bool _handle_write_reply_fail_address_space_at_offset_6(openlcb_node_t* o
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -383,7 +383,7 @@ static bool _handle_write_under_mask_address_space_at_offset_6(openlcb_node_t* o
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -557,7 +557,7 @@ static bool _handle_datagram_memory_configuration(openlcb_node_t* openlcb_node, 
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             return true; // done
 
@@ -577,7 +577,7 @@ bool ProtocolDatagramHandler_handle_datagram(openlcb_node_t* openlcb_node, openl
 
         default:
 
-            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_COMMAND);
+            _load_datagram_rejected_message(openlcb_node, openlcb_msg, worker_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN);
 
             break;
 

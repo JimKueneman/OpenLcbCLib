@@ -145,6 +145,12 @@ extern "C" {
 
     } event_status_enum;
 
+    typedef enum {
+        ADDRESS_SPACE_IN_BYTE_1 = 0,
+        ADDRESS_SPACE_IN_BYTE_6 = 1
+
+    } space_encoding_enum;
+
     typedef uint8_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
     typedef uint8_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
     typedef uint8_t payload_snip_t[LEN_MESSAGE_BYTES_SNIP];

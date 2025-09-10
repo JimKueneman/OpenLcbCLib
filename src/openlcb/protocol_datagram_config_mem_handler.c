@@ -46,7 +46,34 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 
+#define CONFIG_REPLY_OK_OFFSET 0x10
+#define CONFIG_REPLY_FAIL_OFFSET 0x18
+
 static interface_openlcb_protocol_datagram_config_mem_handler_t *_interface;
+
+typedef struct {
+    space_encoding_enum address_space_encoding;
+    uint8_t data_start_offset;
+    uint32_t address_requested;
+    uint16_t bytes_requested;
+    user_address_space_info_t *space_info;
+    uint16_t pending_timeout; // (0s - 32768s in 2^N steps)
+
+} config_mem_message_data_t;
+
+typedef enum {
+    ACK_OK_REPLY,
+    ACK_FAIL_REPLY,
+    ACK_COMPLETED
+
+} config_mem_datagram_reply_result_enum;
+
+typedef enum {
+    CONFIG_MEM_HANDLER_PROCESSING_ACK_OK,
+    CONFIG_MEM_HANDLER_READY,
+    CONFIG_MEM_HANDLER_ABORTED
+
+} config_mem_handler_result_enum;
 
 void ProtocolDatagramConfigMemHandler_initialize(const interface_openlcb_protocol_datagram_config_mem_handler_t *interface_openlcb_protocol_datagram_config_mem_handler) {
 
@@ -54,128 +81,232 @@ void ProtocolDatagramConfigMemHandler_initialize(const interface_openlcb_protoco
 
 }
 
-static uint16_t _validate_memory_read_space_parameters(const user_address_space_info_t* space_info, uint32_t data_address, uint16_t* requested_byte_count) {
+static uint16_t _validate_memory_space_read_arguments(config_mem_message_data_t *config_mem_message_data) {
 
-    if (!space_info->present) {
+    if (config_mem_message_data->address_requested > config_mem_message_data->space_info->highest_address) {
 
-        return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
+        return ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS;
 
     }
 
-    if (data_address > space_info->highest_address) {
+    if (config_mem_message_data->bytes_requested > 64) {
 
         return ERROR_PERMANENT_INVALID_ARGUMENTS;
 
     }
 
-    if (*requested_byte_count > 64) {
+    if (config_mem_message_data->bytes_requested == 0) {
 
-        return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
-
-    }
-
-    if (*requested_byte_count == 0) {
-
-        return ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE;
+        return ERROR_PERMANENT_INVALID_ARGUMENTS;
 
     }
 
-    if ((data_address + *requested_byte_count) > space_info->highest_address) {
+    if ((config_mem_message_data->address_requested + config_mem_message_data->bytes_requested) > config_mem_message_data->space_info->highest_address) {
 
-        *requested_byte_count = (uint8_t) (space_info->highest_address - data_address + 1); // length +1 due to 0...end
+        config_mem_message_data->bytes_requested = (uint8_t) (config_mem_message_data->space_info->highest_address - (config_mem_message_data->address_requested + 1)); // length +1 due to 0...end
 
     }
 
     return 0;
 }
 
-static uint16_t _validate_memory_write_space_parameters(const user_address_space_info_t* space_info, uint32_t data_address, uint16_t* requested_byte_count) {
+static uint16_t _validate_memory_space_write_arguments(config_mem_message_data_t *config_mem_message_data) {
 
-    if (space_info->read_only) {
+    if (config_mem_message_data->space_info->read_only) {
 
-        return ERROR_PERMANENT_NOT_IMPLEMENTED;
+        return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY;
 
     }
 
-    return _validate_memory_read_space_parameters(space_info, data_address, requested_byte_count);
+    return _validate_memory_space_read_arguments(config_mem_message_data);
 
 }
 
-static bool _is_datagram_reply_ok_message_pending(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t return_code) {
+static config_mem_datagram_reply_result_enum _process_datagram_acknowledge(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, config_mem_message_data_t *config_mem_message_data) {
 
-    if (!openlcb_node->state.openlcb_datagram_ack_sent) {
+    if (openlcb_node->state.openlcb_datagram_ack_sent) {
 
-        OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_msg->dest_alias, openlcb_msg->dest_id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_OK_REPLY, 1);
-        *worker_msg->payload[0] = return_code;
-
-        openlcb_node->state.openlcb_datagram_ack_sent = true;
-
-        return true; // not done yet 
+        return ACK_COMPLETED;
 
     }
 
-    return false; // done   
+    if (!config_mem_message_data->space_info->present) {
+
+        OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_msg->dest_alias, openlcb_msg->dest_id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_REJECTED_REPLY, 1);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN, 0);
+        worker_msg->payload_count = 2;
+
+        openlcb_node->state.openlcb_datagram_ack_sent = true;
+
+        return ACK_FAIL_REPLY;
+
+    }
+
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_msg->dest_alias, openlcb_msg->dest_id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM_OK_REPLY, 1);
+    *worker_msg->payload[0] = 0x00;
+    worker_msg->payload_count = 1;
+
+    if (config_mem_message_data->pending_timeout > 1) {
+
+        uint16_t calculated_time = 2;
+        uint8_t N = 1;
+
+        while ((calculated_time < config_mem_message_data->pending_timeout) && (N < (15 - 1))) {
+
+            calculated_time = calculated_time << 2; // double each time is equivalent to the 2^N factor in the spec
+            N++;
+
+        }
+
+        *worker_msg->payload[0] = DATAGRAM_OK_REPLY_PENDING | N;
+
+    }
+
+    openlcb_node->state.openlcb_datagram_ack_sent = true;
+
+    return ACK_OK_REPLY;
+}
+
+space_encoding_enum _decode_address_space_position(openlcb_msg_t* openlcb_msg) {
+
+    // In Read/Write/Stream the bottom nibble is zero (not true for Write under Mask though)
+
+    if ((*openlcb_msg->payload[1] & 0x0F) == 0x00) {
+
+        return ADDRESS_SPACE_IN_BYTE_6;
+
+    }
+
+    return ADDRESS_SPACE_IN_BYTE_1;
+
+}
+
+static void _load_config_mem_reply_message_header(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, config_mem_message_data_t *config_mem_message_data) {
+
+    config_mem_message_data->data_start_offset = 6 + config_mem_message_data->address_space_encoding;
+    config_mem_message_data->address_requested = OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
+    config_mem_message_data->bytes_requested = OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg, config_mem_message_data->data_start_offset);
+
+    // Load the common reply fields that all messages will have
+    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_msg->dest_alias, openlcb_msg->dest_id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
+    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *worker_msg->payload[1] = *openlcb_msg->payload[1] + CONFIG_REPLY_OK_OFFSET; // generate an OK reply by default for Read/Write/Stream
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(worker_msg, config_mem_message_data->address_requested, 2);
+
+
+}
+
+static void _load_config_memory_fail_return_msg(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, config_mem_message_data_t *config_mem_message_data, uint16_t error_code) {
+
+    *worker_msg->payload[1] = *openlcb_msg->payload[1] + CONFIG_REPLY_FAIL_OFFSET; // generate a reply failure for Read/Write/Stream
+    worker_msg->payload_count = 8;
+
+    if (config_mem_message_data->address_space_encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        *worker_msg->payload[6] = *openlcb_msg->payload[6];
+        worker_msg->payload_count++;
+
+    }
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, error_code, config_mem_message_data->data_start_offset);
+
+}
+
+static config_mem_handler_result_enum _process_read_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, config_mem_message_data_t *config_mem_message_data) {
+
+    uint16_t error_code = 0;
+
+    switch (_process_datagram_acknowledge(openlcb_node, openlcb_msg, worker_msg, config_mem_message_data)) {
+
+        case ACK_OK_REPLY:
+
+            return CONFIG_MEM_HANDLER_PROCESSING_ACK_OK;
+
+        case ACK_FAIL_REPLY:
+
+            return CONFIG_MEM_HANDLER_ABORTED;
+
+        case ACK_COMPLETED:
+
+            error_code = _validate_memory_space_read_arguments(config_mem_message_data);
+
+            if (error_code > 0) {
+
+                _load_config_memory_fail_return_msg(openlcb_node, openlcb_msg, worker_msg, config_mem_message_data, error_code);
+
+                return CONFIG_MEM_HANDLER_ABORTED;
+
+            }
+
+            return CONFIG_MEM_HANDLER_READY;
+
+    }
+
+    return true;
+
+}
+
+static config_mem_handler_result_enum _process_write_request(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, config_mem_message_data_t *config_mem_message_data) {
+
+    uint16_t error_code = 0;
+
+    switch (_process_datagram_acknowledge(openlcb_node, openlcb_msg, worker_msg, config_mem_message_data)) {
+
+        case ACK_OK_REPLY:
+
+            return CONFIG_MEM_HANDLER_PROCESSING_ACK_OK;
+
+        case ACK_FAIL_REPLY:
+
+            return CONFIG_MEM_HANDLER_ABORTED;
+
+        case ACK_COMPLETED:
+
+            error_code = _validate_memory_space_write_arguments(config_mem_message_data);
+
+            if (error_code > 0) {
+
+                _load_config_memory_fail_return_msg(openlcb_node, openlcb_msg, worker_msg, config_mem_message_data, error_code);
+
+                return CONFIG_MEM_HANDLER_ABORTED;
+
+            }
+
+            return CONFIG_MEM_HANDLER_READY;
+
+    }
+
+    return true;
 
 }
 
 bool ProtocolDatagramConfigMemHandler_memory_read_space_config_description_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
 
-    if (_is_datagram_reply_ok_message_pending(openlcb_node, openlcb_msg, worker_msg, 0x00)) {
-        
-        return false;
-        
-    }
-  
-    uint32_t address = OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
-    uint16_t count = OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg, 6); // make a guess
-    bool space_in_byte_six = (*openlcb_msg->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6);
+    config_mem_message_data_t config_mem_message_data = {.address_requested = 0, .bytes_requested = 0, .data_start_offset = 0};
+    config_mem_message_data.address_space_encoding = _decode_address_space_position(openlcb_msg);
+    config_mem_message_data.space_info = (user_address_space_info_t*) & openlcb_node->parameters->address_space_configuration_definition; // a const so need to un-const to stop compiler from complaining
 
-    if (space_in_byte_six) {
+    switch (_process_read_request(openlcb_node, openlcb_msg, worker_msg, &config_mem_message_data)) {
 
-        count = OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg, 6);
+        case CONFIG_MEM_HANDLER_PROCESSING_ACK_OK: // not done yet with a message to send in worker_msg but need to call again to do the reply
 
-    }
+            return false;
 
-    uint16_t error_code = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, address, &count);
+        case CONFIG_MEM_HANDLER_ABORTED: // done with last message we need to send in worker_msg, either a Datagram Rejected or Command Fail Config Mem Message
 
-    OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_msg->dest_alias, openlcb_msg->dest_id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(worker_msg, address, 2);
+            return true;
 
-    if (error_code > 0) {
+        case CONFIG_MEM_HANDLER_READY: // done with the actual reply for the read
 
-        if (space_in_byte_six) {
+            _load_config_mem_reply_message_header(openlcb_node, openlcb_msg, worker_msg, &config_mem_message_data);
+            OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[config_mem_message_data.address_requested], config_mem_message_data.data_start_offset, config_mem_message_data.bytes_requested);
+            worker_msg->payload_count = config_mem_message_data.data_start_offset + config_mem_message_data.bytes_requested;
 
-            *worker_msg->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;     
-            *worker_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
-            OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, error_code, 7);
-            worker_msg->payload_count = 9; 
-
-        } else {
-
-            *worker_msg->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF;
-            OpenLcbUtilities_copy_word_to_openlcb_payload(worker_msg, error_code, 6);
-            worker_msg->payload_count = 8; 
-
-        }
+            return true;
 
     }
 
-    if (space_in_byte_six) {
-
-        *worker_msg->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-        *worker_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
-        OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[address], 7, count);
-        worker_msg->payload_count = count + 7; 
-
-    } else {
-
-        *worker_msg->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF;
-        OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[address], 6, count);
-        worker_msg->payload_count = count + 6; 
-
-    }
-
+    worker_msg->mti = 0x00; // unexpected error, make rouge message is not sent and flag done
     return true;
 }
 
@@ -238,6 +369,78 @@ bool ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_config
 
     return true;
 }
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_config_description_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    return true;
+
+}
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_all_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    return true;
+}
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_configuration_memory_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+    
+    config_mem_message_data_t config_mem_message_data = {.address_requested = 0, .bytes_requested = 0, .data_start_offset = 0};
+    config_mem_message_data.address_space_encoding = _decode_address_space_position(openlcb_msg);
+    config_mem_message_data.space_info = (user_address_space_info_t*) & openlcb_node->parameters->address_space_config_memory; // a const so need to un-const to stop compiler from complaining
+
+    switch (_process_write_request(openlcb_node, openlcb_msg, worker_msg, &config_mem_message_data)) {
+
+        case CONFIG_MEM_HANDLER_PROCESSING_ACK_OK: // not done yet with a message to send in worker_msg but need to call again to do the reply
+
+            return false;
+
+        case CONFIG_MEM_HANDLER_ABORTED: // done with last message we need to send in worker_msg, either a Datagram Rejected or Command Fail Config Mem Message
+
+            return true;
+
+        case CONFIG_MEM_HANDLER_READY: // done with the actual reply for the read
+
+            _load_config_mem_reply_message_header(openlcb_node, openlcb_msg, worker_msg, &config_mem_message_data);
+        //    OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[config_mem_message_data.address_requested], config_mem_message_data.data_start_offset, config_mem_message_data.bytes_requested);
+        //    worker_msg->payload_count = config_mem_message_data.data_start_offset + config_mem_message_data.bytes_requested;
+
+            return true;
+
+    }
+
+    worker_msg->mti = 0x00; // unexpected error, make rouge message is not sent and flag done
+    return true;
+}
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_acdi_manufacturer_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    return true;
+}
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_acdi_user_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    return true;
+}
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_definition_info_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    return true;
+}
+
+bool ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_config_memory_message(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg) {
+
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+/// OLD stuff.......................
 
 static const user_address_space_info_t* _decode_to_space_definition(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
 
@@ -340,142 +543,173 @@ static void _send_datagram_ack_reply(openlcb_node_t* openlcb_node, openlcb_msg_t
 
 static uint16_t _read_memory_space_cdi(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_configuration_definition, data_address, &requested_byte_count);
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_configuration_definition, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    return reply_payload_index + OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[data_address], reply_payload_index, requested_byte_count);
 
-    if (invalid) {
-
-        return invalid;
-
-    }
-
-    return reply_payload_index + OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->cdi[data_address], reply_payload_index, requested_byte_count);
-
+    return 0;
 }
 
 static uint16_t _read_memory_space_all(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_all, data_address, &requested_byte_count);
-    if (invalid) {
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_all, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    return ERROR_PERMANENT_NOT_IMPLEMENTED;
 
-        return invalid;
-
-    }
-
-    return ERROR_PERMANENT_NOT_IMPLEMENTED;
+    return 0;
 
 }
 
 static uint16_t _read_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &requested_byte_count);
-    if (invalid) {
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_config_memory, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
+    //
+    //    return reply_payload_index + _interface->configuration_memory_read(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
-        return invalid;
-
-    }
-
-    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
-
-    return reply_payload_index + _interface->configuration_memory_read(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
+    return 0;
 
 }
 
 static uint16_t _read_memory_space_acdi_manufacurer(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_manufacturer, data_address, &requested_byte_count);
-    if (invalid) {
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_acdi_manufacturer, &config_mem_message_data);
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    switch (data_address) {
+    //
+    //        case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
+    //
+    //            return _interface->snip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
+    //
+    //            return _interface->snip_load_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
+    //
+    //            return _interface->snip_load_model(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
+    //
+    //            return _interface->snip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
+    //
+    //            return _interface->snip_load_software_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        default:
+    //
+    //            return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL;
+    //
+    //    }
 
-        return invalid;
-
-    }
-
-    switch (data_address) {
-
-        case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
-
-            return _interface->snip_load_manufacturer_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
-
-            return _interface->snip_load_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
-
-            return _interface->snip_load_model(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
-
-            return _interface->snip_load_hardware_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
-
-            return _interface->snip_load_software_version(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        default:
-
-            return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL;
-
-    }
-
+    return 0;
 }
 
 static uint16_t _read_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &requested_byte_count);
-    if (invalid) {
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_acdi_user, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    switch (data_address) {
+    //
+    //        case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
+    //
+    //            return _interface->snip_load_user_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
+    //
+    //            return _interface->snip_load_user_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
+    //
+    //            return _interface->snip_load_user_description(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
+    //
+    //        default:
+    //
+    //            return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL;
+    //
+    //    }
 
-        return invalid;
-
-    }
-
-    switch (data_address) {
-
-        case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
-
-            return _interface->snip_load_user_version_id(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
-
-            return _interface->snip_load_user_name(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
-
-            return _interface->snip_load_user_description(openlcb_node, worker_msg, reply_payload_index, requested_byte_count);
-
-        default:
-
-            return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL;
-
-    }
+    return 0;
 
 }
 
 static uint16_t _read_memory_space_train_function_definition_info(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_traction_function_definition_info, data_address, &requested_byte_count);
-    if (invalid) {
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_traction_function_definition_info, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    return reply_payload_index + OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->fdi[data_address], reply_payload_index, requested_byte_count);
 
-        return invalid;
-
-    }
-
-    return reply_payload_index + OpenLcbUtilities_copy_byte_array_to_openlcb_payload(worker_msg, &openlcb_node->parameters->fdi[data_address], reply_payload_index, requested_byte_count);
+    return 0;
 }
 
 static uint16_t _read_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
 
-    uint16_t invalid = _validate_memory_read_space_parameters(&openlcb_node->parameters->address_space_traction_function_config_memory, data_address, &requested_byte_count);
-    if (invalid) {
-
-        return invalid;
-
-    }
-
-    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_read_arguments(&openlcb_node->parameters->address_space_traction_function_config_memory, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
+    //
+    //    return 0;
+    //
+    //    //  return reply_payload_index + DriverConfigurationMemory_read(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
     return 0;
-
-    //  return reply_payload_index + DriverConfigurationMemory_read(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&worker_msg->payload[reply_payload_index]));
 
 }
 
@@ -513,88 +747,105 @@ static uint16_t _read_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t* 
 
         default:
 
-            return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
+            return ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN;
     }
 
 }
 
 static uint16_t _write_memory_space_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
+    //
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_write_arguments(&openlcb_node->parameters->address_space_config_memory, &config_mem_message_data);
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
+    //
+    //    uint16_t write_count = _interface->configuration_memory_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    //
+    //    if (_interface->on_config_mem_write) {
+    //
+    //        _interface->on_config_mem_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
+    //
+    //    }
+    //
+    //    return write_count;
 
-
-    uint16_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_config_memory, data_address, &requested_byte_count);
-    if (invalid) {
-
-        return invalid;
-
-    }
-
-    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
-
-    uint16_t write_count = _interface->configuration_memory_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
-
-    if (_interface->on_config_mem_write) {
-
-        _interface->on_config_mem_write(data_address, requested_byte_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
-
-    }
-
-    return write_count;
+    return 0;
 }
 
 static uint16_t _write_memory_space_acdi_user(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t data_count) {
+    //
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_write_arguments(&openlcb_node->parameters->address_space_acdi_user, &config_mem_message_data);
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    data_address = data_address - 1; // ACDI addresses are shifted to the right one for the Version byte
+    //
+    //    // ADCI spaces are always mapped referenced to zero so offset by where the config memory starts 
+    //    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
+    //        data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
+    //
+    //    // TODO: Should I check for and insert a terminating NULL if it is missing... 
+    //
+    //    return _write_memory_space_configuration_memory(openlcb_node, openlcb_msg, data_address, reply_payload_index, data_count);
 
-    uint16_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_acdi_user, data_address, &data_count);
-    if (invalid) {
-
-        return invalid;
-
-    }
-
-    data_address = data_address - 1; // ACDI addresses are shifted to the right one for the Version byte
-
-    // ADCI spaces are always mapped referenced to zero so offset by where the config memory starts 
-    if (openlcb_node->parameters->address_space_config_memory.low_address_valid)
-        data_address = data_address + openlcb_node->parameters->address_space_config_memory.low_address;
-
-    // TODO: Should I check for and insert a terminating NULL if it is missing... 
-
-    return _write_memory_space_configuration_memory(openlcb_node, openlcb_msg, data_address, reply_payload_index, data_count);
+    return 0;
 
 }
 
 static uint16_t _write_memory_space_train_function_configuration_memory(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t data_count) {
 
-    uint16_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_traction_function_config_memory, data_address, &data_count);
-    if (invalid) {
-
-        return invalid;
-
-    }
-
-    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_write_arguments(&openlcb_node->parameters->address_space_traction_function_config_memory, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node);
+    //
+    //    return 0;
+    //    //TODO:
+    //    //  THIS IS WRONG.... NOT CONFIGURATION MEMORY WRITE REALLY
+    //    //  return DriverConfigurationMemory_write(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     return 0;
-    //TODO:
-    //  THIS IS WRONG.... NOT CONFIGURATION MEMORY WRITE REALLY
-    //  return DriverConfigurationMemory_write(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
 
 static uint16_t _write_memory_space_firmware(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, uint32_t data_address, uint16_t reply_payload_index, uint16_t data_count) {
 
-    uint16_t invalid = _validate_memory_write_space_parameters(&openlcb_node->parameters->address_space_firmware, data_address, &data_count);
-    if (invalid) {
-
-        return invalid;
-
-    }
-
-    //   data_address = data_address + openlcb_node->parameters->firmware_image_offset;
-
-    //    TODO: This should not be the Configuration Memory 
+    //    config_mem_message_data_t config_mem_message_data;
+    //
+    //    uint16_t invalid = _validate_memory_space_write_arguments(&openlcb_node->parameters->address_space_firmware, &config_mem_message_data);
+    //
+    //    if (invalid) {
+    //
+    //        return invalid;
+    //
+    //    }
+    //
+    //    //   data_address = data_address + openlcb_node->parameters->firmware_image_offset;
+    //
+    //    //    TODO: This should not be the Configuration Memory 
+    //
+    //    return 0;
+    //    //   return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
     return 0;
-    //   return DriverConfigurationMemory_get_write_callback()(data_address, data_count, (configuration_memory_buffer_t*) (&openlcb_msg->payload[reply_payload_index]));
 
 }
 
@@ -620,7 +871,7 @@ static uint16_t _write_memory_space(openlcb_node_t* openlcb_node, openlcb_msg_t*
 
         default:
 
-            return ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_SUBCOMMAND;
+            return ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN;
     }
 
 }
