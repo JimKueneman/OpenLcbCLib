@@ -47,7 +47,7 @@
 #include "openlcb_buffer_store.h"
 
 
-typedef bool(*memory_handler_t)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
+typedef void(*memory_handler_t)(openlcb_statemachine_info_t *statemachine_info);
 
 static interface_protocol_datagram_handler_t *_interface;
 
@@ -61,507 +61,687 @@ static void _load_datagram_received_ok_message(openlcb_statemachine_info_t *stat
 
     OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg->source_alias, statemachine_info->incoming_msg->source_id, MTI_DATAGRAM_OK_REPLY, 2);
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, return_code, 0);
-    
+
 }
 
-static void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code) {
+static void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
 
     OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg->source_alias, statemachine_info->incoming_msg->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, error_code, 0);
-    
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, return_code, 0);
+
 }
 
-static bool _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, memory_handler_t handler_ptr) {
+static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, memory_handler_t handler_ptr) {
 
     // TODO: NEED TO THINK ABOUT WITH MULTIPLE NODES THAT CARRY DIFFERNT NODE PARAMETER STRUCTURES THIS WON'T WORK CORRECT.... NEED TO FIGURE THIS OUT... THE 
     // HANDLER NEEDS TO LOOK AT THE NODE PARAMETERS AND DO THE RIGHT THING I BELIEVE... THIS MODULE CAN'T MAKE THOSE DECISIONS ABOUT ACK/NACK REPLYIES TO THE DATAGRAM MESSAGES
-   
+
     if (handler_ptr) {
 
         if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
-            
+
             // TODO: HOW TO HANDLE RETURNING DELAYED REPLY AND EXPECTED TIME TILL REPLY COMES
 
             _load_datagram_received_ok_message(statemachine_info, 0x00);
 
-            return false; // keep pumping this message
-        }
+            return; // keep pumping this message
 
-        return handler_ptr(statemachine_info);
+        }
+        
+        handler_ptr(statemachine_info);
+
+        return;
 
     } else {
 
         _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-        return true;
+        return;
 
     }
 
 }
 
-static bool _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
     switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_all_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_message);
+
+            break;
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_ok_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_fail_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_all_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_message);
 
+            break;
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_ok_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_ok_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_fail_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_fail_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_write_under_mask_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info_message);
+
+            break;
 
         case ADDRESS_SPACE_ALL:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all_message);
+
+            break;
 
         case ADDRESS_SPACE_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_acdi_manufacturer_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_acdi_manufacturer_message);
+
+            break;
 
         case ADDRESS_SPACE_ACDI_USER_ACCESS:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_acdi_user_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_acdi_user_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_definition_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_definition_info_message);
+
+            break;
 
         case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_config_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_config_memory_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     }
 
 }
 
-static bool _handle_datagram_memory_configuration(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+static void _handle_datagram_memory_configuration(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[1]) { // which space?
+    switch (*statemachine_info->incoming_msg->payload[1]) { // which space?
 
         case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
 
-            return _handle_read_address_space_at_offset_6(statemachine_info);
+            _handle_read_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_all_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6:
 
-            return _handle_read_reply_ok_address_space_at_offset_6(statemachine_info);
+            _handle_read_reply_ok_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6:
 
-            return _handle_read_reply_fail_address_space_at_offset_6(statemachine_info);
+            _handle_read_reply_fail_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail_message);
+
+            break;
 
         case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6:
 
-            return _handle_write_address_space_at_offset_6(statemachine_info);
+            _handle_write_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_all_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
 
-            return (_handle_write_reply_ok_address_space_at_offset_6(statemachine_info));
+            _handle_write_reply_ok_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6:
 
-            return (_handle_write_reply_fail_address_space_at_offset_6(statemachine_info));
+            _handle_write_reply_fail_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6:
 
-            return (_handle_write_under_mask_address_space_at_offset_6(statemachine_info));
+            _handle_write_under_mask_address_space_at_offset_6(statemachine_info);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all_message);
+
+            break;
 
         case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FF:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info_message);
+
+            break;
 
         case DATAGRAM_MEMORY_OPTIONS_CMD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_options_cmd_message));
+            _handle_subcommand(statemachine_info, _interface->memory_options_cmd_message);
+
+            break;
 
         case DATAGRAM_MEMORY_OPTIONS_REPLY:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_options_reply_message));
+            _handle_subcommand(statemachine_info, _interface->memory_options_reply_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_INFO_CMD:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_message));
+            _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_reply_not_present_message));
+            _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_reply_not_present_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_reply_not_present_message));
+            _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_reply_not_present_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_reserve_lock_message));
+            _handle_subcommand(statemachine_info, _interface->memory_reserve_lock_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_GET_UNIQUE_ID:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_get_unique_id_message));
+            _handle_subcommand(statemachine_info, _interface->memory_get_unique_id_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_UNFREEZE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_unfreeze_message));
+            _handle_subcommand(statemachine_info, _interface->memory_unfreeze_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_FREEZE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_freeze_message));
+            _handle_subcommand(statemachine_info, _interface->memory_freeze_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_UPDATE_COMPLETE:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_update_complete_message));
+            _handle_subcommand(statemachine_info, _interface->memory_update_complete_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_RESET_REBOOT:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_reset_reboot_message));
+            _handle_subcommand(statemachine_info, _interface->memory_reset_reboot_message);
+
+            break;
 
         case DATAGRAM_MEMORY_CONFIGURATION_FACTORY_RESET:
 
-            return (_handle_subcommand(statemachine_info, _interface->memory_factory_reset_message));
+            _handle_subcommand(statemachine_info, _interface->memory_factory_reset_message);
+
+            break;
 
         default:
 
             _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
-            return true; // done
+            break;
 
     } // switch sub-command
 
@@ -569,7 +749,7 @@ static bool _handle_datagram_memory_configuration(openlcb_statemachine_info_t *s
 
 void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*openlcb_msg->payload[0]) { // commands
+    switch (*statemachine_info->incoming_msg->payload[0]) { // commands
 
         case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?
 
@@ -585,7 +765,7 @@ void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statem
 
     } // switch command
 
-   
+
 }
 
 void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info) {
@@ -597,9 +777,9 @@ void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_i
 
     }
 
-   statemachine_info-> openlcb_node->state.resend_datagram = false;
-   
-   statemachine_info->outgoing_msg_valid = false;
+    statemachine_info-> openlcb_node->state.resend_datagram = false;
+
+    statemachine_info->outgoing_msg_valid = false;
 
 }
 
@@ -619,7 +799,7 @@ void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_
         statemachine_info->openlcb_node->last_received_datagram = NULL;
 
     }
-    
+
     statemachine_info->outgoing_msg_valid = false;
 
 }
