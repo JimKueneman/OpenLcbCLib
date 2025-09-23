@@ -12,8 +12,7 @@ uint16_t handler_mti = 0x00;
 bool load_interaction_rejected_called = false;
 bool reply_to_protocol_support_inquiry = false;
 bool force_process_statemachine_to_fail = false;
-bool transmit_openlcb_msg_called = false;
-bool try_free_current_and_pop_next_incoming_msg_called = false;
+bool send_openlcb_msg_called = false;
 bool process_statemachine_called = false;
 bool node_get_first_called = false;
 bool node_get_next_called = false;
@@ -23,9 +22,6 @@ openlcb_node_t *node_get_next = nullptr;
 bool lock_node_list_called = false;
 bool unlock_node_list_called = false;
 bool allow_successful_transmit = true;
-openlcb_node_t *openlcb_node_callback = nullptr;
-openlcb_msg_t *openlcb_msg_incoming_callback = nullptr;
-openlcb_msg_t *openlcb_msg_outgoing_callback = nullptr;
 
 node_parameters_t _node_parameters_main_node = {
 
@@ -95,334 +91,296 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-bool _ProtocolSnip_handle_simple_node_info_request(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolSnip_handle_simple_node_info_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_initialization_complete(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_initialization_complete(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_initialization_complete_simple(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info)
 {
 
     fprintf(stderr, "\n_ProtocolMessageNetwork_handle_protocol_support_inquiry = called\n");
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
     if (reply_to_protocol_support_inquiry)
     {
 
         fprintf(stderr, "\nreply_to_protocol_support_inquiry = true\n");
 
-        outgoing_msg->mti = MTI_PROTOCOL_SUPPORT_REPLY;
+        statemachine_info->outgoing_msg->mti = MTI_PROTOCOL_SUPPORT_REPLY;
+        statemachine_info->outgoing_msg_valid = true;
     }
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
-{
-    handler_mti = incoming_msg->mti;
-
-    return true;
-}
-
-bool _ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_consumer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_consumer_range_identified(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_consumer_range_identified(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_consumer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
-{
-    handler_mti = incoming_msg->mti;
-
-    return true;
-}
-
-bool _ProtocolEventTransport_handle_consumer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_consumer_identified_set(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_producer_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
-{
-    handler_mti = incoming_msg->mti;
-
-    return true;
-}
-
-bool _ProtocolEventTransport_handle_producer_range_identified(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_consumer_identified_clear(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_producer_identified_unknown(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_statemachine_info_t *statemachine_info)
+{
+    handler_mti = statemachine_info->incoming_msg->mti;
+
+}
+
+void _ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t *statemachine_info)
+{
+    handler_mti = statemachine_info->incoming_msg->mti;
+
+}
+
+void _ProtocolEventTransport_handle_producer_range_identified(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_producer_identified_set(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_producer_identified_unknown(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_producer_identified_clear(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_producer_identified_set(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_producer_identified_reserved(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_producer_identified_clear(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_identify_dest(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_producer_identified_reserved(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_identify(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_identify_dest(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_event_learn(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_identify(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_pc_event_report(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_event_learn(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_pc_event_report(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolTractionControl_command(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolTractionControl_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolTractionControl_command(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolSimpleTrainNodeIdentInfo_request(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolTractionControl_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolSimpleTrainNodeIdentInfo_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolSimpleTrainNodeIdentInfo_request(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolDatagram_handle_datagram(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolSimpleTrainNodeIdentInfo_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolDatagram_handle_datagram(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _Protocol_Datagram_handle_datagram_ok_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-void _OpenLcbUtilities_load_interaction_rejected(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info)
+{
+
+    handler_mti = statemachine_info->incoming_msg->mti;
+
+}
+
+void _OpenLcbUtilities_load_interaction_rejected(openlcb_statemachine_info_t *statemachine_info)
 {
 
     load_interaction_rejected_called = true;
 }
 
-bool _ProtocolStream_initiate_request(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolStream_initiate_request(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolStream_initiate_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolStream_initiate_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolStream_send_data(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolStream_send_data(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolStream_data_proceed(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolStream_data_proceed(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
-bool _ProtocolStream_data_complete(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _ProtocolStream_data_complete(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = incoming_msg->mti;
+    handler_mti = statemachine_info->incoming_msg->mti;
 
-    return true;
 }
 
 void _ExampleDrivers_lock_can_buffer_fifo(void)
@@ -453,66 +411,46 @@ openlcb_node_t *_OpenLcbNode_get_next(uint8_t key)
     return result;
 }
 
-bool _CanTxStatemachine_transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
+bool _CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg)
 {
-    transmit_openlcb_msg_called = true;
+    send_openlcb_msg_called = true;
 
     if (allow_successful_transmit)
     {
-        fprintf(stderr, "CanTxStatemachine_transmit_openlcb_message, YES\n");
+        fprintf(stderr, "CanTxStatemachine_send_openlcb_message, YES\n");
 
         return true;
     }
     else
     {
 
-        fprintf(stderr, "CanTxStatemachine_transmit_openlcb_message, NO\n");
+        fprintf(stderr, "CanTxStatemachine_send_openlcb_message, NO\n");
 
         return false;
     }
 }
 
-bool _OpenLcbMainStatemachine_process_main_statemachine(openlcb_node_t *openlcb_node, openlcb_msg_t *incoming_msg, openlcb_msg_t *outgoing_msg)
+void _OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info_t *statemachine_info)
 {
-
-    bool result = false;
 
     if (!force_process_statemachine_to_fail)
     {
 
-        result = OpenLcbMainStatemachine_process_main_statemachine(openlcb_node, incoming_msg, outgoing_msg);
+         OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
     }
 
-    openlcb_node_callback = openlcb_node;
-    openlcb_msg_incoming_callback = incoming_msg;
-    openlcb_msg_outgoing_callback = outgoing_msg;
     process_statemachine_called = true;
 
-    fprintf(stderr, "OpenLcbMainStatemachine_process_main_statemachine: %d, force_process_statemachine_to_fail: %d\n", result, force_process_statemachine_to_fail);
-
-    return result;
 }
 
-bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg)
+bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    bool result = OpenLcbMainStatemachine_does_node_process_msg(openlcb_node, openlcb_msg);
+    bool result = OpenLcbMainStatemachine_does_node_process_msg(statemachine_info);
 
     does_node_process_msg = result;
 
     fprintf(stderr, "OpenLcbMainStatemachine_does_node_process_msg: %d\n", result);
-
-    return result;
-}
-
-openlcb_msg_t *_OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg_t *active_incoming_msg)
-{
-
-    openlcb_msg_t *result = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(active_incoming_msg);
-
-    fprintf(stderr, "OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg: %p\n", result);
-
-    try_free_current_and_pop_next_incoming_msg_called = true;
 
     return result;
 }
@@ -528,7 +466,7 @@ void unlock_node_list(void)
 
     unlock_node_list_called = true;
 }
-
+    
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
     // Optinal handlers
@@ -539,7 +477,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .message_network_initialization_complete_simple = &_ProtocolMessageNetwork_initialization_complete_simple,
     .message_network_verify_node_id_addressed = &_ProtocolMessageNetwork_handle_verify_node_id_addressed,
     .message_network_verify_node_id_global = &_ProtocolMessageNetwork_handle_verify_node_id_global,
-    .message_network_verified_node_id_addressed = &_ProtocolMessageNetwork_handle_verified_node_id,
+    .message_network_verified_node_id = &_ProtocolMessageNetwork_handle_verified_node_id,
     .message_network_optional_interaction_rejected = &_ProtocolMessageNetwork_handle_optional_interaction_rejected,
     .message_network_terminate_due_to_error = &_ProtocolMessageNetwork_handle_terminate_due_to_error,
 
@@ -584,14 +522,15 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // required functions
     .node_get_first = &_OpenLcbNode_get_first,
     .node_get_next = &_OpenLcbNode_get_next,
-    .transmit_openlcb_msg = &_CanTxStatemachine_transmit_openlcb_message,
+    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
     .lock_openlcb_buffer_fifo = &_ExampleDrivers_lock_can_buffer_fifo,
     .unlock_openlcb_buffer_fifo = &_ExampleDrivers_unlock_can_buffer_fifo,
 
     // use the internal default functions
     .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
-    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg,
-    .try_free_current_and_pop_next_incoming_msg = _OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg};
+    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg
+
+};
 
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_null_handlers = {
 
@@ -603,7 +542,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .message_network_initialization_complete_simple = nullptr,
     .message_network_verify_node_id_addressed = nullptr,
     .message_network_verify_node_id_global = nullptr,
-    .message_network_verified_node_id_addressed = nullptr,
+    .message_network_verified_node_id = nullptr,
     .message_network_optional_interaction_rejected = nullptr,
     .message_network_terminate_due_to_error = nullptr,
 
@@ -647,15 +586,14 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     // required functions
     .node_get_first = &_OpenLcbNode_get_first,
     .node_get_next = &_OpenLcbNode_get_next,
-    .transmit_openlcb_msg = &_CanTxStatemachine_transmit_openlcb_message,
+    .send_openlcb_msg = &_CanTxStatemachine_send_openlcb_message,
     .lock_openlcb_buffer_fifo = &_ExampleDrivers_lock_can_buffer_fifo,
     .unlock_openlcb_buffer_fifo = &_ExampleDrivers_unlock_can_buffer_fifo,
     .load_interaction_rejected = &_OpenLcbUtilities_load_interaction_rejected,
 
     // use the internal default functions
     .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
-    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg,
-    .try_free_current_and_pop_next_incoming_msg = _OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg};
+    .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg};
 
 interface_openlcb_node_t interface_openlcb_node = {
 
@@ -667,8 +605,7 @@ void _reset_variables(void)
 
     load_interaction_rejected_called = false;
     reply_to_protocol_support_inquiry = false;
-    transmit_openlcb_msg_called = false;
-    try_free_current_and_pop_next_incoming_msg_called = false;
+    send_openlcb_msg_called = false;
     process_statemachine_called = false;
     node_get_first_called = false;
     node_get_next_called = false;
@@ -676,9 +613,6 @@ void _reset_variables(void)
     lock_node_list_called = false;
     unlock_node_list_called = false;
     allow_successful_transmit = true;
-    openlcb_node_callback = nullptr;
-    openlcb_msg_incoming_callback = nullptr;
-    openlcb_msg_outgoing_callback = nullptr;
     node_get_first = nullptr;
     node_get_next = nullptr;
     force_process_statemachine_to_fail = false;
@@ -732,93 +666,44 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg)
     if (openlcb_msg)
     {
 
+        openlcb_statemachine_info_t statemachine_info;
+   
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = NULL;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
+
         // Initization Complete but node not in initialized state
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
-        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Initization Complete but node in initialized state
         node1->state.initalized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
-        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Verify ID Addressed to us
         node1->state.initalized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488, 0);
-        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Verify ID not Addressed to us
         node1->state.initalized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, 0x488, 0);
-        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Datagram for us
         node1->state.initalized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x1C48, 0);
-        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+        EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Datagram not for us
         node1->state.initalized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 2, DEST_ID + 2, 0x1C48, 0);
-        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(node1, openlcb_msg));
+        EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         OpenLcbBufferStore_free_buffer(openlcb_msg);
-    }
-}
-
-TEST(OpenLcbMainStatemachine, try_free_current_and_pop_next_incoming_msg)
-{
-
-    _reset_variables();
-    _global_initialize();
-
-    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
-    node1->alias = DEST_ALIAS;
-
-    openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *openlcb_msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *active_msg = nullptr;
-
-    EXPECT_NE(node1, nullptr);
-    EXPECT_NE(openlcb_msg1, nullptr);
-    EXPECT_NE(openlcb_msg2, nullptr);
-
-    if (openlcb_msg1 && openlcb_msg2)
-    {
-        // pass in a null and the FIFO is empty
-        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(active_msg);
-        EXPECT_EQ(active_msg, nullptr);
-
-        OpenLcbBufferFifo_push(openlcb_msg1);
-        EXPECT_FALSE(OpenLcbBufferFifo_is_empty());
-
-        // pass in a null and the FIFO contains 1 message
-        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(active_msg);
-        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
-        EXPECT_EQ(active_msg, openlcb_msg1);
-
-        // pass in a message and the FIFO is empty
-        EXPECT_TRUE(openlcb_msg1->state.allocated);
-        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
-        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg1);
-        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
-        EXPECT_EQ(active_msg, nullptr);
-        EXPECT_FALSE(openlcb_msg1->state.allocated);
-
-        openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
-
-        // pass in a message and the FIFO has 1
-        EXPECT_TRUE(openlcb_msg1->state.allocated);
-        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
-        OpenLcbBufferFifo_push(openlcb_msg1);
-        EXPECT_FALSE(OpenLcbBufferFifo_is_empty());
-
-        active_msg = OpenLcbMainStatemachine_try_free_current_and_pop_next_incoming_msg(openlcb_msg2);
-        EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
-        EXPECT_EQ(active_msg, openlcb_msg1);
-        EXPECT_FALSE(openlcb_msg2->state.allocated);
-
-        OpenLcbBufferStore_free_buffer(openlcb_msg1);
-        // openlcb_msg2 has been freed already
     }
 }
 
@@ -832,8 +717,7 @@ TEST(OpenLcbMainStatemachine, run)
     // empty Node List
     // ************************************************************************
     OpenLcbMainStatemachine_run();
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called);
     _reset_variables();
@@ -852,26 +736,12 @@ TEST(OpenLcbMainStatemachine, run)
 
     OpenLcbMainStatemachine_run();
     EXPECT_TRUE(OpenLcbBufferFifo_is_empty());                   // should have popped it
-    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1); // but not freed it yet
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
+    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0); // should have freed it
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_TRUE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called); // should have called but should not have found anything
     EXPECT_EQ(node_get_first, nullptr);
     EXPECT_EQ(node_get_next, nullptr);
-    _reset_variables();
-    OpenLcbMainStatemachine_run();
-    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0); // it should be freed
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
-    EXPECT_FALSE(node_get_first_called);
-    EXPECT_FALSE(node_get_next_called);
-    EXPECT_EQ(node_get_first, nullptr);
-    EXPECT_EQ(node_get_next, nullptr);
-    _reset_variables();
-    OpenLcbMainStatemachine_run();
-    _reset_variables();
-    OpenLcbMainStatemachine_run();
     // ************************************************************************
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
@@ -891,15 +761,14 @@ TEST(OpenLcbMainStatemachine, run)
     OpenLcbMainStatemachine_run();
     EXPECT_TRUE(OpenLcbBufferFifo_is_empty());                   // should have popped it
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1); // but not freed it yet
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_TRUE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called);
     EXPECT_EQ(node_get_first, node1);
     EXPECT_EQ(node_get_next, nullptr);
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_FALSE(try_free_current_and_pop_next_incoming_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_first_called);
     EXPECT_TRUE(node_get_next_called); // should have called but should not have found anything
     EXPECT_EQ(node_get_first, nullptr);
@@ -913,8 +782,7 @@ TEST(OpenLcbMainStatemachine, run)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0); // it should be freed
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_first_called);
     EXPECT_FALSE(node_get_next_called);
     EXPECT_EQ(node_get_first, nullptr);
@@ -933,9 +801,8 @@ TEST(OpenLcbMainStatemachine, run)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_TRUE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_next_called);
     EXPECT_EQ(node_get_first, node1);
     EXPECT_EQ(node_get_next, nullptr);
@@ -957,20 +824,18 @@ TEST(OpenLcbMainStatemachine, run)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_FALSE(does_node_process_msg);
     EXPECT_TRUE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_next_called);
     EXPECT_EQ(node_get_first, node1);
     EXPECT_EQ(node_get_next, nullptr);
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_FALSE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_TRUE(does_node_process_msg);
     EXPECT_FALSE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_TRUE(node_get_next_called);
     EXPECT_EQ(node_get_first, nullptr);
     EXPECT_EQ(node_get_next, node2);
@@ -992,10 +857,9 @@ TEST(OpenLcbMainStatemachine, run)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_FALSE(does_node_process_msg);
     EXPECT_TRUE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_next_called);
     EXPECT_EQ(node_get_first, node1);
     EXPECT_EQ(node_get_next, nullptr);
@@ -1006,42 +870,39 @@ TEST(OpenLcbMainStatemachine, run)
     force_process_statemachine_to_fail = true;
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_FALSE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_TRUE(does_node_process_msg);
     EXPECT_FALSE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_TRUE(node_get_next_called);
     EXPECT_EQ(node_get_first, nullptr);
     EXPECT_EQ(node_get_next, node2);
 
-    fprintf(stderr, "should have set reprocess and this is a direct call to Process Statemachine (that still should fail)...\n");
-    _reset_variables();
-    force_process_statemachine_to_fail = true;
-    OpenLcbMainStatemachine_run();
-    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_FALSE(try_free_current_and_pop_next_incoming_msg_called);
-    EXPECT_FALSE(does_node_process_msg);
-    EXPECT_FALSE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_FALSE(node_get_next_called);
-    EXPECT_EQ(node_get_first, nullptr);
-    EXPECT_EQ(node_get_next, nullptr);
-    EXPECT_TRUE(process_statemachine_called);
+    // fprintf(stderr, "should have set reprocess and this is a direct call to Process Statemachine (that still should fail)...\n");
+    // _reset_variables();
+    // force_process_statemachine_to_fail = true;
+    // OpenLcbMainStatemachine_run();
+    // EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
+    // EXPECT_FALSE(does_node_process_msg);
+    // EXPECT_FALSE(node_get_first_called);
+    // EXPECT_FALSE(send_openlcb_msg_called);
+    // EXPECT_FALSE(node_get_next_called);
+    // EXPECT_EQ(node_get_first, nullptr);
+    // EXPECT_EQ(node_get_next, nullptr);
+    // EXPECT_TRUE(process_statemachine_called);
 
-    // The reprocess_active_node flag should be cleared and the same node should should succeed
-    _reset_variables();
-    force_process_statemachine_to_fail = false;
-    fprintf(stderr, "should have set reprocess and this is a direct call to Process Statemachine that now succeeds...\n");
-    OpenLcbMainStatemachine_run();
-    EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_FALSE(try_free_current_and_pop_next_incoming_msg_called);
-    EXPECT_FALSE(does_node_process_msg);
-    EXPECT_FALSE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
-    EXPECT_FALSE(node_get_next_called);
-    EXPECT_EQ(node_get_first, nullptr);
-    EXPECT_EQ(node_get_next, nullptr);
-    EXPECT_TRUE(process_statemachine_called);
+    // // The reprocess_active_node flag should be cleared and the same node should should succeed
+    // _reset_variables();
+    // force_process_statemachine_to_fail = false;
+    // fprintf(stderr, "should have set reprocess and this is a direct call to Process Statemachine that now succeeds...\n");
+    // OpenLcbMainStatemachine_run();
+    // EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
+    // EXPECT_FALSE(does_node_process_msg);
+    // EXPECT_FALSE(node_get_first_called);
+    // EXPECT_FALSE(send_openlcb_msg_called);
+    // EXPECT_FALSE(node_get_next_called);
+    // EXPECT_EQ(node_get_first, nullptr);
+    // EXPECT_EQ(node_get_next, nullptr);
+    // EXPECT_TRUE(process_statemachine_called);
 
     _reset_variables();
     OpenLcbMainStatemachine_run();
@@ -1057,10 +918,9 @@ TEST(OpenLcbMainStatemachine, run)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_TRUE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_FALSE(does_node_process_msg);
     EXPECT_TRUE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_FALSE(node_get_next_called);
     EXPECT_EQ(node_get_first, node1);
     EXPECT_EQ(node_get_next, nullptr);
@@ -1068,10 +928,9 @@ TEST(OpenLcbMainStatemachine, run)
     _reset_variables();
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1);
-    EXPECT_FALSE(try_free_current_and_pop_next_incoming_msg_called);
     EXPECT_FALSE(does_node_process_msg);
     EXPECT_FALSE(node_get_first_called);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     EXPECT_TRUE(node_get_next_called);
     EXPECT_EQ(node_get_first, nullptr);
     EXPECT_FALSE(process_statemachine_called);
@@ -2409,13 +2268,13 @@ TEST(OpenLcbMainStatemachine, handler_returns_openlcb_msg_to_transmit)
     reply_to_protocol_support_inquiry = true;
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, MTI_PROTOCOL_SUPPORT_INQUIRY);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_TRUE(transmit_openlcb_msg_called);
+    EXPECT_TRUE(send_openlcb_msg_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
 
     // // ************************************************************************
     // // MTI_PROTOCOL_SUPPORT_INQUIRY
@@ -2429,16 +2288,16 @@ TEST(OpenLcbMainStatemachine, handler_returns_openlcb_msg_to_transmit)
     reply_to_protocol_support_inquiry = true;
     OpenLcbMainStatemachine_run();
     EXPECT_EQ(handler_mti, MTI_PROTOCOL_SUPPORT_INQUIRY);
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     _reset_variables();
     allow_successful_transmit = false;
     OpenLcbMainStatemachine_run();
-    EXPECT_TRUE(transmit_openlcb_msg_called);
+    EXPECT_TRUE(send_openlcb_msg_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_TRUE(transmit_openlcb_msg_called);
+    EXPECT_TRUE(send_openlcb_msg_called);
     _reset_variables();
     OpenLcbMainStatemachine_run();
-    EXPECT_FALSE(transmit_openlcb_msg_called);
+    EXPECT_FALSE(send_openlcb_msg_called);
     // ************************************************************************
 }

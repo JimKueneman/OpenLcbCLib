@@ -236,9 +236,17 @@ TEST(ProtocolMessageNetowrk, handle_protocol_support_inquiry)
     if (openlcb_msg)
     {
 
+        openlcb_statemachine_info_t statemachine_info;
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = outgoing_msg;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
+
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY, 0);
 
-        ProtocolMessageNetwork_handle_protocol_support_inquiry(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_protocol_support_inquiry(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_PROTOCOL_SUPPORT_REPLY);
         EXPECT_EQ(outgoing_msg->source_alias, DEST_ALIAS);
@@ -259,7 +267,7 @@ TEST(ProtocolMessageNetowrk, handle_protocol_support_inquiry)
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         node1->state.firmware_upgrade_active = true;
         // NOTE: Handler expects the message is for them.....
-        ProtocolMessageNetwork_handle_protocol_support_inquiry(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_protocol_support_inquiry(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_PROTOCOL_SUPPORT_REPLY);
         EXPECT_EQ(outgoing_msg->source_alias, DEST_ALIAS);
@@ -297,11 +305,18 @@ TEST(ProtocolMessageNetowrk, handle_protocol_support_reply)
     if (openlcb_msg)
     {
 
+        openlcb_statemachine_info_t statemachine_info;
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = outgoing_msg;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_REPLY, 0);
 
         // NOTE: Handler expects the message is for them.....
         // Does nothing just allows a place to inject a dependance into the statemachine for user applications to handle at PIP reply
-        ProtocolMessageNetwork_handle_protocol_support_reply(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_protocol_support_reply(&statemachine_info);
     }
 }
 
@@ -323,11 +338,17 @@ TEST(ProtocolMessageNetowrk, verify_node_id_global)
 
     if (openlcb_msg)
     {
+        openlcb_statemachine_info_t statemachine_info;
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = outgoing_msg;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
 
         // no data to compare
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 0);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
-        ProtocolMessageNetwork_handle_verify_node_id_global(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
         EXPECT_EQ(DEST_ID, OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0));
@@ -337,7 +358,7 @@ TEST(ProtocolMessageNetowrk, verify_node_id_global)
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 6);
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID, 0);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
-        ProtocolMessageNetwork_handle_verify_node_id_global(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
         EXPECT_EQ(DEST_ID, OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0));
@@ -348,7 +369,7 @@ TEST(ProtocolMessageNetowrk, verify_node_id_global)
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID + 1, 0);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
 
-        ProtocolMessageNetwork_handle_verify_node_id_global(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, 0x00);
     }
@@ -373,9 +394,16 @@ TEST(ProtocolMessageNetowrk, verify_node_id_addressed)
     if (openlcb_msg)
     {
 
+        openlcb_statemachine_info_t statemachine_info;
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = outgoing_msg;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 0);
-        // NOTE: Handler expects the message is for them.....
-        ProtocolMessageNetwork_handle_verify_node_id_addressed(node1, openlcb_msg, outgoing_msg);
+      
+        ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);
         EXPECT_EQ(DEST_ID, OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0));
@@ -402,9 +430,16 @@ TEST(ProtocolMessageNetowrk, verify_node_id_addressed_simple)
     if (openlcb_msg)
     {
 
+        openlcb_statemachine_info_t statemachine_info;
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = outgoing_msg;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 0);
         // NOTE: Handler expects the message is for them.....
-        ProtocolMessageNetwork_handle_verify_node_id_addressed(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID_SIMPLE);
         EXPECT_EQ(DEST_ID, OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0));
@@ -431,16 +466,23 @@ TEST(ProtocolMessageNetowrk, verified_node_id)
     if (openlcb_msg)
     {
 
+        openlcb_statemachine_info_t statemachine_info;
+        statemachine_info.openlcb_node = node1;
+        statemachine_info.incoming_msg = openlcb_msg;
+        statemachine_info.outgoing_msg = outgoing_msg;
+        statemachine_info.enumerating = false;
+        statemachine_info.outgoing_msg_valid = false;
+
         // a non duplicate node id
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 6);
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID + 1, 0);
-        ProtocolMessageNetwork_handle_verified_node_id(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verified_node_id(&statemachine_info);
         EXPECT_EQ(outgoing_msg->mti, 0x00);
 
         // a duplicate node id
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 6);
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID, 0);
-        ProtocolMessageNetwork_handle_verified_node_id(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verified_node_id(&statemachine_info);
         EXPECT_EQ(outgoing_msg->mti, MTI_PC_EVENT_REPORT);
         EXPECT_EQ(EVENT_ID_DUPLICATE_NODE_DETECTED, OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg));
         EXPECT_TRUE(node1->state.duplicate_id_detected);
@@ -449,7 +491,7 @@ TEST(ProtocolMessageNetowrk, verified_node_id)
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 6);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID, 0);
-        ProtocolMessageNetwork_handle_verified_node_id(node1, openlcb_msg, outgoing_msg);
+        ProtocolMessageNetwork_handle_verified_node_id(&statemachine_info);
         EXPECT_EQ(outgoing_msg->mti, 0x00);
     }
 }

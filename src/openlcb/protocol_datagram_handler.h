@@ -47,86 +47,86 @@
 typedef struct {
    
     // Memory Read Address Space
-    bool (*memory_read_space_config_description_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_all_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_configuration_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_acdi_manufacturer_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_acdi_user_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_traction_function_definition_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_traction_function_config_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_read_space_config_description_info_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_all_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_configuration_memory_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_acdi_manufacturer_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_acdi_user_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_traction_function_definition_info_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_traction_function_config_memory_message)(openlcb_statemachine_info_t *statemachine_info);
    
     // Memory Read Ok Ok Address Space
-    bool (*memory_read_space_config_description_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_all_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_configuration_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_acdi_manufacturer_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_acdi_user_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_traction_function_definition_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_traction_function_config_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_read_space_config_description_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_all_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_configuration_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_acdi_manufacturer_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_acdi_user_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_traction_function_definition_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_traction_function_config_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
   
     // Memory Read Failed Reply Address Space
-    bool (*memory_read_space_config_description_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_all_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_configuration_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_acdi_manufacturer_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_acdi_user_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_traction_function_definition_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_read_space_traction_function_config_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_read_space_config_description_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_all_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_configuration_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_acdi_manufacturer_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_acdi_user_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_traction_function_definition_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_read_space_traction_function_config_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
 
     // Memory Write Address Space
-    bool (*memory_write_space_config_description_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_all_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_configuration_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_acdi_manufacturer_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_acdi_user_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_traction_function_definition_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_traction_function_config_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_firmware_upgrade_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_config_description_info_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_all_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_configuration_memory_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_acdi_manufacturer_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_acdi_user_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_traction_function_definition_info_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_traction_function_config_memory_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_firmware_upgrade_message)(openlcb_statemachine_info_t *statemachine_info);
    
     // Memory Write Ok Reply Address Space
-    bool (*memory_write_space_config_description_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_all_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_configuration_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_acdi_manufacturer_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_acdi_user_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_traction_function_definition_info_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_traction_function_config_memory_reply_ok_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_config_description_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_all_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_configuration_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_acdi_manufacturer_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_acdi_user_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_traction_function_definition_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_traction_function_config_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
    
     // Memory Write Fail Reply Address Space
-    bool (*memory_write_space_config_description_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_all_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_configuration_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_acdi_manufacturer_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_acdi_user_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_traction_function_definition_info_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_space_traction_function_config_memory_reply_fail_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_space_config_description_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_all_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_configuration_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_acdi_manufacturer_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_acdi_user_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_traction_function_definition_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_space_traction_function_config_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
     
     // Memory Write Under Mask Address Space
-    bool (*memory_write_under_mask_space_config_description_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_all_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_configuration_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_acdi_manufacturer_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_acdi_user_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_traction_function_definition_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_traction_function_config_memory_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_write_under_mask_space_firmware_upgrade_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_write_under_mask_space_config_description_info_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_all_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_configuration_memory_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_acdi_manufacturer_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_acdi_user_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_traction_function_definition_info_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_traction_function_config_memory_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_write_under_mask_space_firmware_upgrade_message)(openlcb_statemachine_info_t *statemachine_info);
     
     // Commands
     bool (*memory_options_cmd_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
     bool (*memory_options_reply_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
     bool (*memory_get_address_space_info_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-    bool (*memory_get_address_space_info_reply_not_present_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_get_address_space_info_reply_present_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_reserve_lock_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_get_unique_id_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_unfreeze_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_freeze_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_update_complete_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_reset_reboot_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
-    bool (*memory_factory_reset_message)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t * worker_msg);
+    bool (*memory_get_address_space_info_reply_not_present_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_get_address_space_info_reply_present_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_reserve_lock_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_get_unique_id_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_unfreeze_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_freeze_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_update_complete_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_reset_reboot_message)(openlcb_statemachine_info_t *statemachine_info);
+    bool (*memory_factory_reset_message)(openlcb_statemachine_info_t *statemachine_info);
     
     
-    bool (*send_datagram_rejected_reply)(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg, uint16_t error_code);
+    bool (*send_datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
     
 } interface_protocol_datagram_handler_t;
 
@@ -137,11 +137,11 @@ extern "C" {
 
 extern void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface_protocol_datagram_handler);
 
-extern bool ProtocolDatagramHandler_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statemachine_info);
    
-extern bool Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info);
 
-extern bool ProtocolDatagramHandler_handle_datagram_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+extern void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info);
     
 extern void ProtocolDatagramHandler_100ms_time_tick(void);
 
