@@ -57,123 +57,248 @@
 
 static interface_can_main_statemachine_t *_interface;
 
-static can_msg_t *_active_outgoing_can_msg;
-static openlcb_msg_t *_active_outgoing_openlcb_msg;
+static can_statemachine_info_t can_statemachine_info = {
+    .incoming_msg = NULL,
+    .openlcb_node = NULL,
+    .outgoing_can_msg = NULL,
+    .outgoing_can_msg_valid = false,
+    .outgoing_openlcb_msg = NULL,
+    .outgoing_openlcb_msg_valid = false
+};
 
-static can_msg_t _login_in_can_msg;
-static openlcb_msg_t _login_openlcb_msg;
-static openlcb_basic_data_buffer_t _login_openlcb_payload;
+
+static can_msg_t _can_msg;
+static openlcb_msg_t _openlcb_msg;
+static payload_basic_t _openlcb_payload;
 
 void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine) {
 
     _interface = (interface_can_main_statemachine_t*) interface_can_main_statemachine;
-    
-    CanUtilities_clear_can_message(&_login_in_can_msg);
-    
-    _login_openlcb_msg.payload = (openlcb_payload_t*) &_login_openlcb_payload;
-    OpenLcbUtilities_clear_openlcb_message(&_login_openlcb_msg);
-    _login_openlcb_msg.payload_type = BASIC;
-    
+
+    can_statemachine_info.outgoing_can_msg = &_can_msg;
+    can_statemachine_info.outgoing_openlcb_msg = &_openlcb_msg;
+
+    CanUtilities_clear_can_message(&_can_msg);
+    OpenLcbUtilities_clear_openlcb_message(&_openlcb_msg);
+    _openlcb_msg.payload = (openlcb_payload_t*) & _openlcb_payload;
+    _openlcb_msg.state.allocated = true;
+    _openlcb_msg.payload_type = BASIC;
+
 }
 
-static void _handle_duplicate_alias_detected(openlcb_node_t *openlcb_node) {
+void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
 
-    _interface->lock_can_buffer_fifo();
+    if (!can_statemachine_info->incoming_msg) {
+        
+        return;
+        
+    }
+    
+    // CAN Control Messages
 
-    openlcb_node->state.permitted = false;
-    openlcb_node->state.initalized = false;
-    openlcb_node->state.duplicate_id_detected = false;
-    openlcb_node->state.duplicate_alias_detected = false;
-    openlcb_node->state.firmware_upgrade_active = false;
-    openlcb_node->state.resend_datagram = false;
-    openlcb_node->state.openlcb_datagram_ack_sent = false;
-    OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
-    openlcb_node->last_received_datagram = NULL;
-    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias   
+    switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
 
-    _interface->unlock_can_buffer_fifo();
+        case 0:
+
+            switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
+
+
+                case CAN_CONTROL_FRAME_RID: // Reserve ID
+
+                    if (_interface->handle_rid) {
+
+                        _interface->handle_rid(can_statemachine_info);
+
+                    }
+
+                    break;
+
+                case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
+
+                    if (_interface->handle_amd) {
+
+                        _interface->handle_amd(can_statemachine_info);
+
+                    }
+
+                    break;
+
+                case CAN_CONTROL_FRAME_AME:
+
+                    if (_interface->handle_ame) {
+
+                        _interface->handle_ame(can_statemachine_info);
+
+                    }
+
+                    break;
+
+                case CAN_CONTROL_FRAME_AMR:
+
+                    if (_interface->handle_amr) {
+
+                        _interface->handle_amr(can_statemachine_info);
+
+                    }
+
+                    break;
+
+                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
+                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
+                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
+                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
+
+                    if (_interface->handle_error_information_report) {
+
+                        _interface->handle_error_information_report(can_statemachine_info);
+
+                    }
+
+                    break;
+
+                default:
+
+                    // Do nothing
+                    break; // default
+
+            }
+
+            break;
+
+        default:
+
+            switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+
+                case CAN_CONTROL_FRAME_CID7:
+                case CAN_CONTROL_FRAME_CID6:
+                case CAN_CONTROL_FRAME_CID5:
+                case CAN_CONTROL_FRAME_CID4:
+
+
+                    if (_interface->handle_cid) {
+
+                        _interface->handle_cid(can_statemachine_info);
+
+                    }
+
+                    break;
+
+                case CAN_CONTROL_FRAME_CID3:
+                case CAN_CONTROL_FRAME_CID2:
+                case CAN_CONTROL_FRAME_CID1:
+
+                    break;
+            }
+
+            break; // default
+
+    } // CAN control messages
 
 }
 
 void CanMainStateMachine_run(void) {
 
-    // First if there is no can message to pending send see if there are any in the FIFO to send
-    
-    if (!_active_outgoing_can_msg) {
+    // First get pending outgoing messages sent
+    if (can_statemachine_info.outgoing_can_msg_valid) {
+
+        if (_interface->send_can_message(can_statemachine_info.outgoing_can_msg)) {
+
+            can_statemachine_info.outgoing_can_msg_valid = false;
+
+            return; // done for this loop
+
+        }
+
+    }
+
+    if (can_statemachine_info.outgoing_openlcb_msg_valid) {
+
+        if (_interface->send_openlcb_message) {
+
+            can_statemachine_info.outgoing_openlcb_msg_valid = false;
+
+            return; // done for this loop
+
+        }
+
+    }
+
+
+    // Second see if we have an incoming message, if not see if we have one on the stack waiting
+    // Note still need to run login state-machine so don't return here
+    if (!can_statemachine_info.incoming_msg) {
 
         _interface->lock_can_buffer_fifo();
-        _active_outgoing_can_msg = CanBufferFifo_pop();
+        can_statemachine_info.incoming_msg = CanBufferFifo_pop();
         _interface->unlock_can_buffer_fifo();
+        
     }
-    
-    // Second see if there is a CAN message waiting to be sent, if so try to send it, if not try again on the next loop
-    if (_active_outgoing_can_msg) {
 
-        if (_interface->send_can_message(_active_outgoing_can_msg)) {
-            
-            // If not allocated then it is the local buffer for the CAN Login messages so we don't free it, else it was allocated on the FIFO and neesd to be freed
-            if (_active_outgoing_can_msg->state.allocated) {
-                
-                CanBufferStore_free_buffer(_active_outgoing_can_msg);
-                
-            }
+    // Third, if enumerating the message to the same node call it again
+    if (can_statemachine_info.enumerating) {
 
-            // Success, reset for a new message
-            _active_outgoing_can_msg->identifier = 0x00;
-            _active_outgoing_can_msg = NULL;
+        if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+
+            _run_statemachine(&can_statemachine_info);
 
         } else {
-            
-            return;  // try again on the next loop
-            
-        }
 
-    }
-    
-    // Is there a valid openlcb message ready to send?  If so try to send it
-    
-    if (_active_outgoing_openlcb_msg) {
-
-        if (_interface->send_openlcb_message(_active_outgoing_openlcb_msg)) {
-
-            // Any OpenLcb Message is for Login In only at this level so just locally clear it
-            _active_outgoing_openlcb_msg->mti = 0x00;
-            _active_outgoing_openlcb_msg = NULL;
+            _interface->login_statemachine_run(&can_statemachine_info);
 
         }
+
+        return; // done
 
     }
 
-    // Once all pending messages that need to be sent are handled we can check for duplicate ID and run the CAN statemachine for each node
-    openlcb_node_t *openlcb_node = _interface->node_get_first(0);
+    // Fourth if the current node is null then time to re-enumerate nodes with the next incoming message 
+    if (!can_statemachine_info.openlcb_node) {
 
-    while (openlcb_node) {
+        can_statemachine_info.openlcb_node = _interface->node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
-        if (openlcb_node->state.duplicate_alias_detected) {
+        if (!can_statemachine_info.openlcb_node) {
 
-            _handle_duplicate_alias_detected(openlcb_node);
+            CanBufferStore_free_buffer(can_statemachine_info.incoming_msg); // only get here if there is a valid incoming message
+            can_statemachine_info.incoming_msg = NULL;
 
-        }
-
-        if (openlcb_node->state.run_state < RUNSTATE_RUN) {
-  
-            _interface->login_statemachine_run(openlcb_node, &_login_in_can_msg, &_login_openlcb_msg);
-            
-            if (_login_in_can_msg.identifier != 0x00) {
-                
-                _active_outgoing_can_msg = &_login_in_can_msg;
-                
-            }
-            
-            if (_login_openlcb_msg.mti != 0x00) {
-                
-                _active_outgoing_openlcb_msg = &_login_openlcb_msg;
-                
-            }
+            return; // done, nothing to do
 
         }
 
-        openlcb_node = _interface->node_get_next(0);
+
+        if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+
+            _run_statemachine(&can_statemachine_info);
+
+        } else {
+
+            _interface->login_statemachine_run(&can_statemachine_info);
+
+        }
+
+        return; // done
+
     }
 
+    // Fifth enumerate to the next node
+    can_statemachine_info.openlcb_node = _interface->node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+
+    if (!can_statemachine_info.openlcb_node) {
+
+        CanBufferStore_free_buffer(can_statemachine_info.incoming_msg); // only get here if there is a valid incoming message
+        can_statemachine_info.incoming_msg = NULL;
+
+        return; // done, nothing to do
+
+    }
+
+    if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+
+            _run_statemachine(&can_statemachine_info);
+
+        } else {
+
+            _interface->login_statemachine_run(&can_statemachine_info);
+
+        }
 }

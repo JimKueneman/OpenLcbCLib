@@ -7,6 +7,7 @@ SOURCES
     can_rx_message_handler.c 
     can_login_message_handler.c 
     can_tx_message_handler.c
+    can_main_statemachine_handler.c
     can_main_statemachine.c 
     can_rx_statemachine.c 
     can_login_statemachine.c 
@@ -24,6 +25,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/drivers/common/can_login_message_handler_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_tx_message_handler_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_main_statemachine_Test.cxx
+    ${ROOT_DIR}/src/drivers/common/can_main_statemachine_handler_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_rx_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_login_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_tx_statemachine_Test.cxx

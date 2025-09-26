@@ -54,6 +54,12 @@
 
 static interface_can_rx_statemachine_t *_interface;
 
+void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine) {
+
+    _interface = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
+
+}
+
 static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 
     return (can_msg->identifier >> 12) & 0x0FFF;
@@ -63,7 +69,7 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
     
     if (_interface->on_receive) {
         
-        _interface->on_receive();
+        _interface->on_receive(can_msg);
         
     }
 
@@ -225,43 +231,43 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
                     
 
                     case CAN_CONTROL_FRAME_RID: // Reserve ID
-
-                        if (_interface->handle_rid) {
-
-                            _interface->handle_rid(can_msg);
-
+                        
+                        if (_interface->handle_rid_frame) {
+                        
+                          _interface->handle_rid_frame(can_msg);
+                         
                         }
 
                         break;
 
                     case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
-
-                        if (_interface->handle_amd) {
-
-                            _interface->handle_amd(can_msg);
-
+                        
+                        if (_interface->handle_amd_frame) {
+                            
+                            _interface->handle_amd_frame(can_msg);
+                            
                         }
 
                         break;
 
                     case CAN_CONTROL_FRAME_AME:  
                         
-                        if (_interface->handle_ame) {
-  
-                            _interface->handle_ame(can_msg);
-
+                        if (_interface->handle_ame_frame) {
+                            
+                            _interface->handle_ame_frame(can_msg);
+                            
                         }
-
+ 
                         break;
 
                     case CAN_CONTROL_FRAME_AMR:
- 
-                        if (_interface->handle_amr) {
-
-                            _interface->handle_amr(can_msg);
-
+                        
+                        if (_interface->handle_amr_frame) {
+                            
+                            _interface->handle_amr_frame(can_msg);
+                            
                         }
-
+ 
                         break;
 
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
@@ -269,10 +275,10 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
 
-                        if (_interface->handle_error_information_report) {
-                       
-                            _interface->handle_error_information_report(can_msg);
-                        
+                        if (_interface->handle_frame_error_info_report) {
+                            
+                            _interface->handle_frame_error_info_report(can_msg);
+                            
                         }
                         
                         break;
@@ -294,39 +300,25 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
                     case CAN_CONTROL_FRAME_CID6:
                     case CAN_CONTROL_FRAME_CID5:
                     case CAN_CONTROL_FRAME_CID4:
-
-
-                        if (_interface->handle_cid) {
-                       
-                            _interface->handle_cid(can_msg);
-                        
-                        }
-
-                        break;
-
                     case CAN_CONTROL_FRAME_CID3:
                     case CAN_CONTROL_FRAME_CID2:
                     case CAN_CONTROL_FRAME_CID1:
+                        
+                        if (_interface->handle_cid_frame) {
+                            
+                            _interface->handle_cid_frame(can_msg);
+                            
+                        }
 
                         break;
                 }
 
                 break; // default
 
-        } // CAN control messages
+        } 
 
     }
 
 }
-
-// Call on startup to initialize variables and callbacks
-
-void CanRxStatemachine_initialize(const interface_can_rx_statemachine_t *interface_can_rx_statemachine) {
-
-    _interface = (interface_can_rx_statemachine_t*) interface_can_rx_statemachine;
-
-}
-
-
 
 

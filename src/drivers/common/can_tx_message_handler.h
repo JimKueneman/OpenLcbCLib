@@ -57,15 +57,15 @@ extern "C" {
     
     extern void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler);
 
-    extern bool CanTxMessageHandler_handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
     
-    extern bool CanTxMessageHandler_handle_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
     
-    extern bool CanTxMessageHandler_handle_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
     
-    extern bool CanTxMessageHandler_handle_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
     
-    extern bool CanTxMessageHandler_handle_can_frame(can_msg_t* can_msg);
+    extern bool CanTxMessageHandler_can_frame(can_msg_t* can_msg);
    
 #ifdef	__cplusplus
 }

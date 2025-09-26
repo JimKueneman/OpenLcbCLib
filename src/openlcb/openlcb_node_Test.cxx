@@ -73,17 +73,9 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void lock_node_list(void)
-{
-}
-
-void unlock_node_list(void)
-{
-}
-
 const interface_openlcb_node_t interface_openlcb_node = {
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+
+};
 
 void _global_initialize(void)
 {

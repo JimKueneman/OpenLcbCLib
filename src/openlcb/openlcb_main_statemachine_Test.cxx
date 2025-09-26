@@ -19,8 +19,6 @@ bool node_get_next_called = false;
 bool does_node_process_msg = false;
 openlcb_node_t *node_get_first = nullptr;
 openlcb_node_t *node_get_next = nullptr;
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
 bool allow_successful_transmit = true;
 
 node_parameters_t _node_parameters_main_node = {
@@ -94,27 +92,23 @@ node_parameters_t _node_parameters_main_node = {
 void _ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *statemachine_info)
 {
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *statemachine_info)
 {
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_initialization_complete(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info)
@@ -132,214 +126,183 @@ void _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachin
         statemachine_info->outgoing_msg->mti = MTI_PROTOCOL_SUPPORT_REPLY;
         statemachine_info->outgoing_msg_valid = true;
     }
-
 }
 
 void _ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_consumer_range_identified(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_set(openlcb_statemachine_info_t *statemachine_info)
 {
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_clear(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_statemachine_info_t *statemachine_info)
 {
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t *statemachine_info)
 {
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_producer_range_identified(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_producer_identified_unknown(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_producer_identified_set(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_producer_identified_clear(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_producer_identified_reserved(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_identify_dest(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_identify(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_event_learn(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_pc_event_report(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolTractionControl_command(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolTractionControl_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolSimpleTrainNodeIdentInfo_request(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolSimpleTrainNodeIdentInfo_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolDatagram_handle_datagram(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _Protocol_Datagram_handle_datagram_ok_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _OpenLcbUtilities_load_interaction_rejected(openlcb_statemachine_info_t *statemachine_info)
@@ -352,35 +315,30 @@ void _ProtocolStream_initiate_request(openlcb_statemachine_info_t *statemachine_
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolStream_initiate_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolStream_send_data(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolStream_data_proceed(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ProtocolStream_data_complete(openlcb_statemachine_info_t *statemachine_info)
 {
 
     handler_mti = statemachine_info->incoming_msg->mti;
-
 }
 
 void _ExampleDrivers_lock_can_buffer_fifo(void)
@@ -436,11 +394,10 @@ void _OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_inf
     if (!force_process_statemachine_to_fail)
     {
 
-         OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
     }
 
     process_statemachine_called = true;
-
 }
 
 bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info)
@@ -455,18 +412,6 @@ bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t 
     return result;
 }
 
-void lock_node_list(void)
-{
-
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-    
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
     // Optinal handlers
@@ -595,10 +540,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .process_main_statemachine = _OpenLcbMainStatemachine_process_main_statemachine,
     .does_node_process_msg = _OpenLcbMainStatemachine_does_node_process_msg};
 
-interface_openlcb_node_t interface_openlcb_node = {
-
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+interface_openlcb_node_t interface_openlcb_node = {};
 
 void _reset_variables(void)
 {
@@ -610,8 +552,6 @@ void _reset_variables(void)
     node_get_first_called = false;
     node_get_next_called = false;
     does_node_process_msg = false;
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
     allow_successful_transmit = true;
     node_get_first = nullptr;
     node_get_next = nullptr;
@@ -667,7 +607,7 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg)
     {
 
         openlcb_statemachine_info_t statemachine_info;
-   
+
         statemachine_info.openlcb_node = node1;
         statemachine_info.incoming_msg = openlcb_msg;
         statemachine_info.outgoing_msg = NULL;

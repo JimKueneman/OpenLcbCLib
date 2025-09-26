@@ -149,7 +149,7 @@ static void _load_destination_address_in_payload(openlcb_msg_t* openlcb_msg, can
 
 }
 
-bool CanTxMessageHandler_handle_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
     bool result = false;
     uint8_t len_msg_frame = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, can_msg_worker, *openlcb_start_index, OFFSET_CAN_WITHOUT_DEST_ADDRESS);
@@ -182,7 +182,7 @@ bool CanTxMessageHandler_handle_datagram_frame(openlcb_msg_t* openlcb_msg, can_m
 
 }
 
-bool CanTxMessageHandler_handle_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
     bool result = false;
 
@@ -209,7 +209,7 @@ bool CanTxMessageHandler_handle_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg
 
 }
 
-bool CanTxMessageHandler_handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
     _load_destination_address_in_payload(openlcb_msg, can_msg_worker);
 
@@ -246,13 +246,13 @@ bool CanTxMessageHandler_handle_addressed_msg_frame(openlcb_msg_t* openlcb_msg, 
 
 }
 
-bool CanTxMessageHandler_handle_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
+bool CanTxMessageHandler_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index) {
 
     // ToDo: implement streams
     return true;
 }
 
-bool CanTxMessageHandler_handle_can_frame(can_msg_t* can_msg) {
+bool CanTxMessageHandler_can_frame(can_msg_t* can_msg) {
 
     return _transmit_can_frame(can_msg);
 

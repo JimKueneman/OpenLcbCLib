@@ -19,9 +19,6 @@
 #define SNIP_NAME_FULL "0123456789012345678901234567890123456789"
 #define SNIP_MODEL "Test Model J"
 
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
-
 bool memory_read_message_called = false;
 bool memory_read_reply_ok_message_called = false;
 bool memory_read_reply_fail_message_called = false;
@@ -121,141 +118,106 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void lock_node_list(void)
-{
+interface_openlcb_node_t interface_openlcb_node = {};
 
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-
-interface_openlcb_node_t interface_openlcb_node = {
-
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
-
-bool _memory_read_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
+void _memory_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
 {
     memory_read_message_called = true;
-    return true;
 }
 
-bool _memory_read_reply_ok_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space)
+void _memory_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space)
 {
     memory_read_reply_ok_message_called = true;
-    return true;
 }
 
-bool _memory_read_reply_fail_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space)
+void _memory_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space)
 {
     memory_read_reply_fail_message_called = true;
-    return true;
 }
 
-bool _memory_write_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
+void _memory_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
 {
     memory_write_message_called = true;
-    return true;
 }
 
-bool _memory_write_reply_ok_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space)
+void _memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space)
 {
     memory_write_reply_ok_message_called = true;
-    return true;
 }
 
-bool _memory_write_reply_fail_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space)
+void _memory_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space)
 {
     memory_write_reply_fail_message_called = true;
-    return true;
 }
 
-bool _memory_write_under_mask_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
+void _memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
 {
     memory_write_under_mask_message = true;
-    return true;
 }
 
-bool _memory_options_cmd_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_options_cmd_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_options_cmd_message_called = true;
-    return true;
 }
 
-bool _memory_options_reply_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_options_reply_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_options_reply_message_called = true;
-    return true;
 }
 
-bool _memory_get_address_space_info_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_get_address_space_info_message(openlcb_statemachine_info_t *statemachine_infog)
 {
     memory_get_address_space_info_message_called = true;
-    return true;
 }
 
-bool _memory_get_address_space_info_reply_not_present_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_get_address_space_info_reply_not_present_message(openlcb_statemachine_info_t *statemachine_infog)
 {
     memory_get_address_space_info_reply_not_present_message_called = true;
-    return true;
 }
 
-bool _memory_get_address_space_info_reply_present_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_get_address_space_info_reply_present_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_get_address_space_info_reply_present_message_called = true;
-    return true;
 }
 
-bool _memory_reserve_lock_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_reserve_lock_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_reserve_lock_message_called = true;
-    return true;
 }
 
-bool _memory_get_unique_id_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_get_unique_id_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_get_unique_id_message_called = true;
-    return true;
 }
 
-bool _memory_unfreeze_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_unfreeze_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_unfreeze_message_called = true;
-    return true;
 }
 
-bool _memory_freeze_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_freeze_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_freeze_message_called = true;
-    return true;
 }
 
-bool _memory_update_complete_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_update_complete_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_update_complete_message_called = true;
-    return true;
 }
 
-bool _memory_reset_reboot_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_reset_reboot_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_reset_reboot_message_called = true;
-    return true;
 }
 
-bool _memory_factory_reset_message(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _memory_factory_reset_message(openlcb_statemachine_info_t *statemachine_info)
 {
     memory_factory_reset_message_called = true;
-    return true;
 }
 
-bool _send_datagram_rejected_reply(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg, uint16_t error_code)
+void _send_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code)
 {
     send_datagram_rejected_reply_called = true;
-    return true;
 }
 
 interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
@@ -287,9 +249,6 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
 void _reset_variables(void)
 {
-
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
 
     memory_read_message_called = false;
     memory_read_reply_ok_message_called = false;

@@ -21,9 +21,6 @@
 #define CONFIG_MEM_START_ADDRESS 0x100
 #define CONFIG_MEM_NODE_ADDRESS_ALLOCATION 0x200
 
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
-
 node_parameters_t _node_parameters_main_node = {
 
     .consumer_count_autocreate = 0,
@@ -180,22 +177,9 @@ node_parameters_t _node_parameters_main_node_using_low_address = {
 
 };
 
-void lock_node_list(void)
-{
-
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-
 interface_openlcb_node_t interface_openlcb_node = {
 
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+};
 
 uint16_t config_read_type = 0;
 char simple_config_mem_string[] = "HiX";
@@ -245,8 +229,6 @@ interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 void _reset_variables(void)
 {
 
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
     config_read_address = 0;
     config_read_type = 0;
 }
@@ -405,7 +387,7 @@ TEST(ProtocolSnip, handle_simple_node_info_request)
         _statemachine_info.outgoing_msg = outgoing_msg;
         _statemachine_info.enumerating = false;
         _statemachine_info.outgoing_msg_valid = false;
-  
+
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
 
         ProtocolSnip_handle_simple_node_info_request(&_statemachine_info);

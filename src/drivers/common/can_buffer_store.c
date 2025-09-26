@@ -113,6 +113,12 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 }
 
 void CanBufferStore_free_buffer(can_msg_t* msg) {
+    
+    if (!msg) {
+        
+        return;
+        
+    }
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
     msg->state.allocated = false;

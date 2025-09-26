@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,57 +24,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_main_statemachine.h
- *
- * Where the real work in dispatching the incoming OpenLcb messages to the various
- * handlers to process.  It will call the OpenLcb main statemachine when needed.  
+ * \file can_main_statemachine_handler.h
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 24 Sept 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_MAIN_STATEMACHINE__
-#define	__CAN_MAIN_STATEMACHINE__
-
-#include <stdbool.h>
-#include <stdint.h>
+#ifndef __CAN_MAIN_STATEMACHINE_HANDLER__
+#define	__CAN_MAIN_STATEMACHINE_HANDLER__
 
 #include "can_types.h"
-
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        void (*lock_can_buffer_fifo)(void);
-        void (*unlock_can_buffer_fifo)(void);
-        bool (*send_can_message)(can_msg_t *msg);
-        bool (*send_openlcb_message)(openlcb_msg_t *openlcb_msg);
-      
-        openlcb_node_t *(*node_get_first)(uint8_t key);
-        openlcb_node_t *(*node_get_next)(uint8_t key);
-        void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
-        
-        void (*handle_cid)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_rid)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_amd)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_ame)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_amr)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_error_information_report)(can_statemachine_info_t *can_statemachine_info);
-        
+        openlcb_node_t *(*find_by_alias)(uint16_t alias);
+        openlcb_node_t *(*find_by_node_id)(node_id_t node_id);
+        openlcb_node_t* (*get_first)(uint8_t key);
+        openlcb_node_t* (*get_next)(uint8_t key);
 
-    } interface_can_main_statemachine_t;
+    } interface_can_main_statemachine_handler_t;
 
-    extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
+    extern void CanMainStatemachineHandler_initialize(const interface_can_main_statemachine_handler_t *interface_can_main_statemachine_handler);
 
-    extern void CanMainStateMachine_run(void);
+    extern void CanMainStatemachineHandler_cid(can_statemachine_info_t *can_statemachine_info);
+
+    extern void CanMainStatemachineHandler_rid(can_statemachine_info_t *can_statemachine_info);
+
+    extern void CanMainStatemachineHandler_amd(can_statemachine_info_t *can_statemachine_info);
+
+    extern void CanMainStatemachineHandler_ame(can_statemachine_info_t *can_statemachine_info);
+
+    extern void CanMainStatemachineHandler_amr(can_statemachine_info_t *can_statemachine_info);
+
+    extern void CanMainStatemachineHandler_error_information_report(can_statemachine_info_t *can_statemachine_info);
+
+    extern void CanMainStatemachineHandler_allocate_and_push(uint32_t identifier, uint8_t buffer_count, payload_bytes_can_t *buffer);
+
+
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_MAIN_STATEMACHINE__ */
+#endif	/* __CAN_MAIN_STATEMACHINE_HANDLER__ */
 

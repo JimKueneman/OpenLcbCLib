@@ -42,19 +42,19 @@
 
 typedef struct {
     
-     void (*init)(openlcb_node_t* next_node);
-     void (*generate_seed)(openlcb_node_t* next_node);
-     void (*generate_alias)(openlcb_node_t* next_node);
-     void (*load_cid07)(openlcb_node_t* next_node, can_msg_t *worker_msg);
-     void (*load_cid06)(openlcb_node_t* next_node, can_msg_t *worker_msg);
-     void (*load_cid05)(openlcb_node_t* next_node, can_msg_t *worker_msg);
-     void (*load_cid04)(openlcb_node_t* next_node, can_msg_t *worker_msg);
-     void (*wait_200ms)(openlcb_node_t* next_node);
-     void (*load_rid)(openlcb_node_t* next_node, can_msg_t *worker_msg);
-     void (*load_amd)(openlcb_node_t* next_node, can_msg_t *worker_msg);
-     void (*load_initialization_complete)(openlcb_node_t* next_node, openlcb_msg_t *openlcb_msg);
-     void (*load_producer_events)(openlcb_node_t* next_node, openlcb_msg_t *openlcb_msg);
-     void (*load_consumer_events)(openlcb_node_t* next_node, openlcb_msg_t *openlcb_msg);
+     void (*init)(can_statemachine_info_t *can_statemachine_info);
+     void (*generate_seed)(can_statemachine_info_t *can_statemachine_info);
+     void (*generate_alias)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_cid07)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_cid06)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_cid05)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_cid04)(can_statemachine_info_t *can_statemachine_info);
+     void (*wait_200ms)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_rid)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_amd)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_initialization_complete)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_producer_events)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_consumer_events)(can_statemachine_info_t *can_statemachine_info);
     
 } interface_can_login_state_machine_t;
 
@@ -64,7 +64,7 @@ extern "C" {
     
     extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
 
-    extern void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t *worker_msg, openlcb_msg_t *openlcb_msg);
+    extern void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info);
 
 #ifdef	__cplusplus
 }

@@ -97,17 +97,7 @@ node_parameters_t node_parameters = {
 
 };
 
-void PauseCanRx(void)
-{
-}
-
-void ResumeCanRx(void)
-{
-}
-
-const interface_openlcb_node_t _interface_openlcb_node{
-    .lock_node_list = &PauseCanRx,
-    .unlock_node_list = &ResumeCanRx};
+const interface_openlcb_node_t _interface_openlcb_node{};
 
 TEST(OpenLcbUtilities, load_openlcb_message)
 {

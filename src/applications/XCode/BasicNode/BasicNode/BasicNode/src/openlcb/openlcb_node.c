@@ -57,7 +57,6 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.run_state = RUNSTATE_INIT;
     openlcb_node->state.allocated = false;
     openlcb_node->state.duplicate_id_detected = false;
-    openlcb_node->state.duplicate_alias_detected = false;
     openlcb_node->state.initalized = false;
     openlcb_node->state.permitted = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;

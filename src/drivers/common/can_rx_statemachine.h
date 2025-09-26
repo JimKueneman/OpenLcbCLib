@@ -52,14 +52,14 @@ typedef struct {
     void (*handle_middle_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
     void (*handle_last_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
     void (*handle_stream)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
-    void (*handle_cid)(can_msg_t* can_msg);
-    void (*handle_rid)(can_msg_t* can_msg);
-    void (*handle_ame)(can_msg_t* can_msg);
-    void (*handle_amd)(can_msg_t* can_msg);
-    void (*handle_amr)(can_msg_t* can_msg);
-    void (*handle_error_information_report)(can_msg_t* can_msg);
+    void (*handle_rid_frame)(can_msg_t* can_msg);
+    void (*handle_amd_frame)(can_msg_t* can_msg);
+    void (*handle_ame_frame)(can_msg_t* can_msg);
+    void (*handle_amr_frame)(can_msg_t* can_msg);
+    void (*handle_frame_error_info_report)(can_msg_t* can_msg);
+    void (*handle_cid_frame)(can_msg_t* can_msg);
     // Callback events
-    void (*on_receive)(void);
+    void (*on_receive)(can_msg_t* can_msg);
 
 } interface_can_rx_statemachine_t;
 

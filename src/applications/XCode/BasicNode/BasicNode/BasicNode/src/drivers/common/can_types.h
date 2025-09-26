@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
@@ -66,6 +67,14 @@ extern "C" {
 #define OFFSET_CAN_WITHOUT_DEST_ADDRESS 0
 #define OFFSET_CAN_WITH_DEST_ADDRESS 2
 
+#define _OPENLCB_GLOBAL_ADDRESSED (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
+
+#define _DATAGRAM_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12))
+#define _OPTIONAL_INTERACTION_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12))
+    
+    
+#define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY 123
+
     // Structure for a basic CAN payload
     typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
@@ -85,6 +94,18 @@ extern "C" {
     typedef struct {
         openlcb_statemachine_worker_t *openlcb_worker;
     } can_main_statemachine_t;
+
+    typedef struct {
+        openlcb_node_t *openlcb_node;
+        can_msg_t *incoming_msg;
+        can_msg_t *outgoing_can_msg;
+        uint8_t outgoing_can_msg_valid : 1;
+        openlcb_msg_t *outgoing_openlcb_msg;
+        uint8_t outgoing_openlcb_msg_valid : 1;
+        uint8_t enumerating : 1;
+
+    } can_statemachine_info_t;
+
 
 
 #ifdef __cplusplus

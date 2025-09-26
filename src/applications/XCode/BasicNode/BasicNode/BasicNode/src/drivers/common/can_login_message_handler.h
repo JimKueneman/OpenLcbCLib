@@ -62,31 +62,31 @@ typedef struct {
     
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 
-    extern void CanLoginMessageHandler_init(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_init(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_generate_seed(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_generate_seed(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_generate_alias(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_cid07(openlcb_node_t* next_node, can_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_cid07(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_cid06(openlcb_node_t* next_node, can_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_cid06(can_statemachine_info_t *can_statemachine_infog);
 
-    extern void CanLoginMessageHandler_load_cid05(openlcb_node_t* next_node, can_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_cid05(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_cid04(openlcb_node_t* next_node, can_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_wait_200ms(openlcb_node_t* next_node);
+    extern void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_rid(openlcb_node_t* next_node, can_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_amd(openlcb_node_t* next_node, can_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_initialization_complete(openlcb_node_t* next_node, openlcb_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_initialization_complete(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_producer_events(openlcb_node_t* next_node, openlcb_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_producer_events(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_consumer_events(openlcb_node_t* next_node, openlcb_msg_t *outgoing_msg);
+    extern void CanLoginMessageHandler_load_consumer_events(can_statemachine_info_t *can_statemachine_info);
 
 
 #ifdef	__cplusplus

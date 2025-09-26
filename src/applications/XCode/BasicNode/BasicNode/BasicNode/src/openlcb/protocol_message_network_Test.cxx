@@ -439,7 +439,7 @@ TEST(ProtocolMessageNetowrk, verify_node_id_addressed_simple)
 
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 0);
         // NOTE: Handler expects the message is for them.....
-        ProtocolMessageNetwork_handle_verified_node_id(&statemachine_info);
+        ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID_SIMPLE);
         EXPECT_EQ(DEST_ID, OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 0));

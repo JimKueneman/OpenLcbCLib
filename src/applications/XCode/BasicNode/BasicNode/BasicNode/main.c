@@ -69,14 +69,10 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     
 };
 
-// TODO:  How do these lock the thread/interrupt before accessing the Nodes/Buffers?
 const interface_can_frame_message_handler_t interface_can_frame_message_handler = {
     
-    .find_by_alias = &OpenLcbNode_find_by_alias,
-    .find_by_node_id = &OpenLcbNode_find_by_node_id,
-    .get_first = &OpenLcbNode_get_first,
-    .get_next = &OpenLcbNode_get_next,
-    .openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer
+    .openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer,
+    .can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer
     
 };
 
@@ -88,12 +84,12 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_middle_frame = &CanRxMessageHandler_handle_middle_frame,
     .handle_last_frame = &CanRxMessageHandler_handle_last_frame,
     .handle_stream = &CanRxMessageHandler_handle_stream,
-    .handle_cid = &CanRxMessageHandler_cid,
-    .handle_rid = &CanRxMessageHandler_rid,
-    .handle_ame = &CanRxMessageHandler_ame,
-    .handle_amd = &CanRxMessageHandler_amd,
-    .handle_amr = &CanRxMessageHandler_amr,
-    .handle_error_information_report = &CanRxMessageHandler_error_information_report,
+    .handle_rid = CanRxMessageHandler_handle_can_rid_frame,
+    .handle_amd = CanRxMessageHandler_handle_can_amd_frame,
+    .handle_ame = CanRxMessageHandler_handle_can_ame_frame,
+    .handle_amr = CanRxMessageHandler_handle_can_amr_frame,
+    .handle_frame_error_info_report = CanRxMessageHandler_handle_can_frame_error_info_report,
+    .handle_control_frame = CanRxMessageHandler_handle_can_control_frame,
     // Callback events
     .on_receive = NULL
     
@@ -124,7 +120,6 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .unlock_can_buffer_fifo = OSxCanDriver_resume_can_rx, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
     .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
-    .is_tx_buffer_empty = OSxCanDriver_is_can_tx_buffer_clear, //  HARDWARE INTERFACE
     .node_get_first = &OpenLcbNode_get_first,
     .node_get_next = &OpenLcbNode_get_next,
     .login_statemachine_run = &CanLoginStateMachine_run
@@ -134,9 +129,7 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
 const interface_openlcb_node_t interface_openlcb_node = {
     
-    .lock_node_list = &OSxCanDriver_pause_can_rx,  // Hardware Connection
-    .unlock_node_list = &OSxCanDriver_resume_can_rx // Hardware Connection
-    
+  
 };
 
 const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_message_network = {
@@ -291,7 +284,7 @@ int main(int argc, char *argv[])
   #ifdef PLATFORMIO
   uint64_olcb_t nodeid = 0x0501010107DD;
   #else
-  uint64_t nodeid = 0x0501010107EE;
+  uint64_t nodeid = 0x050101010707;
 #endif
     
   printf("NodeID: %12llX\n", nodeid);

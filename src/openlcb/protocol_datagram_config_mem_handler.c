@@ -126,7 +126,7 @@ static config_mem_datagram_reply_result_enum _process_datagram_acknowledge(openl
 
     if (statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
 
-        
+
         return ACK_COMPLETED;
 
     }
@@ -182,7 +182,7 @@ static config_mem_datagram_reply_result_enum _process_datagram_acknowledge(openl
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
     statemachine_info->outgoing_msg_valid = true;
-    
+
     return ACK_OK_REPLY;
 }
 
@@ -451,22 +451,22 @@ void ProtocolDatagramConfigMemHandler_memory_write_space_configuration_memory_me
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_acdi_manufacturer_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    
+
 }
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_acdi_user_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    
+
 }
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_definition_info_message(openlcb_statemachine_info_t *statemachine_info) {
 
-   
+
 }
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_config_memory_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    
+
 }
 
 
@@ -559,31 +559,38 @@ void ProtocolDatagramConfigMemHandler_try_transmit(openlcb_statemachine_info_t *
 void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code) {
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
-            MTI_DATAGRAM_REJECTED_REPLY, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
+            MTI_DATAGRAM_REJECTED_REPLY,
             2);
-    
+
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, error_code, 0);
+
+    statemachine_info->enumerating = false; // d not call the message again to handle it after the NACK
+    statemachine_info->outgoing_msg_valid = true;
 
 }
 
 static void _send_datagram_ack_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_code) {
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
-            MTI_DATAGRAM_OK_REPLY, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
+            MTI_DATAGRAM_OK_REPLY,
             2);
 
     *statemachine_info->outgoing_msg->payload[0] = (uint8_t) reply_pending_code;
     statemachine_info->outgoing_msg->payload_count = 1;
+
+    statemachine_info->enumerating = true; // call the message again to handle it after the ACK
+    statemachine_info->outgoing_msg_valid = true;
+
 }
 
 static uint16_t _read_memory_space_cdi(openlcb_statemachine_info_t *statemachine_info, uint32_t data_address, uint16_t reply_payload_index, uint16_t requested_byte_count) {
@@ -939,12 +946,12 @@ void ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_statema
     uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg, 2);
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
-            MTI_DATAGRAM, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
+            MTI_DATAGRAM,
             0);
 
     if (*statemachine_info->incoming_msg->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6) {
@@ -982,7 +989,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_ok_message(openlc
 
         _send_datagram_ack_reply(statemachine_info, DATAGRAM_OK_REPLY_PENDING);
 
-           return;
+        return;
 
     }
 
@@ -994,7 +1001,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_fail_message(open
 
         _send_datagram_ack_reply(statemachine_info, DATAGRAM_OK_REPLY_PENDING);
 
-             return;
+        return;
 
     }
 
@@ -1009,7 +1016,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_statem
 
         _send_datagram_ack_reply(statemachine_info, DATAGRAM_OK_REPLY_PENDING);
 
-             return;
+        return;
 
     }
 
@@ -1018,12 +1025,12 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_statem
     uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg, 2);
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
-            MTI_DATAGRAM, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
+            MTI_DATAGRAM,
             0);
 
     if (*statemachine_info->incoming_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
@@ -1064,11 +1071,11 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
     *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
             MTI_DATAGRAM, 0);
 
     if (*statemachine_info->incoming_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
@@ -1153,7 +1160,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_ok_message(openl
 
         _send_datagram_ack_reply(statemachine_info, 0);
 
-             return;
+        return;
 
     }
 
@@ -1165,7 +1172,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_fail_message(ope
 
         _send_datagram_ack_reply(statemachine_info, 0);
 
-              return;
+        return;
 
     }
 
@@ -1184,11 +1191,11 @@ void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
             MTI_DATAGRAM, 0);
 
     *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
@@ -1286,12 +1293,12 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
-            MTI_DATAGRAM, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
+            MTI_DATAGRAM,
             0);
 
     const user_address_space_info_t* target_space = _decode_to_space_definition(statemachine_info->openlcb_node, statemachine_info->incoming_msg);
@@ -1407,12 +1414,12 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg, 
-            statemachine_info->openlcb_node->alias, 
-            statemachine_info->openlcb_node->id, 
-            statemachine_info->incoming_msg->source_alias, 
-            statemachine_info->incoming_msg->source_id, 
-            MTI_DATAGRAM, 
+            statemachine_info->outgoing_msg,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg->source_alias,
+            statemachine_info->incoming_msg->source_id,
+            MTI_DATAGRAM,
             8);
 
     *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
@@ -1429,7 +1436,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_unique_id_message(openlc
 
         ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED);
 
-              return;
+        return;
 
     }
 }
@@ -1443,8 +1450,11 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
             if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
 
                 _send_datagram_ack_reply(statemachine_info, 0);
+                
+                statemachine_info->enumerating = true; // recall after ACK 
+                statemachine_info->outgoing_msg_valid = true;
 
-                          return;
+                return;
 
             } else {
 
@@ -1456,7 +1466,10 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
                 }
 
-                //            return;
+                statemachine_info->enumerating = false; // reset after ACK and any reply
+                statemachine_info->outgoing_msg_valid = false;
+
+                return;
 
             }
 
@@ -1464,15 +1477,10 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
     }
 
-    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
+    ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-        ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
-
-        //       return;
-
-    } else {
-
-    }
+    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_valid = false;
 
 }
 
@@ -1486,7 +1494,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
                 _send_datagram_ack_reply(statemachine_info, 0);
 
-                //           return;
+                return;
 
             } else {
 
@@ -1497,7 +1505,10 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
                 }
 
-                //             return;
+                statemachine_info->enumerating = false; // reset after ACK and any reply
+                statemachine_info->outgoing_msg_valid = false;
+
+                return;
 
             }
 
@@ -1505,17 +1516,11 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
     }
 
-    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
 
-        ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+    ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-        //      return;
-
-    } else {
-
-
-
-    }
+    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_valid = false;
 
 }
 
@@ -1525,10 +1530,12 @@ void ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(open
 
         _send_datagram_ack_reply(statemachine_info, 0);
 
-        //       return;
+        return;
 
     }
 
+    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_valid = false;
 
 }
 
@@ -1539,7 +1546,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb
 
         _send_datagram_ack_reply(statemachine_info, 0);
 
-        //       return;
+        return;
 
     }
 
@@ -1549,6 +1556,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb
 
     }
 
+    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_valid = false;
 
 }
 
@@ -1558,7 +1567,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlc
 
         _send_datagram_ack_reply(statemachine_info, 0);
 
-        //       return;
+        return;
 
     }
 
@@ -1568,6 +1577,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlc
 
     }
 
-
+    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_valid = false;
 
 }

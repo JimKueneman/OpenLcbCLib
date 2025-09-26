@@ -19,9 +19,6 @@
 #define SNIP_NAME_FULL "0123456789012345678901234567890123456789"
 #define SNIP_MODEL "Test Model J"
 
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
-
 bool configuration_memory_read_called = false;
 bool configuration_memory_write = false;
 bool reboot_called = false;
@@ -117,28 +114,10 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void lock_node_list(void)
-{
-
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-
-interface_openlcb_node_t interface_openlcb_node = {
-
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+interface_openlcb_node_t interface_openlcb_node = {};
 
 void _reset_variables(void)
 {
-
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
 }
 
 uint16_t _configuration_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
@@ -222,12 +201,12 @@ void _on_config_mem_write(uint32_t address, uint16_t bytes_written, configuratio
     on_config_mem_write_called = true;
 }
 
-void _on_config_mem_freeze_firmware_update(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _on_config_mem_freeze_firmware_update(openlcb_statemachine_info_t *statemachine_info)
 {
     on_config_mem_freeze_firmware_update_called = true;
 }
 
-void _on_config_mem_unfreeze_firmware_update(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _on_config_mem_unfreeze_firmware_update(openlcb_statemachine_info_t *statemachine_info)
 {
     on_config_mem_unfreeze_firmware_update_called = true;
 }
@@ -263,9 +242,6 @@ void _global_initialize(void)
 
 void _reset_variaibles(void)
 {
-
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
 
     configuration_memory_read_called = false;
     configuration_memory_write = false;

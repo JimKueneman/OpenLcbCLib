@@ -68,12 +68,25 @@ void *thread_function_input(void *arg)
 
     while (1)
     {
+
         scanf("%c", &key);
 
         pthread_mutex_lock(&OSxDdrivers_input_mutex);
 
         switch (key)
         {
+                
+            case 'r':
+                
+                printf("reboot\n");
+                
+                openlcb_node_t *node = OpenLcbNode_get_first(2);
+                
+                node->state.run_state = 0;
+                node->state.initalized = false;
+                node->state.permitted = false;
+                
+                break;
                 
         }
         pthread_mutex_unlock(&OSxDdrivers_input_mutex);

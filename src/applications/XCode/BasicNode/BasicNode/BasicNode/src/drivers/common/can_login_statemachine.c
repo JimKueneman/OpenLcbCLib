@@ -52,86 +52,86 @@ void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *
 
 }
 
-void CanLoginStateMachine_run(openlcb_node_t* openlcb_node, can_msg_t *can_msg, openlcb_msg_t *openlcb_msg) {
+void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
 
 
-    switch (openlcb_node->state.run_state) {
+    switch (can_statemachine_info->openlcb_node->state.run_state) {
 
         case RUNSTATE_INIT:
 
-            _interface->init(openlcb_node);
+            _interface->init(can_statemachine_info);
 
             return;
 
         case RUNSTATE_GENERATE_SEED:
 
-            _interface->generate_seed(openlcb_node);
+            _interface->generate_seed(can_statemachine_info);
 
             return;
 
         case RUNSTATE_GENERATE_ALIAS:
 
-            _interface->generate_alias(openlcb_node);
+            _interface->generate_alias(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_07:
 
-            _interface->load_cid07(openlcb_node, can_msg);
+            _interface->load_cid07(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_06:
 
-            _interface->load_cid06(openlcb_node, can_msg);
+            _interface->load_cid06(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_05:
 
-            _interface->load_cid05(openlcb_node, can_msg);
+            _interface->load_cid05(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_04:
 
-            _interface->load_cid04(openlcb_node, can_msg);
+            _interface->load_cid04(can_statemachine_info);
 
             return;
 
         case RUNSTATE_WAIT_200ms:
 
-            _interface->wait_200ms(openlcb_node);
+            _interface->wait_200ms(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_RESERVE_ID:
 
-            _interface->load_rid(openlcb_node, can_msg);
+            _interface->load_rid(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_ALIAS_MAP_DEFINITION:
 
-            _interface->load_amd(openlcb_node, can_msg);
+            _interface->load_amd(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_INITIALIZATION_COMPLETE:
 
-            _interface->load_initialization_complete(openlcb_node, openlcb_msg);
+            _interface->load_initialization_complete(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_PRODUCER_EVENTS:
 
-            _interface->load_producer_events(openlcb_node, openlcb_msg);
+            _interface->load_producer_events(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CONSUMER_EVENTS:
 
-            _interface->load_consumer_events(openlcb_node, openlcb_msg);
+            _interface->load_consumer_events(can_statemachine_info);
 
             return;
 

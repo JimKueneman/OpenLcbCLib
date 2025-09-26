@@ -579,7 +579,7 @@ void OpenLcbMainStatemachine_run(void) {
     // The next incoming message is popped off the FIFO and wash/rinse/repeat
 
     usleep(25);
-    
+
     // Step 1, send any outgoing messages that are available
     
     if (_statemachine_info.outgoing_msg_valid) {

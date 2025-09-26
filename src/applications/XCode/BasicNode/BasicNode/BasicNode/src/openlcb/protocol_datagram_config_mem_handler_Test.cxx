@@ -222,12 +222,12 @@ void _on_config_mem_write(uint32_t address, uint16_t bytes_written, configuratio
     on_config_mem_write_called = true;
 }
 
-void _on_config_mem_freeze_firmware_update(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _on_config_mem_freeze_firmware_update(openlcb_statemachine_info_t *statemachine_info)
 {
     on_config_mem_freeze_firmware_update_called = true;
 }
 
-void _on_config_mem_unfreeze_firmware_update(openlcb_node_t *openlcb_node, openlcb_msg_t *openlcb_msg, openlcb_msg_t *worker_msg)
+void _on_config_mem_unfreeze_firmware_update(openlcb_statemachine_info_t *statemachine_info)
 {
     on_config_mem_unfreeze_firmware_update_called = true;
 }
