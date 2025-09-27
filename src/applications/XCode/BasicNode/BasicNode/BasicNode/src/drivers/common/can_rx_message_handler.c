@@ -90,7 +90,7 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
 
 }
 
-void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
+void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
@@ -132,7 +132,7 @@ void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t can_buff
 
 }
 
-void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
@@ -152,12 +152,14 @@ void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t can_buf
 
 }
 
-void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
+void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
+    // TODO:  We don't know if this frame was actually for one of our nodes now so we don't know if we need to send this error
+    
     openlcb_msg_t * target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_can_msg) {
@@ -176,7 +178,7 @@ void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t can_buffe
 
 }
 
-void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
+void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
     openlcb_msg_t* target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
@@ -195,7 +197,7 @@ void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t can_buf
 
 }
 
-void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
+void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
     // Early implementations did not have the multi-frame bits to use... special case
 
@@ -207,18 +209,18 @@ void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_
 
     if (!openlcb_msg_inprocess) { // Do we have one in process?
 
-        CanRxMessageHandler_handle_first_frame(can_msg, can_buffer_start_index, data_type);
+        CanRxMessageHandler_first_frame(can_msg, can_buffer_start_index, data_type);
 
     } else { // Yes we have one in process   
 
 
         if (CanUtilities_count_nulls_in_payloads(openlcb_msg_inprocess, can_msg) < 6)
 
-            CanRxMessageHandler_handle_middle_frame(can_msg, can_buffer_start_index);
+            CanRxMessageHandler_middle_frame(can_msg, can_buffer_start_index);
 
         else
 
-            CanRxMessageHandler_handle_last_frame(can_msg, can_buffer_start_index);
+            CanRxMessageHandler_last_frame(can_msg, can_buffer_start_index);
 
     };
 
@@ -226,7 +228,7 @@ void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t can_
 
 
 void _handle_can_frame(can_msg_t* can_msg) {
-
+    
     can_msg_t *target_can_msg = _interface->can_buffer_store_allocate_buffer();
 
     if (target_can_msg) {
@@ -238,42 +240,42 @@ void _handle_can_frame(can_msg_t* can_msg) {
 
 }
 
-void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
+void CanRxMessageHandler_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
 
 }
 
-void CanRxMessageHandler_handle_can_rid_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_rid_frame(can_msg_t* can_msg) {
 
     _handle_can_frame(can_msg);
 
 }
 
-void CanRxMessageHandler_handle_can_amd_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_amd_frame(can_msg_t* can_msg) {
 
     _handle_can_frame(can_msg);
 
 }
 
-void CanRxMessageHandler_handle_can_ame_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
     _handle_can_frame(can_msg);
 
 }
 
-void CanRxMessageHandler_handle_can_amr_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_amr_frame(can_msg_t* can_msg) {
 
     _handle_can_frame(can_msg);
 
 }
 
-void CanRxMessageHandler_handle_can_frame_error_info_report(can_msg_t* can_msg) {
+void CanRxMessageHandler_error_info_report_frame(can_msg_t* can_msg) {
 
     _handle_can_frame(can_msg);
 
 }
 
-void CanRxMessageHandler_handle_can_control_frame(can_msg_t* can_msg) {
+void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 
     _handle_can_frame(can_msg);
 

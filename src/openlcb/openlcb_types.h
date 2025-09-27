@@ -323,13 +323,6 @@ extern "C" {
     typedef uint16_t(*configuration_mem_callback_t) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
 
     typedef struct {
-        uint16_t alias;
-        node_id_t node_id;
-
-    } alias_mapping_t;
-
-
-    typedef struct {
     
         openlcb_node_t *openlcb_node;
         openlcb_msg_t *incoming_msg;

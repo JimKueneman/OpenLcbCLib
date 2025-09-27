@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,52 +24,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_tx_message_handler.h
+ * \file alias_mappings.h
  *
  *
  * @author Jim Kueneman
- * @date 17 Aug 2025
+ * @date 27 Sept 2025
  */
-
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_TX_MESSAGE_HANDLER__
-#define	__CAN_TX_MESSAGE_HANDLER__
+#ifndef __ALIAS_MAPPINGS__
+#define	__ALIAS_MAPPINGS__
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "can_types.h"
-#include "../../openlcb/openlcb_types.h"
-
-typedef struct {
-    
-    bool (*transmit_can_frame)(can_msg_t* can_msg);
-     // Callback events
-    void (*on_transmit)(can_msg_t* can_msg);
-    
-} interface_can_tx_message_handler_t;
-
+#include "common/can_types.h"
+#include "../openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
-    
-    extern void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler);
 
-    extern bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    typedef struct {
+        
+     
+
+
+    } interface_alias_mappings_t;
+
+
+    extern void AliasMappings_initialize(const interface_alias_mappings_t *interface_alias_mappings);
     
-    extern bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id);
     
-    extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern void AliasMappings_unregister(uint16_t alias);
     
-    extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    extern alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias);
     
-    extern bool CanTxMessageHandler_can_frame(can_msg_t* can_msg);
+    extern alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id);
+
    
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* XC_HEADER_TEMPLATE_H */
+#endif	/* __ALIAS_MAPPINGS__ */
 

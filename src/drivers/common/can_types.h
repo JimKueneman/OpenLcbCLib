@@ -53,6 +53,10 @@ extern "C" {
 #ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH  // USER DEFINED MAX VALUE = 0xFE = 254
 #define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 10 
 #endif
+    
+#ifndef USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH  
+#define USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH USER_DEFINED_NODE_BUFFER_DEPTH 
+#endif
 
     // *********************END USER DEFINED VARIABLES *****************************
 
@@ -105,6 +109,19 @@ extern "C" {
         uint8_t enumerating : 1;
 
     } can_statemachine_info_t;
+    
+    typedef struct {
+        
+        uint16_t alias;
+        node_id_t node_id;
+        
+    } alias_mapping_t;
+    
+    typedef struct {
+        
+        alias_mapping_t list[USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH];
+        
+    } alias_mapping_info_t;
 
 
 

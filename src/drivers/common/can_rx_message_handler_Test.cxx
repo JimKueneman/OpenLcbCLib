@@ -1033,20 +1033,27 @@ TEST(CanRxMessageHandler, handle_last_frame)
     // SNIP addressed to somone else
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     // ************************************************************************
+    EXPECT_TRUE(CanBufferFifo_is_empty());
+    EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x8F, 0x37, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
     CanRxMessageHandler_last_frame(&can_msg, 2);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
     // ************************************************************************
 
     // ************************************************************************
     // SNIP addressed to us but have not received the start frame yet
     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
     // ************************************************************************
+    EXPECT_TRUE(CanBufferFifo_is_empty());
+    EXPECT_TRUE(OpenLcbBufferList_is_empty());
+    EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x89, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
     CanRxMessageHandler_last_frame(&can_msg, 2);
-    EXPECT_TRUE(OpenLcbBufferList_is_empty());
-    EXPECT_FALSE(CanBufferFifo_is_empty());
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_TRUE(CanBufferFifo_is_empty());
     outgoing_can_msg = CanBufferFifo_pop();
     EXPECT_NE(outgoing_can_msg, nullptr);
     // define ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START 0x2041

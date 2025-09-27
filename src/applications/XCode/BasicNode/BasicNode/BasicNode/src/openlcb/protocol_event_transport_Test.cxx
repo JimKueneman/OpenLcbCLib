@@ -22,9 +22,6 @@
 #define CONFIG_MEM_START_ADDRESS 0x100
 #define CONFIG_MEM_NODE_ADDRESS_ALLOCATION 0x200
 
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
-
 bool on_consumer_range_identified_called = false;
 bool on_consumer_identified_unknown_called = false;
 bool on_consumer_identified_set_called = false;
@@ -122,22 +119,7 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void lock_node_list(void)
-{
-
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-
-interface_openlcb_node_t interface_openlcb_node = {
-
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+interface_openlcb_node_t interface_openlcb_node = {};
 
 void _on_consumer_range_identified(openlcb_node_t *openlcb_node, event_id_t *event_id)
 {
@@ -247,8 +229,6 @@ interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_tr
 void _reset_variables(void)
 {
 
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
     on_consumer_identified_unknown_called = false;
     on_consumer_identified_set_called = false;
     on_consumer_identified_clear_called = false;
@@ -787,7 +767,8 @@ TEST(ProtocolEventTransport, handle_identify)
     EXPECT_NE(openlcb_msg, nullptr);
     EXPECT_NE(outgoing_msg, nullptr);
 
-    if (openlcb_msg) {
+    if (openlcb_msg)
+    {
 
         openlcb_statemachine_info_t statemachine_info;
         statemachine_info.openlcb_node = node1;
@@ -795,7 +776,6 @@ TEST(ProtocolEventTransport, handle_identify)
         statemachine_info.outgoing_msg = outgoing_msg;
         statemachine_info.enumerating = false;
         statemachine_info.outgoing_msg_valid = false;
-        
 
         // ********************************************************************
         // OpenLcbUtilities_load_openlcb_message, unknown
@@ -965,7 +945,6 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
         statemachine_info.outgoing_msg = outgoing_msg;
         statemachine_info.enumerating = false;
         statemachine_info.outgoing_msg_valid = false;
-        
 
         // ********************************************************************
         // OpenLcbUtilities_load_openlcb_message, unknown
@@ -992,7 +971,8 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
 
             OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
             ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
-            done = !statemachine_info.enumerating;;
+            done = !statemachine_info.enumerating;
+            ;
 
             if (counter == 0)
             {
@@ -1044,7 +1024,8 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
 
             OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
             ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
-            done = !statemachine_info.enumerating;;
+            done = !statemachine_info.enumerating;
+            ;
 
             if (counter < AUTO_CREATE_EVENT_COUNT)
             {
@@ -1084,7 +1065,8 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
 
             OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
             ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
-            done = !statemachine_info.enumerating;;
+            done = !statemachine_info.enumerating;
+            ;
 
             if (counter == 0)
             {
@@ -1136,7 +1118,8 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
 
             OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
             ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
-            done = !statemachine_info.enumerating;;
+            done = !statemachine_info.enumerating;
+            ;
 
             if (counter == 0)
             {
@@ -1191,7 +1174,6 @@ TEST(ProtocolEventTransport, null_callbacks)
         statemachine_info.outgoing_msg = outgoing_msg;
         statemachine_info.enumerating = false;
         statemachine_info.outgoing_msg_valid = false;
-        
 
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN, 0);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);

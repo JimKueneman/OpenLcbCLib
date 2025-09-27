@@ -232,9 +232,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
 
                     case CAN_CONTROL_FRAME_RID: // Reserve ID
                         
-                        if (_interface->handle_rid) {
+                        if (_interface->handle_rid_frame) {
                         
-                          _interface->handle_rid(can_msg);
+                          _interface->handle_rid_frame(can_msg);
                          
                         }
 
@@ -242,9 +242,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
 
                     case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
                         
-                        if (_interface->handle_amd) {
+                        if (_interface->handle_amd_frame) {
                             
-                            _interface->handle_amd(can_msg);
+                            _interface->handle_amd_frame(can_msg);
                             
                         }
 
@@ -252,9 +252,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
 
                     case CAN_CONTROL_FRAME_AME:  
                         
-                        if (_interface->handle_ame) {
+                        if (_interface->handle_ame_frame) {
                             
-                            _interface->handle_ame(can_msg);
+                            _interface->handle_ame_frame(can_msg);
                             
                         }
  
@@ -262,9 +262,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
 
                     case CAN_CONTROL_FRAME_AMR:
                         
-                        if (_interface->handle_amr) {
+                        if (_interface->handle_amr_frame) {
                             
-                            _interface->handle_amr(can_msg);
+                            _interface->handle_amr_frame(can_msg);
                             
                         }
  
@@ -275,9 +275,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
 
-                        if (_interface->handle_frame_error_info_report) {
+                        if (_interface->handle_error_info_report_frame) {
                             
-                            _interface->handle_frame_error_info_report(can_msg);
+                            _interface->handle_error_info_report_frame(can_msg);
                             
                         }
                         
@@ -304,9 +304,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
                     case CAN_CONTROL_FRAME_CID2:
                     case CAN_CONTROL_FRAME_CID1:
                         
-                        if (_interface->handle_control_frame) {
+                        if (_interface->handle_cid_frame) {
                             
-                            _interface->handle_control_frame(can_msg);
+                            _interface->handle_cid_frame(can_msg);
                             
                         }
 

@@ -13,9 +13,6 @@
 #define DEST_ALIAS 0xBBB
 #define DEST_ID 0x060504030201
 
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
-
 node_parameters_t _node_parameters_main_node = {
 
     .consumer_count_autocreate = 0,
@@ -173,32 +170,14 @@ node_parameters_t _node_parameters_main_node_simple = {
 
 };
 
-void lock_node_list(void)
-{
-
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-
 interface_openlcb_protocol_message_network_t interface_openlcb_protocol_message_network = {
 
 };
 
-interface_openlcb_node_t interface_openlcb_node = {
-
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+interface_openlcb_node_t interface_openlcb_node = {};
 
 void _reset_variables(void)
 {
-
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
 }
 
 void _global_initialize(void)
@@ -242,7 +221,6 @@ TEST(ProtocolMessageNetowrk, handle_protocol_support_inquiry)
         statemachine_info.outgoing_msg = outgoing_msg;
         statemachine_info.enumerating = false;
         statemachine_info.outgoing_msg_valid = false;
-
 
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY, 0);
 
@@ -402,7 +380,7 @@ TEST(ProtocolMessageNetowrk, verify_node_id_addressed)
         statemachine_info.outgoing_msg_valid = false;
 
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 0);
-      
+
         ProtocolMessageNetwork_handle_verify_node_id_global(&statemachine_info);
 
         EXPECT_EQ(outgoing_msg->mti, MTI_VERIFIED_NODE_ID);

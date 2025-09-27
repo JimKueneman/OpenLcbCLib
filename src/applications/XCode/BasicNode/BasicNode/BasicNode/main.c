@@ -31,10 +31,11 @@
 #include "src/openlcb/protocol_message_network.h"
 #include "src/openlcb/protocol_event_transport.h"
 #include "src/openlcb/protocol_snip.h"
-
 #include "src/openlcb/openlcb_main_statemachine.h"
-
 #include "src/openlcb/openlcb_application.h"
+
+#include "src/drivers/alias_mappings.h"
+
 
 
 #include "node_parameters.h"
@@ -48,7 +49,13 @@ uint64_t node_id_base = 0x0507010100AA;
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
     
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
-    .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti
+    .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
+    .alias_mapping_register = &AliasMappings_register,
+    .alias_mapping_unregister = &AliasMappings_unregister,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
+    // Callback events
+    .on_alias_change = NULL
     
 };
 
@@ -79,20 +86,20 @@ const interface_can_frame_message_handler_t interface_can_frame_message_handler 
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     
-    .handle_can_legacy_snip = &CanRxMessageHandler_handle_can_legacy_snip,
-    .handle_single_frame = &CanRxMessageHandler_handle_single_frame,
-    .handle_first_frame = &CanRxMessageHandler_handle_first_frame,
-    .handle_middle_frame = &CanRxMessageHandler_handle_middle_frame,
-    .handle_last_frame = &CanRxMessageHandler_handle_last_frame,
-    .handle_stream = &CanRxMessageHandler_handle_stream,
-    .handle_rid = CanRxMessageHandler_handle_can_rid_frame,
-    .handle_amd = CanRxMessageHandler_handle_can_amd_frame,
-    .handle_ame = CanRxMessageHandler_handle_can_ame_frame,
-    .handle_amr = CanRxMessageHandler_handle_can_amr_frame,
-    .handle_frame_error_info_report = CanRxMessageHandler_handle_can_frame_error_info_report,
-    .handle_control_frame = CanRxMessageHandler_handle_can_control_frame,
-    // Callback events
-    .on_receive = NULL
+    .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
+        .handle_single_frame = &CanRxMessageHandler_single_frame,
+        .handle_first_frame = &CanRxMessageHandler_first_frame,
+        .handle_middle_frame = &CanRxMessageHandler_middle_frame,
+        .handle_last_frame = &CanRxMessageHandler_last_frame,
+        .handle_stream = &CanRxMessageHandler_stream,
+        .handle_rid_frame = CanRxMessageHandler_rid_frame,
+        .handle_amd_frame = CanRxMessageHandler_amd_frame,
+        .handle_ame_frame = CanRxMessageHandler_ame_frame,
+        .handle_amr_frame = CanRxMessageHandler_amr_frame,
+        .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
+        .handle_cid_frame = CanRxMessageHandler_cid_frame,
+        // Callback events
+        .on_receive = NULL
     
 };
 
@@ -107,11 +114,11 @@ const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
     
     .is_tx_buffer_empty = OSxCanDriver_is_can_tx_buffer_clear, //  HARDWARE INTERFACE
-    .handle_addressed_msg_frame = &CanTxMessageHandler_handle_addressed_msg_frame,
-    .handle_unaddressed_msg_frame = &CanTxMessageHandler_handle_unaddressed_msg_frame,
-    .handle_datagram_frame = &CanTxMessageHandler_handle_datagram_frame,
-    .handle_stream_frame = &CanTxMessageHandler_handle_stream_frame,
-    .handle_can_frame = &CanTxMessageHandler_handle_can_frame
+    .handle_addressed_msg_frame = &CanTxMessageHandler_addressed_msg_frame,
+    .handle_unaddressed_msg_frame = &CanTxMessageHandler_unaddressed_msg_frame,
+    .handle_datagram_frame = &CanTxMessageHandler_datagram_frame,
+    .handle_stream_frame = &CanTxMessageHandler_stream_frame,
+    .handle_can_frame = &CanTxMessageHandler_can_frame
     
 };
 
@@ -243,6 +250,11 @@ const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
     
 };
 
+const interface_alias_mappings_t interface_alias_mappings = {
+    
+    
+};
+
 int main(int argc, char *argv[])
 {
 
@@ -272,8 +284,10 @@ int main(int argc, char *argv[])
     ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
     ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
-    
+
     OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
+    
+    AliasMappings_initialize(&interface_alias_mappings);
     
     OSxDrivers_setup();
     OSxCanDriver_setup();

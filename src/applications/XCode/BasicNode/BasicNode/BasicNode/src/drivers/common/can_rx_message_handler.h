@@ -59,29 +59,29 @@ extern "C" {
 
     extern void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface_can_frame_message_handler);
 
-    extern void CanRxMessageHandler_handle_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
+    extern void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
-    extern void CanRxMessageHandler_handle_middle_frame(can_msg_t* can_msg, uint8_t offset);
+    extern void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t offset);
 
-    extern void CanRxMessageHandler_handle_last_frame(can_msg_t* can_msg, uint8_t offset);
+    extern void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t offset);
 
-    extern void CanRxMessageHandler_handle_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
+    extern void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
-    extern void CanRxMessageHandler_handle_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
+    extern void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
-    extern void CanRxMessageHandler_handle_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
+    extern void CanRxMessageHandler_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     
-    extern void CanRxMessageHandler_handle_can_rid_frame(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_rid_frame(can_msg_t* can_msg);
     
-    extern void CanRxMessageHandler_handle_can_amd_frame(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_amd_frame(can_msg_t* can_msg);
     
-    extern void CanRxMessageHandler_handle_can_ame_frame(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_ame_frame(can_msg_t* can_msg);
     
-    extern void CanRxMessageHandler_handle_can_amr_frame(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_amr_frame(can_msg_t* can_msg);
     
-    extern void CanRxMessageHandler_handle_can_frame_error_info_report(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_error_info_report_frame(can_msg_t* can_msg);
     
-    extern void CanRxMessageHandler_handle_can_control_frame(can_msg_t* can_msg);
+    extern void CanRxMessageHandler_cid_frame(can_msg_t* can_msg);
    
 #ifdef	__cplusplus
 }

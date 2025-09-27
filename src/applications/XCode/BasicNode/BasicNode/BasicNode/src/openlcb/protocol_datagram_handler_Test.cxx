@@ -19,9 +19,6 @@
 #define SNIP_NAME_FULL "0123456789012345678901234567890123456789"
 #define SNIP_MODEL "Test Model J"
 
-bool lock_node_list_called = false;
-bool unlock_node_list_called = false;
-
 bool memory_read_message_called = false;
 bool memory_read_reply_ok_message_called = false;
 bool memory_read_reply_fail_message_called = false;
@@ -121,22 +118,7 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void lock_node_list(void)
-{
-
-    lock_node_list_called = true;
-}
-
-void unlock_node_list(void)
-{
-
-    unlock_node_list_called = true;
-}
-
-interface_openlcb_node_t interface_openlcb_node = {
-
-    .lock_node_list = &lock_node_list,
-    .unlock_node_list = &unlock_node_list};
+interface_openlcb_node_t interface_openlcb_node = {};
 
 void _memory_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)
 {
@@ -267,9 +249,6 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
 void _reset_variables(void)
 {
-
-    lock_node_list_called = false;
-    unlock_node_list_called = false;
 
     memory_read_message_called = false;
     memory_read_reply_ok_message_called = false;

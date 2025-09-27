@@ -578,8 +578,8 @@ void OpenLcbMainStatemachine_run(void) {
     // When the message is sent the loop moves to the next node and repeats until all nodes are serviced
     // The next incoming message is popped off the FIFO and wash/rinse/repeat
 
-    usleep(25);
-
+  //  usleep(25);
+    
     // Step 1, send any outgoing messages that are available
     
     if (_statemachine_info.outgoing_msg_valid) {

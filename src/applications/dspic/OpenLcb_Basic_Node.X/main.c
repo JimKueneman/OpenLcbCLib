@@ -76,6 +76,8 @@
 #include "stdlib.h"
 
 
+#include "../../../drivers/alias_mappings.h"
+
 #include "../../../drivers/common/can_types.h"
 #include "../../../drivers/common/can_utilities.h"
 #include "../../../drivers/common/can_buffer_store.h"
@@ -141,6 +143,10 @@ const interface_can_login_message_handler_t interface_can_login_message_handler 
     
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
+    .alias_mapping_register = &AliasMappings_register,
+    .alias_mapping_unregister = &AliasMappings_unregister,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,   
     // Callback events
     .on_alias_change = &_alias_change_callback
     
@@ -337,6 +343,11 @@ const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
     
 };
 
+const interface_alias_mappings_t interface_alias_mappings = {
+    
+    
+};
+
 
 
 int main(void) {
@@ -367,6 +378,8 @@ int main(void) {
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
     
     OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
+    
+    AliasMappings_initialize(&interface_alias_mappings);
     
     Ecan1Helper_initialize();
     BasicNodeDrivers_initialize();

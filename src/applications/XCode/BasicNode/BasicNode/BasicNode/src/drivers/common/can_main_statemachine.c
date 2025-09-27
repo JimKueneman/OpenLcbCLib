@@ -87,13 +87,13 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 }
 
 void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
-    
+
     if (!can_statemachine_info->incoming_msg) {
         
         return;
         
     }
-
+    
     // CAN Control Messages
 
     switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
@@ -213,7 +213,7 @@ void CanMainStateMachine_run(void) {
 
     if (can_statemachine_info.outgoing_openlcb_msg_valid) {
 
-        if (_interface->send_openlcb_message(can_statemachine_info.outgoing_openlcb_msg)) {
+        if (_interface->send_openlcb_message) {
 
             can_statemachine_info.outgoing_openlcb_msg_valid = false;
 

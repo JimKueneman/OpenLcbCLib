@@ -1,4 +1,4 @@
-project(drivers_common C)
+project(common_drivers C)
 
 set(
 SOURCES 
