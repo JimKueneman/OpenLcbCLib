@@ -247,7 +247,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = "*.cxx";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = IS_XCODE;
 			};
 			name = Debug;
 		};
@@ -257,7 +256,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				"EXCLUDED_SOURCE_FILE_NAMES[arch=*]" = "*.cxx";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = IS_XCOCE;
 			};
 			name = Release;
 		};

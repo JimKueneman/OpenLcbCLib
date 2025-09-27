@@ -56,7 +56,7 @@ typedef struct {
     void (*handle_amd_frame)(can_msg_t* can_msg);
     void (*handle_ame_frame)(can_msg_t* can_msg);
     void (*handle_amr_frame)(can_msg_t* can_msg);
-    void (*handle_frame_error_info_report)(can_msg_t* can_msg);
+    void (*handle_error_info_report_frame)(can_msg_t* can_msg);
     void (*handle_cid_frame)(can_msg_t* can_msg);
     // Callback events
     void (*on_receive)(can_msg_t* can_msg);

@@ -29,3 +29,5 @@
 /src/applications/dsPIC/TrainBoss.X/dist/
 /src/applications/dsPIC/OpenLcb_Basic_Node.X/dist/
 /src/applications/dsPIC/I2C_Example.X/dist/
+/src/applications/dspic/OpenLcb_Basic_Node.X/build/
+/src/applications/dspic/OpenLcb_Basic_Node.X/dist/

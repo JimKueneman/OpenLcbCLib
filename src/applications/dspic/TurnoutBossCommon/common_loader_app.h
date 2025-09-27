@@ -294,11 +294,11 @@ typedef struct {
 
 typedef struct {
     
-    uint16_olcb_t interrupt_redirect:1;
-    uint16_olcb_t started_from_app:1;
-    uint16_olcb_t started_from_bootloader:1;
-    uint16_olcb_t do_start: 1;
-    uint16_olcb_t update_succeeded: 1;
+    uint16_t interrupt_redirect:1;
+    uint16_t started_from_app:1;
+    uint16_t started_from_bootloader:1;
+    uint16_t do_start: 1;
+    uint16_t update_succeeded: 1;
      
 } bootloader_state_t;
 
@@ -309,17 +309,17 @@ extern "C" {
 
 extern void CommonLoaderApp_initialize_sfrs(void);
 extern void CommonLoaderApp_initialize_can_sfrs(void);
-extern float CommonLoaderApp_next_moving_average_application(uint16_olcb_t next);
-extern float CommonLoaderApp_next_moving_average_openlcb_c_lib(uint16_olcb_t next);
+extern float CommonLoaderApp_next_moving_average_application(uint16_t next);
+extern float CommonLoaderApp_next_moving_average_openlcb_c_lib(uint16_t next);
    
 extern bootloader_state_t CommonLoaderApp_bootloader_state __attribute__((persistent address(DATA_START_ADDRESS))); // 2 bytes
-extern uint16_olcb_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
-extern uint64_olcb_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 8 bytes
+extern uint16_t CommonLoaderApp_node_alias __attribute__((persistent address(DATA_START_ADDRESS + 2))); // 2 bytes
+extern uint64_t CommonLoaderApp_node_id __attribute__((persistent address(DATA_START_ADDRESS + 4))); // 8 bytes
 extern vivt_jumptable_t CommonLoaderApp_jumptable __attribute__((persistent address(DATA_START_ADDRESS + 12))); // 9 * 4 = 36 bytes
 
-extern uint16_olcb_t CommonLoaderApp_max_application_loop_timer;
-extern uint16_olcb_t CommonLoaderApp_max_openlcb_c_lib_loop_timer;
-extern uint8_olcb_t CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes;
+extern uint16_t CommonLoaderApp_max_application_loop_timer;
+extern uint16_t CommonLoaderApp_max_openlcb_c_lib_loop_timer;
+extern uint8_t CommonLoaderApp_max_application_loop_delay_ignore_config_mem_writes;
 
 
 #ifdef	__cplusplus

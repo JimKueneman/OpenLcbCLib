@@ -78,7 +78,7 @@ static bool _transmit_can_frame(can_msg_t* can_msg) {
 
     if (_interface->on_transmit && result) {
 
-        _interface->on_transmit();
+        _interface->on_transmit(can_msg);
 
     }
 

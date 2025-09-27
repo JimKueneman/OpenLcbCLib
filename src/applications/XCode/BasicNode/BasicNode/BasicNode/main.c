@@ -18,6 +18,7 @@
 #include "src/drivers/common/can_rx_statemachine.h"
 #include "src/drivers/common/can_tx_message_handler.h"
 #include "src/drivers/common/can_tx_statemachine.h"
+#include "src/drivers/common/can_main_statemachine_handler.h"
 #include "src/drivers/common/can_main_statemachine.h"
 
 #include "src/openlcb/openlcb_defines.h"
@@ -122,7 +123,13 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
     .node_get_first = &OpenLcbNode_get_first,
     .node_get_next = &OpenLcbNode_get_next,
-    .login_statemachine_run = &CanLoginStateMachine_run
+    .login_statemachine_run = &CanLoginStateMachine_run,
+    .handle_amd = &CanMainStatemachineHandler_amd,
+    .handle_ame = &CanMainStatemachineHandler_ame,
+    .handle_amr = &CanMainStatemachineHandler_amr,
+    .handle_cid = &CanMainStatemachineHandler_cid,
+    .handle_rid = &CanMainStatemachineHandler_rid,
+    .handle_error_information_report = &CanMainStatemachineHandler_error_information_report
     
 };
 
@@ -221,7 +228,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .node_get_first = &OpenLcbNode_get_first,
     .node_get_next = &OpenLcbNode_get_next,
     .lock_openlcb_buffer_fifo = OSxCanDriver_pause_can_rx,   //  HARDWARE INTERFACE
-    .unlock_openlcb_buffer_fifo = OSxCanDriver_pause_can_rx,   //  HARDWARE INTERFACE
+    .unlock_openlcb_buffer_fifo = OSxCanDriver_resume_can_rx,   //  HARDWARE INTERFACE
     .load_interaction_rejected = OpenLcbMainStatemachine_load_interaction_rejected,
     
     // for test injection, leave null to use the default functions

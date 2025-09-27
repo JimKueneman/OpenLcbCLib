@@ -40,6 +40,9 @@
 #ifndef __ECAN1_HELPER__
 #define	__ECAN1_HELPER__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
 
@@ -49,25 +52,25 @@ extern "C" {
 
  // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
     
-extern void Ecan1Helper_initialization(void);
+extern void Ecan1Helper_initialize(void);
 
-extern void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback);
-
-extern uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+extern bool Ecan1Helper_is_can_tx_buffer_clear(void);
 
 extern void Ecan1Helper_pause_can_rx(void);
 
 extern void Ecan1Helper_resume_can_rx(void);
 
-extern uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg);
+extern bool Ecan1Helper_transmit_can_frame(can_msg_t* msg);
 
 extern void Ecan1Helper_C1_interrupt_handler(void);
+
+extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
 
 
 // Custom Driver functions
 
 // How full the chips CAN fifo has gotten
-extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void);
+extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
 
 
 #ifdef	__cplusplus

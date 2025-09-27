@@ -275,9 +275,9 @@ void CanRxStatemachine_incoming_can_driver_callback(can_msg_t* can_msg) {
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
                     case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
 
-                        if (_interface->handle_frame_error_info_report) {
+                        if (_interface->handle_error_info_report_frame) {
                             
-                            _interface->handle_frame_error_info_report(can_msg);
+                            _interface->handle_error_info_report_frame(can_msg);
                             
                         }
                         

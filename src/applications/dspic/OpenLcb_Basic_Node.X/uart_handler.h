@@ -25,8 +25,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_drivers.h
+ * \file uart_handler.h
  *
+ *  Handles the UART receive code to process what is asked.
  *
  * @author Jim Kueneman
  * @date 3 Jan 2025
@@ -34,31 +35,24 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_DRIVERS__
-#define	__TURNOUTBOSS_DRIVERS__
+#ifndef __UART_HANDLER__
+#define	__UART_HANDLER__
 
+#ifndef PLATFORMIO
 #include "../../../openlcb/openlcb_types.h"
+#else
+#include "src/openlcb/openlcb_types.h"
+#endif
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    // OpenLcbCLib defined callback functions that much be defined
-
-    extern void BasicNodeDrivers_initialize(void);
-
-    extern void BasicNodeDrivers_reboot(void);
-
-    extern uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-
-    extern uint16_t BasicNodeDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    
-    extern void BasicNodeDrivers_config_mem_factory_reset(void);
-
-    extern void BasicNodeDrivers_pause_100ms_timer(void);
-
-    extern void BasicNodeDrivers_resume_100ms_timer(void);
+    extern void UartHandler_handle_rx(uint16_t code);
 
 
-#endif	/* __TURNOUTBOSS_DRIVERS__ */
+#ifdef	__cplusplus
+}
+#endif /* __cplusplus */
 
+#endif	/* __UART_HANDLER__ */

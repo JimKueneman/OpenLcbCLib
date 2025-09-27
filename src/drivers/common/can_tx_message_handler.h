@@ -46,7 +46,7 @@ typedef struct {
     
     bool (*transmit_can_frame)(can_msg_t* can_msg);
      // Callback events
-    void (*on_transmit)(void);
+    void (*on_transmit)(can_msg_t* can_msg);
     
 } interface_can_tx_message_handler_t;
 

@@ -38,18 +38,19 @@
 #include "xc.h"
 
 #include <libpic30.h> // Delay
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../drivers/common/can_types.h"
+#include "../../../drivers/common/can_rx_statemachine.h"
 
-can_rx_callback_func_t internal_can_rx_callback_func;
-
-uint8_olcb_t Ecan1Helper_max_can_fifo_depth = 0;
+static uint8_t _max_can_fifo_depth = 0;
 
 
 // ECAN1 ------------------------------------------------------------------------
 // First buffer index that is a RX buffer
-const uint8_olcb_t FIFO_RX_START_INDEX = 8; // (8-31)
+const uint8_t FIFO_RX_START_INDEX = 8; // (8-31)
 
 // ECAN 80 Mhz oscillator
 // Make sure FCY is defined in the compiler macros and set to 40000000UL (80Mhz/2)
@@ -73,7 +74,7 @@ const uint8_olcb_t FIFO_RX_START_INDEX = 8; // (8-31)
 
 #define X 0b0000000000000000;
 
-const uint16_olcb_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
+const uint16_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
     0b1111111111111101,
     0b1111111111111011,
     0b1111111111110111,
@@ -91,7 +92,7 @@ const uint16_olcb_t FIFO_FLAG_MASKS[16] = {0b1111111111111110,
     0b0111111111111111};
 
 // Internal Types
-typedef uint16_olcb_t ECAN1MSGBUF[ECAN1_MSG_BUF_LENGTH][ECAN1_MSG_LENGTH_BYTES];
+typedef uint16_t ECAN1MSGBUF[ECAN1_MSG_BUF_LENGTH][ECAN1_MSG_LENGTH_BYTES];
 
 
 // Internal Variables depending on chip capabilities
@@ -101,25 +102,25 @@ __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(dma), aligned(ECAN1_FI
 __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(xmemory), aligned(ECAN1_FIFO_LENGTH_BYTES)));
 #endif
 
-void ecan1_write_rx_acpt_filter(int16_t n, int32_t identifier, uint16_olcb_t exide, uint16_olcb_t bufPnt, uint16_olcb_t maskSel) {
+static void ecan1_write_rx_acpt_filter(int16_t n, int32_t identifier, uint16_t exide, uint16_t bufPnt, uint16_t maskSel) {
 
-    uint32_olcb_t sid10_0 = 0;
+    uint32_t sid10_0 = 0;
 
-    uint32_olcb_t eid15_0 = 0;
+    uint32_t eid15_0 = 0;
 
-    uint32_olcb_t eid17_16 = 0;
-    uint16_olcb_t *sidRegAddr;
-    uint16_olcb_t *bufPntRegAddr;
-    uint16_olcb_t *maskSelRegAddr;
-    uint16_olcb_t *fltEnRegAddr;
+    uint32_t eid17_16 = 0;
+    uint16_t *sidRegAddr;
+    uint16_t *bufPntRegAddr;
+    uint16_t *maskSelRegAddr;
+    uint16_t *fltEnRegAddr;
 
     C1CTRL1bits.WIN = 1;
 
     // Obtain the Address of CiRXFnSID, CiBUFPNTn, CiFMSKSELn and CiFEN register for a given filter number "n"
-    sidRegAddr = (uint16_olcb_t *) (&C1RXF0SID + (n << 1));
-    bufPntRegAddr = (uint16_olcb_t *) (&C1BUFPNT1 + (n >> 2));
-    maskSelRegAddr = (uint16_olcb_t *) (&C1FMSKSEL1 + (n >> 3));
-    fltEnRegAddr = (uint16_olcb_t *) (&C1FEN1);
+    sidRegAddr = (uint16_t *) (&C1RXF0SID + (n << 1));
+    bufPntRegAddr = (uint16_t *) (&C1BUFPNT1 + (n >> 2));
+    maskSelRegAddr = (uint16_t *) (&C1FMSKSEL1 + (n >> 3));
+    fltEnRegAddr = (uint16_t *) (&C1FEN1);
 
     // Bit-filed manipulation to write to Filter identifier register
     if (exide == 1) { // Filter Extended Identifier
@@ -146,7 +147,7 @@ void ecan1_write_rx_acpt_filter(int16_t n, int32_t identifier, uint16_olcb_t exi
 
 }
 
-void _ecan1_tx_buffer_set_transmit(uint16_olcb_t buf) {
+static void _ecan1_tx_buffer_set_transmit(uint16_t buf) {
 
     switch (buf) {
         case 0:
@@ -192,15 +193,15 @@ void _ecan1_tx_buffer_set_transmit(uint16_olcb_t buf) {
     }
 }
 
-void _ecan1_write_tx_msg_buf_id(uint16_olcb_t buf, int32_t txIdentifier, uint16_olcb_t ide, uint16_olcb_t remoteTransmit) {
-    uint32_olcb_t word0 = 0;
+static void _ecan1_write_tx_msg_buf_id(uint16_t buf, int32_t txIdentifier, uint16_t ide, uint16_t remoteTransmit) {
+    uint32_t word0 = 0;
 
-    uint32_olcb_t word1 = 0;
+    uint32_t word1 = 0;
 
-    uint32_olcb_t word2 = 0;
-    uint32_olcb_t sid10_0 = 0;
-    uint32_olcb_t eid5_0 = 0;
-    uint32_olcb_t eid17_6 = 0;
+    uint32_t word2 = 0;
+    uint32_t sid10_0 = 0;
+    uint32_t eid5_0 = 0;
+    uint32_t eid17_6 = 0;
 
     if (ide) {
         eid5_0 = (txIdentifier & 0x3F);
@@ -233,7 +234,7 @@ void _ecan1_write_tx_msg_buf_id(uint16_olcb_t buf, int32_t txIdentifier, uint16_
 
 }
 
-void _ecan1_write_tx_msg_buf_data(uint16_olcb_t buf, uint16_olcb_t data_length, payload_bytes_can_t* data) {
+static void _ecan1_write_tx_msg_buf_data(uint16_t buf, uint16_t data_length, payload_bytes_can_t* data) {
 
 
     ecan1msgBuf[buf][2] = ((ecan1msgBuf[buf][2] & 0xFFF0) + data_length); // DCL = number of valid data bytes
@@ -248,9 +249,9 @@ void _ecan1_write_tx_msg_buf_data(uint16_olcb_t buf, uint16_olcb_t data_length, 
 
 }
 
-void _ecan1_read_rx_msg_buf_id(uint16_olcb_t buf, can_msg_t *rxData, uint16_olcb_t *ide) {
+static void _ecan1_read_rx_msg_buf_id(uint16_t buf, can_msg_t *rxData, uint16_t *ide) {
 
-    uint32_olcb_t sid, eid_17_6, eid_5_0;
+    uint32_t sid, eid_17_6, eid_5_0;
 
     sid = (0x1FFC & ecan1msgBuf[buf][0]) >> 2; // 0b0001111111111100 ;
     eid_17_6 = ecan1msgBuf[buf][1];
@@ -273,27 +274,27 @@ void _ecan1_read_rx_msg_buf_id(uint16_olcb_t buf, can_msg_t *rxData, uint16_olcb
 
 }
 
-void _ecan1_read_rx_msg_buf_data(uint16_olcb_t buf, can_msg_t *rxData) {
+static void _ecan1_read_rx_msg_buf_data(uint16_t buf, can_msg_t *rxData) {
 
     rxData->payload_count = ecan1msgBuf[buf][2] & 0x000F;
 
-    rxData->payload[0] = (uint8_olcb_t) ecan1msgBuf[buf][3];
-    rxData->payload[1] = (uint8_olcb_t) (ecan1msgBuf[buf][3] >> 8);
+    rxData->payload[0] = (uint8_t) ecan1msgBuf[buf][3];
+    rxData->payload[1] = (uint8_t) (ecan1msgBuf[buf][3] >> 8);
 
-    rxData->payload[2] = (uint8_olcb_t) ecan1msgBuf[buf][4];
-    rxData->payload[3] = (uint8_olcb_t) (ecan1msgBuf[buf][4] >> 8);
+    rxData->payload[2] = (uint8_t) ecan1msgBuf[buf][4];
+    rxData->payload[3] = (uint8_t) (ecan1msgBuf[buf][4] >> 8);
 
-    rxData->payload[4] = (uint8_olcb_t) ecan1msgBuf[buf][5];
-    rxData->payload[5] = (uint8_olcb_t) (ecan1msgBuf[buf][5] >> 8);
+    rxData->payload[4] = (uint8_t) ecan1msgBuf[buf][5];
+    rxData->payload[5] = (uint8_t) (ecan1msgBuf[buf][5] >> 8);
 
-    rxData->payload[6] = (uint8_olcb_t) ecan1msgBuf[buf][6];
-    rxData->payload[7] = (uint8_olcb_t) (ecan1msgBuf[buf][6] >> 8);
+    rxData->payload[6] = (uint8_t) ecan1msgBuf[buf][6];
+    rxData->payload[7] = (uint8_t) (ecan1msgBuf[buf][6] >> 8);
 
     return;
 
 }
 
-uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t channel) {
+static bool _is_can_tx_buffer_clear(uint16_t channel) {
 
     switch (channel) {
         case 0: return (C1TR01CONbits.TXREQ0 == 0);
@@ -304,14 +305,20 @@ uint8_olcb_t Ecan1Helper_is_can_tx_buffer_clear(uint16_olcb_t channel) {
         case 5: return (C1TR45CONbits.TXREQ5 == 0);
         case 6: return (C1TR67CONbits.TXREQ6 == 0);
         case 7: return (C1TR67CONbits.TXREQ7 == 0);
-        default: return 0;
+        default: return false;
     }
 
 }
 
-uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t* msg) {
+bool Ecan1Helper_is_can_tx_buffer_clear(void) {
 
-    if (Ecan1Helper_is_can_tx_buffer_clear(channel)) {
+    return _is_can_tx_buffer_clear(TX_CHANNEL_CAN_CONTROL);
+
+}
+
+static bool _transmit_can_frame(uint8_t channel, can_msg_t* msg) {
+
+    if (_is_can_tx_buffer_clear(channel)) {
 
 #ifndef DEBUG
 
@@ -321,10 +328,17 @@ uint8_olcb_t Ecan1Helper_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t*
 
 #endif
 
-        return 1;
+        return true;
     }
 
-    return 0;
+    return false;
+}
+
+bool Ecan1Helper_transmit_can_frame(can_msg_t* msg) {
+
+
+    return _transmit_can_frame(TX_CHANNEL_CAN_CONTROL, msg);
+
 }
 
 void Ecan1Helper_pause_can_rx() {
@@ -339,14 +353,7 @@ void Ecan1Helper_resume_can_rx() {
 
 };
 
-void Ecan1Helper_setup(can_rx_callback_func_t can_rx_callback) {
-    
-    internal_can_rx_callback_func = can_rx_callback;
-    
-}
-
-
-void Ecan1Helper_initialization() {
+void Ecan1Helper_initialize() {
 
     // ECAN1 Initialize --------------------------------------------------------
     // -------------------------------------------------------------------------
@@ -446,7 +453,7 @@ void Ecan1Helper_initialization() {
     //    DMA2CONbits.AMODE = 2; // Peripheral Indirect Addressing mode
     //    DMA2CONbits.MODE  = 0; // Continuous, Ping-Pong modes disabled
     DMA2CON = 0x0020;
-    DMA2PAD = (uint16_olcb_t) & C1RXD; // (C1RXD) associate this DMA Channel to the peripheral data register associated with CAN1 RX
+    DMA2PAD = (uint16_t) & C1RXD; // (C1RXD) associate this DMA Channel to the peripheral data register associated with CAN1 RX
     DMA2CNT = 0x0007; // 7 data bytes
     DMA2REQ = 0x0022; // associate this DMA Channel to the peripheral interrupt associated with CAN1 RX, DMAxREQ.IRQSEL
 
@@ -454,7 +461,7 @@ void Ecan1Helper_initialization() {
     DMA2STAL = __builtin_dmaoffset(ecan1msgBuf);
     DMA2STAH = __builtin_dmapage(ecan1msgBuf);
 #else
-    DMA2STAL = (uint16_olcb_t) (int_least24_t) (&ecan1msgBuf);
+    DMA2STAL = (uint16_t) (int_least24_t) (&ecan1msgBuf);
     DMA2STAH = 0; // 32k of RAM in any chip being used for this project
 #endif
 
@@ -473,7 +480,7 @@ void Ecan1Helper_initialization() {
     //    DMA0CONbits.AMODE = 2; // Peripheral Indirect Addressing mode
     //    DMA0CONbits.MODE  = 0; // Continuous, Ping-Pong modes disabled
     DMA0CON = 0x2020;
-    DMA0PAD = (uint16_olcb_t) & C1TXD; // ECAN 1 (C1TXD) associate this DMA Channel to the peripheral data interrupt associated with CAN1 TX
+    DMA0PAD = (uint16_t) & C1TXD; // ECAN 1 (C1TXD) associate this DMA Channel to the peripheral data interrupt associated with CAN1 TX
     DMA0CNT = 0x0007; // 7 data bytes
     DMA0REQ = 0x0046; // associate this DMA Channel to the peripheral interrupt associated with CAN1 TX, DMAxREQ.IRQSEL
 
@@ -481,7 +488,7 @@ void Ecan1Helper_initialization() {
     DMA0STAL = __builtin_dmaoffset(ecan1msgBuf);
     DMA0STAH = __builtin_dmapage(ecan1msgBuf);
 #else
-    DMA0STAL = (uint16_olcb_t) (int_least24_t) (&ecan1msgBuf);
+    DMA0STAL = (uint16_t) (int_least24_t) (&ecan1msgBuf);
     DMA0STAH = 0; // 32k of RAM in any chip being used for this project
 #endif
 
@@ -493,32 +500,35 @@ void Ecan1Helper_initialization() {
 }
 
 void Ecan1Helper_C1_interrupt_handler(void) {
-    
-       /* clear interrupt flag */
+
+    /* clear interrupt flag */
     IFS2bits.C1IF = 0; // clear interrupt flag
-    
+
     if (C1INTFbits.RBIF) { // RX Interrupt
 
         // Snag all the buffers that have data that are associated with this interrupt
-        uint8_olcb_t buffer_tail = _FNRB;
-        uint8_olcb_t buffer_head = _FBP;
+        uint8_t buffer_tail = _FNRB;
+        uint8_t buffer_head = _FBP;
 
         // Now reset the interrupt so anything that comes in from here on will reset the interrupt.  
         // Believe this will keep from missing a message
         C1INTFbits.RBIF = 0;
 
-        uint8_olcb_t fifo_size = 0;
-        uint16_olcb_t ide = 0;
+        uint8_t fifo_size = 0;
+        uint16_t ide = 0;
         can_msg_t ecan_msg;
 
         while (buffer_tail != buffer_head) {
 
             _ecan1_read_rx_msg_buf_id(buffer_tail, &ecan_msg, &ide);
             _ecan1_read_rx_msg_buf_data(buffer_tail, &ecan_msg);
-            
-            if ((ide) && (internal_can_rx_callback_func))
-                internal_can_rx_callback_func(buffer_tail, &ecan_msg);
 
+            if (ide) {
+
+                CanRxStatemachine_incoming_can_driver_callback(&ecan_msg);
+
+            }
+            
             // Clear Full/OV flags on any bit that is set, there is a race condition for this.  See the errata
             // You can only clear (set a 0) to the flags so if we write a 1 it won't do anything
             // Don't do anything that reads/modified/writes like a BitSet.  Needs to be atomic
@@ -536,8 +546,8 @@ void Ecan1Helper_C1_interrupt_handler(void) {
 
             fifo_size = fifo_size + 1;
 
-            if (fifo_size > Ecan1Helper_max_can_fifo_depth)
-                Ecan1Helper_max_can_fifo_depth = fifo_size;
+            if (fifo_size > _max_can_fifo_depth)
+                _max_can_fifo_depth = fifo_size;
 
         };
 
@@ -550,8 +560,8 @@ void Ecan1Helper_C1_interrupt_handler(void) {
 
     }
 
-    return;   
-    
+    return;
+
 }
 
 // CAN 1 Interrupt
@@ -559,12 +569,12 @@ void Ecan1Helper_C1_interrupt_handler(void) {
 void __attribute__((interrupt(no_auto_psv))) _C1Interrupt(void) {
 
     // Allows a bootloader to call the normal function from it's interrupt
-    Ecan1Helper_C1_interrupt_handler(); 
+    Ecan1Helper_C1_interrupt_handler();
 
 }
 
-extern uint8_olcb_t Ecan1Helper_get_max_can_fifo_depth(void) {
-    
-    return Ecan1Helper_max_can_fifo_depth;
-    
+uint8_t Ecan1Helper_get_max_can_fifo_depth(void) {
+
+    return _max_can_fifo_depth;
+
 }

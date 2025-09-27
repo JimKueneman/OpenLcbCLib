@@ -40,19 +40,12 @@
 
 
 #include "../dsPIC_Common/ecan1_helper.h"
+#include "uart_handler.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
 
+void BasicNodeDrivers_initialize(void) {
 
-uart_rx_callback_t _uart_rx_callback_func = (void*) 0;
-parameterless_callback_t _100ms_timer_sink_func = (void*) 0;
-
-void BasicNodeDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
-
-    _100ms_timer_sink_func = _100ms_timer_sink;
-
-    Ecan1Helper_initialization();
-    
-       // IO Pin Initialize -------------------------------------------------------
+    // IO Pin Initialize -------------------------------------------------------
 
     ANSELA = 0x00; // Convert all I/O pins to digital
     ANSELB = 0x00;
@@ -146,7 +139,7 @@ void BasicNodeDrivers_setup(parameterless_callback_t _100ms_timer_sink) {
     IEC0bits.T2IE = 1; // Enable the Interrupt
 
     T2CONbits.TON = 1; // Turn on Timer 2
-   
+
 }
 
 void BasicNodeDrivers_reboot(void) {
@@ -155,23 +148,17 @@ void BasicNodeDrivers_reboot(void) {
 
 }
 
-void BasicNodeDrivers_assign_uart_rx_callback(uart_rx_callback_t uart_rx_callback) {
-
-    _uart_rx_callback_func = uart_rx_callback;
-
-}
-
 void BasicNodeDrivers_config_mem_factory_reset(void) {
- 
+
 }
 
-uint16_olcb_t BasicNodeDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
 
     return 0;
 
 }
 
-uint16_olcb_t BasicNodeDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t* buffer) {
+uint16_t BasicNodeDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
 
     return 0;
 
@@ -189,7 +176,6 @@ void BasicNodeDrivers_resume_100ms_timer(void) {
 
 }
 
-
 void __attribute__((interrupt(no_auto_psv))) _U1TXInterrupt(void) {
 
     IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag
@@ -200,14 +186,13 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 
     IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag 
 
-    uint16_olcb_t value;
+    uint16_t value;
 
     if (U1STAbits.URXDA == 1) {
 
         value = U1RXREG; // read it so it does not fill and overflow
 
-        if (_uart_rx_callback_func)
-            _uart_rx_callback_func(value);
+        UartHandler_handle_rx(value);
 
     }
 
@@ -217,9 +202,9 @@ void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
 
-    // Increment any timer counters assigned
-    if (_100ms_timer_sink_func)
-        _100ms_timer_sink_func();
+    //    // Increment any timer counters assigned
+    //    if (_100ms_timer_sink_func)
+    //        _100ms_timer_sink_func();
 
 }
 

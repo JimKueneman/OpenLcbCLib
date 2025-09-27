@@ -35,6 +35,7 @@
 #include "node_parameters.h"
 
 #include "../../../openlcb/openlcb_defines.h"
+#include "../../../openlcb/openlcb_types.h"
 
 
 
@@ -69,7 +70,7 @@ const node_parameters_t NodeParameters_main_node = {
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
 #ifdef EXCLUDE_FIRMWARE_ADDRESS_SPACE
-    .configuration_options.low_address_space = ADDRESS_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+    .configuration_options.low_address_space = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
 #else
     .configuration_options.low_address_space = ADDRESS_SPACE_FIRMWARE,
 #endif
