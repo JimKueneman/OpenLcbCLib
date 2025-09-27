@@ -55,6 +55,10 @@ extern "C" {
 
     extern void AliasMappings_initialize(const interface_alias_mappings_t *interface_alias_mappings);
     
+    extern alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void);
+    
+    extern void AliasMappings_set_has_duplicate_alias_flag(void);
+    
     extern alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id);
     
     extern void AliasMappings_unregister(uint16_t alias);

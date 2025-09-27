@@ -54,11 +54,11 @@
 #include "../../openlcb/openlcb_utilities.h"
 
 
-static interface_can_frame_message_handler_t *_interface;
+static interface_can_rx_message_handler_t *_interface;
 
-void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface_can_frame_message_handler) {
+void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *interface_can_frame_message_handler) {
 
-    _interface = (interface_can_frame_message_handler_t*) interface_can_frame_message_handler;
+    _interface = (interface_can_rx_message_handler_t*) interface_can_frame_message_handler;
 
 }
 
@@ -87,6 +87,32 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
         OpenLcbBufferFifo_push(target_openlcb_msg);
 
     }
+
+}
+
+static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
+
+    // Check for duplicate Alias 
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
+
+    if (alias_mapping) {
+
+        alias_mapping->is_duplicate = true; // flag for the main loop to handle
+        _interface->alias_mapping_set_has_duplicate_alias_flag();
+
+        can_msg_t *outgoing_can_msg = CanBufferStore_allocate_buffer();
+        outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | source_alias;
+        outgoing_can_msg->payload_count = 6;
+        CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &can_msg->payload);
+
+        CanBufferFifo_push(outgoing_can_msg);
+
+        return true;
+
+    }
+
+    return false;
 
 }
 
@@ -159,7 +185,7 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     // TODO:  We don't know if this frame was actually for one of our nodes now so we don't know if we need to send this error
-    
+
     openlcb_msg_t * target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_can_msg) {
@@ -226,57 +252,102 @@ void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_
 
 }
 
-
-void _handle_can_frame(can_msg_t* can_msg) {
-    
-    can_msg_t *target_can_msg = _interface->can_buffer_store_allocate_buffer();
-
-    if (target_can_msg) {
-
-        CanUtilities_copy_can_message(can_msg, target_can_msg);
-
-        CanBufferFifo_push(target_can_msg);
-    }
-
-}
-
 void CanRxMessageHandler_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type) {
 
 
 }
 
+void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
+
+    // Check for duplicate Alias 
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
+
+    if (alias_mapping) {
+
+        can_msg_t *can_msg = CanBufferStore_allocate_buffer();
+
+        can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | source_alias;
+        can_msg->payload_count = 0;
+
+        CanBufferFifo_push(can_msg);
+
+    }
+
+}
+
 void CanRxMessageHandler_rid_frame(can_msg_t* can_msg) {
 
-    _handle_can_frame(can_msg);
+    _check_for_duplicate_alias(can_msg);
 
 }
 
 void CanRxMessageHandler_amd_frame(can_msg_t* can_msg) {
 
-    _handle_can_frame(can_msg);
+    _check_for_duplicate_alias(can_msg);
 
 }
 
 void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
-    _handle_can_frame(can_msg);
+    if (_check_for_duplicate_alias(can_msg)) {
+
+        return;
+
+    }
+    
+    can_msg_t *outgoing_can_msg = NULL;
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+
+    if (can_msg->payload_count > 0) {
+  
+        alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_node_id(CanUtilities_extract_can_payload_as_node_id(can_msg));
+
+        if (alias_mapping) {
+
+            outgoing_can_msg = CanBufferStore_allocate_buffer();
+            outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | source_alias;
+            outgoing_can_msg->payload_count = 6;
+            CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &can_msg->payload);
+
+            CanBufferFifo_push(can_msg);
+
+            return;
+
+        }
+
+        return;
+
+    }
+    
+    alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
+
+    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+       
+        if (alias_mapping_info->list[i].alias != 0x00) {
+            
+            outgoing_can_msg = CanBufferStore_allocate_buffer();
+            outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | alias_mapping_info->list[i].alias;
+            outgoing_can_msg->payload_count = 6;
+            CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping_info->list[i].node_id, &can_msg->payload);
+
+            CanBufferFifo_push(can_msg);
+            
+        }
+        
+    }
 
 }
 
 void CanRxMessageHandler_amr_frame(can_msg_t* can_msg) {
 
-    _handle_can_frame(can_msg);
+    _check_for_duplicate_alias(can_msg);
 
 }
 
 void CanRxMessageHandler_error_info_report_frame(can_msg_t* can_msg) {
 
-    _handle_can_frame(can_msg);
+    _check_for_duplicate_alias(can_msg);
 
 }
 
-void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
-
-    _handle_can_frame(can_msg);
-
-}

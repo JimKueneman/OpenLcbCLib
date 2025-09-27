@@ -120,7 +120,7 @@ void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
         case RUNSTATE_LOAD_INITIALIZATION_COMPLETE:
 
             _interface->load_initialization_complete(can_statemachine_info);
-
+     
             return;
 
         case RUNSTATE_LOAD_PRODUCER_EVENTS:

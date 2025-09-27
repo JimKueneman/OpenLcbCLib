@@ -51,9 +51,6 @@ const interface_can_login_message_handler_t interface_can_login_message_handler 
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
     .alias_mapping_register = &AliasMappings_register,
-    .alias_mapping_unregister = &AliasMappings_unregister,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
     // Callback events
     .on_alias_change = NULL
     
@@ -77,10 +74,14 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     
 };
 
-const interface_can_frame_message_handler_t interface_can_frame_message_handler = {
+const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
     
     .openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer,
-    .can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer
+    .can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
+    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
+    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag
     
 };
 
@@ -128,15 +129,12 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .unlock_can_buffer_fifo = OSxCanDriver_resume_can_rx, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
     .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
-    .node_get_first = &OpenLcbNode_get_first,
-    .node_get_next = &OpenLcbNode_get_next,
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
+    .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
     .login_statemachine_run = &CanLoginStateMachine_run,
-    .handle_amd = &CanMainStatemachineHandler_amd,
-    .handle_ame = &CanMainStatemachineHandler_ame,
-    .handle_amr = &CanMainStatemachineHandler_amr,
-    .handle_cid = &CanMainStatemachineHandler_cid,
-    .handle_rid = &CanMainStatemachineHandler_rid,
-    .handle_error_information_report = &CanMainStatemachineHandler_error_information_report
+    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
+    .alias_mapping_unregister = &AliasMappings_unregister
     
 };
 
@@ -266,7 +264,7 @@ int main(int argc, char *argv[])
     CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
     CanLoginStateMachine_initialize(&interface_can_login_state_machine);
 
-    CanRxMessageHandler_initialize(&interface_can_frame_message_handler);
+    CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
     CanRxStatemachine_initialize(&interface_can_rx_statemachine);
 
     CanTxMessageHandler_initialize(&interface_can_tx_message_handler);

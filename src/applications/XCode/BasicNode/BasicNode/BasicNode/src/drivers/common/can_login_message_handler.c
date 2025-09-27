@@ -203,6 +203,8 @@ void CanLoginMessageHandler_load_initialization_complete(can_statemachine_info_t
     can_statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
     can_statemachine_info->outgoing_openlcb_msg_valid = true;
     
+    _interface->alias_mapping_register(can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id);
+    
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
 
 

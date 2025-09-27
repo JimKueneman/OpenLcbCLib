@@ -52,12 +52,15 @@ extern "C" {
         
         can_msg_t *(*can_buffer_store_allocate_buffer)(void);
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum payload_type);
+        alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
+        alias_mapping_t*(*alias_mapping_find_mapping_by_node_id)(node_id_t node_id);
+        alias_mapping_info_t*(*alias_mapping_get_alias_mapping_info)(void);
+        void (*alias_mapping_set_has_duplicate_alias_flag)(void);
+ 
+    } interface_can_rx_message_handler_t;
 
 
-    } interface_can_frame_message_handler_t;
-
-
-    extern void CanRxMessageHandler_initialize(const interface_can_frame_message_handler_t *interface_can_frame_message_handler);
+    extern void CanRxMessageHandler_initialize(const interface_can_rx_message_handler_t *interface_can_frame_message_handler);
 
     extern void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 

@@ -54,10 +54,6 @@ extern "C" {
         uint16_t(*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
         uint16_t(*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
         alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
-        void (*alias_mapping_unregister)(uint16_t alias);
-        alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
-        alias_mapping_t*(*alias_mapping_find_mapping_by_node_id)(node_id_t node_id);
-
         // Callback events
         void (*on_alias_change)(uint16_t alias, uint64_t node_id);
 

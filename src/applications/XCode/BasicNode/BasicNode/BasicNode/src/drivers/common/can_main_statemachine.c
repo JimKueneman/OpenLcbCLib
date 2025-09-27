@@ -86,117 +86,63 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 
 }
 
-void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
+static void _reset_node(openlcb_node_t *openlcb_node) {
 
-    if (!can_statemachine_info->incoming_msg) {
-        
-        return;
-        
+    openlcb_node->state.permitted = false;
+    openlcb_node->state.initalized = false;
+    openlcb_node->state.duplicate_id_detected = false;
+    openlcb_node->state.firmware_upgrade_active = false;
+    openlcb_node->state.resend_datagram = false;
+    openlcb_node->state.openlcb_datagram_ack_sent = false;
+    if (openlcb_node->last_received_datagram) {
+
+        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
+        openlcb_node->last_received_datagram = NULL;
+
     }
-    
-    // CAN Control Messages
 
-    switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
-
-        case 0:
-
-            switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
-
-
-                case CAN_CONTROL_FRAME_RID: // Reserve ID
-
-                    if (_interface->handle_rid) {
-
-                        _interface->handle_rid(can_statemachine_info);
-
-                    }
-
-                    break;
-
-                case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
-
-                    if (_interface->handle_amd) {
-
-                        _interface->handle_amd(can_statemachine_info);
-
-                    }
-
-                    break;
-
-                case CAN_CONTROL_FRAME_AME:
-
-                    if (_interface->handle_ame) {
-
-                        _interface->handle_ame(can_statemachine_info);
-
-                    }
-
-                    break;
-
-                case CAN_CONTROL_FRAME_AMR:
-
-                    if (_interface->handle_amr) {
-
-                        _interface->handle_amr(can_statemachine_info);
-
-                    }
-
-                    break;
-
-                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0: // Advanced feature for gateways/routers/etc.
-                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
-                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
-                case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
-
-                    if (_interface->handle_error_information_report) {
-
-                        _interface->handle_error_information_report(can_statemachine_info);
-
-                    }
-
-                    break;
-
-                default:
-
-                    // Do nothing
-                    break; // default
-
-            }
-
-            break;
-
-        default:
-
-            switch (can_statemachine_info->incoming_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
-
-                case CAN_CONTROL_FRAME_CID7:
-                case CAN_CONTROL_FRAME_CID6:
-                case CAN_CONTROL_FRAME_CID5:
-                case CAN_CONTROL_FRAME_CID4:
-
-
-                    if (_interface->handle_cid) {
-
-                        _interface->handle_cid(can_statemachine_info);
-
-                    }
-
-                    break;
-
-                case CAN_CONTROL_FRAME_CID3:
-                case CAN_CONTROL_FRAME_CID2:
-                case CAN_CONTROL_FRAME_CID1:
-
-                    break;
-            }
-
-            break; // default
-
-    } // CAN control messages
+    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias  
 
 }
 
+static void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
+
+
+
+}
+
+static void _handle_duplicate_aliases(void) {
+    
+    _interface->lock_can_buffer_fifo();
+    
+    alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
+    
+    if (alias_mapping_info->has_duplicate_alias) {
+        
+        for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+            
+            if (alias_mapping_info->list[i].is_duplicate) {
+                
+                _interface->alias_mapping_unregister(alias_mapping_info->list[i].alias);
+                
+                _reset_node(_interface->openlcb_node_find_by_alias(alias_mapping_info->list[i].alias));
+           
+            }
+        }
+        
+        alias_mapping_info->has_duplicate_alias = false;
+        
+    }  
+    
+    _interface->unlock_can_buffer_fifo();
+    
+    
+}
+
 void CanMainStateMachine_run(void) {
+
+    
+    _handle_duplicate_aliases();
 
     // First get pending outgoing messages sent
     if (can_statemachine_info.outgoing_can_msg_valid) {
@@ -231,7 +177,7 @@ void CanMainStateMachine_run(void) {
         _interface->lock_can_buffer_fifo();
         can_statemachine_info.incoming_msg = CanBufferFifo_pop();
         _interface->unlock_can_buffer_fifo();
-        
+
     }
 
     // Third, if enumerating the message to the same node call it again
@@ -254,7 +200,7 @@ void CanMainStateMachine_run(void) {
     // Fourth if the current node is null then time to re-enumerate nodes with the next incoming message 
     if (!can_statemachine_info.openlcb_node) {
 
-        can_statemachine_info.openlcb_node = _interface->node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+        can_statemachine_info.openlcb_node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
         if (!can_statemachine_info.openlcb_node) {
 
@@ -281,7 +227,7 @@ void CanMainStateMachine_run(void) {
     }
 
     // Fifth enumerate to the next node
-    can_statemachine_info.openlcb_node = _interface->node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+    can_statemachine_info.openlcb_node = _interface->openlcb_node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
     if (!can_statemachine_info.openlcb_node) {
 
@@ -294,11 +240,11 @@ void CanMainStateMachine_run(void) {
 
     if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
 
-            _run_statemachine(&can_statemachine_info);
+        _run_statemachine(&can_statemachine_info);
 
-        } else {
+    } else {
 
-            _interface->login_statemachine_run(&can_statemachine_info);
+        _interface->login_statemachine_run(&can_statemachine_info);
 
-        }
+    }
 }

@@ -58,6 +58,7 @@ typedef struct {
     void (*handle_amr_frame)(can_msg_t* can_msg);
     void (*handle_error_info_report_frame)(can_msg_t* can_msg);
     void (*handle_cid_frame)(can_msg_t* can_msg);
+    alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
     // Callback events
     void (*on_receive)(can_msg_t* can_msg);
 

@@ -115,7 +115,8 @@ extern "C" {
 #define LEN_SNIP_VERSION 1
 #define LEN_SNIP_USER_VERSION 1
 
-#define LEN_SNIP_STRUCTURE 253
+// Event with Payload = 256 Payload + 8 bytes for Event ID = 264; SNIP max = 253
+#define LEN_SNIP_STRUCTURE 264
 
 #define LEN_MESSAGE_BYTES_BASIC 16 // most are 8 bytes but a few protocols take 2 frames like Traction
 #define LEN_MESSAGE_BYTES_DATAGRAM 72

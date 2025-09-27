@@ -42,29 +42,11 @@ extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        openlcb_node_t *(*find_by_alias)(uint16_t alias);
-        openlcb_node_t *(*find_by_node_id)(node_id_t node_id);
-        openlcb_node_t* (*get_first)(uint8_t key);
-        openlcb_node_t* (*get_next)(uint8_t key);
+
 
     } interface_can_main_statemachine_handler_t;
 
     extern void CanMainStatemachineHandler_initialize(const interface_can_main_statemachine_handler_t *interface_can_main_statemachine_handler);
-
-    extern void CanMainStatemachineHandler_cid(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanMainStatemachineHandler_rid(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanMainStatemachineHandler_amd(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanMainStatemachineHandler_ame(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanMainStatemachineHandler_amr(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanMainStatemachineHandler_error_information_report(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanMainStatemachineHandler_allocate_and_push(uint32_t identifier, uint8_t buffer_count, payload_bytes_can_t *buffer);
-
 
 
 #ifdef	__cplusplus

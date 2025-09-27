@@ -52,18 +52,13 @@ extern "C" {
         void (*lock_can_buffer_fifo)(void);
         void (*unlock_can_buffer_fifo)(void);
         bool (*send_can_message)(can_msg_t *msg);
-        bool (*send_openlcb_message)(openlcb_msg_t *openlcb_msg);
-      
-        openlcb_node_t *(*node_get_first)(uint8_t key);
-        openlcb_node_t *(*node_get_next)(uint8_t key);
+        bool (*send_openlcb_message)(openlcb_msg_t *openlcb_msg);    
+        openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
+        openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
+        openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);
         void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
-        
-        void (*handle_cid)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_rid)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_amd)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_ame)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_amr)(can_statemachine_info_t *can_statemachine_info);
-        void (*handle_error_information_report)(can_statemachine_info_t *can_statemachine_info);
+        alias_mapping_info_t*(*alias_mapping_get_alias_mapping_info)(void);
+        void (*alias_mapping_unregister)(uint16_t alias);
         
 
     } interface_can_main_statemachine_t;

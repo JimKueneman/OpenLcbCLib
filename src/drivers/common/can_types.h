@@ -112,7 +112,8 @@ extern "C" {
     
     typedef struct {
         
-        uint16_t alias;
+        uint16_t alias: 12;
+        uint16_t is_duplicate: 4;
         node_id_t node_id;
         
     } alias_mapping_t;
@@ -120,6 +121,7 @@ extern "C" {
     typedef struct {
         
         alias_mapping_t list[USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH];
+        bool has_duplicate_alias;
         
     } alias_mapping_info_t;
 
