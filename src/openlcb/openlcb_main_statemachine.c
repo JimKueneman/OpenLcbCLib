@@ -551,18 +551,18 @@ static void _free_incoming_message(openlcb_statemachine_info_t *_statemachine_in
         
     }
     
-    _interface->lock_openlcb_buffer_fifo();
+    _interface->lock_shared_resources();
     OpenLcbBufferStore_free_buffer(_statemachine_info->incoming_msg);
-    _interface->unlock_openlcb_buffer_fifo();
+    _interface->unlock_shared_resources();
     _statemachine_info->incoming_msg = NULL;
     
 }
 
 static openlcb_msg_t * _pop_next_incoming_message(openlcb_statemachine_info_t *_statemachine_info) {
     
-    _interface->lock_openlcb_buffer_fifo();
+    _interface->lock_shared_resources();
     openlcb_msg_t *result = OpenLcbBufferFifo_pop();
-    _interface->unlock_openlcb_buffer_fifo();
+    _interface->unlock_shared_resources();
     
     return result;
     
@@ -609,7 +609,7 @@ void OpenLcbMainStatemachine_run(void) {
     
     if (_statemachine_info.openlcb_node) {
         
-        _statemachine_info.openlcb_node = _interface->node_get_next(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
+        _statemachine_info.openlcb_node = _interface->openlcb_node_get_next(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
         
         if (!_statemachine_info.openlcb_node) {  // reached the end of the list, free the incoming message
             
@@ -641,7 +641,7 @@ void OpenLcbMainStatemachine_run(void) {
     
     // Step 5, if we get here then it is time to start a new iteration of the nodes with the new incoming message
     
-    _statemachine_info.openlcb_node = _interface->node_get_first(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
+    _statemachine_info.openlcb_node = _interface->openlcb_node_get_first(OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
     
     if (!_statemachine_info.openlcb_node) {
 

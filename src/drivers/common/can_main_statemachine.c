@@ -113,7 +113,7 @@ static void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
 
 static void _handle_duplicate_aliases(void) {
     
-    _interface->lock_can_buffer_fifo();
+    _interface->lock_shared_resources();
     
     alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
     
@@ -134,7 +134,7 @@ static void _handle_duplicate_aliases(void) {
         
     }  
     
-    _interface->unlock_can_buffer_fifo();
+    _interface->unlock_shared_resources();
     
     
 }
@@ -174,9 +174,9 @@ void CanMainStateMachine_run(void) {
     // Note still need to run login state-machine so don't return here
     if (!can_statemachine_info.incoming_msg) {
 
-        _interface->lock_can_buffer_fifo();
+        _interface->lock_shared_resources();
         can_statemachine_info.incoming_msg = CanBufferFifo_pop();
-        _interface->unlock_can_buffer_fifo();
+        _interface->unlock_shared_resources();
 
     }
 

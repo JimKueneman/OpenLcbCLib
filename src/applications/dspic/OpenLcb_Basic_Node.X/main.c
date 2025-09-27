@@ -219,8 +219,8 @@ const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
 
 const interface_can_main_statemachine_t interface_can_main_statemachine = {
     
-    .lock_can_buffer_fifo = Ecan1Helper_pause_can_rx,   //  HARDWARE INTERFACE
-    .unlock_can_buffer_fifo = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
+    .lock_shared_resources = Ecan1Helper_pause_can_rx,   //  HARDWARE INTERFACE
+    .unlock_shared_resources = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
     .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
@@ -328,11 +328,11 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .stream_data_complete = NULL,
     
     // required
+    .lock_shared_resources = Ecan1Helper_pause_can_rx,   //  HARDWARE INTERFACE
+    .unlock_shared_resources = Ecan1Helper_resume_can_rx,   //  HARDWARE INTERFACE
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
-    .node_get_first = &OpenLcbNode_get_first,
-    .node_get_next = &OpenLcbNode_get_next,
-    .lock_openlcb_buffer_fifo = Ecan1Helper_pause_can_rx,   //  HARDWARE INTERFACE
-    .unlock_openlcb_buffer_fifo = Ecan1Helper_resume_can_rx,   //  HARDWARE INTERFACE
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_interaction_rejected = OpenLcbMainStatemachine_load_interaction_rejected,
     
     // for test injection, leave null to use the default functions

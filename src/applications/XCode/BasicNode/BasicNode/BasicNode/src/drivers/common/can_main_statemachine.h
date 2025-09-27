@@ -49,8 +49,8 @@ extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        void (*lock_can_buffer_fifo)(void);
-        void (*unlock_can_buffer_fifo)(void);
+        void (*lock_shared_resources)(void);
+        void (*unlock_shared_resources)(void);
         bool (*send_can_message)(can_msg_t *msg);
         bool (*send_openlcb_message)(openlcb_msg_t *openlcb_msg);    
         openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);

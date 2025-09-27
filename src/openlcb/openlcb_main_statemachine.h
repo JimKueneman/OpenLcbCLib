@@ -103,11 +103,11 @@ typedef struct {
     void (*stream_data_complete)(openlcb_statemachine_info_t *statemachine_info);
     
     // required
+    void (*lock_shared_resources)(void);
+    void (*unlock_shared_resources)(void);
     bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
-    openlcb_node_t *(*node_get_first)(uint8_t key);
-    openlcb_node_t *(*node_get_next)(uint8_t key);
-    void (*lock_openlcb_buffer_fifo)(void);
-    void (*unlock_openlcb_buffer_fifo)(void);
+    openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
+    openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
     void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
     
     // for test injection, leave null to use the default functions
