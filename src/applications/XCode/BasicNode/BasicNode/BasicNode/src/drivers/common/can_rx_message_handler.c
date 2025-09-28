@@ -101,7 +101,7 @@ static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
         alias_mapping->is_duplicate = true; // flag for the main loop to handle
         _interface->alias_mapping_set_has_duplicate_alias_flag();
 
-        can_msg_t *outgoing_can_msg = CanBufferStore_allocate_buffer();
+        can_msg_t *outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
         outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | source_alias;
         outgoing_can_msg->payload_count = 6;
         CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &can_msg->payload);
@@ -217,7 +217,8 @@ void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
-    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti, 0);
+    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti, 0);   
+    CanUtilities_copy_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, can_buffer_start_index);
 
     OpenLcbBufferFifo_push(target_openlcb_msg); // Can not fail List is as large as the number of buffers
 
@@ -265,7 +266,7 @@ void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 
     if (alias_mapping) {
 
-        can_msg_t *can_msg = CanBufferStore_allocate_buffer();
+        can_msg_t *can_msg = _interface->can_buffer_store_allocate_buffer();
 
         can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | source_alias;
         can_msg->payload_count = 0;
@@ -305,7 +306,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
         if (alias_mapping) {
 
-            outgoing_can_msg = CanBufferStore_allocate_buffer();
+            outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
             outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | source_alias;
             outgoing_can_msg->payload_count = 6;
             CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &can_msg->payload);
@@ -326,7 +327,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
        
         if (alias_mapping_info->list[i].alias != 0x00) {
             
-            outgoing_can_msg = CanBufferStore_allocate_buffer();
+            outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
             outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | alias_mapping_info->list[i].alias;
             outgoing_can_msg->payload_count = 6;
             CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping_info->list[i].node_id, &can_msg->payload);

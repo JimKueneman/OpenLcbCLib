@@ -101,11 +101,11 @@ extern "C" {
 
     typedef struct {
         openlcb_node_t *openlcb_node;
-        can_msg_t *incoming_msg;
-        can_msg_t *outgoing_can_msg;
-        uint8_t outgoing_can_msg_valid : 1;
-        openlcb_msg_t *outgoing_openlcb_msg;
-        uint8_t outgoing_openlcb_msg_valid : 1;
+        can_msg_t *login_outgoing_can_msg;
+        uint8_t login_outgoing_can_msg_valid : 1;
+        openlcb_msg_t *login_outgoing_openlcb_msg;
+        uint8_t login_outgoing_openlcb_msg_valid : 1;
+        can_msg_t *outgoing_can_msg;   
         uint8_t enumerating : 1;
 
     } can_statemachine_info_t;

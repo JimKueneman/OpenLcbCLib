@@ -7,127 +7,95 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "93EF453C-D4CF-48C7-A475-5B44491CA913"
+            uuid = "5552351A-FC5E-4138-9034-FB92F7F85691"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BasicNode/osx_can_drivers.c"
+            filePath = "BasicNode/src/drivers/common/can_rx_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
-            landmarkName = "thread_function_can(arg)"
+            startingLineNumber = "424"
+            endingLineNumber = "424"
+            landmarkName = "_handle_can_control_frame_sequence_number(can_msg)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C5F7596B-5D7D-424A-A0EA-1B3F434D596B"
+            uuid = "F697BF4A-817B-4973-A68C-B58A02446E41"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BasicNode/osx_can_drivers.c"
+            filePath = "BasicNode/src/drivers/common/can_rx_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "225"
-            endingLineNumber = "225"
-            landmarkName = "thread_function_can(arg)"
+            startingLineNumber = "429"
+            endingLineNumber = "429"
+            landmarkName = "_handle_can_control_frame_sequence_number(can_msg)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4749E556-060A-480F-A631-037793E14E9E"
+            uuid = "D002FA66-C08E-444E-9423-F53D67928A83"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/openlcb/openlcb_gridconnect.c"
+            filePath = "BasicNode/src/drivers/common/can_main_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
-            landmarkName = "OpenLcbGridConnect_copy_out_gridconnect_when_done(next_byte, buffer)"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "_handle_login_outgoing_can_message()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9DF62A25-4AEA-402B-A409-CAE70E317E6A"
+            uuid = "674C5EF9-5528-4E01-B2E1-9D805B122928"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BasicNode/osx_can_drivers.c"
+            filePath = "BasicNode/src/drivers/common/can_main_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "thread_function_can(arg)"
+            startingLineNumber = "281"
+            endingLineNumber = "281"
+            landmarkName = "_handle_try_enumerate_next_node()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7B27FD1F-DC8E-44F3-AF13-A12C69E97CA0"
-            shouldBeEnabled = "No"
+            uuid = "79E864A4-7B7A-4183-8656-53A4AFE4E248"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BasicNode/src/openlcb/openlcb_main_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "644"
-            endingLineNumber = "644"
-            landmarkName = "OpenLcbMainStatemachine_run()"
+            startingLineNumber = "668"
+            endingLineNumber = "668"
+            landmarkName = "_handle_process_main_statemachine()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5112A2B8-DB5F-436A-8B06-867160F33E5D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/openlcb/protocol_event_transport.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "341"
-            endingLineNumber = "341"
-            landmarkName = "ProtocolEventTransport_handle_events_identify(statemachine_info)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9DAE6771-32F3-4047-A5B4-0897B29644F7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BasicNode/main.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "327"
-            endingLineNumber = "327"
-            landmarkName = "main(argc, argv)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "29D80EA4-BF1F-47E5-B150-54A5280A97A4"
+            uuid = "AE9216CD-CE62-47E6-94B7-0570A8CC2A8E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BasicNode/src/drivers/common/can_main_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "312"
+            endingLineNumber = "312"
             landmarkName = "CanMainStateMachine_run()"
             landmarkType = "9">
          </BreakpointContent>
@@ -135,15 +103,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D79C9671-3B79-4A58-86A0-0DDAE2D85190"
+            uuid = "BF421400-6E2E-49A6-94BB-09390EA37866"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BasicNode/src/drivers/common/can_main_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
             landmarkName = "CanMainStateMachine_run()"
             landmarkType = "9">
          </BreakpointContent>
@@ -151,16 +119,80 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CBD92FDE-13E3-4618-92DD-DB0CB984B0E1"
+            uuid = "CABBD835-0A1C-4999-BDCC-7C94413F0864"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/drivers/common/can_login_message_handler.c"
+            filePath = "BasicNode/src/drivers/common/can_login_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "213"
-            endingLineNumber = "213"
-            landmarkName = "CanLoginMessageHandler_load_producer_events(can_statemachine_info)"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "CanLoginStateMachine_run(can_statemachine_info)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CCF628DF-C786-4279-85DA-D271DDC9E120"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BasicNode/src/drivers/common/can_login_statemachine.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
+            landmarkName = "CanLoginStateMachine_run(can_statemachine_info)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "61804F27-97E9-4500-89F5-9D639385E2A4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BasicNode/src/drivers/common/can_login_statemachine.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "CanLoginStateMachine_run(can_statemachine_info)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FDF5EFD1-13DE-45C4-B208-AFC72EA599A6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BasicNode/src/drivers/common/can_rx_statemachine.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "467"
+            endingLineNumber = "467"
+            landmarkName = "CanRxStatemachine_incoming_can_driver_callback(can_msg)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8CF0956B-789F-4641-B00A-ABD90F44B30D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BasicNode/src/openlcb/protocol_message_network.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "ProtocolMessageNetwork_handle_verify_node_id_global(statemachine_info)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

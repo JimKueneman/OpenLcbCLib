@@ -50,8 +50,8 @@
 
 
 static can_msg_array_t _can_buffer_store;
-static uint16_t _can_buffer_store_message_allocated = 0;
-static uint16_t _can_buffer_store_message_max_allocated = 0;
+static uint16_t _can_buffer_store_message_allocated;
+static uint16_t _can_buffer_store_message_max_allocated;
 
 void CanBufferStore_initialize(void) {
     
@@ -68,6 +68,9 @@ void CanBufferStore_initialize(void) {
         }
 
     }
+    
+    _can_buffer_store_message_allocated = 0;
+    _can_buffer_store_message_max_allocated = 0;
 
 }
 

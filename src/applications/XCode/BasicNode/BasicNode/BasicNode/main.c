@@ -88,19 +88,20 @@ const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     
     .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
-        .handle_single_frame = &CanRxMessageHandler_single_frame,
-        .handle_first_frame = &CanRxMessageHandler_first_frame,
-        .handle_middle_frame = &CanRxMessageHandler_middle_frame,
-        .handle_last_frame = &CanRxMessageHandler_last_frame,
-        .handle_stream = &CanRxMessageHandler_stream,
-        .handle_rid_frame = CanRxMessageHandler_rid_frame,
-        .handle_amd_frame = CanRxMessageHandler_amd_frame,
-        .handle_ame_frame = CanRxMessageHandler_ame_frame,
-        .handle_amr_frame = CanRxMessageHandler_amr_frame,
-        .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
-        .handle_cid_frame = CanRxMessageHandler_cid_frame,
-        // Callback events
-        .on_receive = NULL
+    .handle_single_frame = &CanRxMessageHandler_single_frame,
+    .handle_first_frame = &CanRxMessageHandler_first_frame,
+    .handle_middle_frame = &CanRxMessageHandler_middle_frame,
+    .handle_last_frame = &CanRxMessageHandler_last_frame,
+    .handle_stream = &CanRxMessageHandler_stream,
+    .handle_rid_frame = CanRxMessageHandler_rid_frame,
+    .handle_amd_frame = CanRxMessageHandler_amd_frame,
+    .handle_ame_frame = CanRxMessageHandler_ame_frame,
+    .handle_amr_frame = CanRxMessageHandler_amr_frame,
+    .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
+    .handle_cid_frame = CanRxMessageHandler_cid_frame,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    // Callback events
+    .on_receive = NULL
     
 };
 

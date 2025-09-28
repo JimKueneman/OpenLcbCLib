@@ -43,7 +43,8 @@ extern "C" {
 
     typedef struct {
 
-
+        uint8_t test;
+        
     } interface_can_main_statemachine_handler_t;
 
     extern void CanMainStatemachineHandler_initialize(const interface_can_main_statemachine_handler_t *interface_can_main_statemachine_handler);
