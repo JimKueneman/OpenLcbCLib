@@ -10,6 +10,24 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_defines.h"
+#include "../../drivers/alias_mappings.h"
+#include "../../drivers/common/can_main_statemachine.h"
+#include "../../drivers/common/can_login_statemachine.h"
+
+#define NODE_ID_1 0x010203040506
+#define NODE_ID_2 0x010203040507
+
+#define NODE_ALIAS_1 0x0666
+#define NODE_ALIAS_1_HI 0x06
+#define NODE_ALIAS_1_LO 0x66
+
+#define NODE_ALIAS_2 0x0999
+#define NODE_ALIAS_2_HI 0x09
+#define NODE_ALIAS_2_LO 0x99
+
+#define SOURCE_ALIAS 0x06BE
+#define SOURCE_ALIAS_HI 0x06
+#define SOURCE_ALIAS_LO 0xBE
 
 bool fail_buffer = false;
 
@@ -83,8 +101,9 @@ node_parameters_t _node_parameters_main_node = {
 
 openlcb_msg_t *openlcb_buffer_store_allocate_buffer(payload_type_enum payload_type)
 {
+    // only fail larger buffers, assume BASIC buffers are always avaialble
 
-    if (!fail_buffer)
+    if (!fail_buffer || (payload_type == BASIC))
     {
 
         return OpenLcbBufferStore_allocate_buffer(payload_type);
@@ -113,6 +132,10 @@ can_msg_t *can_buffer_store_allocate_buffer(void)
 
 const interface_can_rx_message_handler_t interface_rx_message_handler = {
 
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
+    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
+    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag,
     .openlcb_buffer_store_allocate_buffer = &openlcb_buffer_store_allocate_buffer,
     .can_buffer_store_allocate_buffer = &can_buffer_store_allocate_buffer
 
@@ -120,6 +143,45 @@ const interface_can_rx_message_handler_t interface_rx_message_handler = {
 
 const interface_openlcb_node_t interface_openlcb_node = {
 
+};
+
+static void _lock_shared_resources(void) {
+
+
+}
+
+static void _unlock_shared_resources(void) {
+
+    
+}
+
+static bool _send_can_message(can_msg_t *can_msg) {
+
+   
+    return true;
+}
+
+static bool _send_openlcb_message(openlcb_msg_t *openlcb_msg) {
+
+    return true;
+}
+
+void _can_login_statemachine_run(can_statemachine_info_t *can_statemachine_info) {
+
+}
+
+const interface_can_main_statemachine_t interface_can_main_statemachine = {
+
+    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
+    .alias_mapping_unregister = &AliasMappings_unregister,
+    .lock_shared_resources = &_lock_shared_resources,
+    .login_statemachine_run = &_can_login_statemachine_run,
+    .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
+    .send_can_message = &_send_can_message,
+    .send_openlcb_message = &_send_openlcb_message,
+    .unlock_shared_resources = &_unlock_shared_resources
 };
 
 void _global_initialize(void)
@@ -130,43 +192,14 @@ void _global_initialize(void)
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbNode_initialize(&interface_openlcb_node);
-
     CanRxMessageHandler_initialize(&interface_rx_message_handler);
+    CanMainStatemachine_initialize(&interface_can_main_statemachine);
 }
 
 void _global_reset_variables(void)
 {
 
     fail_buffer = false;
-}
-
-void _initalize_can_statemachine_info(node_id_t node_id, node_parameters_t *node_parameters, can_statemachine_info_t *can_statemachine_info)
-{
-
-    can_statemachine_info->openlcb_node = OpenLcbNode_allocate(node_id, node_parameters);
-    can_statemachine_info->incoming_msg = NULL;
-    can_statemachine_info->outgoing_can_msg = CanBufferStore_allocate_buffer();
-    can_statemachine_info->outgoing_can_msg_valid = false;
-    can_statemachine_info->outgoing_openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    can_statemachine_info->outgoing_openlcb_msg_valid = false;
-}
-
-void _set_can_statemachine_info_node_active(can_statemachine_info_t *can_statemachine_info)
-{
-
-    can_statemachine_info->openlcb_node->state.allocated = true;
-    can_statemachine_info->openlcb_node->state.initalized = true;
-    can_statemachine_info->openlcb_node->state.permitted = true;
-    can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
-}
-
-void _set_can_statemachine_info_node_inactive(can_statemachine_info_t *can_statemachine_info)
-{
-
-    can_statemachine_info->openlcb_node->state.allocated = true;
-    can_statemachine_info->openlcb_node->state.initalized = false;
-    can_statemachine_info->openlcb_node->state.permitted = false;
-    can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_INIT;
 }
 
 bool _compare_can_msg(can_msg_t *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t bytes[])
@@ -257,27 +290,32 @@ void _test_for_all_buffer_lists_not_empty(void)
 void _test_for_all_buffer_stores_empty(void)
 {
 
-    if (CanBufferStore_messages_allocated() != 0) {
+    if (CanBufferStore_messages_allocated() != 0)
+    {
 
         fprintf(stderr, "\nCanBufferStore_messages_allocated() is not empty\n\n");
     }
 
-    if (OpenLcbBufferStore_basic_messages_allocated() != 0) {
+    if (OpenLcbBufferStore_basic_messages_allocated() != 0)
+    {
 
         fprintf(stderr, "\nOpenLcbBufferStore_basic_messages_allocated() is not empty\n\n");
     }
 
-    if (OpenLcbBufferStore_snip_messages_allocated() != 0) {
+    if (OpenLcbBufferStore_snip_messages_allocated() != 0)
+    {
 
         fprintf(stderr, "\nOpenLcbBufferStore_snip_messages_allocated() is not empty\n\n");
     }
 
-    if (OpenLcbBufferStore_datagram_messages_allocated() != 0) {
+    if (OpenLcbBufferStore_datagram_messages_allocated() != 0)
+    {
 
         fprintf(stderr, "\nOpenLcbBufferStore_datagram_messages_allocated() is not empty\n\n");
     }
 
-    if (OpenLcbBufferStore_stream_messages_allocated() != 0) {
+    if (OpenLcbBufferStore_stream_messages_allocated() != 0)
+    {
 
         fprintf(stderr, "\nOpenLcbBufferStore_stream_messages_allocated() is not empty\n\n");
     }
@@ -313,6 +351,14 @@ void _test_for_only_openlcb_buffer_list_not_empty(void)
     EXPECT_TRUE(OpenLcbBufferFifo_is_empty());
 }
 
+void _test_for_openlcb_buffer_list_and_openlcb_buffer_fifo_not_empty(void)
+{
+
+    EXPECT_TRUE(CanBufferFifo_is_empty());
+    EXPECT_FALSE(OpenLcbBufferList_is_empty());
+    EXPECT_FALSE(OpenLcbBufferFifo_is_empty());
+}
+
 TEST(CanRxMessageHandler, initialize)
 {
 
@@ -323,188 +369,232 @@ TEST(CanRxMessageHandler, initialize)
 TEST(CanRxMessageHandler, cid)
 {
 
-#define NODE_ID_1 0x010203040506
-#define NODE_ID_2 0x010203040507
-
-    can_msg_t incoming_can_msg;
+    can_msg_t can_msg;
+    can_msg_t *outgoing_can_msg;
 
     _global_reset_variables();
     _global_initialize();
 
-    can_statemachine_info_t can_statemachine_info_1;
-    _initalize_can_statemachine_info(NODE_ID_1, &_node_parameters_main_node, &can_statemachine_info_1);
-    can_statemachine_info_1.openlcb_node->alias = 0xAAA;
-    can_statemachine_info_1.incoming_msg = &incoming_can_msg;
+    openlcb_node_t *openlcb_node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    openlcb_node1->alias = NODE_ALIAS_1;
+    openlcb_node1->state.run_state = RUNSTATE_RUN;
+    openlcb_node1->state.permitted = true;
+    openlcb_node1->state.initalized = true;
+    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
-    can_statemachine_info_t can_statemachine_info_2;
-    _initalize_can_statemachine_info(NODE_ID_2, &_node_parameters_main_node, &can_statemachine_info_2);
-    can_statemachine_info_2.openlcb_node->alias = 0x777;
-    can_statemachine_info_2.incoming_msg = &incoming_can_msg;
+    openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
+    openlcb_node2->alias = NODE_ALIAS_1;
+    openlcb_node2->state.run_state = RUNSTATE_RUN;
+    openlcb_node2->state.permitted = true;
+    openlcb_node2->state.initalized = true;
+    AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
-    // // ************************************************************************
-    // // No conflict
-    // // ************************************************************************
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-    // incoming_can_msg.identifier = 0x17050AAB;
-    // incoming_can_msg.payload_count = 0;
-    // CanRxMessageHandler_cid_frame(&incoming_can_msg);
-    // can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_FALSE(can_statemachine_info_1.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.initalized);
-    // EXPECT_FALSE(can_statemachine_info_2.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.initalized);
+    // ************************************************************************
+    // No conflict
+    // ************************************************************************
 
-    // // ************************************************************************
+    can_msg.identifier = 0x17050000 | SOURCE_ALIAS;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node1->state.permitted);
+    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node2->state.permitted);
+    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
 
-    // // ************************************************************************
-    // // No conflict
-    // // ************************************************************************
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-    // incoming_can_msg.identifier = 0x16050AAB;
-    // incoming_can_msg.payload_count = 0;
-    // CanRxMessageHandler_cid_frame(&incoming_can_msg);
-    // can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_FALSE(can_statemachine_info_1.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.initalized);
-    // EXPECT_FALSE(can_statemachine_info_2.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.initalized);
-    // // ************************************************************************
+    // ************************************************************************
 
-    // // ************************************************************************
-    // // No conflict
-    // // ************************************************************************
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-    // incoming_can_msg.identifier = 0x15050AAB;
-    // incoming_can_msg.payload_count = 0;
-    // CanRxMessageHandler_cid_frame(&incoming_can_msg);
-    // can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_FALSE(can_statemachine_info_1.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.initalized);
-    // EXPECT_FALSE(can_statemachine_info_2.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.initalized);
+    // ************************************************************************
+    // No conflict
+    // ************************************************************************
+    can_msg.identifier = 0x16050000 | SOURCE_ALIAS;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node1->state.permitted);
+    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node2->state.permitted);
+    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
+    // ************************************************************************
 
-    // // ************************************************************************
+    // ************************************************************************
+    // No conflict
+    // ************************************************************************
+    can_msg.identifier = 0x15050000 | SOURCE_ALIAS;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node1->state.permitted);
+    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node2->state.permitted);
+    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
+    // ************************************************************************
 
-    // // ************************************************************************
-    // // No conflict
-    // // ************************************************************************
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-    // incoming_can_msg.identifier = 0x17040AAB;
-    // incoming_can_msg.payload_count = 0;
-    // CanRxMessageHandler_cid_frame(&incoming_can_msg);
-    // can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_FALSE(can_statemachine_info_1.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.initalized);
-    // EXPECT_FALSE(can_statemachine_info_2.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.initalized);
+    // ************************************************************************
+    // No conflict
+    // ************************************************************************
+    can_msg.identifier = 0x17040000 | SOURCE_ALIAS;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node1->state.permitted);
+    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
+    EXPECT_TRUE(openlcb_node2->state.permitted);
+    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
+    EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
+    // ************************************************************************
 
-    // // ************************************************************************
+    // ************************************************************************
+    // Cause a conflict CID 7
+    // ************************************************************************
+    can_msg.identifier = 0x17070000 | NODE_ALIAS_1;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_only_can_buffer_fifo_not_empty();
 
-    // // ************************************************************************
-    // // Cause a conflict
-    // // ************************************************************************
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-    // incoming_can_msg.identifier = 0x17050AAA;
-    // incoming_can_msg.payload_count = 0;
-    // CanRxMessageHandler_cid_frame(&incoming_can_msg);
-    // can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_NE(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_TRUE(_compare_can_msg(can_statemachine_info_1.outgoing_can_msg, 0x10700AAA, 0, nullptr));
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_FALSE(can_statemachine_info_1.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.initalized);
-    // EXPECT_FALSE(can_statemachine_info_2.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.initalized);
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_NE(outgoing_can_msg, nullptr);
 
-    // // ************************************************************************
+    EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
+    CanBufferStore_free_buffer(outgoing_can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    // ************************************************************************
 
-    // // ************************************************************************
-    // // Cause a conflict
-    // // ************************************************************************
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-    // _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-    // incoming_can_msg.identifier = 0x17040777;
-    // incoming_can_msg.payload_count = 0;
-    // CanRxMessageHandler_cid_frame(&incoming_can_msg);
-    // can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_NE(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_TRUE(_compare_can_msg(can_statemachine_info_1.outgoing_can_msg, 0x10700777, 0, nullptr));
-    // EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
-    // EXPECT_FALSE(can_statemachine_info_1.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_1.openlcb_node->state.initalized);
-    // EXPECT_FALSE(can_statemachine_info_2.openlcb_node->state.run_state == RUNSTATE_GENERATE_SEED);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.permitted);
-    // EXPECT_TRUE(can_statemachine_info_2.openlcb_node->state.initalized);
+    // ************************************************************************
+    // Cause a conflict CID 6
+    // ************************************************************************
+    can_msg.identifier = 0x17060000 | NODE_ALIAS_1;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_only_can_buffer_fifo_not_empty();
 
-    // // ************************************************************************
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_NE(outgoing_can_msg, nullptr);
+
+    EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
+    CanBufferStore_free_buffer(outgoing_can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    // ************************************************************************
+
+    // ************************************************************************
+    // Cause a conflict CID 5
+    // ************************************************************************
+    can_msg.identifier = 0x17050000 | NODE_ALIAS_1;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_only_can_buffer_fifo_not_empty();
+
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_NE(outgoing_can_msg, nullptr);
+
+    EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
+    CanBufferStore_free_buffer(outgoing_can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    // ************************************************************************
+
+    // ************************************************************************
+    // Cause a conflict CID 4
+    // ************************************************************************
+    can_msg.identifier = 0x17040000 | NODE_ALIAS_1;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_cid_frame(&can_msg);
+    _test_for_only_can_buffer_fifo_not_empty();
+
+    outgoing_can_msg = CanBufferFifo_pop();
+    EXPECT_NE(outgoing_can_msg, nullptr);
+
+    EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
+    CanBufferStore_free_buffer(outgoing_can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    // ************************************************************************
+
 }
 
-// TEST(CanRxMessageHandler, rid)
-// {
+TEST(CanRxMessageHandler, rid)
+{
 
-// #define NODE_ID_1 0x010203040506
-// #define NODE_ID_2 0x010203040507
+    can_msg_t can_msg;
+   // can_msg_t *outgoing_can_msg;
 
-//     can_msg_t incoming_can_msg;
+    _global_reset_variables();
+    _global_initialize();
 
-//     _global_reset_variables();
-//     _global_initialize();
+    openlcb_node_t *openlcb_node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    openlcb_node1->alias = NODE_ALIAS_1;
+    openlcb_node1->state.run_state = RUNSTATE_RUN;
+    openlcb_node1->state.permitted = true;
+    openlcb_node1->state.initalized = true;
+    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
-//     can_statemachine_info_t can_statemachine_info_1;
-//     _initalize_can_statemachine_info(NODE_ID_1, &_node_parameters_main_node, &can_statemachine_info_1);
-//     can_statemachine_info_1.openlcb_node->alias = 0xAAA;
-//     can_statemachine_info_1.incoming_msg = &incoming_can_msg;
+    openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
+    openlcb_node2->alias = NODE_ALIAS_1;
+    openlcb_node2->state.run_state = RUNSTATE_RUN;
+    openlcb_node2->state.permitted = true;
+    openlcb_node2->state.initalized = true;
+    AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
-//     can_statemachine_info_t can_statemachine_info_2;
-//     _initalize_can_statemachine_info(NODE_ID_2, &_node_parameters_main_node, &can_statemachine_info_2);
-//     can_statemachine_info_2.openlcb_node->alias = 0x777;
-//     can_statemachine_info_2.incoming_msg = &incoming_can_msg;
+    // ************************************************************************
+    // No conflict
+    // ************************************************************************
+    can_msg.identifier = 0x10700000 | (NODE_ALIAS_1 + 1);
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_rid_frame(&can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    
 
-//     // ************************************************************************
-//     // No conflict
-//     // ************************************************************************
-//     _set_can_statemachine_info_node_active(&can_statemachine_info_1);
-//     _set_can_statemachine_info_node_active(&can_statemachine_info_2);
-//     incoming_can_msg.identifier = 0x10700AAB;
-//     incoming_can_msg.payload_count = 0;
-//     CanRxMessageHandler_rid_frame(&incoming_can_msg);
-//     can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-//     EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
+    // ************************************************************************
 
-//     // ************************************************************************
+    // ************************************************************************
+    // Cause a conflict, but not permittted
+    // ************************************************************************
+    openlcb_node1->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
+    openlcb_node1->state.permitted = false;
+    openlcb_node1->state.initalized = false;
 
-//     // ************************************************************************
-//     // Cause a conflict, but not permittted
-//     // ************************************************************************
-//     _set_can_statemachine_info_node_inactive(&can_statemachine_info_1);
-//     _set_can_statemachine_info_node_inactive(&can_statemachine_info_2);
-//     incoming_can_msg.identifier = 0x10700AAA;
-//     incoming_can_msg.payload_count = 0;
-//     CanRxMessageHandler_rid_frame(&incoming_can_msg);
-//     can_statemachine_info_1.outgoing_can_msg = CanBufferFifo_pop();
-//     EXPECT_EQ(can_statemachine_info_1.outgoing_can_msg, nullptr);
+    can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
+    can_msg.payload_count = 0;
+    CanRxMessageHandler_rid_frame(&can_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    CanMainStateMachine_run();
+
+    EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
+    EXPECT_FALSE(openlcb_node1->state.permitted);
+    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_EQ(openlcb_node1->last_received_datagram, nullptr);
+    EXPECT_EQ(openlcb_node1->alias, 0x00);
+
+    // outgoing_can_msg = CanBufferFifo_pop();
+    // EXPECT_NE(outgoing_can_msg, nullptr);
+    // EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
+    // CanBufferStore_free_buffer(outgoing_can_msg);
+    // _test_for_all_buffer_lists_empty();
+    // _test_for_all_buffer_stores_empty();
 
 //     // ************************************************************************
 
@@ -538,7 +628,7 @@ TEST(CanRxMessageHandler, cid)
 //     EXPECT_TRUE(_compare_can_msg(can_statemachine_info_1.outgoing_can_msg, 0x10703777, 6, bytes1));
 
 //     // ************************************************************************
-// }
+}
 
 // TEST(CanRxMessageHandler, amd)
 // {
@@ -839,187 +929,175 @@ TEST(CanRxMessageHandler, cid)
 //     // ************************************************************************
 // }
 
-// TEST(CanRxMessageHandler, handle_first_frame)
-// {
-//     can_msg_t can_msg;
-//     openlcb_msg_t *openlcb_msg;
-
-//     _global_reset_variables();
-//     _global_initialize();
-
-//     openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-//     node1->alias = 0x666;
-//     openlcb_node_t *node2 = OpenLcbNode_allocate(0x010203040507, &_node_parameters_main_node);
-//     node2->alias = 0x999;
-
-//     // ************************************************************************
-//     // SNIP addressed to somone else
-//     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x4F, 0x37, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     //  SNIP.......
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // SNIP addressed to us
-//     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
-//     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-//     openlcb_msg = OpenLcbBufferList_find(0x6be, 0x0999, 0xa08);
-//     EXPECT_NE(openlcb_msg, nullptr);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     uint8_t bytes[6] = {0x04, 0x4D, 0x75, 0x73, 0x74, 0x61};
-//     EXPECT_TRUE(compare_openlcb_msg(openlcb_msg, 0x0A08, 0x0000, 0x6be, 0x0000, 0x999, 6, bytes));
-//     OpenLcbBufferList_free(openlcb_msg);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // SNIP addressed to us but there is one already sent
-//     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
-//     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
-//     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-//     EXPECT_FALSE(CanBufferFifo_is_empty());
-//     can_msg_t *outgoing_can_msg = CanBufferFifo_pop();
-//     EXPECT_NE(outgoing_can_msg, nullptr);
-//     // define ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END 0x2042
-//     uint8_t bytes9[4] = {0x06, 0xbe, 0x20, 0x42};
-//     EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x19068999, 4, bytes9));
-//     OpenLcbBufferList_free(OpenLcbBufferList_find(0x6be, 0x0999, 0xa08));
-//     CanBufferStore_free_buffer(outgoing_can_msg);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // SNIP addressed to us but we can't allocate a buffer
-//     // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x19a086be, 8, 0x49, 0x99, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
-//     fail_buffer = true;
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 2, SNIP);
-//     fail_buffer = false;
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-//     outgoing_can_msg = CanBufferFifo_pop();
-//     EXPECT_NE(outgoing_can_msg, nullptr);
-//     // define ERROR_TEMPORARY_BUFFER_UNAVAILABLE 0x2020
-//     uint8_t bytes10[4] = {0x06, 0xbe, 0x20, 0x20};
-//     EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x19068999, 4, bytes10));
-//     CanBufferStore_free_buffer(outgoing_can_msg);
-//     OpenLcbBufferList_free(OpenLcbBufferList_find(0x6be, 0x0999, 0xa08));
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     //  Datagram.......
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // datagram addressed to somone else
-//     // [[1bf376be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x1bf376be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // Datagram addressed to us
-//     // // [[1b6666be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x1b6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
-//     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-//     openlcb_msg = OpenLcbBufferList_find(0x06be, 0x0666, MTI_DATAGRAM);
-//     EXPECT_NE(openlcb_msg, nullptr);
-//     uint8_t bytes1[8] = {0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F};
-//     EXPECT_TRUE(compare_openlcb_msg(openlcb_msg, 0x1C48, 0x0000, 0x6be, 0x0000, 0x666, 8, bytes1));
-//     OpenLcbBufferList_free(openlcb_msg);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // Datagram addressed to us but there is one already sent
-//     // // [[1b6666be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x1b6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
-//     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 0, DATAGRAM);
-//     EXPECT_FALSE(OpenLcbBufferList_is_empty());
-//     EXPECT_FALSE(CanBufferFifo_is_empty());
-//     outgoing_can_msg = CanBufferFifo_pop();
-//     EXPECT_NE(outgoing_can_msg, nullptr);
-//     // ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END 0x2042
-//     uint8_t bytes2[4] = {0x06, 0xbe, 0x20, 0x42};
-//     EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x19A48666, 4, bytes2));
-//     OpenLcbBufferList_free(OpenLcbBufferList_find(0x6be, 0x0666, MTI_DATAGRAM));
-//     CanBufferStore_free_buffer(outgoing_can_msg);
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-
-//     // ************************************************************************
-
-//     // ************************************************************************
-//     // DATAGRAM addressed to us but we can't allocate a buffer
-//     // // [[1b6666be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
-//     // ************************************************************************
-//     CanUtilities_load_can_message(&can_msg, 0x1b6666be, 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
-//     fail_buffer = true;
-//     CanRxMessageHandler_handle_first_frame(&can_msg, 2, DATAGRAM);
-//     fail_buffer = false;
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-//     outgoing_can_msg = CanBufferFifo_pop();
-//     EXPECT_NE(outgoing_can_msg, nullptr);
-//     // define ERROR_TEMPORARY_BUFFER_UNAVAILABLE 0x2020
-//     uint8_t bytes3[4] = {0x06, 0xbe, 0x20, 0x20};
-//     EXPECT_TRUE(compare_can_msg(outgoing_can_msg, 0x19A48666, 4, bytes3));
-//     CanBufferStore_free_buffer(outgoing_can_msg);
-//     OpenLcbBufferList_free(OpenLcbBufferList_find(0x6be, 0x0999, 0xa08));
-//     EXPECT_TRUE(CanBufferFifo_is_empty());
-//     EXPECT_TRUE(OpenLcbBufferList_is_empty());
-//     // ************************************************************************
-// }
-
- TEST(CanRxMessageHandler, handle_middle_frame)
+TEST(CanRxMessageHandler, handle_first_frame)
 {
-#define NODE_ID_1 0x010203040506
-#define NODE_ID_2 0x010203040507
-#define NODE_ALIAS_1 0x0666
-#define NODE_ALIAS_2 0x0999
 
-#define SOURCE_ALIAS 0x06BE
-#define SOURCE_ALIAS_HI 0x06
-#define SOURCE_ALIAS_LO 0xBE
+    can_msg_t can_msg;
+    openlcb_msg_t *openlcb_msg;
 
+    _global_reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    node1->alias = NODE_ALIAS_1;
+    openlcb_node_t *node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
+    node2->alias = NODE_ALIAS_2;
+
+    // ************************************************************************
+    //  SNIP.......
+    // ************************************************************************
+
+    // ************************************************************************
+    // SNIP addressed to us
+    // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
+    // ************************************************************************
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    CanUtilities_load_can_message(&can_msg, (0x19a08000 | SOURCE_ALIAS), 8, (MULTIFRAME_FIRST | NODE_ALIAS_2_HI), NODE_ALIAS_2_LO, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
+    CanRxMessageHandler_first_frame(&can_msg, 2, SNIP);
+    _test_for_only_openlcb_buffer_list_not_empty();
+
+    openlcb_msg = OpenLcbBufferList_find(SOURCE_ALIAS, NODE_ALIAS_2, MTI_SIMPLE_NODE_INFO_REPLY);
+    EXPECT_NE(openlcb_msg, nullptr);
+    uint8_t bytes[6] = {0x04, 0x4D, 0x75, 0x73, 0x74, 0x61};
+    EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, MTI_SIMPLE_NODE_INFO_REPLY, 0x0000, SOURCE_ALIAS, 0x0000, NODE_ALIAS_2, 6, bytes));
+    OpenLcbBufferList_free(openlcb_msg);
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    // ************************************************************************
+
+    // ************************************************************************
+    // SNIP addressed to us but there is one already sent
+    // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
+    // ************************************************************************
+    CanUtilities_load_can_message(&can_msg, (0x19a08000 | SOURCE_ALIAS), 8, (MULTIFRAME_FIRST | NODE_ALIAS_2_HI), NODE_ALIAS_2_LO, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
+    CanRxMessageHandler_first_frame(&can_msg, 2, SNIP);
+    _test_for_only_openlcb_buffer_list_not_empty();
+
+    CanRxMessageHandler_first_frame(&can_msg, 2, SNIP);
+    _test_for_openlcb_buffer_list_and_openlcb_buffer_fifo_not_empty();
+
+    openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+    uint8_t bytes1[4] = {SOURCE_ALIAS_HI, SOURCE_ALIAS_LO, 0x20, 0x42}; // define ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END 0x2042
+    EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, MTI_OPTIONAL_INTERACTION_REJECTED, 0x00, NODE_ALIAS_2, 0x00, SOURCE_ALIAS, 4, bytes1));
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+    openlcb_msg = OpenLcbBufferList_find(SOURCE_ALIAS, NODE_ALIAS_2, MTI_SIMPLE_NODE_INFO_REPLY);
+    EXPECT_NE(openlcb_msg, nullptr);
+    OpenLcbBufferList_free(openlcb_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    // ************************************************************************
+
+    // ************************************************************************
+    // SNIP addressed to us but we can't allocate a buffer
+    // [19a086be] 4F 37 04 4D 75 73 74 61]  Simple Node Ident Info with content '4,Musta'
+    // ************************************************************************
+    fail_buffer = true;
+    CanUtilities_load_can_message(&can_msg, (0x19a08000 | SOURCE_ALIAS), 8, (MULTIFRAME_FIRST | NODE_ALIAS_2_HI), NODE_ALIAS_2_LO, 0x04, 0x4D, 0x75, 0x73, 0x74, 0x61);
+    CanRxMessageHandler_first_frame(&can_msg, 2, SNIP);
+    fail_buffer = false;
+    _test_for_only_openlcb_buffer_fifo_not_empty();
+
+    openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+    // define ERROR_TEMPORARY_BUFFER_UNAVAILABLE 0x2020
+    uint8_t bytes10[4] = {SOURCE_ALIAS_HI, SOURCE_ALIAS_LO, 0x20, 0x20};
+    EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, MTI_OPTIONAL_INTERACTION_REJECTED, 0x00, NODE_ALIAS_2, 0x00, SOURCE_ALIAS, 4, bytes10));
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    // ************************************************************************
+
+    // ************************************************************************
+    //  Datagram.......
+    // ************************************************************************
+
+    // ************************************************************************
+    // Datagram addressed to us
+    // // [[1b6666be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
+    // ************************************************************************
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+    CanUtilities_load_can_message(&can_msg, (0x1b000000 | (NODE_ALIAS_1 << 12) | SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
+    CanRxMessageHandler_first_frame(&can_msg, 0, DATAGRAM);
+    _test_for_only_openlcb_buffer_list_not_empty();
+
+    openlcb_msg = OpenLcbBufferList_find(SOURCE_ALIAS, NODE_ALIAS_1, MTI_DATAGRAM);
+    EXPECT_NE(openlcb_msg, nullptr);
+
+    uint8_t bytes3[8] = {0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F};
+    EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, 0x1C48, 0x0000, SOURCE_ALIAS, 0x0000, NODE_ALIAS_1, 8, bytes3));
+    OpenLcbBufferList_free(openlcb_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    // ************************************************************************
+
+    // ************************************************************************
+    // Datagram addressed to us but there is one already sent
+    // // [[1b6666be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
+    // ************************************************************************
+    CanUtilities_load_can_message(&can_msg, (0x1b000000 | (NODE_ALIAS_1 << 12) | SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
+    CanRxMessageHandler_first_frame(&can_msg, 0, DATAGRAM);
+    _test_for_only_openlcb_buffer_list_not_empty();
+
+    CanRxMessageHandler_first_frame(&can_msg, 0, DATAGRAM);
+    _test_for_openlcb_buffer_list_and_openlcb_buffer_fifo_not_empty();
+
+    openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+    uint8_t bytes4[4] = {SOURCE_ALIAS_HI, SOURCE_ALIAS_LO, 0x20, 0x42}; // define ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END 0x2042
+    EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, MTI_DATAGRAM_REJECTED_REPLY, 0x00, NODE_ALIAS_1, 0x00, SOURCE_ALIAS, 4, bytes4));
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+    openlcb_msg = OpenLcbBufferList_find(SOURCE_ALIAS, NODE_ALIAS_1, MTI_DATAGRAM);
+    EXPECT_NE(openlcb_msg, nullptr);
+    OpenLcbBufferList_free(openlcb_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    // ************************************************************************
+
+    // ************************************************************************
+    // DATAGRAM addressed to us but we can't allocate a buffer
+    // // [[1b6666be] 20 53 00 00 00 00 3C 3F]  R: (Start of Datagram)
+    // ************************************************************************
+
+    fail_buffer = true;
+    CanUtilities_load_can_message(&can_msg, (0x1b000000 | (NODE_ALIAS_1 << 12) | SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
+    CanRxMessageHandler_first_frame(&can_msg, 0, DATAGRAM);
+    _test_for_only_openlcb_buffer_fifo_not_empty();
+    fail_buffer = false;
+
+    openlcb_msg = OpenLcbBufferFifo_pop();
+    EXPECT_NE(openlcb_msg, nullptr);
+    // define ERROR_TEMPORARY_BUFFER_UNAVAILABLE 0x2020
+    uint8_t bytes6[4] = {SOURCE_ALIAS_HI, SOURCE_ALIAS_LO, 0x20, 0x20};
+    EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, MTI_DATAGRAM_REJECTED_REPLY, 0x00, NODE_ALIAS_1, 0x00, SOURCE_ALIAS, 4, bytes6));
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+
+    // ************************************************************************
+}
+
+TEST(CanRxMessageHandler, handle_middle_frame)
+{
     can_msg_t can_msg;
     openlcb_msg_t *outgoing_openlcb_msg;
 
     _global_reset_variables();
     _global_initialize();
-
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->alias = NODE_ALIAS_1;
@@ -1056,7 +1134,7 @@ TEST(CanRxMessageHandler, cid)
     // ************************************************************************
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
-    CanUtilities_load_can_message(&can_msg, (0x1c666000 |SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
+    CanUtilities_load_can_message(&can_msg, (0x1c666000 | SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
     CanRxMessageHandler_middle_frame(&can_msg, 0);
     _test_for_only_openlcb_buffer_fifo_not_empty();
     outgoing_openlcb_msg = OpenLcbBufferFifo_pop();
@@ -1073,21 +1151,12 @@ TEST(CanRxMessageHandler, cid)
 
 TEST(CanRxMessageHandler, handle_last_frame)
 {
-#define NODE_ID_1 0x010203040506
-#define NODE_ID_2 0x010203040507
-#define NODE_ALIAS_1 0x0666
-#define NODE_ALIAS_2 0x0999
-
-#define SOURCE_ALIAS 0x06BE
-#define SOURCE_ALIAS_HI 0x06
-#define SOURCE_ALIAS_LO 0xBE
 
     can_msg_t can_msg;
     openlcb_msg_t *outgoing_openlcb_msg;
 
     _global_reset_variables();
     _global_initialize();
-
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->alias = NODE_ALIAS_1;
@@ -1124,7 +1193,7 @@ TEST(CanRxMessageHandler, handle_last_frame)
     // ************************************************************************
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
-    CanUtilities_load_can_message(&can_msg, (0x1c666000 |SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
+    CanUtilities_load_can_message(&can_msg, (0x1c666000 | SOURCE_ALIAS), 8, 0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F);
     CanRxMessageHandler_last_frame(&can_msg, 0);
     _test_for_only_openlcb_buffer_fifo_not_empty();
     outgoing_openlcb_msg = OpenLcbBufferFifo_pop();

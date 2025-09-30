@@ -119,11 +119,11 @@ static void _handle_duplicate_aliases(void) {
     alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
 
     if (alias_mapping_info->has_duplicate_alias) {
-
+       
         for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
             if (alias_mapping_info->list[i].is_duplicate) {
-
+            
                 _interface->alias_mapping_unregister(alias_mapping_info->list[i].alias);
 
                 _reset_node(_interface->openlcb_node_find_by_alias(alias_mapping_info->list[i].alias));
@@ -184,7 +184,9 @@ static bool _handle_outgoing_can_message(void) {
     if (!can_statemachine_info.outgoing_can_msg) {
 
         _interface->lock_shared_resources();
+        
         can_statemachine_info.outgoing_can_msg = CanBufferFifo_pop();
+        
         _interface->unlock_shared_resources();
 
     }
@@ -194,7 +196,9 @@ static bool _handle_outgoing_can_message(void) {
         if (_interface->send_can_message(can_statemachine_info.outgoing_can_msg)) {
 
             _interface->lock_shared_resources();
+            
             CanBufferStore_free_buffer(can_statemachine_info.outgoing_can_msg);
+            
             _interface->unlock_shared_resources();
             
             can_statemachine_info.outgoing_can_msg = NULL;

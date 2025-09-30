@@ -103,6 +103,8 @@ void CanLoginMessageHandler_generate_seed(can_statemachine_info_t *can_statemach
 void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
+    
+    _interface->alias_mapping_register(can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id);
 
     if (_interface->on_alias_change) {
 
@@ -181,7 +183,10 @@ void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_i
     CanUtilities_copy_node_id_to_payload(can_statemachine_info->login_outgoing_can_msg, can_statemachine_info->openlcb_node->id, 0);
     can_statemachine_info->login_outgoing_can_msg_valid = true;
     can_statemachine_info->openlcb_node->state.permitted = true;
-
+    
+    alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(can_statemachine_info->openlcb_node->alias);
+    alias_mapping->is_permitted = true;
+    
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
     
 }
@@ -202,9 +207,7 @@ void CanLoginMessageHandler_load_initialization_complete(can_statemachine_info_t
     can_statemachine_info->openlcb_node->producers.enumerator.running = true;
     can_statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
     can_statemachine_info->login_outgoing_openlcb_msg_valid = true;
-    
-    _interface->alias_mapping_register(can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id);
-    
+   
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
 
 

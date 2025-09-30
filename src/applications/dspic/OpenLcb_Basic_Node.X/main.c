@@ -144,6 +144,7 @@ const interface_can_login_message_handler_t interface_can_login_message_handler 
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
     .alias_mapping_register = &AliasMappings_register,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
     .on_alias_change = &_alias_change_callback
     

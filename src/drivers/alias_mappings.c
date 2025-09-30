@@ -53,7 +53,9 @@ void AliasMappings_initialize(const interface_alias_mappings_t *interface_alias_
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         alias_mapping_info.list[i].alias = 0x00;
-        alias_mapping_info.list[i].node_id = 0x00;
+        alias_mapping_info.list[i].node_id = 0x00;    
+        alias_mapping_info.list[i].is_duplicate = false;
+        alias_mapping_info.list[i].is_permitted = false;
 
     }
     

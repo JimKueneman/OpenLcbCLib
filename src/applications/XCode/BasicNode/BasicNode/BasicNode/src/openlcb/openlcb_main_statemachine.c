@@ -591,7 +591,9 @@ static bool _handle_try_pop_next_incoming_openlcb_message(void) {
     if (!_statemachine_info.incoming_msg) {
 
         _interface->lock_shared_resources();
+        
         _statemachine_info.incoming_msg = OpenLcbBufferFifo_pop();
+        
         _interface->unlock_shared_resources();
       
         return true;

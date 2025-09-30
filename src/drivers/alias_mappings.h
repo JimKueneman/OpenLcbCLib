@@ -45,10 +45,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    typedef struct {
+ typedef struct {
         
-     
-
+        uint8_t junk;
 
     } interface_alias_mappings_t;
 

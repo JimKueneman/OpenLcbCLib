@@ -92,15 +92,23 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
 
 static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
 
+    // TODO:  THIS NEEDS TO KNOW IF THE NODE IS PERMITTED BEFORE SENDING THE MESSAGE ELSE STOP USING ANY ALIAS
+
     // Check for duplicate Alias 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
 
-    if (alias_mapping) {
+    if (!alias_mapping) {
 
-        alias_mapping->is_duplicate = true; // flag for the main loop to handle
-        _interface->alias_mapping_set_has_duplicate_alias_flag();
+        return false; // Done nothing to do
+    }
 
+
+    alias_mapping->is_duplicate = true; // flag for the main loop to handle
+    _interface->alias_mapping_set_has_duplicate_alias_flag();
+
+    if (alias_mapping->is_permitted) {
+        
         can_msg_t *outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
         outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | source_alias;
         outgoing_can_msg->payload_count = 6;
@@ -108,11 +116,9 @@ static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
 
         CanBufferFifo_push(outgoing_can_msg);
 
-        return true;
-
     }
 
-    return false;
+    return true;
 
 }
 
@@ -123,13 +129,14 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t can_buffer_star
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
 
+    // fprintf(stderr, "\n\n Source_Alias: %04X, Dest_Alias: %04X, MTI: %04X\n\n", source_alias, dest_alias, mti);
+
     // See if there is a message already started for this.
     openlcb_msg_t* target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (target_can_msg) {
 
         // If we find a message for this source/dest/mti then it is an error as it is out of order
-        OpenLcbBufferList_free(target_can_msg);
         _queue_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
 
         return;
@@ -217,7 +224,7 @@ void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
-    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti, 0);   
+    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti, 0);
     CanUtilities_copy_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, can_buffer_start_index);
 
     OpenLcbBufferFifo_push(target_openlcb_msg); // Can not fail List is as large as the number of buffers
@@ -264,6 +271,9 @@ void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
 
+    fprintf(stderr, "\n\n Alias: %04X\n\n", source_alias);
+    fprintf(stderr, "\n\n Alias: %p\n\n", alias_mapping);
+
     if (alias_mapping) {
 
         can_msg_t *can_msg = _interface->can_buffer_store_allocate_buffer();
@@ -296,12 +306,12 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
         return;
 
     }
-    
+
     can_msg_t *outgoing_can_msg = NULL;
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
 
     if (can_msg->payload_count > 0) {
-  
+
         alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_node_id(CanUtilities_extract_can_payload_as_node_id(can_msg));
 
         if (alias_mapping) {
@@ -320,22 +330,22 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
         return;
 
     }
-    
+
     alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
 
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
-       
+
         if (alias_mapping_info->list[i].alias != 0x00) {
-            
+
             outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
             outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | alias_mapping_info->list[i].alias;
             outgoing_can_msg->payload_count = 6;
             CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping_info->list[i].node_id, &can_msg->payload);
 
             CanBufferFifo_push(can_msg);
-            
+
         }
-        
+
     }
 
 }

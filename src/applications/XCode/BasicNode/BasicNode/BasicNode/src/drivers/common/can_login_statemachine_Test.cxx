@@ -226,11 +226,10 @@ void _initalize_can_statemachine_info(node_id_t node_id, node_parameters_t *node
 {
 
     can_statemachine_info->openlcb_node = OpenLcbNode_allocate(node_id, node_parameters);
-    can_statemachine_info->incoming_msg = NULL;
-    can_statemachine_info->outgoing_can_msg = CanBufferStore_allocate_buffer();
-    can_statemachine_info->outgoing_can_msg_valid = false;
-    can_statemachine_info->outgoing_openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    can_statemachine_info->outgoing_openlcb_msg_valid = false;
+    can_statemachine_info->login_outgoing_can_msg = CanBufferStore_allocate_buffer();
+    can_statemachine_info->login_outgoing_can_msg_valid = false;
+    can_statemachine_info->login_outgoing_openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    can_statemachine_info->login_outgoing_openlcb_msg_valid = false;
 }
 
 TEST(CanLoginStateMachine, initialize)
