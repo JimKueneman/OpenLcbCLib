@@ -88,7 +88,7 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 }
 
 static void _reset_node(openlcb_node_t *openlcb_node) {
-
+    
     openlcb_node->alias = 0x00;
     openlcb_node->state.permitted = false;
     openlcb_node->state.initalized = false;
@@ -104,7 +104,7 @@ static void _reset_node(openlcb_node_t *openlcb_node) {
     }
 
     openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias  
-
+    
 }
 
 static void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
@@ -124,10 +124,12 @@ static void _handle_duplicate_aliases(void) {
         for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
             if (alias_mapping_info->list[i].is_duplicate) {
+                
+                uint16_t alias = alias_mapping_info->list[i].alias;
             
-                _interface->alias_mapping_unregister(alias_mapping_info->list[i].alias);
-
-                _reset_node(_interface->openlcb_node_find_by_alias(alias_mapping_info->list[i].alias));
+                _interface->alias_mapping_unregister(alias);
+ 
+                _reset_node(_interface->openlcb_node_find_by_alias(alias));
 
             }
         }

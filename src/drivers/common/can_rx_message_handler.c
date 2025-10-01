@@ -92,14 +92,17 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
 
 static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
 
-    // TODO:  THIS NEEDS TO KNOW IF THE NODE IS PERMITTED BEFORE SENDING THE MESSAGE ELSE STOP USING ANY ALIAS
-
     // Check for duplicate Alias 
     uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
 
     if (!alias_mapping) {
 
+        return false; // Done nothing to do
+    }
+    
+    if (alias_mapping->alias != source_alias) {
+        
         return false; // Done nothing to do
     }
 
@@ -187,8 +190,6 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
-
-    // TODO:  We don't know if this frame was actually for one of our nodes now so we don't know if we need to send this error
 
     openlcb_msg_t * target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 

@@ -98,7 +98,7 @@ void AliasMappings_unregister(uint16_t alias) {
 
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
-        if (alias_mapping_info.list[i].alias == 0x00) {
+        if (alias_mapping_info.list[i].alias == alias) {
 
             alias_mapping_info.list[i].alias = 0x00;
             alias_mapping_info.list[i].node_id = 0x00;

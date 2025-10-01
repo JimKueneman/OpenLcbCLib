@@ -184,6 +184,12 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .unlock_shared_resources = &_unlock_shared_resources
 };
 
+const interface_alias_mappings_t interface_alias_mappings = {
+
+.junk = 0
+
+};
+
 void _global_initialize(void)
 {
     CanBufferStore_initialize();
@@ -191,6 +197,7 @@ void _global_initialize(void)
     OpenLcbBufferStore_initialize();
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferList_initialize();
+    AliasMappings_initialize(&interface_alias_mappings);
     OpenLcbNode_initialize(&interface_openlcb_node);
     CanRxMessageHandler_initialize(&interface_rx_message_handler);
     CanMainStatemachine_initialize(&interface_can_main_statemachine);
@@ -581,20 +588,22 @@ TEST(CanRxMessageHandler, rid)
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
 
+    // Process the set flag for duplicate
     CanMainStateMachine_run();
 
+   // Should have unregistered the mapping
+    EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
+
+    // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
     EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
+    EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
+    EXPECT_FALSE(openlcb_node1->state.resend_datagram);
+    EXPECT_FALSE(openlcb_node1->state.openlcb_datagram_ack_sent);
     EXPECT_EQ(openlcb_node1->last_received_datagram, nullptr);
     EXPECT_EQ(openlcb_node1->alias, 0x00);
-
-    // outgoing_can_msg = CanBufferFifo_pop();
-    // EXPECT_NE(outgoing_can_msg, nullptr);
-    // EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
-    // CanBufferStore_free_buffer(outgoing_can_msg);
-    // _test_for_all_buffer_lists_empty();
-    // _test_for_all_buffer_stores_empty();
 
 //     // ************************************************************************
 

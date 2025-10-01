@@ -89,6 +89,7 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 
 static void _reset_node(openlcb_node_t *openlcb_node) {
 
+    openlcb_node->alias = 0x00;
     openlcb_node->state.permitted = false;
     openlcb_node->state.initalized = false;
     openlcb_node->state.duplicate_id_detected = false;

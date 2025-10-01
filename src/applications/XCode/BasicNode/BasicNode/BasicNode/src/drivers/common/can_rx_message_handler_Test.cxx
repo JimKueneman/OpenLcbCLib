@@ -537,7 +537,7 @@ TEST(CanRxMessageHandler, rid)
 {
 
     can_msg_t can_msg;
-    can_msg_t *outgoing_can_msg;
+   // can_msg_t *outgoing_can_msg;
 
     _global_reset_variables();
     _global_initialize();
@@ -578,12 +578,25 @@ TEST(CanRxMessageHandler, rid)
     can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
     can_msg.payload_count = 0;
     CanRxMessageHandler_rid_frame(&can_msg);
-    outgoing_can_msg = CanBufferFifo_pop();
-    EXPECT_NE(outgoing_can_msg, nullptr);
-    EXPECT_TRUE(_compare_can_msg(outgoing_can_msg, (0x10700000 | NODE_ALIAS_1), 0, nullptr));
-    CanBufferStore_free_buffer(outgoing_can_msg);
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
+
+    // Should have unregistered the mapping
+    EXPECT_EQ(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
+
+    // Process the set flag for duplicate
+    CanMainStateMachine_run();
+
+    // Test that the node is reset and ready to generate a new Alias
+    EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
+    EXPECT_FALSE(openlcb_node1->state.permitted);
+    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
+    EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
+    EXPECT_FALSE(openlcb_node1->state.resend_datagram);
+    EXPECT_FALSE(openlcb_node1->state.openlcb_datagram_ack_sent);
+    EXPECT_EQ(openlcb_node1->last_received_datagram, nullptr);
+    EXPECT_EQ(openlcb_node1->alias, 0x00);
 
 //     // ************************************************************************
 
