@@ -106,16 +106,15 @@ static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
         return false; // Done nothing to do
     }
 
-
     alias_mapping->is_duplicate = true; // flag for the main loop to handle
     _interface->alias_mapping_set_has_duplicate_alias_flag();
 
     if (alias_mapping->is_permitted) {
-        
+   
         can_msg_t *outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
         outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | source_alias;
         outgoing_can_msg->payload_count = 6;
-        CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &can_msg->payload);
+        CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &outgoing_can_msg->payload);
 
         CanBufferFifo_push(outgoing_can_msg);
 

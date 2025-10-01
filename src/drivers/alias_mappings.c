@@ -80,9 +80,7 @@ alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id) {
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if ((_alias_mapping_info.list[i].alias == 0x00) || (_alias_mapping_info.list[i].node_id == node_id)) {
-            
-     //       fprintf(stderr, "\n REGISTER Alias: 0x%04X at Index: %d \n", alias, i);
-
+ 
             _alias_mapping_info.list[i].alias = alias;
             _alias_mapping_info.list[i].node_id = node_id;
             
@@ -102,8 +100,6 @@ void AliasMappings_unregister(uint16_t alias) {
 
         if (_alias_mapping_info.list[i].alias == alias) {
 
-      //      fprintf(stderr, "\n UNREGISTER Alias: 0x%04X at Index: %d \n", alias, i);
-            
             _alias_mapping_info.list[i].alias = 0x00;
             _alias_mapping_info.list[i].node_id = 0x00;
             
@@ -120,9 +116,7 @@ alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
      
         if (_alias_mapping_info.list[i].alias == alias) {
-            
-    //       fprintf(stderr, "\n FOUND Alias: 0x%04X at Index: %d \n", alias, i);
-
+          
             return &_alias_mapping_info.list[i];
 
         }
