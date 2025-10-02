@@ -88,6 +88,12 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 }
 
 static void _reset_node(openlcb_node_t *openlcb_node) {
+    
+    if (!openlcb_node) {
+        
+        return;
+        
+    }
 
     openlcb_node->alias = 0x00;
     openlcb_node->state.permitted = false;
@@ -282,6 +288,8 @@ static bool _handle_try_enumerate_first_node(void) {
 }
 
 static bool _handle_try_enumerate_next_node(void) {
+    
+    return false;
 
     can_statemachine_info.openlcb_node = _interface->openlcb_node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
@@ -310,7 +318,6 @@ static bool _handle_try_enumerate_next_node(void) {
 void CanMainStateMachine_run(void) {
 
     _handle_duplicate_aliases();
-
 
     if (_handle_outgoing_can_message()) {
 
