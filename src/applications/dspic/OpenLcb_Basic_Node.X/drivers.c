@@ -42,6 +42,8 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
 #include "../TurnoutBossCommon/common_loader_app.h"
+#include "../../../openlcb/openlcb_node.h"
+#include "../../../openlcb/protocol_datagram_handler.h"
 
 void BasicNodeDrivers_initialize(void) {
 
@@ -61,14 +63,23 @@ void BasicNodeDrivers_initialize(void) {
     PLLFBDbits.PLLDIV = 60 + PLLDIV_OFFSET; // This should be 60 for 80 Mhz.  Need 80 Mhz because the CAN module is limited to Fcy = 40 Mhz
     CLKDIV = 0x0001; // PreScaler divide by 3; Post Scaler divide by 2
 
+//    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
+//    // CAN Pin Mapping
+//    RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
+//    RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
+//
+//    // UART Pin Mapping
+//    RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
+//    RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
+    
     // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
     // CAN Pin Mapping
-    RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
-    RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
+    RPINR26bits.C1RXR = 47; // RPI47 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
+    RPOR8bits.RP118R = _RPOUT_C1TX; // RP118 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
 
     // UART Pin Mapping
-    RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
-    RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
+    RPINR18bits.U1RXR = 119; // RPI119 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
+    RPOR9bits.RP120R = _RPOUT_U1TX; // RP120  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
 
     //UART_TX/RX auto-set by the PPS 
     UART_CTS_TRIS = 0; // Output
@@ -201,10 +212,9 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
-
-    //    // Increment any timer counters assigned
-    //    if (_100ms_timer_sink_func)
-    //        _100ms_timer_sink_func();
+    
+    OpenLcbNode_100ms_timer_tick();
+    ProtocolDatagramHandler_100ms_timer_tick();
 
 }
 

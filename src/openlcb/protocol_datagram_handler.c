@@ -804,7 +804,7 @@ void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_
 
 }
 
-void ProtocolDatagramHandler_100ms_time_tick(void) {
+void ProtocolDatagramHandler_100ms_timer_tick(void) {
 
 
 }

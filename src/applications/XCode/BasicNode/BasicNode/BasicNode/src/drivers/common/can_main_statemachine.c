@@ -64,7 +64,7 @@ static can_statemachine_info_t can_statemachine_info = {
     .login_outgoing_openlcb_msg = NULL,
     .login_outgoing_openlcb_msg_valid = false,
     .outgoing_can_msg = NULL,
- 
+
 };
 
 
@@ -88,6 +88,12 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 }
 
 static void _reset_node(openlcb_node_t *openlcb_node) {
+    
+    if (!openlcb_node) {
+        
+        return;
+        
+    }
 
     openlcb_node->alias = 0x00;
     openlcb_node->state.permitted = false;
@@ -113,6 +119,24 @@ static void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
 
 }
 
+static void _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info) {
+
+    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+
+        uint16_t alias = alias_mapping_info->list[i].alias;
+
+        if ((alias > 0) && alias_mapping_info->list[i].is_duplicate) {
+
+            _interface->alias_mapping_unregister(alias);
+    
+            _reset_node(_interface->openlcb_node_find_by_alias(alias));
+
+        }
+        
+    }
+
+}
+
 static void _handle_duplicate_aliases(void) {
 
     _interface->lock_shared_resources();
@@ -120,17 +144,8 @@ static void _handle_duplicate_aliases(void) {
     alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
 
     if (alias_mapping_info->has_duplicate_alias) {
-       
-        for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
-            if (alias_mapping_info->list[i].is_duplicate) {
-            
-                _interface->alias_mapping_unregister(alias_mapping_info->list[i].alias);
-
-                _reset_node(_interface->openlcb_node_find_by_alias(alias_mapping_info->list[i].alias));
-
-            }
-        }
+        _process_duplicate_aliases(alias_mapping_info);
 
         alias_mapping_info->has_duplicate_alias = false;
 
@@ -150,11 +165,11 @@ static bool _handle_login_outgoing_can_message(void) {
             can_statemachine_info.login_outgoing_can_msg_valid = false;
 
         } else {
-            
-           return true;  // done for this loop, try again next time
+
+            return true; // done for this loop, try again next time
         }
 
-    } 
+    }
 
     return false;
 
@@ -169,12 +184,12 @@ static bool _handle_login_outgoing_openlcb_message(void) {
             can_statemachine_info.login_outgoing_openlcb_msg_valid = false;
 
         } else {
-            
+
             return true; // done for this loop, try again next time
-            
+
         }
 
-    } 
+    }
 
     return false;
 
@@ -185,9 +200,9 @@ static bool _handle_outgoing_can_message(void) {
     if (!can_statemachine_info.outgoing_can_msg) {
 
         _interface->lock_shared_resources();
-        
+
         can_statemachine_info.outgoing_can_msg = CanBufferFifo_pop();
-        
+
         _interface->unlock_shared_resources();
 
     }
@@ -197,17 +212,17 @@ static bool _handle_outgoing_can_message(void) {
         if (_interface->send_can_message(can_statemachine_info.outgoing_can_msg)) {
 
             _interface->lock_shared_resources();
-            
+
             CanBufferStore_free_buffer(can_statemachine_info.outgoing_can_msg);
-            
+
             _interface->unlock_shared_resources();
-            
+
             can_statemachine_info.outgoing_can_msg = NULL;
 
         } else {
-            
+
             return true; // done for this loop, try again next time
-            
+
         }
 
     }
@@ -251,6 +266,8 @@ static bool _handle_try_enumerate_first_node(void) {
             return true; // done, nothing to do
 
         }
+        
+   //    printf("x\n");
 
         // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
@@ -273,7 +290,7 @@ static bool _handle_try_enumerate_first_node(void) {
 }
 
 static bool _handle_try_enumerate_next_node(void) {
-
+  
     can_statemachine_info.openlcb_node = _interface->openlcb_node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
     if (!can_statemachine_info.openlcb_node) {
@@ -300,9 +317,8 @@ static bool _handle_try_enumerate_next_node(void) {
 
 void CanMainStateMachine_run(void) {
 
-
     _handle_duplicate_aliases();
-    
+
     if (_handle_outgoing_can_message()) {
 
         return;

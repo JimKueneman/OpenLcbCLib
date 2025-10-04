@@ -72,8 +72,7 @@ static uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_m
 }
 
 static bool _transmit_can_frame(can_msg_t* can_msg) {
-
-
+    
     bool result = _interface->transmit_can_frame(can_msg);
 
     if (_interface->on_transmit && result) {
@@ -128,14 +127,14 @@ static bool _addressed_message_first_frame(openlcb_msg_t* openlcb_msg, can_msg_t
 
 }
 
-static bool _addressed_message_middle(can_msg_t* can_msg) {
+static bool _addressed_message_middle_frame(can_msg_t* can_msg) {
 
     OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_MIDDLE);
     return _transmit_can_frame(can_msg);
 
 }
 
-static bool _addressed_message_last(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
+static bool _addressed_message_last_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg) {
 
     OpenLcbUtilities_set_multi_frame_flag(&can_msg->payload[0], MULTIFRAME_FINAL);
     return _transmit_can_frame(can_msg);
@@ -228,11 +227,11 @@ bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg
 
     } else if ((*openlcb_start_index + len_msg_frame) < openlcb_msg->payload_count) {
 
-        result = _addressed_message_middle(can_msg_worker);
+        result = _addressed_message_middle_frame(can_msg_worker);
 
     } else {
 
-        result = _addressed_message_last(openlcb_msg, can_msg_worker);
+        result = _addressed_message_last_frame(openlcb_msg, can_msg_worker);
 
     }
 

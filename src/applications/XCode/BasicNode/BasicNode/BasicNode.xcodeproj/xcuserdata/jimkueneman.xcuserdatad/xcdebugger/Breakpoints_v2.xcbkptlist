@@ -48,7 +48,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
             endingLineNumber = "145"
-            landmarkName = "_handle_login_outgoing_can_message()"
+            landmarkName = "_handle_duplicate_aliases()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "281"
             endingLineNumber = "281"
-            landmarkName = "_handle_try_enumerate_next_node()"
+            landmarkName = "_handle_try_enumerate_first_node()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -96,7 +96,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "312"
             endingLineNumber = "312"
-            landmarkName = "CanMainStateMachine_run()"
+            landmarkName = "_handle_try_enumerate_next_node()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -112,7 +112,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "310"
             endingLineNumber = "310"
-            landmarkName = "CanMainStateMachine_run()"
+            landmarkName = "_handle_try_enumerate_next_node()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

@@ -141,7 +141,7 @@
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>dsPIC33EP512GP504</targetDevice>
+        <targetDevice>dsPIC33EP512MC506</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
         <platformTool>Simulator</platformTool>
@@ -302,7 +302,7 @@
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
         <property key="oXC16glb-macros"
-                  value="FCY=40000000;EXCLUDE_FIRMWARE_ADDRESS_SPACE;USER_DEFINED_CDI_LENGTH=1200;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_PRODUCER_COUNT=0;USER_DEFINED_CONSUMER_COUNT=0;USER_DEFINED_NODE_BUFFER_DEPTH=1;USER_DEFINED_SNIP_BUFFER_DEPTH=2;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=2"/>
+                  value="FCY=40000000;EXCLUDE_FIRMWARE_ADDRESS_SPACE;USER_DEFINED_CDI_LENGTH=1200;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_PRODUCER_COUNT=10;USER_DEFINED_CONSUMER_COUNT=10;USER_DEFINED_NODE_BUFFER_DEPTH=1;USER_DEFINED_SNIP_BUFFER_DEPTH=2;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=2"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>

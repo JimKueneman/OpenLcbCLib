@@ -44,6 +44,8 @@
 
 typedef struct {
    
+    // callbacks
+    void (*on_100ms_timer_tick)(void);
 
 } interface_openlcb_node_t;
 

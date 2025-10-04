@@ -72,8 +72,7 @@ static uint32_t _construct_addressed_message_identifier(openlcb_msg_t* openlcb_m
 }
 
 static bool _transmit_can_frame(can_msg_t* can_msg) {
-
-
+    
     bool result = _interface->transmit_can_frame(can_msg);
 
     if (_interface->on_transmit && result) {

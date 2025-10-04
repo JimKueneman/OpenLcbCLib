@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_datagram_handlers.h
+ * \file protocol_datagram_config_mem_handlers.h
  *
  *
  * @author Jim Kueneman

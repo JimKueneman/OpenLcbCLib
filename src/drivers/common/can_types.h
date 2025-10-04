@@ -112,11 +112,11 @@ extern "C" {
     
     typedef struct {
         
-        uint16_t alias: 12;
+        node_id_t node_id;
+        uint16_t alias: 12;   
         uint16_t is_duplicate: 1;
         uint16_t is_permitted: 1;
-        node_id_t node_id;
-        
+    
     } alias_mapping_t;
     
     typedef struct {

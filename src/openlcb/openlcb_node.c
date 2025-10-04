@@ -242,6 +242,12 @@ void OpenLcbNode_100ms_timer_tick(void) {
         _openlcb_nodes.node[i].timerticks = _openlcb_nodes.node[i].timerticks + 1;
 
     };
+    
+    if (_interface->on_100ms_timer_tick) {
+        
+        _interface->on_100ms_timer_tick();
+        
+    }
 
 }
 

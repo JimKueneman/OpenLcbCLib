@@ -85,6 +85,8 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 0);
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, statemachine_info->incoming_msg->mti, 2);
 
+    statemachine_info->outgoing_msg_valid = true;
+
 }
 
 void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info_t *statemachine_info) {
@@ -101,6 +103,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
         return;
 
     }
+
+    printf("Processing:  ");
 
     switch (statemachine_info->incoming_msg->mti) {
 
@@ -519,7 +523,11 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         default:
 
-            _interface->load_interaction_rejected(statemachine_info);
+            if (OpenLcbUtilities_is_addressed_message_for_node(statemachine_info->openlcb_node, statemachine_info->incoming_msg)) {
+
+                _interface->load_interaction_rejected(statemachine_info);
+
+            }
 
             break;
 
@@ -591,11 +599,11 @@ static bool _handle_try_pop_next_incoming_openlcb_message(void) {
     if (!_statemachine_info.incoming_msg) {
 
         _interface->lock_shared_resources();
-        
+
         _statemachine_info.incoming_msg = OpenLcbBufferFifo_pop();
-        
+
         _interface->unlock_shared_resources();
-      
+
         return true;
 
     }
@@ -613,17 +621,17 @@ static bool _handle_try_enumerate_first_node(void) {
         if (!_statemachine_info.openlcb_node) {
 
             _free_incoming_message(&_statemachine_info); // no nodes are allocated yet, free the message buffer
-            
+
             return true; // done
 
         }
-        
+
         if (_interface->does_node_process_msg(&_statemachine_info)) {
 
             _interface->process_main_statemachine(&_statemachine_info); // Do the processing of the incoming message on the node
 
         }
-        
+
         return true; // done
 
     }

@@ -50,6 +50,8 @@
 #include "../../../drivers/common/can_main_statemachine_handler.h"
 #include "../../../drivers/common/can_main_statemachine.h"
 
+#include "../../../drivers/alias_mappings.h"
+
 #include "../../../openlcb/openlcb_defines.h"
 #include "../../../openlcb/openlcb_types.h"
 #include "../../../openlcb/openlcb_utilities.h"
@@ -68,8 +70,10 @@
 
 void UartHandler_handle_rx(uint16_t code) {
 
-    T3CONbits.TON = 0; // Turn off Timer  don't count these dumps in the timing 
+ //   T3CONbits.TON = 0; // Turn off Timer  don't count these dumps in the timing 
 
+    alias_mapping_info_t *mapping_info = AliasMappings_get_alias_mapping_info();
+    
     switch (code) {
         case 'B':
         case 'b':
@@ -88,7 +92,7 @@ void UartHandler_handle_rx(uint16_t code) {
             
             printf("Max CAN FIFO depth: %d\n", Ecan1Helper_get_max_can_fifo_depth());
 
-            return;
+            break;
 
         case 'N':
         case 'n':
@@ -96,7 +100,7 @@ void UartHandler_handle_rx(uint16_t code) {
             if (OpenLcbNode_get_first(2))
                 PrintNode(OpenLcbNode_get_first(2));
 
-            return;
+            break;
 
         case 'H':
         case 'h':
@@ -104,11 +108,21 @@ void UartHandler_handle_rx(uint16_t code) {
             printf("B - Print Buffer Storage state\n");     
             printf("N - Print the state of the first allocated Node\n");
 
-            return;
+            break;
+            
+        case 'm':
+                
+            for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+                
+                printf("Index: %d, Alias: 0x%04X, NodeID: 0x%08llX\n", i, mapping_info->list[i].alias, mapping_info->list[i].node_id);
+                
+            }
+            
+            break;
 
     }
 
-    T3CONbits.TON = 1; // Turn on Timer 
+ //   T3CONbits.TON = 1; // Turn on Timer 
 
     return;
 

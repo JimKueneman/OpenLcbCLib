@@ -249,7 +249,7 @@ void PrintNode(openlcb_node_t* node) {
     printf("State Info\n");
     printf("  allocated = 0x%02X\n", node->state.allocated);
     printf("  permitted = 0x%02X\n", node->state.permitted);
-    printf("  initalized = 0x%02X\n", node->state.initalized);
+    printf("  initialized = 0x%02X\n", node->state.initalized);
     printf("  duplicate_id_detected = 0x%02X\n", node->state.duplicate_id_detected);
     printf("  openlcb_datagram_ack_sent = 0x%02X\n", node->state.openlcb_datagram_ack_sent);
     printf("  resend_datagram = 0x%02X\n", node->state.resend_datagram);
@@ -266,7 +266,7 @@ void PrintNode(openlcb_node_t* node) {
         printf("  null\n");
     printf("NodeLock ID: ");
     PrintInt64(node->lock_node);
-    printf("Timer Ticks: %d", node->timerticks);
+    printf("Timer Ticks: %u", node->timerticks);
      
 }
 

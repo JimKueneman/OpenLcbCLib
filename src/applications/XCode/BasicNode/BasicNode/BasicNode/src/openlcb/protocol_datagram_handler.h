@@ -112,9 +112,9 @@ typedef struct {
     void (*memory_write_under_mask_space_firmware_upgrade_message)(openlcb_statemachine_info_t *statemachine_info);
     
     // Commands
-    void (*memory_options_cmd_message)(openlcb_statemachine_info_t *statemachine_inf);
-    void (*memory_options_reply_message)(openlcb_statemachine_info_t *statemachine_inf);
-    void (*memory_get_address_space_info_message)(openlcb_statemachine_info_t *statemachine_inf);
+    void (*memory_options_cmd_message)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_options_reply_message)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_get_address_space_info_message)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_get_address_space_info_reply_not_present_message)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_get_address_space_info_reply_present_message)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_reserve_lock_message)(openlcb_statemachine_info_t *statemachine_info);
@@ -124,8 +124,6 @@ typedef struct {
     void (*memory_update_complete_message)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_reset_reboot_message)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_factory_reset_message)(openlcb_statemachine_info_t *statemachine_info);
-    
-    
     void (*send_datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
     
 } interface_protocol_datagram_handler_t;
@@ -143,7 +141,7 @@ extern void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statema
 
 extern void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info);
     
-extern void ProtocolDatagramHandler_100ms_time_tick(void);
+extern void ProtocolDatagramHandler_100ms_timer_tick(void);
 
 #ifdef	__cplusplus
 }
