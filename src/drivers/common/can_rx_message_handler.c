@@ -71,6 +71,7 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
         if (mti == MTI_DATAGRAM) {
 
             mti = MTI_DATAGRAM_REJECTED_REPLY;
+            
 
         } else {
 
@@ -141,7 +142,7 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t can_buffer_star
     target_can_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
     if (!target_can_msg) {
-
+ 
         _queue_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
 
         return;
@@ -168,6 +169,8 @@ void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
     openlcb_msg_t* target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_can_msg) {
+        
+    //    printf("CanRxMessageHandler_middle_frame (ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START) - REJECT\n");
 
         _queue_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
@@ -180,7 +183,7 @@ void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
 }
 
 void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
-
+    
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
@@ -188,7 +191,7 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     openlcb_msg_t * target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
     if (!target_can_msg) {
-
+ 
         _queue_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START);
 
         return;
@@ -196,6 +199,7 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     }
 
     CanUtilities_append_can_payload_to_openlcb_payload(target_can_msg, can_msg, can_buffer_start_index);
+    
     target_can_msg->state.inprocess = false;
 
     OpenLcbBufferList_release(target_can_msg);

@@ -96,12 +96,26 @@ uint16_t CanUtilities_extract_dest_alias_from_can_message(can_msg_t *can_msg) {
 
 uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
 
+    uint16_t mti = 0;
+
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
         case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
         case CAN_FRAME_TYPE_STREAM:
 
-            return (can_msg->identifier >> 12) & 0x0FFF;
+            mti = (can_msg->identifier >> 12) & 0x0FFF;
+
+            switch (mti) {
+
+                case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST:
+                case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE:
+                case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST:
+
+                    mti = MTI_PC_EVENT_REPORT_WITH_PAYLOAD;
+
+            }
+
+            return mti;
 
         case CAN_FRAME_TYPE_DATAGRAM_ONLY:
         case CAN_FRAME_TYPE_DATAGRAM_FIRST:
@@ -196,9 +210,9 @@ uint8_t CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg_t *openlcb_
 
     can_msg->payload_count = 0;
     uint8_t count = 0;
-    
+
     if (openlcb_msg->payload_count == 0) {
-        
+
         return 0;
     }
 

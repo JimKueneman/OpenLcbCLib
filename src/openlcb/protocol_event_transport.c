@@ -426,13 +426,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemac
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg);
         uint16_t payload_count = (statemachine_info->incoming_msg->payload_count - sizeof (event_id_t));
         
-        if (payload_count > LEN_EVENT_PAYLOAD) {
-            
-            payload_count = LEN_EVENT_PAYLOAD;
-            
-        }
-
-        _interface->on_pc_event_report_with_payload(statemachine_info->openlcb_node, &eventid, payload_count, (event_payload_t*) &statemachine_info->incoming_msg->payload[sizeof (event_id_t)]);
+        _interface->on_pc_event_report_with_payload(statemachine_info->openlcb_node, &eventid, payload_count, (event_payload_t*) statemachine_info->incoming_msg->payload[sizeof (event_id_t)]);
     }
 
     statemachine_info->outgoing_msg_valid = false;

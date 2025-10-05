@@ -162,7 +162,15 @@ void _can_rx_callback(can_msg_t* can_msg) {
 
     // Called when a CAN message is received
     
-    printf("Rx: 0x%08lX\n", can_msg->identifier);
+//    printf("Rx: 0x%08lX [", can_msg->identifier);
+//    
+//    for (int i = 0; i < can_msg->payload_count; i++) {
+//        
+//        printf("0x%04X ", can_msg->payload[i]);
+//        
+//    }
+//    
+//    printf("]\n");
     
     LED_BLUE = 1;
 
@@ -171,10 +179,10 @@ void _can_rx_callback(can_msg_t* can_msg) {
 void _can_tx_callback(can_msg_t* can_msg) {
 
     // Called when a CAN message is transmitted
+
+//    printf("Tx: 0x%08lX\n", can_msg->identifier);
     
     LED_YELLOW = 1;
-    
-    printf("Tx: 0x%08lX\n", can_msg->identifier);
        
 }
 
@@ -183,6 +191,36 @@ void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
     printf("Alias Allocation: 0x%02X  ", new_alias);
     printf("NodeID: 0x%04X%04X%04X\n\n", (uint16_t) (node_id >> 32), (uint16_t) (node_id >> 16), (uint16_t) node_id);
 
+}
+
+void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
+    
+//    printf("event with payload: data count = %d; Total count = %d\n", count, count + sizeof(*event_id));
+//    printf("event_id = 0x%08llX\n", *event_id);
+//    
+//    uint16_t i = 1;
+//    
+//    printf("[ ");
+//    while (i <= count) {
+//        
+//        if (i % 8 == 0) {
+//            
+//            printf("0x%02X ] ", (*payload)[i-1]);
+//            printf("\n");
+//            printf("[ ");
+//            
+//        } else {
+//
+//          printf("0x%02X, ", (*payload)[i-1]);
+//          
+//        }
+//          
+//        i++;
+//        
+//    }
+//
+//    printf("\n\n");
+    
 }
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
@@ -318,7 +356,7 @@ const  interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_e
     .on_producer_identified_reserved = NULL,
     .on_event_learn = NULL,
     .on_pc_event_report = NULL,
-    .on_pc_event_report_with_payload = NULL
+    .on_pc_event_report_with_payload = &_event_with_payload
     
 };
 
