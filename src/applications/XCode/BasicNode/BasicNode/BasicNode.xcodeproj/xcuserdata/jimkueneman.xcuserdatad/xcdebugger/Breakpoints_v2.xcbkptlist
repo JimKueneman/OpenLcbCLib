@@ -48,7 +48,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
             endingLineNumber = "145"
-            landmarkName = "_handle_duplicate_aliases()"
+            landmarkName = "_process_duplicate_aliases(alias_mapping_info)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

@@ -108,7 +108,7 @@ endforeach(testsourcefile ${TESTS})
 # Generate the HTML coverage report
 add_custom_command(OUTPUT gcovr/coverage.html
     COMMAND mkdir -p gcovr
-    COMMAND gcovr --html-details gcovr/coverage.html --exclude=_deps.* --exclude=.*_Test.* -r ${ROOT_DIR} .
+    COMMAND gcovr --gcov-ignore-parse-errors=all --html-details gcovr/coverage.html --exclude=_deps.* --exclude=.*_Test.* -r ${ROOT_DIR} .
     COMMAND ln -sf ${CMAKE_SOURCE_DIR}/build/gcovr/coverage.html ${CMAKE_SOURCE_DIR}/
     VERBATIM
 )

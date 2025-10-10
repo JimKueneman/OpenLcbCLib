@@ -239,7 +239,7 @@ void OpenLcbNode_100ms_timer_tick(void) {
 
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        _openlcb_nodes.node[i].timerticks = _openlcb_nodes.node[i].timerticks + 1;
+        _openlcb_nodes.node[i].timerticks++;
 
     };
     

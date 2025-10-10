@@ -186,9 +186,7 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .load_initialization_complete = &_load_initialization_complete,
     .load_producer_events = &_load_producer_events,
     .load_rid = &_load_rid,
-    .wait_200ms = &_wait_200ms
-
-};
+    .wait_200ms = &_wait_200ms};
 
 const interface_openlcb_node_t interface_openlcb_node = {};
 

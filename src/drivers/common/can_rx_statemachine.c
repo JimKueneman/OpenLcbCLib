@@ -331,9 +331,9 @@ static void _handle_can_type_frame(can_msg_t* can_msg) {
             
             // Stream message for one of our nodes
 
-            if (_interface->handle_stream) {
+            if (_interface->handle_stream_frame) {
 
-                _interface->handle_stream(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
+                _interface->handle_stream_frame(can_msg, OFFSET_DEST_ID_IN_IDENTIFIER, STREAM);
 
             }
 

@@ -120,7 +120,7 @@ extern "C" {
 
 #define LEN_MESSAGE_BYTES_BASIC 16 // most are 8 bytes but a few protocols take 2 frames like Traction
 #define LEN_MESSAGE_BYTES_DATAGRAM 72
-#define LEN_MESSAGE_BYTES_SNIP 256 // will cover Event with Payload as well
+#define LEN_MESSAGE_BYTES_SNIP 256 // will cover Events with Payload as well
 #define LEN_MESSAGE_BYTES_STREAM 512
 
 #define LEN_EVENT_ID 8
@@ -129,7 +129,7 @@ extern "C" {
 
 #define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
-#define LEN_EVENT_PAYLOAD 256
+#define LEN_EVENT_PAYLOAD LEN_MESSAGE_BYTES_SNIP
 
     typedef enum {
         BASIC,

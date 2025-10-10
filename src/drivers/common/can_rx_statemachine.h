@@ -51,7 +51,7 @@ typedef struct {
     void (*handle_first_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     void (*handle_middle_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
     void (*handle_last_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index);
-    void (*handle_stream)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
+    void (*handle_stream_frame)(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     void (*handle_rid_frame)(can_msg_t* can_msg);
     void (*handle_amd_frame)(can_msg_t* can_msg);
     void (*handle_ame_frame)(can_msg_t* can_msg);

@@ -66,6 +66,8 @@ extern "C" {
     extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
 
     extern void CanMainStateMachine_run(void);
+    
+    extern can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void);
 
 #ifdef	__cplusplus
 }

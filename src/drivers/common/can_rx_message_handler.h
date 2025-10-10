@@ -72,7 +72,7 @@ extern "C" {
 
     extern void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t offset, payload_type_enum data_type);
 
-    extern void CanRxMessageHandler_stream(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
+    extern void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     
     extern void CanRxMessageHandler_rid_frame(can_msg_t* can_msg);
     
