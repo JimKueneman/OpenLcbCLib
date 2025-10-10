@@ -140,7 +140,9 @@ static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info)
 
 }
 
-static void _handle_duplicate_aliases(void) {
+static bool _handle_duplicate_aliases(void) {
+    
+    bool result = false;
 
     _interface->lock_shared_resources();
 
@@ -149,10 +151,14 @@ static void _handle_duplicate_aliases(void) {
     if (alias_mapping_info->has_duplicate_alias) {
 
         _process_duplicate_aliases(alias_mapping_info);
+        
+        result = true;      
 
     }
 
     _interface->unlock_shared_resources();
+    
+    return result;
 
 }
 
