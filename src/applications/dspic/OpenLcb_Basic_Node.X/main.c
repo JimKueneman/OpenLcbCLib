@@ -144,14 +144,14 @@ uint16_t count = 0;
 
 void _100ms_timer_callback(void) {
 
-   // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
-    
+    // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
+
     count++;
-    
+
     if (count > 10) {
-        
+
         count = 0;
-        
+
         LED_BLUE = 0;
         LED_YELLOW = 0;
     }
@@ -161,17 +161,17 @@ void _100ms_timer_callback(void) {
 void _can_rx_callback(can_msg_t* can_msg) {
 
     // Called when a CAN message is received
-    
-//    printf("Rx: 0x%08lX [", can_msg->identifier);
-//    
-//    for (int i = 0; i < can_msg->payload_count; i++) {
-//        
-//        printf("0x%04X ", can_msg->payload[i]);
-//        
-//    }
-//    
-//    printf("]\n");
-    
+
+    //    printf("Rx: 0x%08lX [", can_msg->identifier);
+    //    
+    //    for (int i = 0; i < can_msg->payload_count; i++) {
+    //        
+    //        printf("0x%04X ", can_msg->payload[i]);
+    //        
+    //    }
+    //    
+    //    printf("]\n");
+
     LED_BLUE = 1;
 
 }
@@ -180,10 +180,10 @@ void _can_tx_callback(can_msg_t* can_msg) {
 
     // Called when a CAN message is transmitted
 
-//    printf("Tx: 0x%08lX\n", can_msg->identifier);
-    
+    //    printf("Tx: 0x%08lX\n", can_msg->identifier);
+
     LED_YELLOW = 1;
-       
+
 }
 
 void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
@@ -194,48 +194,48 @@ void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 }
 
 void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
-    
-//    printf("event with payload: data count = %d; Total count = %d\n", count, count + sizeof(*event_id));
-//    printf("event_id = 0x%08llX\n", *event_id);
-//    
-//    uint16_t i = 1;
-//    
-//    printf("[ ");
-//    while (i <= count) {
-//        
-//        if (i % 8 == 0) {
-//            
-//            printf("0x%02X ] ", (*payload)[i-1]);
-//            printf("\n");
-//            printf("[ ");
-//            
-//        } else {
-//
-//          printf("0x%02X, ", (*payload)[i-1]);
-//          
-//        }
-//          
-//        i++;
-//        
-//    }
-//
-//    printf("\n\n");
-    
+
+    //    printf("event with payload: data count = %d; Total count = %d\n", count, count + sizeof(*event_id));
+    //    printf("event_id = 0x%08llX\n", *event_id);
+    //    
+    //    uint16_t i = 1;
+    //    
+    //    printf("[ ");
+    //    while (i <= count) {
+    //        
+    //        if (i % 8 == 0) {
+    //            
+    //            printf("0x%02X ] ", (*payload)[i-1]);
+    //            printf("\n");
+    //            printf("[ ");
+    //            
+    //        } else {
+    //
+    //          printf("0x%02X, ", (*payload)[i-1]);
+    //          
+    //        }
+    //          
+    //        i++;
+    //        
+    //    }
+    //
+    //    printf("\n\n");
+
 }
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
-    
+
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
     .alias_mapping_register = &AliasMappings_register,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
     .on_alias_change = &_alias_change_callback
-    
+
 };
 
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
-    
+
     .init = &CanLoginMessageHandler_init,
     .generate_seed = &CanLoginMessageHandler_generate_seed,
     .generate_alias = &CanLoginMessageHandler_generate_alias,
@@ -248,22 +248,22 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .load_amd = &CanLoginMessageHandler_load_amd,
     .load_initialization_complete = &CanLoginMessageHandler_load_initialization_complete,
     .load_producer_events = &CanLoginMessageHandler_load_producer_events,
-    .load_consumer_events = &CanLoginMessageHandler_load_consumer_events, 
+    .load_consumer_events = &CanLoginMessageHandler_load_consumer_events,
 };
 
 const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
-    
+
     .openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer,
     .can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,  
-    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,  
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
     .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag
-    
+
 };
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
-    
+
     .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
     .handle_single_frame = &CanRxMessageHandler_single_frame,
     .handle_first_frame = &CanRxMessageHandler_first_frame,
@@ -276,40 +276,40 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_amr_frame = CanRxMessageHandler_amr_frame,
     .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
     .handle_cid_frame = CanRxMessageHandler_cid_frame,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,  
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
     .on_receive = &_can_rx_callback
-    
+
 };
 
 const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
-    
+
     .transmit_can_frame = &Ecan1Helper_transmit_can_frame, //  HARDWARE INTERFACE
     // Callback events
     .on_transmit = &_can_tx_callback
-    
+
 };
 
 const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
-    
+
     .is_tx_buffer_empty = Ecan1Helper_is_can_tx_buffer_clear, //  HARDWARE INTERFACE
     .handle_addressed_msg_frame = &CanTxMessageHandler_addressed_msg_frame,
     .handle_unaddressed_msg_frame = &CanTxMessageHandler_unaddressed_msg_frame,
     .handle_datagram_frame = &CanTxMessageHandler_datagram_frame,
     .handle_stream_frame = &CanTxMessageHandler_stream_frame,
     .handle_can_frame = &CanTxMessageHandler_can_frame
-    
+
 };
 
 
 const interface_can_main_statemachine_handler_t interface_can_main_statemachine_handler = {
-    
-    
+
+
 };
 
 const interface_can_main_statemachine_t interface_can_main_statemachine = {
-    
-    .lock_shared_resources = Ecan1Helper_pause_can_rx,   //  HARDWARE INTERFACE
+
+    .lock_shared_resources = Ecan1Helper_pause_can_rx, //  HARDWARE INTERFACE
     .unlock_shared_resources = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
     .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
@@ -318,31 +318,39 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
     .login_statemachine_run = &CanLoginStateMachine_run,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_unregister = &AliasMappings_unregister
-    
+    .alias_mapping_unregister = &AliasMappings_unregister,
+
+    .handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases,
+    .handle_outgoing_can_message = &CanMainStatemachine_handle_outgoing_can_message,
+    .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
+    .handle_login_outgoing_openlcb_message = &CanMainStatemachine_handle_login_outgoing_openlcb_message,
+    .handle_reenumerate_openlcb_message = &CanMainStatemachine_handle_reenumerate_openlcb_message,
+    .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
+
 };
 
 const interface_alias_mappings_t interface_alias_mappings = {
-    
-    
+
+
 };
 
 
 const interface_openlcb_node_t interface_openlcb_node = {
-    
+
     // Callback events
     .on_100ms_timer_tick = &_100ms_timer_callback
-  
+
 };
 
 const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_message_network = {
-    
+
 };
 
 
 // TODO Complete
-const  interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
-  
+const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
+
     // Callback events
     .on_consumer_range_identified = NULL,
     .on_consumer_identified_unknown = NULL,
@@ -357,12 +365,12 @@ const  interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_e
     .on_event_learn = NULL,
     .on_pc_event_report = NULL,
     .on_pc_event_report_with_payload = &_event_with_payload
-    
+
 };
 
 // TODO Complete
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
- 
+
     // MESSAGE NETWORK
     .message_network_initialization_complete = ProtocolMessageNetwork_handle_initialization_complete,
     .message_network_initialization_complete_simple = ProtocolMessageNetwork_handle_initialization_complete_simple,
@@ -371,19 +379,19 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .message_network_verified_node_id = &ProtocolMessageNetwork_handle_verified_node_id,
     .message_network_optional_interaction_rejected = &ProtocolMessageNetwork_handle_optional_interaction_rejected,
     .message_network_terminate_due_to_error = &ProtocolMessageNetwork_handle_terminate_due_to_error,
-    
+
     // PROTOCOL SUPPORT
     .message_network_protocol_support_inquiry = &ProtocolMessageNetwork_handle_protocol_support_inquiry,
     .message_network_protocol_support_reply = &ProtocolMessageNetwork_handle_protocol_support_reply,
-    
+
     // SNIP
     .snip_simple_node_info_request = &ProtocolSnip_handle_simple_node_info_request,
     .snip_simple_node_info_reply = &ProtocolSnip_handle_simple_node_info_reply,
-    
+
     // EVENTS
     .event_transport_consumer_identify = &ProtocolEventTransport_handle_consumer_identify,
     .event_transport_consumer_range_identified = &ProtocolEventTransport_handle_consumer_range_identified,
-    .event_transport_consumer_identified_unknown =&ProtocolEventTransport_handle_consumer_identified_unknown,
+    .event_transport_consumer_identified_unknown = &ProtocolEventTransport_handle_consumer_identified_unknown,
     .event_transport_consumer_identified_set = &ProtocolEventTransport_handle_consumer_identified_set,
     .event_transport_consumer_identified_clear = &ProtocolEventTransport_handle_consumer_identified_clear,
     .event_transport_consumer_identified_reserved = &ProtocolEventTransport_handle_consumer_identified_reserved,
@@ -398,52 +406,52 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .event_transport_learn = &ProtocolEventTransport_handle_event_learn,
     .event_transport_pc_report = &ProtocolEventTransport_handle_pc_event_report,
     .event_transport_pc_report_with_payload = &ProtocolEventTransport_handle_pc_event_report_with_payload,
-    
+
     // TRACTION
     .traction_control_command = NULL,
     .traction_control_reply = NULL,
-    
+
     // TRACTION SNIP
-   .simple_train_node_ident_info_request = NULL,
-   .simple_train_node_ident_info_reply = NULL,
-    
+    .simple_train_node_ident_info_request = NULL,
+    .simple_train_node_ident_info_reply = NULL,
+
     // DATAGRAM
     .datagram = NULL,
     .datagram_ok_reply = NULL,
     .datagram_rejected_reply = NULL,
-    
+
     // STREAM
     .stream_initiate_request = NULL,
     .stream_initiate_reply = NULL,
     .stream_send_data = NULL,
     .stream_data_proceed = NULL,
     .stream_data_complete = NULL,
-    
+
     // required
-    .lock_shared_resources = Ecan1Helper_pause_can_rx,   //  HARDWARE INTERFACE
-    .unlock_shared_resources = Ecan1Helper_resume_can_rx,   //  HARDWARE INTERFACE
+    .lock_shared_resources = Ecan1Helper_pause_can_rx, //  HARDWARE INTERFACE
+    .unlock_shared_resources = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_interaction_rejected = OpenLcbMainStatemachine_load_interaction_rejected,
-    
+
     // for test injection, leave null to use the default functions
     .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
     .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
-    
+
 };
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
-    
+
     .configuration_memory_read = &BasicNodeDrivers_config_mem_read
-    
+
 };
 
 // TODO Finish these interfaces
 // -------------------------------
 
 const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
-    
+
     // Memory Read Address Space
     .memory_read_space_config_description_info_message = NULL,
     .memory_read_space_all_message = NULL,
@@ -452,7 +460,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_space_acdi_user_message = NULL,
     .memory_read_space_traction_function_definition_info_message = NULL,
     .memory_read_space_traction_function_config_memory_message = NULL,
-   
+
     // Memory Read Ok Ok Address Space
     .memory_read_space_config_description_info_reply_ok_message = NULL,
     .memory_read_space_all_reply_ok_message = NULL,
@@ -461,7 +469,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_space_acdi_user_reply_ok_message = NULL,
     .memory_read_space_traction_function_definition_info_reply_ok_message = NULL,
     .memory_read_space_traction_function_config_memory_reply_ok_message = NULL,
-  
+
     // Memory Read Failed Reply Address Space
     .memory_read_space_config_description_info_reply_fail_message = NULL,
     .memory_read_space_all_reply_fail_message = NULL,
@@ -480,7 +488,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_space_traction_function_definition_info_message = NULL,
     .memory_write_space_traction_function_config_memory_message = NULL,
     .memory_write_space_firmware_upgrade_message = NULL,
-   
+
     // Memory Write Ok Reply Address Space
     .memory_write_space_config_description_info_reply_ok_message = NULL,
     .memory_write_space_all_reply_ok_message = NULL,
@@ -489,7 +497,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_space_acdi_user_reply_ok_message = NULL,
     .memory_write_space_traction_function_definition_info_reply_ok_message = NULL,
     .memory_write_space_traction_function_config_memory_reply_ok_message = NULL,
-   
+
     // Memory Write Fail Reply Address Space
     .memory_write_space_config_description_info_reply_fail_message = NULL,
     .memory_write_space_all_reply_fail_message = NULL,
@@ -498,7 +506,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_space_acdi_user_reply_fail_message = NULL,
     .memory_write_space_traction_function_definition_info_reply_fail_message = NULL,
     .memory_write_space_traction_function_config_memory_reply_fail_message = NULL,
-    
+
     // Memory Write Under Mask Address Space
     .memory_write_under_mask_space_config_description_info_message = NULL,
     .memory_write_under_mask_space_all_message = NULL,
@@ -508,7 +516,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_under_mask_space_traction_function_definition_info_message = NULL,
     .memory_write_under_mask_space_traction_function_config_memory_message = NULL,
     .memory_write_under_mask_space_firmware_upgrade_message = NULL,
-    
+
     // Commands
     .memory_options_cmd_message = NULL,
     .memory_options_reply_message = NULL,
@@ -523,19 +531,19 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_reset_reboot_message = NULL,
     .memory_factory_reset_message = NULL,
     .send_datagram_rejected_reply = NULL
-  
+
 };
 
 const interface_openlcb_application_t interface_openlcb_application = {
-    
+
     .transmit_openlcb_message = NULL,
     .configuration_memory_read = NULL,
     .configuration_memory_write = NULL
-    
+
 };
 
 interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_protocol_datagram_config_mem_handler = {
-    
+
     .configuration_memory_read = NULL,
     .configuration_memory_write = NULL,
     .reboot = NULL,
@@ -553,9 +561,8 @@ interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_proto
     .on_config_mem_write = NULL,
     .on_config_mem_freeze_firmware_update = NULL,
     .on_config_mem_unfreeze_firmware_update = NULL
-    
-};
 
+};
 
 void _initialize_io_early_for_test(void) {
 
@@ -577,24 +584,21 @@ void _initialize_io_early_for_test(void) {
 
 }
 
-
-
-
 int main(void) {
-    
+
     _initialize_io_early_for_test();
-    
+
     Ecan1Helper_initialize();
     BasicNodeDrivers_initialize();
-  
+
     printf("MCU Initialized\n");
-   
+
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
 
     CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
     CanRxStatemachine_initialize(&interface_can_rx_statemachine);
-    
+
     CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
     CanTxStatemachine_initialize(&interface_can_tx_statemachine);
 
@@ -603,30 +607,30 @@ int main(void) {
 
     CanMainStatemachineHandler_initialize(&interface_can_main_statemachine_handler);
     CanMainStatemachine_initialize(&interface_can_main_statemachine);
-    
+
     AliasMappings_initialize(&interface_alias_mappings);
 
     OpenLcbBufferStore_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbBufferFifo_initialize();
-    
+
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
     ProtocolDatagramConfigMemHandler_initialize(&interface_openlcb_protocol_datagram_config_mem_handler);
     ProtocolDatagramHandler_initialize(&interface_protocol_datagram_handler);
     ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
     ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
-    
+
     OpenLcbNode_initialize(&interface_openlcb_node);
-    
+
     OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
-    
+
     OpenLcbApplication_initialize(&interface_openlcb_application);
 
     // We always boot and reallocate the alias
     openlcb_node_t* node = OpenLcbNode_allocate(0x050101010707, &NodeParameters_main_node);
 
     printf("Does it work?\n");
-   
+
     while (1) {
 
         // Run the main Openlcb/LCC engine

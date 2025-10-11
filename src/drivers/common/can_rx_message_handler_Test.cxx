@@ -169,6 +169,48 @@ void _can_login_statemachine_run(can_statemachine_info_t *can_statemachine_info)
 {
 }
 
+bool _handle_duplicate_aliases(void)
+{
+  
+    return CanMainStatemachine_handle_duplicate_aliases();
+}
+
+bool _handle_login_outgoing_can_message(void)
+{
+
+    return CanMainStatemachine_handle_login_outgoing_can_message();
+}
+
+bool _handle_login_outgoing_openlcb_message(void)
+{
+
+    return CanMainStatemachine_handle_login_outgoing_openlcb_message();
+}
+
+bool _handle_outgoing_can_message(void)
+{
+
+    return CanMainStatemachine_handle_outgoing_can_message();
+}
+
+bool _handle_reenumerate_openlcb_message(void)
+{
+
+    return CanMainStatemachine_handle_reenumerate_openlcb_message();
+}
+
+bool _handle_try_enumerate_first_node(void)
+{
+
+    return CanMainStatemachine_handle_try_enumerate_first_node();
+}
+
+bool _handle_try_enumerate_next_node(void)
+{
+
+    return CanMainStatemachine_handle_try_enumerate_next_node();
+}
+
 const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
@@ -180,7 +222,15 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .send_can_message = &_send_can_message,
     .send_openlcb_message = &_send_openlcb_message,
-    .unlock_shared_resources = &_unlock_shared_resources};
+    .unlock_shared_resources = &_unlock_shared_resources,
+
+    .handle_duplicate_aliases = &_handle_duplicate_aliases,
+    .handle_login_outgoing_can_message = &_handle_login_outgoing_can_message,
+    .handle_login_outgoing_openlcb_message = &_handle_login_outgoing_openlcb_message,
+    .handle_outgoing_can_message = &_handle_outgoing_can_message,
+    .handle_reenumerate_openlcb_message = &_handle_reenumerate_openlcb_message,
+    .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node};
 
 const interface_alias_mappings_t interface_alias_mappings = {
 

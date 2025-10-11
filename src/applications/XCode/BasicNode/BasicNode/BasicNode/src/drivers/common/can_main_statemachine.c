@@ -57,17 +57,7 @@
 
 static interface_can_main_statemachine_t *_interface;
 
-static can_statemachine_info_t can_statemachine_info = {
-    .openlcb_node = NULL,
-    .login_outgoing_can_msg = NULL,
-    .login_outgoing_can_msg_valid = false,
-    .login_outgoing_openlcb_msg = NULL,
-    .login_outgoing_openlcb_msg_valid = false,
-    .outgoing_can_msg = NULL,
-
-};
-
-
+static can_statemachine_info_t _can_statemachine_info;
 static can_msg_t _can_msg;
 static openlcb_msg_t _openlcb_msg;
 static payload_basic_t _openlcb_payload;
@@ -76,30 +66,29 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
 
     _interface = (interface_can_main_statemachine_t*) interface_can_main_statemachine;
 
-    can_statemachine_info.login_outgoing_can_msg = &_can_msg;
-    can_statemachine_info.login_outgoing_openlcb_msg = &_openlcb_msg;
-
     CanUtilities_clear_can_message(&_can_msg);
     OpenLcbUtilities_clear_openlcb_message(&_openlcb_msg);
     _openlcb_msg.payload = (openlcb_payload_t*) & _openlcb_payload;
     _openlcb_msg.state.allocated = true;
     _openlcb_msg.payload_type = BASIC;
 
+    _can_statemachine_info.login_outgoing_can_msg = &_can_msg;
+    _can_statemachine_info.login_outgoing_openlcb_msg = &_openlcb_msg;
+    _can_statemachine_info.openlcb_node = NULL;
+    _can_statemachine_info.login_outgoing_can_msg_valid = false;
+    _can_statemachine_info.login_outgoing_openlcb_msg_valid = false;
+    _can_statemachine_info.enumerating = false;
+    _can_statemachine_info.outgoing_can_msg = NULL;
+
 }
 
 static void _reset_node(openlcb_node_t *openlcb_node) {
-    
-    
-     
-    printf("_reset_node: 0x%p\n", openlcb_node);
-    
+
     if (!openlcb_node) {
-        
+
         return;
-        
+
     }
-    
-    printf("openlcb_node->alias: 0x%04X\n", openlcb_node->alias);
 
     openlcb_node->alias = 0x00;
     openlcb_node->state.permitted = false;
@@ -125,27 +114,35 @@ static void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
 
 }
 
-static void _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info) {
+static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info) {
+
+    bool result = false;
 
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         uint16_t alias = alias_mapping_info->list[i].alias;
 
         if ((alias > 0) && alias_mapping_info->list[i].is_duplicate) {
- 
+
             _interface->alias_mapping_unregister(alias);
-    
+
             _reset_node(_interface->openlcb_node_find_by_alias(alias));
 
+            result = true;
+
         }
-        
+
     }
-    
+
     alias_mapping_info->has_duplicate_alias = false;
+
+    return result;
 
 }
 
-static void _handle_duplicate_aliases(void) {
+bool CanMainStatemachine_handle_duplicate_aliases(void) {
+
+    bool result = false;
 
     _interface->lock_shared_resources();
 
@@ -155,19 +152,23 @@ static void _handle_duplicate_aliases(void) {
 
         _process_duplicate_aliases(alias_mapping_info);
 
+        result = true;
+
     }
 
     _interface->unlock_shared_resources();
 
+    return result;
+
 }
 
-static bool _handle_login_outgoing_can_message(void) {
+bool CanMainStatemachine_handle_login_outgoing_can_message(void) {
 
-    if (can_statemachine_info.login_outgoing_can_msg_valid) {
+    if (_can_statemachine_info.login_outgoing_can_msg_valid) {
 
-        if (_interface->send_can_message(can_statemachine_info.login_outgoing_can_msg)) {
+        if (_interface->send_can_message(_can_statemachine_info.login_outgoing_can_msg)) {
 
-            can_statemachine_info.login_outgoing_can_msg_valid = false;
+            _can_statemachine_info.login_outgoing_can_msg_valid = false;
 
         } else {
 
@@ -180,13 +181,13 @@ static bool _handle_login_outgoing_can_message(void) {
 
 }
 
-static bool _handle_login_outgoing_openlcb_message(void) {
+bool CanMainStatemachine_handle_login_outgoing_openlcb_message(void) {
 
-    if (can_statemachine_info.login_outgoing_openlcb_msg_valid) {
+    if (_can_statemachine_info.login_outgoing_openlcb_msg_valid) {
 
-        if (_interface->send_openlcb_message(can_statemachine_info.login_outgoing_openlcb_msg)) {
+        if (_interface->send_openlcb_message(_can_statemachine_info.login_outgoing_openlcb_msg)) {
 
-            can_statemachine_info.login_outgoing_openlcb_msg_valid = false;
+            _can_statemachine_info.login_outgoing_openlcb_msg_valid = false;
 
         } else {
 
@@ -200,29 +201,29 @@ static bool _handle_login_outgoing_openlcb_message(void) {
 
 }
 
-static bool _handle_outgoing_can_message(void) {
+bool CanMainStatemachine_handle_outgoing_can_message(void) {
 
-    if (!can_statemachine_info.outgoing_can_msg) {
+    if (!_can_statemachine_info.outgoing_can_msg) {
 
         _interface->lock_shared_resources();
 
-        can_statemachine_info.outgoing_can_msg = CanBufferFifo_pop();
+        _can_statemachine_info.outgoing_can_msg = CanBufferFifo_pop();
 
         _interface->unlock_shared_resources();
 
     }
 
-    if (can_statemachine_info.outgoing_can_msg) {
+    if (_can_statemachine_info.outgoing_can_msg) {
 
-        if (_interface->send_can_message(can_statemachine_info.outgoing_can_msg)) {
+        if (_interface->send_can_message(_can_statemachine_info.outgoing_can_msg)) {
 
             _interface->lock_shared_resources();
 
-            CanBufferStore_free_buffer(can_statemachine_info.outgoing_can_msg);
+            CanBufferStore_free_buffer(_can_statemachine_info.outgoing_can_msg);
 
             _interface->unlock_shared_resources();
 
-            can_statemachine_info.outgoing_can_msg = NULL;
+            _can_statemachine_info.outgoing_can_msg = NULL;
 
         } else {
 
@@ -236,19 +237,19 @@ static bool _handle_outgoing_can_message(void) {
 
 }
 
-static bool _handle_reenumerate_openlcb_message(void) {
+bool CanMainStatemachine_handle_reenumerate_openlcb_message(void) {
 
-    if (can_statemachine_info.enumerating) {
+    if (_can_statemachine_info.enumerating) {
 
         // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-        if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
 
-            _run_statemachine(&can_statemachine_info);
+            _run_statemachine(&_can_statemachine_info);
 
         } else {
 
-            _interface->login_statemachine_run(&can_statemachine_info);
+            _interface->login_statemachine_run(&_can_statemachine_info);
 
         }
 
@@ -260,31 +261,31 @@ static bool _handle_reenumerate_openlcb_message(void) {
 
 }
 
-static bool _handle_try_enumerate_first_node(void) {
+bool CanMainStatemachine_handle_try_enumerate_first_node(void) {
 
-    if (!can_statemachine_info.openlcb_node) {
+    if (!_can_statemachine_info.openlcb_node) {
 
-        can_statemachine_info.openlcb_node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+        _can_statemachine_info.openlcb_node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
-        if (!can_statemachine_info.openlcb_node) {
+        if (!_can_statemachine_info.openlcb_node) {
 
             return true; // done, nothing to do
 
         }
-       
+
         // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-        if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
+        if (_can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
 
-      //        printf("_handle_try_enumerate_first_node: _run_statemachine\n");
-            
-            _run_statemachine(&can_statemachine_info);
+            //        printf("_handle_try_enumerate_first_node: _run_statemachine\n");
+
+            _run_statemachine(&_can_statemachine_info);
 
         } else {
 
-       //     printf("_handle_try_enumerate_first_node: login_statemachine_run\n");
-            
-            _interface->login_statemachine_run(&can_statemachine_info);
+            //     printf("_handle_try_enumerate_first_node: login_statemachine_run\n");
+
+            _interface->login_statemachine_run(&_can_statemachine_info);
 
         }
 
@@ -296,11 +297,11 @@ static bool _handle_try_enumerate_first_node(void) {
 
 }
 
-static bool _handle_try_enumerate_next_node(void) {
-  
-    can_statemachine_info.openlcb_node = _interface->openlcb_node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 
-    if (!can_statemachine_info.openlcb_node) {
+    _can_statemachine_info.openlcb_node = _interface->openlcb_node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
+
+    if (!_can_statemachine_info.openlcb_node) {
 
         return true; // done, nothing to do
 
@@ -308,17 +309,17 @@ static bool _handle_try_enumerate_next_node(void) {
 
     // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-    if (can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
-        
-    //    printf("_handle_try_enumerate_next_node: _run_statemachine\n");
+    if (_can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
 
-        _run_statemachine(&can_statemachine_info);
+        //    printf("_handle_try_enumerate_next_node: _run_statemachine\n");
+
+        _run_statemachine(&_can_statemachine_info);
 
     } else {
 
-     //   printf("_handle_try_enumerate_next_node: _run_statemachine\n");
-        
-        _interface->login_statemachine_run(&can_statemachine_info);
+        //   printf("_handle_try_enumerate_next_node: _run_statemachine\n");
+
+        _interface->login_statemachine_run(&_can_statemachine_info);
 
     }
 
@@ -328,42 +329,52 @@ static bool _handle_try_enumerate_next_node(void) {
 
 void CanMainStateMachine_run(void) {
 
-    _handle_duplicate_aliases();
+    if (_interface->handle_duplicate_aliases()) {
 
-    if (_handle_outgoing_can_message()) {
+        return;
+        
+    }
+
+    if (_interface->handle_outgoing_can_message()) {
 
         return;
 
     }
 
-    if (_handle_login_outgoing_can_message()) {
+    if (_interface->handle_login_outgoing_can_message()) {
 
         return;
 
     }
 
-    if (_handle_login_outgoing_openlcb_message()) {
+    if (_interface->handle_login_outgoing_openlcb_message()) {
 
         return;
 
     }
 
-    if (_handle_reenumerate_openlcb_message()) {
+    if (_interface->handle_reenumerate_openlcb_message()) {
 
         return;
 
     }
 
-    if (_handle_try_enumerate_first_node()) {
+    if (_interface->handle_try_enumerate_first_node()) {
 
         return;
 
     }
 
-    if (_handle_try_enumerate_next_node()) {
+    if (_interface->handle_try_enumerate_next_node()) {
 
         return;
 
     }
+
+}
+
+can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
+
+    return (&_can_statemachine_info);
 
 }

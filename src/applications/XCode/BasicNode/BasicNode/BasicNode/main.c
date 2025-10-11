@@ -93,7 +93,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_first_frame = &CanRxMessageHandler_first_frame,
     .handle_middle_frame = &CanRxMessageHandler_middle_frame,
     .handle_last_frame = &CanRxMessageHandler_last_frame,
-    .handle_stream = &CanRxMessageHandler_stream,
+    .handle_stream_frame = &CanRxMessageHandler_stream_frame,
     .handle_rid_frame = CanRxMessageHandler_rid_frame,
     .handle_amd_frame = CanRxMessageHandler_amd_frame,
     .handle_ame_frame = CanRxMessageHandler_ame_frame,
@@ -136,7 +136,15 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
     .login_statemachine_run = &CanLoginStateMachine_run,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_unregister = &AliasMappings_unregister
+    .alias_mapping_unregister = &AliasMappings_unregister,
+    
+    .handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases,
+    .handle_outgoing_can_message = &CanMainStatemachine_handle_outgoing_can_message,
+    .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
+    .handle_login_outgoing_openlcb_message = &CanMainStatemachine_handle_login_outgoing_openlcb_message,
+    .handle_reenumerate_openlcb_message = &CanMainStatemachine_handle_reenumerate_openlcb_message,
+    .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
     
 };
 
