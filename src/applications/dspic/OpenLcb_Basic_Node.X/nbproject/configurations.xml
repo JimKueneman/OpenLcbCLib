@@ -9,7 +9,6 @@
           <itemPath>../../../drivers/common/can_rx_statemachine.h</itemPath>
           <itemPath>../../../drivers/common/can_utilities.h</itemPath>
           <itemPath>../../../drivers/common/can_login_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_main_statemachine_handler.h</itemPath>
           <itemPath>../../../drivers/common/can_types.h</itemPath>
           <itemPath>../../../drivers/common/can_tx_statemachine.h</itemPath>
           <itemPath>../../../drivers/common/can_buffer_store.h</itemPath>
@@ -85,7 +84,6 @@
           <itemPath>../../../drivers/common/can_login_statemachine.c</itemPath>
           <itemPath>../../../drivers/common/can_tx_statemachine.c</itemPath>
           <itemPath>../../../drivers/common/can_buffer_store.c</itemPath>
-          <itemPath>../../../drivers/common/can_main_statemachine_handler.c</itemPath>
         </logicalFolder>
         <itemPath>../../../drivers/alias_mappings.c</itemPath>
       </logicalFolder>

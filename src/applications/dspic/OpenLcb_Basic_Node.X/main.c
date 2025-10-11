@@ -113,7 +113,6 @@
 #include "../../../drivers/common/can_rx_statemachine.h"
 #include "../../../drivers/common/can_tx_message_handler.h"
 #include "../../../drivers/common/can_tx_statemachine.h"
-#include "../../../drivers/common/can_main_statemachine_handler.h"
 #include "../../../drivers/common/can_main_statemachine.h"
 
 #include "../../../openlcb/openlcb_defines.h"
@@ -296,12 +295,6 @@ const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
     .handle_datagram_frame = &CanTxMessageHandler_datagram_frame,
     .handle_stream_frame = &CanTxMessageHandler_stream_frame,
     .handle_can_frame = &CanTxMessageHandler_can_frame
-
-};
-
-
-const interface_can_main_statemachine_handler_t interface_can_main_statemachine_handler = {
-
 
 };
 
@@ -609,7 +602,6 @@ int main(void) {
     CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
     CanLoginStateMachine_initialize(&interface_can_login_state_machine);
 
-    CanMainStatemachineHandler_initialize(&interface_can_main_statemachine_handler);
     CanMainStatemachine_initialize(&interface_can_main_statemachine);
 
     AliasMappings_initialize(&interface_alias_mappings);
