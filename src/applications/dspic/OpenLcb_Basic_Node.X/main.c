@@ -303,7 +303,6 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .lock_shared_resources = Ecan1Helper_pause_can_rx, //  HARDWARE INTERFACE
     .unlock_shared_resources = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
-    .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
@@ -316,11 +315,6 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
     .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
-
-};
-
-const interface_alias_mappings_t interface_alias_mappings = {
-
 
 };
 
@@ -604,7 +598,7 @@ int main(void) {
 
     CanMainStatemachine_initialize(&interface_can_main_statemachine);
 
-    AliasMappings_initialize(&interface_alias_mappings);
+    AliasMappings_initialize();
 
     OpenLcbBufferStore_initialize();
     OpenLcbBufferList_initialize();

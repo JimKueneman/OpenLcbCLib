@@ -47,7 +47,6 @@
 #include "../../../drivers/common/can_rx_statemachine.h"
 #include "../../../drivers/common/can_tx_message_handler.h"
 #include "../../../drivers/common/can_tx_statemachine.h"
-#include "../../../drivers/common/can_main_statemachine_handler.h"
 #include "../../../drivers/common/can_main_statemachine.h"
 
 #include "../../../drivers/alias_mappings.h"

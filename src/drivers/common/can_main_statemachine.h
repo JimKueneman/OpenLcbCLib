@@ -52,7 +52,6 @@ extern "C" {
         void (*lock_shared_resources)(void);
         void (*unlock_shared_resources)(void);
         bool (*send_can_message)(can_msg_t *msg);
-        bool (*send_openlcb_message)(openlcb_msg_t *openlcb_msg);
         openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
         openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
         openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);

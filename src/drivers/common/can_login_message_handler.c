@@ -86,9 +86,8 @@ static uint16_t _generate_alias(uint64_t seed) {
 void CanLoginMessageHandler_init(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->seed = can_statemachine_info->openlcb_node->id;
-
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS; // Jump over Generate Seed that only is if we have an Alias conflict and have to jump back
-
+    
 }
 
 void CanLoginMessageHandler_generate_seed(can_statemachine_info_t *can_statemachine_info) {
@@ -157,7 +156,7 @@ void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine
 
 void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine_info) {
 
-    if (can_statemachine_info->openlcb_node->timerticks > 3) {
+    if (can_statemachine_info->openlcb_node->timerticks > 2) {
 
         can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_RESERVE_ID;
 

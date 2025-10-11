@@ -33,19 +33,15 @@
 bool lock_shared_resources_called = false;
 bool unlock_shared_resources_called = false;
 bool send_can_message_called = false;
-bool send_openlcb_message_called = false;
 bool node_find_node_by_alias_called = false;
 bool node_get_first_called = false;
 bool node_get_next_called = false;
 bool login_statemachine_run_called = false;
 bool send_can_message_enabled = true;
-bool send_openlcb_message_enabled = true;
 bool alias_mapping_get_alias_mapping_info_called = false;
 bool handle_duplicate_aliases_called = false;
 bool handle_login_outgoing_can_message_called = false;
-bool handle_login_outgoing_openlcb_message_called = false;
 bool handle_outgoing_can_message_called = false;
-bool handle_reenumerate_openlcb_message_called = false;
 bool handle_try_enumerate_first_node_called = false;
 bool handle_try_enumerate_next_node_called = false;
 
@@ -158,21 +154,6 @@ bool _send_can_message(can_msg_t *msg)
         CanUtilities_copy_can_message(msg, &send_can_msg);
 
         return true;
-
-    }
-
-    return false;
-}
-
-bool _send_openlcb_message(openlcb_msg_t *msg)
-{
-
-    send_openlcb_message_called = true;
-
-    if (send_openlcb_message_enabled)
-    {
-
-        return true;
     }
 
     return false;
@@ -228,22 +209,6 @@ bool _handle_login_outgoing_can_message(void)
     return CanMainStatemachine_handle_login_outgoing_can_message();
 }
 
-bool _handle_login_outgoing_openlcb_message(void)
-{
-
-    handle_login_outgoing_openlcb_message_called = true;
-
-    return CanMainStatemachine_handle_login_outgoing_openlcb_message();
-}
-
-bool _handle_reenumerate_openlcb_message(void)
-{
-
-    handle_reenumerate_openlcb_message_called = true;
-
-    return CanMainStatemachine_handle_reenumerate_openlcb_message();
-}
-
 bool _handle_try_enumerate_first_node(void)
 {
 
@@ -270,14 +235,11 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .openlcb_node_get_first = &_openlcb_node_get_first,
     .openlcb_node_get_next = &_openlcb_node_get_next,
     .send_can_message = &_send_can_message,
-    .send_openlcb_message = &_send_openlcb_message,
     .unlock_shared_resources = &_unlock_shared_resources,
 
     .handle_duplicate_aliases = &_handle_duplicate_aliases,
     .handle_login_outgoing_can_message = &_handle_login_outgoing_can_message,
-    .handle_login_outgoing_openlcb_message = &_handle_login_outgoing_openlcb_message,
     .handle_outgoing_can_message = &_handle_outgoing_can_message,
-    .handle_reenumerate_openlcb_message = &_handle_reenumerate_openlcb_message,
     .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node};
 
@@ -327,19 +289,15 @@ void _reset_variables(void)
     lock_shared_resources_called = false;
     unlock_shared_resources_called = false;
     send_can_message_called = false;
-    send_openlcb_message_called = false;
     node_find_node_by_alias_called = false;
     node_get_first_called = false;
     node_get_next_called = false;
     login_statemachine_run_called = false;
     send_can_message_enabled = true;
-    send_openlcb_message_enabled = true;
     alias_mapping_get_alias_mapping_info_called = false;
     handle_duplicate_aliases_called = false;
     handle_login_outgoing_can_message_called = false;
-    handle_login_outgoing_openlcb_message_called = false;
     handle_outgoing_can_message_called = false;
-    handle_reenumerate_openlcb_message_called = false;
     handle_try_enumerate_first_node_called = false;
     handle_try_enumerate_next_node_called = false;
 }
@@ -363,8 +321,6 @@ TEST(CanMainStatemachine, run_empty_node_list)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
 }
@@ -384,8 +340,6 @@ TEST(CanMainStatemachine, run_node_list_single)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == openlcb_node_1);
@@ -398,8 +352,6 @@ TEST(CanMainStatemachine, run_node_list_single)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_TRUE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == nullptr);
@@ -421,8 +373,6 @@ TEST(CanMainStatemachine, run_node_list_mulitiple)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == openlcb_node_1);
@@ -436,8 +386,6 @@ TEST(CanMainStatemachine, run_node_list_mulitiple)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_TRUE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == openlcb_node_2);
@@ -451,8 +399,6 @@ TEST(CanMainStatemachine, run_node_list_mulitiple)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_TRUE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == nullptr);
@@ -466,8 +412,6 @@ TEST(CanMainStatemachine, run_node_list_mulitiple)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_TRUE(handle_login_outgoing_can_message_called);
-    EXPECT_TRUE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_TRUE(handle_reenumerate_openlcb_message_called);
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == openlcb_node_1);
@@ -500,8 +444,6 @@ TEST(CanMainStatemachine, process_outgoing_can_message)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_FALSE(handle_login_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_FALSE(handle_reenumerate_openlcb_message_called);
     EXPECT_FALSE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(send_can_message_called);
@@ -517,8 +459,6 @@ TEST(CanMainStatemachine, process_outgoing_can_message)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_FALSE(handle_login_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_FALSE(handle_reenumerate_openlcb_message_called);
     EXPECT_FALSE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(send_can_message_called);
@@ -547,25 +487,6 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
 
     send_can_message_enabled = false;
 
-     CanMainStateMachine_run();
-
-    EXPECT_TRUE(lock_shared_resources_called);
-    EXPECT_TRUE(unlock_shared_resources_called);
-    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
-    EXPECT_TRUE(handle_duplicate_aliases_called);
-    EXPECT_TRUE(handle_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_FALSE(handle_reenumerate_openlcb_message_called);
-    EXPECT_FALSE(handle_try_enumerate_first_node_called);
-    EXPECT_FALSE(handle_try_enumerate_next_node_called);
-    EXPECT_TRUE(send_can_message_called);
-
-     EXPECT_EQ(CanBufferStore_messages_allocated(), 2);
-
-    send_can_message_enabled = true;
-
-     _reset_variables();
     CanMainStateMachine_run();
 
     EXPECT_TRUE(lock_shared_resources_called);
@@ -574,8 +495,23 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_FALSE(handle_login_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_FALSE(handle_reenumerate_openlcb_message_called);
+    EXPECT_FALSE(handle_try_enumerate_first_node_called);
+    EXPECT_FALSE(handle_try_enumerate_next_node_called);
+    EXPECT_TRUE(send_can_message_called);
+
+    EXPECT_EQ(CanBufferStore_messages_allocated(), 2);
+
+    send_can_message_enabled = true;
+
+    _reset_variables();
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_TRUE(handle_outgoing_can_message_called);
+    EXPECT_FALSE(handle_login_outgoing_can_message_called);
     EXPECT_FALSE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(send_can_message_called);
@@ -583,7 +519,7 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
     EXPECT_TRUE(compare_can_msg(&send_can_msg, 0x19490AAA, 0, nullptr));
     _reset_variables();
 
-     _reset_variables();
+    _reset_variables();
     CanMainStateMachine_run();
 
     EXPECT_TRUE(lock_shared_resources_called);
@@ -592,15 +528,12 @@ TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_TRUE(handle_outgoing_can_message_called);
     EXPECT_FALSE(handle_login_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_FALSE(handle_reenumerate_openlcb_message_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(send_can_message_called);
-    
+
     EXPECT_TRUE(compare_can_msg(&send_can_msg, 0x19170AAA, 0, nullptr));
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_EQ(CanBufferStore_messages_allocated(), 0);
-
 }
 
 TEST(CanMainStatemachine, duplicate_alias)
@@ -627,8 +560,6 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_TRUE(handle_duplicate_aliases_called);
     EXPECT_FALSE(handle_outgoing_can_message_called);
     EXPECT_FALSE(handle_login_outgoing_can_message_called);
-    EXPECT_FALSE(handle_login_outgoing_openlcb_message_called);
-    EXPECT_FALSE(handle_reenumerate_openlcb_message_called);
     EXPECT_FALSE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
 

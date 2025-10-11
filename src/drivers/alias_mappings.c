@@ -43,68 +43,65 @@
 #include "../openlcb/openlcb_types.h"
 
 
-static interface_alias_mappings_t *_interface;
 static alias_mapping_info_t _alias_mapping_info;
 
-void AliasMappings_initialize(const interface_alias_mappings_t *interface_alias_mappings) {
-
-    _interface = (interface_alias_mappings_t*) interface_alias_mappings;
+void AliasMappings_initialize(void) {
 
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         _alias_mapping_info.list[i].alias = 0x00;
-        _alias_mapping_info.list[i].node_id = 0x00;    
+        _alias_mapping_info.list[i].node_id = 0x00;
         _alias_mapping_info.list[i].is_duplicate = false;
         _alias_mapping_info.list[i].is_permitted = false;
 
     }
-    
+
     _alias_mapping_info.has_duplicate_alias = false;
 
 }
 
 alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void) {
-    
+
     return (&_alias_mapping_info);
-    
+
 }
 
 void AliasMappings_set_has_duplicate_alias_flag(void) {
-    
+
     _alias_mapping_info.has_duplicate_alias = true;
-    
+
 }
 
 alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id) {
-    
+
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if ((_alias_mapping_info.list[i].alias == 0x00) || (_alias_mapping_info.list[i].node_id == node_id)) {
- 
+
             _alias_mapping_info.list[i].alias = alias;
             _alias_mapping_info.list[i].node_id = node_id;
-            
+
             return &_alias_mapping_info.list[i];
 
         }
 
     }
-    
+
     return NULL;
 
 }
 
 void AliasMappings_unregister(uint16_t alias) {
- 
+
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (_alias_mapping_info.list[i].alias == alias) {
-           
+
             _alias_mapping_info.list[i].alias = 0x00;
             _alias_mapping_info.list[i].node_id = 0x00;
             _alias_mapping_info.list[i].is_duplicate = false;
             _alias_mapping_info.list[i].is_permitted = false;
-            
+
             break;
 
         }
@@ -116,15 +113,15 @@ void AliasMappings_unregister(uint16_t alias) {
 alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
 
     for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
-     
+
         if (_alias_mapping_info.list[i].alias == alias) {
-          
+
             return &_alias_mapping_info.list[i];
 
         }
 
     }
-    
+
     return NULL;
 
 }
@@ -141,7 +138,7 @@ alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id) {
         }
 
     }
-    
+
     return NULL;
 
 }

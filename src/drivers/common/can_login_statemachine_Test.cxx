@@ -93,9 +93,6 @@ bool _load_cid04_called = false;
 bool _wait_200ms_called = false;
 bool _load_rid_called = false;
 bool _load_amd_called = false;
-bool _load_initialization_complete_called = false;
-bool _load_producer_events_called = false;
-bool _load_consumer_events_called = false;
 
 uint16_t called_mti = 0;
 
@@ -154,24 +151,6 @@ void _load_amd(can_statemachine_info_t *can_statemachine_info)
     _load_amd_called = true;
 }
 
-void _load_initialization_complete(can_statemachine_info_t *can_statemachine_info)
-{
-
-    _load_initialization_complete_called = true;
-}
-
-void _load_producer_events(can_statemachine_info_t *can_statemachine_info)
-{
-
-    _load_producer_events_called = true;
-}
-
-void _load_consumer_events(can_statemachine_info_t *can_statemachine_info)
-{
-
-    _load_consumer_events_called = true;
-}
-
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
 
     .generate_alias = &_generate_alias,
@@ -182,9 +161,6 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .load_cid05 = &_load_cid05,
     .load_cid06 = &_load_cid06,
     .load_cid07 = &_load_cid07,
-    .load_consumer_events = &_load_consumer_events,
-    .load_initialization_complete = &_load_initialization_complete,
-    .load_producer_events = &_load_producer_events,
     .load_rid = &_load_rid,
     .wait_200ms = &_wait_200ms};
 
@@ -203,9 +179,6 @@ void _reset_variables(void)
     _wait_200ms_called = false;
     _load_rid_called = false;
     _load_amd_called = false;
-    _load_initialization_complete_called = false;
-    _load_producer_events_called = false;
-    _load_consumer_events_called = false;
 }
 
 void _initialize(void)
@@ -226,8 +199,6 @@ void _initalize_can_statemachine_info(node_id_t node_id, node_parameters_t *node
     can_statemachine_info->openlcb_node = OpenLcbNode_allocate(node_id, node_parameters);
     can_statemachine_info->login_outgoing_can_msg = CanBufferStore_allocate_buffer();
     can_statemachine_info->login_outgoing_can_msg_valid = false;
-    can_statemachine_info->login_outgoing_openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    can_statemachine_info->login_outgoing_openlcb_msg_valid = false;
 }
 
 TEST(CanLoginStateMachine, initialize)
@@ -260,9 +231,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
@@ -277,9 +245,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
@@ -294,9 +259,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_07;
@@ -311,9 +273,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_06;
@@ -328,9 +287,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
@@ -345,9 +301,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_04;
@@ -362,9 +315,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
@@ -379,9 +329,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_TRUE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_RESERVE_ID;
@@ -396,9 +343,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_TRUE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_ALIAS_MAP_DEFINITION;
@@ -413,9 +357,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_TRUE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
@@ -430,9 +371,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_TRUE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
@@ -447,9 +385,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_TRUE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_RUN;
@@ -464,9 +399,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
@@ -481,9 +413,6 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_TRUE(_load_consumer_events_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = 31; // Invalid
@@ -498,8 +427,5 @@ TEST(CanLoginStateMachine, run)
     EXPECT_FALSE(_wait_200ms_called);
     EXPECT_FALSE(_load_rid_called);
     EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
     _reset_variables();
 }

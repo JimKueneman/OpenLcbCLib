@@ -754,6 +754,9 @@ void OpenLcbMainStatemachine_run(void) {
 
     }
 
+    
+    // TODO:  NEED TO HANDLE ENUMERATING BOTH THE INCOMING AND LOGIN OUTGOING MESSAGE....
+    
     if (_handle_reenumerate_incoming_openlcb_message()) {
 
         return;
