@@ -328,6 +328,8 @@ extern "C" {
         openlcb_node_t *openlcb_node;
         openlcb_msg_t *incoming_msg;
         openlcb_msg_t *outgoing_msg;
+        openlcb_msg_t *login_outgoing_openlcb_msg;
+        uint8_t login_outgoing_openlcb_msg_valid : 1;
         uint8_t enumerating : 1;
         uint8_t outgoing_msg_valid : 1;
        

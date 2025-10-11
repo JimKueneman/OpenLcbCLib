@@ -63,8 +63,6 @@ extern "C" {
         bool (*handle_duplicate_aliases)(void);
         bool (*handle_outgoing_can_message)(void);
         bool (*handle_login_outgoing_can_message)(void);
-        bool (*handle_login_outgoing_openlcb_message)(void);
-        bool (*handle_reenumerate_openlcb_message)(void);
         bool (*handle_try_enumerate_first_node)(void);
         bool (*handle_try_enumerate_next_node)(void);
 
@@ -81,12 +79,8 @@ extern "C" {
     extern bool CanMainStatemachine_handle_duplicate_aliases(void);
 
     extern bool CanMainStatemachine_handle_login_outgoing_can_message(void);
-    
-    extern bool CanMainStatemachine_handle_login_outgoing_openlcb_message(void);
 
     extern bool CanMainStatemachine_handle_outgoing_can_message(void);
-
-    extern bool CanMainStatemachine_handle_reenumerate_openlcb_message(void);
 
     extern bool CanMainStatemachine_handle_try_enumerate_first_node(void);
 

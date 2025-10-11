@@ -24,49 +24,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_statemachine.h
+ * \file openlcb_login_statemachine.h
  *
  *
  * @author Jim Kueneman
- * @date 12 Aug 2025
+ * @date 11 Oct 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_LOGIN_STATEMACHINE__
-#define	__CAN_LOGIN_STATEMACHINE__
+#ifndef __OPENLCB_LOGIN_STATEMACHINE__
+#define	__OPENLCB_LOGIN_STATEMACHINE__
 
-#include "can_types.h"
-#include "../../openlcb/openlcb_types.h"
+#include "openlcb_types.h"
 
 
 typedef struct {
     
-     void (*init)(can_statemachine_info_t *can_statemachine_info);
-     void (*generate_seed)(can_statemachine_info_t *can_statemachine_info);
-     void (*generate_alias)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid07)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid06)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid05)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid04)(can_statemachine_info_t *can_statemachine_info);
-     void (*wait_200ms)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_rid)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_amd)(can_statemachine_info_t *can_statemachine_info);
+     void (*load_initialization_complete)(openlcb_statemachine_info_t *openlcb_statemachine_info);
+     void (*load_producer_events)(openlcb_statemachine_info_t *openlcb_statemachine_info);
+     void (*load_consumer_events)(openlcb_statemachine_info_t *openlcb_statemachine_info);
     
-    
-} interface_can_login_state_machine_t;
+} interface_openlcb_login_state_machine_t;
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
     
-    extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
+    extern void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
 
-    extern void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info);
+    extern void OpenLcbLoginStateMachine_run(openlcb_statemachine_info_t *openlcb_statemachine_info);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_LOGIN_STATEMACHINE__ */
-
+#endif	/* __OPENLCB_LOGIN_STATEMACHINE__ */

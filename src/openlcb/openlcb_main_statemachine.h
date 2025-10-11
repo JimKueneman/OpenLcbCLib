@@ -109,6 +109,7 @@ typedef struct {
     openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
     void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
+    void (*login_statemachine_run)(openlcb_statemachine_info_t *statemachine_info);
     
     // for test injection, leave null to use the default functions
     void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);

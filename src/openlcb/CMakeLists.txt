@@ -6,6 +6,8 @@ set(SOURCES
     openlcb_buffer_list.c 
     openlcb_buffer_store.c 
     openlcb_gridconnect.c 
+    openlcb_login_statemachine_handler.c
+    openlcb_login_statemachine.c
     openlcb_main_statemachine.c 
     openlcb_node.c  
     openlcb_utilities.c 
@@ -25,6 +27,8 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/openlcb_buffer_list_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_buffer_store_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_gridconnect_Test.cxx
+    ${ROOT_DIR}/src/openlcb/openlcb_login_statemachine_handler_Test.cxx
+    ${ROOT_DIR}/src/openlcb/openlcb_login_statemachine_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_main_statemachine_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_node_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_utilities_Test.cxx

@@ -53,8 +53,7 @@ void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *
 }
 
 void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
-
-
+    
     switch (can_statemachine_info->openlcb_node->state.run_state) {
 
         case RUNSTATE_INIT:
@@ -117,25 +116,7 @@ void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
 
             return;
 
-        case RUNSTATE_LOAD_INITIALIZATION_COMPLETE:
-
-            _interface->load_initialization_complete(can_statemachine_info);
-     
-            return;
-
-        case RUNSTATE_LOAD_PRODUCER_EVENTS:
-
-            _interface->load_producer_events(can_statemachine_info);
-
-            return;
-
-        case RUNSTATE_LOAD_CONSUMER_EVENTS:
-
-            _interface->load_consumer_events(can_statemachine_info);
-
-            return;
-
-        case RUNSTATE_RUN:
+        default:
 
             return;
 

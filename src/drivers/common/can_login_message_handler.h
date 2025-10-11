@@ -44,15 +44,13 @@
 #include <stdint.h>
 
 #include "can_types.h"
-#include "../../openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        uint16_t(*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
-        uint16_t(*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
+   
         alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);    
         alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
         // Callback events
@@ -82,12 +80,6 @@ extern "C" {
     extern void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_info);
 
     extern void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanLoginMessageHandler_load_initialization_complete(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanLoginMessageHandler_load_producer_events(can_statemachine_info_t *can_statemachine_info);
-
-    extern void CanLoginMessageHandler_load_consumer_events(can_statemachine_info_t *can_statemachine_info);
 
 
 #ifdef	__cplusplus

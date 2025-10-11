@@ -129,6 +129,8 @@
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/protocol_datagram_config_mem_handler.h"
 #include "../../../openlcb/protocol_datagram_handler.h"
+#include "../../../openlcb/openlcb_login_statemachine.h"
+#include "../../../openlcb/openlcb_login_statemachine_handler.h"
 
 #include "../../../openlcb/openlcb_application.h"
 
@@ -225,8 +227,6 @@ void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t co
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
-    .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
-    .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
     .alias_mapping_register = &AliasMappings_register,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
@@ -245,10 +245,8 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .load_cid04 = &CanLoginMessageHandler_load_cid04,
     .wait_200ms = &CanLoginMessageHandler_wait_200ms,
     .load_rid = &CanLoginMessageHandler_load_rid,
-    .load_amd = &CanLoginMessageHandler_load_amd,
-    .load_initialization_complete = &CanLoginMessageHandler_load_initialization_complete,
-    .load_producer_events = &CanLoginMessageHandler_load_producer_events,
-    .load_consumer_events = &CanLoginMessageHandler_load_consumer_events,
+    .load_amd = &CanLoginMessageHandler_load_amd
+            
 };
 
 const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
@@ -323,8 +321,6 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases,
     .handle_outgoing_can_message = &CanMainStatemachine_handle_outgoing_can_message,
     .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
-    .handle_login_outgoing_openlcb_message = &CanMainStatemachine_handle_login_outgoing_openlcb_message,
-    .handle_reenumerate_openlcb_message = &CanMainStatemachine_handle_reenumerate_openlcb_message,
     .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
 
@@ -366,6 +362,13 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
     .on_pc_event_report = NULL,
     .on_pc_event_report_with_payload = &_event_with_payload
 
+};
+
+const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
+    
+     .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
+     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_events,
+     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_events
 };
 
 // TODO Complete
@@ -433,7 +436,8 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
-    .load_interaction_rejected = OpenLcbMainStatemachine_load_interaction_rejected,
+    .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
+    .login_statemachine_run = &OpenLcbLoginStateMachine_run,
 
     // for test injection, leave null to use the default functions
     .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,

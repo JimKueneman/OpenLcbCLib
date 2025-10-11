@@ -42,6 +42,8 @@
         <itemPath>../../../openlcb/openlcb_node.h</itemPath>
         <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
+        <itemPath>../../../openlcb/openlcb_login_statemachine.h</itemPath>
+        <itemPath>../../../openlcb/openlcb_login_statemachine_handler.h</itemPath>
       </logicalFolder>
       <logicalFolder name="OpenLcb_Basic_Node.X"
                      displayName="OpenLcb_Basic_Node.X"
@@ -106,6 +108,8 @@
         <itemPath>../../../openlcb/openlcb_main_statemachine.c</itemPath>
         <itemPath>../../../openlcb/protocol_message_network.c</itemPath>
         <itemPath>../../../openlcb/openlcb_application.c</itemPath>
+        <itemPath>../../../openlcb/openlcb_login_statemachine.c</itemPath>
+        <itemPath>../../../openlcb/openlcb_login_statemachine_handler.c</itemPath>
       </logicalFolder>
       <logicalFolder name="OpenLcb_Basic_Node.X"
                      displayName="OpenLcb_Basic_Node.X"
@@ -302,7 +306,7 @@
         <property key="legacy-libc" value="true"/>
         <property key="mpreserve-all" value="false"/>
         <property key="oXC16glb-macros"
-                  value="FCY=40000000;EXCLUDE_FIRMWARE_ADDRESS_SPACE;USER_DEFINED_CDI_LENGTH=1200;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_PRODUCER_COUNT=0;USER_DEFINED_CONSUMER_COUNT=0;USER_DEFINED_NODE_BUFFER_DEPTH=1;USER_DEFINED_SNIP_BUFFER_DEPTH=2;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=2"/>
+                  value="FCY=40000000;EXCLUDE_FIRMWARE_ADDRESS_SPACE;USER_DEFINED_CDI_LENGTH=1200;USER_DEFINED_FDI_LENGTH=0;USER_DEFINED_PRODUCER_COUNT=10;USER_DEFINED_CONSUMER_COUNT=10;USER_DEFINED_NODE_BUFFER_DEPTH=1;USER_DEFINED_SNIP_BUFFER_DEPTH=10;USER_DEFINED_DATAGRAM_BUFFER_DEPTH=10"/>
         <property key="omit-pack-options" value="1"/>
         <property key="output-file-format" value="elf"/>
         <property key="preserve-all" value="false"/>
