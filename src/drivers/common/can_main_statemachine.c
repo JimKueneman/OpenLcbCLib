@@ -100,12 +100,6 @@ static void _reset_node(openlcb_node_t *openlcb_node) {
 
 }
 
-static void _run_statemachine(can_statemachine_info_t *can_statemachine_info) {
-
-
-
-}
-
 static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info) {
 
     bool result = false;
@@ -220,11 +214,7 @@ bool CanMainStatemachine_handle_try_enumerate_first_node(void) {
 
         // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-        if (_can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
-
-            _run_statemachine(&_can_statemachine_info);
-
-        } else {
+        if (_can_statemachine_info.openlcb_node->state.run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE) {
 
             _interface->login_statemachine_run(&_can_statemachine_info);
 
@@ -250,15 +240,7 @@ bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 
     // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-    if (_can_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
-
-        //    printf("_handle_try_enumerate_next_node: _run_statemachine\n");
-
-        _run_statemachine(&_can_statemachine_info);
-
-    } else {
-
-        //   printf("_handle_try_enumerate_next_node: _run_statemachine\n");
+    if (_can_statemachine_info.openlcb_node->state.run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE) {
 
         _interface->login_statemachine_run(&_can_statemachine_info);
 

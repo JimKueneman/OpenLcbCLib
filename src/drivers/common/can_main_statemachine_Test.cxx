@@ -44,6 +44,7 @@ bool handle_login_outgoing_can_message_called = false;
 bool handle_outgoing_can_message_called = false;
 bool handle_try_enumerate_first_node_called = false;
 bool handle_try_enumerate_next_node_called = false;
+bool node_find_node_by_alias_fail = false;
 
 can_msg_t send_can_msg;
 
@@ -156,6 +157,8 @@ bool _send_can_message(can_msg_t *msg)
         return true;
     }
 
+    CanUtilities_clear_can_message(&send_can_msg);
+
     return false;
 }
 
@@ -163,6 +166,12 @@ openlcb_node_t *_node_find_by_alias(uint16_t alias)
 {
 
     node_find_node_by_alias_called = true;
+
+    if (node_find_node_by_alias_fail)
+    {
+
+        return NULL;
+    }
 
     return OpenLcbNode_find_by_alias(alias);
 }
@@ -300,6 +309,7 @@ void _reset_variables(void)
     handle_outgoing_can_message_called = false;
     handle_try_enumerate_first_node_called = false;
     handle_try_enumerate_next_node_called = false;
+    node_find_node_by_alias_fail = false;
 }
 
 TEST(CanMainStatemachine, intialization)
@@ -403,6 +413,9 @@ TEST(CanMainStatemachine, run_node_list_mulitiple)
     EXPECT_TRUE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == nullptr);
 
+    openlcb_node_1->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
+    openlcb_node_2->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
+
     _reset_variables();
     CanMainStateMachine_run();
 
@@ -415,9 +428,35 @@ TEST(CanMainStatemachine, run_node_list_mulitiple)
     EXPECT_TRUE(handle_try_enumerate_first_node_called);
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
     EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == openlcb_node_1);
+
+    _reset_variables();
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_TRUE(handle_outgoing_can_message_called);
+    EXPECT_TRUE(handle_login_outgoing_can_message_called);
+    EXPECT_TRUE(handle_try_enumerate_first_node_called);
+    EXPECT_TRUE(handle_try_enumerate_next_node_called);
+    EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == openlcb_node_2);
+
+    _reset_variables();
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_TRUE(handle_outgoing_can_message_called);
+    EXPECT_TRUE(handle_login_outgoing_can_message_called);
+    EXPECT_TRUE(handle_try_enumerate_first_node_called);
+    EXPECT_TRUE(handle_try_enumerate_next_node_called);
+    EXPECT_TRUE(CanMainStateMachine_get_can_statemachine_info()->openlcb_node == nullptr);
 }
 
-TEST(CanMainStatemachine, process_outgoing_can_message)
+TEST(CanMainStatemachine, handle_outgoing_can_message)
 {
     can_msg_t *can_msg;
 
@@ -467,7 +506,7 @@ TEST(CanMainStatemachine, process_outgoing_can_message)
     EXPECT_EQ(CanBufferStore_messages_allocated(), 0);
 }
 
-TEST(CanMainStatemachine, process_outgoing_can_message_with_tx_fail)
+TEST(CanMainStatemachine, handle_outgoing_can_message_with_tx_fail)
 {
 
     can_msg_t *can_msg;
@@ -570,4 +609,135 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_FALSE(node1->state.resend_datagram);
     EXPECT_EQ(node1->last_received_datagram, nullptr);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_GENERATE_SEED);
+
+    _global_initialize();
+    _reset_variables();
+
+    node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    node1->alias = NODE_ALIAS_1;
+    node1->state.permitted = true;
+    node1->state.initalized = true;
+    node1->state.run_state = RUNSTATE_RUN;
+    node1->last_received_datagram = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+
+    alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping->is_duplicate = true;
+    alias_mapping->is_permitted = true;
+    AliasMappings_set_has_duplicate_alias_flag();
+
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_FALSE(handle_outgoing_can_message_called);
+    EXPECT_FALSE(handle_login_outgoing_can_message_called);
+    EXPECT_FALSE(handle_try_enumerate_first_node_called);
+    EXPECT_FALSE(handle_try_enumerate_next_node_called);
+
+    EXPECT_FALSE(node1->state.permitted);
+    EXPECT_FALSE(node1->state.initalized);
+    EXPECT_FALSE(node1->state.duplicate_id_detected);
+    EXPECT_FALSE(node1->state.firmware_upgrade_active);
+    EXPECT_FALSE(node1->state.resend_datagram);
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_GENERATE_SEED);
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
+}
+
+TEST(CanMainStatemachine, duplicate_alias_fail_to_find_mapping)
+{
+    _global_initialize();
+    _reset_variables();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
+    node1->alias = NODE_ALIAS_1;
+    node1->state.permitted = true;
+    node1->state.initalized = true;
+    node1->state.run_state = RUNSTATE_RUN;
+
+    alias_mapping_t *alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    alias_mapping->is_duplicate = true;
+    alias_mapping->is_permitted = true;
+    AliasMappings_set_has_duplicate_alias_flag();
+
+    node_find_node_by_alias_fail = true;
+
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_FALSE(handle_outgoing_can_message_called);
+    EXPECT_FALSE(handle_login_outgoing_can_message_called);
+    EXPECT_FALSE(handle_try_enumerate_first_node_called);
+    EXPECT_FALSE(handle_try_enumerate_next_node_called);
+
+    // Nothing happend as the find node by alias failed
+    EXPECT_TRUE(node1->state.permitted);
+    EXPECT_TRUE(node1->state.initalized);
+    EXPECT_FALSE(node1->state.duplicate_id_detected);
+    EXPECT_FALSE(node1->state.firmware_upgrade_active);
+    EXPECT_FALSE(node1->state.resend_datagram);
+    EXPECT_EQ(node1->last_received_datagram, nullptr);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_RUN);
+}
+
+TEST(CanMainStatemachine, handle_login_outgoing_can_message)
+{
+
+    _global_initialize();
+    _reset_variables();
+
+    can_statemachine_info_t *can_statemachine_info = CanMainStateMachine_get_can_statemachine_info();
+
+    can_statemachine_info->login_outgoing_can_msg_valid = true;
+    CanUtilities_load_can_message(can_statemachine_info->login_outgoing_can_msg, 0x19490AAA, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    send_can_message_enabled = true;
+
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_TRUE(handle_outgoing_can_message_called);
+    EXPECT_TRUE(handle_login_outgoing_can_message_called);
+    EXPECT_FALSE(handle_try_enumerate_first_node_called);
+    EXPECT_FALSE(handle_try_enumerate_next_node_called);
+    EXPECT_TRUE(send_can_message_called);
+
+    EXPECT_TRUE(compare_can_msg(&send_can_msg, 0x19490AAA, 0, nullptr));
+}
+
+TEST(CanMainStatemachine, handle_login_outgoing_can_message_with_tx_fail)
+{
+
+    _global_initialize();
+    _reset_variables();
+
+    can_statemachine_info_t *can_statemachine_info = CanMainStateMachine_get_can_statemachine_info();
+
+    can_statemachine_info->login_outgoing_can_msg_valid = true;
+    CanUtilities_load_can_message(can_statemachine_info->login_outgoing_can_msg, 0x19490AAA, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    send_can_message_enabled = false;
+
+    CanMainStateMachine_run();
+
+    EXPECT_TRUE(lock_shared_resources_called);
+    EXPECT_TRUE(unlock_shared_resources_called);
+    EXPECT_TRUE(alias_mapping_get_alias_mapping_info_called);
+    EXPECT_TRUE(handle_duplicate_aliases_called);
+    EXPECT_TRUE(handle_outgoing_can_message_called);
+    EXPECT_TRUE(handle_login_outgoing_can_message_called);
+    EXPECT_FALSE(handle_try_enumerate_first_node_called);
+    EXPECT_FALSE(handle_try_enumerate_next_node_called);
+    EXPECT_TRUE(send_can_message_called);
+
+    EXPECT_TRUE(compare_can_msg(&send_can_msg, 0x00, 0, nullptr));
 }
