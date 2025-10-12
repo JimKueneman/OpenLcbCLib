@@ -425,6 +425,14 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
     .login_statemachine_run = &OpenLcbLoginStateMachine_run,
+    
+    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_login_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message,
+    .handle_reenumerate_outgoing_login_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message,
+    .handle_reenumerate_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
 
     // for test injection, leave null to use the default functions
     .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,

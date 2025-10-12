@@ -76,6 +76,7 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
     _statemachine_info.login_outgoing_openlcb_msg = &_login_openlcb_msg;
     _statemachine_info.login_outgoing_openlcb_msg_valid = false;
+    _statemachine_info.enumerating_outgoing_login_openlcb_message = false;
     _statemachine_info.outgoing_msg = &_outgoing_msg;
     _statemachine_info.incoming_msg = NULL;
     _statemachine_info.openlcb_node = NULL;
@@ -570,7 +571,7 @@ static void _free_incoming_message(openlcb_statemachine_info_t *_statemachine_in
 
 }
 
-static bool _handle_outgoing_openlcb_message(void) {
+ bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
 
     if (_statemachine_info.outgoing_msg_valid) {
 
@@ -587,9 +588,9 @@ static bool _handle_outgoing_openlcb_message(void) {
 
 }
 
-static bool _handle_reenumerate_incoming_openlcb_message(void) {
+bool OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message(void) {
 
-    if (_statemachine_info.enumerating) {
+    if (_statemachine_info.enumerating_incoming_openlcb_message) {
 
         _interface->process_main_statemachine(&_statemachine_info); // Continue the processing of the incoming message on the node
 
@@ -601,31 +602,27 @@ static bool _handle_reenumerate_incoming_openlcb_message(void) {
 
 }
 
-//bool _handle_reenumerate_openlcb_message(void) {
-//
-//    if (_statemachine_info.enumerating) {
-//
-//        // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
-//
-//        if (_statemachine_info.openlcb_node->state.run_state == RUNSTATE_RUN) {
-//
-//            _run_statemachine(&_can_statemachine_info);
-//
-//        } else {
-//
-//            _interface->login_statemachine_run(&_statemachine_info);
-//
-//        }
-//
-//        return true; // done
-//
-//    }
-//
-//    return false;
-//
-//}
+bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(void) {
 
-static bool _handle_login_outgoing_openlcb_message(void) {
+    if (_statemachine_info.enumerating_outgoing_login_openlcb_message) {
+
+        // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
+
+        if (_statemachine_info.openlcb_node->state.run_state < RUNSTATE_RUN) {
+
+            _interface->login_statemachine_run(&_statemachine_info);
+
+        }
+
+        return true; // done
+
+    }
+
+    return false;
+
+}
+
+ bool OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message(void) {
 
     if (_statemachine_info.login_outgoing_openlcb_msg_valid) {
 
@@ -643,7 +640,7 @@ static bool _handle_login_outgoing_openlcb_message(void) {
 
 }
 
-static bool _handle_try_pop_next_incoming_openlcb_message(void) {
+ bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) {
 
     if (!_statemachine_info.incoming_msg) {
 
@@ -661,7 +658,7 @@ static bool _handle_try_pop_next_incoming_openlcb_message(void) {
 
 }
 
-static bool _handle_try_enumerate_first_node(void) {
+ bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
     if (!_statemachine_info.openlcb_node) {
 
@@ -697,7 +694,7 @@ static bool _handle_try_enumerate_first_node(void) {
 
 }
 
-static bool _handle_try_enumerate_next_node(void) {
+ bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 
     if (_statemachine_info.openlcb_node) {
 
@@ -744,44 +741,43 @@ static void _handle_process_main_statemachine(void) {
 
 void OpenLcbMainStatemachine_run(void) {
 
-
-    //  usleep(25);
-
-
-    if (_handle_outgoing_openlcb_message()) {
+    if (_interface->handle_outgoing_openlcb_message()) {
 
         return;
 
     }
 
+   if (_interface->handle_reenumerate_outgoing_login_openlcb_message()) {
+
+        return;
+
+    }
     
-    // TODO:  NEED TO HANDLE ENUMERATING BOTH THE INCOMING AND LOGIN OUTGOING MESSAGE....
-    
-    if (_handle_reenumerate_incoming_openlcb_message()) {
+    if (_interface->handle_reenumerate_incoming_openlcb_message()) {
 
         return;
 
     }
 
-    if (_handle_login_outgoing_openlcb_message()) {
+    if (_interface->handle_login_outgoing_openlcb_message()) {
 
         return;
 
     }
 
-    if (_handle_try_pop_next_incoming_openlcb_message()) {
+    if (_interface->handle_try_pop_next_incoming_openlcb_message()) {
 
         return;
 
     }
 
-    if (_handle_try_enumerate_first_node()) {
+    if (_interface->handle_try_enumerate_first_node()) {
 
         return;
 
     }
 
-    if (_handle_try_enumerate_next_node()) {
+    if (_interface->handle_try_enumerate_next_node()) {
 
         return;
 

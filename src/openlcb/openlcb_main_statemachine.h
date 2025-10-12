@@ -45,7 +45,6 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    
     // MESSAGE NETWORK
     void (*message_network_initialization_complete)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_initialization_complete_simple)(openlcb_statemachine_info_t *statemachine_info);
@@ -54,15 +53,15 @@ typedef struct {
     void (*message_network_verified_node_id)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_optional_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_terminate_due_to_error)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // PROTOCOL SUPPORT
     void (*message_network_protocol_support_inquiry)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_protocol_support_reply)(openlcb_statemachine_info_t *statemachine_info);
-   
+
     // SNIP
     void (*snip_simple_node_info_request)(openlcb_statemachine_info_t *statemachine_info);
     void (*snip_simple_node_info_reply)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // EVENTS
     void (*event_transport_consumer_identify)(openlcb_statemachine_info_t *statemachine_info);
     void (*event_transport_consumer_range_identified)(openlcb_statemachine_info_t *statemachine_info);
@@ -81,27 +80,27 @@ typedef struct {
     void (*event_transport_learn)(openlcb_statemachine_info_t *statemachine_info);
     void (*event_transport_pc_report)(openlcb_statemachine_info_t *statemachine_info);
     void (*event_transport_pc_report_with_payload)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // TRACTION
     void (*traction_control_command)(openlcb_statemachine_info_t *statemachine_info);
     void (*traction_control_reply)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // TRACTION SNIP
     void (*simple_train_node_ident_info_request)(openlcb_statemachine_info_t *statemachine_info);
     void (*simple_train_node_ident_info_reply)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // DATAGRAM
     void (*datagram)(openlcb_statemachine_info_t *statemachine_info);
     void (*datagram_ok_reply)(openlcb_statemachine_info_t *statemachine_info);
     void (*datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // STREAM
     void (*stream_initiate_request)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_initiate_reply)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_send_data)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_data_proceed)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_data_complete)(openlcb_statemachine_info_t *statemachine_info);
-    
+
     // required
     void (*lock_shared_resources)(void);
     void (*unlock_shared_resources)(void);
@@ -110,7 +109,15 @@ typedef struct {
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
     void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
     void (*login_statemachine_run)(openlcb_statemachine_info_t *statemachine_info);
-    
+
+    bool (*handle_outgoing_openlcb_message)(void);
+    bool (*handle_reenumerate_incoming_openlcb_message)(void);
+    bool (*handle_reenumerate_outgoing_login_openlcb_message)(void);
+    bool (*handle_login_outgoing_openlcb_message)(void);
+    bool (*handle_try_pop_next_incoming_openlcb_message)(void);
+    bool (*handle_try_enumerate_first_node)(void);
+    bool (*handle_try_enumerate_next_node)(void);
+
     // for test injection, leave null to use the default functions
     void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);
     bool (*does_node_process_msg)(openlcb_statemachine_info_t *_statemachine_info);
@@ -131,7 +138,23 @@ extern "C" {
     extern bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info);
 
     extern void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info_t *statemachine_info);
-    
+
+    extern bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void);
+
+    extern bool OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message(void);
+
+    extern bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(void);
+
+    extern bool OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message(void);
+
+    extern bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void);
+
+    extern bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void);
+
+    extern bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void);
+
+
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

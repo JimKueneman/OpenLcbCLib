@@ -103,7 +103,7 @@ void OpenLcbLoginMessageHandler_load_producer_events(openlcb_statemachine_info_t
         openlcb_statemachine_info->openlcb_node->producers.enumerator.running = false;
         openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
         openlcb_statemachine_info->openlcb_node->consumers.enumerator.running = true;
-        openlcb_statemachine_info->enumerating = false;
+        openlcb_statemachine_info->enumerating_incoming_openlcb_message = false;
 
         openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
         
@@ -111,7 +111,7 @@ void OpenLcbLoginMessageHandler_load_producer_events(openlcb_statemachine_info_t
 
     }
     
-    openlcb_statemachine_info->enumerating = true;
+    openlcb_statemachine_info->enumerating_incoming_openlcb_message = true;
 
 }
 
@@ -139,7 +139,7 @@ void OpenLcbLoginMessageHandler_load_consumer_events(openlcb_statemachine_info_t
         openlcb_statemachine_info->openlcb_node->consumers.enumerator.running = false;
         openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
         
-        openlcb_statemachine_info->enumerating = false;
+        openlcb_statemachine_info->enumerating_incoming_openlcb_message = false;
 
         openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
         
@@ -147,6 +147,6 @@ void OpenLcbLoginMessageHandler_load_consumer_events(openlcb_statemachine_info_t
 
     }
     
-    openlcb_statemachine_info->enumerating = true;
+    openlcb_statemachine_info->enumerating_incoming_openlcb_message = true;
 
 }

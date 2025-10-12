@@ -569,7 +569,7 @@ void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_state
 
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, error_code, 0);
 
-    statemachine_info->enumerating = false; // d not call the message again to handle it after the NACK
+    statemachine_info->enumerating_incoming_openlcb_message = false; // d not call the message again to handle it after the NACK
     statemachine_info->outgoing_msg_valid = true;
 
 }
@@ -588,7 +588,7 @@ static void _send_datagram_ack_reply(openlcb_statemachine_info_t *statemachine_i
     *statemachine_info->outgoing_msg->payload[0] = (uint8_t) reply_pending_code;
     statemachine_info->outgoing_msg->payload_count = 1;
 
-    statemachine_info->enumerating = true; // call the message again to handle it after the ACK
+    statemachine_info->enumerating_incoming_openlcb_message = true; // call the message again to handle it after the ACK
     statemachine_info->outgoing_msg_valid = true;
 
 }
@@ -1451,7 +1451,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
                 _send_datagram_ack_reply(statemachine_info, 0);
                 
-                statemachine_info->enumerating = true; // recall after ACK 
+                statemachine_info->enumerating_incoming_openlcb_message = true; // recall after ACK 
                 statemachine_info->outgoing_msg_valid = true;
 
                 return;
@@ -1466,7 +1466,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
                 }
 
-                statemachine_info->enumerating = false; // reset after ACK and any reply
+                statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
                 statemachine_info->outgoing_msg_valid = false;
 
                 return;
@@ -1479,7 +1479,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
     ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
     statemachine_info->outgoing_msg_valid = false;
 
 }
@@ -1505,7 +1505,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
                 }
 
-                statemachine_info->enumerating = false; // reset after ACK and any reply
+                statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
                 statemachine_info->outgoing_msg_valid = false;
 
                 return;
@@ -1519,7 +1519,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
     ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
     statemachine_info->outgoing_msg_valid = false;
 
 }
@@ -1534,7 +1534,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(open
 
     }
 
-    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
     statemachine_info->outgoing_msg_valid = false;
 
 }
@@ -1556,7 +1556,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb
 
     }
 
-    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
     statemachine_info->outgoing_msg_valid = false;
 
 }
@@ -1577,7 +1577,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlc
 
     }
 
-    statemachine_info->enumerating = false; // reset after ACK and any reply
+    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
     statemachine_info->outgoing_msg_valid = false;
 
 }
