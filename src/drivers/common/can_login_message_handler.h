@@ -61,25 +61,25 @@ extern "C" {
 
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 
-    extern void CanLoginMessageHandler_init(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_init(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_generate_seed(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_generate_seed(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_cid07(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_load_cid07(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_cid06(can_statemachine_info_t *can_statemachine_infog);
+    extern void CanLoginMessageHandler_state_load_cid06(can_statemachine_info_t *can_statemachine_infog);
 
-    extern void CanLoginMessageHandler_load_cid05(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_load_cid05(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_load_cid04(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_wait_200ms(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_load_rid(can_statemachine_info_t *can_statemachine_info);
 
-    extern void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_info);
+    extern void CanLoginMessageHandler_state_load_amd(can_statemachine_info_t *can_statemachine_info);
 
 
 #ifdef	__cplusplus

@@ -126,6 +126,12 @@ static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info)
 
 }
 
+can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
+
+    return (&_can_statemachine_info);
+
+}
+
 bool CanMainStatemachine_handle_duplicate_aliases(void) {
 
     bool result = false;
@@ -281,11 +287,5 @@ void CanMainStateMachine_run(void) {
         return;
 
     }
-
-}
-
-can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
-
-    return (&_can_statemachine_info);
 
 }
