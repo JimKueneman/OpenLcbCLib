@@ -188,3 +188,4 @@ void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_i
     
 }
 
+
