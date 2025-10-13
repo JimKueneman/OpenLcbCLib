@@ -192,7 +192,7 @@ TEST(CanLoginMessageHandler, init)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_init(&can_statemachine_info);
+    CanLoginMessageHandler_state_init(&can_statemachine_info);
 
     EXPECT_NE(can_statemachine_info.openlcb_node->seed, 0x00);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_GENERATE_ALIAS);
@@ -210,11 +210,11 @@ TEST(CanLoginMessageHandler, generate_seed)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_init(&can_statemachine_info);
+    CanLoginMessageHandler_state_init(&can_statemachine_info);
 
     uint64_t old_seed = can_statemachine_info.openlcb_node->seed;
 
-    CanLoginMessageHandler_generate_seed(&can_statemachine_info);
+    CanLoginMessageHandler_state_generate_seed(&can_statemachine_info);
 
     EXPECT_NE(can_statemachine_info.openlcb_node->seed, old_seed);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_GENERATE_ALIAS);
@@ -232,11 +232,11 @@ TEST(CanLoginMessageHandler, generate_alias)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_init(&can_statemachine_info);
+    CanLoginMessageHandler_state_init(&can_statemachine_info);
 
     can_statemachine_info.openlcb_node->alias = 0x00;
 
-    CanLoginMessageHandler_generate_alias(&can_statemachine_info);
+    CanLoginMessageHandler_state_generate_alias(&can_statemachine_info);
 
     EXPECT_NE(can_statemachine_info.openlcb_node->alias, 0x00);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_07);
@@ -248,11 +248,11 @@ TEST(CanLoginMessageHandler, generate_alias)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_init(&can_statemachine_info);
+    CanLoginMessageHandler_state_init(&can_statemachine_info);
 
     can_statemachine_info.openlcb_node->alias = 0x00;
 
-    CanLoginMessageHandler_generate_alias(&can_statemachine_info);
+    CanLoginMessageHandler_state_generate_alias(&can_statemachine_info);
 
     EXPECT_NE(can_statemachine_info.openlcb_node->alias, 0x00);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_07);
@@ -271,7 +271,7 @@ TEST(CanLoginMessageHandler, load_cid07)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_load_cid07(&can_statemachine_info);
+    CanLoginMessageHandler_state_load_cid07(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->payload_count, 0);
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((can_statemachine_info.openlcb_node->id >> 24) & 0xFFF000) | can_statemachine_info.openlcb_node->alias));
@@ -291,7 +291,7 @@ TEST(CanLoginMessageHandler, load_cid06)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_load_cid06(&can_statemachine_info);
+    CanLoginMessageHandler_state_load_cid06(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->payload_count, 0);
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((can_statemachine_info.openlcb_node->id >> 12) & 0xFFF000) | can_statemachine_info.openlcb_node->alias));
@@ -311,7 +311,7 @@ TEST(CanLoginMessageHandler, load_cid05)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_load_cid05(&can_statemachine_info);
+    CanLoginMessageHandler_state_load_cid05(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->payload_count, 0);
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((can_statemachine_info.openlcb_node->id & 0xFFF000) | can_statemachine_info.openlcb_node->alias));
@@ -331,7 +331,7 @@ TEST(CanLoginMessageHandler, load_cid04)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_load_cid04(&can_statemachine_info);
+    CanLoginMessageHandler_state_load_cid04(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->payload_count, 0);
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((can_statemachine_info.openlcb_node->id << 12) & 0xFFF000) | can_statemachine_info.openlcb_node->alias));
@@ -353,7 +353,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
 
-    CanLoginMessageHandler_wait_200ms(&can_statemachine_info);
+    CanLoginMessageHandler_state_wait_200ms(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
@@ -361,7 +361,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 0);
 
     OpenLcbNode_100ms_timer_tick();
-    CanLoginMessageHandler_wait_200ms(&can_statemachine_info);
+    CanLoginMessageHandler_state_wait_200ms(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
@@ -369,7 +369,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 1);
 
     OpenLcbNode_100ms_timer_tick();
-    CanLoginMessageHandler_wait_200ms(&can_statemachine_info);
+    CanLoginMessageHandler_state_wait_200ms(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
@@ -377,7 +377,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 2);
 
     OpenLcbNode_100ms_timer_tick();
-    CanLoginMessageHandler_wait_200ms(&can_statemachine_info);
+    CanLoginMessageHandler_state_wait_200ms(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_RESERVE_ID);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
@@ -395,7 +395,7 @@ TEST(CanLoginMessageHandler, load_rid)
 
     _initialize_can_statemachine_info(&can_statemachine_info);
 
-    CanLoginMessageHandler_load_rid(&can_statemachine_info);
+    CanLoginMessageHandler_state_load_rid(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->payload_count, 0);
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_statemachine_info.openlcb_node->alias);
@@ -418,7 +418,7 @@ TEST(CanLoginMessageHandler, load_amd)
     alias_mapping.alias = can_statemachine_info.openlcb_node->alias;
     alias_mapping.node_id = can_statemachine_info.openlcb_node->id;
 
-    CanLoginMessageHandler_load_amd(&can_statemachine_info);
+    CanLoginMessageHandler_state_load_amd(&can_statemachine_info);
 
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->payload_count, 6);
     EXPECT_EQ(can_statemachine_info.login_outgoing_can_msg->identifier, RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_statemachine_info.openlcb_node->alias);

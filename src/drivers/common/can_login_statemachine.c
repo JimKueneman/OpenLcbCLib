@@ -58,61 +58,61 @@ void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
 
         case RUNSTATE_INIT:
 
-            _interface->init(can_statemachine_info);
+            _interface->state_init(can_statemachine_info);
 
             return;
 
         case RUNSTATE_GENERATE_SEED:
 
-            _interface->generate_seed(can_statemachine_info);
+            _interface->state_generate_seed(can_statemachine_info);
 
             return;
 
         case RUNSTATE_GENERATE_ALIAS:
 
-            _interface->generate_alias(can_statemachine_info);
+            _interface->state_generate_alias(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_07:
 
-            _interface->load_cid07(can_statemachine_info);
+            _interface->state_load_cid07(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_06:
 
-            _interface->load_cid06(can_statemachine_info);
+            _interface->state_load_cid06(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_05:
 
-            _interface->load_cid05(can_statemachine_info);
+            _interface->state_load_cid05(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_CHECK_ID_04:
 
-            _interface->load_cid04(can_statemachine_info);
+            _interface->state_load_cid04(can_statemachine_info);
 
             return;
 
         case RUNSTATE_WAIT_200ms:
 
-            _interface->wait_200ms(can_statemachine_info);
+            _interface->state_wait_200ms(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_RESERVE_ID:
 
-            _interface->load_rid(can_statemachine_info);
+            _interface->state_load_rid(can_statemachine_info);
 
             return;
 
         case RUNSTATE_LOAD_ALIAS_MAP_DEFINITION:
 
-            _interface->load_amd(can_statemachine_info);
+            _interface->state_load_amd(can_statemachine_info);
 
             return;
 

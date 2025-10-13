@@ -235,16 +235,16 @@ const interface_can_login_message_handler_t interface_can_login_message_handler 
 
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
 
-    .init = &CanLoginMessageHandler_init,
-    .generate_seed = &CanLoginMessageHandler_generate_seed,
-    .generate_alias = &CanLoginMessageHandler_generate_alias,
-    .load_cid07 = &CanLoginMessageHandler_load_cid07,
-    .load_cid06 = &CanLoginMessageHandler_load_cid06,
-    .load_cid05 = &CanLoginMessageHandler_load_cid05,
-    .load_cid04 = &CanLoginMessageHandler_load_cid04,
-    .wait_200ms = &CanLoginMessageHandler_wait_200ms,
-    .load_rid = &CanLoginMessageHandler_load_rid,
-    .load_amd = &CanLoginMessageHandler_load_amd
+    .state_init = &CanLoginMessageHandler_state_init,
+    .state_generate_seed = &CanLoginMessageHandler_state_generate_seed,
+    .state_generate_alias = &CanLoginMessageHandler_state_generate_alias,
+    .state_load_cid07 = &CanLoginMessageHandler_state_load_cid07,
+    .state_load_cid06 = &CanLoginMessageHandler_state_load_cid06,
+    .state_load_cid05 = &CanLoginMessageHandler_state_load_cid05,
+    .state_load_cid04 = &CanLoginMessageHandler_state_load_cid04,
+    .state_wait_200ms = &CanLoginMessageHandler_state_wait_200ms,
+    .state_load_rid = &CanLoginMessageHandler_state_load_rid,
+    .state_load_amd = &CanLoginMessageHandler_state_load_amd
             
 };
 

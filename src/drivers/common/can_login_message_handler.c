@@ -83,21 +83,21 @@ static uint16_t _generate_alias(uint64_t seed) {
 
 }
 
-void CanLoginMessageHandler_init(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_init(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->seed = can_statemachine_info->openlcb_node->id;
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS; // Jump over Generate Seed that only is if we have an Alias conflict and have to jump back
     
 }
 
-void CanLoginMessageHandler_generate_seed(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_generate_seed(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->seed = _generate_seed(can_statemachine_info->openlcb_node->seed);
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
 
 }
 
-void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
     
@@ -113,7 +113,7 @@ void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemac
 
 }
 
-void CanLoginMessageHandler_load_cid07(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid07(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((can_statemachine_info->openlcb_node->id >> 24) & 0xFFF000) | can_statemachine_info->openlcb_node->alias); // AA0203040506
@@ -123,7 +123,7 @@ void CanLoginMessageHandler_load_cid07(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_cid06(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid06(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((can_statemachine_info->openlcb_node->id >> 12) & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
@@ -133,7 +133,7 @@ void CanLoginMessageHandler_load_cid06(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_cid05(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid05(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((can_statemachine_info->openlcb_node->id & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
@@ -143,7 +143,7 @@ void CanLoginMessageHandler_load_cid05(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid04(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((can_statemachine_info->openlcb_node->id << 12) & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
@@ -154,7 +154,7 @@ void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_wait_200ms(can_statemachine_info_t *can_statemachine_info) {
 
     if (can_statemachine_info->openlcb_node->timerticks > 2) {
 
@@ -164,7 +164,7 @@ void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_rid(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_statemachine_info->openlcb_node->alias;
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
@@ -174,7 +174,7 @@ void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_i
 
 }
 
-void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_amd(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_statemachine_info->openlcb_node->alias;
     CanUtilities_copy_node_id_to_payload(can_statemachine_info->login_outgoing_can_msg, can_statemachine_info->openlcb_node->id, 0);
