@@ -3,12 +3,12 @@
 #include "can_buffer_store.h"
 #include "can_types.h"
 
-TEST(CAN_BufferStore, CanBufferStore_initialize)
+TEST(CAN_BufferStore, nitialize)
 {
     CanBufferStore_initialize();
 }
 
-TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
+TEST(CAN_BufferStore, allocate_buffer)
 {
 
     CanBufferStore_initialize();
@@ -44,7 +44,7 @@ TEST(CAN_BufferStore, CanBufferStore_allocate_buffer)
     }
 }
 
-TEST(CAN_BufferStore, CanBufferStore_clear_message)
+TEST(CAN_BufferStore, clear_message)
 {
 
     CanBufferStore_initialize();
@@ -78,7 +78,7 @@ TEST(CAN_BufferStore, CanBufferStore_clear_message)
     }
 }
 
-TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
+TEST(CAN_BufferStore, stress_buffer)
 {
     CanBufferStore_initialize();
 
@@ -112,4 +112,12 @@ TEST(CAN_BufferStore, CanBufferStore_stress_buffer)
 
         EXPECT_EQ(count, USER_DEFINED_CAN_MSG_BUFFER_DEPTH - i - 1);
     }
+}
+
+TEST(CAN_BufferStore, null_input)
+{
+
+    CanBufferStore_initialize();
+
+    CanBufferStore_free_buffer(nullptr);
 }

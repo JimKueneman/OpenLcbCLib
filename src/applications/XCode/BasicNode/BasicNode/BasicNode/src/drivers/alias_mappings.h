@@ -45,14 +45,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
- typedef struct {
-        
-        uint8_t junk;
-
-    } interface_alias_mappings_t;
-
-
-    extern void AliasMappings_initialize(const interface_alias_mappings_t *interface_alias_mappings);
+    extern void AliasMappings_initialize(void);
     
     extern alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void);
     

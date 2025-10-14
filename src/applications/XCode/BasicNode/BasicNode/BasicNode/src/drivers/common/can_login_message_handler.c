@@ -45,12 +45,16 @@
 
 #include "can_types.h"
 #include "can_utilities.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_utilities.h"
-#include "../../openlcb//openlcb_buffer_store.h"
 
 
 static interface_can_login_message_handler_t* _interface;
+
+
+void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface) {
+
+    _interface = (interface_can_login_message_handler_t*) interface;
+
+}
 
 static uint64_t _generate_seed(uint64_t start_seed) {
 
@@ -79,28 +83,21 @@ static uint16_t _generate_alias(uint64_t seed) {
 
 }
 
-void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface) {
-
-    _interface = (interface_can_login_message_handler_t*) interface;
-
-}
-
-void CanLoginMessageHandler_init(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_init(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->seed = can_statemachine_info->openlcb_node->id;
-
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS; // Jump over Generate Seed that only is if we have an Alias conflict and have to jump back
-
+    
 }
 
-void CanLoginMessageHandler_generate_seed(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_generate_seed(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->seed = _generate_seed(can_statemachine_info->openlcb_node->seed);
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
 
 }
 
-void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
     
@@ -116,7 +113,7 @@ void CanLoginMessageHandler_generate_alias(can_statemachine_info_t *can_statemac
 
 }
 
-void CanLoginMessageHandler_load_cid07(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid07(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID7 | (((can_statemachine_info->openlcb_node->id >> 24) & 0xFFF000) | can_statemachine_info->openlcb_node->alias); // AA0203040506
@@ -126,7 +123,7 @@ void CanLoginMessageHandler_load_cid07(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_cid06(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid06(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID6 | (((can_statemachine_info->openlcb_node->id >> 12) & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
@@ -136,7 +133,7 @@ void CanLoginMessageHandler_load_cid06(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_cid05(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid05(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID5 | ((can_statemachine_info->openlcb_node->id & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
@@ -146,7 +143,7 @@ void CanLoginMessageHandler_load_cid05(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_cid04(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_CID4 | (((can_statemachine_info->openlcb_node->id << 12) & 0xFFF000) | can_statemachine_info->openlcb_node->alias);
@@ -157,9 +154,9 @@ void CanLoginMessageHandler_load_cid04(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_wait_200ms(can_statemachine_info_t *can_statemachine_info) {
 
-    if (can_statemachine_info->openlcb_node->timerticks > 3) {
+    if (can_statemachine_info->openlcb_node->timerticks > 2) {
 
         can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_RESERVE_ID;
 
@@ -167,7 +164,7 @@ void CanLoginMessageHandler_wait_200ms(can_statemachine_info_t *can_statemachine
 
 }
 
-void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_rid(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | can_statemachine_info->openlcb_node->alias;
     can_statemachine_info->login_outgoing_can_msg->payload_count = 0;
@@ -177,7 +174,7 @@ void CanLoginMessageHandler_load_rid(can_statemachine_info_t *can_statemachine_i
 
 }
 
-void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_info) {
+void CanLoginMessageHandler_state_load_amd(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->login_outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | can_statemachine_info->openlcb_node->alias;
     CanUtilities_copy_node_id_to_payload(can_statemachine_info->login_outgoing_can_msg, can_statemachine_info->openlcb_node->id, 0);
@@ -191,97 +188,4 @@ void CanLoginMessageHandler_load_amd(can_statemachine_info_t *can_statemachine_i
     
 }
 
-void CanLoginMessageHandler_load_initialization_complete(can_statemachine_info_t *can_statemachine_info) {
 
-    OpenLcbUtilities_load_openlcb_message(can_statemachine_info->login_outgoing_openlcb_msg, can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
-
-    if (can_statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
-
-        can_statemachine_info->login_outgoing_openlcb_msg->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
-
-    }
-
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(can_statemachine_info->login_outgoing_openlcb_msg, can_statemachine_info->openlcb_node->id, 0);
-
-    can_statemachine_info->openlcb_node->state.initalized = true;
-    can_statemachine_info->openlcb_node->producers.enumerator.running = true;
-    can_statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
-    can_statemachine_info->login_outgoing_openlcb_msg_valid = true;
-   
-    can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
-
-
-}
-
-void CanLoginMessageHandler_load_producer_events(can_statemachine_info_t *can_statemachine_info) {
-
-    if (can_statemachine_info->openlcb_node->producers.count == 0) {
-
-        can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
-        
-        return;
-
-    }
-
-    uint16_t event_mti = _interface->extract_producer_event_state_mti(can_statemachine_info->openlcb_node, can_statemachine_info->openlcb_node->producers.enumerator.enum_index);
-
-    OpenLcbUtilities_load_openlcb_message(can_statemachine_info->login_outgoing_openlcb_msg, can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id, 0, 0, event_mti, 8);
-    event_id_t event_id = can_statemachine_info->openlcb_node->producers.list[can_statemachine_info->openlcb_node->producers.enumerator.enum_index].event;
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(can_statemachine_info->login_outgoing_openlcb_msg, event_id);
-
-    can_statemachine_info->openlcb_node->producers.enumerator.enum_index++;
-    can_statemachine_info->login_outgoing_openlcb_msg_valid = true;
-    
-    if (can_statemachine_info->openlcb_node->producers.enumerator.enum_index >= can_statemachine_info->openlcb_node->producers.count) {
-
-        can_statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
-        can_statemachine_info->openlcb_node->producers.enumerator.running = false;
-        can_statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
-        can_statemachine_info->openlcb_node->consumers.enumerator.running = true;
-        can_statemachine_info->enumerating = false;
-
-        can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
-        
-        return;
-
-    }
-    
-    can_statemachine_info->enumerating = true;
-
-}
-
-void CanLoginMessageHandler_load_consumer_events(can_statemachine_info_t *can_statemachine_info) {
-
-    if (can_statemachine_info->openlcb_node->consumers.count == 0) {
-
-        can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
-        
-        return;
-
-    }
-
-    uint16_t event_mti = _interface->extract_consumer_event_state_mti(can_statemachine_info->openlcb_node, can_statemachine_info->openlcb_node->consumers.enumerator.enum_index);
-
-    OpenLcbUtilities_load_openlcb_message(can_statemachine_info->login_outgoing_openlcb_msg, can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id, 0, 0, event_mti, 8);
-    event_id_t event_id = can_statemachine_info->openlcb_node->consumers.list[can_statemachine_info->openlcb_node->consumers.enumerator.enum_index].event;
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(can_statemachine_info->login_outgoing_openlcb_msg, event_id);
-
-    can_statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
-    can_statemachine_info->login_outgoing_openlcb_msg_valid = true;
-
-    if (can_statemachine_info->openlcb_node->consumers.enumerator.enum_index >= can_statemachine_info->openlcb_node->consumers.count) {
-
-        can_statemachine_info->openlcb_node->consumers.enumerator.running = false;
-        can_statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
-        
-        can_statemachine_info->enumerating = false;
-
-        can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
-        
-        return;
-
-    }
-    
-    can_statemachine_info->enumerating = true;
-
-}

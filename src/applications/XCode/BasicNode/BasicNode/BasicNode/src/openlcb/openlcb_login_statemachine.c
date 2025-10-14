@@ -24,14 +24,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_main_statemachine_hander.c
+ * \file can_login_statemachine.c
  *
  *
  * @author Jim Kueneman
- * @date 24 Sept 2025
+ * @date 12 Aug 2025
  */
 
-#include "can_main_statemachine_handler.h"
+#include "openlcb_login_statemachine.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -39,27 +39,47 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "can_types.h"
-#include "can_utilities.h"
-#include "can_buffer_store.h"
-#include "can_buffer_fifo.h"
+#include "openlcb_types.h"
+#include "openlcb_defines.h"
 
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_buffer_store.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_buffer_list.h"
 
-static interface_can_main_statemachine_handler_t *_interface;
+static interface_openlcb_login_state_machine_t *_interface;
 
-void CanMainStatemachineHandler_initialize(const interface_can_main_statemachine_handler_t *interface_can_main_statemachine_handler) {
+void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine) {
 
-    _interface = (interface_can_main_statemachine_handler_t*) interface_can_main_statemachine_handler;
+    _interface = (interface_openlcb_login_state_machine_t*) interface_openlcb_login_state_machine;
 
 }
 
+void OpenLcbLoginStateMachine_run(openlcb_statemachine_info_t *openlcb_statemachine_info) {
 
 
+    switch (openlcb_statemachine_info->openlcb_node->state.run_state) {
 
 
+        case RUNSTATE_LOAD_INITIALIZATION_COMPLETE:
 
+            _interface->load_initialization_complete(openlcb_statemachine_info);
+     
+            return;
+
+        case RUNSTATE_LOAD_PRODUCER_EVENTS:
+
+            _interface->load_producer_events(openlcb_statemachine_info);
+
+            return;
+
+        case RUNSTATE_LOAD_CONSUMER_EVENTS:
+
+            _interface->load_consumer_events(openlcb_statemachine_info);
+
+            return;
+            
+        default:
+            
+            return;
+
+    }
+
+}
 

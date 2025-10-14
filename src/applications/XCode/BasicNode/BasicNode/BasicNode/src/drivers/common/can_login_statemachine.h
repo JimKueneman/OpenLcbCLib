@@ -42,19 +42,17 @@
 
 typedef struct {
     
-     void (*init)(can_statemachine_info_t *can_statemachine_info);
-     void (*generate_seed)(can_statemachine_info_t *can_statemachine_info);
-     void (*generate_alias)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid07)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid06)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid05)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_cid04)(can_statemachine_info_t *can_statemachine_info);
-     void (*wait_200ms)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_rid)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_amd)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_initialization_complete)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_producer_events)(can_statemachine_info_t *can_statemachine_info);
-     void (*load_consumer_events)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_init)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_generate_seed)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_generate_alias)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid07)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid06)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid05)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid04)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_wait_200ms)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_rid)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_amd)(can_statemachine_info_t *can_statemachine_info);
+    
     
 } interface_can_login_state_machine_t;
 

@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,50 +24,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_message_handler.h
+ * \file openlcb_login_statemachine.h
  *
- * When a node is logging into the network on a CAN bus it must follow a specific
- * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
- * that is called from the CAN main statemachine to accomplish that when a new node
- * is created.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 11 Oct 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __OPENLCB_LOGIN_MESSAGE_HANDLER__
-#define	__OPENLCB_LOGIN_MESSAGE_HANDLER__
-
-#include <stdbool.h>
-#include <stdint.h>
+#ifndef __OPENLCB_LOGIN_STATEMACHINE__
+#define	__OPENLCB_LOGIN_STATEMACHINE__
 
 #include "openlcb_types.h"
+
+
+typedef struct {
+    
+     void (*load_initialization_complete)(openlcb_statemachine_info_t *openlcb_statemachine_info);
+     void (*load_producer_events)(openlcb_statemachine_info_t *openlcb_statemachine_info);
+     void (*load_consumer_events)(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    
+} interface_openlcb_login_state_machine_t;
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+    extern void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
 
-    typedef struct {
-        
-        uint16_t(*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
-        uint16_t(*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
-
-    } interface_openlcb_login_message_handler_t;
-
-    extern void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message_handler_t *interface);
-
-    extern void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_statemachine_info_t *openlcb_statemachine_info);
-
-    extern void OpenLcbLoginMessageHandler_load_producer_events(openlcb_statemachine_info_t *openlcb_statemachine_info);
-
-    extern void OpenLcbLoginMessageHandler_load_consumer_events(openlcb_statemachine_info_t *openlcb_statemachine_info);
-
+    extern void OpenLcbLoginStateMachine_run(openlcb_statemachine_info_t *openlcb_statemachine_info);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_LOGIN_MESSAGE_HANDLER__ */
-
+#endif	/* __OPENLCB_LOGIN_STATEMACHINE__ */

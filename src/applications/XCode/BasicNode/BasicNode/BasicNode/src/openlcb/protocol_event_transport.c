@@ -60,7 +60,7 @@ static void _identify_producers(openlcb_statemachine_info_t *statemachine_info) 
     if (!statemachine_info->openlcb_node->producers.enumerator.running) {
 
         statemachine_info->openlcb_node->producers.enumerator.running = true; // Kick off the enumeration next loop
-        statemachine_info->enumerating = true;
+        statemachine_info->enumerating_incoming_openlcb_message = true;
 
     }
 
@@ -84,7 +84,7 @@ static void _identify_consumers(openlcb_statemachine_info_t *statemachine_info) 
     if (!statemachine_info->openlcb_node->consumers.enumerator.running) {
 
         statemachine_info->openlcb_node->consumers.enumerator.running = true; // Kick off the enumeration next loop
-        statemachine_info->enumerating = true;
+        statemachine_info->enumerating_incoming_openlcb_message = true;
 
     }
 
@@ -361,7 +361,7 @@ void ProtocolEventTransport_handle_events_identify(openlcb_statemachine_info_t *
         statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;  // Reset for next enumeration
         statemachine_info->openlcb_node->producers.enumerator.enum_index = 0; // Reset for next enumeration
         statemachine_info->openlcb_node->consumers.enumerator.running = false;
-        statemachine_info->enumerating = false;
+        statemachine_info->enumerating_incoming_openlcb_message = false;
         
     }
     

@@ -351,6 +351,13 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
 
 };
 
+const interface_openlcb_login_message_handler_t interface_openlcb_login_message_handler = {
+    
+    .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
+    .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti
+    
+};
+
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
     
      .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
@@ -603,7 +610,6 @@ int main(void) {
 
     CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
     CanLoginStateMachine_initialize(&interface_can_login_state_machine);
-
     CanMainStatemachine_initialize(&interface_can_main_statemachine);
 
     AliasMappings_initialize();
@@ -620,6 +626,8 @@ int main(void) {
 
     OpenLcbNode_initialize(&interface_openlcb_node);
 
+    OpenLcbLoginMessageHandler_initialize(&interface_openlcb_login_message_handler);
+    OpenLcbLoginStateMachine_initialize(&interface_openlcb_login_state_machine);
     OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
 
     OpenLcbApplication_initialize(&interface_openlcb_application);

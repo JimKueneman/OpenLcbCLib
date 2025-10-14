@@ -571,7 +571,7 @@ static void _free_incoming_message(openlcb_statemachine_info_t *_statemachine_in
 
 }
 
- bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
+bool OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void) {
 
     if (_statemachine_info.outgoing_msg_valid) {
 
@@ -604,15 +604,11 @@ bool OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message(void) {
 
 bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(void) {
 
-    if (_statemachine_info.enumerating_outgoing_login_openlcb_message) {
+    if (_statemachine_info.enumerating_outgoing_login_openlcb_message && (_statemachine_info.openlcb_node->state.run_state < RUNSTATE_RUN)) {
 
-        // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-        if (_statemachine_info.openlcb_node->state.run_state < RUNSTATE_RUN) {
+        _interface->login_statemachine_run(&_statemachine_info);
 
-            _interface->login_statemachine_run(&_statemachine_info);
-
-        }
 
         return true; // done
 
@@ -622,7 +618,7 @@ bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(v
 
 }
 
- bool OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message(void) {
+bool OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message(void) {
 
     if (_statemachine_info.login_outgoing_openlcb_msg_valid) {
 
@@ -640,7 +636,7 @@ bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(v
 
 }
 
- bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) {
+bool OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message(void) {
 
     if (!_statemachine_info.incoming_msg) {
 
@@ -648,9 +644,10 @@ bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(v
 
         _statemachine_info.incoming_msg = OpenLcbBufferFifo_pop();
 
+
         _interface->unlock_shared_resources();
 
-        return true;
+        return (_statemachine_info.incoming_msg);
 
     }
 
@@ -658,7 +655,7 @@ bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(v
 
 }
 
- bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
+bool OpenLcbMainStatemachine_handle_try_enumerate_first_node(void) {
 
     if (!_statemachine_info.openlcb_node) {
 
@@ -694,7 +691,7 @@ bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(v
 
 }
 
- bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
+bool OpenLcbMainStatemachine_handle_try_enumerate_next_node(void) {
 
     if (_statemachine_info.openlcb_node) {
 
@@ -729,25 +726,25 @@ bool OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message(v
 
 }
 
-static void _handle_process_main_statemachine(void) {
-
-    if (_interface->does_node_process_msg(&_statemachine_info)) {
-
-        _interface->process_main_statemachine(&_statemachine_info); // kick it off.
-
-    }
-
-}
-
 void OpenLcbMainStatemachine_run(void) {
 
+    // Get any pending message out first
+    
     if (_interface->handle_outgoing_openlcb_message()) {
 
         return;
 
     }
+    
+    if (_interface->handle_login_outgoing_openlcb_message()) {
 
-   if (_interface->handle_reenumerate_outgoing_login_openlcb_message()) {
+        return;
+
+    }
+    
+    // If the message handler needs to send multiple messages then enumerate the same incoming message again
+
+    if (_interface->handle_reenumerate_outgoing_login_openlcb_message()) {
 
         return;
 
@@ -758,12 +755,8 @@ void OpenLcbMainStatemachine_run(void) {
         return;
 
     }
-
-    if (_interface->handle_login_outgoing_openlcb_message()) {
-
-        return;
-
-    }
+    
+    // Pop the next incoming message and dispatch it to the active node
 
     if (_interface->handle_try_pop_next_incoming_openlcb_message()) {
 
@@ -771,18 +764,20 @@ void OpenLcbMainStatemachine_run(void) {
 
     }
 
+    // Grab the first OpenLcb Node
+    
     if (_interface->handle_try_enumerate_first_node()) {
 
         return;
 
     }
 
+    // Enumerate all the OpenLcb Nodes
+    
     if (_interface->handle_try_enumerate_next_node()) {
 
         return;
 
     }
-
-    _handle_process_main_statemachine();
 
 }

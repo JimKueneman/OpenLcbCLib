@@ -83,129 +83,102 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-bool _init_called = false;
-bool _generate_seed_called = false;
-bool _generate_alias_called = false;
-bool _load_cid07_called = false;
-bool _load_cid06_called = false;
-bool _load_cid05_called = false;
-bool _load_cid04_called = false;
-bool _wait_200ms_called = false;
-bool _load_rid_called = false;
-bool _load_amd_called = false;
-bool _load_initialization_complete_called = false;
-bool _load_producer_events_called = false;
-bool _load_consumer_events_called = false;
+bool _state_init_called = false;
+bool _state_generate_seed_called = false;
+bool _state_generate_alias_called = false;
+bool _state_load_cid07_called = false;
+bool _state_load_cid06_called = false;
+bool _state_load_cid05_called = false;
+bool _state_load_cid04_called = false;
+bool _state_wait_200ms_called = false;
+bool _state_load_rid_called = false;
+bool _state_load_amd_called = false;
 
 uint16_t called_mti = 0;
 
-void _init(can_statemachine_info_t *can_statemachine_info)
+void _state_init(can_statemachine_info_t *can_statemachine_info)
 {
-    _init_called = true;
+    _state_init_called = true;
 }
 
-void _generate_seed(can_statemachine_info_t *can_statemachine_info)
+void _state_generate_seed(can_statemachine_info_t *can_statemachine_info)
 {
-    _generate_seed_called = true;
+    _state_generate_seed_called = true;
 }
 
-void _generate_alias(can_statemachine_info_t *can_statemachine_info)
+void _state_generate_alias(can_statemachine_info_t *can_statemachine_info)
 {
 
-    _generate_alias_called = true;
+    _state_generate_alias_called = true;
 }
 
-void _load_cid07(can_statemachine_info_t *can_statemachine_info)
+void _state_load_cid07(can_statemachine_info_t *can_statemachine_info)
 {
-    _load_cid07_called = true;
+    _state_load_cid07_called = true;
 }
 
-void _load_cid06(can_statemachine_info_t *can_statemachine_info)
+void _state_load_cid06(can_statemachine_info_t *can_statemachine_info)
 {
-    _load_cid06_called = true;
+    _state_load_cid06_called = true;
 }
 
-void _load_cid05(can_statemachine_info_t *can_statemachine_info)
+void _state_load_cid05(can_statemachine_info_t *can_statemachine_info)
 {
-    _load_cid05_called = true;
+    _state_load_cid05_called = true;
 }
 
-void _load_cid04(can_statemachine_info_t *can_statemachine_info)
+void _state_load_cid04(can_statemachine_info_t *can_statemachine_info)
 {
 
-    _load_cid04_called = true;
+    _state_load_cid04_called = true;
 }
 
-void _wait_200ms(can_statemachine_info_t *can_statemachine_info)
+void _state_wait_200ms(can_statemachine_info_t *can_statemachine_info)
 {
 
-    _wait_200ms_called = true;
+    _state_wait_200ms_called = true;
 }
 
-void _load_rid(can_statemachine_info_t *can_statemachine_info)
+void _state_load_rid(can_statemachine_info_t *can_statemachine_info)
 {
 
-    _load_rid_called = true;
+    _state_load_rid_called = true;
 }
 
-void _load_amd(can_statemachine_info_t *can_statemachine_info)
+void _state_load_amd(can_statemachine_info_t *can_statemachine_info)
 {
 
-    _load_amd_called = true;
-}
-
-void _load_initialization_complete(can_statemachine_info_t *can_statemachine_info)
-{
-
-    _load_initialization_complete_called = true;
-}
-
-void _load_producer_events(can_statemachine_info_t *can_statemachine_info)
-{
-
-    _load_producer_events_called = true;
-}
-
-void _load_consumer_events(can_statemachine_info_t *can_statemachine_info)
-{
-
-    _load_consumer_events_called = true;
+    _state_load_amd_called = true;
 }
 
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
 
-    .generate_alias = &_generate_alias,
-    .generate_seed = &_generate_seed,
-    .init = &_init,
-    .load_amd = &_load_amd,
-    .load_cid04 = &_load_cid04,
-    .load_cid05 = &_load_cid05,
-    .load_cid06 = &_load_cid06,
-    .load_cid07 = &_load_cid07,
-    .load_consumer_events = &_load_consumer_events,
-    .load_initialization_complete = &_load_initialization_complete,
-    .load_producer_events = &_load_producer_events,
-    .load_rid = &_load_rid,
-    .wait_200ms = &_wait_200ms};
+    .state_generate_alias = &_state_generate_alias,
+    .state_generate_seed = &_state_generate_seed,
+    .state_init = &_state_init,
+    .state_load_amd = &_state_load_amd,
+    .state_load_cid04 = &_state_load_cid04,
+    .state_load_cid05 = &_state_load_cid05,
+    .state_load_cid06 = &_state_load_cid06,
+    .state_load_cid07 = &_state_load_cid07,
+    .state_load_rid = &_state_load_rid,
+    .state_wait_200ms = &_state_wait_200ms};
 
 const interface_openlcb_node_t interface_openlcb_node = {};
 
 void _reset_variables(void)
 {
 
-    _init_called = false;
-    _generate_seed_called = false;
-    _generate_alias_called = false;
-    _load_cid07_called = false;
-    _load_cid06_called = false;
-    _load_cid05_called = false;
-    _load_cid04_called = false;
-    _wait_200ms_called = false;
-    _load_rid_called = false;
-    _load_amd_called = false;
-    _load_initialization_complete_called = false;
-    _load_producer_events_called = false;
-    _load_consumer_events_called = false;
+    _state_init_called = false;
+    _state_generate_seed_called = false;
+    _state_generate_alias_called = false;
+    _state_load_cid07_called = false;
+    _state_load_cid06_called = false;
+    _state_load_cid05_called = false;
+    _state_load_cid04_called = false;
+    _state_wait_200ms_called = false;
+    _state_load_rid_called = false;
+    _state_load_amd_called = false;
 }
 
 void _initialize(void)
@@ -226,8 +199,6 @@ void _initalize_can_statemachine_info(node_id_t node_id, node_parameters_t *node
     can_statemachine_info->openlcb_node = OpenLcbNode_allocate(node_id, node_parameters);
     can_statemachine_info->login_outgoing_can_msg = CanBufferStore_allocate_buffer();
     can_statemachine_info->login_outgoing_can_msg_valid = false;
-    can_statemachine_info->login_outgoing_openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    can_statemachine_info->login_outgoing_openlcb_msg_valid = false;
 }
 
 TEST(CanLoginStateMachine, initialize)
@@ -250,256 +221,211 @@ TEST(CanLoginStateMachine, run)
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_INIT;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_TRUE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_TRUE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_TRUE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_TRUE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_TRUE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_TRUE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_07;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_TRUE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_TRUE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_06;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_TRUE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_TRUE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_TRUE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_TRUE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CHECK_ID_04;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_TRUE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_TRUE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_WAIT_200ms;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_TRUE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_TRUE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_RESERVE_ID;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_TRUE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_TRUE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_ALIAS_MAP_DEFINITION;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_TRUE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_TRUE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_TRUE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_TRUE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_RUN;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_TRUE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 
     can_statemachine_info.openlcb_node->state.run_state = 31; // Invalid
     CanLoginStateMachine_run(&can_statemachine_info);
-    EXPECT_FALSE(_init_called);
-    EXPECT_FALSE(_generate_seed_called);
-    EXPECT_FALSE(_generate_alias_called);
-    EXPECT_FALSE(_load_cid07_called);
-    EXPECT_FALSE(_load_cid06_called);
-    EXPECT_FALSE(_load_cid05_called);
-    EXPECT_FALSE(_load_cid04_called);
-    EXPECT_FALSE(_wait_200ms_called);
-    EXPECT_FALSE(_load_rid_called);
-    EXPECT_FALSE(_load_amd_called);
-    EXPECT_FALSE(_load_initialization_complete_called);
-    EXPECT_FALSE(_load_producer_events_called);
-    EXPECT_FALSE(_load_consumer_events_called);
+    EXPECT_FALSE(_state_init_called);
+    EXPECT_FALSE(_state_generate_seed_called);
+    EXPECT_FALSE(_state_generate_alias_called);
+    EXPECT_FALSE(_state_load_cid07_called);
+    EXPECT_FALSE(_state_load_cid06_called);
+    EXPECT_FALSE(_state_load_cid05_called);
+    EXPECT_FALSE(_state_load_cid04_called);
+    EXPECT_FALSE(_state_wait_200ms_called);
+    EXPECT_FALSE(_state_load_rid_called);
+    EXPECT_FALSE(_state_load_amd_called);
     _reset_variables();
 }

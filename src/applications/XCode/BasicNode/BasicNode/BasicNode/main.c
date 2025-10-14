@@ -18,9 +18,9 @@
 #include "src/drivers/common/can_rx_statemachine.h"
 #include "src/drivers/common/can_tx_message_handler.h"
 #include "src/drivers/common/can_tx_statemachine.h"
-#include "src/drivers/common/can_main_statemachine_handler.h"
 #include "src/drivers/common/can_main_statemachine.h"
 
+#include "src/openlcb/openlcb_application.h"
 #include "src/openlcb/openlcb_defines.h"
 #include "src/openlcb/openlcb_types.h"
 #include "src/openlcb/openlcb_utilities.h"
@@ -32,10 +32,13 @@
 #include "src/openlcb/protocol_event_transport.h"
 #include "src/openlcb/protocol_snip.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_application.h"
+#include "src/openlcb/protocol_datagram_config_mem_handler.h"
+#include "src/openlcb/protocol_datagram_handler.h"
+#include "src/openlcb/openlcb_login_statemachine.h"
+#include "src/openlcb/openlcb_login_statemachine_handler.h"
+
 
 #include "src/drivers/alias_mappings.h"
-
 
 
 #include "node_parameters.h"
@@ -47,9 +50,7 @@
 uint64_t node_id_base = 0x0507010100AA;
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
-    
-    .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
-    .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
+
     .alias_mapping_register = &AliasMappings_register,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
@@ -59,19 +60,16 @@ const interface_can_login_message_handler_t interface_can_login_message_handler 
 
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
     
-    .init = &CanLoginMessageHandler_init,
-    .generate_seed = &CanLoginMessageHandler_generate_seed,
-    .generate_alias = &CanLoginMessageHandler_generate_alias,
-    .load_cid07 = &CanLoginMessageHandler_load_cid07,
-    .load_cid06 = &CanLoginMessageHandler_load_cid06,
-    .load_cid05 = &CanLoginMessageHandler_load_cid05,
-    .load_cid04 = &CanLoginMessageHandler_load_cid04,
-    .wait_200ms = &CanLoginMessageHandler_wait_200ms,
-    .load_rid = &CanLoginMessageHandler_load_rid,
-    .load_amd = &CanLoginMessageHandler_load_amd,
-    .load_initialization_complete = &CanLoginMessageHandler_load_initialization_complete,
-    .load_producer_events = &CanLoginMessageHandler_load_producer_events,
-    .load_consumer_events = &CanLoginMessageHandler_load_consumer_events
+    .state_init = &CanLoginMessageHandler_state_init,
+    .state_generate_seed = &CanLoginMessageHandler_state_generate_seed,
+    .state_generate_alias = &CanLoginMessageHandler_state_generate_alias,
+    .state_load_cid07 = &CanLoginMessageHandler_state_load_cid07,
+    .state_load_cid06 = &CanLoginMessageHandler_state_load_cid06,
+    .state_load_cid05 = &CanLoginMessageHandler_state_load_cid05,
+    .state_load_cid04 = &CanLoginMessageHandler_state_load_cid04,
+    .state_wait_200ms = &CanLoginMessageHandler_state_wait_200ms,
+    .state_load_rid = &CanLoginMessageHandler_state_load_rid,
+    .state_load_amd = &CanLoginMessageHandler_state_load_amd
     
 };
 
@@ -130,19 +128,16 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .lock_shared_resources = OSxCanDriver_pause_can_rx,   //  HARDWARE INTERFACE
     .unlock_shared_resources = OSxCanDriver_resume_can_rx, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
-    .send_openlcb_message = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
     .login_statemachine_run = &CanLoginStateMachine_run,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
     .alias_mapping_unregister = &AliasMappings_unregister,
-    
+
     .handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases,
     .handle_outgoing_can_message = &CanMainStatemachine_handle_outgoing_can_message,
     .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
-    .handle_login_outgoing_openlcb_message = &CanMainStatemachine_handle_login_outgoing_openlcb_message,
-    .handle_reenumerate_openlcb_message = &CanMainStatemachine_handle_reenumerate_openlcb_message,
     .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
     
@@ -151,6 +146,8 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
 const interface_openlcb_node_t interface_openlcb_node = {
     
+    // Callback events
+    .on_100ms_timer_tick = NULL
   
 };
 
@@ -178,13 +175,23 @@ const  interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_e
     
 };
 
+const interface_openlcb_login_message_handler_t interface_openlcb_login_message_handler = {
+    
+    .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
+    .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti
+    
+};
+
+const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
+    
+     .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
+     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_events,
+     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_events
+    
+};
 
 // TODO Complete
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
-    
-    // SNIP
-    .snip_simple_node_info_request = &ProtocolSnip_handle_simple_node_info_request,
-    .snip_simple_node_info_reply = &ProtocolSnip_handle_simple_node_info_reply,
     
     // MESSAGE NETWORK
     .message_network_initialization_complete = ProtocolMessageNetwork_handle_initialization_complete,
@@ -194,15 +201,19 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .message_network_verified_node_id = &ProtocolMessageNetwork_handle_verified_node_id,
     .message_network_optional_interaction_rejected = &ProtocolMessageNetwork_handle_optional_interaction_rejected,
     .message_network_terminate_due_to_error = &ProtocolMessageNetwork_handle_terminate_due_to_error,
-    
+
     // PROTOCOL SUPPORT
     .message_network_protocol_support_inquiry = &ProtocolMessageNetwork_handle_protocol_support_inquiry,
     .message_network_protocol_support_reply = &ProtocolMessageNetwork_handle_protocol_support_reply,
-    
+
+    // SNIP
+    .snip_simple_node_info_request = &ProtocolSnip_handle_simple_node_info_request,
+    .snip_simple_node_info_reply = &ProtocolSnip_handle_simple_node_info_reply,
+
     // EVENTS
     .event_transport_consumer_identify = &ProtocolEventTransport_handle_consumer_identify,
     .event_transport_consumer_range_identified = &ProtocolEventTransport_handle_consumer_range_identified,
-    .event_transport_consumer_identified_unknown =&ProtocolEventTransport_handle_consumer_identified_unknown,
+    .event_transport_consumer_identified_unknown = &ProtocolEventTransport_handle_consumer_identified_unknown,
     .event_transport_consumer_identified_set = &ProtocolEventTransport_handle_consumer_identified_set,
     .event_transport_consumer_identified_clear = &ProtocolEventTransport_handle_consumer_identified_clear,
     .event_transport_consumer_identified_reserved = &ProtocolEventTransport_handle_consumer_identified_reserved,
@@ -217,20 +228,20 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .event_transport_learn = &ProtocolEventTransport_handle_event_learn,
     .event_transport_pc_report = &ProtocolEventTransport_handle_pc_event_report,
     .event_transport_pc_report_with_payload = &ProtocolEventTransport_handle_pc_event_report_with_payload,
-    
+
     // TRACTION
     .traction_control_command = NULL,
     .traction_control_reply = NULL,
-    
+
     // TRACTION SNIP
-   .simple_train_node_ident_info_request = NULL,
-   .simple_train_node_ident_info_reply = NULL,
-    
+    .simple_train_node_ident_info_request = NULL,
+    .simple_train_node_ident_info_reply = NULL,
+
     // DATAGRAM
     .datagram = NULL,
     .datagram_ok_reply = NULL,
     .datagram_rejected_reply = NULL,
-    
+
     // STREAM
     .stream_initiate_request = NULL,
     .stream_initiate_reply = NULL,
@@ -244,8 +255,17 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
-    .load_interaction_rejected = OpenLcbMainStatemachine_load_interaction_rejected,
+    .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
+    .login_statemachine_run = &OpenLcbLoginStateMachine_run,
     
+    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_login_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message,
+    .handle_reenumerate_outgoing_login_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message,
+    .handle_reenumerate_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+
     // for test injection, leave null to use the default functions
     .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
     .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
@@ -258,9 +278,121 @@ const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
     
 };
 
-const interface_alias_mappings_t interface_alias_mappings = {
-    
-    
+// TODO Finish these interfaces
+// -------------------------------
+
+const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
+
+    // Memory Read Address Space
+    .memory_read_space_config_description_info_message = NULL,
+    .memory_read_space_all_message = NULL,
+    .memory_read_space_configuration_memory_message = NULL,
+    .memory_read_space_acdi_manufacturer_message = NULL,
+    .memory_read_space_acdi_user_message = NULL,
+    .memory_read_space_traction_function_definition_info_message = NULL,
+    .memory_read_space_traction_function_config_memory_message = NULL,
+
+    // Memory Read Ok Ok Address Space
+    .memory_read_space_config_description_info_reply_ok_message = NULL,
+    .memory_read_space_all_reply_ok_message = NULL,
+    .memory_read_space_configuration_memory_reply_ok_message = NULL,
+    .memory_read_space_acdi_manufacturer_reply_ok_message = NULL,
+    .memory_read_space_acdi_user_reply_ok_message = NULL,
+    .memory_read_space_traction_function_definition_info_reply_ok_message = NULL,
+    .memory_read_space_traction_function_config_memory_reply_ok_message = NULL,
+
+    // Memory Read Failed Reply Address Space
+    .memory_read_space_config_description_info_reply_fail_message = NULL,
+    .memory_read_space_all_reply_fail_message = NULL,
+    .memory_read_space_configuration_memory_reply_fail_message = NULL,
+    .memory_read_space_acdi_manufacturer_reply_fail_message = NULL,
+    .memory_read_space_acdi_user_reply_fail_message = NULL,
+    .memory_read_space_traction_function_definition_info_reply_fail_message = NULL,
+    .memory_read_space_traction_function_config_memory_reply_fail_message = NULL,
+
+    // Memory Write Address Space
+    .memory_write_space_config_description_info_message = NULL,
+    .memory_write_space_all_message = NULL,
+    .memory_write_space_configuration_memory_message = NULL,
+    .memory_write_space_acdi_manufacturer_message = NULL,
+    .memory_write_space_acdi_user_message = NULL,
+    .memory_write_space_traction_function_definition_info_message = NULL,
+    .memory_write_space_traction_function_config_memory_message = NULL,
+    .memory_write_space_firmware_upgrade_message = NULL,
+
+    // Memory Write Ok Reply Address Space
+    .memory_write_space_config_description_info_reply_ok_message = NULL,
+    .memory_write_space_all_reply_ok_message = NULL,
+    .memory_write_space_configuration_memory_reply_ok_message = NULL,
+    .memory_write_space_acdi_manufacturer_reply_ok_message = NULL,
+    .memory_write_space_acdi_user_reply_ok_message = NULL,
+    .memory_write_space_traction_function_definition_info_reply_ok_message = NULL,
+    .memory_write_space_traction_function_config_memory_reply_ok_message = NULL,
+
+    // Memory Write Fail Reply Address Space
+    .memory_write_space_config_description_info_reply_fail_message = NULL,
+    .memory_write_space_all_reply_fail_message = NULL,
+    .memory_write_space_configuration_memory_reply_fail_message = NULL,
+    .memory_write_space_acdi_manufacturer_reply_fail_message = NULL,
+    .memory_write_space_acdi_user_reply_fail_message = NULL,
+    .memory_write_space_traction_function_definition_info_reply_fail_message = NULL,
+    .memory_write_space_traction_function_config_memory_reply_fail_message = NULL,
+
+    // Memory Write Under Mask Address Space
+    .memory_write_under_mask_space_config_description_info_message = NULL,
+    .memory_write_under_mask_space_all_message = NULL,
+    .memory_write_under_mask_space_configuration_memory_message = NULL,
+    .memory_write_under_mask_space_acdi_manufacturer_message = NULL,
+    .memory_write_under_mask_space_acdi_user_message = NULL,
+    .memory_write_under_mask_space_traction_function_definition_info_message = NULL,
+    .memory_write_under_mask_space_traction_function_config_memory_message = NULL,
+    .memory_write_under_mask_space_firmware_upgrade_message = NULL,
+
+    // Commands
+    .memory_options_cmd_message = NULL,
+    .memory_options_reply_message = NULL,
+    .memory_get_address_space_info_message = NULL,
+    .memory_get_address_space_info_reply_not_present_message = NULL,
+    .memory_get_address_space_info_reply_present_message = NULL,
+    .memory_reserve_lock_message = NULL,
+    .memory_get_unique_id_message = NULL,
+    .memory_unfreeze_message = NULL,
+    .memory_freeze_message = NULL,
+    .memory_update_complete_message = NULL,
+    .memory_reset_reboot_message = NULL,
+    .memory_factory_reset_message = NULL,
+    .send_datagram_rejected_reply = NULL
+
+};
+
+const interface_openlcb_application_t interface_openlcb_application = {
+
+    .transmit_openlcb_message = NULL,
+    .configuration_memory_read = NULL,
+    .configuration_memory_write = NULL
+
+};
+
+interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_protocol_datagram_config_mem_handler = {
+
+    .configuration_memory_read = NULL,
+    .configuration_memory_write = NULL,
+    .reboot = NULL,
+    .configuration_memory_factory_reset = NULL,
+    .snip_load_manufacturer_version_id = NULL,
+    .snip_load_name = NULL,
+    .snip_load_model = NULL,
+    .snip_load_hardware_version = NULL,
+    .snip_load_software_version = NULL,
+    .snip_load_user_version_id = NULL,
+    .snip_load_user_name = NULL,
+    .snip_load_user_description = NULL,
+    // Callback events
+    .on_configuration_memory_factory_reset = NULL,
+    .on_config_mem_write = NULL,
+    .on_config_mem_freeze_firmware_update = NULL,
+    .on_config_mem_unfreeze_firmware_update = NULL
+
 };
 
 int main(int argc, char *argv[])
@@ -273,6 +405,7 @@ int main(int argc, char *argv[])
 
     CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
     CanLoginStateMachine_initialize(&interface_can_login_state_machine);
+    CanMainStatemachine_initialize(&interface_can_main_statemachine);
 
     CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
     CanRxStatemachine_initialize(&interface_can_rx_statemachine);
@@ -280,22 +413,21 @@ int main(int argc, char *argv[])
     CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
     CanTxStatemachine_initialize(&interface_can_tx_statemachine);
 
-    CanMainStatemachine_initialize(&interface_can_main_statemachine);
-
-
     OpenLcbBufferStore_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbBufferFifo_initialize();
     
+    OpenLcbLoginMessageHandler_initialize(&interface_openlcb_login_message_handler);
+    OpenLcbLoginStateMachine_initialize(&interface_openlcb_login_state_machine);
+    OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
+
     OpenLcbNode_initialize(&interface_openlcb_node);
     
     ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
     ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
-
-    OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
     
-    AliasMappings_initialize(&interface_alias_mappings);
+    AliasMappings_initialize();
     
     OSxDrivers_setup();
     OSxCanDriver_setup();
