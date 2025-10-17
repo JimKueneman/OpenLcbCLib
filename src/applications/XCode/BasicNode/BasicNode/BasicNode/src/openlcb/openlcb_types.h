@@ -115,7 +115,7 @@ extern "C" {
 #define LEN_SNIP_VERSION 1
 #define LEN_SNIP_USER_VERSION 1
 
-// Event with Payload = 256 Payload + 8 bytes for Event ID = 264; SNIP max = 253
+    // Event with Payload = 256 Payload + 8 bytes for Event ID = 264; SNIP max = 253
 #define LEN_SNIP_STRUCTURE 264
 
 #define LEN_MESSAGE_BYTES_BASIC 16 // most are 8 bytes but a few protocols take 2 frames like Traction
@@ -321,19 +321,33 @@ extern "C" {
     } openlcb_statemachine_worker_t;
 
     typedef void (*parameterless_callback_t)(void);
-    typedef uint16_t(*configuration_mem_callback_t) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    
+    typedef struct {
+        openlcb_msg_t openlcb_msg;
+        payload_stream_t openlcb_payload;
+
+    } openlcb_stream_message_t;
+    
+    typedef struct {
+        openlcb_msg_t *openlcb_msg;
+        uint8_t valid : 1;
+        uint8_t enumerating : 1;
+        openlcb_stream_message_t message; 
+
+    } openlcb_outgoing_msg_info_t;
+    
+    typedef struct {
+        
+        openlcb_msg_t *openlcb_msg;
+        uint8_t enumerating : 1;
+        
+    } openlcb_incoming_msg_info_t;
 
     typedef struct {
-    
         openlcb_node_t *openlcb_node;
-        openlcb_msg_t *incoming_msg;
-        openlcb_msg_t *outgoing_msg;
-        openlcb_msg_t *login_outgoing_openlcb_msg;
-        uint8_t login_outgoing_openlcb_msg_valid : 1;
-        uint8_t enumerating_incoming_openlcb_message : 1;
-        uint8_t enumerating_outgoing_login_openlcb_message : 1;
-        uint8_t outgoing_msg_valid : 1;
-       
+        openlcb_incoming_msg_info_t incoming_msg_info;
+        openlcb_outgoing_msg_info_t outgoing_msg_info;
+
     } openlcb_statemachine_info_t;
 
 

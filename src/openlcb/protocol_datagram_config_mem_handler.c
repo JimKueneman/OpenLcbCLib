@@ -134,35 +134,35 @@ static config_mem_datagram_reply_result_enum _process_datagram_acknowledge(openl
     if (!config_mem_message_data->space_info->present) {
 
         OpenLcbUtilities_load_openlcb_message(
-                statemachine_info->outgoing_msg,
+                statemachine_info->outgoing_msg_info.openlcb_msg,
                 statemachine_info->openlcb_node->alias,
                 statemachine_info->openlcb_node->id,
-                statemachine_info->incoming_msg->dest_alias,
-                statemachine_info->incoming_msg->dest_id,
+                statemachine_info->incoming_msg_info.openlcb_msg->dest_alias,
+                statemachine_info->incoming_msg_info.openlcb_msg->dest_id,
                 MTI_DATAGRAM_REJECTED_REPLY,
                 1);
 
-        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN, 0);
-        statemachine_info->outgoing_msg->payload_count = 2;
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN, 0);
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 2;
 
         statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
-        statemachine_info->outgoing_msg_valid = true;
+        statemachine_info->outgoing_msg_info.valid = true;
 
         return ACK_FAIL_REPLY;
 
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->dest_alias,
-            statemachine_info->incoming_msg->dest_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->dest_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->dest_id,
             MTI_DATAGRAM_OK_REPLY,
             1);
 
-    *statemachine_info->outgoing_msg->payload[0] = 0x00;
-    statemachine_info->outgoing_msg->payload_count = 1;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = 0x00;
+    statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 1;
 
     if (config_mem_message_data->pending_timeout > 1) {
 
@@ -176,12 +176,12 @@ static config_mem_datagram_reply_result_enum _process_datagram_acknowledge(openl
 
         }
 
-        *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_OK_REPLY_PENDING | N;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_OK_REPLY_PENDING | N;
 
     }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
-    statemachine_info->outgoing_msg_valid = true;
+    statemachine_info->outgoing_msg_info.valid = true;
 
     return ACK_OK_REPLY;
 }
@@ -203,38 +203,38 @@ space_encoding_enum _decode_address_space_position(openlcb_msg_t* openlcb_msg) {
 static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_message_data_t *config_mem_message_data) {
 
     config_mem_message_data->data_start_offset = 6 + config_mem_message_data->address_space_encoding;
-    config_mem_message_data->address_requested = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg, 2);
-    config_mem_message_data->bytes_requested = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg, config_mem_message_data->data_start_offset);
+    config_mem_message_data->address_requested = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.openlcb_msg, 2);
+    config_mem_message_data->bytes_requested = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.openlcb_msg, config_mem_message_data->data_start_offset);
 
     // Load the common reply fields that all messages will have
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->dest_alias,
-            statemachine_info->incoming_msg->dest_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->dest_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->dest_id,
             MTI_DATAGRAM,
             0);
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->outgoing_msg->payload[1] = *statemachine_info->incoming_msg->payload[1] + CONFIG_REPLY_OK_OFFSET; // generate an OK reply by default for Read/Write/Stream
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg, config_mem_message_data->address_requested, 2);
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = *statemachine_info->incoming_msg_info.openlcb_msg->payload[1] + CONFIG_REPLY_OK_OFFSET; // generate an OK reply by default for Read/Write/Stream
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, config_mem_message_data->address_requested, 2);
 
 }
 
 static void _load_config_memory_fail_return_msg(openlcb_statemachine_info_t *statemachine_info, config_mem_message_data_t *config_mem_message_data, uint16_t error_code) {
 
-    *statemachine_info->outgoing_msg->payload[1] = *statemachine_info->incoming_msg->payload[1] + CONFIG_REPLY_FAIL_OFFSET; // generate a reply failure for Read/Write/Stream
-    statemachine_info->outgoing_msg->payload_count = 8;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = *statemachine_info->incoming_msg_info.openlcb_msg->payload[1] + CONFIG_REPLY_FAIL_OFFSET; // generate a reply failure for Read/Write/Stream
+    statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 8;
 
     if (config_mem_message_data->address_space_encoding == ADDRESS_SPACE_IN_BYTE_6) {
 
-        *statemachine_info->outgoing_msg->payload[6] = *statemachine_info->incoming_msg->payload[6];
-        statemachine_info->outgoing_msg->payload_count++;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[6] = *statemachine_info->incoming_msg_info.openlcb_msg->payload[6];
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count++;
 
     }
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, error_code, config_mem_message_data->data_start_offset);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, error_code, config_mem_message_data->data_start_offset);
 
 }
 
@@ -309,38 +309,38 @@ static config_mem_handler_result_enum _process_write_request(openlcb_statemachin
 void ProtocolDatagramConfigMemHandler_memory_read_space_config_description_info_message(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_message_data_t config_mem_message_data = {.address_requested = 0, .bytes_requested = 0, .data_start_offset = 0};
-    config_mem_message_data.address_space_encoding = _decode_address_space_position(statemachine_info->incoming_msg);
+    config_mem_message_data.address_space_encoding = _decode_address_space_position(statemachine_info->incoming_msg_info.openlcb_msg);
     config_mem_message_data.space_info = (user_address_space_info_t*) & statemachine_info->openlcb_node->parameters->address_space_configuration_definition; // a const so need to un-const to stop compiler from complaining
 
     switch (_process_read_request(statemachine_info, &config_mem_message_data)) {
 
         case CONFIG_MEM_HANDLER_PROCESSING_ACK_OK: // not done yet with a message to send in worker_msg but need to call again to do the reply
 
-            statemachine_info->outgoing_msg_valid = false;
+            statemachine_info->outgoing_msg_info.valid = false;
 
             return;
 
         case CONFIG_MEM_HANDLER_ABORTED: // done with last message we need to send in worker_msg, either a Datagram Rejected or Command Fail Config Mem Message
 
-            statemachine_info->outgoing_msg_valid = false;
+            statemachine_info->outgoing_msg_info.valid = false;
 
             return;
 
         case CONFIG_MEM_HANDLER_READY: // done with the actual reply for the read
 
             _load_config_mem_reply_message_header(statemachine_info, &config_mem_message_data);
-            OpenLcbUtilities_copy_byte_array_to_openlcb_payload(statemachine_info->outgoing_msg,
+            OpenLcbUtilities_copy_byte_array_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg,
                     &statemachine_info->openlcb_node->parameters->cdi[config_mem_message_data.address_requested],
                     config_mem_message_data.data_start_offset, config_mem_message_data.bytes_requested);
 
-            statemachine_info->outgoing_msg->payload_count = config_mem_message_data.data_start_offset + config_mem_message_data.bytes_requested;
+            statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = config_mem_message_data.data_start_offset + config_mem_message_data.bytes_requested;
 
-            statemachine_info->outgoing_msg_valid = true;
+            statemachine_info->outgoing_msg_info.valid = true;
 
             return;
     }
 
-    statemachine_info->outgoing_msg_valid = false; // unexpected error, make rouge message is not sent and flag done
+    statemachine_info->outgoing_msg_info.valid = false; // unexpected error, make rouge message is not sent and flag done
 }
 
 void ProtocolDatagramConfigMemHandler_memory_read_space_all_message(openlcb_statemachine_info_t *statemachine_info) {
@@ -350,7 +350,7 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_all_message(openlcb_stat
 
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -361,7 +361,7 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_configuration_memory_mes
 
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -371,7 +371,7 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_acdi_manufacturer_messag
 
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -381,7 +381,7 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_acdi_user_message(openlc
 
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -392,7 +392,7 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_defini
         return;
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -403,37 +403,37 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_config
         return;
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_config_description_info_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    statemachine_info->outgoing_msg_valid = false; // Not a writable space
+    statemachine_info->outgoing_msg_info.valid = false; // Not a writable space
 
 }
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_all_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    statemachine_info->outgoing_msg_valid = false; // Not a writable space
+    statemachine_info->outgoing_msg_info.valid = false; // Not a writable space
 
 }
 
 void ProtocolDatagramConfigMemHandler_memory_write_space_configuration_memory_message(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_message_data_t config_mem_message_data = {.address_requested = 0, .bytes_requested = 0, .data_start_offset = 0};
-    config_mem_message_data.address_space_encoding = _decode_address_space_position(statemachine_info->incoming_msg);
+    config_mem_message_data.address_space_encoding = _decode_address_space_position(statemachine_info->incoming_msg_info.openlcb_msg);
     config_mem_message_data.space_info = (user_address_space_info_t*) & statemachine_info->openlcb_node->parameters->address_space_config_memory; // a const so need to un-const to stop compiler from complaining
 
     switch (_process_write_request(statemachine_info, &config_mem_message_data)) {
 
         case CONFIG_MEM_HANDLER_PROCESSING_ACK_OK: // not done yet with a message to send in worker_msg but need to call again to do the reply
 
-            statemachine_info->outgoing_msg_valid = false;
+            statemachine_info->outgoing_msg_info.valid = false;
 
         case CONFIG_MEM_HANDLER_ABORTED: // done with last message we need to send in worker_msg, either a Datagram Rejected or Command Fail Config Mem Message
 
-            statemachine_info->outgoing_msg_valid = false;
+            statemachine_info->outgoing_msg_info.valid = false;
 
         case CONFIG_MEM_HANDLER_READY: // done with the actual reply for the read
 
@@ -441,11 +441,11 @@ void ProtocolDatagramConfigMemHandler_memory_write_space_configuration_memory_me
             //       OpenLcbUtilities_copy_byte_array_to_openlcb_payload(statemachine_info->outgoing_msg, &statemachine_info->openlcb_node->parameters->cdi[config_mem_message_data.address_requested], config_mem_message_data.data_start_offset, config_mem_message_data.bytes_requested);
             //      statemachine_info->outgoing_msg->payload_count = config_mem_message_data.data_start_offset + config_mem_message_data.bytes_requested;
 
-            statemachine_info->outgoing_msg_valid = true;
+            statemachine_info->outgoing_msg_info.valid = true;
 
     }
 
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -538,9 +538,9 @@ static void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_sta
     ProtocolDatagramConfigMemHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
 
     // Take a reference and store the sent message in case we have to resend it
-    OpenLcbBufferStore_inc_reference_count(statemachine_info->incoming_msg);
+    OpenLcbBufferStore_inc_reference_count(statemachine_info->incoming_msg_info.openlcb_msg);
 
-    statemachine_info->openlcb_node->last_received_datagram = statemachine_info->incoming_msg;
+    statemachine_info->openlcb_node->last_received_datagram = statemachine_info->incoming_msg_info.openlcb_msg;
 
 }
 
@@ -559,37 +559,37 @@ void ProtocolDatagramConfigMemHandler_try_transmit(openlcb_statemachine_info_t *
 void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code) {
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM_REJECTED_REPLY,
             2);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, error_code, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, error_code, 0);
 
-    statemachine_info->enumerating_incoming_openlcb_message = false; // d not call the message again to handle it after the NACK
-    statemachine_info->outgoing_msg_valid = true;
+    statemachine_info->incoming_msg_info.enumerating = false; // d not call the message again to handle it after the NACK
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 static void _send_datagram_ack_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_code) {
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM_OK_REPLY,
             2);
 
-    *statemachine_info->outgoing_msg->payload[0] = (uint8_t) reply_pending_code;
-    statemachine_info->outgoing_msg->payload_count = 1;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = (uint8_t) reply_pending_code;
+    statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 1;
 
-    statemachine_info->enumerating_incoming_openlcb_message = true; // call the message again to handle it after the ACK
-    statemachine_info->outgoing_msg_valid = true;
+    statemachine_info->incoming_msg_info.enumerating = true; // call the message again to handle it after the ACK
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
@@ -941,41 +941,41 @@ void ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_statema
 
     }
 
-    uint16_t data_count = (*statemachine_info->incoming_msg->payload[6]) & 0x7F; // top bit reserved
+    uint16_t data_count = (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) & 0x7F; // top bit reserved
     uint16_t reply_payload_index = 6;
-    uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg, 2);
+    uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.openlcb_msg, 2);
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM,
             0);
 
-    if (*statemachine_info->incoming_msg->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6) {
+    if (*statemachine_info->incoming_msg_info.openlcb_msg->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6) {
 
         reply_payload_index = 7;
-        *statemachine_info->outgoing_msg->payload[6] = space;
-        data_count = (*statemachine_info->incoming_msg->payload[7]) & 0x7F; // top bit reserved
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[6] = space;
+        data_count = (*statemachine_info->incoming_msg_info.openlcb_msg->payload[7]) & 0x7F; // top bit reserved
 
     }
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg, data_address, 2);
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, data_address, 2);
 
     uint16_t read_result_or_error_code = _read_memory_space(statemachine_info, data_address, reply_payload_index, data_count, space);
 
     if (read_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
-        *statemachine_info->outgoing_msg->payload[1] = return_msg_ok; // read_result is the current payload index in this case
-        statemachine_info->outgoing_msg->payload_count = read_result_or_error_code;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_ok; // read_result is the current payload index in this case
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = read_result_or_error_code;
 
     } else {
-        *statemachine_info->outgoing_msg->payload[1] = return_msg_fail;
-        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, read_result_or_error_code, reply_payload_index); // read_result is the error code in this case
-        statemachine_info->outgoing_msg->payload_count = reply_payload_index + 2;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_fail;
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, read_result_or_error_code, reply_payload_index); // read_result is the error code in this case
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = reply_payload_index + 2;
 
     }
 
@@ -1020,42 +1020,42 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_statem
 
     }
 
-    uint16_t data_count = statemachine_info->incoming_msg->payload_count - 6;
+    uint16_t data_count = statemachine_info->incoming_msg_info.openlcb_msg->payload_count - 6;
     uint16_t payload_index = 6;
-    uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg, 2);
+    uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.openlcb_msg, 2);
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM,
             0);
 
-    if (*statemachine_info->incoming_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
+    if (*statemachine_info->incoming_msg_info.openlcb_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
 
         payload_index = 7;
-        *statemachine_info->outgoing_msg->payload[6] = space;
-        data_count = statemachine_info->incoming_msg->payload_count - 7;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[6] = space;
+        data_count = statemachine_info->incoming_msg_info.openlcb_msg->payload_count - 7;
 
     }
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg, data_address, 2);
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, data_address, 2);
 
     uint16_t write_result_or_error_code = _write_memory_space(statemachine_info, data_address, payload_index, data_count, space);
 
     if (write_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
-        *statemachine_info->outgoing_msg->payload[1] = return_msg_ok; // write_result is the current payload index in this case
-        statemachine_info->outgoing_msg->payload_count = payload_index;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_ok; // write_result is the current payload index in this case
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = payload_index;
 
     } else {
 
-        *statemachine_info->outgoing_msg->payload[1] = return_msg_fail;
-        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, write_result_or_error_code, payload_index); // write_result is the error code in this case
-        statemachine_info->outgoing_msg->payload_count = payload_index + 2;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_fail;
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, write_result_or_error_code, payload_index); // write_result is the error code in this case
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = payload_index + 2;
 
     }
 
@@ -1066,30 +1066,30 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_statem
 void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 
     uint8_t reply_payload_index = 6;
-    uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg, 2);
+    uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.openlcb_msg, 2);
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM, 0);
 
-    if (*statemachine_info->incoming_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
+    if (*statemachine_info->incoming_msg_info.openlcb_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
 
         reply_payload_index = 7;
-        *statemachine_info->outgoing_msg->payload[6] = space;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[6] = space;
 
     }
 
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg, data_address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, data_address, 2);
 
-    uint16_t data_count = (statemachine_info->incoming_msg->payload_count - reply_payload_index);
+    uint16_t data_count = (statemachine_info->incoming_msg_info.openlcb_msg->payload_count - reply_payload_index);
 
-    if ((data_count == 0) || (statemachine_info->incoming_msg->payload_count % 2 != 0)) {
+    if ((data_count == 0) || (statemachine_info->incoming_msg_info.openlcb_msg->payload_count % 2 != 0)) {
 
         ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
@@ -1116,9 +1116,9 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
         while (data_pair_index < (reply_payload_index + data_count)) {
 
             // (data_byte & data_mask) | (existing_byte & ~data_mask)
-            *statemachine_info->outgoing_msg->payload[data_index] =
-                    (*statemachine_info->incoming_msg->payload[data_pair_index + 1] & *statemachine_info->incoming_msg->payload[data_pair_index]) |
-                    (*statemachine_info->outgoing_msg->payload[data_index] & ~(*statemachine_info->incoming_msg->payload[data_pair_index])
+            *statemachine_info->outgoing_msg_info.openlcb_msg->payload[data_index] =
+                    (*statemachine_info->incoming_msg_info.openlcb_msg->payload[data_pair_index + 1] & *statemachine_info->incoming_msg_info.openlcb_msg->payload[data_pair_index]) |
+                    (*statemachine_info->outgoing_msg_info.openlcb_msg->payload[data_index] & ~(*statemachine_info->incoming_msg_info.openlcb_msg->payload[data_pair_index])
                     );
 
             data_pair_index = data_pair_index + 2;
@@ -1130,23 +1130,23 @@ void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
 
         if (_result_or_error_code < LEN_MESSAGE_BYTES_DATAGRAM) {
 
-            *statemachine_info->outgoing_msg->payload[1] = return_msg_ok; // read_result is the current payload index in this case
-            statemachine_info->outgoing_msg->payload_count = reply_payload_index;
+            *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_ok; // read_result is the current payload index in this case
+            statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = reply_payload_index;
 
 
         } else {
 
-            *statemachine_info->outgoing_msg->payload[1] = return_msg_fail;
-            OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, _result_or_error_code, reply_payload_index); // read_result is the error code in this case
-            statemachine_info->outgoing_msg->payload_count = reply_payload_index + 2;
+            *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_fail;
+            OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, _result_or_error_code, reply_payload_index); // read_result is the error code in this case
+            statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = reply_payload_index + 2;
 
         }
 
     } else {
 
-        *statemachine_info->outgoing_msg->payload[1] = return_msg_fail;
-        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, _result_or_error_code, reply_payload_index); // read_result is the error code in this case
-        statemachine_info->outgoing_msg->payload_count = reply_payload_index + 2;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = return_msg_fail;
+        OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, _result_or_error_code, reply_payload_index); // read_result is the error code in this case
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = reply_payload_index + 2;
 
     }
 
@@ -1191,16 +1191,16 @@ void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM, 0);
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
 
-    *statemachine_info->outgoing_msg->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
 
     uint16_t available_commands = 0x00;
 
@@ -1245,7 +1245,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_
 
     }
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg, available_commands, 2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, available_commands, 2);
 
     uint8_t write_lengths = 0x80 | 0x40 | 0x020 | 0x02;
 
@@ -1255,15 +1255,15 @@ void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_
 
     }
 
-    *statemachine_info->outgoing_msg->payload[4] = write_lengths;
-    *statemachine_info->outgoing_msg->payload[5] = statemachine_info->openlcb_node->parameters->configuration_options.high_address_space;
-    *statemachine_info->outgoing_msg->payload[6] = statemachine_info->openlcb_node->parameters->configuration_options.low_address_space;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[4] = write_lengths;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[5] = statemachine_info->openlcb_node->parameters->configuration_options.high_address_space;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[6] = statemachine_info->openlcb_node->parameters->configuration_options.low_address_space;
 
-    statemachine_info->outgoing_msg->payload_count = 7;
+    statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 7;
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.description[0] != 0x00)
 
-        statemachine_info->outgoing_msg->payload_count = statemachine_info->outgoing_msg->payload_count + OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg, statemachine_info->openlcb_node->parameters->configuration_options.description, statemachine_info->outgoing_msg->payload_count);
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = statemachine_info->outgoing_msg_info.openlcb_msg->payload_count + OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, statemachine_info->openlcb_node->parameters->configuration_options.description, statemachine_info->outgoing_msg_info.openlcb_msg->payload_count);
 
 
     ProtocolDatagramConfigMemHandler_try_transmit(statemachine_info);
@@ -1293,15 +1293,15 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM,
             0);
 
-    const user_address_space_info_t* target_space = _decode_to_space_definition(statemachine_info->openlcb_node, statemachine_info->incoming_msg);
+    const user_address_space_info_t* target_space = _decode_to_space_definition(statemachine_info->openlcb_node, statemachine_info->incoming_msg_info.openlcb_msg);
     uint8_t invalid_space;
 
     if (target_space) {
@@ -1317,48 +1317,48 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
 
     if (invalid_space) {
 
-        OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg);
+        OpenLcbUtilities_clear_openlcb_message_payload(statemachine_info->outgoing_msg_info.openlcb_msg);
 
-        *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-        *statemachine_info->outgoing_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT;
-        *statemachine_info->outgoing_msg->payload[2] = *statemachine_info->incoming_msg->payload[2];
-        *statemachine_info->outgoing_msg->payload[7] = 0x01;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[2] = *statemachine_info->incoming_msg_info.openlcb_msg->payload[2];
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[7] = 0x01;
 
-        statemachine_info->outgoing_msg->payload_count = 8;
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 8;
 
         //       return;
 
     }
 
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->outgoing_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT;
-    *statemachine_info->outgoing_msg->payload[2] = target_space->address_space;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg, target_space->highest_address, 3);
-    *statemachine_info->outgoing_msg->payload[7] = 0x00;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[2] = target_space->address_space;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, target_space->highest_address, 3);
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[7] = 0x00;
 
     if (target_space->read_only) {
 
-        *statemachine_info->outgoing_msg->payload[7] = *statemachine_info->outgoing_msg->payload[7] | 0x01;
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[7] = *statemachine_info->outgoing_msg_info.openlcb_msg->payload[7] | 0x01;
 
     }
 
     if (target_space->low_address_valid) {
 
-        *statemachine_info->outgoing_msg->payload[7] = *statemachine_info->outgoing_msg->payload[7] | 0x02;
-        OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg, target_space->low_address, 8);
+        *statemachine_info->outgoing_msg_info.openlcb_msg->payload[7] = *statemachine_info->outgoing_msg_info.openlcb_msg->payload[7] | 0x02;
+        OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, target_space->low_address, 8);
 
-        statemachine_info->outgoing_msg->payload_count = 12;
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 12;
 
     } else {
 
-        statemachine_info->outgoing_msg->payload_count = 8;
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = 8;
 
     }
 
     if (target_space->description[0] != 0x00) {
 
-        statemachine_info->outgoing_msg->payload_count = statemachine_info->outgoing_msg->payload_count + OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg, target_space->description, statemachine_info->outgoing_msg->payload_count);
+        statemachine_info->outgoing_msg_info.openlcb_msg->payload_count = statemachine_info->outgoing_msg_info.openlcb_msg->payload_count + OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, target_space->description, statemachine_info->outgoing_msg_info.openlcb_msg->payload_count);
     }
 
     ProtocolDatagramConfigMemHandler_try_transmit(statemachine_info);
@@ -1399,7 +1399,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb
 
     }
 
-    node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->outgoing_msg, 2);
+    node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, 2);
 
     if (statemachine_info->openlcb_node->lock_node == 0) {
 
@@ -1414,17 +1414,17 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb
     }
 
     OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg,
+            statemachine_info->outgoing_msg_info.openlcb_msg,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg->source_alias,
-            statemachine_info->incoming_msg->source_id,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_alias,
+            statemachine_info->incoming_msg_info.openlcb_msg->source_id,
             MTI_DATAGRAM,
             8);
 
-    *statemachine_info->outgoing_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->outgoing_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg, statemachine_info->openlcb_node->lock_node, 2);
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->outgoing_msg_info.openlcb_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, statemachine_info->openlcb_node->lock_node, 2);
 
     ProtocolDatagramConfigMemHandler_try_transmit(statemachine_info);
 
@@ -1443,7 +1443,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_get_unique_id_message(openlc
 
 void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (*statemachine_info->incoming_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
+    if (*statemachine_info->incoming_msg_info.openlcb_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
 
         if (statemachine_info->openlcb_node->parameters->address_space_firmware.present) {
 
@@ -1451,8 +1451,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
                 _send_datagram_ack_reply(statemachine_info, 0);
                 
-                statemachine_info->enumerating_incoming_openlcb_message = true; // recall after ACK 
-                statemachine_info->outgoing_msg_valid = true;
+                statemachine_info->incoming_msg_info.enumerating = true; // recall after ACK 
+                statemachine_info->outgoing_msg_info.valid = true;
 
                 return;
 
@@ -1466,8 +1466,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
                 }
 
-                statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-                statemachine_info->outgoing_msg_valid = false;
+                statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+                statemachine_info->outgoing_msg_info.valid = false;
 
                 return;
 
@@ -1479,14 +1479,14 @@ void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_sta
 
     ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
 void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (*statemachine_info->incoming_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
+    if (*statemachine_info->incoming_msg_info.openlcb_msg->payload[2] == ADDRESS_SPACE_FIRMWARE) {
 
         if (statemachine_info->openlcb_node->parameters->address_space_firmware.present) {
 
@@ -1505,8 +1505,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
                 }
 
-                statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-                statemachine_info->outgoing_msg_valid = false;
+                statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+                statemachine_info->outgoing_msg_info.valid = false;
 
                 return;
 
@@ -1519,8 +1519,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_state
 
     ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
 
-    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -1534,8 +1534,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(open
 
     }
 
-    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -1556,8 +1556,8 @@ void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb
 
     }
 
-    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
@@ -1577,7 +1577,7 @@ void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlc
 
     }
 
-    statemachine_info->enumerating_incoming_openlcb_message = false; // reset after ACK and any reply
-    statemachine_info->outgoing_msg_valid = false;
+    statemachine_info->incoming_msg_info.enumerating = false; // reset after ACK and any reply
+    statemachine_info->outgoing_msg_info.valid = false;
 
 }

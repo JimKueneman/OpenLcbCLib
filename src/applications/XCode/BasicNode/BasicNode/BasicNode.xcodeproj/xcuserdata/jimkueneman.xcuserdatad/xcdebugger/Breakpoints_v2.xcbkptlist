@@ -72,15 +72,15 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "79E864A4-7B7A-4183-8656-53A4AFE4E248"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BasicNode/src/openlcb/openlcb_main_statemachine.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "669"
-            endingLineNumber = "669"
-            landmarkName = "OpenLcbMainStatemachine_handle_try_enumerate_first_node()"
+            startingLineNumber = "668"
+            endingLineNumber = "668"
+            landmarkName = "OpenLcbMainStatemachine_handle_try_enumerate_next_node()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -189,70 +189,6 @@
             startingLineNumber = "151"
             endingLineNumber = "151"
             landmarkName = "ProtocolMessageNetwork_handle_verify_node_id_global(statemachine_info)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D99B420D-2FAE-4009-9189-E3304188C349"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/openlcb/openlcb_main_statemachine.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "745"
-            endingLineNumber = "745"
-            landmarkName = "OpenLcbMainStatemachine_run()"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7DAED3AD-74A9-45CE-8BBC-8AD567E3E636"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/openlcb/openlcb_login_statemachine.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "OpenLcbLoginStateMachine_run(openlcb_statemachine_info)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C6E3CCA4-544A-40F1-B7B6-45B4FC0EE9FB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/openlcb/openlcb_login_statemachine.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
-            landmarkName = "OpenLcbLoginStateMachine_run(openlcb_statemachine_info)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "314F6DDD-C70D-42FB-9772-6C3F0F005566"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BasicNode/src/openlcb/openlcb_main_statemachine.c"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "668"
-            endingLineNumber = "668"
-            landmarkName = "OpenLcbMainStatemachine_handle_try_enumerate_first_node()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

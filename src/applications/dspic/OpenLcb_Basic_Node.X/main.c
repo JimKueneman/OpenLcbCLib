@@ -224,6 +224,12 @@ void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t co
 
 }
 
+#define TRANSMIT_CAN_FRAME_FUNC &Ecan1Helper_transmit_can_frame
+#define IS_TX_BUFFER_EMPTY_FUNC &Ecan1Helper_is_can_tx_buffer_clear
+#define LOCK_SHARED_RESOURCES_FUNC &Ecan1Helper_pause_can_rx
+#define UNLOCK_SHARED_RESOURCES_FUNC &Ecan1Helper_resume_can_rx
+#define CONFIG_MEM_READ_FUNC &BasicNodeDrivers_config_mem_read
+
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
     .alias_mapping_register = &AliasMappings_register,
@@ -281,7 +287,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 
 const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
-    .transmit_can_frame = &Ecan1Helper_transmit_can_frame, //  HARDWARE INTERFACE
+    .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
     // Callback events
     .on_transmit = &_can_tx_callback
 
@@ -289,7 +295,7 @@ const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
 const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
 
-    .is_tx_buffer_empty = Ecan1Helper_is_can_tx_buffer_clear, //  HARDWARE INTERFACE
+    .is_tx_buffer_empty = IS_TX_BUFFER_EMPTY_FUNC, //  HARDWARE INTERFACE
     .handle_addressed_msg_frame = &CanTxMessageHandler_addressed_msg_frame,
     .handle_unaddressed_msg_frame = &CanTxMessageHandler_unaddressed_msg_frame,
     .handle_datagram_frame = &CanTxMessageHandler_datagram_frame,
@@ -300,8 +306,8 @@ const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
 
 const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
-    .lock_shared_resources = Ecan1Helper_pause_can_rx, //  HARDWARE INTERFACE
-    .unlock_shared_resources = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
@@ -361,8 +367,8 @@ const interface_openlcb_login_message_handler_t interface_openlcb_login_message_
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
     
      .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
-     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_events,
-     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_events
+     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
+     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event
 };
 
 // TODO Complete
@@ -425,17 +431,15 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .stream_data_complete = NULL,
 
     // required
-    .lock_shared_resources = Ecan1Helper_pause_can_rx, //  HARDWARE INTERFACE
-    .unlock_shared_resources = Ecan1Helper_resume_can_rx, //  HARDWARE INTERFACE
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
-    .login_statemachine_run = &OpenLcbLoginStateMachine_run,
+    .process_login_statemachine = &OpenLcbLoginStateMachine_process,
     
     .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_login_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message,
-    .handle_reenumerate_outgoing_login_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message,
     .handle_reenumerate_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message,
     .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
@@ -449,7 +453,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = &BasicNodeDrivers_config_mem_read
+    .configuration_memory_read = CONFIG_MEM_READ_FUNC
 
 };
 

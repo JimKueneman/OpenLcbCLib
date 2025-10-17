@@ -108,18 +108,17 @@ typedef struct {
     openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
     void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
-    void (*login_statemachine_run)(openlcb_statemachine_info_t *statemachine_info);
+    void (*process_login_statemachine)(openlcb_statemachine_info_t *statemachine_info);
 
     bool (*handle_outgoing_openlcb_message)(void);
     bool (*handle_reenumerate_incoming_openlcb_message)(void);
-    bool (*handle_reenumerate_outgoing_login_openlcb_message)(void);
-    bool (*handle_login_outgoing_openlcb_message)(void);
     bool (*handle_try_pop_next_incoming_openlcb_message)(void);
     bool (*handle_try_enumerate_first_node)(void);
     bool (*handle_try_enumerate_next_node)(void);
 
     // for test injection, leave null to use the default functions
     void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);
+    
     bool (*does_node_process_msg)(openlcb_statemachine_info_t *_statemachine_info);
 
 } interface_openlcb_main_statemachine_t;

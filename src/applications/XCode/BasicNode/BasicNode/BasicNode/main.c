@@ -49,17 +49,66 @@
 
 uint64_t node_id_base = 0x0507010100AA;
 
+void _100ms_timer_callback(void) {
+
+    // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
+
+}
+
+void _can_rx_callback(can_msg_t* can_msg) {
+
+    // Called when a CAN message is received
+
+    //    printf("Rx: 0x%08lX [", can_msg->identifier);
+    //
+    //    for (int i = 0; i < can_msg->payload_count; i++) {
+    //
+    //        printf("0x%04X ", can_msg->payload[i]);
+    //
+    //    }
+    //
+    //    printf("]\n");
+
+}
+
+void _can_tx_callback(can_msg_t* can_msg) {
+
+    // Called when a CAN message is transmitted
+
+    //    printf("Tx: 0x%08lX\n", can_msg->identifier);
+
+}
+
+void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
+
+//    printf("Alias Allocation: 0x%02X  ", new_alias);
+//    printf("NodeID: 0x%04X%04X%04X\n\n", (uint16_t) (node_id >> 32), (uint16_t) (node_id >> 16), (uint16_t) node_id);
+
+}
+
+void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
+
+
+}
+
+
+#define TRANSMIT_CAN_FRAME_FUNC &OSxCanDriver_transmit_raw_can_frame
+#define IS_TX_BUFFER_EMPTY_FUNC &OSxCanDriver_is_can_tx_buffer_clear
+#define LOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_pause_can_rx
+#define UNLOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_resume_can_rx
+#define CONFIG_MEM_READ_FUNC OSxDrivers_config_mem_read
+
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
     .alias_mapping_register = &AliasMappings_register,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
-    .on_alias_change = NULL
-    
+    .on_alias_change = &_alias_change_callback
+
 };
 
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
-    
+
     .state_init = &CanLoginMessageHandler_state_init,
     .state_generate_seed = &CanLoginMessageHandler_state_generate_seed,
     .state_generate_alias = &CanLoginMessageHandler_state_generate_alias,
@@ -70,22 +119,22 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .state_wait_200ms = &CanLoginMessageHandler_state_wait_200ms,
     .state_load_rid = &CanLoginMessageHandler_state_load_rid,
     .state_load_amd = &CanLoginMessageHandler_state_load_amd
-    
+            
 };
 
 const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
-    
+
     .openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer,
     .can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
     .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
     .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag
-    
+
 };
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
-    
+
     .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
     .handle_single_frame = &CanRxMessageHandler_single_frame,
     .handle_first_frame = &CanRxMessageHandler_first_frame,
@@ -100,33 +149,33 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_cid_frame = CanRxMessageHandler_cid_frame,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
-    .on_receive = NULL
-    
+    .on_receive = &_can_rx_callback
+
 };
 
 const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
-    
-    .transmit_can_frame = OSxCanDriver_transmit_raw_can_frame, //  HARDWARE INTERFACE
+
+    .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
     // Callback events
-    .on_transmit = NULL
-    
+    .on_transmit = &_can_tx_callback
+
 };
 
 const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
-    
-    .is_tx_buffer_empty = OSxCanDriver_is_can_tx_buffer_clear, //  HARDWARE INTERFACE
+
+    .is_tx_buffer_empty = IS_TX_BUFFER_EMPTY_FUNC, //  HARDWARE INTERFACE
     .handle_addressed_msg_frame = &CanTxMessageHandler_addressed_msg_frame,
     .handle_unaddressed_msg_frame = &CanTxMessageHandler_unaddressed_msg_frame,
     .handle_datagram_frame = &CanTxMessageHandler_datagram_frame,
     .handle_stream_frame = &CanTxMessageHandler_stream_frame,
     .handle_can_frame = &CanTxMessageHandler_can_frame
-    
+
 };
 
 const interface_can_main_statemachine_t interface_can_main_statemachine = {
-    
-    .lock_shared_resources = OSxCanDriver_pause_can_rx,   //  HARDWARE INTERFACE
-    .unlock_shared_resources = OSxCanDriver_resume_can_rx, //  HARDWARE INTERFACE
+
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .send_can_message = &CanTxStatemachine_send_can_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
@@ -140,25 +189,26 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
     .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
     .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
-    
+
 };
 
 
 const interface_openlcb_node_t interface_openlcb_node = {
-    
+
     // Callback events
-    .on_100ms_timer_tick = NULL
-  
+    .on_100ms_timer_tick = &_100ms_timer_callback
+
 };
 
 const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_message_network = {
-    
+
 };
 
 
 // TODO Complete
-const  interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
-  
+const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
+
+    // Callback events
     .on_consumer_range_identified = NULL,
     .on_consumer_identified_unknown = NULL,
     .on_consumer_identified_set = NULL,
@@ -171,8 +221,8 @@ const  interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_e
     .on_producer_identified_reserved = NULL,
     .on_event_learn = NULL,
     .on_pc_event_report = NULL,
-    .on_pc_event_report_with_payload = NULL
-    
+    .on_pc_event_report_with_payload = &_event_with_payload
+
 };
 
 const interface_openlcb_login_message_handler_t interface_openlcb_login_message_handler = {
@@ -185,14 +235,14 @@ const interface_openlcb_login_message_handler_t interface_openlcb_login_message_
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
     
      .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
-     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_events,
-     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_events
+     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
+     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event
     
 };
 
 // TODO Complete
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
-    
+
     // MESSAGE NETWORK
     .message_network_initialization_complete = ProtocolMessageNetwork_handle_initialization_complete,
     .message_network_initialization_complete_simple = ProtocolMessageNetwork_handle_initialization_complete_simple,
@@ -248,19 +298,17 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .stream_send_data = NULL,
     .stream_data_proceed = NULL,
     .stream_data_complete = NULL,
-    
+
     // required
-    .lock_shared_resources = OSxCanDriver_pause_can_rx,   //  HARDWARE INTERFACE
-    .unlock_shared_resources = OSxCanDriver_resume_can_rx,   //  HARDWARE INTERFACE
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
-    .login_statemachine_run = &OpenLcbLoginStateMachine_run,
+    .process_login_statemachine = &OpenLcbLoginStateMachine_process,
     
     .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_login_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_login_outgoing_openlcb_message,
-    .handle_reenumerate_outgoing_login_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_outgoing_login_openlcb_message,
     .handle_reenumerate_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message,
     .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
@@ -269,13 +317,13 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // for test injection, leave null to use the default functions
     .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
     .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
-    
+
 };
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
-    
-    .configuration_memory_read = &OSxDrivers_config_mem_read
-    
+
+    .configuration_memory_read = CONFIG_MEM_READ_FUNC
+
 };
 
 // TODO Finish these interfaces

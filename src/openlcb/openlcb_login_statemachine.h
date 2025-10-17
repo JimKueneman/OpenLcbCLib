@@ -53,7 +53,7 @@ extern "C" {
     
     extern void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
 
-    extern void OpenLcbLoginStateMachine_run(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginStateMachine_process(openlcb_statemachine_info_t *openlcb_statemachine_info);
 
 #ifdef	__cplusplus
 }

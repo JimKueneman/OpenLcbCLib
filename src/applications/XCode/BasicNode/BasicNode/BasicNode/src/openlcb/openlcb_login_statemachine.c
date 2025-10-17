@@ -51,7 +51,7 @@ void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_mac
 
 }
 
-void OpenLcbLoginStateMachine_run(openlcb_statemachine_info_t *openlcb_statemachine_info) {
+void OpenLcbLoginStateMachine_process(openlcb_statemachine_info_t *openlcb_statemachine_info) {
 
 
     switch (openlcb_statemachine_info->openlcb_node->state.run_state) {

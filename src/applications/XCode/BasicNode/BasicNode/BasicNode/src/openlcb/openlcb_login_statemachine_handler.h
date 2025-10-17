@@ -60,9 +60,9 @@ extern "C" {
 
     extern void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_statemachine_info_t *openlcb_statemachine_info);
 
-    extern void OpenLcbLoginMessageHandler_load_producer_events(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginMessageHandler_load_producer_event(openlcb_statemachine_info_t *openlcb_statemachine_info);
 
-    extern void OpenLcbLoginMessageHandler_load_consumer_events(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_statemachine_info_t *openlcb_statemachine_info);
 
 
 #ifdef	__cplusplus
