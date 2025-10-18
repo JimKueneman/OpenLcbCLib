@@ -236,8 +236,17 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
     
      .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
      .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
-     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event
-    
+     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event,
+     
+    .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
+     
+    .process_login_statemachine = &OpenLcbLoginStateMachine_process,
+    .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &OpenLcbLoginStatemachine_handle_try_reenumerate,
+    .handle_try_enumerate_first_node = &OpenLcbLoginStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node
 };
 
 // TODO Complete
@@ -306,10 +315,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
     .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
-    .process_login_statemachine = &OpenLcbLoginStateMachine_process,
-    
+
     .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_reenumerate_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_reenumerate_incoming_openlcb_message,
+    .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
     .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
     .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
@@ -515,6 +523,7 @@ int main(int argc, char *argv[])
         usleep(25);
         
         CanMainStateMachine_run();
+        OpenLcbLoginMainStatemachine_run();
         OpenLcbMainStatemachine_run();
         
     }

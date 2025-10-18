@@ -41,17 +41,30 @@
 
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
+#include "openlcb_utilities.h"
 
 
 static interface_openlcb_login_state_machine_t *_interface;
 
+static openlcb_login_statemachine_info_t _statemachine_info;
+
+
 void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine) {
 
     _interface = (interface_openlcb_login_state_machine_t*) interface_openlcb_login_state_machine;
+    
+    _statemachine_info.outgoing_msg_info.msg_ptr = &_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
+    _statemachine_info.outgoing_msg_info.msg_ptr->payload = (openlcb_payload_t*) _statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
+    _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = BASIC;
+    OpenLcbUtilities_clear_openlcb_message(_statemachine_info.outgoing_msg_info.msg_ptr);
+    OpenLcbUtilities_clear_openlcb_message_payload(_statemachine_info.outgoing_msg_info.msg_ptr);
+    _statemachine_info.outgoing_msg_info.msg_ptr->state.allocated = true;
+
+    _statemachine_info.openlcb_node = NULL;
 
 }
 
-void OpenLcbLoginStateMachine_process(openlcb_statemachine_info_t *openlcb_statemachine_info) {
+void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info) {
 
 
     switch (openlcb_statemachine_info->openlcb_node->state.run_state) {
@@ -78,6 +91,121 @@ void OpenLcbLoginStateMachine_process(openlcb_statemachine_info_t *openlcb_state
         default:
             
             return;
+
+    }
+
+}
+
+bool OpenLcbLoginStatemachine_handle_outgoing_openlcb_message(void) {
+
+    if (_statemachine_info.outgoing_msg_info.valid) {
+
+        if (_interface->send_openlcb_msg(_statemachine_info.outgoing_msg_info.msg_ptr)) {
+
+            _statemachine_info.outgoing_msg_info.valid = false; // done
+
+        }
+
+        return true; // keep trying till it can get sent
+
+    }
+
+    return false;
+
+}
+
+bool OpenLcbLoginStatemachine_handle_try_reenumerate(void) {
+
+    if (_statemachine_info.outgoing_msg_info.enumerate) {
+
+        _interface->process_login_statemachine(&_statemachine_info); // Continue the processing of the incoming message on the node
+
+        return true; // keep going until target clears the enumerate flag
+
+    }
+
+    return false;
+
+}
+
+bool OpenLcbLoginStatemachine_handle_try_enumerate_first_node(void) {
+
+    if (!_statemachine_info.openlcb_node) {
+
+        _statemachine_info.openlcb_node = _interface->openlcb_node_get_first(OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
+
+        if (!_statemachine_info.openlcb_node) {
+
+            return true; // done
+
+        }
+
+        if (_statemachine_info.openlcb_node->state.run_state < RUNSTATE_RUN) {
+
+            _interface->process_login_statemachine(&_statemachine_info); // Do the processing of the incoming message on the node
+
+        }
+
+        return true; // done
+
+    }
+
+    return false;
+
+}
+
+bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void) {
+
+    if (_statemachine_info.openlcb_node) {
+
+        _statemachine_info.openlcb_node = _interface->openlcb_node_get_next(OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX);
+
+        if (!_statemachine_info.openlcb_node) { // reached the end of the list, free the incoming message
+
+            return true; // done
+
+        }
+
+        if (_statemachine_info.openlcb_node->state.run_state < RUNSTATE_RUN) {
+
+            _interface->process_login_statemachine(&_statemachine_info); // Do the processing of the incoming message on the node
+
+        }
+
+        return true; // done
+    }
+
+    return false;
+
+}
+
+void OpenLcbLoginMainStatemachine_run(void) {
+
+    // Get any pending message out first
+    if (_interface->handle_outgoing_openlcb_message()) {
+
+        return;
+
+    }
+
+    // If the message handler needs to send multiple messages then enumerate the same incoming/login outgoing message again   
+    if (_interface->handle_try_reenumerate()) {
+
+        return;
+
+    }
+
+    // Grab the first OpenLcb Node
+    if (_interface->handle_try_enumerate_first_node()) {
+
+        return;
+
+    }
+
+    // Enumerate all the OpenLcb Nodes  
+    if (_interface->handle_try_enumerate_next_node()) {
+
+        return;
 
     }
 

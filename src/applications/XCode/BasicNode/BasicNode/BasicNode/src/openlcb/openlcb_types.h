@@ -321,34 +321,54 @@ extern "C" {
     } openlcb_statemachine_worker_t;
 
     typedef void (*parameterless_callback_t)(void);
-    
+
     typedef struct {
         openlcb_msg_t openlcb_msg;
         payload_stream_t openlcb_payload;
 
     } openlcb_stream_message_t;
-    
-    typedef struct {
-        openlcb_msg_t *openlcb_msg;
-        uint8_t valid : 1;
-        uint8_t enumerating : 1;
-        openlcb_stream_message_t message; 
 
-    } openlcb_outgoing_msg_info_t;
-    
     typedef struct {
-        
-        openlcb_msg_t *openlcb_msg;
-        uint8_t enumerating : 1;
-        
+        openlcb_msg_t *msg_ptr;
+        uint8_t valid : 1;
+        uint8_t enumerate : 1;
+        openlcb_stream_message_t openlcb_msg;
+
+    } openlcb_outgoing_stream_msg_info_t;
+
+    typedef struct {
+        openlcb_msg_t *msg_ptr;
+        uint8_t enumerate : 1;
+
     } openlcb_incoming_msg_info_t;
 
     typedef struct {
         openlcb_node_t *openlcb_node;
         openlcb_incoming_msg_info_t incoming_msg_info;
-        openlcb_outgoing_msg_info_t outgoing_msg_info;
+        openlcb_outgoing_stream_msg_info_t outgoing_msg_info;
 
     } openlcb_statemachine_info_t;
+    
+
+    typedef struct {
+        openlcb_msg_t openlcb_msg;
+        payload_basic_t openlcb_payload;
+
+    } openlcb_basic_message_t;
+
+    typedef struct {
+        openlcb_msg_t *msg_ptr;
+        uint8_t valid : 1;
+        uint8_t enumerate : 1;
+        openlcb_basic_message_t openlcb_msg;
+
+    } openlcb_outgoing_basic_msg_info_t;
+    
+    typedef struct {
+        openlcb_node_t *openlcb_node;
+        openlcb_outgoing_basic_msg_info_t outgoing_msg_info;
+
+    } openlcb_login_statemachine_info_t;
 
 
 #ifdef __cplusplus

@@ -59,15 +59,15 @@ void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handle
 
 static void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
 
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.openlcb_msg, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg_info.openlcb_msg->source_alias, statemachine_info->incoming_msg_info.openlcb_msg->source_id, MTI_DATAGRAM_OK_REPLY, 2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, return_code, 0);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg_info.msg_ptr->source_alias, statemachine_info->incoming_msg_info.msg_ptr->source_id, MTI_DATAGRAM_OK_REPLY, 2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
 
 }
 
 static void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
 
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.openlcb_msg, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg_info.openlcb_msg->source_alias, statemachine_info->incoming_msg_info.openlcb_msg->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.openlcb_msg, return_code, 0);
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg_info.msg_ptr->source_alias, statemachine_info->incoming_msg_info.msg_ptr->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
 
 }
 
@@ -104,7 +104,7 @@ static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, m
 
 static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -160,7 +160,7 @@ static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *
 
 static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -216,7 +216,7 @@ static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine
 
 static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -272,7 +272,7 @@ static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachi
 
 static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -327,7 +327,7 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
 
 static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -383,7 +383,7 @@ static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachin
 
 static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -439,7 +439,7 @@ static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemach
 
 static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[6]) {
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
         case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
 
@@ -495,7 +495,7 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 
 static void _handle_datagram_memory_configuration(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[1]) { // which space?
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[1]) { // which space?
 
         case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
 
@@ -749,7 +749,7 @@ static void _handle_datagram_memory_configuration(openlcb_statemachine_info_t *s
 
 void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.openlcb_msg->payload[0]) { // commands
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[0]) { // commands
 
         case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?
 
@@ -785,7 +785,7 @@ void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_i
 
 void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.openlcb_msg, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
+    if (OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) && ERROR_TEMPORARY == ERROR_TEMPORARY) {
 
         if (statemachine_info->openlcb_node->last_received_datagram) {
 

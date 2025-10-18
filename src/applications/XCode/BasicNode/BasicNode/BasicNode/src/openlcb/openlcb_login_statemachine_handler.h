@@ -58,11 +58,11 @@ extern "C" {
 
     extern void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message_handler_t *interface);
 
-    extern void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
-    extern void OpenLcbLoginMessageHandler_load_producer_event(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
-    extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_statemachine_info_t *openlcb_statemachine_info);
+    extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
 
 #ifdef	__cplusplus
