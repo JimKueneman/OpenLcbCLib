@@ -72,28 +72,28 @@ void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachin
 
 }
 
-static void _free_incoming_message(openlcb_statemachine_info_t *_statemachine_info) {
+static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (!_statemachine_info->incoming_msg_info.msg_ptr) {
+    if (!statemachine_info->incoming_msg_info.msg_ptr) {
 
         return;
 
     }
 
     _interface->lock_shared_resources();
-    OpenLcbBufferStore_free_buffer(_statemachine_info->incoming_msg_info.msg_ptr);
+    OpenLcbBufferStore_free_buffer(statemachine_info->incoming_msg_info.msg_ptr);
     _interface->unlock_shared_resources();
-    _statemachine_info->incoming_msg_info.msg_ptr = NULL;
+    statemachine_info->incoming_msg_info.msg_ptr = NULL;
 
 }
 
-bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *_statemachine_info) {
+bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info) {
 
-    return ( (_statemachine_info->openlcb_node->state.initalized) &&
+    return ( (statemachine_info->openlcb_node->state.initalized) &&
             (
-            ((_statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
-            (((_statemachine_info->openlcb_node->alias == _statemachine_info->incoming_msg_info.msg_ptr->dest_alias) || (_statemachine_info->openlcb_node->id == _statemachine_info->incoming_msg_info.msg_ptr->dest_id)) && ((_statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT)) ||
-            (_statemachine_info->incoming_msg_info.msg_ptr->mti == MTI_VERIFY_NODE_ID_GLOBAL) // special case, the handler will decide if it should reply or not based on if there is a node id in the payload or not
+            ((statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
+            (((statemachine_info->openlcb_node->alias == statemachine_info->incoming_msg_info.msg_ptr->dest_alias) || (statemachine_info->openlcb_node->id == statemachine_info->incoming_msg_info.msg_ptr->dest_id)) && ((statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT)) ||
+            (statemachine_info->incoming_msg_info.msg_ptr->mti == MTI_VERIFY_NODE_ID_GLOBAL) // special case, the handler will decide if it should reply or not based on if there is a node id in the payload or not
             )
             );
 

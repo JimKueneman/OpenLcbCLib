@@ -138,10 +138,11 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 
 
+#define NODE_ID 0x0507010100AA
 
-uint64_t node_id_base = 0x0507010100AA;
+//static uint64_t node_id_base = NODE_ID;
 
-uint16_t count = 0;
+static uint16_t count = 0;
 
 void _100ms_timer_callback(void) {
 
@@ -646,7 +647,12 @@ int main(void) {
     OpenLcbApplication_initialize(&interface_openlcb_application);
 
     // We always boot and reallocate the alias
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101010707, &NodeParameters_main_node);
+   // openlcb_node_t* node = OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+//    OpenLcbNode_allocate(NODE_ID + 1, &NodeParameters_main_node);
+//    OpenLcbNode_allocate(NODE_ID + 2, &NodeParameters_main_node);
+//    OpenLcbNode_allocate(NODE_ID + 3, &NodeParameters_main_node);
+//    OpenLcbNode_allocate(NODE_ID + 4, &NodeParameters_main_node);
+    OpenLcbNode_allocate(NODE_ID + 5, &NodeParameters_main_node);
 
     printf("Does it work?\n");
 

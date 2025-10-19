@@ -45,7 +45,7 @@
 #include "openlcb_buffer_store.h"
 
 static openlcb_nodes_t _openlcb_nodes;
-static uint16_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
+static uint8_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
 
 static interface_openlcb_node_t *_interface;
 
@@ -86,6 +86,13 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
+    
+    
+    for (int i = 0; i < MAX_NODE_ENUM_KEY_VALUES; i++) {
+        
+        _node_enum_index_array[i] = 0;
+        
+    }
 
 }
 
@@ -104,6 +111,12 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
 }
 
 openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
+    
+    if (key > MAX_NODE_ENUM_KEY_VALUES) {
+        
+        return NULL;
+        
+    }
 
     _node_enum_index_array[key] = 0;
 
@@ -119,6 +132,12 @@ openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
 }
 
 openlcb_node_t* OpenLcbNode_get_next(uint8_t key) {
+    
+    if (key > MAX_NODE_ENUM_KEY_VALUES) {
+        
+        return NULL;
+        
+    }
 
     _node_enum_index_array[key] = _node_enum_index_array[key] + 1;
 

@@ -77,8 +77,6 @@ extern "C" {
 #define _OPTIONAL_INTERACTION_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12))
     
     
-#define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY 123
-
     // Structure for a basic CAN payload
     typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
