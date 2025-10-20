@@ -646,12 +646,6 @@ int main(void) {
 
     OpenLcbApplication_initialize(&interface_openlcb_application);
 
-    // We always boot and reallocate the alias
-   // openlcb_node_t* node = OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
-//    OpenLcbNode_allocate(NODE_ID + 1, &NodeParameters_main_node);
-//    OpenLcbNode_allocate(NODE_ID + 2, &NodeParameters_main_node);
-//    OpenLcbNode_allocate(NODE_ID + 3, &NodeParameters_main_node);
-//    OpenLcbNode_allocate(NODE_ID + 4, &NodeParameters_main_node);
     OpenLcbNode_allocate(NODE_ID + 5, &NodeParameters_main_node);
 
     printf("Does it work?\n");

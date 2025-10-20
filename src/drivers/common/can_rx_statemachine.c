@@ -68,7 +68,7 @@ static uint16_t _extract_can_mti_from_can_identifier(can_msg_t *can_msg) {
 static void _handle_openlcb_msg_can_frame_addressed(can_msg_t* can_msg, uint16_t can_mti) {
     
     // Handle addressed message, note this assumes the message has already been tested be for one of our nodes
-
+ 
     switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
 
         case MULTIFRAME_ONLY:
@@ -140,6 +140,11 @@ static void _handle_openlcb_msg_can_frame_addressed(can_msg_t* can_msg, uint16_t
             }
 
             break;
+            
+        default:
+            
+            break;
+            
     }
 
 }
@@ -207,20 +212,18 @@ static void _handle_can_type_frame(can_msg_t* can_msg) {
 
     switch (can_msg->identifier & MASK_CAN_FRAME_TYPE) {
 
-        case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:
-            
-            // First see if it is normal Global or Addressed Openlcb Message
-
+        case CAN_FRAME_TYPE_GLOBAL_ADDRESSED:  // It is a global or addressed message type
+    
             if (can_msg->identifier & MASK_CAN_DEST_ADDRESS_PRESENT) {
                 
                 // If it is a message targeting a destination node make sure it is for one of our nodes
-
+       
                 if (!_interface->alias_mapping_find_mapping_by_alias(CanUtilities_extract_dest_alias_from_can_message(can_msg))) {
 
                     break;
 
                 }
-
+      
                 // Addressed message for one of our nodes
                 
                 _handle_openlcb_msg_can_frame_addressed(can_msg, _extract_can_mti_from_can_identifier(can_msg));
@@ -338,6 +341,10 @@ static void _handle_can_type_frame(can_msg_t* can_msg) {
             }
 
             break;
+            
+        default:
+            
+            break;
 
     }
 
@@ -428,6 +435,11 @@ static void _handle_can_control_frame_sequence_number(can_msg_t* can_msg) {
             }
 
             break;
+            
+        default:
+            
+            break;
+            
     }
 
 }

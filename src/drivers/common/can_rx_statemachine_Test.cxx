@@ -19,6 +19,8 @@ bool can_amd_called = false;
 bool can_amr_called = false;
 bool can_error_information_report_called = false;
 bool can_stream_called = false;
+bool fail_find_mapping = false;
+bool on_receive_called = false;
 
 void _can_frame_message_handler_handle_can_legacy_snip(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type)
 {
@@ -96,10 +98,22 @@ alias_mapping_t alias_mapping;
 
 alias_mapping_t *_alias_mappings_find_mapping_by_alias(uint16_t alias)
 {
+    if (fail_find_mapping)
+    {
+
+        return nullptr;
+    }
+
     alias_mapping.alias = alias;
     alias_mapping.node_id = 0x010203040506;
 
     return &alias_mapping;
+}
+
+void _on_receive(can_msg_t *can_msg)
+{
+
+    on_receive_called = true;
 }
 
 void _reset_variables(void)
@@ -117,6 +131,8 @@ void _reset_variables(void)
     can_amr_called = false;
     can_error_information_report_called = false;
     can_stream_called = false;
+    fail_find_mapping = false;
+    on_receive_called = false;
 }
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
@@ -134,24 +150,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_error_info_report_frame = &_can_frame_message_handler_error_information_report_frame,
     .handle_stream_frame = &_can_frame_message_handler_stream_frame,
     .alias_mapping_find_mapping_by_alias = &_alias_mappings_find_mapping_by_alias,
-    .on_receive = NULL};
-
-const interface_can_rx_statemachine_t interface_can_rx_statemachine_nulls = {
-
-    .handle_can_legacy_snip = nullptr,
-    .handle_single_frame = nullptr,
-    .handle_first_frame = nullptr,
-    .handle_middle_frame = nullptr,
-    .handle_last_frame = nullptr,
-    .handle_cid_frame = nullptr,
-    .handle_rid_frame = nullptr,
-    .handle_ame_frame = nullptr,
-    .handle_amd_frame = nullptr,
-    .handle_amr_frame = nullptr,
-    .handle_error_info_report_frame = nullptr,
-    .handle_stream_frame = nullptr,
-    .alias_mapping_find_mapping_by_alias = &_alias_mappings_find_mapping_by_alias,
-    .on_receive = NULL};
+    .on_receive = &_on_receive};
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine_null_rx_target = {
 
@@ -168,7 +167,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine_null_rx_targ
     .handle_error_info_report_frame = nullptr,
     .handle_stream_frame = nullptr,
     .alias_mapping_find_mapping_by_alias = &_alias_mappings_find_mapping_by_alias,
-    .on_receive = NULL};
+    .on_receive = nullptr};
 
 void _test_snip_request(can_msg_t *can_msg)
 {
@@ -179,8 +178,31 @@ void _test_snip_request(can_msg_t *can_msg)
     uint32_t identifier = 0x19DE8AAA;
     CanUtilities_load_can_message(can_msg, identifier, 2, 0x0F, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_TRUE(on_receive_called);
     EXPECT_FALSE(can_legacy_snip_called);
     EXPECT_TRUE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+    // ************************************************************************
+
+    // ************************************************************************
+    // SNIP Request to 0x0FFF Not to us
+    // ************************************************************************
+    _reset_variables();
+    fail_find_mapping = true;
+    identifier = 0x19DE8AAA;
+    CanUtilities_load_can_message(can_msg, identifier, 2, 0x0F, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
     EXPECT_FALSE(can_middle_frame_called);
     EXPECT_FALSE(can_last_frame_called);
@@ -372,6 +394,94 @@ void _test_datagram_framing(can_msg_t *can_msg)
     EXPECT_FALSE(can_error_information_report_called);
     EXPECT_FALSE(can_stream_called);
     // ************************************************************************
+
+    // ************************************************************************
+    // Datagram Only Frame to 0x0FFF Not to Us
+    // ************************************************************************
+    identifier = 0x1AFFFAAA;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
+    _reset_variables();
+    fail_find_mapping = true;
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+    // ************************************************************************
+
+    // ************************************************************************
+    // Datagram First Frame to 0x0FFF Not to Us
+    // ************************************************************************
+    identifier = 0x1BFFFAAA;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
+    _reset_variables();
+    fail_find_mapping = true;
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+    // ************************************************************************
+
+    // ************************************************************************
+    // Datagram Middle Frame to 0x0FFF Not to Us
+    // ************************************************************************
+    identifier = 0x1CFFFAAA;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
+    _reset_variables();
+    fail_find_mapping = true;
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+    // ************************************************************************
+
+    // ************************************************************************
+    // Datagram Last Frame to 0x0FFF Not to Us
+    // ************************************************************************
+    identifier = 0x1DFFFAAA;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x59, 0x34, 0xCF, 0x60, 0x56, 0x45, 0x023, 0x66);
+    _reset_variables();
+    fail_find_mapping = true;
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+    // ************************************************************************
 }
 
 void _test_traction_control(can_msg_t *can_msg)
@@ -472,6 +582,24 @@ void _test_stream(can_msg_t *can_msg)
     EXPECT_FALSE(can_amr_called);
     EXPECT_FALSE(can_error_information_report_called);
     EXPECT_TRUE(can_stream_called);
+
+    identifier = 0x1FAAA6BE;
+    CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    _reset_variables();
+    fail_find_mapping = true;
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
 }
 
 void _test_cid(can_msg_t *can_msg)
@@ -615,6 +743,27 @@ void _test_cid(can_msg_t *can_msg)
     EXPECT_FALSE(can_middle_frame_called);
     EXPECT_FALSE(can_last_frame_called);
     EXPECT_TRUE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+    // ************************************************************************
+
+    // ************************************************************************
+    // CID 0x00 (error)
+    // ************************************************************************
+    identifier = 0x100506BE;
+    CanUtilities_load_can_message(can_msg, identifier, 0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
     EXPECT_FALSE(can_rid_called);
     EXPECT_FALSE(can_ame_called);
     EXPECT_FALSE(can_amd_called);
@@ -1056,6 +1205,114 @@ void _test_error_info_report_nulls(can_msg_t *can_msg)
     CanRxStatemachine_incoming_can_driver_callback(can_msg);
 }
 
+void _test_event_with_payload(can_msg_t *can_msg)
+{
+
+    uint32_t identifier = 0x19F166BE;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_TRUE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+
+    identifier = 0x19F156BE;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_TRUE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+
+    identifier = 0x19F146BE;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_TRUE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+
+    CanRxStatemachine_initialize(&interface_can_rx_statemachine_null_rx_target);
+
+    identifier = 0x19F166BE;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+
+    identifier = 0x19F156BE;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+
+    identifier = 0x19F146BE;
+    CanUtilities_load_can_message(can_msg, identifier, 8, 0x05, 0x01, 0x01, 0x01, 0x07, 0xFF, 0x00, 0x00);
+    _reset_variables();
+    CanRxStatemachine_incoming_can_driver_callback(can_msg);
+    EXPECT_FALSE(can_legacy_snip_called);
+    EXPECT_FALSE(can_single_frame_called);
+    EXPECT_FALSE(can_first_frame_called);
+    EXPECT_FALSE(can_middle_frame_called);
+    EXPECT_FALSE(can_last_frame_called);
+    EXPECT_FALSE(can_cid_called);
+    EXPECT_FALSE(can_rid_called);
+    EXPECT_FALSE(can_ame_called);
+    EXPECT_FALSE(can_amd_called);
+    EXPECT_FALSE(can_amr_called);
+    EXPECT_FALSE(can_error_information_report_called);
+    EXPECT_FALSE(can_stream_called);
+}
+
 TEST(CanRxStatemachine, initialize)
 {
 
@@ -1077,9 +1334,10 @@ TEST(CanRxStatemachine, initialize)
     _test_error_info_report(&can_msg);
     _test_reserved(&can_msg);
     _test_stream(&can_msg);
+    _test_event_with_payload(&can_msg);
 
     _reset_variables();
-    CanRxStatemachine_initialize(&interface_can_rx_statemachine_nulls);
+    CanRxStatemachine_initialize(&interface_can_rx_statemachine_null_rx_target);
 
     _test_snip_request_nulls(&can_msg);
     _test_legacy_snip_nulls(&can_msg);
