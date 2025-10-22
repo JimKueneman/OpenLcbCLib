@@ -159,9 +159,7 @@ bool CanMainStatemachine_handle_outgoing_can_message(void) {
     if (!_can_statemachine_info.outgoing_can_msg) {
 
         _interface->lock_shared_resources();
-
         _can_statemachine_info.outgoing_can_msg = CanBufferFifo_pop();
-
         _interface->unlock_shared_resources();
 
     }
@@ -171,9 +169,7 @@ bool CanMainStatemachine_handle_outgoing_can_message(void) {
         if (_interface->send_can_message(_can_statemachine_info.outgoing_can_msg)) {
 
             _interface->lock_shared_resources();
-
             CanBufferStore_free_buffer(_can_statemachine_info.outgoing_can_msg);
-
             _interface->unlock_shared_resources();
 
             _can_statemachine_info.outgoing_can_msg = NULL;

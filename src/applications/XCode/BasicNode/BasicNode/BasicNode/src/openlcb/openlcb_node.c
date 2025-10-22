@@ -112,7 +112,7 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
 
 openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
     
-    if (key > MAX_NODE_ENUM_KEY_VALUES) {
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
         
         return NULL;
         
@@ -133,7 +133,7 @@ openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
 
 openlcb_node_t* OpenLcbNode_get_next(uint8_t key) {
     
-    if (key > MAX_NODE_ENUM_KEY_VALUES) {
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
         
         return NULL;
         

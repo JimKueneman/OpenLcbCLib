@@ -16,6 +16,7 @@ bool _handle_stream_frame_called = false;
 bool _handle_can_frame_frame_called = false;
 bool _is_can_tx_buffer_empty_called = false;
 bool _is_can_tx_buffer_empty_diabled = false;
+bool _fail_handle_stream_frame = false;
 
 can_msg_t sent_can_msg;
 
@@ -24,7 +25,12 @@ bool _handle_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_
 
     _handle_addressed_msg_frame_called = true;
 
-    *openlcb_start_index = 0xFFFF;
+    *openlcb_start_index = *openlcb_start_index + 8;
+    if (*openlcb_start_index > openlcb_msg->payload_count)
+    {
+
+        *openlcb_start_index = openlcb_msg->payload_count;
+    }
 
     return true;
 }
@@ -34,7 +40,12 @@ bool _handle_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_ms
 
     _handle_unaddressed_msg_frame_called = true;
 
-    *openlcb_start_index = 0xFFFF;
+    *openlcb_start_index = *openlcb_start_index + 8;
+    if (*openlcb_start_index > openlcb_msg->payload_count)
+    {
+
+        *openlcb_start_index = openlcb_msg->payload_count;
+    }
 
     return true;
 }
@@ -44,7 +55,12 @@ bool _handle_datagram_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worke
 
     _handle_datagram_frame_called = true;
 
-    *openlcb_start_index = 0xFFFF;
+    *openlcb_start_index = *openlcb_start_index + 8;
+    if (*openlcb_start_index > openlcb_msg->payload_count)
+    {
+
+        *openlcb_start_index = openlcb_msg->payload_count;
+    }
 
     return true;
 }
@@ -54,7 +70,18 @@ bool _handle_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker,
 
     _handle_stream_frame_called = true;
 
-    *openlcb_start_index = 0xFFFF;
+    if (_fail_handle_stream_frame)
+    {
+
+        return false;
+    }
+
+    *openlcb_start_index = *openlcb_start_index + 8;
+    if (*openlcb_start_index > openlcb_msg->payload_count)
+    {
+
+        *openlcb_start_index = openlcb_msg->payload_count;
+    }
 
     return true;
 }
@@ -129,6 +156,7 @@ void _reset_variables(void)
     _handle_can_frame_frame_called = false;
     _is_can_tx_buffer_empty_called = false;
     _is_can_tx_buffer_empty_diabled = false;
+    _fail_handle_stream_frame = false;
 }
 
 void _initialize(void)
@@ -229,10 +257,11 @@ TEST(CanTxStatemachine, send_openlcb_message)
         EXPECT_FALSE(_handle_stream_frame_called);
         EXPECT_FALSE(_handle_can_frame_frame_called);
         EXPECT_TRUE(_is_can_tx_buffer_empty_called);
+
         // ********************************************************************
 
         // ********************************************************************
-        // Streqm frame
+        // Stream frame
         // ********************************************************************
         _reset_variables();
 
@@ -258,6 +287,22 @@ TEST(CanTxStatemachine, send_openlcb_message)
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
         EXPECT_FALSE(_handle_datagram_frame_called);
         EXPECT_FALSE(_handle_stream_frame_called);
+        EXPECT_FALSE(_handle_can_frame_frame_called);
+        EXPECT_TRUE(_is_can_tx_buffer_empty_called);
+        // ********************************************************************
+
+        // ********************************************************************
+        // Stream frame but send failed
+        // ********************************************************************
+        _reset_variables();
+        _fail_handle_stream_frame = true;
+
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_STREAM_PROCEED, 8);
+        EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
+        EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
+        EXPECT_FALSE(_handle_addressed_msg_frame_called);
+        EXPECT_FALSE(_handle_datagram_frame_called);
+        EXPECT_TRUE(_handle_stream_frame_called);
         EXPECT_FALSE(_handle_can_frame_frame_called);
         EXPECT_TRUE(_is_can_tx_buffer_empty_called);
         // ********************************************************************

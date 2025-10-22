@@ -126,6 +126,9 @@ typedef struct {
     void (*memory_factory_reset_message)(openlcb_statemachine_info_t *statemachine_info);
     void (*send_datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
     
+    void (*lock_shared_resources)(void);
+    void (*unlock_shared_resources)(void);
+    
 } interface_protocol_datagram_handler_t;
 
 
@@ -140,6 +143,8 @@ extern void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t 
 extern void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info);
 
 extern void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info);
+
+extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
     
 extern void ProtocolDatagramHandler_100ms_timer_tick(void);
 

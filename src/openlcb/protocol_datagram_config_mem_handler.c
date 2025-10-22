@@ -519,23 +519,10 @@ static const user_address_space_info_t* _decode_to_space_definition(openlcb_node
 
 }
 
-void ProtocolDatagramConfigMemHandler_clear_resend_datagram_message(openlcb_node_t* openlcb_node) {
-
-    if (openlcb_node->last_received_datagram) {
-
-        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
-
-        openlcb_node->last_received_datagram = NULL;
-
-    }
-
-    openlcb_node->state.resend_datagram = false;
-
-}
 
 static void _buffer_datagram_message_for_temporary_ack_reject_resend(openlcb_statemachine_info_t *statemachine_info) {
 
-    ProtocolDatagramConfigMemHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
+    _interface->clear_resend_datagram_message(statemachine_info->openlcb_node);
 
     // Take a reference and store the sent message in case we have to resend it
     OpenLcbBufferStore_inc_reference_count(statemachine_info->incoming_msg_info.msg_ptr);

@@ -417,7 +417,10 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_update_complete_message = NULL,
     .memory_reset_reboot_message = NULL,
     .memory_factory_reset_message = NULL,
-    .send_datagram_rejected_reply = NULL
+    .send_datagram_rejected_reply = NULL,
+    
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
 
@@ -447,7 +450,9 @@ interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_proto
     .on_configuration_memory_factory_reset = NULL,
     .on_config_mem_write = NULL,
     .on_config_mem_freeze_firmware_update = NULL,
-    .on_config_mem_unfreeze_firmware_update = NULL
+    .on_config_mem_unfreeze_firmware_update = NULL,
+    
+    .clear_resend_datagram_message = &ProtocolDatagramHandler_clear_resend_datagram_message,
 
 };
 

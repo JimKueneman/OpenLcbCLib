@@ -609,6 +609,21 @@ TEST(CAN_Utilities, extract_can_mti_from_can_identifier)
     mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
     EXPECT_EQ(mti, 0xCC8);
 
+    // Event with Payload First , mti
+    CanUtilities_load_can_message(&can_msg, 0x19F16AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
+    EXPECT_EQ(mti, 0xF14);
+
+    // Event with Payload Middle , mti
+    CanUtilities_load_can_message(&can_msg, 0x19F15AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
+    EXPECT_EQ(mti, 0xF14);
+
+    // Event with Payload Last , mti
+    CanUtilities_load_can_message(&can_msg, 0x19F14AAA, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+    mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);
+    EXPECT_EQ(mti, 0xF14);
+
     uint32_t reserved_identifier = (0x19888AAA & !0x19488AAA) | CAN_FRAME_TYPE_RESERVED;
     CanUtilities_load_can_message(&can_msg, reserved_identifier, 8, 0x1A, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
     mti = CanUtilities_convert_can_mti_to_openlcb_mti(&can_msg);

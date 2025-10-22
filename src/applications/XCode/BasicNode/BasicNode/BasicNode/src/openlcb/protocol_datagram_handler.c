@@ -769,15 +769,8 @@ void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statem
 }
 
 void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info) {
-
-    if (statemachine_info->openlcb_node->last_received_datagram) {
-
-        OpenLcbBufferStore_free_buffer(statemachine_info->openlcb_node->last_received_datagram);
-        statemachine_info->openlcb_node->last_received_datagram = NULL;
-
-    }
-
-    statemachine_info-> openlcb_node->state.resend_datagram = false;
+    
+    ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
 
     statemachine_info->outgoing_msg_info.valid = false;
 
@@ -795,12 +788,30 @@ void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_
 
     } else {
 
+        _interface->lock_shared_resources();
         OpenLcbBufferStore_free_buffer(statemachine_info->openlcb_node->last_received_datagram);
+        _interface->unlock_shared_resources();
         statemachine_info->openlcb_node->last_received_datagram = NULL;
 
     }
 
     statemachine_info->outgoing_msg_info.valid = false;
+
+}
+
+void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t* openlcb_node) {
+
+    if (openlcb_node->last_received_datagram) {
+
+        _interface->lock_shared_resources();
+        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
+        _interface->unlock_shared_resources();
+
+        openlcb_node->last_received_datagram = NULL;
+
+    }
+
+    openlcb_node->state.resend_datagram = false;
 
 }
 

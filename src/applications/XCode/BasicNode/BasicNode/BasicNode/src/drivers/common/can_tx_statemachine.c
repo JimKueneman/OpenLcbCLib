@@ -95,6 +95,9 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
 }
 
 bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
+    
+    can_msg_t worker_can_msg;
+    uint16_t payload_index = 0;
 
     if (!_interface->is_tx_buffer_empty()) {
 
@@ -102,24 +105,16 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
     }
 
-    can_msg_t worker_can_msg;
-    uint16_t payload_index = 0;
-
     if (openlcb_msg->payload_count == 0) {
-
-        //    printf("_transmit_openlcb_message, no payload\n");
 
         return _transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index);
 
     }
 
     if (_transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index)) {
-
- 
-        // stall until everything is sent
         
-        while (payload_index < openlcb_msg->payload_count) {
-
+        while (payload_index < openlcb_msg->payload_count) {                    // stall until everything is sent
+ 
             _transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index);
 
         }

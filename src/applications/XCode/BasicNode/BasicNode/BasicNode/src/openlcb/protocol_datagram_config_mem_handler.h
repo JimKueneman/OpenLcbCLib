@@ -59,6 +59,8 @@ typedef struct {
     void (*on_config_mem_write)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
     void (*on_config_mem_freeze_firmware_update) (openlcb_statemachine_info_t *statemachine_info);
     void (*on_config_mem_unfreeze_firmware_update) (openlcb_statemachine_info_t *statemachine_info);
+    
+    void (*clear_resend_datagram_message)(openlcb_node_t* openlcb_node);
 
 } interface_openlcb_protocol_datagram_config_mem_handler_t;
 
@@ -111,7 +113,6 @@ extern "C" {
     extern void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlcb_statemachine_info_t *statemachine_info);
     
     extern void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
-    extern void ProtocolDatagramConfigMemHandler_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
     extern void ProtocolDatagramConfigMemHandler_try_transmit(openlcb_statemachine_info_t *statemachine_info);
 
 #ifdef	__cplusplus

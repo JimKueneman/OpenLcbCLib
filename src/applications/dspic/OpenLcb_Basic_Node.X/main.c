@@ -430,9 +430,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .simple_train_node_ident_info_reply = NULL,
 
     // DATAGRAM
-    .datagram = NULL,
-    .datagram_ok_reply = NULL,
-    .datagram_rejected_reply = NULL,
+    .datagram = ProtocolDatagramHandler_handle_datagram,
+    .datagram_ok_reply = Protocol_DatagramHandler_handle_datagram_received_ok,
+    .datagram_rejected_reply = ProtocolDatagramHandler_handle_datagram_rejected,
 
     // STREAM
     .stream_initiate_request = NULL,
@@ -550,15 +550,10 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_update_complete_message = NULL,
     .memory_reset_reboot_message = NULL,
     .memory_factory_reset_message = NULL,
-    .send_datagram_rejected_reply = NULL
-
-};
-
-const interface_openlcb_application_t interface_openlcb_application = {
-
-    .transmit_openlcb_message = NULL,
-    .configuration_memory_read = NULL,
-    .configuration_memory_write = NULL
+    .send_datagram_rejected_reply = NULL,
+    
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
 
@@ -568,19 +563,28 @@ interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_proto
     .configuration_memory_write = NULL,
     .reboot = NULL,
     .configuration_memory_factory_reset = NULL,
-    .snip_load_manufacturer_version_id = NULL,
-    .snip_load_name = NULL,
-    .snip_load_model = NULL,
-    .snip_load_hardware_version = NULL,
-    .snip_load_software_version = NULL,
-    .snip_load_user_version_id = NULL,
-    .snip_load_user_name = NULL,
-    .snip_load_user_description = NULL,
+    .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
+    .snip_load_name = &ProtocolSnip_load_name,
+    .snip_load_model = &ProtocolSnip_load_model,
+    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
+    .snip_load_software_version = &ProtocolSnip_load_software_version,
+    .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_load_user_name = &ProtocolSnip_load_user_name,
+    .snip_load_user_description = &ProtocolSnip_load_user_description,
+    .clear_resend_datagram_message = &ProtocolDatagramHandler_clear_resend_datagram_message,
     // Callback events
     .on_configuration_memory_factory_reset = NULL,
     .on_config_mem_write = NULL,
     .on_config_mem_freeze_firmware_update = NULL,
     .on_config_mem_unfreeze_firmware_update = NULL
+
+};
+
+const interface_openlcb_application_t interface_openlcb_application = {
+
+    .transmit_openlcb_message = NULL,
+    .configuration_memory_read = NULL,
+    .configuration_memory_write = NULL
 
 };
 

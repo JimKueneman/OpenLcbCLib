@@ -47,8 +47,6 @@
 #include "openlcb_buffer_store.h"
 
 
-typedef void(*memory_handler_t)(openlcb_statemachine_info_t *statemachine_info);
-
 static interface_protocol_datagram_handler_t *_interface;
 
 void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface_protocol_datagram_handler) {
@@ -59,15 +57,32 @@ void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handle
 
 static void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
 
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg_info.msg_ptr->source_alias, statemachine_info->incoming_msg_info.msg_ptr->source_id, MTI_DATAGRAM_OK_REPLY, 2);
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM_OK_REPLY,
+            2);
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 static void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
 
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id, statemachine_info->incoming_msg_info.msg_ptr->source_alias, statemachine_info->incoming_msg_info.msg_ptr->source_id, MTI_DATAGRAM_REJECTED_REPLY, 2);
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM_REJECTED_REPLY,
+            2);
     OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
@@ -76,27 +91,27 @@ static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, m
     // TODO: NEED TO THINK ABOUT WITH MULTIPLE NODES THAT CARRY DIFFERNT NODE PARAMETER STRUCTURES THIS WON'T WORK CORRECT.... NEED TO FIGURE THIS OUT... THE 
     // HANDLER NEEDS TO LOOK AT THE NODE PARAMETERS AND DO THE RIGHT THING I BELIEVE... THIS MODULE CAN'T MAKE THOSE DECISIONS ABOUT ACK/NACK REPLYIES TO THE DATAGRAM MESSAGES
 
-    if (handler_ptr) {
+    if (!handler_ptr) {
 
-        if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
-
-            // TODO: HOW TO HANDLE RETURNING DELAYED REPLY AND EXPECTED TIME TILL REPLY COMES
-
-            _load_datagram_received_ok_message(statemachine_info, 0x00);
-
-            return; // keep pumping this message
-
-        }
+        _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
         
-        handler_ptr(statemachine_info);
-
         return;
+
+    }
+    
+    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
+
+        // TODO: HOW TO HANDLE RETURNING DELAYED REPLY AND EXPECTED TIME TILL REPLY COMES
+
+        _load_datagram_received_ok_message(statemachine_info, 0x00);
+
+        statemachine_info->outgoing_msg_info.enumerate = true;
 
     } else {
 
-        _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+        handler_ptr(statemachine_info);
 
-        return;
+        statemachine_info->outgoing_msg_info.enumerate = false;
 
     }
 
@@ -493,7 +508,7 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 
 }
 
-static void _handle_datagram_memory_configuration(openlcb_statemachine_info_t *statemachine_info) {
+static void _handle_datagram_memory_configuration_command(openlcb_statemachine_info_t *statemachine_info) {
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[1]) { // which space?
 
@@ -753,7 +768,7 @@ void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statem
 
         case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?
 
-            _handle_datagram_memory_configuration(statemachine_info);
+            _handle_datagram_memory_configuration_command(statemachine_info);
 
             break;
 
@@ -770,14 +785,7 @@ void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statem
 
 void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (statemachine_info->openlcb_node->last_received_datagram) {
-
-        OpenLcbBufferStore_free_buffer(statemachine_info->openlcb_node->last_received_datagram);
-        statemachine_info->openlcb_node->last_received_datagram = NULL;
-
-    }
-
-    statemachine_info-> openlcb_node->state.resend_datagram = false;
+    ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
 
     statemachine_info->outgoing_msg_info.valid = false;
 
@@ -795,12 +803,27 @@ void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_
 
     } else {
 
-        OpenLcbBufferStore_free_buffer(statemachine_info->openlcb_node->last_received_datagram);
-        statemachine_info->openlcb_node->last_received_datagram = NULL;
+        ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
 
     }
 
     statemachine_info->outgoing_msg_info.valid = false;
+
+}
+
+void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t* openlcb_node) {
+
+    if (openlcb_node->last_received_datagram) {
+
+        _interface->lock_shared_resources();
+        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
+        _interface->unlock_shared_resources();
+
+        openlcb_node->last_received_datagram = NULL;
+
+    }
+
+    openlcb_node->state.resend_datagram = false;
 
 }
 
