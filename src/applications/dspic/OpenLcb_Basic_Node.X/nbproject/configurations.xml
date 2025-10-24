@@ -190,10 +190,34 @@
       <item path="../../../openlcb/protocol_datagram_config_mem_handler.c"
             ex="true"
             overriding="false">
+        <C30>
+        </C30>
+        <C30-AR>
+        </C30-AR>
+        <C30-AS>
+        </C30-AS>
+        <C30-CO>
+        </C30-CO>
+        <C30-LD>
+        </C30-LD>
+        <C30Global>
+        </C30Global>
       </item>
       <item path="../../../openlcb/protocol_datagram_config_mem_handler.h"
             ex="true"
             overriding="false">
+        <C30>
+        </C30>
+        <C30-AR>
+        </C30-AR>
+        <C30-AS>
+        </C30-AS>
+        <C30-CO>
+        </C30-CO>
+        <C30-LD>
+        </C30-LD>
+        <C30Global>
+        </C30Global>
       </item>
       <C30>
         <property key="cast-align" value="false"/>
