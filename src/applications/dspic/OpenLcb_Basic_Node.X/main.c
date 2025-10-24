@@ -126,10 +126,13 @@
 #include "../../../openlcb/protocol_event_transport.h"
 #include "../../../openlcb/protocol_snip.h"
 #include "../../../openlcb/openlcb_main_statemachine.h"
-#include "../../../openlcb/protocol_datagram_config_mem_handler.h"
+// #include "../../../openlcb/protocol_datagram_config_mem_handler.h"
 #include "../../../openlcb/protocol_datagram_handler.h"
 #include "../../../openlcb/openlcb_login_statemachine.h"
 #include "../../../openlcb/openlcb_login_statemachine_handler.h"
+#include "../../../openlcb/protocol_config_mem_read_handler.h"
+#include "../../../openlcb/protocol_config_mem_write_handler.h"
+#include "../../../openlcb/protocol_config_mem_operations_handler.h"
 
 #include "../../../openlcb/openlcb_application.h"
 
@@ -252,7 +255,7 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .state_wait_200ms = &CanLoginMessageHandler_state_wait_200ms,
     .state_load_rid = &CanLoginMessageHandler_state_load_rid,
     .state_load_amd = &CanLoginMessageHandler_state_load_amd
-            
+
 };
 
 const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
@@ -359,22 +362,22 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
 };
 
 const interface_openlcb_login_message_handler_t interface_openlcb_login_message_handler = {
-    
+
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti
-    
+
 };
 
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
-    
-     .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
-     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
-     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event,
-     
+
+    .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
+    .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
+    .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event,
+
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
-     
+
     .process_login_statemachine = &OpenLcbLoginStateMachine_process,
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
     .handle_try_reenumerate = &OpenLcbLoginStatemachine_handle_try_reenumerate,
@@ -467,6 +470,27 @@ const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
 };
 
+const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler = {
+
+    .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+
+};
+
+const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
+
+    .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+
+};
+
+const interface_protocol_config_mem_operations_handler_t interface_protocol_config_mem_operations_handler = {
+
+    .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+
+};
+
 // TODO Finish these interfaces
 // -------------------------------
 
@@ -551,34 +575,34 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_reset_reboot_message = NULL,
     .memory_factory_reset_message = NULL,
     .send_datagram_rejected_reply = NULL,
-    
+
     .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
 
-interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_protocol_datagram_config_mem_handler = {
-
-    .configuration_memory_read = NULL,
-    .configuration_memory_write = NULL,
-    .reboot = NULL,
-    .configuration_memory_factory_reset = NULL,
-    .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    .snip_load_name = &ProtocolSnip_load_name,
-    .snip_load_model = &ProtocolSnip_load_model,
-    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
-    .snip_load_software_version = &ProtocolSnip_load_software_version,
-    .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
-    .snip_load_user_name = &ProtocolSnip_load_user_name,
-    .snip_load_user_description = &ProtocolSnip_load_user_description,
-    .clear_resend_datagram_message = &ProtocolDatagramHandler_clear_resend_datagram_message,
-    // Callback events
-    .on_configuration_memory_factory_reset = NULL,
-    .on_config_mem_write = NULL,
-    .on_config_mem_freeze_firmware_update = NULL,
-    .on_config_mem_unfreeze_firmware_update = NULL
-
-};
+//interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_protocol_datagram_config_mem_handler = {
+//
+//    .configuration_memory_read = NULL,
+//    .configuration_memory_write = NULL,
+//    .reboot = NULL,
+//    .configuration_memory_factory_reset = NULL,
+//    .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
+//    .snip_load_name = &ProtocolSnip_load_name,
+//    .snip_load_model = &ProtocolSnip_load_model,
+//    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
+//    .snip_load_software_version = &ProtocolSnip_load_software_version,
+//    .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+//    .snip_load_user_name = &ProtocolSnip_load_user_name,
+//    .snip_load_user_description = &ProtocolSnip_load_user_description,
+//    .clear_resend_datagram_message = &ProtocolDatagramHandler_clear_resend_datagram_message,
+//    // Callback events
+//    .on_configuration_memory_factory_reset = NULL,
+//    .on_config_mem_write = NULL,
+//    .on_config_mem_freeze_firmware_update = NULL,
+//    .on_config_mem_unfreeze_firmware_update = NULL
+//
+//};
 
 const interface_openlcb_application_t interface_openlcb_application = {
 
@@ -637,10 +661,13 @@ int main(void) {
     OpenLcbBufferFifo_initialize();
 
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
-    ProtocolDatagramConfigMemHandler_initialize(&interface_openlcb_protocol_datagram_config_mem_handler);
+    //  ProtocolDatagramConfigMemHandler_initialize(&interface_openlcb_protocol_datagram_config_mem_handler);
     ProtocolDatagramHandler_initialize(&interface_protocol_datagram_handler);
     ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
     ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
+    ProtocolConfigMemReadHandler_initialize(&interface_protocol_config_mem_read_handler);
+    ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
+    ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
 
     OpenLcbNode_initialize(&interface_openlcb_node);
 

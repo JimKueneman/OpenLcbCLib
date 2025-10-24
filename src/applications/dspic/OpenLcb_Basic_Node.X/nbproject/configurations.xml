@@ -43,6 +43,9 @@
         <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
         <itemPath>../../../openlcb/openlcb_login_statemachine.h</itemPath>
         <itemPath>../../../openlcb/openlcb_login_statemachine_handler.h</itemPath>
+        <itemPath>../../../openlcb/protocol_config_mem_operations_handler.h</itemPath>
+        <itemPath>../../../openlcb/protocol_config_mem_read_handler.h</itemPath>
+        <itemPath>../../../openlcb/protocol_config_mem_write_handler.h</itemPath>
       </logicalFolder>
       <logicalFolder name="OpenLcb_Basic_Node.X"
                      displayName="OpenLcb_Basic_Node.X"
@@ -108,6 +111,9 @@
         <itemPath>../../../openlcb/openlcb_application.c</itemPath>
         <itemPath>../../../openlcb/openlcb_login_statemachine.c</itemPath>
         <itemPath>../../../openlcb/openlcb_login_statemachine_handler.c</itemPath>
+        <itemPath>../../../openlcb/protocol_config_mem_operations_handler.c</itemPath>
+        <itemPath>../../../openlcb/protocol_config_mem_read_handler.c</itemPath>
+        <itemPath>../../../openlcb/protocol_config_mem_write_handler.c</itemPath>
       </logicalFolder>
       <logicalFolder name="OpenLcb_Basic_Node.X"
                      displayName="OpenLcb_Basic_Node.X"
@@ -181,6 +187,14 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
+      <item path="../../../openlcb/protocol_datagram_config_mem_handler.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="../../../openlcb/protocol_datagram_config_mem_handler.h"
+            ex="true"
+            overriding="false">
+      </item>
       <C30>
         <property key="cast-align" value="false"/>
         <property key="code-model" value="default"/>

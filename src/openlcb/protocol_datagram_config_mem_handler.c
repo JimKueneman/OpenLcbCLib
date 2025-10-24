@@ -331,7 +331,8 @@ void ProtocolDatagramConfigMemHandler_memory_read_space_config_description_info_
             _load_config_mem_reply_message_header(statemachine_info, &config_mem_message_data);
             OpenLcbUtilities_copy_byte_array_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr,
                     &statemachine_info->openlcb_node->parameters->cdi[config_mem_message_data.address_requested],
-                    config_mem_message_data.data_start_offset, config_mem_message_data.bytes_requested);
+                    config_mem_message_data.data_start_offset, 
+                    config_mem_message_data.bytes_requested);
 
             statemachine_info->outgoing_msg_info.msg_ptr->payload_count = config_mem_message_data.data_start_offset + config_mem_message_data.bytes_requested;
 

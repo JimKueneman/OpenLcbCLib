@@ -55,65 +55,33 @@ void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handle
 
 }
 
-static void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
-
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
-            statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_DATAGRAM_OK_REPLY,
-            2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
-
-    statemachine_info->outgoing_msg_info.valid = true;
-
-}
-
-static void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
-
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
-            statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_DATAGRAM_REJECTED_REPLY,
-            2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
-
-    statemachine_info->outgoing_msg_info.valid = true;
-
-}
 
 static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, memory_handler_t handler_ptr) {
 
-    // TODO: NEED TO THINK ABOUT WITH MULTIPLE NODES THAT CARRY DIFFERNT NODE PARAMETER STRUCTURES THIS WON'T WORK CORRECT.... NEED TO FIGURE THIS OUT... THE 
-    // HANDLER NEEDS TO LOOK AT THE NODE PARAMETERS AND DO THE RIGHT THING I BELIEVE... THIS MODULE CAN'T MAKE THOSE DECISIONS ABOUT ACK/NACK REPLYIES TO THE DATAGRAM MESSAGES
-
     if (!handler_ptr) {
 
-        _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+        ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
         
         return;
 
     }
     
-    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
-
-        // TODO: HOW TO HANDLE RETURNING DELAYED REPLY AND EXPECTED TIME TILL REPLY COMES
-
-        _load_datagram_received_ok_message(statemachine_info, 0x00);
-
-        statemachine_info->outgoing_msg_info.enumerate = true;
-
-    } else {
-
-        handler_ptr(statemachine_info);
-
-        statemachine_info->outgoing_msg_info.enumerate = false;
-
-    }
+// TODO: REMOVE
+//    if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
+//
+//        _load_datagram_received_ok_message(statemachine_info, 0x00);     // TODO: HOW TO HANDLE RETURNING DELAYED REPLY AND EXPECTED TIME TILL REPLY COMES
+//
+//        statemachine_info->outgoing_msg_info.enumerate = true;
+//
+//    } else {
+//
+//        handler_ptr(statemachine_info);
+//
+//        statemachine_info->outgoing_msg_info.enumerate = false;
+//
+//    }
+    
+    handler_ptr(statemachine_info);
 
 }
 
@@ -165,7 +133,7 @@ static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -221,7 +189,7 @@ static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -277,7 +245,7 @@ static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachi
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -332,7 +300,7 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -388,7 +356,7 @@ static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachin
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -444,7 +412,7 @@ static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemach
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -500,7 +468,7 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -754,7 +722,7 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
             break;
 
@@ -774,12 +742,43 @@ void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statem
 
         default:
 
-            _load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN);
+            ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN);
 
             break;
 
     } // switch command
 
+
+}
+
+void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM_OK_REPLY,
+            2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
+void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias, statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM_REJECTED_REPLY,
+            2);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
