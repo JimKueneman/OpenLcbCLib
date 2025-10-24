@@ -46,6 +46,15 @@ typedef struct {
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
     
+    // Callbacks
+    void (*on_read_space_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_read_space_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_read_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_read_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_read_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_read_space_traction_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_read_space_traction_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    
 } interface_protocol_config_mem_read_handler_t;
 
 

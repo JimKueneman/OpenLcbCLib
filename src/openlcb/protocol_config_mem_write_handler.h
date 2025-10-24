@@ -46,6 +46,15 @@ typedef struct {
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
     
+    // Callbacks
+    void (*on_write_space_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_write_space_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_write_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_write_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_write_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_write_space_traction_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*on_write_space_traction_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    
 } interface_protocol_config_mem_write_handler_t;
 
 #ifdef	__cplusplus
@@ -61,11 +70,13 @@ extern "C" {
     extern void ProtocolConfigMemWriteHandler_memory_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
     extern void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
     extern void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+    
+    extern void ProtocolConfigMemWriteHandler_memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
 
     extern void ProtocolConfigMemWriteHandler_memory_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
     extern void ProtocolConfigMemWriteHandler_memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
     extern void ProtocolConfigMemWriteHandler_memory_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    extern void ProtocolConfigMemWriteHandler_memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+    
 
 #ifdef	__cplusplus
 }

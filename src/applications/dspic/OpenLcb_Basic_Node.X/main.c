@@ -473,14 +473,32 @@ const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler = {
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
-    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    
+    // Callbacks
+    .on_read_space_config_decscription_info = NULL,
+    .on_read_space_all = NULL,
+    .on_read_space_configuration_memory = NULL,
+    .on_read_space_acdi_manufacturer = NULL,
+    .on_read_space_acdi_user = NULL,
+    .on_read_space_traction_config_decscription_info = NULL,
+    .on_read_space_traction_config_memory = NULL
 
 };
 
 const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
-    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    
+    // Callbacks
+    .on_write_space_config_decscription_info = NULL,
+    .on_write_space_all = NULL,
+    .on_write_space_configuration_memory = NULL,
+    .on_write_space_acdi_manufacturer = NULL,
+    .on_write_space_acdi_user = NULL,
+    .on_write_space_traction_config_decscription_info = NULL,
+    .on_write_space_traction_config_memory = NULL
 
 };
 
@@ -496,85 +514,138 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
 
 const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
-    // Memory Read Address Space
-    .memory_read_space_config_description_info_message = NULL,
-    .memory_read_space_all_message = NULL,
-    .memory_read_space_configuration_memory_message = NULL,
-    .memory_read_space_acdi_manufacturer_message = NULL,
-    .memory_read_space_acdi_user_message = NULL,
-    .memory_read_space_traction_function_definition_info_message = NULL,
-    .memory_read_space_traction_function_config_memory_message = NULL,
+    // Config Memory Read 
+    .memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_memory_read_space_config_description_info,
+    .memory_read_space_all = &ProtocolConfigMemReadHandler_memory_read_space_all,
+    .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_memory_read_space_configuration_memory,
+    .memory_read_space_acdi_manufacturer = &ProtocolConfigMemReadHandler_memory_read_space_acdi_manufacturer,
+    .memory_read_space_acdi_user = &ProtocolConfigMemReadHandler_memory_read_space_acdi_user,
+    .memory_read_space_traction_function_definition_info = &ProtocolConfigMemReadHandler_memory_read_space_traction_function_definition_info,
+    .memory_read_space_traction_function_config_memory = &ProtocolConfigMemReadHandler_memory_read_space_traction_function_config_memory,
 
-    // Memory Read Ok Ok Address Space
-    .memory_read_space_config_description_info_reply_ok_message = NULL,
-    .memory_read_space_all_reply_ok_message = NULL,
-    .memory_read_space_configuration_memory_reply_ok_message = NULL,
-    .memory_read_space_acdi_manufacturer_reply_ok_message = NULL,
-    .memory_read_space_acdi_user_reply_ok_message = NULL,
-    .memory_read_space_traction_function_definition_info_reply_ok_message = NULL,
-    .memory_read_space_traction_function_config_memory_reply_ok_message = NULL,
+    // Config Memory Read Reply Ok 
+    .memory_read_space_config_description_info_reply_ok = NULL,
+    .memory_read_space_all_reply_ok = NULL,
+    .memory_read_space_configuration_memory_reply_ok = NULL,
+    .memory_read_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_read_space_acdi_user_reply_ok = NULL,
+    .memory_read_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_read_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Memory Read Failed Reply Address Space
-    .memory_read_space_config_description_info_reply_fail_message = NULL,
-    .memory_read_space_all_reply_fail_message = NULL,
-    .memory_read_space_configuration_memory_reply_fail_message = NULL,
-    .memory_read_space_acdi_manufacturer_reply_fail_message = NULL,
-    .memory_read_space_acdi_user_reply_fail_message = NULL,
-    .memory_read_space_traction_function_definition_info_reply_fail_message = NULL,
-    .memory_read_space_traction_function_config_memory_reply_fail_message = NULL,
+    // Config Memory Read Reply Failed
+    .memory_read_space_config_description_info_reply_fail = NULL,
+    .memory_read_space_all_reply_fail = NULL,
+    .memory_read_space_configuration_memory_reply_fail = NULL,
+    .memory_read_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_read_space_acdi_user_reply_fail = NULL,
+    .memory_read_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_read_space_traction_function_config_memory_reply_fail = NULL,
+    
+    // Config Memory Stream Read
+    .memory_read_stream_space_config_description_info = NULL,
+    .memory_read_stream_space_all = NULL,
+    .memory_read_stream_space_configuration_memory = NULL,
+    .memory_read_stream_space_acdi_manufacturer = NULL,
 
-    // Memory Write Address Space
-    .memory_write_space_config_description_info_message = NULL,
-    .memory_write_space_all_message = NULL,
-    .memory_write_space_configuration_memory_message = NULL,
-    .memory_write_space_acdi_manufacturer_message = NULL,
-    .memory_write_space_acdi_user_message = NULL,
-    .memory_write_space_traction_function_definition_info_message = NULL,
-    .memory_write_space_traction_function_config_memory_message = NULL,
-    .memory_write_space_firmware_upgrade_message = NULL,
+    // Config Memory Stream Read Reply = Ok
+    .memory_read_stream_space_config_description_info_reply_ok = NULL,
+    .memory_read_stream_space_all_reply_ok = NULL,
+    .memory_read_stream_space_configuration_memory_reply_ok = NULL,
+    .memory_read_stream_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_read_stream_space_acdi_user_reply_ok = NULL,
+    .memory_read_stream_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_read_stream_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Memory Write Ok Reply Address Space
-    .memory_write_space_config_description_info_reply_ok_message = NULL,
-    .memory_write_space_all_reply_ok_message = NULL,
-    .memory_write_space_configuration_memory_reply_ok_message = NULL,
-    .memory_write_space_acdi_manufacturer_reply_ok_message = NULL,
-    .memory_write_space_acdi_user_reply_ok_message = NULL,
-    .memory_write_space_traction_function_definition_info_reply_ok_message = NULL,
-    .memory_write_space_traction_function_config_memory_reply_ok_message = NULL,
+    // Config Memory Stream Read Reply = Failed
+    .memory_read_stream_space_config_description_info_reply_fail = NULL,
+    .memory_read_stream_space_all_reply_fail = NULL,
+    .memory_read_stream_space_configuration_memory_reply_fail = NULL,
+    .memory_read_stream_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_read_stream_space_acdi_user_reply_fail = NULL,
+    .memory_read_stream_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_read_stream_space_traction_function_config_memory_reply_fail = NULL,
 
-    // Memory Write Fail Reply Address Space
-    .memory_write_space_config_description_info_reply_fail_message = NULL,
-    .memory_write_space_all_reply_fail_message = NULL,
-    .memory_write_space_configuration_memory_reply_fail_message = NULL,
-    .memory_write_space_acdi_manufacturer_reply_fail_message = NULL,
-    .memory_write_space_acdi_user_reply_fail_message = NULL,
-    .memory_write_space_traction_function_definition_info_reply_fail_message = NULL,
-    .memory_write_space_traction_function_config_memory_reply_fail_message = NULL,
+    // Config Memory Write 
+    .memory_write_space_config_description_info = NULL,
+    .memory_write_space_all = NULL,
+    .memory_write_space_configuration_memory = NULL,
+    .memory_write_space_acdi_manufacturer = NULL,
+    .memory_write_space_acdi_user = NULL,
+    .memory_write_space_traction_function_definition_info = NULL,
+    .memory_write_space_traction_function_config_memory = NULL,
+    .memory_write_space_firmware_upgrade = NULL,
 
-    // Memory Write Under Mask Address Space
-    .memory_write_under_mask_space_config_description_info_message = NULL,
-    .memory_write_under_mask_space_all_message = NULL,
-    .memory_write_under_mask_space_configuration_memory_message = NULL,
-    .memory_write_under_mask_space_acdi_manufacturer_message = NULL,
-    .memory_write_under_mask_space_acdi_user_message = NULL,
-    .memory_write_under_mask_space_traction_function_definition_info_message = NULL,
-    .memory_write_under_mask_space_traction_function_config_memory_message = NULL,
-    .memory_write_under_mask_space_firmware_upgrade_message = NULL,
+    // Config Memory Write Reply Ok 
+    .memory_write_space_config_description_info_reply_ok = NULL,
+    .memory_write_space_all_reply_ok = NULL,
+    .memory_write_space_configuration_memory_reply_ok = NULL,
+    .memory_write_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_write_space_acdi_user_reply_ok = NULL,
+    .memory_write_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_write_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Commands
-    .memory_options_cmd_message = NULL,
-    .memory_options_reply_message = NULL,
-    .memory_get_address_space_info_message = NULL,
-    .memory_get_address_space_info_reply_not_present_message = NULL,
-    .memory_get_address_space_info_reply_present_message = NULL,
-    .memory_reserve_lock_message = NULL,
-    .memory_get_unique_id_message = NULL,
-    .memory_unfreeze_message = NULL,
-    .memory_freeze_message = NULL,
-    .memory_update_complete_message = NULL,
-    .memory_reset_reboot_message = NULL,
-    .memory_factory_reset_message = NULL,
-    .send_datagram_rejected_reply = NULL,
+    // Config Memory Write Reply Fail
+    .memory_write_space_config_description_info_reply_fail = NULL,
+    .memory_write_space_all_reply_fail = NULL,
+    .memory_write_space_configuration_memory_reply_fail = NULL,
+    .memory_write_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_write_space_acdi_user_reply_fail = NULL,
+    .memory_write_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_write_space_traction_function_config_memory_reply_fail = NULL,
+
+    // Config Memory Write Under Mask
+    .memory_write_under_mask_space_config_description_info = NULL,
+    .memory_write_under_mask_space_all = NULL,
+    .memory_write_under_mask_space_configuration_memory = NULL,
+    .memory_write_under_mask_space_acdi_manufacturer = NULL,
+    .memory_write_under_mask_space_acdi_user = NULL,
+    .memory_write_under_mask_space_traction_function_definition_info = NULL,
+    .memory_write_under_mask_space_traction_function_config_memory = NULL,
+    .memory_write_under_mask_space_firmware_upgrade = NULL,
+
+    // Config Memory Stream Write
+    .memory_write_stream_space_config_description_info = NULL,
+    .memory_write_stream_space_all = NULL,
+    .memory_write_stream_space_configuration_memory = NULL,
+    .memory_write_stream_space_acdi_manufacturer = NULL,
+    .memory_write_stream_space_acdi_user = NULL,
+    .memory_write_stream_space_traction_function_definition_info = NULL,
+    .memory_write_stream_space_traction_function_config_memory = NULL,
+    .memory_write_stream_space_firmware_upgrade = NULL,
+    
+    // Config Memory Stream Write Reply = Ok
+    .memory_write_stream_space_config_description_info_reply_ok = NULL,
+    .memory_write_stream_space_all_reply_ok = NULL,
+    .memory_write_stream_space_configuration_memory_reply_ok = NULL,
+    .memory_write_stream_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_write_stream_space_acdi_user_reply_ok = NULL,
+    .memory_write_stream_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_write_stream_space_traction_function_config_memory_reply_ok = NULL,
+
+    // Config Memory Stream Write Reply = Failed
+    .memory_write_stream_space_config_description_info_reply_fail = NULL,
+    .memory_write_stream_space_all_reply_fail = NULL,
+    .memory_write_stream_space_configuration_memory_reply_fail = NULL,
+    .memory_write_stream_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_write_stream_space_acdi_user_reply_fail = NULL,
+    .memory_write_stream_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
+    
+    // Config Memory Commands
+    .memory_options_cmd = NULL,
+    .memory_options_reply = NULL,
+    .memory_get_address_space_info = NULL,
+    .memory_get_address_space_info_reply_not_present = NULL,
+    .memory_get_address_space_info_reply_present = NULL,
+    .memory_reserve_lock = NULL,
+    .memory_reserve_lock_reply = NULL,
+    .memory_get_unique_id = NULL,
+    .memory_get_unique_id_reply = NULL,
+    .memory_unfreeze = NULL,
+    .memory_freeze = NULL,
+    .memory_update_complete = NULL,
+    .memory_reset_reboot = NULL,
+    .memory_factory_reset = NULL,
 
     .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE

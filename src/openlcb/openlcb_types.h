@@ -348,7 +348,6 @@ extern "C" {
         openlcb_outgoing_stream_msg_info_t outgoing_msg_info;
 
     } openlcb_statemachine_info_t;
-    
 
     typedef struct {
         openlcb_msg_t openlcb_msg;
@@ -363,12 +362,27 @@ extern "C" {
         openlcb_basic_message_t openlcb_msg;
 
     } openlcb_outgoing_basic_msg_info_t;
-    
+
     typedef struct {
         openlcb_node_t *openlcb_node;
         openlcb_outgoing_basic_msg_info_t outgoing_msg_info;
 
     } openlcb_login_statemachine_info_t;
+
+
+    struct config_mem_read_request_info_TAG;
+
+    typedef void (*read_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_read_request_info_TAG *config_mem_read_request_info);
+
+    typedef struct config_mem_read_request_info_TAG {
+        space_encoding_enum encoding;
+        uint32_t address;
+        uint16_t bytes;
+        uint16_t data_start; // what offset into the payload to insert the data begin requested
+        const user_address_space_info_t *space_info;
+        read_config_mem_space_func_t read_space_func;
+
+    } config_mem_read_request_info_t;
 
 
 #ifdef __cplusplus
