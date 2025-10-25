@@ -26,15 +26,10 @@
 #define CONFIG_MEM_START_ADDRESS 0x100
 #define CONFIG_MEM_NODE_ADDRESS_ALLOCATION 0x200
 
+void *called_function_ptr = nullptr;
+
 bool load_datagram_ok_message_called = false;
 bool load_datagram_rejected_message_called = false;
-bool on_read_space_config_decscription_info_called = false;
-bool on_read_space_all = false;
-bool on_read_space_configuration_memory = false;
-bool on_read_space_acdi_manufacturer = false;
-bool on_read_space_acdi_user = false;
-bool on_read_space_traction_config_decscription_info = false;
-bool on_read_space_traction_config_memory = false;
 
 node_parameters_t _node_parameters_main_node = {
 
@@ -150,18 +145,23 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
-void _ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
+void _update_called_function_ptr(void *function_ptr)
+{
+    called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
+}
+
+void _load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
 {
 
-    load_datagram_ok_message_called = true;
+    _update_called_function_ptr((void *)&_load_datagram_received_ok_message);
 
     ProtocolDatagramHandler_load_datagram_received_ok_message(statemachine_info, return_code);
 }
 
-void _ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
+void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code)
 {
 
-    load_datagram_rejected_message_called = true;
+    _update_called_function_ptr((void *)&_load_datagram_rejected_message);
 
     ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, return_code);
 }
@@ -169,49 +169,49 @@ void _ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachin
 void _on_read_space_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_config_decscription_info_called = true;
+    _update_called_function_ptr((void *)&_on_read_space_config_decscription_info);
 }
 
 void _on_read_space_all(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_all = true;
+    _update_called_function_ptr((void *)&_on_read_space_all);
 }
 
 void _on_read_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_configuration_memory = true;
+     _update_called_function_ptr((void *)&_on_read_space_configuration_memory);
 }
 
 void _on_read_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_acdi_manufacturer = true;
+     _update_called_function_ptr((void *)&_on_read_space_acdi_manufacturer);
 }
 
 void _on_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_acdi_user = true;
+     _update_called_function_ptr((void *)&_on_read_space_acdi_user);
 }
 
 void _on_read_space_traction_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_traction_config_decscription_info = true;
+    _update_called_function_ptr((void *)&_on_read_space_traction_config_decscription_info);
 }
 
 void _on_read_space_traction_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-    on_read_space_traction_config_memory = true;
+     _update_called_function_ptr((void *)&_on_read_space_traction_config_memory);
 }
 
 const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler = {
 
-    .load_datagram_received_ok_message = &_ProtocolDatagramHandler_load_datagram_received_ok_message,
-    .load_datagram_received_rejected_message = &_ProtocolDatagramHandler_load_datagram_rejected_message,
+    .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
     // Callbacks
     .on_read_space_config_decscription_info = NULL,
@@ -226,8 +226,8 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
 const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler_with_callbacks = {
 
-    .load_datagram_received_ok_message = &_ProtocolDatagramHandler_load_datagram_received_ok_message,
-    .load_datagram_received_rejected_message = &_ProtocolDatagramHandler_load_datagram_rejected_message,
+    .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
     // Callbacks
     .on_read_space_config_decscription_info = &_on_read_space_config_decscription_info,
@@ -247,6 +247,8 @@ void _reset_variables(void)
 
     load_datagram_ok_message_called = false;
     load_datagram_rejected_message_called = false;
+
+    called_function_ptr = nullptr;
 }
 
 void _global_initialize(void)
@@ -436,5 +438,69 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
     EXPECT_EQ(outgoing_msg->payload_count, 1 + 7); // Will clip the requested 64 to just the last byte as the addres is parameters->address_space_configuration_definition.highest_address
 
+
+}
+
+TEST(ProtocolConfigMemReadHandler, memory_read_space_all)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+     _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ALL;
+    *incoming_msg->payload[7] = 64;
+    incoming_msg->payload_count = 8;
+
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    ProtocolConfigMemReadHandler_memory_read_space_all(&statemachine_info);
+
+    // EXPECT_EQ(called_function_ptr, nullptr);
+
+     _reset_variables();
+    _global_initialize_with_callbacks();
+
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ALL;
+    *incoming_msg->payload[7] = 64;
+    incoming_msg->payload_count = 8;
+
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    ProtocolConfigMemReadHandler_memory_read_space_all(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, &_on_read_space_config_decscription_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
 
 }

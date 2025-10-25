@@ -475,6 +475,15 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     
+    .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
+    .snip_load_name = &ProtocolSnip_load_name,
+    .snip_load_model = &ProtocolSnip_load_model,
+    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
+    .snip_load_software_version = &ProtocolSnip_load_software_version,
+    .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_load_user_name = &ProtocolSnip_load_user_name,
+    .snip_load_user_description = &ProtocolSnip_load_user_description,
+    
     // Callbacks
     .on_read_space_config_decscription_info = NULL,
     .on_read_space_all = NULL,

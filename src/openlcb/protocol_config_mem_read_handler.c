@@ -123,9 +123,9 @@ static void _read_request_configuration_definition_info(openlcb_statemachine_inf
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
 
-    if (_interface->on_read_space_traction_config_decscription_info) {
+    if (_interface->on_read_space_config_decscription_info) {
 
-        _interface->on_read_space_traction_config_decscription_info(statemachine_info, config_mem_read_request_info);
+        _interface->on_read_space_config_decscription_info(statemachine_info, config_mem_read_request_info);
 
         return;
     }
@@ -180,7 +180,71 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
         return;
     }
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    switch (config_mem_read_request_info->address) {
+
+        case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
+
+             _interface->snip_load_manufacturer_version_id(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+
+        case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
+
+             _interface->snip_load_name(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+
+        case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
+
+             _interface->snip_load_model(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+
+        case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
+
+             _interface->snip_load_hardware_version(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+
+        case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
+
+             _interface->snip_load_software_version(          
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+
+             break;
+             
+        default:
+            
+            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+
+            break;
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
 }
 
 static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
@@ -194,7 +258,49 @@ static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_in
         return;
     }
 
-    statemachine_info->outgoing_msg_info.valid = false;
+        switch (config_mem_read_request_info->address) {
+
+        case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
+
+             _interface->snip_load_user_version_id(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+
+        case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
+
+             _interface->snip_load_user_name(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+
+        case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
+
+             _interface->snip_load_user_description(
+                    statemachine_info->openlcb_node, 
+                    statemachine_info->outgoing_msg_info.msg_ptr, 
+                    config_mem_read_request_info->data_start,
+                    config_mem_read_request_info->bytes
+                    );
+             
+             break;
+             
+        default:
+            
+            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+
+            break;
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
 }
 
 static void _read_request_traction_function_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
@@ -251,10 +357,10 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
 
     // Complete Command Request
     if (config_mem_read_request_info->read_space_func) {
-        
+
         _check_for_read_overrun(statemachine_info, config_mem_read_request_info);
         config_mem_read_request_info->read_space_func(statemachine_info, config_mem_read_request_info);
-        
+
     }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
