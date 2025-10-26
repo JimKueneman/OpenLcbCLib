@@ -116,7 +116,10 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
     *statemachine_info->outgoing_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
     *statemachine_info->outgoing_msg_info.msg_ptr->payload[1] = *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET; // generate an OK reply by default for Read/Write/Stream
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_read_request_info->address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            config_mem_read_request_info->address, 
+            2);
 }
 
 static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
@@ -206,9 +209,7 @@ static void _read_request_config_mem(openlcb_statemachine_info_t *statemachine_i
 }
 
 static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
-    
-    uint16_t string_len = 0;
-
+ 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
     
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = config_mem_read_request_info->data_start;
@@ -224,8 +225,8 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
 
         case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
 
-              string_len = _interface->snip_load_manufacturer_version_id(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_manufacturer_version_id(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -235,8 +236,8 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
 
         case ACDI_ADDRESS_SPACE_FB_MANUFACTURER_ADDRESS:
 
-             string_len = _interface->snip_load_name(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_name(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -246,8 +247,8 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
 
         case ACDI_ADDRESS_SPACE_FB_MODEL_ADDRESS:
 
-             string_len = _interface->snip_load_model(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_model(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -257,8 +258,8 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
 
         case ACDI_ADDRESS_SPACE_FB_HARDWARE_VERSION_ADDRESS:
 
-             string_len = _interface->snip_load_hardware_version(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_hardware_version(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -268,8 +269,8 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
 
         case ACDI_ADDRESS_SPACE_FB_SOFTWARE_VERSION_ADDRESS:
 
-             string_len = _interface->snip_load_software_version(          
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_software_version(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -284,8 +285,6 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
             break;
     }
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = statemachine_info->outgoing_msg_info.msg_ptr->payload_count + string_len;
-    
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
@@ -304,8 +303,8 @@ static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_in
 
         case ACDI_ADDRESS_SPACE_FC_VERSION_ADDRESS:
 
-             _interface->snip_load_user_version_id(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_user_version_id(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -315,8 +314,8 @@ static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_in
 
         case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
 
-             _interface->snip_load_user_name(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_user_name(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes
@@ -326,8 +325,8 @@ static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_in
 
         case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
 
-             _interface->snip_load_user_description(
-                    statemachine_info->openlcb_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = _interface->snip_load_user_description(
+                    statemachine_info->openlcb_node,
                     statemachine_info->outgoing_msg_info.msg_ptr, 
                     config_mem_read_request_info->data_start,
                     config_mem_read_request_info->bytes

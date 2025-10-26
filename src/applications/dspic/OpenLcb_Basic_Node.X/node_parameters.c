@@ -66,13 +66,13 @@ const node_parameters_t NodeParameters_main_node = {
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
     .configuration_options.low_address_space = ADDRESS_SPACE_FIRMWARE,
-    .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
-    .configuration_options.read_from_user_space_0xfb_supported = 1,
-    .configuration_options.stream_read_write_supported = 0,
-    .configuration_options.unaligned_reads_supported = 1,
-    .configuration_options.unaligned_writes_supported = 1,
-    .configuration_options.write_to_user_space_0xfb_supported = 1,
-    .configuration_options.write_under_mask_supported = 1,
+    .configuration_options.read_from_manufacturer_space_0xfc_supported = true,
+    .configuration_options.read_from_user_space_0xfb_supported = true,
+    .configuration_options.stream_read_write_supported = false,
+    .configuration_options.unaligned_reads_supported = true,
+    .configuration_options.unaligned_writes_supported = true,
+    .configuration_options.write_to_user_space_0xfb_supported = true,
+    .configuration_options.write_under_mask_supported = true,
     .configuration_options.description = "These are options that defined the memory space capabilities",
 
     // Space 0xFF 
@@ -114,9 +114,9 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_manufacturer.description = "ACDI access manufacturer",
 
     // Space 0xFB
-    .address_space_acdi_user.read_only = true,
+    .address_space_acdi_user.read_only = false,
     .address_space_acdi_user.present = true,
-    .address_space_acdi_user.low_address_valid = true, // assume the low address starts at 0
+    .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_user.low_address = 0, // ignored if low_address_valid is false
     .address_space_acdi_user.highest_address = 128 - 1, // Zero indexed: Predefined in the Configuration Description Definition Spec = 1 + 63 + 64 = 128 bytes length
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,

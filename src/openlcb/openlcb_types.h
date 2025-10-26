@@ -220,13 +220,13 @@ extern "C" {
     } user_snip_struct_t;
 
     typedef struct {
-        uint8_t write_under_mask_supported : 1;
-        uint8_t unaligned_reads_supported : 1;
-        uint8_t unaligned_writes_supported : 1;
-        uint8_t read_from_manufacturer_space_0xfc_supported : 1;
-        uint8_t read_from_user_space_0xfb_supported : 1;
-        uint8_t write_to_user_space_0xfb_supported : 1;
-        uint8_t stream_read_write_supported : 1;
+        bool write_under_mask_supported : 1;
+        bool unaligned_reads_supported : 1;
+        bool unaligned_writes_supported : 1;
+        bool read_from_manufacturer_space_0xfc_supported : 1;
+        bool read_from_user_space_0xfb_supported : 1;
+        bool write_to_user_space_0xfb_supported : 1;
+        bool stream_read_write_supported : 1;
         uint8_t high_address_space;
         uint8_t low_address_space;
         char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];

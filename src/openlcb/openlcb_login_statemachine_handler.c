@@ -56,56 +56,72 @@ void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message
 
 }
 
-void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_statemachine_info_t *openlcb_statemachine_info) {
+void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_statemachine_info_t *statemachine_info) {
 
-    OpenLcbUtilities_load_openlcb_message(openlcb_statemachine_info->outgoing_msg_info.msg_ptr, openlcb_statemachine_info->openlcb_node->alias, openlcb_statemachine_info->openlcb_node->id, 0, 0, MTI_INITIALIZATION_COMPLETE, 6);
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->openlcb_node->alias, 
+            statemachine_info->openlcb_node->id, 
+            0, 
+            0, 
+            MTI_INITIALIZATION_COMPLETE, 
+            6);
 
-    if (openlcb_statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
+    if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
 
-        openlcb_statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+        statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
 
     }
 
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_statemachine_info->outgoing_msg_info.msg_ptr, openlcb_statemachine_info->openlcb_node->id, 0);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->id, 0);
 
-    openlcb_statemachine_info->openlcb_node->state.initalized = true;
-    openlcb_statemachine_info->openlcb_node->producers.enumerator.running = true;
-    openlcb_statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
-    openlcb_statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->openlcb_node->state.initalized = true;
+    statemachine_info->openlcb_node->producers.enumerator.running = true;
+    statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
+    statemachine_info->outgoing_msg_info.valid = true;
 
-    openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
 
 }
 
-void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info) {
+void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_info_t *statemachine_info) {
 
-    if (openlcb_statemachine_info->openlcb_node->producers.count == 0) {
+    if (statemachine_info->openlcb_node->producers.count == 0) {
 
-        openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+        statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
 
         return;
 
     }
 
-    uint16_t event_mti = _interface->extract_producer_event_state_mti(openlcb_statemachine_info->openlcb_node, openlcb_statemachine_info->openlcb_node->producers.enumerator.enum_index);
+    uint16_t event_mti = _interface->extract_producer_event_state_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index);
 
-    OpenLcbUtilities_load_openlcb_message(openlcb_statemachine_info->outgoing_msg_info.msg_ptr, openlcb_statemachine_info->openlcb_node->alias, openlcb_statemachine_info->openlcb_node->id, 0, 0, event_mti, 8);
-    event_id_t event_id = openlcb_statemachine_info->openlcb_node->producers.list[openlcb_statemachine_info->openlcb_node->producers.enumerator.enum_index].event;
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_statemachine_info->outgoing_msg_info.msg_ptr, event_id);
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->openlcb_node->alias, 
+            statemachine_info->openlcb_node->id, 
+            0, 
+            0, 
+            event_mti, 
+            8);
+    event_id_t event_id = statemachine_info->openlcb_node->producers.list[statemachine_info->openlcb_node->producers.enumerator.enum_index].event;
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, event_id);
+  
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
-    openlcb_statemachine_info->openlcb_node->producers.enumerator.enum_index++;
-    openlcb_statemachine_info->outgoing_msg_info.enumerate = true;
-    openlcb_statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->openlcb_node->producers.enumerator.enum_index++;
+    statemachine_info->outgoing_msg_info.enumerate = true;
+    statemachine_info->outgoing_msg_info.valid = true;
 
-    if (openlcb_statemachine_info->openlcb_node->producers.enumerator.enum_index >= openlcb_statemachine_info->openlcb_node->producers.count) {
+    if (statemachine_info->openlcb_node->producers.enumerator.enum_index >= statemachine_info->openlcb_node->producers.count) {
 
-        openlcb_statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
-        openlcb_statemachine_info->openlcb_node->producers.enumerator.running = false;
-        openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
-        openlcb_statemachine_info->openlcb_node->consumers.enumerator.running = true;
-        openlcb_statemachine_info->outgoing_msg_info.enumerate = false;
+        statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
+        statemachine_info->openlcb_node->producers.enumerator.running = false;
+        statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
+        statemachine_info->openlcb_node->consumers.enumerator.running = true;
+        statemachine_info->outgoing_msg_info.enumerate = false;
 
-        openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+        statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
 
         return;
 
@@ -113,34 +129,43 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
 
 }
 
-void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info) {
+void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *statemachine_info) {
 
-    if (openlcb_statemachine_info->openlcb_node->consumers.count == 0) {
+    if (statemachine_info->openlcb_node->consumers.count == 0) {
 
-        openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
+        statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
 
         return;
 
     }
 
-    uint16_t event_mti = _interface->extract_consumer_event_state_mti(openlcb_statemachine_info->openlcb_node, openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index);
+    uint16_t event_mti = _interface->extract_consumer_event_state_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index);
 
-    OpenLcbUtilities_load_openlcb_message(openlcb_statemachine_info->outgoing_msg_info.msg_ptr, openlcb_statemachine_info->openlcb_node->alias, openlcb_statemachine_info->openlcb_node->id, 0, 0, event_mti, 8);
-    event_id_t event_id = openlcb_statemachine_info->openlcb_node->consumers.list[openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index].event;
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_statemachine_info->outgoing_msg_info.msg_ptr, event_id);
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->openlcb_node->alias, 
+            statemachine_info->openlcb_node->id, 
+            0, 
+            0, 
+            event_mti, 
+            8);
+    event_id_t event_id = statemachine_info->openlcb_node->consumers.list[statemachine_info->openlcb_node->consumers.enumerator.enum_index].event;
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, event_id);
+    
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
-    openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
-    openlcb_statemachine_info->outgoing_msg_info.enumerate = true;
-    openlcb_statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
+    statemachine_info->outgoing_msg_info.enumerate = true;
+    statemachine_info->outgoing_msg_info.valid = true;
 
-    if (openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index >= openlcb_statemachine_info->openlcb_node->consumers.count) {
+    if (statemachine_info->openlcb_node->consumers.enumerator.enum_index >= statemachine_info->openlcb_node->consumers.count) {
 
-        openlcb_statemachine_info->openlcb_node->consumers.enumerator.running = false;
-        openlcb_statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
+        statemachine_info->openlcb_node->consumers.enumerator.running = false;
+        statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
 
-        openlcb_statemachine_info->outgoing_msg_info.enumerate = false;
+        statemachine_info->outgoing_msg_info.enumerate = false;
 
-        openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
+        statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
 
         return;
 

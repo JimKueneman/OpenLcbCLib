@@ -147,8 +147,6 @@ void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_ms
 
     }
 
-    openlcb_msg->payload_count = 8;
-
 }
 
 void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t word, uint16_t offset) {

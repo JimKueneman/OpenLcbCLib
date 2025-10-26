@@ -81,9 +81,22 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
 
         // TODO: Probably Stream is a special case too
 
-        OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti, 4);
-        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, dest_alias, 0);
-        OpenLcbUtilities_copy_word_to_openlcb_payload(target_openlcb_msg, error_code, 2);
+        OpenLcbUtilities_load_openlcb_message(
+                target_openlcb_msg, 
+                source_alias, 
+                0, 
+                dest_alias, 
+                0, 
+                mti, 
+                4);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(
+                target_openlcb_msg, 
+                dest_alias, 
+                0);
+        OpenLcbUtilities_copy_word_to_openlcb_payload(
+                target_openlcb_msg, 
+                error_code, 
+                2);
 
         OpenLcbBufferFifo_push(target_openlcb_msg);
 
@@ -218,8 +231,18 @@ void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
     int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
-    OpenLcbUtilities_load_openlcb_message(target_openlcb_msg, source_alias, 0, dest_alias, 0, mti, 0);
-    CanUtilities_copy_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, can_buffer_start_index);
+    OpenLcbUtilities_load_openlcb_message(
+            target_openlcb_msg, 
+            source_alias, 
+            0, 
+            dest_alias, 
+            0, 
+            mti, 
+            0);
+    CanUtilities_copy_can_payload_to_openlcb_payload(
+            target_openlcb_msg, 
+            can_msg, 
+            can_buffer_start_index);
 
     OpenLcbBufferFifo_push(target_openlcb_msg); // Can not fail List is as large as the number of buffers
 

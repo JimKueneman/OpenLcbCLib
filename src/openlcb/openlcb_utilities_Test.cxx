@@ -141,6 +141,7 @@ TEST(OpenLcbUtilities, copy_event_id_to_openlcb_payload)
         EXPECT_EQ(openlcb_msg->payload_count, 16);
 
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, 0x0102030405060708);
+        openlcb_msg->payload_count = 8;
 
         for (int i = 0; i < 8; i++)
         {

@@ -220,22 +220,22 @@ extern "C" {
     } user_snip_struct_t;
 
     typedef struct {
-        uint8_t write_under_mask_supported : 1;
-        uint8_t unaligned_reads_supported : 1;
-        uint8_t unaligned_writes_supported : 1;
-        uint8_t read_from_manufacturer_space_0xfc_supported : 1;
-        uint8_t read_from_user_space_0xfb_supported : 1;
-        uint8_t write_to_user_space_0xfb_supported : 1;
-        uint8_t stream_read_write_supported : 1;
+        bool write_under_mask_supported : 1;
+        bool unaligned_reads_supported : 1;
+        bool unaligned_writes_supported : 1;
+        bool read_from_manufacturer_space_0xfc_supported : 1;
+        bool read_from_user_space_0xfb_supported : 1;
+        bool write_to_user_space_0xfb_supported : 1;
+        bool stream_read_write_supported : 1;
         uint8_t high_address_space;
         uint8_t low_address_space;
         char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];
     } user_configuration_options;
 
     typedef struct {
-        uint8_t present : 1;
-        uint8_t read_only : 1;
-        uint8_t low_address_valid : 1;
+        bool present : 1;
+        bool read_only : 1;
+        bool low_address_valid : 1;
         uint8_t address_space;
         uint32_t highest_address;
         uint32_t low_address;
@@ -368,6 +368,18 @@ extern "C" {
         openlcb_outgoing_basic_msg_info_t outgoing_msg_info;
 
     } openlcb_login_statemachine_info_t;
+
+    struct config_mem_operations_request_info_TAG;
+
+    typedef void (*operations_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_operations_request_info_TAG *config_mem_operations_request_info);
+
+    typedef struct config_mem_operations_request_info_TAG {
+     
+        const user_address_space_info_t *space_info;
+        operations_config_mem_space_func_t operations_func;
+
+    } config_mem_operations_request_info_t;
+
 
 
     struct config_mem_read_request_info_TAG;
