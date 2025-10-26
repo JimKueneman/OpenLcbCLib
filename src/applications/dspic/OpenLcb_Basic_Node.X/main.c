@@ -141,7 +141,7 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 
 
-#define NODE_ID 0x0507010100AA
+#define NODE_ID 0x0501010107AA
 
 //static uint64_t node_id_base = NODE_ID;
 
@@ -649,20 +649,20 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
     
     // Config Memory Commands
-    .memory_options_cmd = NULL,
-    .memory_options_reply = NULL,
-    .memory_get_address_space_info = NULL,
-    .memory_get_address_space_info_reply_not_present = NULL,
-    .memory_get_address_space_info_reply_present = NULL,
-    .memory_reserve_lock = NULL,
-    .memory_reserve_lock_reply = NULL,
-    .memory_get_unique_id = NULL,
-    .memory_get_unique_id_reply = NULL,
-    .memory_unfreeze = NULL,
-    .memory_freeze = NULL,
-    .memory_update_complete = NULL,
-    .memory_reset_reboot = NULL,
-    .memory_factory_reset = NULL,
+    .memory_options_cmd = &ProtocolConfigMemOperationsHandler_memory_options_cmd,
+    .memory_options_reply = &ProtocolConfigMemOperationsHandler_memory_options_reply,
+    .memory_get_address_space_info = &ProtocolConfigMemOperationsHandler_memory_get_address_space_info,
+    .memory_get_address_space_info_reply_not_present = &ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_not_present,
+    .memory_get_address_space_info_reply_present = &ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_present,
+    .memory_reserve_lock = &ProtocolConfigMemOperationsHandler_memory_reserve_lock,
+    .memory_reserve_lock_reply = &ProtocolConfigMemOperationsHandler_memory_reserve_lock_reply,
+    .memory_get_unique_id = ProtocolConfigMemOperationsHandler_memory_get_unique_id,
+    .memory_get_unique_id_reply = &ProtocolConfigMemOperationsHandler_memory_get_unique_id_reply,
+    .memory_unfreeze = &ProtocolConfigMemOperationsHandler_memory_unfreeze,
+    .memory_freeze = &ProtocolConfigMemOperationsHandler_memory_freeze,
+    .memory_update_complete = &ProtocolConfigMemOperationsHandler_memory_update_complete,
+    .memory_reset_reboot = &ProtocolConfigMemOperationsHandler_memory_reset_reboot,
+    .memory_factory_reset = &ProtocolConfigMemOperationsHandler_memory_factory_reset,
 
     .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
@@ -757,7 +757,7 @@ int main(void) {
 
     OpenLcbApplication_initialize(&interface_openlcb_application);
 
-    OpenLcbNode_allocate(NODE_ID + 5, &NodeParameters_main_node);
+    OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
 
     printf("Does it work?\n");
 

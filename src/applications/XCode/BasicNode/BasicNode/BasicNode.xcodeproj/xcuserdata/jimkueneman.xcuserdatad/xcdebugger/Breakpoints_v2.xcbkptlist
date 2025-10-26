@@ -270,7 +270,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "80F15175-D327-4B66-8F0C-45F7EEC1F1B3"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BasicNode/src/openlcb/protocol_config_mem_read_handler.c"
@@ -375,6 +375,22 @@
             startingLineNumber = "432"
             endingLineNumber = "432"
             landmarkName = "ProtocolConfigMemReadHandler_memory_read_space_traction_function_config_memory(statemachine_info)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B15C388A-EDBF-405F-A9CE-BC6D9BE7E0D8"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BasicNode/src/openlcb/openlcb_utilities.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
+            landmarkName = "OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg, byte_array, payload_index, requested_bytes)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

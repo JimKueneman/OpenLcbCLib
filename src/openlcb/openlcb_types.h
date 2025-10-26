@@ -233,9 +233,9 @@ extern "C" {
     } user_configuration_options;
 
     typedef struct {
-        uint8_t present : 1;
-        uint8_t read_only : 1;
-        uint8_t low_address_valid : 1;
+        bool present : 1;
+        bool read_only : 1;
+        bool low_address_valid : 1;
         uint8_t address_space;
         uint32_t highest_address;
         uint32_t low_address;
@@ -368,6 +368,18 @@ extern "C" {
         openlcb_outgoing_basic_msg_info_t outgoing_msg_info;
 
     } openlcb_login_statemachine_info_t;
+
+    struct config_mem_operations_request_info_TAG;
+
+    typedef void (*operations_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_operations_request_info_TAG *config_mem_operations_request_info);
+
+    typedef struct config_mem_operations_request_info_TAG {
+     
+        const user_address_space_info_t *space_info;
+        operations_config_mem_space_func_t operations_func;
+
+    } config_mem_operations_request_info_t;
+
 
 
     struct config_mem_read_request_info_TAG;
