@@ -45,108 +45,169 @@
 #include "openlcb_types.h"
 
 typedef struct {
-   
-    // Memory Read Address Space
-    void (*memory_read_space_config_description_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_all_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_configuration_memory_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_acdi_manufacturer_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_acdi_user_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_traction_function_definition_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_traction_function_config_memory_message)(openlcb_statemachine_info_t *statemachine_info);
-   
-    // Memory Read Ok Ok Address Space
-    void (*memory_read_space_config_description_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_all_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_configuration_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_acdi_manufacturer_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_acdi_user_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_traction_function_definition_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_traction_function_config_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-  
-    // Memory Read Failed Reply Address Space
-    void (*memory_read_space_config_description_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_all_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_configuration_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_acdi_manufacturer_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_acdi_user_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_traction_function_definition_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_read_space_traction_function_config_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    // Config Memory Read
+    void (*memory_read_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_all)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Memory Write Address Space
-    void (*memory_write_space_config_description_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_all_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_configuration_memory_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_manufacturer_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_user_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_definition_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_config_memory_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_firmware_upgrade_message)(openlcb_statemachine_info_t *statemachine_info);
-   
-    // Memory Write Ok Reply Address Space
-    void (*memory_write_space_config_description_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_all_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_configuration_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_manufacturer_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_user_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_definition_info_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_config_memory_reply_ok_message)(openlcb_statemachine_info_t *statemachine_info);
-   
-    // Memory Write Fail Reply Address Space
-    void (*memory_write_space_config_description_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_all_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_configuration_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_manufacturer_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_user_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_definition_info_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_config_memory_reply_fail_message)(openlcb_statemachine_info_t *statemachine_info);
+    // Config Memory Read Reply = Ok
+    void (*memory_read_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Read Reply = Failed
+    void (*memory_read_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_acdi_manufacturer_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Stream Read
+    void (*memory_read_stream_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_all)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Stream Read Reply = Ok
+    void (*memory_read_stream_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Stream Read Reply = Failed
+    void (*memory_read_stream_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_acdi_manufacturer_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Write
+    void (*memory_write_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_all)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Write Reply = Ok
+    void (*memory_write_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Write Reply = Fail
+    void (*memory_write_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_manufacturer_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Write Under Mask
+    void (*memory_write_under_mask_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_all)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
     
-    // Memory Write Under Mask Address Space
-    void (*memory_write_under_mask_space_config_description_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_all_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_configuration_memory_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_acdi_manufacturer_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_acdi_user_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_traction_function_definition_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_traction_function_config_memory_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_firmware_upgrade_message)(openlcb_statemachine_info_t *statemachine_info);
-    
-    // Commands
-    void (*memory_options_cmd_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_options_reply_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_get_address_space_info_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_get_address_space_info_reply_not_present_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_get_address_space_info_reply_present_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_reserve_lock_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_get_unique_id_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_unfreeze_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_freeze_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_update_complete_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_reset_reboot_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_factory_reset_message)(openlcb_statemachine_info_t *statemachine_info);
-    void (*send_datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
-    
+    // Config Memory Write Stream
+    void (*memory_write_stream_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_all)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Write Stream Reply = Ok
+    void (*memory_write_stream_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Memory Write Stream Reply = Fail
+    void (*memory_write_stream_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_manufacturer_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Config Commands
+    void (*memory_options_cmd)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_options_reply)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_get_address_space_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_get_address_space_info_reply_not_present)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_get_address_space_info_reply_present)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_reserve_lock)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_reserve_lock_reply)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_get_unique_id)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_get_unique_id_reply)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_unfreeze)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_freeze)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_update_complete)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_reset_reboot)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_factory_reset)(openlcb_statemachine_info_t *statemachine_info);
+
     void (*lock_shared_resources)(void);
     void (*unlock_shared_resources)(void);
-    
+
 } interface_protocol_datagram_handler_t;
 
+
+typedef void(*memory_handler_t)(openlcb_statemachine_info_t *statemachine_info);
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-extern void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface_protocol_datagram_handler);
+    extern void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface_protocol_datagram_handler);
 
-extern void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statemachine_info);
-   
-extern void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
 
-extern void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
 
-extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
-    
-extern void ProtocolDatagramHandler_100ms_timer_tick(void);
+    extern void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t * statemachine_info);
+
+    extern void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t * statemachine_info);
+
+    extern void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t * statemachine_info);
+
+    extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t * openlcb_node);
+
+    extern void ProtocolDatagramHandler_100ms_timer_tick(void);
 
 #ifdef	__cplusplus
 }

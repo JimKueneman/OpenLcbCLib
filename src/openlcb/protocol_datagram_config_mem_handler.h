@@ -41,79 +41,79 @@
 
 #include "openlcb_types.h"
 
-typedef struct {
-    uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    uint16_t(*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    void (*reboot)(void);
-    void (*configuration_memory_factory_reset)(void);
-    uint16_t(*snip_load_manufacturer_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_model)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_hardware_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_software_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_user_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_user_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    uint16_t(*snip_load_user_description)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
-    // Callback events
-    void (*on_configuration_memory_factory_reset)(void);
-    void (*on_config_mem_write)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
-    void (*on_config_mem_freeze_firmware_update) (openlcb_statemachine_info_t *statemachine_info);
-    void (*on_config_mem_unfreeze_firmware_update) (openlcb_statemachine_info_t *statemachine_info);
-    
-    void (*clear_resend_datagram_message)(openlcb_node_t* openlcb_node);
-
-} interface_openlcb_protocol_datagram_config_mem_handler_t;
-
+//typedef struct {
+//    uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+//    uint16_t(*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+//    void (*reboot)(void);
+//    void (*configuration_memory_factory_reset)(void);
+//    uint16_t(*snip_load_manufacturer_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_model)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_hardware_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_software_version)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_user_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_user_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    uint16_t(*snip_load_user_description)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+//    // Callback events
+//    void (*on_configuration_memory_factory_reset)(void);
+//    void (*on_config_mem_write)(uint32_t address, uint16_t bytes_written, configuration_memory_buffer_t* config_mem_buffer);
+//    void (*on_config_mem_freeze_firmware_update) (openlcb_statemachine_info_t *statemachine_info);
+//    void (*on_config_mem_unfreeze_firmware_update) (openlcb_statemachine_info_t *statemachine_info);
+//    
+//    void (*clear_resend_datagram_message)(openlcb_node_t* openlcb_node);
+//
+//} interface_openlcb_protocol_datagram_config_mem_handler_t;
+//
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void ProtocolDatagramConfigMemHandler_initialize(const interface_openlcb_protocol_datagram_config_mem_handler_t *interface_openlcb_protocol_datagram_config_mem_handler);
-
-    
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_config_description_info_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_all_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_configuration_memory_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_acdi_manufacturer_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_acdi_user_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_definition_info_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_config_memory_message(openlcb_statemachine_info_t *statemachine_info);
-   
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_config_description_info_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_all_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_configuration_memory_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_acdi_manufacturer_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_acdi_user_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_definition_info_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_config_memory_message(openlcb_statemachine_info_t *statemachine_info);
-      
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-  
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
-
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_options_reply_message(openlcb_statemachine_info_t *statemachine_info);
-
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_reply_not_present_message(openlcb_statemachine_info_t *statemachine_info);
-
-    extern void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_get_unique_id_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlcb_statemachine_info_t *statemachine_info);
-    
-    extern void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
-    extern void ProtocolDatagramConfigMemHandler_try_transmit(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_initialize(const interface_openlcb_protocol_datagram_config_mem_handler_t *interface_openlcb_protocol_datagram_config_mem_handler);
+//
+//    
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_config_description_info_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_all_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_configuration_memory_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_acdi_manufacturer_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_acdi_user_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_definition_info_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_read_space_traction_function_config_memory_message(openlcb_statemachine_info_t *statemachine_info);
+//   
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_config_description_info_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_all_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_configuration_memory_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_acdi_manufacturer_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_acdi_user_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_definition_info_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_memory_write_space_traction_function_config_memory_message(openlcb_statemachine_info_t *statemachine_info);
+//      
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+//  
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+//
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_options_reply_message(openlcb_statemachine_info_t *statemachine_info);
+//
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_reply_not_present_message(openlcb_statemachine_info_t *statemachine_info);
+//
+//    extern void ProtocolDatagramHandlers_handle_memory_get_address_space_info_reply_present_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_get_unique_id_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_unfreeze_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_freeze_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_update_complete_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_reset_reboot_message(openlcb_statemachine_info_t *statemachine_info);
+//    extern void ProtocolDatagramConfigMemHandler_handle_memory_factory_reset_message(openlcb_statemachine_info_t *statemachine_info);
+//    
+//    extern void ProtocolDatagramConfigMemHandler_send_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
+//    extern void ProtocolDatagramConfigMemHandler_try_transmit(openlcb_statemachine_info_t *statemachine_info);
 
 #ifdef	__cplusplus
 }

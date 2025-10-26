@@ -12,10 +12,13 @@ set(SOURCES
     openlcb_node.c  
     openlcb_utilities.c 
     protocol_datagram_handler.c 
-    protocol_datagram_config_mem_handler.c 
     protocol_event_transport.c 
     protocol_message_network.c 
     protocol_snip.c
+    protocol_config_mem_read_handler.c
+    protocol_config_mem_write_handler.c
+    protocol_config_mem_operations_handler.c
+
 )
 
 
@@ -33,10 +36,13 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/openlcb_node_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_utilities_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_datagram_handler_Test.cxx
-    ${ROOT_DIR}/src/openlcb/protocol_datagram_config_mem_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_event_transport_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_message_network_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_snip_Test.cxx
+    ${ROOT_DIR}/src/openlcb/protocol_config_mem_read_handler_Test.cxx
+    ${ROOT_DIR}/src/openlcb/protocol_config_mem_write_handler_Test.cxx
+    ${ROOT_DIR}/src/openlcb/protocol_config_mem_operations_handler_Test.cxx
+
 
     PARENT_SCOPE
 )

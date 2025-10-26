@@ -521,6 +521,14 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
 // TODO Finish these interfaces
 // -------------------------------
 
+const interface_openlcb_application_t interface_openlcb_application = {
+
+    .transmit_openlcb_message = NULL,
+    .configuration_memory_read = NULL,
+    .configuration_memory_write = NULL
+
+};
+
 const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
     // Config Memory Read 
@@ -683,14 +691,6 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
 //    .on_config_mem_unfreeze_firmware_update = NULL
 //
 //};
-
-const interface_openlcb_application_t interface_openlcb_application = {
-
-    .transmit_openlcb_message = NULL,
-    .configuration_memory_read = NULL,
-    .configuration_memory_write = NULL
-
-};
 
 void _initialize_io_early_for_test(void) {
 

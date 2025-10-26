@@ -32,10 +32,12 @@
 #include "src/openlcb/protocol_event_transport.h"
 #include "src/openlcb/protocol_snip.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/protocol_datagram_config_mem_handler.h"
 #include "src/openlcb/protocol_datagram_handler.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine_handler.h"
+#include "src/openlcb/protocol_config_mem_read_handler.h"
+#include "src/openlcb/protocol_config_mem_write_handler.h"
+#include "src/openlcb/protocol_config_mem_operations_handler.h"
 
 
 #include "src/drivers/alias_mappings.h"
@@ -119,7 +121,7 @@ const interface_can_login_state_machine_t interface_can_login_state_machine = {
     .state_wait_200ms = &CanLoginMessageHandler_state_wait_200ms,
     .state_load_rid = &CanLoginMessageHandler_state_load_rid,
     .state_load_amd = &CanLoginMessageHandler_state_load_amd
-            
+
 };
 
 const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
@@ -226,22 +228,22 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
 };
 
 const interface_openlcb_login_message_handler_t interface_openlcb_login_message_handler = {
-    
+
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti,
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti
-    
+
 };
 
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
-    
-     .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
-     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
-     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event,
-     
+
+    .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
+    .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
+    .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event,
+
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
     .openlcb_node_get_first = &OpenLcbNode_get_first,
     .openlcb_node_get_next = &OpenLcbNode_get_next,
-     
+
     .process_login_statemachine = &OpenLcbLoginStateMachine_process,
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
     .handle_try_reenumerate = &OpenLcbLoginStatemachine_handle_try_reenumerate,
@@ -297,9 +299,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .simple_train_node_ident_info_reply = NULL,
 
     // DATAGRAM
-    .datagram = NULL,
-    .datagram_ok_reply = NULL,
-    .datagram_rejected_reply = NULL,
+    .datagram = ProtocolDatagramHandler_handle_datagram,
+    .datagram_ok_reply = Protocol_DatagramHandler_handle_datagram_received_ok,
+    .datagram_rejected_reply = ProtocolDatagramHandler_handle_datagram_rejected,
 
     // STREAM
     .stream_initiate_request = NULL,
@@ -334,95 +336,56 @@ const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
 };
 
-// TODO Finish these interfaces
-// -------------------------------
+const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler = {
 
-const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
-
-    // Memory Read Address Space
-    .memory_read_space_config_description_info_message = NULL,
-    .memory_read_space_all_message = NULL,
-    .memory_read_space_configuration_memory_message = NULL,
-    .memory_read_space_acdi_manufacturer_message = NULL,
-    .memory_read_space_acdi_user_message = NULL,
-    .memory_read_space_traction_function_definition_info_message = NULL,
-    .memory_read_space_traction_function_config_memory_message = NULL,
-
-    // Memory Read Ok Ok Address Space
-    .memory_read_space_config_description_info_reply_ok_message = NULL,
-    .memory_read_space_all_reply_ok_message = NULL,
-    .memory_read_space_configuration_memory_reply_ok_message = NULL,
-    .memory_read_space_acdi_manufacturer_reply_ok_message = NULL,
-    .memory_read_space_acdi_user_reply_ok_message = NULL,
-    .memory_read_space_traction_function_definition_info_reply_ok_message = NULL,
-    .memory_read_space_traction_function_config_memory_reply_ok_message = NULL,
-
-    // Memory Read Failed Reply Address Space
-    .memory_read_space_config_description_info_reply_fail_message = NULL,
-    .memory_read_space_all_reply_fail_message = NULL,
-    .memory_read_space_configuration_memory_reply_fail_message = NULL,
-    .memory_read_space_acdi_manufacturer_reply_fail_message = NULL,
-    .memory_read_space_acdi_user_reply_fail_message = NULL,
-    .memory_read_space_traction_function_definition_info_reply_fail_message = NULL,
-    .memory_read_space_traction_function_config_memory_reply_fail_message = NULL,
-
-    // Memory Write Address Space
-    .memory_write_space_config_description_info_message = NULL,
-    .memory_write_space_all_message = NULL,
-    .memory_write_space_configuration_memory_message = NULL,
-    .memory_write_space_acdi_manufacturer_message = NULL,
-    .memory_write_space_acdi_user_message = NULL,
-    .memory_write_space_traction_function_definition_info_message = NULL,
-    .memory_write_space_traction_function_config_memory_message = NULL,
-    .memory_write_space_firmware_upgrade_message = NULL,
-
-    // Memory Write Ok Reply Address Space
-    .memory_write_space_config_description_info_reply_ok_message = NULL,
-    .memory_write_space_all_reply_ok_message = NULL,
-    .memory_write_space_configuration_memory_reply_ok_message = NULL,
-    .memory_write_space_acdi_manufacturer_reply_ok_message = NULL,
-    .memory_write_space_acdi_user_reply_ok_message = NULL,
-    .memory_write_space_traction_function_definition_info_reply_ok_message = NULL,
-    .memory_write_space_traction_function_config_memory_reply_ok_message = NULL,
-
-    // Memory Write Fail Reply Address Space
-    .memory_write_space_config_description_info_reply_fail_message = NULL,
-    .memory_write_space_all_reply_fail_message = NULL,
-    .memory_write_space_configuration_memory_reply_fail_message = NULL,
-    .memory_write_space_acdi_manufacturer_reply_fail_message = NULL,
-    .memory_write_space_acdi_user_reply_fail_message = NULL,
-    .memory_write_space_traction_function_definition_info_reply_fail_message = NULL,
-    .memory_write_space_traction_function_config_memory_reply_fail_message = NULL,
-
-    // Memory Write Under Mask Address Space
-    .memory_write_under_mask_space_config_description_info_message = NULL,
-    .memory_write_under_mask_space_all_message = NULL,
-    .memory_write_under_mask_space_configuration_memory_message = NULL,
-    .memory_write_under_mask_space_acdi_manufacturer_message = NULL,
-    .memory_write_under_mask_space_acdi_user_message = NULL,
-    .memory_write_under_mask_space_traction_function_definition_info_message = NULL,
-    .memory_write_under_mask_space_traction_function_config_memory_message = NULL,
-    .memory_write_under_mask_space_firmware_upgrade_message = NULL,
-
-    // Commands
-    .memory_options_cmd_message = NULL,
-    .memory_options_reply_message = NULL,
-    .memory_get_address_space_info_message = NULL,
-    .memory_get_address_space_info_reply_not_present_message = NULL,
-    .memory_get_address_space_info_reply_present_message = NULL,
-    .memory_reserve_lock_message = NULL,
-    .memory_get_unique_id_message = NULL,
-    .memory_unfreeze_message = NULL,
-    .memory_freeze_message = NULL,
-    .memory_update_complete_message = NULL,
-    .memory_reset_reboot_message = NULL,
-    .memory_factory_reset_message = NULL,
-    .send_datagram_rejected_reply = NULL,
+    .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     
-    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
-    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
+    .snip_load_name = &ProtocolSnip_load_name,
+    .snip_load_model = &ProtocolSnip_load_model,
+    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
+    .snip_load_software_version = &ProtocolSnip_load_software_version,
+    .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_load_user_name = &ProtocolSnip_load_user_name,
+    .snip_load_user_description = &ProtocolSnip_load_user_description,
+    
+    // Callbacks
+    .on_read_space_config_decscription_info = NULL,
+    .on_read_space_all = NULL,
+    .on_read_space_configuration_memory = NULL,
+    .on_read_space_acdi_manufacturer = NULL,
+    .on_read_space_acdi_user = NULL,
+    .on_read_space_traction_config_decscription_info = NULL,
+    .on_read_space_traction_config_memory = NULL
 
 };
+
+const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
+
+    .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    
+    // Callbacks
+    .on_write_space_config_decscription_info = NULL,
+    .on_write_space_all = NULL,
+    .on_write_space_configuration_memory = NULL,
+    .on_write_space_acdi_manufacturer = NULL,
+    .on_write_space_acdi_user = NULL,
+    .on_write_space_traction_config_decscription_info = NULL,
+    .on_write_space_traction_config_memory = NULL
+
+};
+
+const interface_protocol_config_mem_operations_handler_t interface_protocol_config_mem_operations_handler = {
+
+    .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+
+};
+
+// TODO Finish these interfaces
+// -------------------------------
 
 const interface_openlcb_application_t interface_openlcb_application = {
 
@@ -432,27 +395,143 @@ const interface_openlcb_application_t interface_openlcb_application = {
 
 };
 
-interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_protocol_datagram_config_mem_handler = {
+const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
-    .configuration_memory_read = NULL,
-    .configuration_memory_write = NULL,
-    .reboot = NULL,
-    .configuration_memory_factory_reset = NULL,
-    .snip_load_manufacturer_version_id = NULL,
-    .snip_load_name = NULL,
-    .snip_load_model = NULL,
-    .snip_load_hardware_version = NULL,
-    .snip_load_software_version = NULL,
-    .snip_load_user_version_id = NULL,
-    .snip_load_user_name = NULL,
-    .snip_load_user_description = NULL,
-    // Callback events
-    .on_configuration_memory_factory_reset = NULL,
-    .on_config_mem_write = NULL,
-    .on_config_mem_freeze_firmware_update = NULL,
-    .on_config_mem_unfreeze_firmware_update = NULL,
+    // Config Memory Read
+    .memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_memory_read_space_config_description_info,
+    .memory_read_space_all = &ProtocolConfigMemReadHandler_memory_read_space_all,
+    .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_memory_read_space_configuration_memory,
+    .memory_read_space_acdi_manufacturer = &ProtocolConfigMemReadHandler_memory_read_space_acdi_manufacturer,
+    .memory_read_space_acdi_user = &ProtocolConfigMemReadHandler_memory_read_space_acdi_user,
+    .memory_read_space_traction_function_definition_info = &ProtocolConfigMemReadHandler_memory_read_space_traction_function_definition_info,
+    .memory_read_space_traction_function_config_memory = &ProtocolConfigMemReadHandler_memory_read_space_traction_function_config_memory,
+
+    // Config Memory Read Reply Ok
+    .memory_read_space_config_description_info_reply_ok = NULL,
+    .memory_read_space_all_reply_ok = NULL,
+    .memory_read_space_configuration_memory_reply_ok = NULL,
+    .memory_read_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_read_space_acdi_user_reply_ok = NULL,
+    .memory_read_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_read_space_traction_function_config_memory_reply_ok = NULL,
+
+    // Config Memory Read Reply Failed
+    .memory_read_space_config_description_info_reply_fail = NULL,
+    .memory_read_space_all_reply_fail = NULL,
+    .memory_read_space_configuration_memory_reply_fail = NULL,
+    .memory_read_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_read_space_acdi_user_reply_fail = NULL,
+    .memory_read_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_read_space_traction_function_config_memory_reply_fail = NULL,
     
-    .clear_resend_datagram_message = &ProtocolDatagramHandler_clear_resend_datagram_message,
+    // Config Memory Stream Read
+    .memory_read_stream_space_config_description_info = NULL,
+    .memory_read_stream_space_all = NULL,
+    .memory_read_stream_space_configuration_memory = NULL,
+    .memory_read_stream_space_acdi_manufacturer = NULL,
+
+    // Config Memory Stream Read Reply = Ok
+    .memory_read_stream_space_config_description_info_reply_ok = NULL,
+    .memory_read_stream_space_all_reply_ok = NULL,
+    .memory_read_stream_space_configuration_memory_reply_ok = NULL,
+    .memory_read_stream_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_read_stream_space_acdi_user_reply_ok = NULL,
+    .memory_read_stream_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_read_stream_space_traction_function_config_memory_reply_ok = NULL,
+
+    // Config Memory Stream Read Reply = Failed
+    .memory_read_stream_space_config_description_info_reply_fail = NULL,
+    .memory_read_stream_space_all_reply_fail = NULL,
+    .memory_read_stream_space_configuration_memory_reply_fail = NULL,
+    .memory_read_stream_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_read_stream_space_acdi_user_reply_fail = NULL,
+    .memory_read_stream_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_read_stream_space_traction_function_config_memory_reply_fail = NULL,
+
+    // Config Memory Write
+    .memory_write_space_config_description_info = NULL,
+    .memory_write_space_all = NULL,
+    .memory_write_space_configuration_memory = NULL,
+    .memory_write_space_acdi_manufacturer = NULL,
+    .memory_write_space_acdi_user = NULL,
+    .memory_write_space_traction_function_definition_info = NULL,
+    .memory_write_space_traction_function_config_memory = NULL,
+    .memory_write_space_firmware_upgrade = NULL,
+
+    // Config Memory Write Reply Ok
+    .memory_write_space_config_description_info_reply_ok = NULL,
+    .memory_write_space_all_reply_ok = NULL,
+    .memory_write_space_configuration_memory_reply_ok = NULL,
+    .memory_write_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_write_space_acdi_user_reply_ok = NULL,
+    .memory_write_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_write_space_traction_function_config_memory_reply_ok = NULL,
+
+    // Config Memory Write Reply Fail
+    .memory_write_space_config_description_info_reply_fail = NULL,
+    .memory_write_space_all_reply_fail = NULL,
+    .memory_write_space_configuration_memory_reply_fail = NULL,
+    .memory_write_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_write_space_acdi_user_reply_fail = NULL,
+    .memory_write_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_write_space_traction_function_config_memory_reply_fail = NULL,
+
+    // Config Memory Write Under Mask
+    .memory_write_under_mask_space_config_description_info = NULL,
+    .memory_write_under_mask_space_all = NULL,
+    .memory_write_under_mask_space_configuration_memory = NULL,
+    .memory_write_under_mask_space_acdi_manufacturer = NULL,
+    .memory_write_under_mask_space_acdi_user = NULL,
+    .memory_write_under_mask_space_traction_function_definition_info = NULL,
+    .memory_write_under_mask_space_traction_function_config_memory = NULL,
+    .memory_write_under_mask_space_firmware_upgrade = NULL,
+
+    // Config Memory Stream Write
+    .memory_write_stream_space_config_description_info = NULL,
+    .memory_write_stream_space_all = NULL,
+    .memory_write_stream_space_configuration_memory = NULL,
+    .memory_write_stream_space_acdi_manufacturer = NULL,
+    .memory_write_stream_space_acdi_user = NULL,
+    .memory_write_stream_space_traction_function_definition_info = NULL,
+    .memory_write_stream_space_traction_function_config_memory = NULL,
+    .memory_write_stream_space_firmware_upgrade = NULL,
+    
+    // Config Memory Stream Write Reply = Ok
+    .memory_write_stream_space_config_description_info_reply_ok = NULL,
+    .memory_write_stream_space_all_reply_ok = NULL,
+    .memory_write_stream_space_configuration_memory_reply_ok = NULL,
+    .memory_write_stream_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_write_stream_space_acdi_user_reply_ok = NULL,
+    .memory_write_stream_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_write_stream_space_traction_function_config_memory_reply_ok = NULL,
+
+    // Config Memory Stream Write Reply = Failed
+    .memory_write_stream_space_config_description_info_reply_fail = NULL,
+    .memory_write_stream_space_all_reply_fail = NULL,
+    .memory_write_stream_space_configuration_memory_reply_fail = NULL,
+    .memory_write_stream_space_acdi_manufacturer_reply_fail = NULL,
+    .memory_write_stream_space_acdi_user_reply_fail = NULL,
+    .memory_write_stream_space_traction_function_definition_info_reply_fail = NULL,
+    .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
+    
+    // Config Memory Commands
+    .memory_options_cmd = NULL,
+    .memory_options_reply = NULL,
+    .memory_get_address_space_info = NULL,
+    .memory_get_address_space_info_reply_not_present = NULL,
+    .memory_get_address_space_info_reply_present = NULL,
+    .memory_reserve_lock = NULL,
+    .memory_reserve_lock_reply = NULL,
+    .memory_get_unique_id = NULL,
+    .memory_get_unique_id_reply = NULL,
+    .memory_unfreeze = NULL,
+    .memory_freeze = NULL,
+    .memory_update_complete = NULL,
+    .memory_reset_reboot = NULL,
+    .memory_factory_reset = NULL,
+
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
 
@@ -464,31 +543,37 @@ int main(int argc, char *argv[])
     CanBufferStore_initialize();
     CanBufferFifo_initialize();
 
-    CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
-    CanLoginStateMachine_initialize(&interface_can_login_state_machine);
-    CanMainStatemachine_initialize(&interface_can_main_statemachine);
-
     CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
     CanRxStatemachine_initialize(&interface_can_rx_statemachine);
 
     CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
     CanTxStatemachine_initialize(&interface_can_tx_statemachine);
 
+    CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
+    CanLoginStateMachine_initialize(&interface_can_login_state_machine);
+    CanMainStatemachine_initialize(&interface_can_main_statemachine);
+    
+    AliasMappings_initialize();
+  
     OpenLcbBufferStore_initialize();
     OpenLcbBufferList_initialize();
     OpenLcbBufferFifo_initialize();
     
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
+    ProtocolDatagramHandler_initialize(&interface_protocol_datagram_handler);
+    ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
+    ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
+    ProtocolConfigMemReadHandler_initialize(&interface_protocol_config_mem_read_handler);
+    ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
+    ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
+    
+    OpenLcbNode_initialize(&interface_openlcb_node);
+
     OpenLcbLoginMessageHandler_initialize(&interface_openlcb_login_message_handler);
     OpenLcbLoginStateMachine_initialize(&interface_openlcb_login_state_machine);
     OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
-
-    OpenLcbNode_initialize(&interface_openlcb_node);
     
-    ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
-    ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
-    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
-    
-    AliasMappings_initialize();
+    OpenLcbApplication_initialize(&interface_openlcb_application);
     
     OSxDrivers_setup();
     OSxCanDriver_setup();
