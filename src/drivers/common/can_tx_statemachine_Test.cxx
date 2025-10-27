@@ -202,7 +202,7 @@ TEST(CanTxStatemachine, send_openlcb_message)
         // ********************************************************************
         _reset_variables();
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_VERIFY_NODE_ID_GLOBAL, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_VERIFY_NODE_ID_GLOBAL);
         EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_TRUE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
@@ -217,7 +217,8 @@ TEST(CanTxStatemachine, send_openlcb_message)
         // ********************************************************************
         _reset_variables();
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_VERIFY_NODE_ID_ADDRESSED, 6);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_VERIFY_NODE_ID_ADDRESSED);
+        openlcb_msg->payload_count = 6;
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
         EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
@@ -233,7 +234,8 @@ TEST(CanTxStatemachine, send_openlcb_message)
         // ********************************************************************
         _reset_variables();
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_DATAGRAM, 6);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_DATAGRAM);
+        openlcb_msg->payload_count = 6;
         OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, 0x010203040506, 0);
         EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
@@ -249,7 +251,8 @@ TEST(CanTxStatemachine, send_openlcb_message)
         // ********************************************************************
         _reset_variables();
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_DATAGRAM, 24);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_DATAGRAM);
+        openlcb_msg->payload_count = 24;
         EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
@@ -265,7 +268,8 @@ TEST(CanTxStatemachine, send_openlcb_message)
         // ********************************************************************
         _reset_variables();
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_STREAM_PROCEED, 8);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_STREAM_PROCEED);
+        openlcb_msg->payload_count = 8;
         EXPECT_TRUE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
@@ -281,7 +285,7 @@ TEST(CanTxStatemachine, send_openlcb_message)
         _reset_variables();
         _is_can_tx_buffer_empty_diabled = true;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_VERIFY_NODE_ID_GLOBAL, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_VERIFY_NODE_ID_GLOBAL);
         EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);
@@ -297,7 +301,8 @@ TEST(CanTxStatemachine, send_openlcb_message)
         _reset_variables();
         _fail_handle_stream_frame = true;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_STREAM_PROCEED, 8);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x060504030201, MTI_STREAM_PROCEED);
+        openlcb_msg->payload_count = 8;
         EXPECT_FALSE(CanTxStatemachine_send_openlcb_message(openlcb_msg));
         EXPECT_FALSE(_handle_unaddressed_msg_frame_called);
         EXPECT_FALSE(_handle_addressed_msg_frame_called);

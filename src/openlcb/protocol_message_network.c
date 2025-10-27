@@ -68,8 +68,7 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_PC_EVENT_REPORT,
-            0);
+            MTI_PC_EVENT_REPORT);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -89,8 +88,7 @@ static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_inf
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_VERIFIED_NODE_ID,
-            0);
+            MTI_VERIFIED_NODE_ID);
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->id, 0);
 
@@ -133,8 +131,7 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_PROTOCOL_SUPPORT_REPLY,
-            0);
+            MTI_PROTOCOL_SUPPORT_REPLY);
     
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 16) & 0xFF, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 8) & 0xFF, 1);

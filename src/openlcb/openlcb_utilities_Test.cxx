@@ -106,7 +106,9 @@ TEST(OpenLcbUtilities, load_openlcb_message)
 
     openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
 
-    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 16);
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
+
+    openlcb_msg->payload_count = 16;
 
     EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
     EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
@@ -131,17 +133,16 @@ TEST(OpenLcbUtilities, copy_event_id_to_openlcb_payload)
 
     if (openlcb_msg)
     {
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 16);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, 16);
+        EXPECT_EQ(openlcb_msg->payload_count, 0);
 
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, 0x0102030405060708);
-        openlcb_msg->payload_count = 8;
 
         for (int i = 0; i < 8; i++)
         {
@@ -164,7 +165,7 @@ TEST(OpenLcbUtilities, copy_node_id_to_openlcb_payload)
 
     if (openlcb_msg)
     {
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
@@ -212,7 +213,7 @@ TEST(OpenLcbUtilities, copy_word_to_openlcb_payload)
 
     if (openlcb_msg)
     {
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
@@ -261,7 +262,7 @@ TEST(OpenLcbUtilities, copy_dword_to_openlcb_payload)
 
     if (openlcb_msg)
     {
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
@@ -314,7 +315,7 @@ TEST(OpenLcbUtilities, copy_string_to_openlcb_payload)
 
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
@@ -418,7 +419,7 @@ TEST(OpenLcbUtilities, copy_byte_array_to_openlcb_payload)
 
     if (openlcb_msg)
     {
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
@@ -499,14 +500,15 @@ TEST(OpenLcbUtilities, clear_openlcb_message_payload)
     {
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        
+        openlcb_msg->payload_count = LEN_BUFFER;
 
         for (int i = 0; i < LEN_BUFFER; i++)
         {
@@ -546,15 +548,16 @@ TEST(OpenLcbUtilities, extract_node_id_from_openlcb_payload)
     {
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
 
+        openlcb_msg->payload_count = 16;
+       
         for (int i = 0; i < LEN_BUFFER; i++)
         {
 
@@ -568,7 +571,7 @@ TEST(OpenLcbUtilities, extract_node_id_from_openlcb_payload)
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_EQ(openlcb_msg->payload_count, 16);
         EXPECT_TRUE(event_id == 0x010203040506);
         EXPECT_TRUE(openlcb_msg->state.allocated);
 
@@ -579,7 +582,7 @@ TEST(OpenLcbUtilities, extract_node_id_from_openlcb_payload)
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_EQ(openlcb_msg->payload_count, 16);
         EXPECT_TRUE(event_id == 0x0708090A0B0C);
         EXPECT_TRUE(openlcb_msg->state.allocated);
 
@@ -598,14 +601,15 @@ TEST(OpenLcbUtilities, extract_event_id_from_openlcb_payload)
     {
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        
+        openlcb_msg->payload_count = 8;
 
         for (int i = 0; i < LEN_BUFFER; i++)
         {
@@ -620,7 +624,7 @@ TEST(OpenLcbUtilities, extract_event_id_from_openlcb_payload)
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_EQ(openlcb_msg->payload_count, 8);
         EXPECT_TRUE(event_id == 0x0102030405060708);
         EXPECT_TRUE(openlcb_msg->state.allocated);
 
@@ -639,14 +643,15 @@ TEST(OpenLcbUtilities, extract_word_from_openlcb_payload)
     {
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        
+        openlcb_msg->payload_count = 8;
 
         for (int i = 0; i < LEN_BUFFER; i++)
         {
@@ -662,7 +667,7 @@ TEST(OpenLcbUtilities, extract_word_from_openlcb_payload)
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_EQ(openlcb_msg->payload_count, 8);
         EXPECT_TRUE(local_word == 0x0102);
         EXPECT_TRUE(openlcb_msg->state.allocated);
 
@@ -688,14 +693,15 @@ TEST(OpenLcbUtilities, extract_dword_from_openlcb_payload)
     {
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        
+        openlcb_msg->payload_count = 16;
 
         for (int i = 0; i < LEN_BUFFER; i++)
         {
@@ -711,7 +717,7 @@ TEST(OpenLcbUtilities, extract_dword_from_openlcb_payload)
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        EXPECT_EQ(openlcb_msg->payload_count, 16);
         EXPECT_TRUE(local_dword == 0x01020304);
         EXPECT_TRUE(openlcb_msg->state.allocated);
 
@@ -737,14 +743,15 @@ TEST(OpenLcbUtilities, count_nulls_in_openlcb_payload)
     {
 #define LEN_BUFFER 16
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x899);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, 0x899);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        
+        openlcb_msg->payload_count = LEN_BUFFER;
 
         for (int i = 0; i < LEN_BUFFER; i++)
         {
@@ -791,14 +798,15 @@ TEST(OpenLcbUtilities, is_addressed_openlcb_message)
 
         uint16_t mti = 0x455 | MASK_DEST_ADDRESS_PRESENT;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, mti, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, mti);
 
         EXPECT_EQ(openlcb_msg->source_alias, 0xAAA);
         EXPECT_EQ(openlcb_msg->source_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->dest_alias, 0xBBB);
         EXPECT_EQ(openlcb_msg->dest_id, 0x010203040506);
         EXPECT_EQ(openlcb_msg->mti, mti);
-        EXPECT_EQ(openlcb_msg->payload_count, LEN_BUFFER);
+        
+        openlcb_msg->payload_count = LEN_BUFFER;
 
         EXPECT_TRUE(OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg));
 
@@ -862,7 +870,9 @@ TEST(OpenLcbUtilities, is_message_for_node)
 #define NODE_ID 0x1122334455667788
 #define NODE_ALIAS 0x444
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x914, LEN_BUFFER);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0xAAA, 0x010203040506, 0xBBB, 0x010203040506, 0x914);
+
+        openlcb_msg->payload_count = LEN_BUFFER;
 
         openlcb_node_t *openlcb_node = OpenLcbNode_allocate(0x010203040506, &node_parameters);
 

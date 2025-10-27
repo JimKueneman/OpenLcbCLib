@@ -90,8 +90,7 @@ bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *node, event_id_t ev
             node->id, 
             0, 
             NULL_NODE_ID,
-            MTI_PC_EVENT_REPORT, 
-            0);
+            MTI_PC_EVENT_REPORT);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             &msg, 
@@ -122,8 +121,7 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t event_
             node->id,
             0, 
             NULL_NODE_ID,
-            MTI_EVENT_LEARN, 
-            0);
+            MTI_EVENT_LEARN);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             &msg, 

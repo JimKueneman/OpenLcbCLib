@@ -658,32 +658,32 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg)
         statemachine_info.outgoing_msg_info.valid = false;
 
         // Initization Complete but node not in initialized state
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100);
         EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Initization Complete but node in initialized state
         node1->state.initalized = true;
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100);
         EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Verify ID Addressed to us
         node1->state.initalized = true;
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488);
         EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Verify ID not Addressed to us
         node1->state.initalized = true;
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, 0x488, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, 0x488);
         EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Datagram for us
         node1->state.initalized = true;
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x1C48, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x1C48);
         EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Datagram not for us
         node1->state.initalized = true;
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 2, DEST_ID + 2, 0x1C48, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 2, DEST_ID + 2, 0x1C48);
         EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         OpenLcbBufferStore_free_buffer(openlcb_msg);

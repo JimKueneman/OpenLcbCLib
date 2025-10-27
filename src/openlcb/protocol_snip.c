@@ -209,8 +209,7 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *s
                                           statemachine_info->openlcb_node->id,
                                           statemachine_info->incoming_msg_info.msg_ptr->source_alias,
                                           statemachine_info->incoming_msg_info.msg_ptr->source_id,
-                                          MTI_SIMPLE_NODE_INFO_REPLY,
-                                          0);
+                                          MTI_SIMPLE_NODE_INFO_REPLY);
 
     uint16_t payload_offset = 0;
     payload_offset = ProtocolSnip_load_manufacturer_version_id(statemachine_info->openlcb_node, statemachine_info->outgoing_msg_info.msg_ptr, payload_offset, 1);

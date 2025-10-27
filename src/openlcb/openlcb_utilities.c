@@ -89,14 +89,14 @@ uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t
 
 }
 
-void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti, uint16_t payload_count) {
+void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti) {
 
     openlcb_msg->dest_alias = dest_alias;
     openlcb_msg->dest_id = dest_id;
     openlcb_msg->source_alias = source_alias;
     openlcb_msg->source_id = source_id;
     openlcb_msg->mti = mti;
-    openlcb_msg->payload_count = payload_count;
+    openlcb_msg->payload_count = 0;
     openlcb_msg->timerticks = 0;
 
     uint16_t data_count = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);

@@ -69,8 +69,7 @@ static void _identify_producers(openlcb_statemachine_info_t *statemachine_info) 
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index),
-            0);
+            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -99,8 +98,7 @@ static void _identify_consumers(openlcb_statemachine_info_t *statemachine_info) 
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index),
-            0);
+            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -172,8 +170,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, event_index),
-            0);
+            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, event_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -274,8 +271,7 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, event_index),
-            0);
+            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, event_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,

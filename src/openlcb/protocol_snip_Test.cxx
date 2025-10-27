@@ -389,7 +389,7 @@ TEST(ProtocolSnip, handle_simple_node_info_request)
         statemachine_info.outgoing_msg_info.enumerate = false;
         statemachine_info.outgoing_msg_info.valid = false;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
 
         ProtocolSnip_handle_simple_node_info_request(&statemachine_info);
 
@@ -434,7 +434,7 @@ TEST(ProtocolSnip, validate_snip_reply)
         statemachine_info.outgoing_msg_info.enumerate = false;
         statemachine_info.outgoing_msg_info.valid = false;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
 
         ProtocolSnip_handle_simple_node_info_request(&statemachine_info);
 
@@ -474,7 +474,7 @@ TEST(ProtocolSnip, load_name_request_too_many_bytes)
     if (openlcb_msg)
     {
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
 
         EXPECT_EQ(ProtocolSnip_load_name(node1, outgoing_msg, 0, LEN_SNIP_NAME_BUFFER + 10), LEN_SNIP_NAME_BUFFER); // ask for more than expected
     }
@@ -500,13 +500,13 @@ TEST(ProtocolSnip, load_with_asking_for_partial_strings)
     {
 
         //  only ask for 1 byte
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_manufacturer_version_id(node1, outgoing_msg, 0, 1), 1);
         EXPECT_EQ(outgoing_msg->payload_count, 1);
 
         //  is the name so only ask for 16 bytes
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_name(node1, outgoing_msg, 0, 16), 16);
         EXPECT_EQ(outgoing_msg->payload_count, 16);
@@ -514,23 +514,23 @@ TEST(ProtocolSnip, load_with_asking_for_partial_strings)
         EXPECT_EQ(*outgoing_msg->payload[1], '1');
         EXPECT_EQ(*outgoing_msg->payload[2], '2');
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_model(node1, outgoing_msg, 0, 3), 3);
         EXPECT_EQ(outgoing_msg->payload_count, 3);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_hardware_version(node1, outgoing_msg, 0, 3), 3);
         EXPECT_EQ(outgoing_msg->payload_count, 3);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_software_version(node1, outgoing_msg, 0, 3), 3);
         EXPECT_EQ(outgoing_msg->payload_count, 3);
 
         // Ask for more bytes than the buffer allows
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_model(node1, outgoing_msg, 0, LEN_SNIP_MODEL_BUFFER + 10), strlen(SNIP_MODEL) + 1);
         // Has the null
@@ -557,12 +557,12 @@ TEST(ProtocolSnip, load_versions_with_0_request_bytes)
     if (openlcb_msg)
     {
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_manufacturer_version_id(node1, outgoing_msg, 0, 0), 0);
         EXPECT_EQ(outgoing_msg->payload_count, 0);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_version_id(node1, outgoing_msg, 0, 0), 0);
         EXPECT_EQ(outgoing_msg->payload_count, 0);
@@ -593,7 +593,7 @@ TEST(ProtocolSnip, load_user_name)
         // ********************************************************************
         // First Node using simple 3 letter return of config mem
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_name(node1, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), 3 + 1); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, 3 + 1);
@@ -605,7 +605,7 @@ TEST(ProtocolSnip, load_user_name)
         // ********************************************************************
         _reset_variables();
         config_read_type = 1; // full length name
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_name(node1, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), LEN_SNIP_USER_NAME_BUFFER); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_NAME_BUFFER);
@@ -618,7 +618,7 @@ TEST(ProtocolSnip, load_user_name)
         // ********************************************************************
         _reset_variables();
         config_read_type = 1; // full length name
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_name(node2, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), LEN_SNIP_USER_NAME_BUFFER); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_NAME_BUFFER);
@@ -631,7 +631,7 @@ TEST(ProtocolSnip, load_user_name)
         // ********************************************************************
         _reset_variables();
         config_read_type = 2; // over sized length name
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_name(node1, outgoing_msg, 0, LEN_SNIP_USER_NAME_BUFFER), LEN_SNIP_USER_NAME_BUFFER); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_NAME_BUFFER);
@@ -665,7 +665,7 @@ TEST(ProtocolSnip, load_user_description)
         // ********************************************************************
         // First Node using simple 3 letter return of config mem
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_description(node1, outgoing_msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER), 3 + 1); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, 3 + 1);
@@ -677,7 +677,7 @@ TEST(ProtocolSnip, load_user_description)
         // ********************************************************************
         _reset_variables();
         config_read_type = 2; // full length name
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_description(node1, outgoing_msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER), LEN_SNIP_USER_DESCRIPTION_BUFFER); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_DESCRIPTION_BUFFER);
@@ -690,7 +690,7 @@ TEST(ProtocolSnip, load_user_description)
         // ********************************************************************
         _reset_variables();
         config_read_type = 2; // full length name
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         EXPECT_EQ(ProtocolSnip_load_user_description(node2, outgoing_msg, 0, LEN_SNIP_USER_DESCRIPTION_BUFFER), LEN_SNIP_USER_DESCRIPTION_BUFFER); // includes null
         EXPECT_EQ(outgoing_msg->payload_count, LEN_SNIP_USER_DESCRIPTION_BUFFER);
@@ -728,7 +728,7 @@ TEST(ProtocolSnip, handle_simple_node_info_reply)
         _statemachine_info.outgoing_msg_info.enumerate = false;
         _statemachine_info.outgoing_msg_info.valid = false;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REPLY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REPLY);
         ProtocolSnip_handle_simple_node_info_reply(&_statemachine_info);
 
         EXPECT_FALSE(_statemachine_info.outgoing_msg_info.valid);

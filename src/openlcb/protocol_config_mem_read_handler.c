@@ -111,8 +111,7 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_DATAGRAM,
-            0);
+            MTI_DATAGRAM);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 

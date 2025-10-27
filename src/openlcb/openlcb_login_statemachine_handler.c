@@ -73,8 +73,7 @@ void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_state
             statemachine_info->openlcb_node->id,
             0,
             0,
-            mti,
-            0);
+            mti);
     
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 
@@ -111,8 +110,7 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
             statemachine_info->openlcb_node->id,
             0,
             0,
-            event_mti,
-            0);
+            event_mti);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 
@@ -159,8 +157,8 @@ void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_i
             statemachine_info->openlcb_node->id,
             0,
             0,
-            event_mti,
-            0);
+            event_mti);
+    
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 
             event_id);
