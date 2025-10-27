@@ -66,36 +66,6 @@
             endingLineNumber = "389"
             landmarkName = "ProtocolConfigMemReadHandler_memory_read_space_config_description_info(statemachine_info)"
             landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "4197FBE1-80D2-48E5-849F-926979A40D82 - 4c481adb699b5290"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ProtocolConfigMemReadHandler_memory_read_space_all"
-                  moduleName = "BasicNode"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jimkueneman/Documents/OpenLcbCLib/src/applications/XCode/BasicNode/BasicNode/BasicNode/src/openlcb/protocol_config_mem_read_handler.c"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "389"
-                  endingLineNumber = "389">
-               </Location>
-               <Location
-                  uuid = "4197FBE1-80D2-48E5-849F-926979A40D82 - 928658c3f406b31"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ProtocolConfigMemReadHandler_memory_read_space_config_description_info"
-                  moduleName = "BasicNode"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jimkueneman/Documents/OpenLcbCLib/src/applications/XCode/BasicNode/BasicNode/BasicNode/src/openlcb/protocol_config_mem_read_handler.c"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "389"
-                  endingLineNumber = "389">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -144,36 +114,6 @@
             endingLineNumber = "379"
             landmarkName = "_read_request_traction_function_configuration_memory(statemachine_info, config_mem_read_request_info)"
             landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "79FE7A48-AC77-4474-9B34-94BDC712897C - 928658c3f406887"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ProtocolConfigMemReadHandler_memory_read_space_config_description_info"
-                  moduleName = "BasicNode"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jimkueneman/Documents/OpenLcbCLib/src/applications/XCode/BasicNode/BasicNode/BasicNode/src/openlcb/protocol_config_mem_read_handler.c"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "379"
-                  endingLineNumber = "379">
-               </Location>
-               <Location
-                  uuid = "79FE7A48-AC77-4474-9B34-94BDC712897C - 8d47686a66d4ade1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "_read_request_traction_function_configuration_memory"
-                  moduleName = "BasicNode"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jimkueneman/Documents/OpenLcbCLib/src/applications/XCode/BasicNode/BasicNode/BasicNode/src/openlcb/protocol_config_mem_read_handler.c"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "379"
-                  endingLineNumber = "379">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
