@@ -108,10 +108,12 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_OPTIONAL_INTERACTION_REJECTED,
             4);
+    
     OpenLcbUtilities_copy_word_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 
             ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 
             0);
+    
     OpenLcbUtilities_copy_word_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 
             statemachine_info->incoming_msg_info.msg_ptr->mti, 

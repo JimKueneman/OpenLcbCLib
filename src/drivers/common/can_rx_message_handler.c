@@ -88,11 +88,13 @@ static void _queue_reject_message(uint16_t source_alias, uint16_t dest_alias, ui
                 dest_alias, 
                 0, 
                 mti, 
-                4);
+                0);
+        
         OpenLcbUtilities_copy_word_to_openlcb_payload(
                 target_openlcb_msg, 
                 dest_alias, 
                 0);
+        
         OpenLcbUtilities_copy_word_to_openlcb_payload(
                 target_openlcb_msg, 
                 error_code, 
@@ -140,9 +142,9 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t can_buffer_star
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     // See if there is a message already started for this.
-    openlcb_msg_t* target_can_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
+    openlcb_msg_t* target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
 
-    if (target_can_msg) {
+    if (target_openlcb_msg) {
 
         // If we find a message for this source/dest/mti then it is an error as it is out of order
         _queue_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END);
@@ -152,9 +154,9 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t can_buffer_star
     }
 
     // Try to allocate an openlcb message buffer to start accumulating the frames into an openlcb message
-    target_can_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
+    target_openlcb_msg = _interface->openlcb_buffer_store_allocate_buffer(data_type);
 
-    if (!target_can_msg) {
+    if (!target_openlcb_msg) {
  
         _queue_reject_message(dest_alias, source_alias, mti, ERROR_TEMPORARY_BUFFER_UNAVAILABLE);
 
@@ -162,14 +164,20 @@ void CanRxMessageHandler_first_frame(can_msg_t* can_msg, uint8_t can_buffer_star
 
     }
 
-    target_can_msg->mti = mti;
-    target_can_msg->source_alias = source_alias;
-    target_can_msg->dest_alias = dest_alias;
-    target_can_msg->state.inprocess = true;
+    OpenLcbUtilities_load_openlcb_message(
+            target_openlcb_msg, 
+            source_alias, 
+            0, 
+            dest_alias, 
+            0, 
+            mti, 
+            0);
+    
+    target_openlcb_msg->state.inprocess = true;
 
-    CanUtilities_copy_can_payload_to_openlcb_payload(target_can_msg, can_msg, can_buffer_start_index);
+    CanUtilities_append_can_payload_to_openlcb_payload(target_openlcb_msg, can_msg, can_buffer_start_index);
 
-    OpenLcbBufferList_add(target_can_msg); // Can not fail List is as large as the number of buffers
+    OpenLcbBufferList_add(target_openlcb_msg); // Can not fail List is as large as the number of buffers
 
 }
 
@@ -239,7 +247,8 @@ void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
             0, 
             mti, 
             0);
-    CanUtilities_copy_can_payload_to_openlcb_payload(
+    
+    CanUtilities_append_can_payload_to_openlcb_payload(
             target_openlcb_msg, 
             can_msg, 
             can_buffer_start_index);

@@ -108,7 +108,10 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             MTI_DATAGRAM,
             0);
 
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            DATAGRAM_MEMORY_CONFIGURATION,
+            0);
 
 }
 
@@ -139,9 +142,6 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
 static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     uint16_t available_commands = 0x00;
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.write_under_mask_supported) {
 
@@ -184,8 +184,6 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
 
     }
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, available_commands, 2);
-
     uint8_t write_lengths = 0x80 | 0x40 | 0x020 | 0x02;
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
@@ -194,16 +192,42 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
 
     }
 
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[4] = write_lengths;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[5] = statemachine_info->openlcb_node->parameters->configuration_options.high_address_space;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[6] = statemachine_info->openlcb_node->parameters->configuration_options.low_address_space;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            DATAGRAM_MEMORY_OPTIONS_REPLY,
+            1);
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            available_commands,
+            2);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            write_lengths,
+            4);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->parameters->configuration_options.high_address_space,
+            5);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->parameters->configuration_options.low_address_space,
+            6);
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 7;
 
 
     if (strlen(statemachine_info->openlcb_node->parameters->configuration_options.description) > 0x00) {
 
-        uint8_t string_len = OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->parameters->configuration_options.description, statemachine_info->outgoing_msg_info.msg_ptr->payload_count);
+        uint8_t string_len = OpenLcbUtilities_copy_string_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->parameters->configuration_options.description,
+                statemachine_info->outgoing_msg_info.msg_ptr->payload_count);
         statemachine_info->outgoing_msg_info.msg_ptr->payload_count = statemachine_info->outgoing_msg_info.msg_ptr->payload_count + string_len;
 
     }
@@ -222,31 +246,54 @@ static void _memory_options_reply(openlcb_statemachine_info_t *statemachine_info
 static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     uint8_t description_offset = 8;
+    uint8_t flags = 0x00;
+
+    if (config_mem_operations_request_info->space_info->read_only) {
+
+        flags = flags | 0x01;
+
+    }
+
+    if (config_mem_operations_request_info->space_info->low_address_valid) {
+
+        flags = flags | 0x02;
+
+    }
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-    
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     if (config_mem_operations_request_info->space_info) {
 
         if (config_mem_operations_request_info->space_info->present) {
 
-            *statemachine_info->outgoing_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT;
-            *statemachine_info->outgoing_msg_info.msg_ptr->payload[2] = *statemachine_info->incoming_msg_info.msg_ptr->payload[2];
-            OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_operations_request_info->space_info->highest_address, 3);
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                    statemachine_info->outgoing_msg_info.msg_ptr,
+                    DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT,
+                    1);
 
-            *statemachine_info->outgoing_msg_info.msg_ptr->payload[7] = 0x00;
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                    statemachine_info->outgoing_msg_info.msg_ptr,
+                    *statemachine_info->incoming_msg_info.msg_ptr->payload[2],
+                    2);
 
-            if (config_mem_operations_request_info->space_info->read_only) {
-      
-                *statemachine_info->outgoing_msg_info.msg_ptr->payload[7] = *statemachine_info->outgoing_msg_info.msg_ptr->payload[7] | 0x01;
+            OpenLcbUtilities_copy_dword_to_openlcb_payload(
+                    statemachine_info->outgoing_msg_info.msg_ptr,
+                    config_mem_operations_request_info->space_info->highest_address,
+                    3);
 
-            }
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                    statemachine_info->outgoing_msg_info.msg_ptr,
+                    flags,
+                    7);
+
+            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
             if (config_mem_operations_request_info->space_info->low_address_valid) {
 
-                *statemachine_info->outgoing_msg_info.msg_ptr->payload[7] = *statemachine_info->outgoing_msg_info.msg_ptr->payload[7] | 0x02;
-                OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_operations_request_info->space_info->low_address, 8);
+                OpenLcbUtilities_copy_dword_to_openlcb_payload(
+                        statemachine_info->outgoing_msg_info.msg_ptr,
+                        config_mem_operations_request_info->space_info->low_address,
+                        8);
 
                 description_offset = 12;
 
@@ -256,8 +303,10 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
             if (strlen(config_mem_operations_request_info->space_info->description) > 0) {
 
-                uint8_t string_len = OpenLcbUtilities_copy_string_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, config_mem_operations_request_info->space_info->description, description_offset);
-                statemachine_info->outgoing_msg_info.msg_ptr->payload_count = statemachine_info->outgoing_msg_info.msg_ptr->payload_count + string_len;
+                OpenLcbUtilities_copy_string_to_openlcb_payload(
+                        statemachine_info->outgoing_msg_info.msg_ptr,
+                        config_mem_operations_request_info->space_info->description,
+                        description_offset);
 
             }
 
@@ -269,9 +318,19 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
     }
 
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[2] = *statemachine_info->incoming_msg_info.msg_ptr->payload[1];
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+    // default reply
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT,
+            1);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1],
+            2);
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8; // OpenLcbChecker needs 8 
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -370,7 +429,7 @@ void ProtocolConfigMemOperationsHandler_memory_get_address_space_info(openlcb_st
 
     config_mem_operations_request_info.operations_func = &_memory_get_address_space_info;
     config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
-    
+
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
 
 }

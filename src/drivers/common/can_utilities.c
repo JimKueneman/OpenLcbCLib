@@ -156,14 +156,6 @@ uint8_t CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg_t *openlc
     return result;
 }
 
-uint8_t CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg, uint8_t can_start_index) {
-
-    openlcb_msg->payload_count = 0; // replacing the contents so reset to index 0
-
-    return CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, can_msg, can_start_index);
-
-}
-
 static uint8_t _count_nulls_in_can_payload(can_msg_t *can_msg) {
 
     uint8_t count = 0;
