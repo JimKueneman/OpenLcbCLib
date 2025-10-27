@@ -68,37 +68,43 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_PC_EVENT_REPORT,
-            0);
+            MTI_PC_EVENT_REPORT);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             EVENT_ID_DUPLICATE_NODE_DETECTED);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+    
     statemachine_info->openlcb_node->state.duplicate_id_detected = true;
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
+    
+    uint16_t mti = MTI_VERIFIED_NODE_ID;
+    
+    if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
+
+        mti = MTI_VERIFIED_NODE_ID_SIMPLE;
+
+    } 
 
     OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_VERIFIED_NODE_ID,
-            6);
+            mti);
 
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->id, 0);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->openlcb_node->id, 
+            0);
 
-    if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
-
-        statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
-
-    }
-
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+    
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -117,14 +123,6 @@ void ProtocolMessageNetwork_handle_initialization_complete_simple(openlcb_statem
 
 void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info) {
 
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
-            statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_PROTOCOL_SUPPORT_REPLY,
-            6);
-
     uint64_t support_flags = statemachine_info->openlcb_node->parameters->protocol_support;
 
     if (statemachine_info->openlcb_node->state.firmware_upgrade_active) {
@@ -132,14 +130,23 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine
         support_flags = (support_flags & ~((uint64_t) PSI_FIRMWARE_UPGRADE)) | (uint64_t) PSI_FIRMWARE_UPGRADE_ACTIVE;
 
     }
-
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[0] = (uint8_t) (support_flags >> 16) & 0xFF;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[1] = (uint8_t) (support_flags >> 8) & 0xFF;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[2] = (uint8_t) (support_flags >> 0) & 0xFF;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[3] = 0;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[4] = 0;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[5] = 0;
-
+    
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_PROTOCOL_SUPPORT_REPLY);
+    
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 16) & 0xFF, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 8) & 0xFF, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 0) & 0xFF, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 5);
+    
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+    
     statemachine_info->outgoing_msg_info.valid = true;
 
 }

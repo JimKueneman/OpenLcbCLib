@@ -1236,10 +1236,15 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_DATAGRAM_OK_REPLY,
-            2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
-
+            MTI_DATAGRAM_OK_REPLY);
+    
+    OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            return_code, 
+            0);
+    
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
+    
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -1252,9 +1257,14 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_DATAGRAM_REJECTED_REPLY,
-            2);
-    OpenLcbUtilities_copy_word_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, return_code, 0);
+            MTI_DATAGRAM_REJECTED_REPLY);
+    
+    OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            return_code, 
+            0);
+    
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
 
     statemachine_info->outgoing_msg_info.valid = true;
 

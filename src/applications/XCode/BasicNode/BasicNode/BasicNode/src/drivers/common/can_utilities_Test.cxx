@@ -91,91 +91,6 @@ TEST(CAN_Utilities, copy_node_id_to_payload)
     EXPECT_EQ(can_msg.payload_count, 0);
 }
 
-TEST(CAN_Utilities, copy_can_payload_to_openlcb_payload)
-{
-
-    can_msg_t can_msg;
-    openlcb_msg_t *openlcb_msg = nullptr;
-    uint16_t result = 0;
-
-    OpenLcbBufferStore_initialize();
-
-    memset(&can_msg, 0x00, sizeof(can_msg));
-
-    // Load up a CAN message
-    CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-
-    // Copy the all 8 bytes in the can payload to the openlcb payload.  This will wipe out
-    // any payload in the openlcb structure if it is successful, else nothing is changed
-    openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    EXPECT_NE(openlcb_msg, nullptr);
-
-    if (openlcb_msg)
-    {
-
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
-
-        result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
-
-        EXPECT_EQ(result, 8);
-        EXPECT_EQ(openlcb_msg->payload_count, 8);
-
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(*openlcb_msg->payload[i], i + 1);
-        }
-
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
-    }
-
-    // Copy the all upper 4 bytes in the can payload to the openlcb payload.  This will wipe out
-    // any payload in the openlcb structure if it is successful, else nothing is changed
-    openlcb_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    EXPECT_NE(openlcb_msg, nullptr);
-
-    if (openlcb_msg)
-    {
-
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
-
-        result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 4);
-
-        EXPECT_EQ(result, 4);
-        EXPECT_EQ(openlcb_msg->payload_count, 4);
-
-        EXPECT_EQ(*openlcb_msg->payload[0], 5);
-        EXPECT_EQ(*openlcb_msg->payload[1], 6);
-        EXPECT_EQ(*openlcb_msg->payload[2], 7);
-        EXPECT_EQ(*openlcb_msg->payload[3], 8);
-
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
-    }
-
-    // Can buffer offset is beyond the size of a can message, should return nothing writen an
-    // nothing changed
-    openlcb_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
-    EXPECT_NE(openlcb_msg, nullptr);
-
-    if (openlcb_msg)
-    {
-
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 8);
-
-        result = CanUtilities_copy_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 8);
-
-        // Nothing written and nothing changed
-        EXPECT_EQ(result, 0);
-        for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        {
-            EXPECT_EQ(*openlcb_msg->payload[i], 0x00);
-        }
-
-        OpenLcbBufferStore_free_buffer(openlcb_msg);
-        EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
-    }
-}
 
 TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 {
@@ -198,13 +113,17 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
+
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
         *openlcb_msg->payload[2] = 0xCC;
         *openlcb_msg->payload[3] = 0xDD;
+        openlcb_msg->payload_count = 4;
 
         result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 0, 0);
+
+        openlcb_msg->payload_count = 4;
 
         EXPECT_EQ(result, 4);
         EXPECT_EQ(can_msg.payload_count, 4);
@@ -234,16 +153,21 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
+
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
         *openlcb_msg->payload[2] = 0xCC;
         *openlcb_msg->payload[3] = 0xDD;
 
+        openlcb_msg->payload_count = 4;
+
         // both offset by 2 so the can message should retain its first 2 bytes, the openlcb message
         // is only 4 bytes long so it should only copy the remaining 2 to the can message and will
         // have clipped off the remaining bytes in the can message for a size of 4
         result = CanUtilities_copy_openlcb_payload_to_can_payload(openlcb_msg, &can_msg, 2, 2);
+
+        openlcb_msg->payload_count = 4;
 
         EXPECT_EQ(result, 2);
         EXPECT_EQ(can_msg.payload_count, 4);
@@ -273,12 +197,13 @@ TEST(CAN_Utilities, copy_openlcb_payload_to_can_payload)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 16);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
         for (int i = 0; i < 16; i++)
         {
 
             *openlcb_msg->payload[i] = i + 1;
         }
+        openlcb_msg->payload_count = 16;
 
         // both offset by 2 so the can message should retain its first 2 bytes, the openlcb message
         // is only 4 bytes long so it should only copy the remaining 2 to the can message and will
@@ -325,7 +250,7 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
 
         // append an empty openlcb message
         result = CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
@@ -349,14 +274,18 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
+
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0xBB;
         *openlcb_msg->payload[2] = 0xCC;
         *openlcb_msg->payload[3] = 0xDD;
 
+        openlcb_msg->payload_count = 4;
+
         // append 8 bytes from the can message to a openlcb message containing 4 existing items
         result = CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
+        openlcb_msg->payload_count = 12;
 
         EXPECT_EQ(result, 8);
 
@@ -384,13 +313,16 @@ TEST(CAN_Utilities, append_can_payload_to_openlcb_payload)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 14);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
+
         for (int i = 0; i < 14; i++)
         {
 
             *openlcb_msg->payload[i] = i + 1;
         }
 
+        openlcb_msg->payload_count = 14;
+        
         // attempt to append 8 bytes from the can message to a openlcb message containing 2 open items
         result = CanUtilities_append_can_payload_to_openlcb_payload(openlcb_msg, &can_msg, 0);
 
@@ -651,11 +583,13 @@ TEST(CAN_Utilities, count_nulls_in_payloads)
 
         // Load up a CAN message
         CanUtilities_load_can_message(&can_msg, 0xABAB, 8, 0x01, 0x02, 0x00, 0x04, 0x05, 0x00, 0x07, 0x08);
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999, 4);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, 0x0AAA, 0xBBBBBBBBBBBB, 0x0CCC, 0xDDDDDDDDDDDD, 0x0999);
         *openlcb_msg->payload[0] = 0xAA;
         *openlcb_msg->payload[1] = 0x00;
         *openlcb_msg->payload[2] = 0xCC;
         *openlcb_msg->payload[3] = 0x00;
+        
+        openlcb_msg->payload_count = 4;
 
         result = CanUtilities_count_nulls_in_payloads(openlcb_msg, &can_msg);
         EXPECT_EQ(result, 4);

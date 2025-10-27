@@ -75,7 +75,7 @@ static void _identify_producers(openlcb_statemachine_info_t *statemachine_info) 
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->producers.list[statemachine_info->openlcb_node->producers.enumerator.enum_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->openlcb_node->producers.enumerator.enum_index++;
 
@@ -104,7 +104,7 @@ static void _identify_consumers(openlcb_statemachine_info_t *statemachine_info) 
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->consumers.list[statemachine_info->openlcb_node->consumers.enumerator.enum_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
 
@@ -176,7 +176,7 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->consumers.list[event_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+  //  statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -277,7 +277,7 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->producers.list[event_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+  //  statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -444,6 +444,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemac
         uint16_t payload_count = (statemachine_info->incoming_msg_info.msg_ptr->payload_count - sizeof (event_id_t));
 
         _interface->on_pc_event_report_with_payload(statemachine_info->openlcb_node, &eventid, payload_count, (event_payload_t*) statemachine_info->incoming_msg_info.msg_ptr->payload[sizeof (event_id_t)]);
+    
     }
 
     statemachine_info->outgoing_msg_info.valid = false;

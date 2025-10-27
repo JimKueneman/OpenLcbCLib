@@ -310,7 +310,7 @@ TEST(ProtocolEventTransport, handle_consumer_identify)
         // ********************************************************************
         // Consumer Identify event for us
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identify(&statemachine_info);
@@ -323,7 +323,7 @@ TEST(ProtocolEventTransport, handle_consumer_identify)
         // Consumer Identify event for us
         // ********************************************************************
         _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID + AUTO_CREATE_EVENT_COUNT - 1);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identify(&statemachine_info);
@@ -335,7 +335,7 @@ TEST(ProtocolEventTransport, handle_consumer_identify)
         // Consumer Identify event NOT for us
         // ********************************************************************
         _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID + AUTO_CREATE_EVENT_COUNT);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identify(&statemachine_info);
@@ -375,7 +375,7 @@ TEST(ProtocolEventTransport, handle_producer_identify)
         // ********************************************************************
         // Producer Identify event for us
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identify(&statemachine_info);
@@ -388,7 +388,7 @@ TEST(ProtocolEventTransport, handle_producer_identify)
         // Producer Identify event for us
         // ********************************************************************
         _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID + AUTO_CREATE_EVENT_COUNT - 1);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identify(&statemachine_info);
@@ -400,7 +400,7 @@ TEST(ProtocolEventTransport, handle_producer_identify)
         // Producer Identify event NOT for us
         // ********************************************************************
         _reset_variables();
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID + AUTO_CREATE_EVENT_COUNT);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identify(&statemachine_info);
@@ -439,7 +439,7 @@ TEST(ProtocolEventTransport, consumer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_consumer_range_identified
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED);
         ProtocolEventTransport_handle_consumer_range_identified(&statemachine_info);
         EXPECT_TRUE(on_consumer_range_identified_called);
         _reset_variables();
@@ -448,7 +448,7 @@ TEST(ProtocolEventTransport, consumer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_consumer_identified_unknown
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
         ProtocolEventTransport_handle_consumer_identified_unknown(&statemachine_info);
         EXPECT_TRUE(on_consumer_identified_unknown_called);
         _reset_variables();
@@ -457,7 +457,7 @@ TEST(ProtocolEventTransport, consumer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_consumer_identified_set
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET);
         ProtocolEventTransport_handle_consumer_identified_set(&statemachine_info);
         EXPECT_TRUE(on_consumer_identified_set_called);
         _reset_variables();
@@ -466,7 +466,7 @@ TEST(ProtocolEventTransport, consumer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_consumer_identified_clear
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR);
         ProtocolEventTransport_handle_consumer_identified_clear(&statemachine_info);
         EXPECT_TRUE(on_consumer_identified_clear_called);
         _reset_variables();
@@ -475,7 +475,7 @@ TEST(ProtocolEventTransport, consumer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_consumer_identified_reserved
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED);
         ProtocolEventTransport_handle_consumer_identified_reserved(&statemachine_info);
         EXPECT_TRUE(on_consumer_identified_reserved_called);
         _reset_variables();
@@ -513,7 +513,7 @@ TEST(ProtocolEventTransport, producer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_producer_range_identified
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED);
         ProtocolEventTransport_handle_producer_range_identified(&statemachine_info);
         EXPECT_TRUE(on_producer_range_identified_called);
         _reset_variables();
@@ -522,7 +522,7 @@ TEST(ProtocolEventTransport, producer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_producer_identified_unknown
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
         ProtocolEventTransport_handle_producer_identified_unknown(&statemachine_info);
         EXPECT_TRUE(on_producer_identified_unknown_called);
         _reset_variables();
@@ -531,7 +531,7 @@ TEST(ProtocolEventTransport, producer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_producer_identified_set
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET);
         ProtocolEventTransport_handle_producer_identified_set(&statemachine_info);
         EXPECT_TRUE(on_producer_identified_set_called);
         _reset_variables();
@@ -540,7 +540,7 @@ TEST(ProtocolEventTransport, producer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_producer_identified_clear
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR);
         ProtocolEventTransport_handle_producer_identified_clear(&statemachine_info);
         EXPECT_TRUE(on_producer_identified_clear_called);
         _reset_variables();
@@ -549,7 +549,7 @@ TEST(ProtocolEventTransport, producer_xxx_identified)
         // ********************************************************************
         // ProtocolEventTransport_handle_producer_identified_reserved
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED);
         ProtocolEventTransport_handle_producer_identified_reserved(&statemachine_info);
         EXPECT_TRUE(on_producer_identified_reserved_called);
         _reset_variables();
@@ -587,7 +587,7 @@ TEST(ProtocolEventTransport, handle_event_learn)
         // ********************************************************************
         // ProtocolEventTransport_handle_event_learn
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN);
         ProtocolEventTransport_handle_event_learn(&statemachine_info);
         EXPECT_TRUE(on_event_learn_called);
         _reset_variables();
@@ -625,7 +625,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
         // ********************************************************************
         // ProtocolEventTransport_handle_pc_event_report
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT);
         ProtocolEventTransport_handle_pc_event_report(&statemachine_info);
         EXPECT_TRUE(on_pc_event_report_called);
         _reset_variables();
@@ -634,7 +634,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
         // ********************************************************************
         // ProtocolEventTransport_handle_pc_event_report_with_payload
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
 
@@ -689,7 +689,7 @@ TEST(ProtocolEventTransport, handle_pc_event_report)
         // ********************************************************************
         // ProtocolEventTransport_handle_pc_event_report_with_payload too few bytes
         // ********************************************************************
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD);
         OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, DEST_EVENT_ID);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         openlcb_msg->payload_count = sizeof(event_id_t); // too few should fail
@@ -796,7 +796,7 @@ TEST(ProtocolEventTransport, handle_identify)
             node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
 
         counter = 0;
         done = false;
@@ -842,7 +842,7 @@ TEST(ProtocolEventTransport, handle_identify)
             node1->producers.list[i].status = EVENT_STATUS_SET;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
 
         counter = 0;
         done = false;
@@ -888,7 +888,7 @@ TEST(ProtocolEventTransport, handle_identify)
             node1->producers.list[i].status = EVENT_STATUS_CLEAR;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
 
         counter = 0;
         done = false;
@@ -966,7 +966,7 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
             node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY_DEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY_DEST);
 
         counter = 0;
         done = false;
@@ -1019,7 +1019,7 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
             node1->producers.list[i].status = EVENT_STATUS_SET;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
 
         counter = 0;
         done = false;
@@ -1066,7 +1066,7 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
             node1->producers.list[i].status = EVENT_STATUS_CLEAR;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
 
         counter = 0;
         done = false;
@@ -1113,7 +1113,7 @@ TEST(ProtocolEventTransport, handle_identify_with_dest)
             node1->producers.list[i].status = EVENT_STATUS_UNKNOWN;
         }
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, MTI_EVENTS_IDENTIFY_DEST, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, MTI_EVENTS_IDENTIFY_DEST);
 
         counter = 0;
         done = false;
@@ -1186,67 +1186,67 @@ TEST(ProtocolEventTransport, null_callbacks)
         statemachine_info.outgoing_msg_info.enumerate = false;
         statemachine_info.outgoing_msg_info.valid = false;
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identified_unknown(&statemachine_info);
         EXPECT_FALSE(on_consumer_identified_unknown_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identified_set(&statemachine_info);
         EXPECT_FALSE(on_consumer_identified_set_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identified_clear(&statemachine_info);
         EXPECT_FALSE(on_consumer_identified_clear_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_identified_reserved(&statemachine_info);
         EXPECT_FALSE(on_consumer_identified_reserved_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_consumer_range_identified(&statemachine_info);
         EXPECT_FALSE(on_consumer_identified_reserved_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identified_unknown(&statemachine_info);
         EXPECT_FALSE(on_producer_identified_unknown_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identified_set(&statemachine_info);
         EXPECT_FALSE(on_producer_identified_set_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identified_clear(&statemachine_info);
         EXPECT_FALSE(on_producer_identified_clear_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_identified_reserved(&statemachine_info);
         EXPECT_FALSE(on_producer_identified_reserved_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_producer_range_identified(&statemachine_info);
         EXPECT_FALSE(on_producer_identified_reserved_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_event_learn(&statemachine_info);
         EXPECT_FALSE(on_event_learn_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT);
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_pc_event_report(&statemachine_info);
         EXPECT_FALSE(on_pc_event_report_called);
 
-        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
+        OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD);
         openlcb_msg->payload_count = 34;
         OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
         ProtocolEventTransport_handle_pc_event_report_with_payload(&statemachine_info);

@@ -69,14 +69,13 @@ static void _identify_producers(openlcb_statemachine_info_t *statemachine_info) 
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index),
-            0);
+            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->producers.list[statemachine_info->openlcb_node->producers.enumerator.enum_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->openlcb_node->producers.enumerator.enum_index++;
 
@@ -99,14 +98,13 @@ static void _identify_consumers(openlcb_statemachine_info_t *statemachine_info) 
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index),
-            0);
+            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->consumers.list[statemachine_info->openlcb_node->consumers.enumerator.enum_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
 
@@ -172,14 +170,13 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, event_index),
-            0);
+            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, event_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->consumers.list[event_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+  //  statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -274,14 +271,13 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, event_index),
-            0);
+            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, event_index));
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->producers.list[event_index].event);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+  //  statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -448,6 +444,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemac
         uint16_t payload_count = (statemachine_info->incoming_msg_info.msg_ptr->payload_count - sizeof (event_id_t));
 
         _interface->on_pc_event_report_with_payload(statemachine_info->openlcb_node, &eventid, payload_count, (event_payload_t*) statemachine_info->incoming_msg_info.msg_ptr->payload[sizeof (event_id_t)]);
+    
     }
 
     statemachine_info->outgoing_msg_info.valid = false;

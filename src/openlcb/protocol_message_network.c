@@ -74,7 +74,7 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
             statemachine_info->outgoing_msg_info.msg_ptr,
             EVENT_ID_DUPLICATE_NODE_DETECTED);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
     
     statemachine_info->openlcb_node->state.duplicate_id_detected = true;
     statemachine_info->outgoing_msg_info.valid = true;
@@ -82,24 +82,29 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
 }
 
 static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
+    
+    uint16_t mti = MTI_VERIFIED_NODE_ID;
+    
+    if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
+
+        mti = MTI_VERIFIED_NODE_ID_SIMPLE;
+
+    } 
 
     OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_VERIFIED_NODE_ID);
+            mti);
 
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, statemachine_info->openlcb_node->id, 0);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->openlcb_node->id, 
+            0);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
     
-    if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
-
-        statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
-
-    }
-
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -140,7 +145,7 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 4);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 5);
     
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
     
     statemachine_info->outgoing_msg_info.valid = true;
 

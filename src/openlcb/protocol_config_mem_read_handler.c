@@ -128,7 +128,7 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             config_mem_read_request_info->address, 
             2);
     
-    statemachine_info->incoming_msg_info.msg_ptr->payload_count = 6;
+ //   statemachine_info->incoming_msg_info.msg_ptr->payload_count = 6;
     
 }
 

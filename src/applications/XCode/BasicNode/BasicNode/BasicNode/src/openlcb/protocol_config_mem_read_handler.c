@@ -111,15 +111,25 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            MTI_DATAGRAM,
-            0);
+            MTI_DATAGRAM);
 
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->outgoing_msg_info.msg_ptr->payload[1] = *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET; // generate an OK reply by default for Read/Write/Stream
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            DATAGRAM_MEMORY_CONFIGURATION,
+            0);
+    
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            1);
+   
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr, 
             config_mem_read_request_info->address, 
             2);
+    
+ //   statemachine_info->incoming_msg_info.msg_ptr->payload_count = 6;
+    
 }
 
 static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
