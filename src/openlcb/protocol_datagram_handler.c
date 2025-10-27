@@ -796,7 +796,7 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 }
 
 static void _handle_datagram_memory_configuration_command(openlcb_statemachine_info_t *statemachine_info) {
-    
+
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[1]) { // which space?
 
         case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
@@ -1038,7 +1038,7 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info);
 
             break;
- 
+
         case DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6:
 
             _handle_write_stream_address_space_at_offset_6(statemachine_info);
@@ -1110,7 +1110,7 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_fail);
 
             break;
-            
+
         case DATAGRAM_MEMORY_OPTIONS_CMD:
 
             _handle_subcommand(statemachine_info, _interface->memory_options_cmd);
@@ -1146,8 +1146,8 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
             _handle_subcommand(statemachine_info, _interface->memory_reserve_lock);
 
             break;
-            
-         case DATAGRAM_MEMORY_RESERVE_LOCK_REPLY:
+
+        case DATAGRAM_MEMORY_RESERVE_LOCK_REPLY:
 
             _handle_subcommand(statemachine_info, _interface->memory_reserve_lock_reply);
 
@@ -1158,8 +1158,8 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
             _handle_subcommand(statemachine_info, _interface->memory_get_unique_id);
 
             break;
-            
-            
+
+
         case DATAGRAM_MEMORY_GET_UNIQUE_ID_REPLY:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_unique_id_reply);
@@ -1228,7 +1228,89 @@ void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statem
 
 }
 
-void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code) {
+void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds) {
+
+    uint8_t exponent = 0;
+
+    if (reply_pending_time_in_seconds > 0) {
+
+            if (reply_pending_time_in_seconds <= 2) {
+
+                exponent = 1;
+
+            } else
+                if (reply_pending_time_in_seconds <= 4) {
+
+                exponent = 2;
+
+            } else
+                if (reply_pending_time_in_seconds <= 8) {
+
+                exponent = 3;
+
+            } else
+                if (reply_pending_time_in_seconds <= 16) {
+
+                exponent = 4;
+
+            } else
+                if (reply_pending_time_in_seconds <= 32) {
+
+                exponent = 5;
+
+            } else
+                if (reply_pending_time_in_seconds <= 64) {
+
+                exponent = 6;
+
+            } else
+                if (reply_pending_time_in_seconds <= 128) {
+
+                exponent = 7;
+
+            } else
+                if (reply_pending_time_in_seconds <= 256) {
+
+                exponent = 8;
+
+            } else
+                if (reply_pending_time_in_seconds <= 512) {
+
+                exponent = 9;
+
+            } else
+                if (reply_pending_time_in_seconds <= 1024) {
+
+                exponent = 0x0A;
+
+            } else
+                if (reply_pending_time_in_seconds <= 2048) {
+
+                exponent = 0x0B;
+
+            } else
+                if (reply_pending_time_in_seconds <= 4096) {
+
+                exponent = 0x0C;
+
+            } else
+                if (reply_pending_time_in_seconds <= 8192) {
+
+                exponent = 0x0D;
+
+            } else
+                if (reply_pending_time_in_seconds <= 16384) {
+
+                exponent = 0x0E;
+
+            } else
+                if (reply_pending_time_in_seconds <= 32769) {
+
+                exponent = 0x0F;
+
+            }
+
+        }
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -1237,14 +1319,14 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM_OK_REPLY);
-    
+
     OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
-            return_code, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            exponent | DATAGRAM_OK_REPLY_PENDING,
             0);
-    
- //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
-    
+
+    //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
+
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -1258,13 +1340,13 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM_REJECTED_REPLY);
-    
+
     OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
-            return_code, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            return_code,
             0);
-    
- //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
+
+    //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
 
     statemachine_info->outgoing_msg_info.valid = true;
 
@@ -1279,9 +1361,9 @@ void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_i
 }
 
 void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info) {
-    
+
     if ((OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) & ERROR_TEMPORARY) == ERROR_TEMPORARY) {
- 
+
         if (statemachine_info->openlcb_node->last_received_datagram) {
 
             statemachine_info->openlcb_node->state.resend_datagram = true;

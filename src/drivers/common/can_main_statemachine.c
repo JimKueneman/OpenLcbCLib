@@ -84,7 +84,7 @@ static void _reset_node(openlcb_node_t *openlcb_node) {
 
     openlcb_node->alias = 0x00;
     openlcb_node->state.permitted = false;
-    openlcb_node->state.initalized = false;
+    openlcb_node->state.initialized = false;
     openlcb_node->state.duplicate_id_detected = false;
     openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->state.resend_datagram = false;

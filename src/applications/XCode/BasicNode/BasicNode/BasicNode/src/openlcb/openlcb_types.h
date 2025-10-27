@@ -179,8 +179,8 @@ extern "C" {
     typedef uint8_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
     typedef struct {
-        uint8_t allocated : 1; // message has been allocated and is in use
-        uint8_t inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
+        bool allocated : 1; // message has been allocated and is in use
+        bool inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
     } openlcb_msg_state_t;
 
     typedef struct {
@@ -264,7 +264,7 @@ extern "C" {
     // Event ID Structures
 
     typedef struct {
-        uint8_t running : 1; // Alway, always, always reset these to false when you have finished processing a
+        bool running : 1; // Alway, always, always reset these to false when you have finished processing a
         uint8_t enum_index; // allows a counter for enumerating the event ids
     } event_id_enum_t;
 
@@ -284,13 +284,13 @@ extern "C" {
 
     typedef struct {
         uint8_t run_state : 5; // Run state... limits the number to how many bits here.... 32 possible states.
-        uint8_t allocated : 1; // Allocated to be used
-        uint8_t permitted : 1; // Has the CAN alias been allocated and the network notified
-        uint8_t initalized : 1; // Has the node been logged into the the network
-        uint8_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
-        uint8_t openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack/nack to say it was successfully received (or not) then the actual response.  This tracks which state the node is in
-        uint8_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-        uint8_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
+        bool allocated : 1; // Allocated to be used
+        bool permitted : 1; // Has the CAN alias been allocated and the network notified
+        bool initialized : 1; // Has the node been logged into the the network
+        bool duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
+        bool openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack/nack to say it was successfully received (or not) then the actual response.  This tracks which state the node is in
+        bool resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+        bool firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;
 
     typedef struct {
@@ -302,7 +302,7 @@ extern "C" {
         event_id_producer_list_t producers;
         const node_parameters_t *parameters;
         uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-        uint64_t lock_node; // node that has this node locked
+        uint64_t owner_node; // node that has this node locked
         openlcb_msg_t *last_received_datagram;
         uint8_t index; // what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
     } openlcb_node_t;

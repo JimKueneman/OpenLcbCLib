@@ -57,13 +57,13 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.run_state = RUNSTATE_INIT;
     openlcb_node->state.allocated = false;
     openlcb_node->state.duplicate_id_detected = false;
-    openlcb_node->state.initalized = false;
+    openlcb_node->state.initialized = false;
     openlcb_node->state.permitted = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;
     openlcb_node->state.resend_datagram = false;
     openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->timerticks = 0;
-    openlcb_node->lock_node = 0;
+    openlcb_node->owner_node = 0;
     openlcb_node->index = 0;
 
     openlcb_node->last_received_datagram = NULL;

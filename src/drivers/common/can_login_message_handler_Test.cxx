@@ -197,7 +197,7 @@ TEST(CanLoginMessageHandler, init)
     EXPECT_NE(can_statemachine_info.openlcb_node->seed, 0x00);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_GENERATE_ALIAS);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, generate_seed)
@@ -219,7 +219,7 @@ TEST(CanLoginMessageHandler, generate_seed)
     EXPECT_NE(can_statemachine_info.openlcb_node->seed, old_seed);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_GENERATE_ALIAS);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, generate_alias)
@@ -241,7 +241,7 @@ TEST(CanLoginMessageHandler, generate_alias)
     EXPECT_NE(can_statemachine_info.openlcb_node->alias, 0x00);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_07);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 
     _global_initialize(&interface_can_login_message_handler_on_alias_callback);
     _reset_variables();
@@ -257,7 +257,7 @@ TEST(CanLoginMessageHandler, generate_alias)
     EXPECT_NE(can_statemachine_info.openlcb_node->alias, 0x00);
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_07);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
     EXPECT_TRUE(on_alias_change_called);
 }
 
@@ -278,7 +278,7 @@ TEST(CanLoginMessageHandler, load_cid07)
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_06);
     EXPECT_TRUE(can_statemachine_info.login_outgoing_can_msg_valid);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, load_cid06)
@@ -298,7 +298,7 @@ TEST(CanLoginMessageHandler, load_cid06)
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_05);
     EXPECT_TRUE(can_statemachine_info.login_outgoing_can_msg_valid);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, load_cid05)
@@ -318,7 +318,7 @@ TEST(CanLoginMessageHandler, load_cid05)
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_04);
     EXPECT_TRUE(can_statemachine_info.login_outgoing_can_msg_valid);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, load_cid04)
@@ -338,7 +338,7 @@ TEST(CanLoginMessageHandler, load_cid04)
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_TRUE(can_statemachine_info.login_outgoing_can_msg_valid);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, wait_200ms)
@@ -357,7 +357,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 0);
 
     OpenLcbNode_100ms_timer_tick();
@@ -365,7 +365,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 1);
 
     OpenLcbNode_100ms_timer_tick();
@@ -373,7 +373,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_WAIT_200ms);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 2);
 
     OpenLcbNode_100ms_timer_tick();
@@ -381,7 +381,7 @@ TEST(CanLoginMessageHandler, wait_200ms)
 
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_RESERVE_ID);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
     EXPECT_EQ(can_statemachine_info.openlcb_node->timerticks, 3);
 }
 
@@ -402,7 +402,7 @@ TEST(CanLoginMessageHandler, load_rid)
     EXPECT_EQ(can_statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_ALIAS_MAP_DEFINITION);
     EXPECT_TRUE(can_statemachine_info.login_outgoing_can_msg_valid);
     EXPECT_FALSE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }
 
 TEST(CanLoginMessageHandler, load_amd)
@@ -426,5 +426,5 @@ TEST(CanLoginMessageHandler, load_amd)
     EXPECT_EQ(CanUtilities_extract_can_payload_as_node_id(can_statemachine_info.login_outgoing_can_msg), NODE_ID);
     EXPECT_TRUE(can_statemachine_info.login_outgoing_can_msg_valid);
     EXPECT_TRUE(can_statemachine_info.openlcb_node->state.permitted);
-    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initalized);
+    EXPECT_FALSE(can_statemachine_info.openlcb_node->state.initialized);
 }

@@ -415,14 +415,14 @@ TEST(CanRxMessageHandler, cid_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
     openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
     // ************************************************************************
@@ -436,10 +436,10 @@ TEST(CanRxMessageHandler, cid_frame)
     _test_for_all_buffer_stores_empty();
     EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node1->state.permitted);
-    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node1->state.initialized);
     EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node2->state.permitted);
-    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.initialized);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
 
@@ -455,10 +455,10 @@ TEST(CanRxMessageHandler, cid_frame)
     _test_for_all_buffer_stores_empty();
     EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node1->state.permitted);
-    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node1->state.initialized);
     EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node2->state.permitted);
-    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.initialized);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
     // ************************************************************************
@@ -473,10 +473,10 @@ TEST(CanRxMessageHandler, cid_frame)
     _test_for_all_buffer_stores_empty();
     EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node1->state.permitted);
-    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node1->state.initialized);
     EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node2->state.permitted);
-    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.initialized);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
     // ************************************************************************
@@ -491,10 +491,10 @@ TEST(CanRxMessageHandler, cid_frame)
     _test_for_all_buffer_stores_empty();
     EXPECT_TRUE(openlcb_node1->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node1->state.permitted);
-    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node1->state.initialized);
     EXPECT_TRUE(openlcb_node2->state.run_state == RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node2->state.permitted);
-    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.initialized);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_1), nullptr);
     EXPECT_NE(AliasMappings_find_mapping_by_alias(NODE_ALIAS_2), nullptr);
     // ************************************************************************
@@ -581,14 +581,14 @@ TEST(CanRxMessageHandler, rid_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
     openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
     // ************************************************************************
@@ -607,7 +607,7 @@ TEST(CanRxMessageHandler, rid_frame)
     // ************************************************************************
     openlcb_node1->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
     openlcb_node1->state.permitted = false;
-    openlcb_node1->state.initalized = false;
+    openlcb_node1->state.initialized = false;
 
     can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
     can_msg.payload_count = 0;
@@ -624,7 +624,7 @@ TEST(CanRxMessageHandler, rid_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -644,7 +644,7 @@ TEST(CanRxMessageHandler, rid_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -652,7 +652,7 @@ TEST(CanRxMessageHandler, rid_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -676,7 +676,7 @@ TEST(CanRxMessageHandler, rid_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -692,7 +692,7 @@ TEST(CanRxMessageHandler, rid_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -700,7 +700,7 @@ TEST(CanRxMessageHandler, rid_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -724,7 +724,7 @@ TEST(CanRxMessageHandler, rid_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node2->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node2->state.permitted);
-    EXPECT_FALSE(openlcb_node2->state.initalized);
+    EXPECT_FALSE(openlcb_node2->state.initialized);
     EXPECT_FALSE(openlcb_node2->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node2->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node2->state.resend_datagram);
@@ -746,14 +746,14 @@ TEST(CanRxMessageHandler, amd_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
     openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
     // ************************************************************************
@@ -772,7 +772,7 @@ TEST(CanRxMessageHandler, amd_frame)
     // ************************************************************************
     openlcb_node1->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
     openlcb_node1->state.permitted = false;
-    openlcb_node1->state.initalized = false;
+    openlcb_node1->state.initialized = false;
 
     can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
     can_msg.payload_count = 0;
@@ -789,7 +789,7 @@ TEST(CanRxMessageHandler, amd_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -809,7 +809,7 @@ TEST(CanRxMessageHandler, amd_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -817,7 +817,7 @@ TEST(CanRxMessageHandler, amd_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -841,7 +841,7 @@ TEST(CanRxMessageHandler, amd_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -857,7 +857,7 @@ TEST(CanRxMessageHandler, amd_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -865,7 +865,7 @@ TEST(CanRxMessageHandler, amd_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -889,7 +889,7 @@ TEST(CanRxMessageHandler, amd_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node2->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node2->state.permitted);
-    EXPECT_FALSE(openlcb_node2->state.initalized);
+    EXPECT_FALSE(openlcb_node2->state.initialized);
     EXPECT_FALSE(openlcb_node2->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node2->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node2->state.resend_datagram);
@@ -913,14 +913,14 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
     openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
     // ************************************************************************
@@ -936,7 +936,7 @@ TEST(CanRxMessageHandler, ame_frame)
     // Test that the nodes are untouched
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node1->state.permitted);
-    EXPECT_TRUE(openlcb_node1->state.initalized);
+    EXPECT_TRUE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -946,7 +946,7 @@ TEST(CanRxMessageHandler, ame_frame)
 
     EXPECT_EQ(openlcb_node2->state.run_state, RUNSTATE_RUN);
     EXPECT_TRUE(openlcb_node2->state.permitted);
-    EXPECT_TRUE(openlcb_node2->state.initalized);
+    EXPECT_TRUE(openlcb_node2->state.initialized);
     EXPECT_FALSE(openlcb_node2->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node2->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node2->state.resend_datagram);
@@ -963,7 +963,7 @@ TEST(CanRxMessageHandler, ame_frame)
     // ************************************************************************
     openlcb_node1->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
     openlcb_node1->state.permitted = false;
-    openlcb_node1->state.initalized = false;
+    openlcb_node1->state.initialized = false;
 
     can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
     can_msg.payload_count = 0;
@@ -980,7 +980,7 @@ TEST(CanRxMessageHandler, ame_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -1003,7 +1003,7 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1011,7 +1011,7 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -1035,7 +1035,7 @@ TEST(CanRxMessageHandler, ame_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -1059,7 +1059,7 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1067,7 +1067,7 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -1096,7 +1096,7 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1104,7 +1104,7 @@ TEST(CanRxMessageHandler, ame_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -1143,14 +1143,14 @@ TEST(CanRxMessageHandler, amr_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
     openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
     // ************************************************************************
@@ -1169,7 +1169,7 @@ TEST(CanRxMessageHandler, amr_frame)
     // ************************************************************************
     openlcb_node1->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
     openlcb_node1->state.permitted = false;
-    openlcb_node1->state.initalized = false;
+    openlcb_node1->state.initialized = false;
 
     can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
     can_msg.payload_count = 0;
@@ -1186,7 +1186,7 @@ TEST(CanRxMessageHandler, amr_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -1206,7 +1206,7 @@ TEST(CanRxMessageHandler, amr_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1214,7 +1214,7 @@ TEST(CanRxMessageHandler, amr_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -1238,7 +1238,7 @@ TEST(CanRxMessageHandler, amr_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -1254,7 +1254,7 @@ TEST(CanRxMessageHandler, amr_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1262,7 +1262,7 @@ TEST(CanRxMessageHandler, amr_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -1286,7 +1286,7 @@ TEST(CanRxMessageHandler, amr_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node2->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node2->state.permitted);
-    EXPECT_FALSE(openlcb_node2->state.initalized);
+    EXPECT_FALSE(openlcb_node2->state.initialized);
     EXPECT_FALSE(openlcb_node2->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node2->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node2->state.resend_datagram);
@@ -1874,14 +1874,14 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
 
     openlcb_node_t *openlcb_node2 = OpenLcbNode_allocate(NODE_ID_2, &_node_parameters_main_node);
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
 
     // ************************************************************************
@@ -1900,7 +1900,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     // ************************************************************************
     openlcb_node1->state.run_state = RUNSTATE_LOAD_CHECK_ID_05;
     openlcb_node1->state.permitted = false;
-    openlcb_node1->state.initalized = false;
+    openlcb_node1->state.initialized = false;
 
     can_msg.identifier = 0x10700000 | NODE_ALIAS_1;
     can_msg.payload_count = 0;
@@ -1917,7 +1917,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -1937,7 +1937,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1945,7 +1945,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -1969,7 +1969,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node1->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node1->state.permitted);
-    EXPECT_FALSE(openlcb_node1->state.initalized);
+    EXPECT_FALSE(openlcb_node1->state.initialized);
     EXPECT_FALSE(openlcb_node1->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node1->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node1->state.resend_datagram);
@@ -1985,7 +1985,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     openlcb_node1->alias = NODE_ALIAS_1;
     openlcb_node1->state.run_state = RUNSTATE_RUN;
     openlcb_node1->state.permitted = true;
-    openlcb_node1->state.initalized = true;
+    openlcb_node1->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_1)->is_permitted = true;
 
@@ -1993,7 +1993,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     openlcb_node2->alias = NODE_ALIAS_2;
     openlcb_node2->state.run_state = RUNSTATE_RUN;
     openlcb_node2->state.permitted = true;
-    openlcb_node2->state.initalized = true;
+    openlcb_node2->state.initialized = true;
     AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
     AliasMappings_find_mapping_by_alias(NODE_ALIAS_2)->is_permitted = true;
 
@@ -2017,7 +2017,7 @@ TEST(CanRxMessageHandler, error_information_report_frame)
     // Test that the node is reset and ready to generate a new Alias
     EXPECT_EQ(openlcb_node2->state.run_state, RUNSTATE_GENERATE_SEED);
     EXPECT_FALSE(openlcb_node2->state.permitted);
-    EXPECT_FALSE(openlcb_node2->state.initalized);
+    EXPECT_FALSE(openlcb_node2->state.initialized);
     EXPECT_FALSE(openlcb_node2->state.duplicate_id_detected);
     EXPECT_FALSE(openlcb_node2->state.firmware_upgrade_active);
     EXPECT_FALSE(openlcb_node2->state.resend_datagram);

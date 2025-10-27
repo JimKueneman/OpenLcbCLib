@@ -43,7 +43,7 @@
 
 typedef struct {
       
-    void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
+    void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
     
     // Callbacks

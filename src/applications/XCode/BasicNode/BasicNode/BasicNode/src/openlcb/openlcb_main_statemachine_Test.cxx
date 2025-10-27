@@ -662,27 +662,27 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg)
         EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Initization Complete but node in initialized state
-        node1->state.initalized = true;
+        node1->state.initialized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100);
         EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Verify ID Addressed to us
-        node1->state.initalized = true;
+        node1->state.initialized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488);
         EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Verify ID not Addressed to us
-        node1->state.initalized = true;
+        node1->state.initialized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, 0x488);
         EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Datagram for us
-        node1->state.initalized = true;
+        node1->state.initialized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x1C48);
         EXPECT_TRUE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
         // Datagram not for us
-        node1->state.initalized = true;
+        node1->state.initialized = true;
         OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 2, DEST_ID + 2, 0x1C48);
         EXPECT_FALSE(OpenLcbMainStatemachine_does_node_process_msg(&statemachine_info));
 
@@ -728,7 +728,7 @@ TEST(OpenLcbMainStatemachine, run)
     // // ************************************************************************
 
     // openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-    // node1->state.initalized = true;
+    // node1->state.initialized = true;
     // node1->alias = 0xAAA;
 
     // // ************************************************************************
@@ -795,7 +795,7 @@ TEST(OpenLcbMainStatemachine, run)
     // OpenLcbMainStatemachine_run();
 
     // openlcb_node_t *node2 = OpenLcbNode_allocate(0x010203040599, &_node_parameters_main_node);
-    // node2->state.initalized = true;
+    // node2->state.initialized = true;
     // node2->alias = 0xBBB;
 
     // openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -943,7 +943,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     _global_initialize_null_handlers();
 
 //     openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-//     node1->state.initalized = true;
+//     node1->state.initialized = true;
 //     node1->alias = 0xBBB;
 
 //     // ************************************************************************
@@ -1611,7 +1611,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     _global_initialize();
 
 //     openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-//     node1->state.initalized = true;
+//     node1->state.initialized = true;
 //     node1->alias = 0xBBB;
 
 //     // ************************************************************************
@@ -2237,7 +2237,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     _global_initialize();
 
 //     openlcb_node_t *node1 = OpenLcbNode_allocate(0x010203040506, &_node_parameters_main_node);
-//     node1->state.initalized = true;
+//     node1->state.initialized = true;
 //     node1->alias = 0xBBB;
 
 //     // // ************************************************************************

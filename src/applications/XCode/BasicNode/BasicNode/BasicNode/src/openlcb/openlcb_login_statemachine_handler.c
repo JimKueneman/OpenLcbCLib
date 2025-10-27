@@ -82,7 +82,7 @@ void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_state
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
 
-    statemachine_info->openlcb_node->state.initalized = true;
+    statemachine_info->openlcb_node->state.initialized = true;
     statemachine_info->openlcb_node->producers.enumerator.running = true;
     statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
     statemachine_info->outgoing_msg_info.valid = true;

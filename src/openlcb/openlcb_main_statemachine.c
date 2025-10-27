@@ -89,7 +89,7 @@ static void _free_incoming_message(openlcb_statemachine_info_t *statemachine_inf
 
 bool OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info) {
 
-    return ( (statemachine_info->openlcb_node->state.initalized) &&
+    return ( (statemachine_info->openlcb_node->state.initialized) &&
             (
             ((statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) != MASK_DEST_ADDRESS_PRESENT) || // if not addressed process it
             (((statemachine_info->openlcb_node->alias == statemachine_info->incoming_msg_info.msg_ptr->dest_alias) || (statemachine_info->openlcb_node->id == statemachine_info->incoming_msg_info.msg_ptr->dest_id)) && ((statemachine_info->incoming_msg_info.msg_ptr->mti & MASK_DEST_ADDRESS_PRESENT) == MASK_DEST_ADDRESS_PRESENT)) ||

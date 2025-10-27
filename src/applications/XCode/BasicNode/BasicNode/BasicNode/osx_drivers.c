@@ -83,7 +83,7 @@ void *thread_function_input(void *arg)
                 openlcb_node_t *node = OpenLcbNode_get_first(2);
                 
                 node->state.run_state = 0;
-                node->state.initalized = false;
+                node->state.initialized = false;
                 node->state.permitted = false;
                 
                 break;

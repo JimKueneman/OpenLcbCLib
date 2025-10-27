@@ -583,7 +583,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->alias = NODE_ALIAS_1;
     node1->state.permitted = true;
-    node1->state.initalized = true;
+    node1->state.initialized = true;
     node1->state.run_state = RUNSTATE_RUN;
 
     alias_mapping_t *alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
@@ -603,7 +603,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
 
     EXPECT_FALSE(node1->state.permitted);
-    EXPECT_FALSE(node1->state.initalized);
+    EXPECT_FALSE(node1->state.initialized);
     EXPECT_FALSE(node1->state.duplicate_id_detected);
     EXPECT_FALSE(node1->state.firmware_upgrade_active);
     EXPECT_FALSE(node1->state.resend_datagram);
@@ -616,7 +616,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->alias = NODE_ALIAS_1;
     node1->state.permitted = true;
-    node1->state.initalized = true;
+    node1->state.initialized = true;
     node1->state.run_state = RUNSTATE_RUN;
     node1->last_received_datagram = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
 
@@ -637,7 +637,7 @@ TEST(CanMainStatemachine, duplicate_alias)
     EXPECT_FALSE(handle_try_enumerate_next_node_called);
 
     EXPECT_FALSE(node1->state.permitted);
-    EXPECT_FALSE(node1->state.initalized);
+    EXPECT_FALSE(node1->state.initialized);
     EXPECT_FALSE(node1->state.duplicate_id_detected);
     EXPECT_FALSE(node1->state.firmware_upgrade_active);
     EXPECT_FALSE(node1->state.resend_datagram);
@@ -655,7 +655,7 @@ TEST(CanMainStatemachine, duplicate_alias_fail_to_find_mapping)
     openlcb_node_t *node1 = OpenLcbNode_allocate(NODE_ID_1, &_node_parameters_main_node);
     node1->alias = NODE_ALIAS_1;
     node1->state.permitted = true;
-    node1->state.initalized = true;
+    node1->state.initialized = true;
     node1->state.run_state = RUNSTATE_RUN;
 
     alias_mapping_t *alias_mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
@@ -678,7 +678,7 @@ TEST(CanMainStatemachine, duplicate_alias_fail_to_find_mapping)
 
     // Nothing happend as the find node by alias failed
     EXPECT_TRUE(node1->state.permitted);
-    EXPECT_TRUE(node1->state.initalized);
+    EXPECT_TRUE(node1->state.initialized);
     EXPECT_FALSE(node1->state.duplicate_id_detected);
     EXPECT_FALSE(node1->state.firmware_upgrade_active);
     EXPECT_FALSE(node1->state.resend_datagram);
