@@ -352,7 +352,7 @@ static void _write_request_traction_function_configuration_memory(openlcb_statem
 
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -362,7 +362,7 @@ void ProtocolConfigMemWriteHandler_memory_write_space_config_description_info(op
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_all(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_all(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -372,7 +372,7 @@ void ProtocolConfigMemWriteHandler_memory_write_space_all(openlcb_statemachine_i
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -382,7 +382,7 @@ void ProtocolConfigMemWriteHandler_memory_write_space_configuration_memory(openl
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -392,7 +392,7 @@ void ProtocolConfigMemWriteHandler_memory_write_space_acdi_manufacturer(openlcb_
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -402,7 +402,7 @@ void ProtocolConfigMemWriteHandler_memory_write_space_acdi_user(openlcb_statemac
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -412,7 +412,7 @@ void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_definiti
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -422,11 +422,11 @@ void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_config_m
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
+void ProtocolConfigMemWriteHandler_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 }
 
 void ProtocolConfigMemWriteHandlerr_memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }
 
-void ProtocolConfigMemWriteHandler_memory_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
+void ProtocolConfigMemWriteHandler_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }

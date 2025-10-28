@@ -64,19 +64,19 @@ extern "C" {
 
     extern void ProtocolConfigMemWriteHandler_initialize(const interface_protocol_config_mem_write_handler_t *interface_protocol_config_mem_write_handler);
 
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_all(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
-    extern void ProtocolConfigMemWriteHandler_memory_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_all(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
     
-    extern void ProtocolConfigMemWriteHandler_memory_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+    extern void ProtocolConfigMemWriteHandler_write_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
 
-    extern void ProtocolConfigMemWriteHandler_memory_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
-    extern void ProtocolConfigMemWriteHandler_memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    extern void ProtocolConfigMemWriteHandler_memory_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+    extern void ProtocolConfigMemWriteHandler_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+    extern void ProtocolConfigMemWriteHandler_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+    extern void ProtocolConfigMemWriteHandler_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
     
 
 #ifdef	__cplusplus

@@ -428,7 +428,7 @@ static void _read_request_traction_function_configuration_memory(openlcb_statema
 
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -438,7 +438,7 @@ void ProtocolConfigMemReadHandler_memory_read_space_config_description_info(open
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_all(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_all(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -448,7 +448,7 @@ void ProtocolConfigMemReadHandler_memory_read_space_all(openlcb_statemachine_inf
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -458,7 +458,7 @@ void ProtocolConfigMemReadHandler_memory_read_space_configuration_memory(openlcb
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -468,7 +468,7 @@ void ProtocolConfigMemReadHandler_memory_read_space_acdi_manufacturer(openlcb_st
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -478,7 +478,7 @@ void ProtocolConfigMemReadHandler_memory_read_space_acdi_user(openlcb_statemachi
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -488,7 +488,7 @@ void ProtocolConfigMemReadHandler_memory_read_space_traction_function_definition
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -498,11 +498,11 @@ void ProtocolConfigMemReadHandler_memory_read_space_traction_function_config_mem
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_memory_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
+void ProtocolConfigMemReadHandler_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 }
 
-void ProtocolConfigMemReadHandlerr_memory_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
+void ProtocolConfigMemReadHandler_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }
 
-void ProtocolConfigMemReadHandler_memory_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
+void ProtocolConfigMemReadHandler_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }

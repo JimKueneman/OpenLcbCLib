@@ -336,14 +336,14 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info)
 
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM_OK_REPLY);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
     EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -397,7 +397,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     // *****************************************
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM_REJECTED_REPLY);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -409,7 +409,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     _reset_variables();
     *incoming_msg->payload[7] = 0; // Invalid
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM_REJECTED_REPLY);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -422,7 +422,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     *incoming_msg->payload[7] = 64;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address + 1, 2);
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM_REJECTED_REPLY);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -435,14 +435,14 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     *incoming_msg->payload[7] = 64;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address, 2);
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM_OK_REPLY);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_TRUE(node1->state.openlcb_datagram_ack_sent);
     EXPECT_TRUE(statemachine_info.incoming_msg_info.enumerate);
 
-    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -490,7 +490,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_all)
 
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
-    ProtocolConfigMemReadHandler_memory_read_space_all(&statemachine_info);
+    ProtocolConfigMemReadHandler_read_space_all(&statemachine_info);
 
     // EXPECT_EQ(called_function_ptr, nullptr);
 

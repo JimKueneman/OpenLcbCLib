@@ -37,7 +37,6 @@
         <itemPath>../../../openlcb/openlcb_application.h</itemPath>
         <itemPath>../../../openlcb/protocol_message_network.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_fifo.h</itemPath>
-        <itemPath>../../../openlcb/protocol_datagram_config_mem_handler.h</itemPath>
         <itemPath>../../../openlcb/openlcb_node.h</itemPath>
         <itemPath>../../../openlcb/openlcb_defines.h</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_store.h</itemPath>
@@ -97,7 +96,6 @@
       </logicalFolder>
       <logicalFolder name="openlcb" displayName="openlcb" projectFiles="true">
         <itemPath>../../../openlcb/openlcb_buffer_fifo.c</itemPath>
-        <itemPath>../../../openlcb/protocol_datagram_config_mem_handler.c</itemPath>
         <itemPath>../../../openlcb/openlcb_node.c</itemPath>
         <itemPath>../../../openlcb/openlcb_buffer_store.c</itemPath>
         <itemPath>../../../openlcb/openlcb_utilities.c</itemPath>

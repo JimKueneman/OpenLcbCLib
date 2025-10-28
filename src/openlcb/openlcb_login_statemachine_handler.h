@@ -45,16 +45,17 @@
 
 #include "openlcb_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    typedef struct {
+typedef struct {
         
         uint16_t(*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
         uint16_t(*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
 
     } interface_openlcb_login_message_handler_t;
+
+
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
     extern void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message_handler_t *interface);
 
