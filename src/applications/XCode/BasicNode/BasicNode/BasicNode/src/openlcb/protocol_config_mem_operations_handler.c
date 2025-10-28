@@ -591,7 +591,7 @@ static void _memory_factory_reset(openlcb_statemachine_info_t *statemachine_info
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_options_cmd(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -601,7 +601,7 @@ void ProtocolConfigMemOperationsHandler_memory_options_cmd(openlcb_statemachine_
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
 }
 
-void ProtocolConfigMemOperationsHandler_memory_options_reply(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_options_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -612,7 +612,7 @@ void ProtocolConfigMemOperationsHandler_memory_options_reply(openlcb_statemachin
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_get_address_space_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_get_address_space_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -623,7 +623,7 @@ void ProtocolConfigMemOperationsHandler_memory_get_address_space_info(openlcb_st
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_not_present(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -634,7 +634,7 @@ void ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_not_
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_present(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -645,7 +645,7 @@ void ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_pres
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_reserve_lock(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -656,7 +656,7 @@ void ProtocolConfigMemOperationsHandler_memory_reserve_lock(openlcb_statemachine
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_reserve_lock_reply(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_reserve_lock_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -668,7 +668,7 @@ void ProtocolConfigMemOperationsHandler_memory_reserve_lock_reply(openlcb_statem
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_get_unique_id(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_get_unique_id(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -679,7 +679,7 @@ void ProtocolConfigMemOperationsHandler_memory_get_unique_id(openlcb_statemachin
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_get_unique_id_reply(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_get_unique_id_reply(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -690,7 +690,7 @@ void ProtocolConfigMemOperationsHandler_memory_get_unique_id_reply(openlcb_state
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_unfreeze(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -701,7 +701,7 @@ void ProtocolConfigMemOperationsHandler_memory_unfreeze(openlcb_statemachine_inf
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_freeze(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -712,7 +712,7 @@ void ProtocolConfigMemOperationsHandler_memory_freeze(openlcb_statemachine_info_
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_update_complete(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -723,7 +723,7 @@ void ProtocolConfigMemOperationsHandler_memory_update_complete(openlcb_statemach
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
@@ -734,7 +734,7 @@ void ProtocolConfigMemOperationsHandler_memory_reset_reboot(openlcb_statemachine
 
 }
 
-void ProtocolConfigMemOperationsHandler_memory_factory_reset(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 

@@ -399,13 +399,13 @@ const interface_openlcb_application_t interface_openlcb_application = {
 const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
 
     // Config Memory Read
-    .memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_memory_read_space_config_description_info,
-    .memory_read_space_all = &ProtocolConfigMemReadHandler_memory_read_space_all,
-    .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_memory_read_space_configuration_memory,
-    .memory_read_space_acdi_manufacturer = &ProtocolConfigMemReadHandler_memory_read_space_acdi_manufacturer,
-    .memory_read_space_acdi_user = &ProtocolConfigMemReadHandler_memory_read_space_acdi_user,
-    .memory_read_space_traction_function_definition_info = &ProtocolConfigMemReadHandler_memory_read_space_traction_function_definition_info,
-    .memory_read_space_traction_function_config_memory = &ProtocolConfigMemReadHandler_memory_read_space_traction_function_config_memory,
+    .memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_read_space_config_description_info,
+    .memory_read_space_all = &ProtocolConfigMemReadHandler_read_space_all,
+    .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_read_space_configuration_memory,
+    .memory_read_space_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_space_acdi_manufacturer,
+    .memory_read_space_acdi_user = &ProtocolConfigMemReadHandler_read_space_acdi_user,
+    .memory_read_space_traction_function_definition_info = &ProtocolConfigMemReadHandler_read_space_traction_function_definition_info,
+    .memory_read_space_traction_function_config_memory = &ProtocolConfigMemReadHandler_read_space_traction_function_config_memory,
 
     // Config Memory Read Reply Ok
     .memory_read_space_config_description_info_reply_ok = NULL,
@@ -516,25 +516,26 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
     
     // Config Memory Commands
-    .memory_options_cmd = &ProtocolConfigMemOperationsHandler_memory_options_cmd,
-    .memory_options_reply = &ProtocolConfigMemOperationsHandler_memory_options_reply,
-    .memory_get_address_space_info = &ProtocolConfigMemOperationsHandler_memory_get_address_space_info,
-    .memory_get_address_space_info_reply_not_present = &ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_not_present,
-    .memory_get_address_space_info_reply_present = &ProtocolConfigMemOperationsHandler_memory_get_address_space_info_reply_present,
-    .memory_reserve_lock = &ProtocolConfigMemOperationsHandler_memory_reserve_lock,
-    .memory_reserve_lock_reply = &ProtocolConfigMemOperationsHandler_memory_reserve_lock_reply,
-    .memory_get_unique_id = ProtocolConfigMemOperationsHandler_memory_get_unique_id,
-    .memory_get_unique_id_reply = &ProtocolConfigMemOperationsHandler_memory_get_unique_id_reply,
-    .memory_unfreeze = &ProtocolConfigMemOperationsHandler_memory_unfreeze,
-    .memory_freeze = &ProtocolConfigMemOperationsHandler_memory_freeze,
-    .memory_update_complete = &ProtocolConfigMemOperationsHandler_memory_update_complete,
-    .memory_reset_reboot = &ProtocolConfigMemOperationsHandler_memory_reset_reboot,
-    .memory_factory_reset = &ProtocolConfigMemOperationsHandler_memory_factory_reset,
+    .memory_options_cmd = &ProtocolConfigMemOperationsHandler_options_cmd,
+    .memory_options_reply = &ProtocolConfigMemOperationsHandler_options_reply,
+    .memory_get_address_space_info = &ProtocolConfigMemOperationsHandler_get_address_space_info,
+    .memory_get_address_space_info_reply_not_present = &ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present,
+    .memory_get_address_space_info_reply_present = &ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present,
+    .memory_reserve_lock = &ProtocolConfigMemOperationsHandler_reserve_lock,
+    .memory_reserve_lock_reply = &ProtocolConfigMemOperationsHandler_reserve_lock_reply,
+    .memory_get_unique_id = ProtocolConfigMemOperationsHandler_get_unique_id,
+    .memory_get_unique_id_reply = &ProtocolConfigMemOperationsHandler_get_unique_id_reply,
+    .memory_unfreeze = &ProtocolConfigMemOperationsHandler_unfreeze,
+    .memory_freeze = &ProtocolConfigMemOperationsHandler_freeze,
+    .memory_update_complete = &ProtocolConfigMemOperationsHandler_update_complete,
+    .memory_reset_reboot = &ProtocolConfigMemOperationsHandler_reset_reboot,
+    .memory_factory_reset = &ProtocolConfigMemOperationsHandler_factory_reset,
 
     .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
+
 
 
 
