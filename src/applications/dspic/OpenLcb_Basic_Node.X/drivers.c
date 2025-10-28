@@ -167,7 +167,7 @@ uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, conf
 
     for (int i = 0; i < count; i++) {
         
-        *buffer[i] = 0xAA;
+        (*buffer)[i] = 0x00;
         
     }
 

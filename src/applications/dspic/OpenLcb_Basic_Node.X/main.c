@@ -204,7 +204,7 @@ void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 
 static void _on_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
     
-    printf("Factory Reset: NodeID = 0x%06llX\n", *node_id);
+    printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
     
 }
 
@@ -515,7 +515,7 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
     .on_get_address_space_info_reply_present = NULL,
     .on_get_address_space_info_reply_not_present = NULL,
     .on_reserve_lock = NULL,
-    .on_lock_reserve_reply = NULL,
+    .on_reserve_lock_reply = NULL,
     .on_get_unique_id = NULL,
     .on_get_unique_id_reply = NULL,
     .on_freeze = NULL,
