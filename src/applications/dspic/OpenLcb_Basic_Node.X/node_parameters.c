@@ -61,7 +61,6 @@ const node_parameters_t NodeParameters_main_node = {
     PSI_SIMPLE_NODE_INFORMATION |
     PSI_CONFIGURATION_DESCRIPTION_INFO |
     PSI_FIRMWARE_UPGRADE
-
     ),
 
     .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
@@ -82,7 +81,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_configuration_definition.present = true,
     .address_space_configuration_definition.low_address_valid = false, // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0, // ignored if low_address_valid is false
-    .address_space_configuration_definition.highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
+    .address_space_configuration_definition.highest_address = (1098 - 1), // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
     .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
@@ -100,7 +99,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_config_memory.present = true,
     .address_space_config_memory.low_address_valid = false, // assume the low address starts at 0
     .address_space_config_memory.low_address = 0, // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.highest_address = (0x0200 - 1), // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
@@ -109,7 +108,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_manufacturer.present = true,
     .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_manufacturer.low_address = 0, // ignored if low_address_valid is false
-    .address_space_acdi_manufacturer.highest_address = 125 - 1, // Zero indexed Predefined in the Configuration Description Definition Spec 1 + 41 + 41 + 21 + 21 = 125 
+    .address_space_acdi_manufacturer.highest_address = (125 - 1), // Zero indexed Predefined in the Configuration Description Definition Spec 1 + 41 + 41 + 21 + 21 = 125 
     .address_space_acdi_manufacturer.address_space = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "ACDI access manufacturer",
 
@@ -118,7 +117,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_acdi_user.present = true,
     .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_user.low_address = 0, // ignored if low_address_valid is false
-    .address_space_acdi_user.highest_address = 128 - 1, // Zero indexed: Predefined in the Configuration Description Definition Spec = 1 + 63 + 64 = 128 bytes length
+    .address_space_acdi_user.highest_address = (128 - 1), // Zero indexed: Predefined in the Configuration Description Definition Spec = 1 + 63 + 64 = 128 bytes length
     .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ACDI access user storage",
 
@@ -127,7 +126,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_firmware.present = true,
     .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
     .address_space_firmware.low_address = 0, // Firmware ALWAYS assumes it starts at 0
-    .address_space_firmware.highest_address = 0xFFFFFFFF, // Predefined in the Configuration Description Definition Spec
+    .address_space_firmware.highest_address = (0x0100 - 1), // Predefined in the Configuration Description Definition Spec
     .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware update address space",
 

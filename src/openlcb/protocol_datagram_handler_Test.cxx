@@ -3430,8 +3430,8 @@ TEST(ProtocolDatagramHandler, load_datagram_received_ok)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
-    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 2);
-    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0000 | DATAGRAM_OK_REPLY_PENDING);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0000 | DATAGRAM_OK_REPLY_PENDING);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_alias, statemachine_info.incoming_msg_info.msg_ptr->source_alias);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_id, statemachine_info.incoming_msg_info.msg_ptr->source_id);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);

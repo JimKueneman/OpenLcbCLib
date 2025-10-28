@@ -276,6 +276,12 @@ event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t*
 
 }
 
+uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
+
+    return (*openlcb_msg->payload[offset]);
+
+}
+
 uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
 
     return (

@@ -202,13 +202,13 @@ void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 
 }
 
-static void _on_factory_reset(node_id_t *node_id) {
+static void _on_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
     
     printf("Factory Reset: NodeID = 0x%06llX\n", *node_id);
     
 }
 
-static void _on_reboot(void) {
+static void _on_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
     
     printf("\n\n\nFactory Reboot............\n\n\n");
     
@@ -509,13 +509,21 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     
-    
+    .on_options_cmd = NULL,
+    .on_options_cmd_reply = NULL,
+    .on_get_address_space_info = NULL,
+    .on_get_address_space_info_reply_present = NULL,
+    .on_get_address_space_info_reply_not_present = NULL,
+    .on_reserve_lock = NULL,
+    .on_lock_reserve_reply = NULL,
+    .on_get_unique_id = NULL,
+    .on_get_unique_id_reply = NULL,
+    .on_freeze = NULL,
+    .on_unfreeze = NULL,
+    .on_update_complete = NULL,
     .on_reset_reboot = ON_REBOOT_FUNC,         // HARDWARE INTERFACE
     .on_factory_reset = ON_FACTORY_RESET_FUNC, // HARDWARE INTERFACE
-    .on_get_address_space_information_reply = NULL,
-    .on_get_unique_id_reply = NULL,
-    .on_lock_reserve_reply = NULL
-
+    
 };
 
 const interface_openlcb_application_t interface_openlcb_application = {
