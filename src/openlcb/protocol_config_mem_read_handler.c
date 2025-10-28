@@ -228,19 +228,6 @@ static void _read_request_config_mem(openlcb_statemachine_info_t *statemachine_i
     
     if (_interface->configuration_memory_read) {
         
-        printf("testing: 0x%06lX\n", config_mem_read_request_info->address);
-        printf("testing: %d\n", config_mem_read_request_info->bytes);
-        printf("payload 0: 0x%02X\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[0]);
-        printf("payload 1: 0x%02X\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[1]);
-        printf("payload 2: %d\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[2]);
-        printf("payload 3: %d\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[3]);
-        printf("payload 4: %d\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[4]);
-        printf("payload 5: %d\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[5]);
-        printf("payload 6: %d\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[6]);
-        printf("payload 7: %d\n", *statemachine_info->incoming_msg_info.msg_ptr->payload[7]);
-        
-        
-
         uint16_t read_count = _interface->configuration_memory_read(
                 config_mem_read_request_info->address, 
                 config_mem_read_request_info->bytes, 

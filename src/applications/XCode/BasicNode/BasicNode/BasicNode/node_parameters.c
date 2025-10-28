@@ -101,7 +101,7 @@ const node_parameters_t NodeParameters_main_node = {
     .address_space_config_memory.present = true,
     .address_space_config_memory.low_address_valid = false, // assume the low address starts at 0
     .address_space_config_memory.low_address = 0, // ignored if low_address_valid is false
-    .address_space_config_memory.highest_address = 0, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_config_memory.highest_address = 0x0200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 

@@ -66,6 +66,7 @@ static void _extract_read_command_parameters(openlcb_statemachine_info_t *statem
         config_mem_read_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[6];
         config_mem_read_request_info->data_start = 6;
     }
+    
 }
 
 uint16_t _is_valid_read_parameters(config_mem_read_request_info_t *config_mem_read_request_info) {
@@ -219,13 +220,24 @@ static void _read_request_config_mem(openlcb_statemachine_info_t *statemachine_i
     _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
 
     if (_interface->on_read_space_configuration_memory) {
-
+       
         _interface->on_read_space_configuration_memory(statemachine_info, config_mem_read_request_info);
 
         return;
     }
+    
+    if (_interface->configuration_memory_read) {
+        
+        uint16_t read_count = _interface->configuration_memory_read(
+                config_mem_read_request_info->address, 
+                config_mem_read_request_info->bytes, 
+                (configuration_memory_buffer_t*) &statemachine_info->outgoing_msg_info.msg_ptr->payload[config_mem_read_request_info->data_start]
+                );
+       
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count += read_count;
+    }
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    statemachine_info->outgoing_msg_info.valid = true;
 }
 
 static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {

@@ -165,9 +165,6 @@ void BasicNodeDrivers_config_mem_factory_reset(void) {
 
 uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
 
-    printf("Address: 0x%lX, %lu\n", address, address);
-    printf("count: %d\n", count);
-    
     for (int i = 0; i < count; i++) {
         
         *buffer[i] = 0xAA;

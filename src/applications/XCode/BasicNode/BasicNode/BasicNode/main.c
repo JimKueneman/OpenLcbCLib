@@ -99,6 +99,10 @@ void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t co
 #define LOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_pause_can_rx
 #define UNLOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_resume_can_rx
 #define CONFIG_MEM_READ_FUNC OSxDrivers_config_mem_read
+#define CONFIG_MEM_WRITE_FUNC &OSxDrivers_config_mem_write
+#define ON_REBOOT_FUNC NULL
+#define ON_FACTORY_RESET_FUNC NULL
+
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
@@ -151,7 +155,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_cid_frame = CanRxMessageHandler_cid_frame,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
-    .on_receive = &_can_rx_callback
+    .on_receive = NULL
 
 };
 
@@ -159,7 +163,7 @@ const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
     .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
     // Callback events
-    .on_transmit = &_can_tx_callback
+    .on_transmit = NULL
 
 };
 
@@ -194,11 +198,10 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
 };
 
-
 const interface_openlcb_node_t interface_openlcb_node = {
 
     // Callback events
-    .on_100ms_timer_tick = &_100ms_timer_callback
+    .on_100ms_timer_tick = NULL
 
 };
 
@@ -206,8 +209,6 @@ const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_me
 
 };
 
-
-// TODO Complete
 const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
 
     // Callback events
@@ -223,7 +224,7 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
     .on_producer_identified_reserved = NULL,
     .on_event_learn = NULL,
     .on_pc_event_report = NULL,
-    .on_pc_event_report_with_payload = &_event_with_payload
+    .on_pc_event_report_with_payload = NULL
 
 };
 
@@ -251,7 +252,6 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
     .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node
 };
 
-// TODO Complete
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
     // MESSAGE NETWORK
@@ -340,6 +340,7 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
     
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
     .snip_load_name = &ProtocolSnip_load_name,
@@ -365,6 +366,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC,
     
     // Callbacks
     .on_write_space_config_decscription_info = NULL,
@@ -380,12 +382,16 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 const interface_protocol_config_mem_operations_handler_t interface_protocol_config_mem_operations_handler = {
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
-    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    
+    
+    .on_reset_reboot = ON_REBOOT_FUNC,         // HARDWARE INTERFACE
+    .on_factory_reset = ON_FACTORY_RESET_FUNC, // HARDWARE INTERFACE
+    .on_get_address_space_information_reply = NULL,
+    .on_get_unique_id_reply = NULL,
+    .on_lock_reserve_reply = NULL
 
 };
-
-// TODO Finish these interfaces
-// -------------------------------
 
 const interface_openlcb_application_t interface_openlcb_application = {
 
@@ -530,11 +536,12 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_reset_reboot = &ProtocolConfigMemOperationsHandler_memory_reset_reboot,
     .memory_factory_reset = &ProtocolConfigMemOperationsHandler_memory_factory_reset,
 
-
     .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
     .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
+
+
 
 int main(int argc, char *argv[])
 {
