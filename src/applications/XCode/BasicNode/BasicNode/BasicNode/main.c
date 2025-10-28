@@ -51,34 +51,21 @@
 
 uint64_t node_id_base = 0x0507010100AA;
 
-void _100ms_timer_callback(void) {
+void _on_100ms_timer_callback(void) {
 
     // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
 
 }
 
-void _can_rx_callback(can_msg_t* can_msg) {
+void _on_can_rx_callback(can_msg_t* can_msg) {
 
     // Called when a CAN message is received
 
-    //    printf("Rx: 0x%08lX [", can_msg->identifier);
-    //
-    //    for (int i = 0; i < can_msg->payload_count; i++) {
-    //
-    //        printf("0x%04X ", can_msg->payload[i]);
-    //
-    //    }
-    //
-    //    printf("]\n");
-
 }
 
-void _can_tx_callback(can_msg_t* can_msg) {
+void _on_can_tx_callback(can_msg_t* can_msg) {
 
     // Called when a CAN message is transmitted
-
-    //    printf("Tx: 0x%08lX\n", can_msg->identifier);
-
 }
 
 void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
@@ -88,7 +75,7 @@ void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 
 }
 
-void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
+void _on_event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
 
 
 }
@@ -155,7 +142,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_cid_frame = CanRxMessageHandler_cid_frame,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
-    .on_receive = NULL
+    .on_receive = &_on_can_rx_callback
 
 };
 
@@ -163,7 +150,7 @@ const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
     .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
     // Callback events
-    .on_transmit = NULL
+    .on_transmit = &_on_can_tx_callback
 
 };
 
@@ -201,7 +188,7 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 const interface_openlcb_node_t interface_openlcb_node = {
 
     // Callback events
-    .on_100ms_timer_tick = NULL
+    .on_100ms_timer_tick = &_on_100ms_timer_callback
 
 };
 
@@ -224,7 +211,7 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
     .on_producer_identified_reserved = NULL,
     .on_event_learn = NULL,
     .on_pc_event_report = NULL,
-    .on_pc_event_report_with_payload = NULL
+    .on_pc_event_report_with_payload = &_on_event_with_payload
 
 };
 
@@ -384,13 +371,21 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     
-    
+    .on_options_cmd = NULL,
+    .on_options_cmd_reply = NULL,
+    .on_get_address_space_info = NULL,
+    .on_get_address_space_info_reply_present = NULL,
+    .on_get_address_space_info_reply_not_present = NULL,
+    .on_reserve_lock = NULL,
+    .on_reserve_lock_reply = NULL,
+    .on_get_unique_id = NULL,
+    .on_get_unique_id_reply = NULL,
+    .on_freeze = NULL,
+    .on_unfreeze = NULL,
+    .on_update_complete = NULL,
     .on_reset_reboot = ON_REBOOT_FUNC,         // HARDWARE INTERFACE
     .on_factory_reset = ON_FACTORY_RESET_FUNC, // HARDWARE INTERFACE
-    .on_get_address_space_information_reply = NULL,
-    .on_get_unique_id_reply = NULL,
-    .on_lock_reserve_reply = NULL
-
+    
 };
 
 const interface_openlcb_application_t interface_openlcb_application = {

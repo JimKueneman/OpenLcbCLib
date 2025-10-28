@@ -69,8 +69,8 @@ node_parameters_t _node_parameters_main_node = {
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
     .address_space_configuration_definition.read_only = true,
     .address_space_configuration_definition.present = true,
-    .address_space_configuration_definition.low_address_valid = false,   // assume the low address starts at 0
-    .address_space_configuration_definition.low_address = 0,         // ignored if low_address_valid is false
+    .address_space_configuration_definition.low_address_valid = false,  // assume the low address starts at 0
+    .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
     .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
@@ -79,7 +79,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_all.read_only = true,
     .address_space_all.present = false,
     .address_space_all.low_address_valid = false, // assume the low address starts at 0
-    .address_space_all.low_address = 0,       // ignored if low_address_valid is false
+    .address_space_all.low_address = 0,           // ignored if low_address_valid is false
     .address_space_all.highest_address = 0,
     .address_space_all.address_space = ADDRESS_SPACE_ALL,
     .address_space_all.description = "All memory Info",
@@ -87,7 +87,7 @@ node_parameters_t _node_parameters_main_node = {
     // Space 0xFD
     .address_space_config_memory.read_only = true,
     .address_space_config_memory.present = true,
-    .address_space_config_memory.low_address_valid = false,                                // assume the low address starts at 0
+    .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
@@ -96,51 +96,51 @@ node_parameters_t _node_parameters_main_node = {
     // Space 0xEF
     .address_space_firmware.read_only = false,
     .address_space_firmware.present = true,
-    .address_space_firmware.low_address_valid = false,   // assume the low address starts at 0
-    .address_space_firmware.low_address = 0,         // ignored if low_address_valid is false
-    .address_space_firmware.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
+    .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
+    .address_space_firmware.highest_address = 0x200,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 
     .cdi =
         {
             // </cdi>
-               0x3C, 0x3F, 0x78, 0x6D, 0x6C, 0x20, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x31, 0x2E, 0x30, 0x22, 0x20, 0x65, 0x6E, 0x63, 0x6F, 0x64, 0x69, 0x6E, 0x67, 0x3D, 0x22, 0x55, 0x54, 0x46, 0x2D, 0x38, 0x22, 0x3F, 0x3E, // <?xml version="1.0" encoding="UTF-8"?>
-        0x3C, 0x3F, 0x78, 0x6D, 0x6C, 0x2D, 0x73, 0x74, 0x79, 0x6C, 0x65, 0x73, 0x68, 0x65, 0x65, 0x74, 0x20, 0x74, 0x79, 0x70, 0x65, 0x3D, 0x22, 0x74, 0x65, 0x78, 0x74, 0x2F, 0x78, 0x73, 0x6C, 0x22, 0x20, 0x68, 0x72, 0x65, 0x66, 0x3D, 0x22, 0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6F, 0x70, 0x65, 0x6E, 0x6C, 0x63, 0x62, 0x2E, 0x6F, 0x72, 0x67, 0x2F, 0x74, 0x72, 0x75, 0x6E, 0x6B, 0x2F, 0x70, 0x72, 0x6F, 0x74, 0x6F, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2F, 0x78, 0x6D, 0x6C, 0x2F, 0x78, 0x73, 0x6C, 0x74, 0x2F, 0x63, 0x64, 0x69, 0x2E, 0x78, 0x73, 0x6C, 0x22, 0x3F, 0x3E, // <?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>
-        0x3C, 0x63, 0x64, 0x69, 0x20, 0x78, 0x6D, 0x6C, 0x6E, 0x73, 0x3A, 0x78, 0x73, 0x69, 0x3D, 0x22, 0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x77, 0x77, 0x77, 0x2E, 0x77, 0x33, 0x2E, 0x6F, 0x72, 0x67, 0x2F, 0x32, 0x30, 0x30, 0x31, 0x2F, 0x58, 0x4D, 0x4C, 0x53, 0x63, 0x68, 0x65, 0x6D, 0x61, 0x2D, 0x69, 0x6E, 0x73, 0x74, 0x61, 0x6E, 0x63, 0x65, 0x22, 0x20, 0x78, 0x73, 0x69, 0x3A, 0x6E, 0x6F, 0x4E, 0x61, 0x6D, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x53, 0x63, 0x68, 0x65, 0x6D, 0x61, 0x4C, 0x6F, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6F, 0x70, 0x65, 0x6E, 0x6C, 0x63, 0x62, 0x2E, 0x6F, 0x72, 0x67, 0x2F, 0x73, 0x63, 0x68, 0x65, 0x6D, 0x61, 0x2F, 0x63, 0x64, 0x69, 0x2F, 0x31, 0x2F, 0x34, 0x2F, 0x63, 0x64, 0x69, 0x2E, 0x78, 0x73, 0x64, 0x22, 0x3E, // <cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
-        0x3C, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // <identification>
-        0x3C, 0x6D, 0x61, 0x6E, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x72, 0x3E, 0x42, 0x61, 0x73, 0x69, 0x63, 0x20, 0x4F, 0x70, 0x65, 0x6E, 0x4C, 0x63, 0x62, 0x20, 0x4E, 0x6F, 0x64, 0x65, 0x3C, 0x2F, 0x6D, 0x61, 0x6E, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x72, 0x3E, // <manufacturer>Basic OpenLcb Node</manufacturer>
-        0x3C, 0x6D, 0x6F, 0x64, 0x65, 0x6C, 0x3E, 0x54, 0x65, 0x73, 0x74, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3C, 0x2F, 0x6D, 0x6F, 0x64, 0x65, 0x6C, 0x3E, // <model>Test Application</model>
-        0x3C, 0x68, 0x61, 0x72, 0x64, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E, 0x30, 0x2E, 0x30, 0x2E, 0x31, 0x3C, 0x2F, 0x68, 0x61, 0x72, 0x64, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E, // <hardwareVersion>0.0.1</hardwareVersion>
-        0x3C, 0x73, 0x6F, 0x66, 0x74, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E, 0x30, 0x2E, 0x30, 0x2E, 0x31, 0x3C, 0x2F, 0x73, 0x6F, 0x66, 0x74, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E, // <softwareVersion>0.0.1</softwareVersion>
-        0x3C, 0x6D, 0x61, 0x70, 0x3E, // <map>
-        0x3C, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // <relation>
-        0x3C, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3C, 0x2F, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E, // <property>Description</property>
-        0x3C, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E, 0x4D, 0x75, 0x73, 0x74, 0x61, 0x6E, 0x67, 0x70, 0x65, 0x61, 0x6B, 0x20, 0x54, 0x65, 0x73, 0x74, 0x20, 0x4E, 0x6F, 0x64, 0x65, 0x3C, 0x2F, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E, // <value>Mustangpeak Test Node</value>
-        0x3C, 0x2F, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // </relation>
-        0x3C, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // <relation>
-        0x3C, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x3C, 0x2F, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E, // <property>Status</property>
-        0x3C, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E, 0x50, 0x72, 0x6F, 0x74, 0x6F, 0x74, 0x79, 0x70, 0x65, 0x3C, 0x2F, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E, // <value>Prototype</value>
-        0x3C, 0x2F, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // </relation>
-        0x3C, 0x2F, 0x6D, 0x61, 0x70, 0x3E, // </map>
-        0x3C, 0x2F, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // </identification>
-        0x3C, 0x61, 0x63, 0x64, 0x69, 0x2F, 0x3E, // <acdi/>
-        0x3C, 0x73, 0x65, 0x67, 0x6D, 0x65, 0x6E, 0x74, 0x20, 0x6F, 0x72, 0x69, 0x67, 0x69, 0x6E, 0x3D, 0x22, 0x30, 0x22, 0x20, 0x73, 0x70, 0x61, 0x63, 0x65, 0x3D, 0x22, 0x32, 0x35, 0x33, 0x22, 0x3E, // <segment origin="0" space="253">
-        0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x4C, 0x61, 0x79, 0x6F, 0x75, 0x74, 0x20, 0x43, 0x6F, 0x6E, 0x66, 0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x53, 0x65, 0x74, 0x75, 0x70, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E, // <name>Layout Configuration Setup</name>
-        0x3C, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E, 0x54, 0x68, 0x65, 0x20, 0x62, 0x61, 0x73, 0x69, 0x63, 0x20, 0x69, 0x6E, 0x66, 0x6F, 0x72, 0x6D, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x20, 0x74, 0x6F, 0x20, 0x67, 0x65, 0x74, 0x20, 0x79, 0x6F, 0x75, 0x72, 0x20, 0x54, 0x75, 0x72, 0x6E, 0x6F, 0x75, 0x74, 0x42, 0x6F, 0x73, 0x73, 0x20, 0x75, 0x70, // <description>The basic information required to get your TurnoutBoss up
-        0x61, 0x6E, 0x64, 0x20, 0x6F, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x61, 0x6C, 0x20, 0x74, 0x6F, 0x20, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x20, 0x61, 0x20, 0x66, 0x75, 0x6C, 0x6C, 0x79, 0x20, 0x73, 0x69, 0x67, 0x6E, 0x61, 0x6C, 0x65, 0x64, 0x20, 0x6C, 0x61, 0x79, 0x6F, 0x75, 0x74, 0x2E, 0x3C, 0x2F, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // and operational to create a fully signaled layout.</description>
-        0x3C, 0x67, 0x72, 0x6F, 0x75, 0x70, 0x3E, // <group>
-        0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x55, 0x73, 0x65, 0x72, 0x20, 0x49, 0x6E, 0x66, 0x6F, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E, // <name>User Info</name>
-        0x3C, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E, 0x45, 0x6E, 0x74, 0x65, 0x72, 0x20, 0x61, 0x20, 0x6E, 0x61, 0x6D, 0x65, 0x20, 0x61, 0x6E, 0x64, 0x20, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x74, 0x6F, 0x20, 0x68, 0x65, 0x6C, 0x70, 0x20, 0x75, 0x6E, 0x69, 0x71, 0x75, 0x65, 0x6C, 0x79, 0x20, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x79, 0x20, 0x74, 0x68, 0x69, 0x73, 0x20, 0x54, 0x75, 0x72, 0x6E, 0x6F, 0x75, 0x74, 0x42, 0x6F, 0x73, 0x73, 0x2E, 0x3C, 0x2F, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E, // <description>Enter a name and description to help uniquely identify this TurnoutBoss.</description>
-        0x3C, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x20, 0x73, 0x69, 0x7A, 0x65, 0x3D, 0x22, 0x36, 0x33, 0x22, 0x3E, // <string size="63">
-        0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x55, 0x73, 0x65, 0x72, 0x20, 0x4E, 0x61, 0x6D, 0x65, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E, // <name>User Name</name>
-        0x3C, 0x2F, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x3E, // </string>
-        0x3C, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x20, 0x73, 0x69, 0x7A, 0x65, 0x3D, 0x22, 0x36, 0x34, 0x22, 0x3E, // <string size="64">
-        0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x55, 0x73, 0x65, 0x72, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E, // <name>User Description</name>
-        0x3C, 0x2F, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x3E, // </string>
-        0x3C, 0x2F, 0x67, 0x72, 0x6F, 0x75, 0x70, 0x3E, // </group>
-        0x3C, 0x2F, 0x73, 0x65, 0x67, 0x6D, 0x65, 0x6E, 0x74, 0x3E, // </segment>
-        0x3C, 0x2F, 0x63, 0x64, 0x69, 0x3E, 0x00 // </cdi>
+            0x3C, 0x3F, 0x78, 0x6D, 0x6C, 0x20, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x31, 0x2E, 0x30, 0x22, 0x20, 0x65, 0x6E, 0x63, 0x6F, 0x64, 0x69, 0x6E, 0x67, 0x3D, 0x22, 0x55, 0x54, 0x46, 0x2D, 0x38, 0x22, 0x3F, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           // <?xml version="1.0" encoding="UTF-8"?>
+            0x3C, 0x3F, 0x78, 0x6D, 0x6C, 0x2D, 0x73, 0x74, 0x79, 0x6C, 0x65, 0x73, 0x68, 0x65, 0x65, 0x74, 0x20, 0x74, 0x79, 0x70, 0x65, 0x3D, 0x22, 0x74, 0x65, 0x78, 0x74, 0x2F, 0x78, 0x73, 0x6C, 0x22, 0x20, 0x68, 0x72, 0x65, 0x66, 0x3D, 0x22, 0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6F, 0x70, 0x65, 0x6E, 0x6C, 0x63, 0x62, 0x2E, 0x6F, 0x72, 0x67, 0x2F, 0x74, 0x72, 0x75, 0x6E, 0x6B, 0x2F, 0x70, 0x72, 0x6F, 0x74, 0x6F, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2F, 0x78, 0x6D, 0x6C, 0x2F, 0x78, 0x73, 0x6C, 0x74, 0x2F, 0x63, 0x64, 0x69, 0x2E, 0x78, 0x73, 0x6C, 0x22, 0x3F, 0x3E,                                                                                                                                                                                                                                           // <?xml-stylesheet type="text/xsl" href="http://openlcb.org/trunk/prototypes/xml/xslt/cdi.xsl"?>
+            0x3C, 0x63, 0x64, 0x69, 0x20, 0x78, 0x6D, 0x6C, 0x6E, 0x73, 0x3A, 0x78, 0x73, 0x69, 0x3D, 0x22, 0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x77, 0x77, 0x77, 0x2E, 0x77, 0x33, 0x2E, 0x6F, 0x72, 0x67, 0x2F, 0x32, 0x30, 0x30, 0x31, 0x2F, 0x58, 0x4D, 0x4C, 0x53, 0x63, 0x68, 0x65, 0x6D, 0x61, 0x2D, 0x69, 0x6E, 0x73, 0x74, 0x61, 0x6E, 0x63, 0x65, 0x22, 0x20, 0x78, 0x73, 0x69, 0x3A, 0x6E, 0x6F, 0x4E, 0x61, 0x6D, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x53, 0x63, 0x68, 0x65, 0x6D, 0x61, 0x4C, 0x6F, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6F, 0x70, 0x65, 0x6E, 0x6C, 0x63, 0x62, 0x2E, 0x6F, 0x72, 0x67, 0x2F, 0x73, 0x63, 0x68, 0x65, 0x6D, 0x61, 0x2F, 0x63, 0x64, 0x69, 0x2F, 0x31, 0x2F, 0x34, 0x2F, 0x63, 0x64, 0x69, 0x2E, 0x78, 0x73, 0x64, 0x22, 0x3E, // <cdi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://openlcb.org/schema/cdi/1/4/cdi.xsd">
+            0x3C, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // <identification>
+            0x3C, 0x6D, 0x61, 0x6E, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x72, 0x3E, 0x42, 0x61, 0x73, 0x69, 0x63, 0x20, 0x4F, 0x70, 0x65, 0x6E, 0x4C, 0x63, 0x62, 0x20, 0x4E, 0x6F, 0x64, 0x65, 0x3C, 0x2F, 0x6D, 0x61, 0x6E, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x72, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // <manufacturer>Basic OpenLcb Node</manufacturer>
+            0x3C, 0x6D, 0x6F, 0x64, 0x65, 0x6C, 0x3E, 0x54, 0x65, 0x73, 0x74, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3C, 0x2F, 0x6D, 0x6F, 0x64, 0x65, 0x6C, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // <model>Test Application</model>
+            0x3C, 0x68, 0x61, 0x72, 0x64, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E, 0x30, 0x2E, 0x30, 0x2E, 0x31, 0x3C, 0x2F, 0x68, 0x61, 0x72, 0x64, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // <hardwareVersion>0.0.1</hardwareVersion>
+            0x3C, 0x73, 0x6F, 0x66, 0x74, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E, 0x30, 0x2E, 0x30, 0x2E, 0x31, 0x3C, 0x2F, 0x73, 0x6F, 0x66, 0x74, 0x77, 0x61, 0x72, 0x65, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // <softwareVersion>0.0.1</softwareVersion>
+            0x3C, 0x6D, 0x61, 0x70, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 // <map>
+            0x3C, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // <relation>
+            0x3C, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3C, 0x2F, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // <property>Description</property>
+            0x3C, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E, 0x4D, 0x75, 0x73, 0x74, 0x61, 0x6E, 0x67, 0x70, 0x65, 0x61, 0x6B, 0x20, 0x54, 0x65, 0x73, 0x74, 0x20, 0x4E, 0x6F, 0x64, 0x65, 0x3C, 0x2F, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       // <value>Mustangpeak Test Node</value>
+            0x3C, 0x2F, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // </relation>
+            0x3C, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // <relation>
+            0x3C, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x3C, 0x2F, 0x70, 0x72, 0x6F, 0x70, 0x65, 0x72, 0x74, 0x79, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // <property>Status</property>
+            0x3C, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E, 0x50, 0x72, 0x6F, 0x74, 0x6F, 0x74, 0x79, 0x70, 0x65, 0x3C, 0x2F, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // <value>Prototype</value>
+            0x3C, 0x2F, 0x72, 0x65, 0x6C, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // </relation>
+            0x3C, 0x2F, 0x6D, 0x61, 0x70, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           // </map>
+            0x3C, 0x2F, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         // </identification>
+            0x3C, 0x61, 0x63, 0x64, 0x69, 0x2F, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // <acdi/>
+            0x3C, 0x73, 0x65, 0x67, 0x6D, 0x65, 0x6E, 0x74, 0x20, 0x6F, 0x72, 0x69, 0x67, 0x69, 0x6E, 0x3D, 0x22, 0x30, 0x22, 0x20, 0x73, 0x70, 0x61, 0x63, 0x65, 0x3D, 0x22, 0x32, 0x35, 0x33, 0x22, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // <segment origin="0" space="253">
+            0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x4C, 0x61, 0x79, 0x6F, 0x75, 0x74, 0x20, 0x43, 0x6F, 0x6E, 0x66, 0x69, 0x67, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x53, 0x65, 0x74, 0x75, 0x70, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // <name>Layout Configuration Setup</name>
+            0x3C, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E, 0x54, 0x68, 0x65, 0x20, 0x62, 0x61, 0x73, 0x69, 0x63, 0x20, 0x69, 0x6E, 0x66, 0x6F, 0x72, 0x6D, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x20, 0x74, 0x6F, 0x20, 0x67, 0x65, 0x74, 0x20, 0x79, 0x6F, 0x75, 0x72, 0x20, 0x54, 0x75, 0x72, 0x6E, 0x6F, 0x75, 0x74, 0x42, 0x6F, 0x73, 0x73, 0x20, 0x75, 0x70,                                                                                                                                                                                                                                                                                                                                                                                           // <description>The basic information required to get your TurnoutBoss up
+            0x61, 0x6E, 0x64, 0x20, 0x6F, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x61, 0x6C, 0x20, 0x74, 0x6F, 0x20, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x20, 0x61, 0x20, 0x66, 0x75, 0x6C, 0x6C, 0x79, 0x20, 0x73, 0x69, 0x67, 0x6E, 0x61, 0x6C, 0x65, 0x64, 0x20, 0x6C, 0x61, 0x79, 0x6F, 0x75, 0x74, 0x2E, 0x3C, 0x2F, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                               // and operational to create a fully signaled layout.</description>
+            0x3C, 0x67, 0x72, 0x6F, 0x75, 0x70, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // <group>
+            0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x55, 0x73, 0x65, 0x72, 0x20, 0x49, 0x6E, 0x66, 0x6F, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           // <name>User Info</name>
+            0x3C, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E, 0x45, 0x6E, 0x74, 0x65, 0x72, 0x20, 0x61, 0x20, 0x6E, 0x61, 0x6D, 0x65, 0x20, 0x61, 0x6E, 0x64, 0x20, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x74, 0x6F, 0x20, 0x68, 0x65, 0x6C, 0x70, 0x20, 0x75, 0x6E, 0x69, 0x71, 0x75, 0x65, 0x6C, 0x79, 0x20, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x79, 0x20, 0x74, 0x68, 0x69, 0x73, 0x20, 0x54, 0x75, 0x72, 0x6E, 0x6F, 0x75, 0x74, 0x42, 0x6F, 0x73, 0x73, 0x2E, 0x3C, 0x2F, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3E,                                                                                                                                                                                                             // <description>Enter a name and description to help uniquely identify this TurnoutBoss.</description>
+            0x3C, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x20, 0x73, 0x69, 0x7A, 0x65, 0x3D, 0x22, 0x36, 0x33, 0x22, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // <string size="63">
+            0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x55, 0x73, 0x65, 0x72, 0x20, 0x4E, 0x61, 0x6D, 0x65, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           // <name>User Name</name>
+            0x3C, 0x2F, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         // </string>
+            0x3C, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x20, 0x73, 0x69, 0x7A, 0x65, 0x3D, 0x22, 0x36, 0x34, 0x22, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // <string size="64">
+            0x3C, 0x6E, 0x61, 0x6D, 0x65, 0x3E, 0x55, 0x73, 0x65, 0x72, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x3C, 0x2F, 0x6E, 0x61, 0x6D, 0x65, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 // <name>User Description</name>
+            0x3C, 0x2F, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         // </string>
+            0x3C, 0x2F, 0x67, 0x72, 0x6F, 0x75, 0x70, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // </group>
+            0x3C, 0x2F, 0x73, 0x65, 0x67, 0x6D, 0x65, 0x6E, 0x74, 0x3E,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // </segment>
+            0x3C, 0x2F, 0x63, 0x64, 0x69, 0x3E, 0x00                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      // </cdi>
         },
 
 };
@@ -166,46 +166,60 @@ void _load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_i
     ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, return_code);
 }
 
-void _on_read_space_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     _update_called_function_ptr((void *)&_on_read_space_config_decscription_info);
+
+    return true;
 }
 
-void _on_read_space_all(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_all(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     _update_called_function_ptr((void *)&_on_read_space_all);
+
+    return true;
 }
 
-void _on_read_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-     _update_called_function_ptr((void *)&_on_read_space_configuration_memory);
+    _update_called_function_ptr((void *)&_on_read_space_configuration_memory);
+
+    return true;
 }
 
-void _on_read_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-     _update_called_function_ptr((void *)&_on_read_space_acdi_manufacturer);
+    _update_called_function_ptr((void *)&_on_read_space_acdi_manufacturer);
+
+    return true;
 }
 
-void _on_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-     _update_called_function_ptr((void *)&_on_read_space_acdi_user);
+    _update_called_function_ptr((void *)&_on_read_space_acdi_user);
+
+    return true;
 }
 
-void _on_read_space_traction_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_traction_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     _update_called_function_ptr((void *)&_on_read_space_traction_config_decscription_info);
+
+    return true;
 }
 
-void _on_read_space_traction_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_read_space_traction_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
-     _update_called_function_ptr((void *)&_on_read_space_traction_config_memory);
+    _update_called_function_ptr((void *)&_on_read_space_traction_config_memory);
+
+    return true;
 }
 
 const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler = {
@@ -289,7 +303,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info)
     _reset_variables();
     _global_initialize();
 
-     _reset_variables();
+    _reset_variables();
     _global_initialize();
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
@@ -336,12 +350,11 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info)
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
     EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
     EXPECT_EQ(outgoing_msg->payload_count, 64 + 7);
-     for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++)
+    {
 
-         EXPECT_EQ(*outgoing_msg->payload[i + 7], _node_parameters_main_node.cdi[i]);
-        
-     }
-
+        EXPECT_EQ(*outgoing_msg->payload[i + 7], _node_parameters_main_node.cdi[i]);
+    }
 }
 
 TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad_size_parameter)
@@ -350,7 +363,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     _reset_variables();
     _global_initialize();
 
-     _reset_variables();
+    _reset_variables();
     _global_initialize();
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
@@ -378,7 +391,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
-    *incoming_msg->payload[7] = 64 + 1;  // Invalid
+    *incoming_msg->payload[7] = 64 + 1; // Invalid
     incoming_msg->payload_count = 8;
 
     // *****************************************
@@ -392,10 +405,9 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_msg, 0), ERROR_PERMANENT_INVALID_ARGUMENTS);
 
-
     // *****************************************
-     _reset_variables();
-    *incoming_msg->payload[7] = 0;  // Invalid
+    _reset_variables();
+    *incoming_msg->payload[7] = 0; // Invalid
 
     ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
 
@@ -406,9 +418,9 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_msg, 0), ERROR_PERMANENT_INVALID_ARGUMENTS);
 
     // *****************************************
-     _reset_variables();
+    _reset_variables();
     *incoming_msg->payload[7] = 64;
-   OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address + 1, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address + 1, 2);
 
     ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
 
@@ -418,12 +430,12 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_msg, 0), ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
 
-     // *****************************************
+    // *****************************************
     _reset_variables();
     *incoming_msg->payload[7] = 64;
-   OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address, 2);
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, node1->parameters->address_space_configuration_definition.highest_address, 2);
 
-   ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
+    ProtocolConfigMemReadHandler_memory_read_space_config_description_info(&statemachine_info);
 
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM_OK_REPLY);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
@@ -437,8 +449,6 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
     EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
     EXPECT_EQ(outgoing_msg->payload_count, 1 + 7); // Will clip the requested 64 to just the last byte as the addres is parameters->address_space_configuration_definition.highest_address
-
-
 }
 
 TEST(ProtocolConfigMemReadHandler, memory_read_space_all)
@@ -447,7 +457,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_all)
     _reset_variables();
     _global_initialize();
 
-     _reset_variables();
+    _reset_variables();
     _global_initialize();
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
@@ -484,7 +494,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_all)
 
     // EXPECT_EQ(called_function_ptr, nullptr);
 
-     _reset_variables();
+    _reset_variables();
     _global_initialize_with_callbacks();
 
     incoming_msg->dest_id = DEST_ID;
@@ -502,5 +512,4 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_all)
 
     // EXPECT_EQ(called_function_ptr, &_on_read_space_config_decscription_info);
     // EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-
 }

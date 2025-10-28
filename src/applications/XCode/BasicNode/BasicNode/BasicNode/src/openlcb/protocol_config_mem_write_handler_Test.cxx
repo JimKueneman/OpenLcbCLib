@@ -84,7 +84,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_all.read_only = true,
     .address_space_all.present = false,
     .address_space_all.low_address_valid = false, // assume the low address starts at 0
-    .address_space_all.low_address = 0,       // ignored if low_address_valid is false
+    .address_space_all.low_address = 0,           // ignored if low_address_valid is false
     .address_space_all.highest_address = 0,
     .address_space_all.address_space = ADDRESS_SPACE_ALL,
     .address_space_all.description = "All memory Info",
@@ -92,7 +92,7 @@ node_parameters_t _node_parameters_main_node = {
     // Space 0xFD
     .address_space_config_memory.read_only = false,
     .address_space_config_memory.present = false,
-    .address_space_config_memory.low_address_valid = false,                                // assume the low address starts at 0
+    .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
@@ -130,46 +130,60 @@ void _ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachin
     ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, return_code);
 }
 
-void _on_write_space_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_config_decscription_info_called = true;
+
+    return true;
 }
 
-void _on_write_space_all(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_all(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_all = true;
+
+    return true;
 }
 
-void _on_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_configuration_memory = true;
+
+    return true;
 }
 
-void _on_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_acdi_manufacturer = true;
+
+    return true;
 }
 
-void _on_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_acdi_user = true;
+
+    return true;
 }
 
-void _on_write_space_traction_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_traction_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_traction_config_decscription_info = true;
+
+    return true;
 }
 
-void _on_write_space_traction_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
+bool _on_write_space_traction_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info)
 {
 
     on_write_space_traction_config_memory = true;
+
+    return true;
 }
 
 const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
@@ -194,13 +208,13 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_rejected_message = &_ProtocolDatagramHandler_load_datagram_rejected_message,
 
     // Callbacks
-    .on_write_space_config_decscription_info = &_on_write_space_config_decscription_info,
-    .on_write_space_all = &_on_write_space_all,
-    .on_write_space_configuration_memory = &_on_write_space_configuration_memory,
-    .on_write_space_acdi_manufacturer = &_on_write_space_acdi_manufacturer,
-    .on_write_space_acdi_user = &_on_write_space_acdi_user,
-    .on_write_space_traction_config_decscription_info = &_on_write_space_traction_config_decscription_info,
-    .on_write_space_traction_config_memory = &_on_write_space_traction_config_memory
+    // .on_write_space_config_decscription_info = &_on_write_space_config_decscription_info,
+    // .on_write_space_all = &_on_write_space_all,
+    // .on_write_space_configuration_memory = &_on_write_space_configuration_memory,
+    // .on_write_space_acdi_manufacturer = &_on_write_space_acdi_manufacturer,
+    // .on_write_space_acdi_user = &_on_write_space_acdi_user,
+    // .on_write_space_traction_config_decscription_info = &_on_write_space_traction_config_decscription_info,
+    // .on_write_space_traction_config_memory = &_on_write_space_traction_config_memory
 
 };
 

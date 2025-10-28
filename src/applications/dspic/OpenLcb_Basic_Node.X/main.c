@@ -202,17 +202,21 @@ void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 
 }
 
-static void _on_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+static bool _on_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
     
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
     
+    return true;
+    
 }
 
-static void _on_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+static bool _on_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
     
     printf("\n\n\nFactory Reboot............\n\n\n");
     
     BasicNodeDrivers_reboot();
+    
+    return true;
     
 }
 

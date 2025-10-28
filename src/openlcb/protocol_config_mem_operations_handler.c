@@ -112,6 +112,8 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             DATAGRAM_MEMORY_CONFIGURATION,
             0);
 
+    statemachine_info->outgoing_msg_info.valid = false; // Assume there is not a message to send by default
+
 }
 
 static uint8_t _available_write_flags(openlcb_statemachine_info_t *statemachine_info) {
@@ -227,15 +229,15 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
 
 static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_options_cmd) {
 
-        _interface->on_options_cmd(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_options_cmd(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -279,15 +281,15 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
 
 static void _memory_options_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_options_cmd_reply) {
 
-        _interface->on_options_cmd_reply(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_options_cmd_reply(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -299,13 +301,13 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     if (_interface->on_get_address_space_info) {
 
-        _interface->on_get_address_space_info(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_get_address_space_info(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -381,15 +383,15 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
 static void _memory_get_address_space_info_reply_not_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_get_address_space_info_reply_not_present) {
 
-        _interface->on_get_address_space_info_reply_not_present(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_get_address_space_info_reply_not_present(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -397,15 +399,15 @@ static void _memory_get_address_space_info_reply_not_present(openlcb_statemachin
 
 static void _memory_get_address_space_info_reply_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_get_address_space_info_reply_present) {
 
-        _interface->on_get_address_space_info_reply_present(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_get_address_space_info_reply_present(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -413,15 +415,15 @@ static void _memory_get_address_space_info_reply_present(openlcb_statemachine_in
 
 static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_reserve_lock) {
 
-        _interface->on_reserve_lock(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_reserve_lock(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -459,15 +461,15 @@ static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info,
 
 static void _memory_reserve_lock_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_reserve_lock_reply) {
 
-        _interface->on_reserve_lock_reply(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_reserve_lock_reply(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -475,15 +477,15 @@ static void _memory_reserve_lock_reply(openlcb_statemachine_info_t *statemachine
 
 static void _memory_get_unique_id(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_get_unique_id) {
 
-        _interface->on_get_unique_id(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_get_unique_id(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -491,15 +493,15 @@ static void _memory_get_unique_id(openlcb_statemachine_info_t *statemachine_info
 
 static void _memory_get_unique_id_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_get_unique_id_reply) {
 
-        _interface->on_get_unique_id_reply(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_get_unique_id_reply(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -507,15 +509,15 @@ static void _memory_get_unique_id_reply(openlcb_statemachine_info_t *statemachin
 
 static void _memory_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_unfreeze) {
 
-        _interface->on_unfreeze(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_unfreeze(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -523,15 +525,15 @@ static void _memory_unfreeze(openlcb_statemachine_info_t *statemachine_info, con
 
 static void _memory_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_freeze) {
 
-        _interface->on_freeze(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_freeze(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -539,15 +541,15 @@ static void _memory_freeze(openlcb_statemachine_info_t *statemachine_info, confi
 
 static void _memory_update_complete(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     if (_interface->on_update_complete) {
 
-        _interface->on_update_complete(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_update_complete(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -555,17 +557,17 @@ static void _memory_update_complete(openlcb_statemachine_info_t *statemachine_in
 
 static void _memory_reset_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     statemachine_info->openlcb_node->owner_node = 0;
 
     if (_interface->on_reset_reboot) {
 
-        _interface->on_reset_reboot(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_reset_reboot(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 
@@ -573,17 +575,17 @@ static void _memory_reset_reboot(openlcb_statemachine_info_t *statemachine_info,
 
 static void _memory_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     statemachine_info->openlcb_node->owner_node = 0;
 
     if (_interface->on_factory_reset) {
 
-        _interface->on_factory_reset(statemachine_info, config_mem_operations_request_info);
+        if (_interface->on_factory_reset(statemachine_info, config_mem_operations_request_info)) {
 
-        return;
+            return;
+
+        }
 
     }
 

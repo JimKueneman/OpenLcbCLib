@@ -395,6 +395,22 @@ extern "C" {
         read_config_mem_space_func_t read_space_func;
 
     } config_mem_read_request_info_t;
+    
+
+    struct config_mem_write_request_info_TAG;
+
+    typedef void (*write_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_write_request_info_TAG *config_mem_write_request_info);
+
+    typedef struct config_mem_write_request_info_TAG {
+        space_encoding_enum encoding;
+        uint32_t address;
+        uint16_t bytes;
+        uint16_t data_start; // what offset into the payload to insert the data begin requested
+        const user_address_space_info_t *space_info;
+        write_config_mem_space_func_t write_space_func;
+
+    } config_mem_write_request_info_t;
+
 
 
 #ifdef __cplusplus

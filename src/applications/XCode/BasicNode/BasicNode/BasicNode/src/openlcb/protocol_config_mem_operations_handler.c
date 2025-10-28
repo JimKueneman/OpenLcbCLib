@@ -112,17 +112,106 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
             DATAGRAM_MEMORY_CONFIGURATION,
             0);
 
+    statemachine_info->outgoing_msg_info.valid = false; // Assume there is not a message to send by default
+
+}
+
+static uint8_t _available_write_flags(openlcb_statemachine_info_t *statemachine_info) {
+
+    uint8_t write_lengths = 0x80 | 0x40 | 0x020 | 0x02;
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
+
+        write_lengths = write_lengths | 0x01;
+
+    }
+
+    return write_lengths;
+
+}
+
+static uint16_t _available_commands_flags(openlcb_statemachine_info_t *statemachine_info) {
+
+    uint16_t result = 0x0000;
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.write_under_mask_supported) {
+
+        result = result | 0x8000;
+
+    }
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.unaligned_reads_supported) {
+
+        result = result | 0x4000;
+
+    }
+    if (statemachine_info->openlcb_node->parameters->configuration_options.unaligned_writes_supported) {
+
+        result = result | 0x2000;
+
+    }
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.read_from_manufacturer_space_0xfc_supported) {
+
+        result = result | 0x0800;
+
+    }
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.read_from_user_space_0xfb_supported) {
+
+        result = result | 0x0400;
+
+    }
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.write_to_user_space_0xfb_supported) {
+
+        result = result | 0x0200;
+
+    }
+
+    if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
+
+        result = result | 0x0001;
+
+    }
+
+    return result;
+
+}
+
+static uint8_t _available_address_space_info_flags(config_mem_operations_request_info_t *config_mem_operations_request_info) {
+
+    uint8_t flags = 0x0;
+
+    if (config_mem_operations_request_info->space_info->read_only) {
+
+        flags = flags | 0x01;
+
+    }
+
+    if (config_mem_operations_request_info->space_info->low_address_valid) {
+
+        flags = flags | 0x02;
+
+    }
+
+    return flags;
+}
+
+static void _load_datagram_ok_message(openlcb_statemachine_info_t *statemachine_info) {
+
+    _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
+
+    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
+    statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
+
 }
 
 static void _handle_operations_request(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
 
-        _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
-
-        statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
-        statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
-
+        _load_datagram_ok_message(statemachine_info);
 
         return;
     }
@@ -140,58 +229,17 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
 
 static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    uint16_t available_commands = 0x00;
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.write_under_mask_supported) {
-
-        available_commands = available_commands | 0x8000;
-
-    }
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.unaligned_reads_supported) {
-
-        available_commands = available_commands | 0x4000;
-
-    }
-    if (statemachine_info->openlcb_node->parameters->configuration_options.unaligned_writes_supported) {
-
-        available_commands = available_commands | 0x2000;
-
-    }
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.read_from_manufacturer_space_0xfc_supported) {
-
-        available_commands = available_commands | 0x0800;
-
-    }
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.read_from_user_space_0xfb_supported) {
-
-        available_commands = available_commands | 0x0400;
-
-    }
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.write_to_user_space_0xfb_supported) {
-
-        available_commands = available_commands | 0x0200;
-
-    }
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
-
-        available_commands = available_commands | 0x0001;
-
-    }
-
-    uint8_t write_lengths = 0x80 | 0x40 | 0x020 | 0x02;
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
-
-        write_lengths = write_lengths | 0x01;
-
-    }
-
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_options_cmd) {
+
+        if (_interface->on_options_cmd(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -200,12 +248,12 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
 
     OpenLcbUtilities_copy_word_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            available_commands,
+            _available_commands_flags(statemachine_info),
             2);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            write_lengths,
+            _available_write_flags(statemachine_info),
             4);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
@@ -218,16 +266,12 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
             statemachine_info->openlcb_node->parameters->configuration_options.low_address_space,
             6);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 7;
-
-
     if (strlen(statemachine_info->openlcb_node->parameters->configuration_options.description) > 0x00) {
 
-        uint8_t string_len = OpenLcbUtilities_copy_string_to_openlcb_payload(
+        OpenLcbUtilities_copy_string_to_openlcb_payload(
                 statemachine_info->outgoing_msg_info.msg_ptr,
                 statemachine_info->openlcb_node->parameters->configuration_options.description,
                 statemachine_info->outgoing_msg_info.msg_ptr->payload_count);
-        statemachine_info->outgoing_msg_info.msg_ptr->payload_count = statemachine_info->outgoing_msg_info.msg_ptr->payload_count + string_len;
 
     }
 
@@ -237,29 +281,35 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
 
 static void _memory_options_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    if (_interface->on_options_cmd_reply) {
+
+        if (_interface->on_options_cmd_reply(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     uint8_t description_offset = 8;
-    uint8_t flags = 0x00;
-
-    if (config_mem_operations_request_info->space_info->read_only) {
-
-        flags = flags | 0x01;
-
-    }
-
-    if (config_mem_operations_request_info->space_info->low_address_valid) {
-
-        flags = flags | 0x02;
-
-    }
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_get_address_space_info) {
+
+        if (_interface->on_get_address_space_info(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
     if (config_mem_operations_request_info->space_info) {
 
@@ -282,10 +332,8 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
             OpenLcbUtilities_copy_byte_to_openlcb_payload(
                     statemachine_info->outgoing_msg_info.msg_ptr,
-                    flags,
+                    _available_address_space_info_flags(config_mem_operations_request_info),
                     7);
-
-            statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
 
             if (config_mem_operations_request_info->space_info->low_address_valid) {
 
@@ -295,8 +343,6 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
                         8);
 
                 description_offset = 12;
-
-                statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 12;
 
             }
 
@@ -337,20 +383,52 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
 static void _memory_get_address_space_info_reply_not_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_get_address_space_info_reply_not_present) {
+
+        if (_interface->on_get_address_space_info_reply_not_present(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_get_address_space_info_reply_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_get_address_space_info_reply_present) {
+
+        if (_interface->on_get_address_space_info_reply_present(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_reserve_lock) {
+
+        if (_interface->on_reserve_lock(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
+
     node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 
+            statemachine_info->incoming_msg_info.msg_ptr,
             2);
 
     if (statemachine_info->openlcb_node->owner_node == 0) {
@@ -364,82 +442,152 @@ static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info,
             statemachine_info->openlcb_node->owner_node = 0;
 
     }
-    
+
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             DATAGRAM_MEMORY_RESERVE_LOCK_REPLY,
             1);
-    
+
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
-            statemachine_info->openlcb_node->owner_node, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->owner_node,
             2);
-    
+
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 static void _memory_reserve_lock_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_reserve_lock_reply) {
+
+        if (_interface->on_reserve_lock_reply(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_get_unique_id(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_get_unique_id) {
+
+        if (_interface->on_get_unique_id(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_get_unique_id_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_get_unique_id_reply) {
+
+        if (_interface->on_get_unique_id_reply(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_unfreeze) {
+
+        if (_interface->on_unfreeze(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_freeze) {
+
+        if (_interface->on_freeze(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_update_complete(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    statemachine_info->outgoing_msg_info.valid = false;
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
+    if (_interface->on_update_complete) {
+
+        if (_interface->on_update_complete(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
+    }
 
 }
 
 static void _memory_reset_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
     statemachine_info->openlcb_node->owner_node = 0;
-    
+
     if (_interface->on_reset_reboot) {
-        
-        _interface->on_reset_reboot();
+
+        if (_interface->on_reset_reboot(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
     }
-    
-    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
 static void _memory_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
+
     statemachine_info->openlcb_node->owner_node = 0;
-    
+
     if (_interface->on_factory_reset) {
-        
-        _interface->on_factory_reset((node_id_t*) &statemachine_info->incoming_msg_info.msg_ptr->payload[0]);
+
+        if (_interface->on_factory_reset(statemachine_info, config_mem_operations_request_info)) {
+
+            return;
+
+        }
+
     }
-    
-    statemachine_info->outgoing_msg_info.valid = false;
 
 }
 

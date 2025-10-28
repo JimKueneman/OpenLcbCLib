@@ -47,11 +47,21 @@ typedef struct {
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
     
     // callbacks
-    void (*on_reset_reboot)(void);
-    void (*on_factory_reset)(node_id_t *node_id);
-    void (*on_get_address_space_information_reply)(bool is_present, uint8_t address_space, uint32_t address_highest, bool is_address_lowest_valid, uint32_t address_lowest, bool is_writable, const char *description);
-    void (*on_lock_reserve_reply)(node_id_t *node_id);
-    void (*on_get_unique_id_reply)(void);
+    bool (*on_options_cmd)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_options_cmd_reply)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_get_address_space_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_get_address_space_info_reply_present)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_get_address_space_info_reply_not_present)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_reserve_lock)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_reserve_lock_reply)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_get_unique_id)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_get_unique_id_reply)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_freeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_unfreeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_update_complete)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);  
+    bool (*on_reset_reboot)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    bool (*on_factory_reset)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
     
 } interface_protocol_config_mem_operations_handler_t;
 

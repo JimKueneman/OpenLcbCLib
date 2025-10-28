@@ -48,13 +48,13 @@ typedef struct {
     uint16_t (*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     
     // Callbacks
-    void (*on_write_space_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
-    void (*on_write_space_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
-    void (*on_write_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
-    void (*on_write_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
-    void (*on_write_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
-    void (*on_write_space_traction_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
-    void (*on_write_space_traction_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    bool (*on_write_space_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    bool (*on_write_space_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    bool (*on_write_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    bool (*on_write_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    bool (*on_write_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    bool (*on_write_space_traction_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    bool (*on_write_space_traction_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     
 } interface_protocol_config_mem_write_handler_t;
 
