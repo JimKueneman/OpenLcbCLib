@@ -1320,7 +1320,7 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_DATAGRAM_OK_REPLY);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             exponent | DATAGRAM_OK_REPLY_PENDING,
             0);

@@ -45,7 +45,14 @@ typedef struct {
        
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
-        
+    
+    // callbacks
+    void (*on_reset_reboot)(void);
+    void (*on_factory_reset)(node_id_t *node_id);
+    void (*on_get_address_space_information_reply)(bool is_present, uint8_t address_space, uint32_t address_highest, bool is_address_lowest_valid, uint32_t address_lowest, bool is_writable, const char *description);
+    void (*on_lock_reserve_reply)(node_id_t *node_id);
+    void (*on_get_unique_id_reply)(void);
+    
 } interface_protocol_config_mem_operations_handler_t;
 
 #ifdef	__cplusplus

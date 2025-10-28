@@ -45,6 +45,7 @@ typedef struct {
       
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
+    uint16_t (*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     
     // Callbacks
     void (*on_write_space_config_decscription_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);

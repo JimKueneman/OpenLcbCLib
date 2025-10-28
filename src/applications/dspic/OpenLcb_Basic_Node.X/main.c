@@ -147,7 +147,27 @@
 
 static uint16_t count = 0;
 
-void _100ms_timer_callback(void) {
+void _initialize_io_early_for_test(void) {
+
+
+    ANSELA = 0x00; // Convert all I/O pins to digital
+    ANSELB = 0x00;
+    ANSELC = 0x00;
+    ANSELE = 0x00;
+
+
+    LED_BLUE_TRIS = 0;
+    LED_GREEN_TRIS = 0;
+    LED_YELLOW_TRIS = 0;
+
+    TEST_PIN_1401_TRIS = 0;
+    TEST_PIN_1402_TRIS = 0;
+    TEST_PIN_1403_TRIS = 0;
+    TEST_PIN_1404_TRIS = 0;
+
+}
+
+void _on_100ms_timer_callback(void) {
 
     // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
 
@@ -163,29 +183,13 @@ void _100ms_timer_callback(void) {
 
 }
 
-void _can_rx_callback(can_msg_t* can_msg) {
-
-    // Called when a CAN message is received
-
-    //    printf("Rx: 0x%08lX [", can_msg->identifier);
-    //    
-    //    for (int i = 0; i < can_msg->payload_count; i++) {
-    //        
-    //        printf("0x%04X ", can_msg->payload[i]);
-    //        
-    //    }
-    //    
-    //    printf("]\n");
+void _on_can_rx_callback(can_msg_t* can_msg) {
 
     LED_BLUE = 1;
 
 }
 
-void _can_tx_callback(can_msg_t* can_msg) {
-
-    // Called when a CAN message is transmitted
-
-    //    printf("Tx: 0x%08lX\n", can_msg->identifier);
+void _on_can_tx_callback(can_msg_t* can_msg) {
 
     LED_YELLOW = 1;
 
@@ -194,37 +198,25 @@ void _can_tx_callback(can_msg_t* can_msg) {
 void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
-    printf("NodeID: 0x%04X%04X%04X\n\n", (uint16_t) (node_id >> 32), (uint16_t) (node_id >> 16), (uint16_t) node_id);
+    printf("NodeID: 0x%06llX\n\n", node_id);
 
 }
 
-void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
+static void _on_factory_reset(node_id_t *node_id) {
+    
+    printf("Factory Reset: NodeID = 0x%06llX\n", *node_id);
+    
+}
 
-    //    printf("event with payload: data count = %d; Total count = %d\n", count, count + sizeof(*event_id));
-    //    printf("event_id = 0x%08llX\n", *event_id);
-    //    
-    //    uint16_t i = 1;
-    //    
-    //    printf("[ ");
-    //    while (i <= count) {
-    //        
-    //        if (i % 8 == 0) {
-    //            
-    //            printf("0x%02X ] ", (*payload)[i-1]);
-    //            printf("\n");
-    //            printf("[ ");
-    //            
-    //        } else {
-    //
-    //          printf("0x%02X, ", (*payload)[i-1]);
-    //          
-    //        }
-    //          
-    //        i++;
-    //        
-    //    }
-    //
-    //    printf("\n\n");
+static void _on_reboot(void) {
+    
+    printf("\n\n\nFactory Reboot............\n\n\n");
+    
+    BasicNodeDrivers_reboot();
+    
+}
+
+void _on_event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t count, event_payload_t* payload) {
 
 }
 
@@ -233,6 +225,9 @@ void _event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t co
 #define LOCK_SHARED_RESOURCES_FUNC &Ecan1Helper_pause_can_rx
 #define UNLOCK_SHARED_RESOURCES_FUNC &Ecan1Helper_resume_can_rx
 #define CONFIG_MEM_READ_FUNC &BasicNodeDrivers_config_mem_read
+#define CONFIG_MEM_WRITE_FUNC &BasicNodeDrivers_config_mem_write
+#define ON_REBOOT_FUNC &_on_reboot
+#define ON_FACTORY_RESET_FUNC &_on_factory_reset
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
@@ -285,7 +280,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_cid_frame = CanRxMessageHandler_cid_frame,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
     // Callback events
-    .on_receive = &_can_rx_callback
+    .on_receive = &_on_can_rx_callback
 
 };
 
@@ -293,7 +288,7 @@ const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
     .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
     // Callback events
-    .on_transmit = &_can_tx_callback
+    .on_transmit = &_on_can_tx_callback
 
 };
 
@@ -328,11 +323,10 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
 };
 
-
 const interface_openlcb_node_t interface_openlcb_node = {
 
     // Callback events
-    .on_100ms_timer_tick = &_100ms_timer_callback
+    .on_100ms_timer_tick = &_on_100ms_timer_callback
 
 };
 
@@ -340,8 +334,6 @@ const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_me
 
 };
 
-
-// TODO Complete
 const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
 
     // Callback events
@@ -357,7 +349,7 @@ const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_ev
     .on_producer_identified_reserved = NULL,
     .on_event_learn = NULL,
     .on_pc_event_report = NULL,
-    .on_pc_event_report_with_payload = &_event_with_payload
+    .on_pc_event_report_with_payload = &_on_event_with_payload
 
 };
 
@@ -385,7 +377,6 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
     .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node
 };
 
-// TODO Complete
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
     // MESSAGE NETWORK
@@ -474,6 +465,7 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
     
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
     .snip_load_name = &ProtocolSnip_load_name,
@@ -499,6 +491,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC,
     
     // Callbacks
     .on_write_space_config_decscription_info = NULL,
@@ -514,12 +507,16 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 const interface_protocol_config_mem_operations_handler_t interface_protocol_config_mem_operations_handler = {
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
-    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message
+    .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
+    
+    
+    .on_reset_reboot = ON_REBOOT_FUNC,         // HARDWARE INTERFACE
+    .on_factory_reset = ON_FACTORY_RESET_FUNC, // HARDWARE INTERFACE
+    .on_get_address_space_information_reply = NULL,
+    .on_get_unique_id_reply = NULL,
+    .on_lock_reserve_reply = NULL
 
 };
-
-// TODO Finish these interfaces
-// -------------------------------
 
 const interface_openlcb_application_t interface_openlcb_application = {
 
@@ -669,49 +666,6 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
 
 };
 
-//interface_openlcb_protocol_datagram_config_mem_handler_t interface_openlcb_protocol_datagram_config_mem_handler = {
-//
-//    .configuration_memory_read = NULL,
-//    .configuration_memory_write = NULL,
-//    .reboot = NULL,
-//    .configuration_memory_factory_reset = NULL,
-//    .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-//    .snip_load_name = &ProtocolSnip_load_name,
-//    .snip_load_model = &ProtocolSnip_load_model,
-//    .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
-//    .snip_load_software_version = &ProtocolSnip_load_software_version,
-//    .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
-//    .snip_load_user_name = &ProtocolSnip_load_user_name,
-//    .snip_load_user_description = &ProtocolSnip_load_user_description,
-//    .clear_resend_datagram_message = &ProtocolDatagramHandler_clear_resend_datagram_message,
-//    // Callback events
-//    .on_configuration_memory_factory_reset = NULL,
-//    .on_config_mem_write = NULL,
-//    .on_config_mem_freeze_firmware_update = NULL,
-//    .on_config_mem_unfreeze_firmware_update = NULL
-//
-//};
-
-void _initialize_io_early_for_test(void) {
-
-
-    ANSELA = 0x00; // Convert all I/O pins to digital
-    ANSELB = 0x00;
-    ANSELC = 0x00;
-    ANSELE = 0x00;
-
-
-    LED_BLUE_TRIS = 0;
-    LED_GREEN_TRIS = 0;
-    LED_YELLOW_TRIS = 0;
-
-    TEST_PIN_1401_TRIS = 0;
-    TEST_PIN_1402_TRIS = 0;
-    TEST_PIN_1403_TRIS = 0;
-    TEST_PIN_1404_TRIS = 0;
-
-}
-
 int main(void) {
 
     _initialize_io_early_for_test();
@@ -741,7 +695,6 @@ int main(void) {
     OpenLcbBufferFifo_initialize();
 
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
-    //  ProtocolDatagramConfigMemHandler_initialize(&interface_openlcb_protocol_datagram_config_mem_handler);
     ProtocolDatagramHandler_initialize(&interface_protocol_datagram_handler);
     ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
     ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);

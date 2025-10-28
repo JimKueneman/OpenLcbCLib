@@ -349,9 +349,8 @@ static void _memory_get_address_space_info_reply_present(openlcb_statemachine_in
 
 static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-    
     node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->incoming_msg_info.msg_ptr, 
             2);
 
     if (statemachine_info->openlcb_node->owner_node == 0) {
@@ -420,12 +419,26 @@ static void _memory_update_complete(openlcb_statemachine_info_t *statemachine_in
 
 static void _memory_reset_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
+    statemachine_info->openlcb_node->owner_node = 0;
+    
+    if (_interface->on_reset_reboot) {
+        
+        _interface->on_reset_reboot();
+    }
+    
     statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
 static void _memory_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
+    statemachine_info->openlcb_node->owner_node = 0;
+    
+    if (_interface->on_factory_reset) {
+        
+        _interface->on_factory_reset((node_id_t*) &statemachine_info->incoming_msg_info.msg_ptr->payload[0]);
+    }
+    
     statemachine_info->outgoing_msg_info.valid = false;
 
 }
