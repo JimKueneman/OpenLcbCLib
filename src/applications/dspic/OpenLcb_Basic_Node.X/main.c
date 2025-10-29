@@ -512,6 +512,7 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     
+    // Callbacks
     .on_options_cmd = NULL,
     .on_options_cmd_reply = NULL,
     .on_get_address_space_info = NULL,
