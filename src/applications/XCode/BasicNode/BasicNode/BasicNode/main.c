@@ -87,8 +87,8 @@ void _on_event_with_payload(openlcb_node_t* node, event_id_t* event_id, uint16_t
 #define UNLOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_resume_can_rx
 #define CONFIG_MEM_READ_FUNC OSxDrivers_config_mem_read
 #define CONFIG_MEM_WRITE_FUNC &OSxDrivers_config_mem_write
-#define ON_REBOOT_FUNC NULL
-#define ON_FACTORY_RESET_FUNC NULL
+#define OPERATIONS_REBOOT_FUNC NULL
+#define OPERATIONS_FACTORY_RESET_FUNC NULL
 
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
@@ -328,7 +328,7 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .configuration_memory_read = CONFIG_MEM_READ_FUNC,
-    
+
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
     .snip_load_name = &ProtocolSnip_load_name,
     .snip_load_model = &ProtocolSnip_load_model,
@@ -337,15 +337,14 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
     .snip_load_user_name = &ProtocolSnip_load_user_name,
     .snip_load_user_description = &ProtocolSnip_load_user_description,
-    
-    // Callbacks
-    .on_read_space_config_decscription_info = NULL,
-    .on_read_space_all = NULL,
-    .on_read_space_configuration_memory = NULL,
-    .on_read_space_acdi_manufacturer = NULL,
-    .on_read_space_acdi_user = NULL,
-    .on_read_space_traction_config_decscription_info = NULL,
-    .on_read_space_traction_config_memory = NULL
+
+    .read_request_configuration_definition_info = &ProtocolConfigMemReadHandler_read_request_configuration_definition_info,
+    .read_request_all = NULL,
+    .read_request_config_mem = &ProtocolConfigMemReadHandler_read_request_config_mem,
+    .read_request_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_request_acdi_manufacturer,
+    .read_request_acdi_user = &ProtocolConfigMemReadHandler_read_request_acdi_user,
+    .read_request_traction_function_configuration_definition_info = NULL,
+    .read_request_traction_function_configuration_memory = NULL,
 
 };
 
@@ -354,15 +353,14 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .configuration_memory_write = CONFIG_MEM_WRITE_FUNC,
-    
-    // Callbacks
-    .on_write_space_config_decscription_info = NULL,
-    .on_write_space_all = NULL,
-    .on_write_space_configuration_memory = NULL,
-    .on_write_space_acdi_manufacturer = NULL,
-    .on_write_space_acdi_user = NULL,
-    .on_write_space_traction_config_decscription_info = NULL,
-    .on_write_space_traction_config_memory = NULL
+
+    .write_request_configuration_definition_info = NULL,
+    .write_request_all = NULL,
+    .write_request_config_mem = &ProtocolConfigMemWriteHandler_write_request_config_mem,
+    .write_request_acdi_manufacturer = NULL,
+    .write_request_acdi_user = &ProtocolConfigMemWriteHandler_write_request_acdi_user,
+    .write_request_traction_function_configuration_definition_info = NULL,
+    .write_request_traction_function_configuration_memory = NULL,
 
 };
 
@@ -370,22 +368,22 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
-    
-    .on_options_cmd = NULL,
-    .on_options_cmd_reply = NULL,
-    .on_get_address_space_info = NULL,
-    .on_get_address_space_info_reply_present = NULL,
-    .on_get_address_space_info_reply_not_present = NULL,
-    .on_reserve_lock = NULL,
-    .on_reserve_lock_reply = NULL,
-    .on_get_unique_id = NULL,
-    .on_get_unique_id_reply = NULL,
-    .on_freeze = NULL,
-    .on_unfreeze = NULL,
-    .on_update_complete = NULL,
-    .on_reset_reboot = ON_REBOOT_FUNC,         // HARDWARE INTERFACE
-    .on_factory_reset = ON_FACTORY_RESET_FUNC, // HARDWARE INTERFACE
-    
+
+    .operations_request_options_cmd = &ProtocolConfigMemOperationsHandler_request_options_cmd,
+    .operations_request_options_cmd_reply = NULL,
+    .operations_request_get_address_space_info = ProtocolConfigMemOperationsHandler_request_get_address_space_info,
+    .operations_request_get_address_space_info_reply_present = NULL,
+    .operations_request_get_address_space_info_reply_not_present = NULL,
+    .operations_request_reserve_lock = ProtocolConfigMemOperationsHandler_request_reserve_lock,
+    .operations_request_reserve_lock_reply = NULL,
+    .operations_request_get_unique_id = NULL,
+    .operations_request_get_unique_id_reply = NULL,
+    .operations_request_freeze = NULL,
+    .operations_request_unfreeze = NULL,
+    .operations_request_update_complete = NULL,
+    .operations_request_reset_reboot = OPERATIONS_REBOOT_FUNC, // HARDWARE INTERFACE
+    .operations_request_factory_reset = OPERATIONS_FACTORY_RESET_FUNC, // HARDWARE INTERFACE
+
 };
 
 const interface_openlcb_application_t interface_openlcb_application = {
@@ -424,7 +422,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_space_acdi_user_reply_fail = NULL,
     .memory_read_space_traction_function_definition_info_reply_fail = NULL,
     .memory_read_space_traction_function_config_memory_reply_fail = NULL,
-    
+
     // Config Memory Stream Read
     .memory_read_stream_space_config_description_info = NULL,
     .memory_read_stream_space_all = NULL,
@@ -496,7 +494,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_stream_space_traction_function_definition_info = NULL,
     .memory_write_stream_space_traction_function_config_memory = NULL,
     .memory_write_stream_space_firmware_upgrade = NULL,
-    
+
     // Config Memory Stream Write Reply = Ok
     .memory_write_stream_space_config_description_info_reply_ok = NULL,
     .memory_write_stream_space_all_reply_ok = NULL,
@@ -514,7 +512,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_stream_space_acdi_user_reply_fail = NULL,
     .memory_write_stream_space_traction_function_definition_info_reply_fail = NULL,
     .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
-    
+
     // Config Memory Commands
     .memory_options_cmd = &ProtocolConfigMemOperationsHandler_options_cmd,
     .memory_options_reply = &ProtocolConfigMemOperationsHandler_options_reply,
@@ -535,7 +533,6 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
 };
-
 
 
 

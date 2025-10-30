@@ -47,9 +47,9 @@
 static interface_protocol_config_mem_write_handler_t* _interface;
 
 void ProtocolConfigMemWriteHandler_initialize(const interface_protocol_config_mem_write_handler_t *interface_protocol_config_mem_write_handler) {
-    
+
     _interface = (interface_protocol_config_mem_write_handler_t*) interface_protocol_config_mem_write_handler;
-    
+
 }
 
 static void _extract_write_command_parameters(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
@@ -71,7 +71,7 @@ static void _extract_write_command_parameters(openlcb_statemachine_info_t *state
 
 }
 
-uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *config_mem_write_request_info) {
+static uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *config_mem_write_request_info) {
 
     if (!config_mem_write_request_info->space_info->present) {
 
@@ -107,7 +107,7 @@ static void _check_for_write_overrun(openlcb_statemachine_info_t *statemachine_i
     }
 }
 
-static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint8_t config_reply_ok_fail) {
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -124,7 +124,7 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + config_reply_ok_fail, // generate an OK reply by default for Read/Write/Stream
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -143,6 +143,19 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
 
     statemachine_info->outgoing_msg_info.valid = false; // Default is to not return a reply
+
+}
+
+static void _load_write_fail_message(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_FAIL_OFFSET);
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN,
+            0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
@@ -176,57 +189,19 @@ static void _handle_write_request(openlcb_statemachine_info_t *statemachine_info
         _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
         config_mem_write_request_info->write_space_func(statemachine_info, config_mem_write_request_info);
 
+    } else {
+
+        _load_write_fail_message(statemachine_info, config_mem_write_request_info);
+
     }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
     statemachine_info->incoming_msg_info.enumerate = false; // done
 }
 
-static void _write_request_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    if (_interface->on_write_space_config_decscription_info) {
-
-        if (_interface->on_write_space_config_decscription_info(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _write_request_all(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    if (_interface->on_write_space_all) {
-
-        if (_interface->on_write_space_all(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _write_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    if (_interface->on_write_space_configuration_memory) {
-
-        if (_interface->on_write_space_configuration_memory(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_OK_OFFSET);
 
     if (_interface->configuration_memory_write) {
 
@@ -249,64 +224,36 @@ static void _write_request_config_mem(openlcb_statemachine_info_t *statemachine_
 
 }
 
-static void _write_request_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = config_mem_write_request_info->data_start;
-
-    if (_interface->on_write_space_acdi_manufacturer) {
-
-        if (_interface->on_write_space_acdi_manufacturer(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    if (_interface->on_write_space_acdi_user) {
-
-        if (_interface->on_write_space_acdi_user(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_OK_OFFSET);
 
     switch (config_mem_write_request_info->address) {
 
         case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
-            
+
             // TODO: Write to Config Mem
 
-//            _interface->snip_load_user_name(
-//                    statemachine_info->openlcb_node,
-//                    statemachine_info->outgoing_msg_info.msg_ptr,
-//                    config_mem_write_request_info->data_start,
-//                    config_mem_write_request_info->bytes
-//                    );
+            //            _interface->snip_load_user_name(
+            //                    statemachine_info->openlcb_node,
+            //                    statemachine_info->outgoing_msg_info.msg_ptr,
+            //                    config_mem_write_request_info->data_start,
+            //                    config_mem_write_request_info->bytes
+            //                    );
 
             break;
 
         case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
 
             // TODO: Write to Config Mem
-            
-            
-//            _interface->snip_load_user_description(
-//                    statemachine_info->openlcb_node,
-//                    statemachine_info->outgoing_msg_info.msg_ptr,
-//                    config_mem_write_request_info->data_start,
-//                    config_mem_write_request_info->bytes
-//                    );
+
+
+            //            _interface->snip_load_user_description(
+            //                    statemachine_info->openlcb_node,
+            //                    statemachine_info->outgoing_msg_info.msg_ptr,
+            //                    config_mem_write_request_info->data_start,
+            //                    config_mem_write_request_info->bytes
+            //                    );
 
             break;
 
@@ -320,43 +267,11 @@ static void _write_request_acdi_user(openlcb_statemachine_info_t *statemachine_i
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
-static void _write_request_traction_function_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    if (_interface->on_write_space_traction_config_decscription_info) {
-
-        if (_interface->on_write_space_traction_config_decscription_info(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _write_request_traction_function_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info);
-
-    if (_interface->on_write_space_traction_config_memory) {
-
-        if (_interface->on_write_space_traction_config_memory(statemachine_info, config_mem_write_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
 void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_configuration_definition_info;
+    config_mem_write_request_info.write_space_func = _interface->write_request_configuration_definition_info;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -366,7 +281,7 @@ void ProtocolConfigMemWriteHandler_write_space_all(openlcb_statemachine_info_t *
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_all;
+    config_mem_write_request_info.write_space_func = _interface->write_request_all;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_all;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -376,7 +291,7 @@ void ProtocolConfigMemWriteHandler_write_space_configuration_memory(openlcb_stat
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_config_mem;
+    config_mem_write_request_info.write_space_func = _interface->write_request_config_mem;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_config_memory;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -386,7 +301,7 @@ void ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer(openlcb_statema
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_acdi_manufacturer;
+    config_mem_write_request_info.write_space_func = _interface->write_request_acdi_manufacturer;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -396,7 +311,7 @@ void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_in
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_acdi_user;
+    config_mem_write_request_info.write_space_func = _interface->write_request_acdi_user;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_user;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -406,7 +321,7 @@ void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_traction_function_configuration_definition_info;
+    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_configuration_definition_info;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -416,7 +331,7 @@ void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(o
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = &_write_request_traction_function_configuration_memory;
+    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_configuration_memory;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);

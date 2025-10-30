@@ -191,14 +191,13 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_ProtocolDatagramHandler_load_datagram_rejected_message,
 
-    // Callbacks
-    .on_write_space_config_decscription_info = NULL,
-    .on_write_space_all = NULL,
-    .on_write_space_configuration_memory = NULL,
-    .on_write_space_acdi_manufacturer = NULL,
-    .on_write_space_acdi_user = NULL,
-    .on_write_space_traction_config_decscription_info = NULL,
-    .on_write_space_traction_config_memory = NULL
+    .write_request_configuration_definition_info = NULL,
+    .write_request_all = NULL,
+    .write_request_config_mem = NULL,
+    .write_request_acdi_manufacturer = NULL,
+    .write_request_acdi_user = NULL,
+    .write_request_traction_function_configuration_definition_info = NULL,
+    .write_request_traction_function_configuration_memory = NULL
 
 };
 
@@ -207,14 +206,13 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_ProtocolDatagramHandler_load_datagram_rejected_message,
 
-    // Callbacks
-    // .on_write_space_config_decscription_info = &_on_write_space_config_decscription_info,
-    // .on_write_space_all = &_on_write_space_all,
-    // .on_write_space_configuration_memory = &_on_write_space_configuration_memory,
-    // .on_write_space_acdi_manufacturer = &_on_write_space_acdi_manufacturer,
-    // .on_write_space_acdi_user = &_on_write_space_acdi_user,
-    // .on_write_space_traction_config_decscription_info = &_on_write_space_traction_config_decscription_info,
-    // .on_write_space_traction_config_memory = &_on_write_space_traction_config_memory
+    // .write_request_configuration_definition_info = &_on_write_space_config_decscription_info,
+    // .write_request_all = &_on_write_space_all,
+    // .write_request_config_mem = &_on_write_space_configuration_memory,
+    // .write_request_acdi_manufacturer = &_on_write_space_acdi_manufacturer,
+    // .write_request_acdi_user =  &_on_write_space_acdi_user,
+    // .write_request_traction_function_configuration_definition_info = &_on_write_space_traction_config_decscription_info,
+    // .write_request_traction_function_configuration_memory = &_on_write_space_traction_config_memory
 
 };
 

@@ -69,7 +69,7 @@ static void _extract_read_command_parameters(openlcb_statemachine_info_t *statem
 
 }
 
-uint16_t _is_valid_read_parameters(config_mem_read_request_info_t *config_mem_read_request_info) {
+static uint16_t _is_valid_read_parameters(config_mem_read_request_info_t *config_mem_read_request_info) {
 
     if (!config_mem_read_request_info->space_info->present) {
 
@@ -105,7 +105,7 @@ static void _check_for_read_overrun(openlcb_statemachine_info_t *statemachine_in
     }
 }
 
-static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info, uint8_t config_reply_ok_fail) {
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -122,7 +122,7 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + config_reply_ok_fail, // generate an OK reply by default for Read/Write/Stream
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -144,6 +144,19 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
 }
 
+static void _load_read_fail_message(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_FAIL_OFFSET);
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN,
+            0);
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
 static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
     uint16_t error_code = S_OK;
@@ -159,6 +172,7 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
             _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
 
         } else {
+
             _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
 
             statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
@@ -174,25 +188,19 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
         _check_for_read_overrun(statemachine_info, config_mem_read_request_info);
         config_mem_read_request_info->read_space_func(statemachine_info, config_mem_read_request_info);
 
+    } else {
+
+        _load_read_fail_message(statemachine_info, config_mem_read_request_info);
+
     }
 
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
     statemachine_info->incoming_msg_info.enumerate = false; // done
 }
 
-static void _read_request_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+void ProtocolConfigMemReadHandler_read_request_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    if (_interface->on_read_space_config_decscription_info) {
-
-        if (_interface->on_read_space_config_decscription_info(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_OK_OFFSET);
 
     OpenLcbUtilities_copy_byte_array_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -203,35 +211,9 @@ static void _read_request_configuration_definition_info(openlcb_statemachine_inf
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
-static void _read_request_all(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+void ProtocolConfigMemReadHandler_read_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    if (_interface->on_read_space_all) {
-
-        if (_interface->on_read_space_all(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _read_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    if (_interface->on_read_space_configuration_memory) {
-
-        if (_interface->on_read_space_configuration_memory(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_OK_OFFSET);
 
     if (_interface->configuration_memory_read) {
 
@@ -254,21 +236,9 @@ static void _read_request_config_mem(openlcb_statemachine_info_t *statemachine_i
 
 }
 
-static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = config_mem_read_request_info->data_start;
-
-    if (_interface->on_read_space_acdi_manufacturer) {
-
-        if (_interface->on_read_space_acdi_manufacturer(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_OK_OFFSET);
 
     switch (config_mem_read_request_info->address) {
 
@@ -337,19 +307,9 @@ static void _read_request_acdi_manufacturer(openlcb_statemachine_info_t *statema
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
-static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    if (_interface->on_read_space_acdi_user) {
-
-        if (_interface->on_read_space_acdi_user(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
+    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_OK_OFFSET);
 
     switch (config_mem_read_request_info->address) {
 
@@ -396,43 +356,11 @@ static void _read_request_acdi_user(openlcb_statemachine_info_t *statemachine_in
     statemachine_info->outgoing_msg_info.valid = true;
 }
 
-static void _read_request_traction_function_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    if (_interface->on_read_space_traction_config_decscription_info) {
-
-        if (_interface->on_read_space_traction_config_decscription_info(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _read_request_traction_function_configuration_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info);
-
-    if (_interface->on_read_space_traction_config_memory) {
-
-        if (_interface->on_read_space_traction_config_memory(statemachine_info, config_mem_read_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
 void ProtocolConfigMemReadHandler_read_space_config_description_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_configuration_definition_info;
+    config_mem_read_request_info.read_space_func = _interface->read_request_configuration_definition_info;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -442,7 +370,7 @@ void ProtocolConfigMemReadHandler_read_space_all(openlcb_statemachine_info_t *st
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_all;
+    config_mem_read_request_info.read_space_func = _interface->read_request_all;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_all;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -452,7 +380,7 @@ void ProtocolConfigMemReadHandler_read_space_configuration_memory(openlcb_statem
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_config_mem;
+    config_mem_read_request_info.read_space_func = _interface->read_request_config_mem;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_config_memory;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -462,7 +390,7 @@ void ProtocolConfigMemReadHandler_read_space_acdi_manufacturer(openlcb_statemach
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_acdi_manufacturer;
+    config_mem_read_request_info.read_space_func = _interface->read_request_acdi_manufacturer;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -472,7 +400,7 @@ void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_acdi_user;
+    config_mem_read_request_info.read_space_func = _interface->read_request_acdi_user;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_acdi_user;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -482,7 +410,7 @@ void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(o
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_traction_function_configuration_definition_info;
+    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_configuration_definition_info;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -492,7 +420,7 @@ void ProtocolConfigMemReadHandler_read_space_traction_function_config_memory(ope
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = &_read_request_traction_function_configuration_memory;
+    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_configuration_memory;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);

@@ -207,11 +207,27 @@ static void _load_datagram_ok_message(openlcb_statemachine_info_t *statemachine_
 
 }
 
+static void _load_datagram_fail_message(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code) {
+
+    _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
+
+    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // done
+    statemachine_info->incoming_msg_info.enumerate = false; // done
+
+}
+
 static void _handle_operations_request(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
+        
+        if (config_mem_operations_request_info->operations_func) {
 
-        _load_datagram_ok_message(statemachine_info);
+            _load_datagram_ok_message(statemachine_info);
+            
+        } else {
+            
+            _load_datagram_fail_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+        }
 
         return;
     }
@@ -222,24 +238,14 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
         config_mem_operations_request_info->operations_func(statemachine_info, config_mem_operations_request_info);
 
     }
-
+    
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
     statemachine_info->incoming_msg_info.enumerate = false; // done
 }
 
-static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_options_cmd) {
-
-        if (_interface->on_options_cmd(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -279,37 +285,11 @@ static void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info, 
 
 }
 
-static void _memory_options_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_options_cmd_reply) {
-
-        if (_interface->on_options_cmd_reply(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     uint8_t description_offset = 8;
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_get_address_space_info) {
-
-        if (_interface->on_get_address_space_info(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
 
     if (config_mem_operations_request_info->space_info) {
 
@@ -381,51 +361,9 @@ static void _memory_get_address_space_info(openlcb_statemachine_info_t *statemac
 
 }
 
-static void _memory_get_address_space_info_reply_not_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_get_address_space_info_reply_not_present) {
-
-        if (_interface->on_get_address_space_info_reply_not_present(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_get_address_space_info_reply_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_get_address_space_info_reply_present) {
-
-        if (_interface->on_get_address_space_info_reply_present(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_reserve_lock) {
-
-        if (_interface->on_reserve_lock(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
 
     node_id_t new_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
             statemachine_info->incoming_msg_info.msg_ptr,
@@ -459,143 +397,11 @@ static void _memory_reserve_lock(openlcb_statemachine_info_t *statemachine_info,
 
 }
 
-static void _memory_reserve_lock_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_reserve_lock_reply) {
-
-        if (_interface->on_reserve_lock_reply(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_get_unique_id(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_get_unique_id) {
-
-        if (_interface->on_get_unique_id(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_get_unique_id_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_get_unique_id_reply) {
-
-        if (_interface->on_get_unique_id_reply(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_unfreeze) {
-
-        if (_interface->on_unfreeze(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_freeze) {
-
-        if (_interface->on_freeze(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_update_complete(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    if (_interface->on_update_complete) {
-
-        if (_interface->on_update_complete(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_reset_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    statemachine_info->openlcb_node->owner_node = 0;
-
-    if (_interface->on_reset_reboot) {
-
-        if (_interface->on_reset_reboot(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
-static void _memory_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_operations_request_info);
-
-    statemachine_info->openlcb_node->owner_node = 0;
-
-    if (_interface->on_factory_reset) {
-
-        if (_interface->on_factory_reset(statemachine_info, config_mem_operations_request_info)) {
-
-            return;
-
-        }
-
-    }
-
-}
-
 void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_options_cmd;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_options_cmd;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -605,7 +411,7 @@ void ProtocolConfigMemOperationsHandler_options_reply(openlcb_statemachine_info_
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_options_reply;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_options_cmd_reply;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -616,7 +422,7 @@ void ProtocolConfigMemOperationsHandler_get_address_space_info(openlcb_statemach
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_get_address_space_info;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_get_address_space_info;
     config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -627,7 +433,7 @@ void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_get_address_space_info_reply_not_present;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_get_address_space_info_reply_not_present;
     config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -638,7 +444,7 @@ void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(ope
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_get_address_space_info_reply_present;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_get_address_space_info_reply_present;
     config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -649,7 +455,7 @@ void ProtocolConfigMemOperationsHandler_reserve_lock(openlcb_statemachine_info_t
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_reserve_lock;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_reserve_lock;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -660,7 +466,7 @@ void ProtocolConfigMemOperationsHandler_reserve_lock_reply(openlcb_statemachine_
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_reserve_lock_reply;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_reserve_lock_reply;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -672,7 +478,7 @@ void ProtocolConfigMemOperationsHandler_get_unique_id(openlcb_statemachine_info_
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_get_unique_id;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_get_unique_id;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -683,7 +489,7 @@ void ProtocolConfigMemOperationsHandler_get_unique_id_reply(openlcb_statemachine
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_get_unique_id_reply;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_get_unique_id_reply;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -694,7 +500,7 @@ void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t *st
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_unfreeze;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_unfreeze;
     config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -705,7 +511,7 @@ void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t *stat
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_freeze;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_freeze;
     config_mem_operations_request_info.space_info = _decode_to_space_definition(statemachine_info, 2);
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -716,7 +522,7 @@ void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_inf
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_update_complete;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_update_complete;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -727,7 +533,7 @@ void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_reset_reboot;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_reset_reboot;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);
@@ -738,7 +544,7 @@ void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
-    config_mem_operations_request_info.operations_func = &_memory_factory_reset;
+    config_mem_operations_request_info.operations_func = _interface->operations_request_factory_reset;
     config_mem_operations_request_info.space_info = NULL;
 
     _handle_operations_request(statemachine_info, &config_mem_operations_request_info);

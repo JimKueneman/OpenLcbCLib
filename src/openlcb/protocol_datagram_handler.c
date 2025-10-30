@@ -1325,8 +1325,6 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
             exponent | DATAGRAM_OK_REPLY_PENDING,
             0);
 
-    //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
-
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -1345,8 +1343,6 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
             statemachine_info->outgoing_msg_info.msg_ptr,
             return_code,
             0);
-
-    //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 2;
 
     statemachine_info->outgoing_msg_info.valid = true;
 
