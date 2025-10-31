@@ -172,7 +172,7 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
             _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
 
         } else {
-
+   
             _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
 
             statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
@@ -184,12 +184,12 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
 
     // Complete Command Request
     if (config_mem_read_request_info->read_space_func) {
-
+  
         _check_for_read_overrun(statemachine_info, config_mem_read_request_info);
         config_mem_read_request_info->read_space_func(statemachine_info, config_mem_read_request_info);
 
     } else {
-
+    
         _load_read_fail_message(statemachine_info, config_mem_read_request_info);
 
     }
@@ -198,7 +198,7 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
     statemachine_info->incoming_msg_info.enumerate = false; // done
 }
 
-void ProtocolConfigMemReadHandler_read_request_configuration_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+void ProtocolConfigMemReadHandler_read_request_config_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_OK_OFFSET);
 
@@ -215,10 +215,9 @@ void ProtocolConfigMemReadHandler_read_request_config_mem(openlcb_statemachine_i
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_OK_OFFSET);
 
-    if (_interface->configuration_memory_read) {
+    if (_interface->config_memory_read) {
 
-
-        uint16_t read_count = _interface->configuration_memory_read(
+        uint16_t read_count = _interface->config_memory_read(
                 config_mem_read_request_info->address,
                 config_mem_read_request_info->bytes,
                 (configuration_memory_buffer_t*) & statemachine_info->outgoing_msg_info.msg_ptr->payload[config_mem_read_request_info->data_start]
@@ -360,7 +359,7 @@ void ProtocolConfigMemReadHandler_read_space_config_description_info(openlcb_sta
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = _interface->read_request_configuration_definition_info;
+    config_mem_read_request_info.read_space_func = _interface->read_request_config_definition_info;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -376,7 +375,7 @@ void ProtocolConfigMemReadHandler_read_space_all(openlcb_statemachine_info_t *st
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
-void ProtocolConfigMemReadHandler_read_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
@@ -410,7 +409,7 @@ void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(o
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_configuration_definition_info;
+    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_config_definition_info;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
@@ -420,7 +419,7 @@ void ProtocolConfigMemReadHandler_read_space_traction_function_config_memory(ope
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_configuration_memory;
+    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_config_memory;
     config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);

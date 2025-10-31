@@ -191,13 +191,13 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_ProtocolDatagramHandler_load_datagram_rejected_message,
 
-    .write_request_configuration_definition_info = NULL,
+    .write_request_config_definition_info = NULL,
     .write_request_all = NULL,
     .write_request_config_mem = NULL,
     .write_request_acdi_manufacturer = NULL,
     .write_request_acdi_user = NULL,
-    .write_request_traction_function_configuration_definition_info = NULL,
-    .write_request_traction_function_configuration_memory = NULL
+    .write_request_traction_function_config_definition_info = NULL,
+    .write_request_traction_function_config_memory = NULL
 
 };
 

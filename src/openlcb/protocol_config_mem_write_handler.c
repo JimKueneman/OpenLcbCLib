@@ -271,7 +271,7 @@ void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_s
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = _interface->write_request_configuration_definition_info;
+    config_mem_write_request_info.write_space_func = _interface->write_request_config_definition_info;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_configuration_definition;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -287,7 +287,7 @@ void ProtocolConfigMemWriteHandler_write_space_all(openlcb_statemachine_info_t *
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
-void ProtocolConfigMemWriteHandler_write_space_configuration_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
@@ -321,7 +321,7 @@ void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_configuration_definition_info;
+    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_config_definition_info;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);
@@ -331,7 +331,7 @@ void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(o
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_configuration_memory;
+    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_config_memory;
     config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
 
     _handle_write_request(statemachine_info, &config_mem_write_request_info);

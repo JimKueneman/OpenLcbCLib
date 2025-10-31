@@ -1207,7 +1207,7 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
 
 }
 
-void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t *statemachine_info) {
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[0]) { // commands
 
@@ -1303,10 +1303,9 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
 
                 exponent = 0x0E;
 
-            } else
-                if (reply_pending_time_in_seconds <= 32769) {
+            } else {
 
-                exponent = 0x0F;
+                exponent = 0x0F;  
 
             }
 
@@ -1348,7 +1347,7 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
 
 }
 
-void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *statemachine_info) {
 
     ProtocolDatagramHandler_clear_resend_datagram_message(statemachine_info->openlcb_node);
 
@@ -1356,7 +1355,7 @@ void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_i
 
 }
 
-void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *statemachine_info) {
 
     if ((OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) & ERROR_TEMPORARY) == ERROR_TEMPORARY) {
 
