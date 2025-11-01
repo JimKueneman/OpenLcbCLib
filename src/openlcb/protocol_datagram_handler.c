@@ -1321,7 +1321,7 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            exponent | DATAGRAM_OK_REPLY_PENDING,
+            DATAGRAM_OK_REPLY_PENDING | exponent,
             0);
 
     statemachine_info->outgoing_msg_info.valid = true;

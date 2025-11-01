@@ -199,11 +199,11 @@ extern "C" {
 
     extern void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
 
-    extern void ProtocolDatagramHandler_handle_datagram(openlcb_statemachine_info_t * statemachine_info);
+    extern void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t * statemachine_info);
 
-    extern void Protocol_DatagramHandler_handle_datagram_received_ok(openlcb_statemachine_info_t * statemachine_info);
+    extern void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t * statemachine_info);
 
-    extern void ProtocolDatagramHandler_handle_datagram_rejected(openlcb_statemachine_info_t * statemachine_info);
+    extern void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t * statemachine_info);
 
     extern void ProtocolDatagramHandler_clear_resend_datagram_message(openlcb_node_t * openlcb_node);
 

@@ -174,7 +174,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
     data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
 
     _interface->configuration_memory_read(data_address, requested_bytes, &configuration_memory_buffer);
-
+    
     _process_snip_string(worker_msg, &payload_offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_NAME_BUFFER, requested_bytes);
 
     return payload_offset;

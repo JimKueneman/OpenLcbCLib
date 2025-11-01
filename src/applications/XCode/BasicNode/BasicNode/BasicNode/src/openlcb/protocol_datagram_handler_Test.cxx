@@ -1015,7 +1015,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1029,7 +1029,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1043,7 +1043,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1057,7 +1057,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1071,7 +1071,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1085,7 +1085,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1099,7 +1099,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1113,7 +1113,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1127,7 +1127,7 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1140,7 +1140,7 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1153,7 +1153,7 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1166,7 +1166,7 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1181,7 +1181,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1195,7 +1195,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1209,7 +1209,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1223,7 +1223,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1237,7 +1237,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1251,7 +1251,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1265,7 +1265,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1279,7 +1279,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1293,7 +1293,7 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1306,7 +1306,7 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1319,7 +1319,7 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1332,7 +1332,7 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1347,7 +1347,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1361,7 +1361,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1375,7 +1375,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1389,7 +1389,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1403,7 +1403,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1417,7 +1417,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1431,7 +1431,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1445,7 +1445,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1459,7 +1459,7 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1472,7 +1472,7 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1485,7 +1485,7 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1498,7 +1498,7 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1513,7 +1513,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1527,7 +1527,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1541,7 +1541,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1555,7 +1555,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1569,7 +1569,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1583,7 +1583,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1597,7 +1597,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1611,7 +1611,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1625,7 +1625,7 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1638,7 +1638,7 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1651,7 +1651,7 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1664,7 +1664,7 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1679,7 +1679,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1693,7 +1693,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1707,7 +1707,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1721,7 +1721,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1735,7 +1735,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1749,7 +1749,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1763,7 +1763,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1777,7 +1777,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1791,7 +1791,7 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1804,7 +1804,7 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1817,7 +1817,7 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1830,7 +1830,7 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1845,7 +1845,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1859,7 +1859,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1873,7 +1873,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1887,7 +1887,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1901,7 +1901,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1915,7 +1915,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1929,7 +1929,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1943,7 +1943,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -1957,7 +1957,7 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1970,7 +1970,7 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1983,7 +1983,7 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -1996,7 +1996,7 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2011,7 +2011,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2025,7 +2025,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2039,7 +2039,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2053,7 +2053,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2067,7 +2067,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2081,7 +2081,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2095,7 +2095,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2109,7 +2109,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2123,7 +2123,7 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2136,7 +2136,7 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2149,7 +2149,7 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2162,7 +2162,7 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2177,7 +2177,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2191,7 +2191,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2205,7 +2205,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2219,7 +2219,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2233,7 +2233,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2247,7 +2247,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2261,7 +2261,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2275,7 +2275,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2289,7 +2289,7 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2302,7 +2302,7 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2315,7 +2315,7 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2328,7 +2328,7 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2343,7 +2343,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2357,7 +2357,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2371,7 +2371,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2385,7 +2385,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2402,7 +2402,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        ProtocolDatagramHandler_handle_datagram(statemachine_info);
+        ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2416,7 +2416,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2430,7 +2430,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2444,7 +2444,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2458,7 +2458,7 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2471,7 +2471,7 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2484,7 +2484,7 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2497,7 +2497,7 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2511,7 +2511,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2525,7 +2525,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2539,7 +2539,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2553,7 +2553,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2567,7 +2567,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2581,7 +2581,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2595,7 +2595,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2609,7 +2609,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2623,7 +2623,7 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2636,7 +2636,7 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2649,7 +2649,7 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2662,7 +2662,7 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2677,7 +2677,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2691,7 +2691,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2705,7 +2705,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2719,7 +2719,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2733,7 +2733,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2747,7 +2747,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2761,7 +2761,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2775,7 +2775,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2789,7 +2789,7 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2802,7 +2802,7 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2815,7 +2815,7 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2828,7 +2828,7 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2843,7 +2843,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2857,7 +2857,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2871,7 +2871,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2885,7 +2885,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2899,7 +2899,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2913,7 +2913,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2927,7 +2927,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2941,7 +2941,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -2955,7 +2955,7 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2968,7 +2968,7 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2981,7 +2981,7 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -2994,7 +2994,7 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -3009,7 +3009,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3023,7 +3023,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3037,7 +3037,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3051,7 +3051,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3065,7 +3065,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3079,7 +3079,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3093,7 +3093,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3107,7 +3107,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -3121,7 +3121,7 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3134,7 +3134,7 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3147,7 +3147,7 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3160,7 +3160,7 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -3174,7 +3174,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_OPTIONS_CMD;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3187,7 +3187,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3200,7 +3200,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_CMD;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3213,7 +3213,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3226,7 +3226,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3239,7 +3239,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_RESERVE_LOCK;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3252,7 +3252,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_RESERVE_LOCK_REPLY;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3265,7 +3265,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_UNIQUE_ID;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3278,7 +3278,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_UNIQUE_ID_REPLY;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3291,7 +3291,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_FREEZE;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3304,7 +3304,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_UNFREEZE;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3317,7 +3317,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_UPDATE_COMPLETE;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3330,7 +3330,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_RESET_REBOOT;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3343,7 +3343,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_FACTORY_RESET;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
@@ -3357,7 +3357,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -3370,7 +3370,7 @@ void _invalid_command(openlcb_statemachine_info_t *statemachine_info, bool is_nu
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_UNIQUE_ID;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 0;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram_bad_command(statemachine_info);
     _reset_variables();
@@ -3378,7 +3378,7 @@ void _invalid_command(openlcb_statemachine_info_t *statemachine_info, bool is_nu
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FF + 4; // invalid
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 2;
 
-    ProtocolDatagramHandler_handle_datagram(statemachine_info);
+    ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram(statemachine_info);
 }
@@ -3431,7 +3431,7 @@ TEST(ProtocolDatagramHandler, load_datagram_received_ok)
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 1);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0000 | DATAGRAM_OK_REPLY_PENDING);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x00 | DATAGRAM_OK_REPLY_PENDING);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_alias, statemachine_info.incoming_msg_info.msg_ptr->source_alias);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_id, statemachine_info.incoming_msg_info.msg_ptr->source_id);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);
@@ -3678,7 +3678,7 @@ TEST(ProtocolDatagramHandler, handle_datagram_received_ok)
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 
-    Protocol_DatagramHandler_handle_datagram_received_ok(&statemachine_info);
+    ProtocolDatagramHandler_datagram_received_ok(&statemachine_info);
 
     EXPECT_TRUE(lock_shared_resources_called);
     EXPECT_TRUE(unlock_shared_resources_called);
@@ -3726,7 +3726,7 @@ TEST(ProtocolDatagramHandler, handle_datagram_rejected_temporary)
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 
-    ProtocolDatagramHandler_handle_datagram_rejected(&statemachine_info);
+    ProtocolDatagramHandler_datagram_rejected(&statemachine_info);
 
     EXPECT_FALSE(lock_shared_resources_called);
     EXPECT_FALSE(unlock_shared_resources_called);
@@ -3774,7 +3774,7 @@ TEST(ProtocolDatagramHandler, handle_datagram_rejected_permenent)
 
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 1);
 
-    ProtocolDatagramHandler_handle_datagram_rejected(&statemachine_info);
+    ProtocolDatagramHandler_datagram_rejected(&statemachine_info);
 
     EXPECT_TRUE(lock_shared_resources_called);
     EXPECT_TRUE(unlock_shared_resources_called);
@@ -3819,7 +3819,7 @@ TEST(ProtocolDatagramHandler, handle_datagram_rejected_temporary_no_resend_messa
     EXPECT_EQ(OpenLcbBufferStore_datagram_messages_allocated(), 0);
     EXPECT_EQ(node1->last_received_datagram, nullptr);
 
-    ProtocolDatagramHandler_handle_datagram_rejected(&statemachine_info);
+    ProtocolDatagramHandler_datagram_rejected(&statemachine_info);
 
     EXPECT_FALSE(lock_shared_resources_called);
     EXPECT_FALSE(unlock_shared_resources_called);
@@ -3837,4 +3837,87 @@ TEST(ProtocolDatagramHandler, _100ms_timer_tick)
     _global_initialize();
 
     ProtocolDatagramHandler_100ms_timer_tick();
+}
+
+TEST(ProtocolDatagramHandler, handle_datagram_ok_with_delay_time)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 2);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM_OK_REPLY);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x01 | DATAGRAM_OK_REPLY_PENDING);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_alias, statemachine_info.incoming_msg_info.msg_ptr->source_alias);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->dest_id, statemachine_info.incoming_msg_info.msg_ptr->source_id);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_alias, statemachine_info.incoming_msg_info.msg_ptr->dest_alias);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->source_id, statemachine_info.incoming_msg_info.msg_ptr->dest_id);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 4);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x02 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 8);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x03 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 16);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x04 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 32);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x05 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 64);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x06 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 128);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x07 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 256);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x08 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 512);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x09 | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 1024);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0A | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 2048);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0B | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 4096);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0C | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 8192);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0D | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 16384);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0E | DATAGRAM_OK_REPLY_PENDING);
+
+    ProtocolDatagramHandler_load_datagram_received_ok_message(&statemachine_info, 32769);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 0), 0x0F | DATAGRAM_OK_REPLY_PENDING);
 }

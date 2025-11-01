@@ -230,7 +230,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
     switch (config_mem_write_request_info->address) {
 
-        case ACDI_ADDRESS_SPACE_FC_NAME_ADDRESS:
+        case ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS:
 
             // TODO: Write to Config Mem
 
@@ -243,7 +243,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FC_DESCRIPTION_ADDRESS:
+        case ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS:
 
             // TODO: Write to Config Mem
 

@@ -286,9 +286,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .simple_train_node_ident_info_reply = NULL,
 
     // DATAGRAM
-    .datagram = ProtocolDatagramHandler_handle_datagram,
-    .datagram_ok_reply = Protocol_DatagramHandler_handle_datagram_received_ok,
-    .datagram_rejected_reply = ProtocolDatagramHandler_handle_datagram_rejected,
+    .datagram = ProtocolDatagramHandler_datagram,
+    .datagram_ok_reply = ProtocolDatagramHandler_datagram_received_ok,
+    .datagram_rejected_reply = ProtocolDatagramHandler_datagram_rejected,
 
     // STREAM
     .stream_initiate_request = NULL,
@@ -327,7 +327,7 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
-    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
+    .config_memory_read = CONFIG_MEM_READ_FUNC,
 
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
     .snip_load_name = &ProtocolSnip_load_name,
@@ -338,13 +338,15 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .snip_load_user_name = &ProtocolSnip_load_user_name,
     .snip_load_user_description = &ProtocolSnip_load_user_description,
 
-    .read_request_configuration_definition_info = &ProtocolConfigMemReadHandler_read_request_configuration_definition_info,
+    .read_request_config_definition_info = &ProtocolConfigMemReadHandler_read_request_config_definition_info,
     .read_request_all = NULL,
     .read_request_config_mem = &ProtocolConfigMemReadHandler_read_request_config_mem,
     .read_request_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_request_acdi_manufacturer,
     .read_request_acdi_user = &ProtocolConfigMemReadHandler_read_request_acdi_user,
-    .read_request_traction_function_configuration_definition_info = NULL,
-    .read_request_traction_function_configuration_memory = NULL,
+    .read_request_traction_function_config_definition_info = NULL,
+    .read_request_traction_function_config_memory = NULL,
+    
+    .delayed_reply_time = NULL
 
 };
 
@@ -354,13 +356,15 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .configuration_memory_write = CONFIG_MEM_WRITE_FUNC,
 
-    .write_request_configuration_definition_info = NULL,
+    .write_request_config_definition_info = NULL,
     .write_request_all = NULL,
     .write_request_config_mem = &ProtocolConfigMemWriteHandler_write_request_config_mem,
     .write_request_acdi_manufacturer = NULL,
     .write_request_acdi_user = &ProtocolConfigMemWriteHandler_write_request_acdi_user,
-    .write_request_traction_function_configuration_definition_info = NULL,
-    .write_request_traction_function_configuration_memory = NULL,
+    .write_request_traction_function_config_definition_info = NULL,
+    .write_request_traction_function_config_memory = NULL,
+    
+    .delayed_reply_time = NULL
 
 };
 
@@ -399,7 +403,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     // Config Memory Read
     .memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_read_space_config_description_info,
     .memory_read_space_all = &ProtocolConfigMemReadHandler_read_space_all,
-    .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_read_space_configuration_memory,
+    .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_read_space_config_memory,
     .memory_read_space_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_space_acdi_manufacturer,
     .memory_read_space_acdi_user = &ProtocolConfigMemReadHandler_read_space_acdi_user,
     .memory_read_space_traction_function_definition_info = &ProtocolConfigMemReadHandler_read_space_traction_function_definition_info,
