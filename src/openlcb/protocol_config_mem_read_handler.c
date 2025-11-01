@@ -148,12 +148,7 @@ static void _load_read_fail_message(openlcb_statemachine_info_t *statemachine_in
 
     _load_config_mem_reply_message_header(statemachine_info, config_mem_read_request_info, CONFIG_REPLY_FAIL_OFFSET);
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN,
-            0);
-
-    statemachine_info->outgoing_msg_info.valid = true;
+    _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 
 }
 
@@ -168,7 +163,7 @@ static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info,
         error_code = _is_valid_read_parameters(config_mem_read_request_info);
 
         if (error_code) {
-
+ 
             _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
 
         } else {
@@ -431,5 +426,5 @@ void ProtocolConfigMemReadHandler_read_message(openlcb_statemachine_info_t *stat
 void ProtocolConfigMemReadHandler_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }
 
-void ProtocolConfigMemReadHandler_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
+void ProtocolConfigMemReadHandler_read_reply_reject_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }

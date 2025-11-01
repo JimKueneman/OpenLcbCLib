@@ -86,7 +86,7 @@ extern "C" {
     
     extern void ProtocolConfigMemReadHandler_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
     extern void ProtocolConfigMemReadHandler_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    extern void ProtocolConfigMemReadHandler_read_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+    extern void ProtocolConfigMemReadHandler_read_reply_reject_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
 
 #ifdef	__cplusplus
 }
