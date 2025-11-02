@@ -113,8 +113,10 @@ static void _check_for_write_overrun(openlcb_statemachine_info_t *statemachine_i
     }
 }
 
-static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint8_t config_reply_ok_fail) {
+static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+    
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -130,7 +132,7 @@ static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + config_reply_ok_fail, // generate an OK reply by default for Read/Write/Stream
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -152,18 +154,57 @@ static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t
 
 }
 
-//static void _load_config_mem_reply_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
-//
-//    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_FAIL_OFFSET);
-//
-//    OpenLcbUtilities_copy_word_to_openlcb_payload(
-//            statemachine_info->outgoing_msg_info.msg_ptr,
-//            ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN,
-//            0);
-//
-//    statemachine_info->outgoing_msg_info.valid = true;
-//
-//}
+static void _load_config_mem_reply_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint16_t error_code) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+    
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            DATAGRAM_MEMORY_CONFIGURATION,
+            0);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_FAIL_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            1);
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            config_mem_write_request_info->address,
+            2);
+
+    if (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], // generate an OK reply by default for Read/Write/Stream
+                6);
+        
+         OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            error_code,
+            7);
+
+    } else {
+    
+     OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            error_code,
+            6);
+     
+    }
+
+    statemachine_info->outgoing_msg_info.valid = false; // Default is to not return a reply
+
+}
 
 static void _handle_write_request(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
@@ -210,7 +251,7 @@ static void _handle_write_request(openlcb_statemachine_info_t *statemachine_info
 
 void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_OK_OFFSET);
+    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info);
 
     if (_interface->config_memory_write) {
 
@@ -221,12 +262,22 @@ void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine
                 );
 
         statemachine_info->outgoing_msg_info.msg_ptr->payload_count += write_count;
+        
+        if (write_count < config_mem_write_request_info->bytes) {
+
+            
+            _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+          
+        }
 
         statemachine_info->outgoing_msg_info.valid = true;
 
     } else {
 
-        // TODO:  Send Fail message
+        
+        _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_NOT_IMPLEMENTED);
+        
+        statemachine_info->outgoing_msg_info.valid = true;
 
     }
 
@@ -234,7 +285,7 @@ void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine
 
 void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_OK_OFFSET);
+    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info);
 
     switch (config_mem_write_request_info->address) {
 
