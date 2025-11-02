@@ -491,7 +491,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
-    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC,
+    .config_memory_write = CONFIG_MEM_WRITE_FUNC,
 
     .write_request_config_definition_info = NULL,
     .write_request_all = NULL,

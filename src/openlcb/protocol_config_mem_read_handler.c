@@ -158,8 +158,6 @@ static void _load_config_mem_reply_fail_message_header(openlcb_statemachine_info
             error_code,
             config_mem_read_request_info->data_start);
     
-    statemachine_info->outgoing_msg_info.valid = true; 
-    
 }
 
 static void _handle_read_request(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
@@ -233,6 +231,8 @@ void ProtocolConfigMemReadHandler_read_request_config_mem(openlcb_statemachine_i
 
             _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
             
+            statemachine_info->outgoing_msg_info.valid = true; 
+            
             return;
 
         }
@@ -244,6 +244,8 @@ void ProtocolConfigMemReadHandler_read_request_config_mem(openlcb_statemachine_i
     } else {
 
         _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+        
+        statemachine_info->outgoing_msg_info.valid = true; 
 
     }
 
@@ -269,6 +271,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -288,6 +292,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -307,6 +313,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -326,6 +334,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -345,6 +355,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -353,6 +365,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
         default:
 
             _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
+            
+            statemachine_info->outgoing_msg_info.valid = true; 
 
             break;
     }
@@ -380,6 +394,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -400,6 +416,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 
@@ -419,6 +437,8 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
             } else {
 
                 _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+                
+                statemachine_info->outgoing_msg_info.valid = true; 
 
             }
 

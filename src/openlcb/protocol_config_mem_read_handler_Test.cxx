@@ -1,10 +1,8 @@
 #include "test/main_Test.hxx"
 
+#include "protocol_config_mem_read_handler.h"
 #include "openlcb_application.h"
 #include "openlcb_types.h"
-
-#include "protocol_config_mem_read_handler.h"
-
 #include "protocol_message_network.h"
 #include "openlcb_types.h"
 #include "openlcb_defines.h"
@@ -52,7 +50,6 @@ const node_parameters_t _node_parameters_main_node = {
     .protocol_support = (PSI_DATAGRAM |
                          PSI_FIRMWARE_UPGRADE |
                          PSI_MEMORY_CONFIGURATION |
-                         PSI_EVENT_EXCHANGE |
                          PSI_EVENT_EXCHANGE |
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
@@ -202,7 +199,6 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .protocol_support = (PSI_DATAGRAM |
                          PSI_FIRMWARE_UPGRADE |
                          PSI_MEMORY_CONFIGURATION |
-                         PSI_EVENT_EXCHANGE |
                          PSI_EVENT_EXCHANGE |
                          PSI_ABBREVIATED_DEFAULT_CDI |
                          PSI_SIMPLE_NODE_INFORMATION |
@@ -963,7 +959,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces_delayed)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
     *incoming_msg->payload[7] = 64;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
@@ -1505,7 +1501,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
@@ -1531,7 +1527,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_MANUFACTURER_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS;
@@ -1560,7 +1556,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_MODEL_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS;
@@ -1589,7 +1585,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_HARDWARE_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS;
@@ -1619,7 +1615,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS;
@@ -1649,7 +1645,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS + 1, 2); // Invalid Address
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS + 1; // Invalid Address
@@ -1702,7 +1698,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
@@ -1728,7 +1724,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_NAME_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
@@ -1758,7 +1754,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_DESCRIPTION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
@@ -1795,7 +1791,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS + 1, 2); // Invalid Address
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_NAME_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS + 1; // Invalid Address
@@ -1848,7 +1844,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
@@ -1874,7 +1870,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_MANUFACTURER_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS;
@@ -1900,7 +1896,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_MODEL_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS;
@@ -1926,7 +1922,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_HARDWARE_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS;
@@ -1952,7 +1948,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS;
@@ -2008,7 +2004,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_VERSION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
@@ -2034,7 +2030,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_NAME_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
@@ -2060,7 +2056,7 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
     *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = ACDI_SPACE_FB_DESCRIPTION_LEN;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
     config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
