@@ -593,7 +593,8 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = &_config_memory_read_snip
+    .configuration_memory_read = &_config_memory_read_snip,
+    .configuration_memory_write = nullptr
 
 };
 

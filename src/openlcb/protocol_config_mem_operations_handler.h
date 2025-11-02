@@ -71,37 +71,63 @@ extern "C" {
 #endif /* __cplusplus */
 
     extern void ProtocolConfigMemOperationsHandler_initialize(const interface_protocol_config_mem_operations_handler_t *interface_protocol_config_mem_operations_handler);
-
-    extern void ProtocolConfigMemOperationsHandler_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-    extern void ProtocolConfigMemOperationsHandler_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_options_reply(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_get_address_space_info(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_reserve_lock(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_reserve_lock_reply(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_get_unique_id(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_get_unique_id_reply(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t * statemachine_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t * statemachine_info);
+    
+    
 
     extern void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_options_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_get_address_space_info_reply_not_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_get_address_space_info_reply_present(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_reserve_lock_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_get_unique_id(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_get_unique_id_reply(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
     extern void ProtocolConfigMemOperationsHandler_request_update_complete(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
+    extern void ProtocolConfigMemOperationsHandler_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_options_reply(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_get_address_space_info(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_reserve_lock(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_reserve_lock_reply(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_get_unique_id(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_get_unique_id_reply(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t * statemachine_info);
-    extern void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t * statemachine_info);
 
 #ifdef	__cplusplus
 }

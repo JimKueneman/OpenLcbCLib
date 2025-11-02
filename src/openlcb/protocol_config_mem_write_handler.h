@@ -45,6 +45,9 @@ typedef struct {
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
     uint16_t(*config_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t(*snip_user_name_write)(uint16_t byte_count, configuration_memory_buffer_t* buffer);
+    uint16_t(*snip_user_description_write)(uint16_t byte_count, configuration_memory_buffer_t* buffer);
+    
 
     void (*write_request_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     void (*write_request_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
@@ -85,7 +88,6 @@ extern "C" {
     
     extern void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
     
-
     
     extern void ProtocolConfigMemWriteHandler_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
     

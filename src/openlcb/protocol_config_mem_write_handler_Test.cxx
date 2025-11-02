@@ -34,7 +34,10 @@ bool load_datagram_ok_message_called = false;
 bool load_datagram_rejected_message_called = false;
 uint16_t datagram_reply_code = 0;
 config_mem_write_request_info_t local_config_mem_write_request_info;
-bool config_memory_write_return_zero = false;
+bool memory_write_return_zero = false;
+
+uint16_t memory_write_requested_bytes = 0;
+uint8_t memory_write_data[1024];
 
 const node_parameters_t _node_parameters_main_node = {
 
@@ -424,7 +427,7 @@ uint16_t _config_memory_write(uint32_t address, uint16_t count, configuration_me
 
     _update_called_function_ptr((void *)&_config_memory_write);
 
-    if (config_memory_write_return_zero)
+    if (memory_write_return_zero)
     {
 
         return 0;
@@ -461,19 +464,57 @@ uint16_t _delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, con
     return 16000;
 }
 
+uint16_t _snip_user_name_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
+{
+
+    _update_called_function_ptr((void *)&_snip_user_name_write);
+
+    if (memory_write_return_zero)
+    {
+
+        return 0;
+    }
+
+    memory_write_requested_bytes = byte_count;
+
+    for (int i = 0; i < byte_count; i++)
+    {
+
+        memory_write_data[i] = (*buffer)[i];
+    }
+
+    return byte_count;
+}
+
+uint16_t _snip_user_description_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
+{
+
+    _update_called_function_ptr((void *)&_snip_user_description_write);
+
+    if (memory_write_return_zero)
+    {
+
+        return 0;
+    }
+
+    memory_write_requested_bytes = byte_count;
+
+    for (int i = 0; i < byte_count; i++)
+    {
+
+        memory_write_data[i] = (*buffer)[i];
+    }
+
+    return byte_count;
+}
+
 const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    // .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
-    // .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    // .snip_load_model = &ProtocolSnip_load_model,
-    // .snip_load_name = &ProtocolSnip_load_name,
-    // .snip_load_software_version = &ProtocolSnip_load_software_version,
-    // .snip_load_user_description = &ProtocolSnip_load_user_description,
-    // .snip_load_user_name = &ProtocolSnip_load_user_name,
-    // .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_user_name_write = &_snip_user_name_write,
+    .snip_user_description_write = &_snip_user_description_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
@@ -493,14 +534,9 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    // .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
-    // .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    // .snip_load_model = &ProtocolSnip_load_model,
-    // .snip_load_name = &ProtocolSnip_load_name,
-    // .snip_load_software_version = &ProtocolSnip_load_software_version,
-    // .snip_load_user_description = &ProtocolSnip_load_user_description,
-    // .snip_load_user_name = &ProtocolSnip_load_user_name,
-    // .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_user_name_write = &_snip_user_name_write,
+    .snip_user_description_write = &_snip_user_description_write,
+    .config_memory_write = &_config_memory_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
@@ -510,7 +546,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_traction_function_config_definition_info = &_write_request_traction_config_decscription_info,
     .write_request_traction_function_config_memory = &_write_request_traction_config_memory,
 
-    .config_memory_write = &_config_memory_write,
     .delayed_reply_time = nullptr
 
 };
@@ -520,14 +555,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    // .snip_load_hardware_version = &ProtocolSnip_load_hardware_version,
-    // .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
-    // .snip_load_model = &ProtocolSnip_load_model,
-    // .snip_load_name = &ProtocolSnip_load_name,
-    // .snip_load_software_version = &ProtocolSnip_load_software_version,
-    // .snip_load_user_description = &ProtocolSnip_load_user_description,
-    // .snip_load_user_name = &ProtocolSnip_load_user_name,
-    // .snip_load_user_version_id = &ProtocolSnip_load_user_version_id,
+    .snip_user_name_write = &_snip_user_name_write,
+    .snip_user_description_write = &_snip_user_description_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
@@ -547,14 +576,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    // .snip_load_hardware_version = nullptr,
-    // .snip_load_manufacturer_version_id = nullptr,
-    // .snip_load_model = nullptr,
-    // .snip_load_name = nullptr,
-    // .snip_load_software_version = nullptr,
-    // .snip_load_user_description = nullptr,
-    // .snip_load_user_name = nullptr,
-    // .snip_load_user_version_id = nullptr,
+    .snip_user_name_write = nullptr,
+    .snip_user_description_write = nullptr,
 
     .write_request_config_definition_info = nullptr,
     .write_request_all = nullptr,
@@ -571,13 +594,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    //  .configuration_memory_write = &_config_memory_write_snip
-
-};
-
-interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip_nulls = {
-
-    //  .configuration_memory_write = nullptr
+    .configuration_memory_read = nullptr,
+    .configuration_memory_write = &_config_memory_write_snip
 
 };
 
@@ -597,7 +615,8 @@ void _reset_variables(void)
     local_config_mem_write_request_info.address = 0x00;
     local_config_mem_write_request_info.write_space_func = nullptr;
     local_config_mem_write_request_info.space_info = nullptr;
-    config_memory_write_return_zero = false;
+    memory_write_return_zero = false;
+    memory_write_requested_bytes = 0;
 }
 
 void _global_initialize(void)
@@ -616,16 +635,6 @@ void _global_initialize_with_nulls(void)
     ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler_with_nulls);
     OpenLcbNode_initialize(&interface_openlcb_node);
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
-    OpenLcbBufferFifo_initialize();
-    OpenLcbBufferStore_initialize();
-}
-
-void _global_initialize_with_snip_nulls(void)
-{
-
-    ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler_with_nulls);
-    OpenLcbNode_initialize(&interface_openlcb_node);
-    ProtocolSnip_initialize(&interface_openlcb_protocol_snip_nulls);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
 }
@@ -662,13 +671,6 @@ TEST(ProtocolConfigMemWriteHandler, initialize_with_nulls)
 
     _reset_variables();
     _global_initialize_with_nulls();
-}
-
-TEST(ProtocolConfigMemWriteHandler, initialize_with_snip_nulls)
-{
-
-    _reset_variables();
-    _global_initialize_with_snip_nulls();
 }
 
 TEST(ProtocolConfigMemWriteHandler, initialize_with_config_memory_write_defined)
@@ -1316,6 +1318,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem)
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x17);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 
     // ************************************************************************
     *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
@@ -1338,6 +1341,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem)
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x16);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 }
 
 TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_write_defined)
@@ -1386,7 +1390,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     config_mem_write_request_info.write_space_func = nullptr;
 
     _reset_variables();
-    config_memory_write_return_zero = true;
+    memory_write_return_zero = true;
     ProtocolConfigMemWriteHandler_write_request_config_mem(&statemachine_info, &config_mem_write_request_info);
 
     EXPECT_EQ(called_function_ptr, (void *)&_config_memory_write);
@@ -1397,6 +1401,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
 
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 
     // ************************************************************************
     *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
@@ -1412,7 +1417,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     config_mem_write_request_info.space_info = nullptr;
     config_mem_write_request_info.write_space_func = nullptr;
 
-    config_memory_write_return_zero = false;
+    memory_write_return_zero = false;
 
     _reset_variables();
     ProtocolConfigMemWriteHandler_write_request_config_mem(&statemachine_info, &config_mem_write_request_info);
@@ -1424,6 +1429,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 6 + 16);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 }
 
 TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_write_defined_short_form)
@@ -1483,10 +1489,10 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     config_mem_write_request_info.space_info = nullptr;
     config_mem_write_request_info.write_space_func = nullptr;
 
-    config_memory_write_return_zero = false;
+    memory_write_return_zero = false;
 
     _reset_variables();
-    config_memory_write_return_zero = true;
+    memory_write_return_zero = true;
     ProtocolConfigMemWriteHandler_write_request_config_mem(&statemachine_info, &config_mem_write_request_info);
 
     EXPECT_EQ(called_function_ptr, (void *)&_config_memory_write);
@@ -1497,4 +1503,368 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 6), ERROR_TEMPORARY_TRANSFER_ERROR);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 6 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+}
+
+TEST(ProtocolConfigMemWriteHandler, write_request_acdi_user)
+{
+
+    _reset_variables();
+    _global_initialize_with_config_memory_write_defined();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    // ************************************************************************
+    // Valid write of Name
+    // ************************************************************************
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'N';
+    *incoming_msg->payload[8] = 'a';
+    *incoming_msg->payload[9] = 'm';
+    *incoming_msg->payload[10] = 'e';
+    *incoming_msg->payload[11] = 0x00;
+    incoming_msg->payload_count = 12;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
+    config_mem_write_request_info.bytes = 5;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_name_write);
+    memory_write_requested_bytes = 5;
+    for (int i = 0; i < memory_write_requested_bytes; i++)
+    {
+        EXPECT_EQ(memory_write_data[i], *incoming_msg->payload[i + 7]);
+    }
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+    // ************************************************************************
+    // Valid write of Description
+    // ************************************************************************
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'D';
+    *incoming_msg->payload[8] = 'e';
+    *incoming_msg->payload[9] = 's';
+    *incoming_msg->payload[10] = 'c';
+    *incoming_msg->payload[11] = 'r';
+    *incoming_msg->payload[12] = 'i';
+    *incoming_msg->payload[13] = 'p';
+    *incoming_msg->payload[14] = 't';
+    *incoming_msg->payload[15] = 'i';
+    *incoming_msg->payload[16] = 'o';
+    *incoming_msg->payload[17] = 'n';
+    *incoming_msg->payload[18] = 0x00;
+    incoming_msg->payload_count = 19;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
+    config_mem_write_request_info.bytes = 12;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_description_write);
+    memory_write_requested_bytes = 12;
+    for (int i = 0; i < memory_write_requested_bytes; i++)
+    {
+        EXPECT_EQ(memory_write_data[i], *incoming_msg->payload[i + 7]);
+    }
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+    // ************************************************************************
+    // Failed write of Name
+    // ************************************************************************
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'N';
+    *incoming_msg->payload[8] = 'a';
+    *incoming_msg->payload[9] = 'm';
+    *incoming_msg->payload[10] = 'e';
+    *incoming_msg->payload[11] = 0x00;
+    incoming_msg->payload_count = 12;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
+    config_mem_write_request_info.bytes = 5;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    memory_write_return_zero = true;
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+    memory_write_return_zero = false;
+
+    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_name_write);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 2), ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[6], ADDRESS_SPACE_ACDI_USER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_TEMPORARY_TRANSFER_ERROR);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+    // ************************************************************************
+    // InValid write of Description
+    // ************************************************************************
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'D';
+    *incoming_msg->payload[8] = 'e';
+    *incoming_msg->payload[9] = 's';
+    *incoming_msg->payload[10] = 'c';
+    *incoming_msg->payload[11] = 'r';
+    *incoming_msg->payload[12] = 'i';
+    *incoming_msg->payload[13] = 'p';
+    *incoming_msg->payload[14] = 't';
+    *incoming_msg->payload[15] = 'i';
+    *incoming_msg->payload[16] = 'o';
+    *incoming_msg->payload[17] = 'n';
+    *incoming_msg->payload[18] = 0x00;
+    incoming_msg->payload_count = 19;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
+    config_mem_write_request_info.bytes = 12;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    memory_write_return_zero = true;
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+    memory_write_return_zero = false;
+
+    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_description_write);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 2), ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[6], ADDRESS_SPACE_ACDI_USER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_TEMPORARY_TRANSFER_ERROR);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+    // ************************************************************************
+    // Bad Requested Address Sent
+    // ************************************************************************
+
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS + 1, 2); // Wrong address should do nothing
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'D';
+    *incoming_msg->payload[8] = 'e';
+    *incoming_msg->payload[9] = 's';
+    *incoming_msg->payload[10] = 'c';
+    *incoming_msg->payload[11] = 'r';
+    *incoming_msg->payload[12] = 'i';
+    *incoming_msg->payload[13] = 'p';
+    *incoming_msg->payload[14] = 't';
+    *incoming_msg->payload[15] = 'i';
+    *incoming_msg->payload[16] = 'o';
+    *incoming_msg->payload[17] = 'n';
+    *incoming_msg->payload[18] = 0x00;
+    incoming_msg->payload_count = 19;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS + 1;
+    config_mem_write_request_info.bytes = 12;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 2), ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS + 1);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[6], ADDRESS_SPACE_ACDI_USER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+}
+
+TEST(ProtocolConfigMemWriteHandler, _memory_write_request_equals_null)
+{
+
+    _reset_variables();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    // ************************************************************************
+    // // Write of ACCI Name Write Dependancy Not defined
+    // ************************************************************************
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'N';
+    *incoming_msg->payload[8] = 'a';
+    *incoming_msg->payload[9] = 'm';
+    *incoming_msg->payload[10] = 'e';
+    *incoming_msg->payload[11] = 0x00;
+    incoming_msg->payload_count = 12;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
+    config_mem_write_request_info.bytes = 5;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 2), ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[6], ADDRESS_SPACE_ACDI_USER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+    // ************************************************************************
+    // Write of ACCI Description Write Dependancy Not defined
+    // ************************************************************************
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'D';
+    *incoming_msg->payload[8] = 'e';
+    *incoming_msg->payload[9] = 's';
+    *incoming_msg->payload[10] = 'c';
+    *incoming_msg->payload[11] = 'r';
+    *incoming_msg->payload[12] = 'i';
+    *incoming_msg->payload[13] = 'p';
+    *incoming_msg->payload[14] = 't';
+    *incoming_msg->payload[15] = 'i';
+    *incoming_msg->payload[16] = 'o';
+    *incoming_msg->payload[17] = 'n';
+    *incoming_msg->payload[18] = 0x00;
+    incoming_msg->payload_count = 19;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
+    config_mem_write_request_info.bytes = 12;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 2), ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[6], ADDRESS_SPACE_ACDI_USER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+
+    // ************************************************************************
+    // Config Mem Write Dependancy Not defined
+    // ************************************************************************
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x0000FFFF, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[7] = 0x10;
+    incoming_msg->payload_count = 8;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = 0x0000FFFF;
+    config_mem_write_request_info.bytes = 0x10;
+    config_mem_write_request_info.data_start = 8;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _reset_variables();
+    memory_write_return_zero = true;
+    ProtocolConfigMemWriteHandler_write_request_config_mem(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 2), 0x0000FFFF);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[6], ADDRESS_SPACE_CONFIGURATION_MEMORY);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 }

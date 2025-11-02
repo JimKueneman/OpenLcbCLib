@@ -187,9 +187,9 @@ char max_user_name_config_mem_string[] = "01234567890123456789012345678901234567
 char max_user_description_config_mem_string[] = "012345678901234567890123456789012345678901234567890123456789012"; // 64 - 1 for null
 
 uint32_t config_read_address = 0;
+bool configmem_write_force_fail = false;
 
-uint16_t
-_configuration_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t _configuration_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
     config_read_address = address;
@@ -222,9 +222,26 @@ _configuration_memory_read(uint32_t address, uint16_t count, configuration_memor
     return 0;
 }
 
+uint16_t _configuration_memory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
+    if (configmem_write_force_fail)
+    {
+
+        return 0;
+    }
+
+    return count;
+}
+
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = &_configuration_memory_read};
+    .configuration_memory_read = &_configuration_memory_read,
+    .configuration_memory_write = &_configuration_memory_write};
+
+interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip_null = {
+
+    .configuration_memory_read = nullptr,
+    .configuration_memory_write = nullptr};
 
 void _reset_variables(void)
 {
@@ -237,6 +254,15 @@ void _global_initialize(void)
 {
 
     ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+}
+
+void _global_initialize_null_snip_dependancies(void)
+{
+
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip_null);
     OpenLcbNode_initialize(&interface_openlcb_node);
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
@@ -733,4 +759,98 @@ TEST(ProtocolSnip, handle_simple_node_info_reply)
 
         EXPECT_FALSE(_statemachine_info.outgoing_msg_info.valid);
     }
+}
+
+TEST(ProtocolSnip, write_user_data)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'W';
+    *incoming_msg->payload[8] = 'r';
+    *incoming_msg->payload[9] = 'i';
+    *incoming_msg->payload[10] = 't';
+    *incoming_msg->payload[11] = 'i';
+    *incoming_msg->payload[12] = 'n';
+    *incoming_msg->payload[13] = 'g';
+    *incoming_msg->payload[14] = 0x00;
+    incoming_msg->payload_count = 15;
+
+    EXPECT_EQ(ProtocolSnip_write_user_name(8, (configuration_memory_buffer_t *)&incoming_msg->payload[7]), 8);
+    EXPECT_EQ(ProtocolSnip_write_user_description(8, (configuration_memory_buffer_t *)&incoming_msg->payload[7]), 8);
+
+    configmem_write_force_fail = true;
+    EXPECT_EQ(ProtocolSnip_write_user_name(8, (configuration_memory_buffer_t *)&incoming_msg->payload[7]), 0);
+    EXPECT_EQ(ProtocolSnip_write_user_description(8, (configuration_memory_buffer_t *)&incoming_msg->payload[7]), 0);
+}
+
+TEST(ProtocolSnip, write_user_data_null_dependancies)
+{
+
+    _reset_variables();
+    _global_initialize_null_snip_dependancies();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = 'W';
+    *incoming_msg->payload[8] = 'r';
+    *incoming_msg->payload[9] = 'i';
+    *incoming_msg->payload[10] = 't';
+    *incoming_msg->payload[11] = 'i';
+    *incoming_msg->payload[12] = 'n';
+    *incoming_msg->payload[13] = 'g';
+    *incoming_msg->payload[14] = 0x00;
+    incoming_msg->payload_count = 15;
+
+    EXPECT_EQ(ProtocolSnip_write_user_name(8, (configuration_memory_buffer_t *)&incoming_msg->payload[7]), 0);
+    EXPECT_EQ(ProtocolSnip_write_user_description(8, (configuration_memory_buffer_t *)&incoming_msg->payload[7]), 0);
 }

@@ -456,7 +456,8 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = CONFIG_MEM_READ_FUNC
+    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
+    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC
 
 };
 
@@ -482,7 +483,7 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .read_request_acdi_user = &ProtocolConfigMemReadHandler_read_request_acdi_user,
     .read_request_traction_function_config_definition_info = NULL,
     .read_request_traction_function_config_memory = NULL,
-    
+
     .delayed_reply_time = NULL
 
 };
@@ -492,6 +493,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .config_memory_write = CONFIG_MEM_WRITE_FUNC,
+    .snip_user_name_write = &ProtocolSnip_write_user_name,
+    .snip_user_description_write = ProtocolSnip_write_user_description,
 
     .write_request_config_definition_info = NULL,
     .write_request_all = NULL,
@@ -500,7 +503,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_acdi_user = &ProtocolConfigMemWriteHandler_write_request_acdi_user,
     .write_request_traction_function_config_definition_info = NULL,
     .write_request_traction_function_config_memory = NULL,
-    
+
     .delayed_reply_time = NULL
 
 };

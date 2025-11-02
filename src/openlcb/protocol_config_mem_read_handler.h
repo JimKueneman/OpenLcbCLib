@@ -73,22 +73,39 @@ extern "C" {
 
     extern void ProtocolConfigMemReadHandler_initialize(const interface_protocol_config_mem_read_handler_t *interface_protocol_config_mem_read_handler);
 
+    
     extern void ProtocolConfigMemReadHandler_read_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemReadHandler_read_space_all(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemReadHandler_read_space_config_memory(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemReadHandler_read_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemReadHandler_read_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+    
+    
 
     extern void ProtocolConfigMemReadHandler_read_request_config_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
+    
     extern void ProtocolConfigMemReadHandler_read_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
+    
     extern void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
+    
     extern void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
     
+    
+    
     extern void ProtocolConfigMemReadHandler_read_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
+    
     extern void ProtocolConfigMemReadHandler_read_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+    
     extern void ProtocolConfigMemReadHandler_read_reply_reject_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
+    
 
 #ifdef	__cplusplus
 }
