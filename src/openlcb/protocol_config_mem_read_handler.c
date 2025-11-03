@@ -54,7 +54,7 @@ static void _extract_read_command_parameters(openlcb_statemachine_info_t *statem
 
     config_mem_read_request_info->address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
-    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6) {
+    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == CONFIG_MEM_READ_SPACE_IN_BYTE_6) {
 
         config_mem_read_request_info->encoding = ADDRESS_SPACE_IN_BYTE_6;
         config_mem_read_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[7];
@@ -124,12 +124,12 @@ static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_CONFIGURATION,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET,
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -165,12 +165,12 @@ static void _load_config_mem_reply_fail_message_header(openlcb_statemachine_info
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_CONFIGURATION,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_FAIL_OFFSET,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET,
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -292,7 +292,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
     switch (config_mem_read_request_info->address) {
 
-        case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
+        case CONFIG_MEM_ACDI_MANUFACTURER_VERSION_ADDRESS:
 
             if (_interface->snip_load_manufacturer_version_id) {
 
@@ -313,7 +313,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS:
+        case CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS:
 
             if (_interface->snip_load_name) {
 
@@ -334,7 +334,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS:
+        case CONFIG_MEM_ACDI_MODEL_ADDRESS:
 
             if (_interface->snip_load_model) {
 
@@ -355,7 +355,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS:
+        case CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS:
 
             if (_interface->snip_load_hardware_version) {
 
@@ -376,7 +376,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS:
+        case CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS:
 
             if (_interface->snip_load_software_version) {
 
@@ -415,7 +415,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
     switch (config_mem_read_request_info->address) {
 
-        case ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_VERSION_ADDRESS:
 
             if (_interface->snip_load_user_version_id) {
 
@@ -436,7 +436,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
          
 
             if (_interface->snip_load_user_name) {
@@ -458,7 +458,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:
 
             if (_interface->snip_load_user_description) {
 

@@ -45,8 +45,8 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
 
-    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
@@ -65,7 +65,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_configuration_definition.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,         // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 0x200, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
@@ -74,7 +74,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_all.low_address_valid = 0, // assume the low address starts at 0
     .address_space_all.low_address = 0,       // ignored if low_address_valid is false
     .address_space_all.highest_address = 0,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "All memory Info",
 
     // Space 0xFD
@@ -83,7 +83,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.low_address_valid = 0, // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,       // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = 0,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
     // Space 0xEF
@@ -92,7 +92,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_firmware.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_firmware.low_address = 0,         // ignored if low_address_valid is false
     .address_space_firmware.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 
     .cdi =
@@ -1009,9 +1009,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1023,9 +1023,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1037,9 +1037,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1051,9 +1051,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1065,9 +1065,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_acdi_manufacturer);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1079,9 +1079,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_acdi_user);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1093,9 +1093,9 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_definition_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1107,8 +1107,8 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_config_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -1122,8 +1122,8 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1135,8 +1135,8 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
         EXPECT_EQ(called_function_ptr, &_memory_read_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1148,8 +1148,8 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
         EXPECT_EQ(called_function_ptr, &_memory_read_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1161,7 +1161,7 @@ void _read_command_space(openlcb_statemachine_info_t *statemachine_info, bool is
         EXPECT_EQ(called_function_ptr, &_memory_read_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -1175,9 +1175,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1189,9 +1189,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1203,9 +1203,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1217,9 +1217,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1231,9 +1231,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_acdi_manufacturer_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1245,9 +1245,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_acdi_user_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1259,9 +1259,9 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_definition_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1273,8 +1273,8 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_config_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -1288,8 +1288,8 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1301,8 +1301,8 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
         EXPECT_EQ(called_function_ptr, &_memory_read_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1314,8 +1314,8 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
         EXPECT_EQ(called_function_ptr, &_memory_read_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1327,7 +1327,7 @@ void _read_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool i
         EXPECT_EQ(called_function_ptr, &_memory_read_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -1341,9 +1341,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1355,9 +1355,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1369,9 +1369,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1383,9 +1383,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1397,9 +1397,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_acdi_manufacturer_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1411,9 +1411,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_acdi_user_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1425,9 +1425,9 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_definition_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1439,8 +1439,8 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
         EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_config_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -1454,8 +1454,8 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1467,8 +1467,8 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
         EXPECT_EQ(called_function_ptr, &_memory_read_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1480,8 +1480,8 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
         EXPECT_EQ(called_function_ptr, &_memory_read_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1493,7 +1493,7 @@ void _read_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, bool
         EXPECT_EQ(called_function_ptr, &_memory_read_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -1507,9 +1507,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1521,9 +1521,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1535,9 +1535,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1549,9 +1549,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1563,9 +1563,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_acdi_manufacturer);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1577,9 +1577,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_acdi_user);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1591,9 +1591,9 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_definition_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1605,8 +1605,8 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_config_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -1620,8 +1620,8 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1633,8 +1633,8 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1646,8 +1646,8 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1659,7 +1659,7 @@ void _read_stream_command_space(openlcb_statemachine_info_t *statemachine_info, 
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invald
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -1673,9 +1673,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1687,9 +1687,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1701,9 +1701,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1715,9 +1715,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1729,9 +1729,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_acdi_manufacturer_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1743,9 +1743,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_acdi_user_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1757,9 +1757,9 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_definition_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1771,8 +1771,8 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_config_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invald
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -1786,8 +1786,8 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1799,8 +1799,8 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1812,8 +1812,8 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1825,7 +1825,7 @@ void _read_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info,
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -1839,9 +1839,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1853,9 +1853,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1867,9 +1867,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1881,9 +1881,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1895,9 +1895,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_acdi_manufacturer_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1909,9 +1909,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_acdi_user_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1923,9 +1923,9 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_definition_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1937,8 +1937,8 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_config_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -1952,8 +1952,8 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1965,8 +1965,8 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1978,8 +1978,8 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -1991,7 +1991,7 @@ void _read_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_inf
         EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -2005,9 +2005,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2019,9 +2019,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2033,9 +2033,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2047,9 +2047,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2061,9 +2061,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_acdi_manufacturer);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2075,9 +2075,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_acdi_user);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2089,9 +2089,9 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_definition_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2103,8 +2103,8 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_config_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -2118,8 +2118,8 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2131,8 +2131,8 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2144,8 +2144,8 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2157,7 +2157,7 @@ void _write_command_space(openlcb_statemachine_info_t *statemachine_info, bool i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -2171,9 +2171,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2185,9 +2185,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2199,9 +2199,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2213,9 +2213,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2227,9 +2227,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_acdi_manufacturer_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2241,9 +2241,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_acdi_user_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2255,9 +2255,9 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_definition_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2269,8 +2269,8 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
         EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_config_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -2284,8 +2284,8 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2297,8 +2297,8 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
         EXPECT_EQ(called_function_ptr, &_memory_write_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2310,8 +2310,8 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
         EXPECT_EQ(called_function_ptr, &_memory_write_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2323,7 +2323,7 @@ void _write_reply_ok_space(openlcb_statemachine_info_t *statemachine_info, bool 
         EXPECT_EQ(called_function_ptr, &_memory_write_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -2337,9 +2337,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2351,9 +2351,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2365,9 +2365,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2379,9 +2379,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2393,9 +2393,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_acdi_manufacturer_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2410,9 +2410,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_acdi_user_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2424,9 +2424,9 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_definition_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2438,8 +2438,8 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_config_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -2453,8 +2453,8 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2466,8 +2466,8 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
         EXPECT_EQ(called_function_ptr, &_memory_write_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2479,8 +2479,8 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
         EXPECT_EQ(called_function_ptr, &_memory_write_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2492,7 +2492,7 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
         EXPECT_EQ(called_function_ptr, &_memory_write_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -2505,9 +2505,9 @@ void _write_reply_fail_space(openlcb_statemachine_info_t *statemachine_info, boo
 void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine_info, bool is_null_subcommand)
 {
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2519,9 +2519,9 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2533,9 +2533,9 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2547,9 +2547,9 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2561,9 +2561,9 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_acdi_manufacturer);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2575,9 +2575,9 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_acdi_user);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2589,9 +2589,9 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_traction_function_definition_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2603,8 +2603,8 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_traction_function_config_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -2618,8 +2618,8 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2631,8 +2631,8 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2644,8 +2644,8 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2657,7 +2657,7 @@ void _write_under_mask_space(openlcb_statemachine_info_t *statemachine_info, boo
         EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -2671,9 +2671,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2685,9 +2685,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2699,9 +2699,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2713,9 +2713,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2727,9 +2727,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_acdi_manufacturer);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2741,9 +2741,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_acdi_user);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2755,9 +2755,9 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_definition_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2769,8 +2769,8 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_config_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -2784,8 +2784,8 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2797,8 +2797,8 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_config_description_info);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2810,8 +2810,8 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_all);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2823,7 +2823,7 @@ void _write_stream_command_space(openlcb_statemachine_info_t *statemachine_info,
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_configuration_memory);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -2837,9 +2837,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2851,9 +2851,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2865,9 +2865,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2879,9 +2879,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2893,9 +2893,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_acdi_manufacturer_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2907,9 +2907,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_acdi_user_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2921,9 +2921,9 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_definition_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2935,8 +2935,8 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_config_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -2950,8 +2950,8 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2963,8 +2963,8 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_config_description_info_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2976,8 +2976,8 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_all_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -2989,7 +2989,7 @@ void _write_stream_reply_ok_space(openlcb_statemachine_info_t *statemachine_info
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_configuration_memory_reply_ok);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -3003,9 +3003,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3017,9 +3017,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ALL;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ALL;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3031,9 +3031,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3045,9 +3045,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3059,9 +3059,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_acdi_manufacturer_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3073,9 +3073,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_acdi_user_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3087,9 +3087,9 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_definition_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3101,8 +3101,8 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_config_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
@@ -3116,8 +3116,8 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
 {
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_FF;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -3129,8 +3129,8 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_config_description_info_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_FE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FE;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -3142,8 +3142,8 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_all_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_FD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
@@ -3155,7 +3155,7 @@ void _write_stream_reply_fail_space(openlcb_statemachine_info_t *statemachine_in
         EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_configuration_memory_reply_fail);
 
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -3170,8 +3170,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_OPTIONS_CMD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_OPTIONS_CMD;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3183,8 +3183,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_OPTIONS_REPLY;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3196,8 +3196,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_CMD;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3209,8 +3209,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3222,8 +3222,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3235,8 +3235,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_RESERVE_LOCK;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_RESERVE_LOCK;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3248,8 +3248,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_RESERVE_LOCK_REPLY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_RESERVE_LOCK_REPLY;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3261,8 +3261,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_UNIQUE_ID;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_GET_UNIQUE_ID;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3274,8 +3274,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_UNIQUE_ID_REPLY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_GET_UNIQUE_ID_REPLY;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3287,8 +3287,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_FREEZE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_FREEZE;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3300,8 +3300,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_UNFREEZE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_UNFREEZE;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3313,8 +3313,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_UPDATE_COMPLETE;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_UPDATE_COMPLETE;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3326,8 +3326,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_RESET_REBOOT;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_RESET_REBOOT;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3339,8 +3339,8 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_FACTORY_RESET;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_FACTORY_RESET;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 1;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
@@ -3352,7 +3352,7 @@ void _operations_space(openlcb_statemachine_info_t *statemachine_info, bool is_n
 
     // ********************************************
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = 0x00; // Invalid
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 7;
@@ -3367,15 +3367,15 @@ void _invalid_command(openlcb_statemachine_info_t *statemachine_info, bool is_nu
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = 0xFF; // invalid
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_GET_UNIQUE_ID;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_GET_UNIQUE_ID;
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 0;
 
     ProtocolDatagramHandler_datagram(statemachine_info);
 
     _test_for_rejected_datagram_bad_command(statemachine_info);
     _reset_variables();
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FF + 4; // invalid
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_FF + 4; // invalid
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 2;
 
     ProtocolDatagramHandler_datagram(statemachine_info);

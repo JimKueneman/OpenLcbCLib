@@ -57,7 +57,7 @@ static void _extract_write_command_parameters(openlcb_statemachine_info_t *state
 
     config_mem_write_request_info->address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
-    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
+    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == CONFIG_MEM_WRITE_SPACE_IN_BYTE_6) {
 
         config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_6;
         config_mem_write_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[7];
@@ -127,12 +127,12 @@ static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_CONFIGURATION,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -168,12 +168,12 @@ static void _load_config_mem_reply_fail_message_header(openlcb_statemachine_info
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_CONFIGURATION,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_REPLY_FAIL_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET, // generate an OK reply by default for Read/Write/Stream
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -287,7 +287,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
     switch (config_mem_write_request_info->address) {
 
-        case ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
 
             if (_interface->snip_user_name_write) {
 
@@ -309,7 +309,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:
 
             if (_interface->snip_user_description_write) {
 

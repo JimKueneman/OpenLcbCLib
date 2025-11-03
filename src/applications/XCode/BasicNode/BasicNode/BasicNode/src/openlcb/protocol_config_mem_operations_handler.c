@@ -57,35 +57,35 @@ static const user_address_space_info_t* _decode_to_space_definition(openlcb_stat
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[space_offset]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             return (&statemachine_info->openlcb_node->parameters->address_space_configuration_definition);
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             return &statemachine_info->openlcb_node->parameters->address_space_all;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             return&statemachine_info->openlcb_node->parameters->address_space_config_memory;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             return&statemachine_info->openlcb_node->parameters->address_space_acdi_manufacturer;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             return&statemachine_info->openlcb_node->parameters->address_space_acdi_user;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             return &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             return &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
 
-        case ADDRESS_SPACE_FIRMWARE:
+        case CONFIG_MEM_SPACE_FIRMWARE:
 
             return &statemachine_info->openlcb_node->parameters->address_space_firmware;
 
@@ -109,7 +109,7 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_CONFIGURATION,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
     statemachine_info->outgoing_msg_info.valid = false; // Assume there is not a message to send by default
@@ -249,7 +249,7 @@ void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_OPTIONS_REPLY,
+            CONFIG_MEM_OPTIONS_REPLY,
             1);
 
     OpenLcbUtilities_copy_word_to_openlcb_payload(
@@ -297,7 +297,7 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
             OpenLcbUtilities_copy_byte_to_openlcb_payload(
                     statemachine_info->outgoing_msg_info.msg_ptr,
-                    DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT,
+                    CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT,
                     1);
 
             OpenLcbUtilities_copy_byte_to_openlcb_payload(
@@ -347,7 +347,7 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT,
+            CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT,
             1);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
@@ -385,7 +385,7 @@ void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachin
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_RESERVE_LOCK_REPLY,
+            CONFIG_MEM_RESERVE_LOCK_REPLY,
             1);
 
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(

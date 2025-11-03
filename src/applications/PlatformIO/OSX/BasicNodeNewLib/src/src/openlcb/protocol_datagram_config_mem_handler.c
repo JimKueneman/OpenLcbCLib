@@ -189,7 +189,7 @@ static void _load_config_mem_reply_message_header(openlcb_node_t* openlcb_node, 
 
     // Load the common reply fields that all messages will have
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_msg->dest_alias, openlcb_msg->dest_id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     *worker_msg->payload[1] = *openlcb_msg->payload[1] + CONFIG_REPLY_OK_OFFSET; // generate an OK reply by default for Read/Write/Stream
     OpenLcbUtilities_copy_dword_to_openlcb_payload(worker_msg, config_mem_message_data->address_requested, 2);
 
@@ -897,7 +897,7 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t*
 
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
 
-    if (*openlcb_msg->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6) {
+    if (*openlcb_msg->payload[1] == CONFIG_MEM_READ_SPACE_IN_BYTE_6) {
 
         reply_payload_index = 7;
         *worker_msg->payload[6] = space;
@@ -905,7 +905,7 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_read_message(openlcb_node_t*
 
     }
 
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
 
     uint16_t read_result_or_error_code = _read_memory_space(openlcb_node, worker_msg, data_address, reply_payload_index, data_count, space);
@@ -975,7 +975,7 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_node_t
 
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
 
-    if (*openlcb_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
+    if (*openlcb_msg->payload[1] == CONFIG_MEM_WRITE_SPACE_IN_BYTE_6) {
 
         payload_index = 7;
         *worker_msg->payload[6] = space;
@@ -983,7 +983,7 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_write_message(openlcb_node_t
 
     }
 
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(worker_msg, data_address, 2);
 
     uint16_t write_result_or_error_code = _write_memory_space(openlcb_node, openlcb_msg, data_address, payload_index, data_count, space);
@@ -1013,11 +1013,11 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_write_under_mask_message(ope
     uint8_t reply_payload_index = 6;
     uint32_t data_address = OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg, 2);
 
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
 
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
 
-    if (*openlcb_msg->payload[1] == DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6) {
+    if (*openlcb_msg->payload[1] == CONFIG_MEM_WRITE_SPACE_IN_BYTE_6) {
 
         reply_payload_index = 7;
         *worker_msg->payload[6] = space;
@@ -1139,9 +1139,9 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_options_cmd_message(openlcb_
 
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 0);
 
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
 
-    *worker_msg->payload[1] = DATAGRAM_MEMORY_OPTIONS_REPLY;
+    *worker_msg->payload[1] = CONFIG_MEM_OPTIONS_REPLY;
 
     uint16_t available_commands = 0x00;
 
@@ -1258,8 +1258,8 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
 
         OpenLcbUtilities_clear_openlcb_message_payload(worker_msg);
 
-        *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-        *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT;
+        *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+        *worker_msg->payload[1] = CONFIG_MEM_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT;
         *worker_msg->payload[2] = *openlcb_msg->payload[2];
         *worker_msg->payload[7] = 0x01;
 
@@ -1270,8 +1270,8 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_get_address_space_info_messa
     }
 
 
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *worker_msg->payload[1] = CONFIG_MEM_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT;
     *worker_msg->payload[2] = target_space->address_space;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(worker_msg, target_space->highest_address, 3);
     *worker_msg->payload[7] = 0x00;
@@ -1361,8 +1361,8 @@ bool ProtocolDatagramConfigMemHandler_handle_memory_reserve_lock_message(openlcb
 
     OpenLcbUtilities_load_openlcb_message(worker_msg, openlcb_node->alias, openlcb_node->id, openlcb_msg->source_alias, openlcb_msg->source_id, MTI_DATAGRAM, 8);
 
-    *worker_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *worker_msg->payload[1] = DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK_REPLY;
+    *worker_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *worker_msg->payload[1] = CONFIG_MEM_CONFIGURATION_RESERVE_LOCK_REPLY;
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(worker_msg, openlcb_node->lock_node, 2);
 
     ProtocolDatagramConfigMemHandler_try_transmit(openlcb_node, openlcb_msg, worker_msg);

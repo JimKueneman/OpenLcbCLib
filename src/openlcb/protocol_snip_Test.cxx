@@ -42,8 +42,8 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
 
-    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
@@ -62,7 +62,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_configuration_definition.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,         // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 0x200, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
@@ -71,7 +71,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_all.low_address_valid = 0, // assume the low address starts at 0
     .address_space_all.low_address = 0,       // ignored if low_address_valid is false
     .address_space_all.highest_address = 0,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "All memory Info",
 
     // Space 0xFD
@@ -80,7 +80,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.low_address_valid = 0,                                // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
     // Space 0xEF
@@ -89,7 +89,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_firmware.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_firmware.low_address = 0,         // ignored if low_address_valid is false
     .address_space_firmware.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 
     .cdi =
@@ -120,8 +120,8 @@ node_parameters_t _node_parameters_main_node_using_low_address = {
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
 
-    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
@@ -140,7 +140,7 @@ node_parameters_t _node_parameters_main_node_using_low_address = {
     .address_space_configuration_definition.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,         // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 0x200, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
@@ -149,7 +149,7 @@ node_parameters_t _node_parameters_main_node_using_low_address = {
     .address_space_all.low_address_valid = 0, // assume the low address starts at 0
     .address_space_all.low_address = 0,       // ignored if low_address_valid is false
     .address_space_all.highest_address = 0,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "All memory Info",
 
     // Space 0xFD
@@ -158,7 +158,7 @@ node_parameters_t _node_parameters_main_node_using_low_address = {
     .address_space_config_memory.low_address_valid = 1,                                                           // assume the low address starts at 0
     .address_space_config_memory.low_address = CONFIG_MEM_START_ADDRESS,                                          // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION + CONFIG_MEM_START_ADDRESS, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
     // Space 0xEF
@@ -167,7 +167,7 @@ node_parameters_t _node_parameters_main_node_using_low_address = {
     .address_space_firmware.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_firmware.low_address = 0,         // ignored if low_address_valid is false
     .address_space_firmware.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 
     .cdi =
@@ -788,10 +788,10 @@ TEST(ProtocolSnip, write_user_data)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = 'W';
     *incoming_msg->payload[8] = 'r';
     *incoming_msg->payload[9] = 'i';
@@ -837,10 +837,10 @@ TEST(ProtocolSnip, write_user_data_null_dependancies)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
     *incoming_msg->payload[7] = 'W';
     *incoming_msg->payload[8] = 'r';
     *incoming_msg->payload[9] = 'i';

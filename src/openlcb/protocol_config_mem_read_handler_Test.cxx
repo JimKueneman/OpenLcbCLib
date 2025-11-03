@@ -55,8 +55,8 @@ const node_parameters_t _node_parameters_main_node = {
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
 
-    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
@@ -75,7 +75,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_configuration_definition.low_address_valid = false,  // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
@@ -84,7 +84,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_all.low_address_valid = false, // assume the low address starts at 0
     .address_space_all.low_address = 0,           // ignored if low_address_valid is false
     .address_space_all.highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "All memory Info",
 
     // Space 0xFD
@@ -93,7 +93,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
     // Space 0xFC
@@ -102,7 +102,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_manufacturer.low_address = 0,           // ignored if low_address_valid is false
     .address_space_acdi_manufacturer.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_acdi_manufacturer.address_space = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS,
+    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "ADCI Manufacturer storage",
 
     // Space 0xFB
@@ -111,7 +111,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_user.low_address = 0,           // ignored if low_address_valid is false
     .address_space_acdi_user.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
+    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ADCI User storage",
 
     // Space 0xFA
@@ -120,7 +120,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_traction_function_definition_info.low_address_valid = false, // assume the low address starts at 0
     .address_space_traction_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
     .address_space_traction_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_definition_info.address_space = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
+    .address_space_traction_function_definition_info.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
     .address_space_traction_function_definition_info.description = "Traction Configuration Definition Info",
 
     // Space 0xF9
@@ -129,7 +129,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_traction_function_config_memory.low_address_valid = false, // assume the low address starts at 0
     .address_space_traction_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
     .address_space_traction_function_config_memory.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_config_memory.address_space = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
+    .address_space_traction_function_config_memory.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_traction_function_config_memory.description = "Traction Configuration Memory storage",
 
     // Space 0xEF
@@ -138,7 +138,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
     .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
     .address_space_firmware.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 
     .cdi =
@@ -204,8 +204,8 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
 
-    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
@@ -224,7 +224,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_configuration_definition.low_address_valid = false,  // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 1098 - 1, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
@@ -233,7 +233,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_all.low_address_valid = false, // assume the low address starts at 0
     .address_space_all.low_address = 0,           // ignored if low_address_valid is false
     .address_space_all.highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "All memory Info",
 
     // Space 0xFD
@@ -242,7 +242,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_config_memory.low_address_valid = false,                            // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,                                      // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = CONFIG_MEM_NODE_ADDRESS_ALLOCATION, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
     // Space 0xFC
@@ -251,7 +251,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_manufacturer.low_address = 0,           // ignored if low_address_valid is false
     .address_space_acdi_manufacturer.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_acdi_manufacturer.address_space = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS,
+    .address_space_acdi_manufacturer.address_space = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS,
     .address_space_acdi_manufacturer.description = "ADCI Manufacturer storage",
 
     // Space 0xFB
@@ -260,7 +260,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_acdi_user.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_user.low_address = 0,           // ignored if low_address_valid is false
     .address_space_acdi_user.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_acdi_user.address_space = ADDRESS_SPACE_ACDI_USER_ACCESS,
+    .address_space_acdi_user.address_space = CONFIG_MEM_SPACE_ACDI_USER_ACCESS,
     .address_space_acdi_user.description = "ADCI User storage",
 
     // Space 0xFA
@@ -269,7 +269,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_traction_function_definition_info.low_address_valid = false, // assume the low address starts at 0
     .address_space_traction_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
     .address_space_traction_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_definition_info.address_space = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
+    .address_space_traction_function_definition_info.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
     .address_space_traction_function_definition_info.description = "Traction Configuration Definition Info",
 
     // Space 0xF9
@@ -278,7 +278,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_traction_function_config_memory.low_address_valid = false, // assume the low address starts at 0
     .address_space_traction_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
     .address_space_traction_function_config_memory.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_config_memory.address_space = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
+    .address_space_traction_function_config_memory.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_traction_function_config_memory.description = "Traction Configuration Memory storage",
 
     // Space 0xEF
@@ -287,7 +287,7 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
     .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
     .address_space_firmware.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_firmware.address_space = ADDRESS_SPACE_FIRMWARE,
+    .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware Bootloader",
 
     .cdi =
@@ -714,10 +714,10 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_info_bad
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     *incoming_msg->payload[7] = 64 + 1; // Invalid number of bytes to read
     incoming_msg->payload_count = 8;
 
@@ -776,10 +776,10 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     *incoming_msg->payload[7] = 64;
     incoming_msg->payload_count = 8;
 
@@ -804,7 +804,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ALL;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ALL;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_all(&statemachine_info);
@@ -825,7 +825,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_config_memory(&statemachine_info);
@@ -845,7 +845,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_acdi_manufacturer(&statemachine_info);
@@ -866,7 +866,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_acdi_user(&statemachine_info);
@@ -887,7 +887,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(&statemachine_info);
@@ -908,7 +908,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(&statemachine_info);
@@ -955,10 +955,10 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces_delayed)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     *incoming_msg->payload[7] = 64;
     incoming_msg->payload_count = 8;
 
@@ -1009,8 +1009,8 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_short_fo
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FF;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = 64;
     incoming_msg->payload_count = 7;
@@ -1036,7 +1036,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_short_fo
 
     // *****************************************
 
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FE;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FE;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_all(&statemachine_info);
@@ -1057,7 +1057,7 @@ TEST(ProtocolConfigMemReadHandler, memory_read_space_config_description_short_fo
 
     // *****************************************
 
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FD;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
 
     _reset_variables();
     ProtocolConfigMemReadHandler_read_space_config_memory(&statemachine_info);
@@ -1103,10 +1103,10 @@ TEST(ProtocolConfigMemReadHandler, memory_read_spaces_all_space_not_present)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ALL;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ALL;
     *incoming_msg->payload[7] = 64;
     incoming_msg->payload_count = 8;
 
@@ -1147,10 +1147,10 @@ TEST(ProtocolConfigMemReadHandler, message_reply_handlers)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ALL;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ALL;
     *incoming_msg->payload[7] = 64;
     incoming_msg->payload_count = 8;
 
@@ -1158,15 +1158,15 @@ TEST(ProtocolConfigMemReadHandler, message_reply_handlers)
 
     // *****************************************
     _reset_variables();
-    ProtocolConfigMemReadHandler_read_message(&statemachine_info, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO, 0x0000, 0x0000);
+    ProtocolConfigMemReadHandler_read_message(&statemachine_info, CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, 0x0000, 0x0000);
 
     // *****************************************
     _reset_variables();
-    ProtocolConfigMemReadHandler_read_reply_ok_message(&statemachine_info, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO);
+    ProtocolConfigMemReadHandler_read_reply_ok_message(&statemachine_info, CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO);
 
     // *****************************************
     _reset_variables();
-    ProtocolConfigMemReadHandler_read_reply_reject_message(&statemachine_info, ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO);
+    ProtocolConfigMemReadHandler_read_reply_reject_message(&statemachine_info, CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO);
 }
 
 TEST(ProtocolConfigMemReadHandler, message_handlers_null)
@@ -1196,10 +1196,10 @@ TEST(ProtocolConfigMemReadHandler, message_handlers_null)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ALL;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ALL;
     *incoming_msg->payload[7] = 64;
     incoming_msg->payload_count = 8;
 
@@ -1242,10 +1242,10 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_definition_info)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
     *incoming_msg->payload[7] = 0x10;
     incoming_msg->payload_count = 8;
 
@@ -1260,8 +1260,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_definition_info)
     ProtocolConfigMemReadHandler_read_request_config_definition_info(&statemachine_info, &config_mem_read_request_info);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x17);
     for (int i = config_mem_read_request_info.data_start; i < statemachine_info.outgoing_msg_info.msg_ptr->payload_count; i++)
     {
@@ -1270,8 +1270,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_definition_info)
     }
 
     // ************************************************************************
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FF;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = 0x10;
     incoming_msg->payload_count = 7;
@@ -1287,8 +1287,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_definition_info)
     ProtocolConfigMemReadHandler_read_request_config_definition_info(&statemachine_info, &config_mem_read_request_info);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_FF);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x16);
     for (int i = config_mem_read_request_info.data_start; i < statemachine_info.outgoing_msg_info.msg_ptr->payload_count; i++)
     {
@@ -1328,10 +1328,10 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_mem_without_configmem_rea
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     *incoming_msg->payload[7] = 0x10;
     incoming_msg->payload_count = 8;
 
@@ -1347,13 +1347,13 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_mem_without_configmem_rea
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x09);
 
     // ************************************************************************
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FD;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = 0x10;
     incoming_msg->payload_count = 7;
@@ -1370,8 +1370,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_mem_without_configmem_rea
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_FD);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x8);
 }
 
@@ -1406,10 +1406,10 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_mem_with_configmem_read_d
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
     *incoming_msg->payload[7] = 0x10;
     incoming_msg->payload_count = 8;
 
@@ -1428,13 +1428,13 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_mem_with_configmem_read_d
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_FD;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = 0x10;
     incoming_msg->payload_count = 7;
@@ -1455,8 +1455,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_config_mem_with_configmem_read_d
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_FD);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 6 + 16);
 
     for (int i = config_mem_read_request_info.data_start; i < statemachine_info.outgoing_msg_info.msg_ptr->payload_count; i++)
@@ -1497,16 +1497,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1516,23 +1516,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 1 + 7);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], 0x4);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_MANUFACTURER_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_MANUFACTURER_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_MANUFACTURER_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_MANUFACTURER_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1542,8 +1542,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 41 + 7);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], '0');
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], '1');
@@ -1552,16 +1552,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_MODEL_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_MODEL_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_MODEL_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_MODEL_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_MODEL_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_MODEL_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1571,8 +1571,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 13);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], 'T');
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], 'e');
@@ -1581,16 +1581,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_HARDWARE_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_HARDWARE_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_HARDWARE_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_HARDWARE_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1600,8 +1600,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 6);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], '0');
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], '.');
@@ -1611,16 +1611,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1630,8 +1630,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 6);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], '0');
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], '.');
@@ -1641,16 +1641,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS + 1, 2); // Invalid Address
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS + 1, 2); // Invalid Address
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS + 1; // Invalid Address
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS + 1; // Invalid Address
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1694,16 +1694,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1713,23 +1713,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 1);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], 0x2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_NAME_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_NAME_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_NAME_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_NAME_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_NAME_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1739,8 +1739,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 5);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], 'N');
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], 'a');
@@ -1750,16 +1750,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_DESCRIPTION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_DESCRIPTION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1769,8 +1769,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 12);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[7], 'D');
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[8], 'e');
@@ -1787,16 +1787,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS + 1, 2); // Invalid Address
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_NAME_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_NAME_ADDRESS + 1, 2); // Invalid Address
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_NAME_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS + 1; // Invalid Address
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_NAME_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_NAME_ADDRESS + 1; // Invalid Address
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_NAME_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1840,16 +1840,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1859,23 +1859,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_MANUFACTURER_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_MANUFACTURER_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MANUFACTURER_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_MANUFACTURER_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_MANUFACTURER_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1885,23 +1885,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_MODEL_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_MODEL_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_MODEL_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_MODEL_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_MODEL_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_MODEL_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_MODEL_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1911,23 +1911,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_HARDWARE_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_HARDWARE_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_HARDWARE_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_HARDWARE_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_HARDWARE_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1937,23 +1937,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FC_SOFTWARE_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FC_SOFTWARE_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -1963,8 +1963,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dep
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 }
@@ -2000,16 +2000,16 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
     incoming_msg->source_alias = SOURCE_ALIAS;
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_VERSION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_VERSION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_VERSION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_VERSION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_VERSION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_VERSION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_VERSION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -2019,23 +2019,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_NAME_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_NAME_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_NAME_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_NAME_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_NAME_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_NAME_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -2045,23 +2045,23 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 
     // ************************************************************************
 
-    *incoming_msg->payload[0] = DATAGRAM_MEMORY_CONFIGURATION;
-    *incoming_msg->payload[1] = DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS, 2);
-    *incoming_msg->payload[6] = ADDRESS_SPACE_ACDI_USER_ACCESS;
-    *incoming_msg->payload[7] = ACDI_SPACE_FB_DESCRIPTION_LEN;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    *incoming_msg->payload[7] = CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN;
     incoming_msg->payload_count = 8;
 
     config_mem_read_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    config_mem_read_request_info.address = ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS;
-    config_mem_read_request_info.bytes = ACDI_SPACE_FB_DESCRIPTION_LEN;
+    config_mem_read_request_info.address = CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS;
+    config_mem_read_request_info.bytes = CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN;
     config_mem_read_request_info.data_start = 7;
     config_mem_read_request_info.space_info = nullptr;
     config_mem_read_request_info.read_space_func = nullptr;
@@ -2071,8 +2071,8 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user_null_snip_dependancies
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], DATAGRAM_MEMORY_CONFIGURATION);
-    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
 }

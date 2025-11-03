@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h> // printf
+#include <string.h>
 
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -56,7 +57,7 @@ static void _extract_write_command_parameters(openlcb_statemachine_info_t *state
 
     config_mem_write_request_info->address = OpenLcbUtilities_extract_dword_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 2);
 
-    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6) {
+    if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == CONFIG_MEM_WRITE_SPACE_IN_BYTE_6) {
 
         config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_6;
         config_mem_write_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[7];
@@ -76,6 +77,11 @@ static uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *conf
     if (!config_mem_write_request_info->space_info->present) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN;
+    }
+
+    if (config_mem_write_request_info->space_info->read_only) {
+
+        return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY;
     }
 
     if (config_mem_write_request_info->address > config_mem_write_request_info->space_info->highest_address) {
@@ -107,7 +113,9 @@ static void _check_for_write_overrun(openlcb_statemachine_info_t *statemachine_i
     }
 }
 
-static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint8_t config_reply_ok_fail) {
+static void _load_config_mem_reply_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -119,12 +127,12 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            DATAGRAM_MEMORY_CONFIGURATION,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + config_reply_ok_fail, // generate an OK reply by default for Read/Write/Stream
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
             1);
 
     OpenLcbUtilities_copy_dword_to_openlcb_payload(
@@ -146,16 +154,55 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
 }
 
-static void _load_write_fail_message(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+static void _load_config_mem_reply_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint16_t error_code) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_FAIL_OFFSET);
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
 
-    OpenLcbUtilities_copy_word_to_openlcb_payload(
+    OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            CONFIG_MEM_CONFIGURATION,
             0);
 
-    statemachine_info->outgoing_msg_info.valid = true;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            1);
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            config_mem_write_request_info->address,
+            2);
+
+    if (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], // generate an OK reply by default for Read/Write/Stream
+                6);
+
+        OpenLcbUtilities_copy_word_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                error_code,
+                7);
+
+    } else {
+
+        OpenLcbUtilities_copy_word_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                error_code,
+                6);
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = false; // Default is to not return a reply
 
 }
 
@@ -174,7 +221,16 @@ static void _handle_write_request(openlcb_statemachine_info_t *statemachine_info
             _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
 
         } else {
-            _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
+
+            if (_interface->delayed_reply_time) {
+
+                _interface->load_datagram_received_ok_message(statemachine_info, _interface->delayed_reply_time(statemachine_info, config_mem_write_request_info));
+
+            } else {
+
+                _interface->load_datagram_received_ok_message(statemachine_info, 0x00);
+
+            }
 
             statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = true;
             statemachine_info->incoming_msg_info.enumerate = true; // call this again for the data
@@ -183,83 +239,101 @@ static void _handle_write_request(openlcb_statemachine_info_t *statemachine_info
         return;
     }
 
-    // Complete Command Request
-    if (config_mem_write_request_info->write_space_func) {
+    // Try to Complete Command Request, we know that config_mem_write_request_info->write_space_func is valid if we get here
 
-        _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
-        config_mem_write_request_info->write_space_func(statemachine_info, config_mem_write_request_info);
+    _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
+    config_mem_write_request_info->write_space_func(statemachine_info, config_mem_write_request_info);
 
-    } else {
-
-        _load_write_fail_message(statemachine_info, config_mem_write_request_info);
-
-    }
-
-    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
+    statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // Done
     statemachine_info->incoming_msg_info.enumerate = false; // done
+
 }
 
 void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_OK_OFFSET);
+    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info);
 
-    if (_interface->configuration_memory_write) {
+    if (_interface->config_memory_write) {
 
-
-        uint16_t read_count = _interface->configuration_memory_write(
+        uint16_t write_count = _interface->config_memory_write(
                 config_mem_write_request_info->address,
                 config_mem_write_request_info->bytes,
                 (configuration_memory_buffer_t*) & statemachine_info->outgoing_msg_info.msg_ptr->payload[config_mem_write_request_info->data_start]
                 );
 
-        statemachine_info->outgoing_msg_info.msg_ptr->payload_count += read_count;
+        statemachine_info->outgoing_msg_info.msg_ptr->payload_count += write_count;
 
-        statemachine_info->outgoing_msg_info.valid = true;
+        if (write_count < config_mem_write_request_info->bytes) {
+
+            _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+
+        }
 
     } else {
 
-        // TODO:  Send Fail message
+        _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
     }
+    
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
-    _load_config_mem_reply_message_header(statemachine_info, config_mem_write_request_info, CONFIG_REPLY_OK_OFFSET);
+    uint16_t bytes_written = 0;
+    
+    _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_write_request_info);
 
     switch (config_mem_write_request_info->address) {
 
-        case ACDI_ADDRESS_SPACE_FB_NAME_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
 
-            // TODO: Write to Config Mem
+            if (_interface->snip_user_name_write) {
 
-            //            _interface->snip_load_user_name(
-            //                    statemachine_info->openlcb_node,
-            //                    statemachine_info->outgoing_msg_info.msg_ptr,
-            //                    config_mem_write_request_info->data_start,
-            //                    config_mem_write_request_info->bytes
-            //                    );
+              bytes_written = _interface->snip_user_name_write(
+                      config_mem_write_request_info->bytes,
+                      (configuration_memory_buffer_t*)&statemachine_info->incoming_msg_info.msg_ptr->payload[config_mem_write_request_info->data_start]);
+              
+              if (bytes_written < config_mem_write_request_info->bytes) {
+
+                  _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
+ 
+              }
+
+            } else {
+
+                _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+
+            }
 
             break;
 
-        case ACDI_ADDRESS_SPACE_FB_DESCRIPTION_ADDRESS:
+        case CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:
 
-            // TODO: Write to Config Mem
+            if (_interface->snip_user_description_write) {
 
+              bytes_written = _interface->snip_user_description_write(
+                      config_mem_write_request_info->bytes,
+                      (configuration_memory_buffer_t*)&statemachine_info->incoming_msg_info.msg_ptr->payload[config_mem_write_request_info->data_start]);
+              
+              if (bytes_written < config_mem_write_request_info->bytes) {
 
-            //            _interface->snip_load_user_description(
-            //                    statemachine_info->openlcb_node,
-            //                    statemachine_info->outgoing_msg_info.msg_ptr,
-            //                    config_mem_write_request_info->data_start,
-            //                    config_mem_write_request_info->bytes
-            //                    );
+                  _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
 
+              }
+
+            } else {
+
+                _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
+
+            }
+ 
             break;
 
         default:
 
-            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL);
+            _load_config_mem_reply_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
 
             break;
     }
@@ -340,7 +414,7 @@ void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(o
 void ProtocolConfigMemWriteHandler_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail) {
 }
 
-void ProtocolConfigMemWriteHandlerr_memory_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
+void ProtocolConfigMemWriteHandler_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {
 }
 
 void ProtocolConfigMemWriteHandler_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space) {

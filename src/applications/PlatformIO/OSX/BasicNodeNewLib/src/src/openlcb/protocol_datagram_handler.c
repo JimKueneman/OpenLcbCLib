@@ -395,163 +395,163 @@ static bool _handle_datagram_memory_configuration(openlcb_node_t* openlcb_node, 
 
     switch (*openlcb_msg->payload[1]) { // which space?
 
-        case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_SPACE_IN_BYTE_6:
 
             return _handle_read_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg);
 
-        case DATAGRAM_MEMORY_READ_SPACE_FD:
+        case CONFIG_MEM_READ_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_configuration_memory_message));
 
-        case DATAGRAM_MEMORY_READ_SPACE_FE:
+        case CONFIG_MEM_READ_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_all_message));
 
-        case DATAGRAM_MEMORY_READ_SPACE_FF:
+        case CONFIG_MEM_READ_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_config_description_info_message));
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6:
 
             return _handle_read_reply_ok_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg);
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_configuration_memory_reply_ok_message));
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FE:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_all_reply_ok_message));
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_config_description_info_reply_ok_message));
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             return _handle_read_reply_fail_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg);
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_configuration_memory_reply_fail_message));
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FE:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_all_reply_fail_message));
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_read_space_config_description_info_reply_fail_message));
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_SPACE_IN_BYTE_6:
 
             return _handle_write_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg);
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_FD:
+        case CONFIG_MEM_WRITE_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_configuration_memory_message));
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_FE:
+        case CONFIG_MEM_WRITE_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_all_message));
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_FF:
+        case CONFIG_MEM_WRITE_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_config_description_info_message));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
 
             return (_handle_write_reply_ok_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_configuration_memory_reply_ok_message));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FE:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_all_reply_ok_message));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FF:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_config_description_info_reply_ok_message));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             return (_handle_write_reply_fail_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_configuration_memory_reply_fail_message));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FE:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_all_reply_fail_message));
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FF:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_space_config_description_info_reply_fail_message));
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6:
 
             return (_handle_write_under_mask_address_space_at_offset_6(openlcb_node, openlcb_msg, worker_msg));
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FD:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_under_mask_space_configuration_memory_message));
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FE:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_under_mask_space_all_message));
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FF:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FF:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_write_under_mask_space_config_description_info_message));
 
-        case DATAGRAM_MEMORY_OPTIONS_CMD:
+        case CONFIG_MEM_OPTIONS_CMD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_options_cmd_message));
 
-        case DATAGRAM_MEMORY_OPTIONS_REPLY:
+        case CONFIG_MEM_OPTIONS_REPLY:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_options_reply_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_INFO_CMD:
+        case CONFIG_MEM_CONFIGURATION_GET_ADDRESS_SPACE_INFO_CMD:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_get_address_space_info_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT:
+        case CONFIG_MEM_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_NOT_PRESENT:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_get_address_space_info_reply_not_present_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT:
+        case CONFIG_MEM_CONFIGURATION_GET_ADDRESS_SPACE_REPLY_PRESENT:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_get_address_space_info_reply_not_present_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_RESERVE_LOCK:
+        case CONFIG_MEM_CONFIGURATION_RESERVE_LOCK:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_reserve_lock_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_GET_UNIQUE_ID:
+        case CONFIG_MEM_CONFIGURATION_GET_UNIQUE_ID:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_get_unique_id_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_UNFREEZE:
+        case CONFIG_MEM_CONFIGURATION_UNFREEZE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_unfreeze_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_FREEZE:
+        case CONFIG_MEM_CONFIGURATION_FREEZE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_freeze_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_UPDATE_COMPLETE:
+        case CONFIG_MEM_CONFIGURATION_UPDATE_COMPLETE:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_update_complete_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_RESET_REBOOT:
+        case CONFIG_MEM_CONFIGURATION_RESET_REBOOT:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_reset_reboot_message));
 
-        case DATAGRAM_MEMORY_CONFIGURATION_FACTORY_RESET:
+        case CONFIG_MEM_CONFIGURATION_FACTORY_RESET:
 
             return (_handle_subcommand(openlcb_node, openlcb_msg, worker_msg, _interface->memory_factory_reset_message));
 
@@ -569,7 +569,7 @@ bool ProtocolDatagramHandler_handle_datagram(openlcb_node_t* openlcb_node, openl
 
     switch (*openlcb_msg->payload[0]) { // commands
 
-        case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?
+        case CONFIG_MEM_CONFIGURATION: // are we 0x20?
 
             _handle_datagram_memory_configuration(openlcb_node, openlcb_msg, worker_msg);
 

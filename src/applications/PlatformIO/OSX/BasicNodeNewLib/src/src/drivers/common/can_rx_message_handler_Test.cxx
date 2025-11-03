@@ -33,8 +33,8 @@ node_parameters_t _node_parameters_main_node = {
                          PSI_SIMPLE_NODE_INFORMATION |
                          PSI_CONFIGURATION_DESCRIPTION_INFO),
 
-    .configuration_options.high_address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
 
     .configuration_options.read_from_manufacturer_space_0xfc_supported = 1,
     .configuration_options.read_from_user_space_0xfb_supported = 1,
@@ -53,7 +53,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_configuration_definition.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,         // ignored if low_address_valid is false
     .address_space_configuration_definition.highest_address = 0x200, // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
-    .address_space_configuration_definition.address_space = ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
@@ -62,7 +62,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_all.low_address_valid = 0, // assume the low address starts at 0
     .address_space_all.low_address = 0,       // ignored if low_address_valid is false
     .address_space_all.highest_address = 0,
-    .address_space_all.address_space = ADDRESS_SPACE_ALL,
+    .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
     .address_space_all.description = "All memory Info",
 
     // Space 0xFD
@@ -71,7 +71,7 @@ node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.low_address_valid = 0,   // assume the low address starts at 0
     .address_space_config_memory.low_address = 0,         // ignored if low_address_valid is false
     .address_space_config_memory.highest_address = 0x200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_config_memory.address_space = ADDRESS_SPACE_CONFIGURATION_MEMORY,
+    .address_space_config_memory.address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
     .address_space_config_memory.description = "Configuration memory storage",
 
     .cdi =

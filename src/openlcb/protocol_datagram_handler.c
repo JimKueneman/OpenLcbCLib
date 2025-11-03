@@ -73,43 +73,43 @@ static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_all);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory);
 
@@ -129,43 +129,43 @@ static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_ok);
 
@@ -185,43 +185,43 @@ static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachi
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_manufacturer_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_acdi_user_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_fail);
 
@@ -241,43 +241,43 @@ static void _handle_read_stream_address_space_at_offset_6(openlcb_statemachine_i
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_acdi_manufacturer);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_acdi_user);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_definition_info);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_config_memory);
 
@@ -297,43 +297,43 @@ static void _handle_read_stream_reply_ok_address_space_at_offset_6(openlcb_state
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_acdi_manufacturer_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_acdi_user_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_definition_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_config_memory_reply_ok);
 
@@ -353,43 +353,43 @@ static void _handle_read_stream_reply_fail_address_space_at_offset_6(openlcb_sta
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_acdi_manufacturer_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_acdi_user_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_definition_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_config_memory_reply_fail);
 
@@ -409,42 +409,42 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all);
 
             break;
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory);
 
@@ -464,43 +464,43 @@ static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachin
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_ok);
 
@@ -520,43 +520,43 @@ static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemach
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_manufacturer_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_acdi_user_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_fail);
 
@@ -576,42 +576,42 @@ static void _handle_write_stream_address_space_at_offset_6(openlcb_statemachine_
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all);
 
             break;
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_acdi_manufacturer);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_acdi_user);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_definition_info);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory);
 
@@ -631,43 +631,43 @@ static void _handle_write_stream_reply_ok_address_space_at_offset_6(openlcb_stat
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_acdi_manufacturer_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_acdi_user_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_definition_info_reply_ok);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory_reply_ok);
 
@@ -687,43 +687,43 @@ static void _handle_write_stream_reply_fail_address_space_at_offset_6(openlcb_st
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_acdi_manufacturer_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_acdi_user_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_definition_info_reply_fail);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory_reply_fail);
 
@@ -743,43 +743,43 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[6]) {
 
-        case ADDRESS_SPACE_CONFIGURATION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info);
 
             break;
 
-        case ADDRESS_SPACE_ALL:
+        case CONFIG_MEM_SPACE_ALL:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all);
 
             break;
 
-        case ADDRESS_SPACE_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_MANUFACTURER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_acdi_manufacturer);
 
             break;
 
-        case ADDRESS_SPACE_ACDI_USER_ACCESS:
+        case CONFIG_MEM_SPACE_ACDI_USER_ACCESS:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_acdi_user);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_definition_info);
 
             break;
 
-        case ADDRESS_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_config_memory);
 
@@ -799,399 +799,399 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[1]) { // which space?
 
-        case DATAGRAM_MEMORY_READ_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_SPACE_IN_BYTE_6:
 
             _handle_read_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_SPACE_FD:
+        case CONFIG_MEM_READ_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_SPACE_FE:
+        case CONFIG_MEM_READ_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_all);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_SPACE_FF:
+        case CONFIG_MEM_READ_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_read_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FD:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FE:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_OK_SPACE_FF:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_read_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FD:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FE:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_REPLY_FAIL_SPACE_FF:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6:
 
             _handle_read_stream_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_SPACE_FD:
+        case CONFIG_MEM_READ_STREAM_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_SPACE_FE:
+        case CONFIG_MEM_READ_STREAM_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_SPACE_FF:
+        case CONFIG_MEM_READ_STREAM_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_read_stream_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FD:
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FE:
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_OK_SPACE_FF:
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_read_stream_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FD:
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FE:
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_READ_STREAM_REPLY_FAIL_SPACE_FF:
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_SPACE_IN_BYTE_6:
 
             _handle_write_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_FD:
+        case CONFIG_MEM_WRITE_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_FE:
+        case CONFIG_MEM_WRITE_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_SPACE_FF:
+        case CONFIG_MEM_WRITE_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_write_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FD:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FE:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_OK_SPACE_FF:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_write_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FD:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FE:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_REPLY_FAIL_SPACE_FF:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6:
 
             _handle_write_under_mask_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FD:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FE:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_UNDER_MASK_SPACE_FF:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6:
 
             _handle_write_stream_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FD:
+        case CONFIG_MEM_WRITE_STREAM_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FE:
+        case CONFIG_MEM_WRITE_STREAM_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_SPACE_FF:
+        case CONFIG_MEM_WRITE_STREAM_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_write_stream_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_FD:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_FE:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_OK_SPACE_FF:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_ok);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_write_stream_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_FD:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FD:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_FE:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_WRITE_STREAM_REPLY_FAIL_SPACE_FF:
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FF:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_fail);
 
             break;
 
-        case DATAGRAM_MEMORY_OPTIONS_CMD:
+        case CONFIG_MEM_OPTIONS_CMD:
 
             _handle_subcommand(statemachine_info, _interface->memory_options_cmd);
 
             break;
 
-        case DATAGRAM_MEMORY_OPTIONS_REPLY:
+        case CONFIG_MEM_OPTIONS_REPLY:
 
             _handle_subcommand(statemachine_info, _interface->memory_options_reply);
 
             break;
 
-        case DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_CMD:
+        case CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info);
 
             break;
 
-        case DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT:
+        case CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_reply_not_present);
 
             break;
 
-        case DATAGRAM_MEMORY_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT:
+        case CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info_reply_present);
 
             break;
 
-        case DATAGRAM_MEMORY_RESERVE_LOCK:
+        case CONFIG_MEM_RESERVE_LOCK:
 
             _handle_subcommand(statemachine_info, _interface->memory_reserve_lock);
 
             break;
 
-        case DATAGRAM_MEMORY_RESERVE_LOCK_REPLY:
+        case CONFIG_MEM_RESERVE_LOCK_REPLY:
 
             _handle_subcommand(statemachine_info, _interface->memory_reserve_lock_reply);
 
             break;
 
-        case DATAGRAM_MEMORY_GET_UNIQUE_ID:
+        case CONFIG_MEM_GET_UNIQUE_ID:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_unique_id);
 
             break;
 
 
-        case DATAGRAM_MEMORY_GET_UNIQUE_ID_REPLY:
+        case CONFIG_MEM_GET_UNIQUE_ID_REPLY:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_unique_id_reply);
 
             break;
 
 
-        case DATAGRAM_MEMORY_UNFREEZE:
+        case CONFIG_MEM_UNFREEZE:
 
             _handle_subcommand(statemachine_info, _interface->memory_unfreeze);
 
             break;
 
-        case DATAGRAM_MEMORY_FREEZE:
+        case CONFIG_MEM_FREEZE:
 
             _handle_subcommand(statemachine_info, _interface->memory_freeze);
 
             break;
 
-        case DATAGRAM_MEMORY_UPDATE_COMPLETE:
+        case CONFIG_MEM_UPDATE_COMPLETE:
 
             _handle_subcommand(statemachine_info, _interface->memory_update_complete);
 
             break;
 
-        case DATAGRAM_MEMORY_RESET_REBOOT:
+        case CONFIG_MEM_RESET_REBOOT:
 
             _handle_subcommand(statemachine_info, _interface->memory_reset_reboot);
 
             break;
 
-        case DATAGRAM_MEMORY_FACTORY_RESET:
+        case CONFIG_MEM_FACTORY_RESET:
 
             _handle_subcommand(statemachine_info, _interface->memory_factory_reset);
 
@@ -1211,7 +1211,7 @@ void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t *statemachine_
 
     switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[0]) { // commands
 
-        case DATAGRAM_MEMORY_CONFIGURATION: // are we 0x20?
+        case CONFIG_MEM_CONFIGURATION: // are we 0x20?
 
             _handle_datagram_memory_configuration_command(statemachine_info);
 
