@@ -99,6 +99,8 @@ static const user_address_space_info_t* _decode_to_space_definition(openlcb_stat
 
 static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_read_request_info) {
 
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -118,11 +120,11 @@ static void _load_config_mem_reply_message_header(openlcb_statemachine_info_t *s
 
 static uint8_t _available_write_flags(openlcb_statemachine_info_t *statemachine_info) {
 
-    uint8_t write_lengths = 0x80 | 0x40 | 0x020 | 0x02;
+    uint8_t write_lengths = CONFIG_OPTIONS_WRITE_LENGTH_RESERVED;
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
 
-        write_lengths = write_lengths | 0x01;
+        write_lengths = write_lengths | CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE;
 
     }
 
@@ -136,42 +138,36 @@ static uint16_t _available_commands_flags(openlcb_statemachine_info_t *statemach
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.write_under_mask_supported) {
 
-        result = result | 0x8000;
+        result = result | CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK;
 
     }
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.unaligned_reads_supported) {
 
-        result = result | 0x4000;
+        result = result | CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS;
 
     }
     if (statemachine_info->openlcb_node->parameters->configuration_options.unaligned_writes_supported) {
 
-        result = result | 0x2000;
+        result = result | CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES;
 
     }
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.read_from_manufacturer_space_0xfc_supported) {
 
-        result = result | 0x0800;
+        result = result | CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ;
 
     }
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.read_from_user_space_0xfb_supported) {
 
-        result = result | 0x0400;
+        result = result | CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ;
 
     }
 
     if (statemachine_info->openlcb_node->parameters->configuration_options.write_to_user_space_0xfb_supported) {
 
-        result = result | 0x0200;
-
-    }
-
-    if (statemachine_info->openlcb_node->parameters->configuration_options.stream_read_write_supported) {
-
-        result = result | 0x0001;
+        result = result | CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE;
 
     }
 
@@ -185,13 +181,13 @@ static uint8_t _available_address_space_info_flags(config_mem_operations_request
 
     if (config_mem_operations_request_info->space_info->read_only) {
 
-        flags = flags | 0x01;
+        flags = flags | CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY;
 
     }
 
     if (config_mem_operations_request_info->space_info->low_address_valid) {
 
-        flags = flags | 0x02;
+        flags = flags | CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS;
 
     }
 
@@ -207,7 +203,7 @@ static void _load_datagram_ok_message(openlcb_statemachine_info_t *statemachine_
 
 }
 
-static void _load_datagram_fail_message(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code) {
+static void _load_datagram_reject_message(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code) {
 
     _interface->load_datagram_received_rejected_message(statemachine_info, error_code);
 
@@ -219,25 +215,21 @@ static void _load_datagram_fail_message(openlcb_statemachine_info_t *statemachin
 static void _handle_operations_request(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     if (!statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent) {
-        
+
         if (config_mem_operations_request_info->operations_func) {
 
             _load_datagram_ok_message(statemachine_info);
-            
+
         } else {
-            
-            _load_datagram_fail_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+
+            _load_datagram_reject_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
         }
 
         return;
     }
 
-    // Complete Command Request
-    if (config_mem_operations_request_info->operations_func) {
-
-        config_mem_operations_request_info->operations_func(statemachine_info, config_mem_operations_request_info);
-
-    }
+    // Complete Command Request, if it was null the first pass with the datagram ACK check would have return NACK and with won't get called with a null
+    config_mem_operations_request_info->operations_func(statemachine_info, config_mem_operations_request_info);
     
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
     statemachine_info->incoming_msg_info.enumerate = false; // done
@@ -267,6 +259,8 @@ void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine
             statemachine_info->openlcb_node->parameters->configuration_options.high_address_space,
             5);
 
+
+    // elect to always send this optional byte
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->parameters->configuration_options.low_address_space,
@@ -280,7 +274,7 @@ void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine
                 statemachine_info->outgoing_msg_info.msg_ptr->payload_count);
 
     }
-
+  
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -352,7 +346,7 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            *statemachine_info->incoming_msg_info.msg_ptr->payload[1],
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[2],
             2);
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8; // OpenLcbChecker needs 8 
