@@ -67,7 +67,7 @@ const node_parameters_t _node_parameters_main_node = {
     // Space 0xFF
     // WARNING: The ACDI write always maps to the first 128 bytes (64 Name + 64 Description) of the Config Memory System so
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
-    .address_space_configuration_definition.read_only = false,
+    .address_space_configuration_definition.read_only = true,
     .address_space_configuration_definition.present = true,
     .address_space_configuration_definition.low_address_valid = false,  // assume the low address starts at 0
     .address_space_configuration_definition.low_address = 0,            // ignored if low_address_valid is false
@@ -76,13 +76,13 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_configuration_definition.description = "Configuration definition info",
 
     // Space 0xFE
-    .address_space_all.read_only = false,
+    .address_space_all.read_only = true,
     .address_space_all.present = true,
     .address_space_all.low_address_valid = false, // assume the low address starts at 0
     .address_space_all.low_address = 0,           // ignored if low_address_valid is false
     .address_space_all.highest_address = CONFIG_MEM_ALL_HIGH_MEMORY,
     .address_space_all.address_space = CONFIG_MEM_SPACE_ALL,
-    .address_space_all.description = "All memory Info",
+    .address_space_all.description = "",
 
     // Space 0xFD
     .address_space_config_memory.read_only = false,
@@ -94,7 +94,7 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_config_memory.description = "Configuration memory storage",
 
     // Space 0xFC
-    .address_space_acdi_manufacturer.read_only = false,
+    .address_space_acdi_manufacturer.read_only = true,
     .address_space_acdi_manufacturer.present = true,
     .address_space_acdi_manufacturer.low_address_valid = false, // assume the low address starts at 0
     .address_space_acdi_manufacturer.low_address = 0,           // ignored if low_address_valid is false
@@ -112,26 +112,26 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_user.description = "ADCI User storage",
 
     // Space 0xFA
-    .address_space_traction_function_definition_info.read_only = false,
+    .address_space_traction_function_definition_info.read_only = true,
     .address_space_traction_function_definition_info.present = true,
-    .address_space_traction_function_definition_info.low_address_valid = false, // assume the low address starts at 0
-    .address_space_traction_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_traction_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_traction_function_definition_info.low_address_valid = true, // assume the low address starts at 0
+    .address_space_traction_function_definition_info.low_address = 0x100,      // ignored if low_address_valid is false
+    .address_space_traction_function_definition_info.highest_address = 0x0200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_traction_function_definition_info.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
     .address_space_traction_function_definition_info.description = "Traction Configuration Definition Info",
 
     // Space 0xF9
     .address_space_traction_function_config_memory.read_only = false,
     .address_space_traction_function_config_memory.present = true,
-    .address_space_traction_function_config_memory.low_address_valid = false, // assume the low address starts at 0
-    .address_space_traction_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_traction_function_config_memory.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_traction_function_config_memory.low_address_valid = true, // assume the low address starts at 0
+    .address_space_traction_function_config_memory.low_address = 0x100,       // ignored if low_address_valid is false
+    .address_space_traction_function_config_memory.highest_address = 0x200,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
     .address_space_traction_function_config_memory.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
     .address_space_traction_function_config_memory.description = "Traction Configuration Memory storage",
 
     // Space 0xEF
     .address_space_firmware.read_only = false,
-    .address_space_firmware.present = true,
+    .address_space_firmware.present = false,
     .address_space_firmware.low_address_valid = false, // assume the low address starts at 0
     .address_space_firmware.low_address = 0,           // ignored if low_address_valid is false
     .address_space_firmware.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
@@ -311,13 +311,13 @@ void _operations_request_update_complete(openlcb_statemachine_info_t *statemachi
     _update_called_function_ptr((void *)&_operations_request_update_complete);
 }
 
-void _requestoperations_request_reset_reboot_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+void _operations_request_reset_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
 {
 
     statemachine_info->outgoing_msg_info.valid = false;
     local_config_mem_operations_request_info = *config_mem_operations_request_info;
 
-    _update_called_function_ptr((void *)&_requestoperations_request_reset_reboot_get_address_space_info);
+    _update_called_function_ptr((void *)&_operations_request_reset_reboot);
 }
 
 void _operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
@@ -346,8 +346,30 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
     .operations_request_freeze = &_operations_request_freeze,
     .operations_request_unfreeze = &_operations_request_unfreeze,
     .operations_request_update_complete = _operations_request_update_complete,
-    .operations_request_reset_reboot = &_requestoperations_request_reset_reboot_get_address_space_info, // HARDWARE INTERFACE
-    .operations_request_factory_reset = &_operations_request_factory_reset,                             // HARDWARE INTERFACE
+    .operations_request_reset_reboot = &_operations_request_reset_reboot,   // HARDWARE INTERFACE
+    .operations_request_factory_reset = &_operations_request_factory_reset, // HARDWARE INTERFACE
+
+};
+
+const interface_protocol_config_mem_operations_handler_t interface_protocol_config_mem_operations_handler_nulls = {
+
+    .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
+    .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
+
+    .operations_request_options_cmd = nullptr,
+    .operations_request_options_cmd_reply = nullptr,
+    .operations_request_get_address_space_info = nullptr,
+    .operations_request_get_address_space_info_reply_present = nullptr,
+    .operations_request_get_address_space_info_reply_not_present = nullptr,
+    .operations_request_reserve_lock = nullptr,
+    .operations_request_reserve_lock_reply = nullptr,
+    .operations_request_get_unique_id = nullptr,
+    .operations_request_get_unique_id_reply = nullptr,
+    .operations_request_freeze = nullptr,
+    .operations_request_unfreeze = nullptr,
+    .operations_request_update_complete = nullptr,
+    .operations_request_reset_reboot = nullptr,   // HARDWARE INTERFACE
+    .operations_request_factory_reset = nullptr, // HARDWARE INTERFACE
 
 };
 
@@ -369,6 +391,16 @@ void _global_initialize(void)
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
 }
+
+void _global_initialize_nulls(void)
+{
+
+    ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler_nulls);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+}
+
 
 TEST(ProtocolConfigMemOperationsHandler, initialize)
 {
@@ -405,14 +437,1362 @@ TEST(ProtocolConfigMemOperationsHandler, options_cmd)
     incoming_msg->dest_id = DEST_ID;
     incoming_msg->dest_alias = DEST_ALIAS;
     *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
-    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
-    *incoming_msg->payload[7] = 64 + 1; // Invalid number of bytes to read
+    *incoming_msg->payload[1] = CONFIG_MEM_OPTIONS_CMD;
+    incoming_msg->payload_count = 2;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_options_cmd(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_options_cmd(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_options_cmd);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_options_cmd);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, options_cmd_reply)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_OPTIONS_REPLY;
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming_msg, CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK, 2);
+    *incoming_msg->payload[4] = CONFIG_OPTIONS_WRITE_LENGTH_RESERVED;
+    *incoming_msg->payload[5] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_FIRMWARE;
+    incoming_msg->payload_count = 7;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_options_reply(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_options_reply(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_options_cmd_reply);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_options_cmd_reply);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, get_address_space_info)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    incoming_msg->payload_count = 3;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_address_space_info(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_address_space_info(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_get_address_space_info);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_get_address_space_info);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_configuration_definition);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, get_address_space_info_reply_present)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x0200, 3);
+    *incoming_msg->payload[7] = CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY;
     incoming_msg->payload_count = 8;
 
     // *****************************************
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_get_address_space_info_reply_present);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_get_address_space_info_reply_present);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_configuration_definition);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, get_address_space_info_reply_not_present)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x0200, 3);
+    *incoming_msg->payload[7] = CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY;
+    incoming_msg->payload_count = 8;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_get_address_space_info_reply_not_present);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_get_address_space_info_reply_not_present);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_configuration_definition);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, reserve_lock)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_RESERVE_LOCK;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+    incoming_msg->payload_count = 8;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_reserve_lock(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_reserve_lock(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_reserve_lock);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_reserve_lock);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, reserve_lock_reply)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_RESERVE_LOCK_REPLY;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+    incoming_msg->payload_count = 8;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_reserve_lock_reply(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_reserve_lock_reply(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_reserve_lock_reply);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_reserve_lock_reply);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, get_unique_id)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_GET_UNIQUE_ID;
+    *incoming_msg->payload[2] = 1;
+    incoming_msg->payload_count = 3;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_unique_id(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_unique_id(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_get_unique_id);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_get_unique_id);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, get_unique_id_reply)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_GET_UNIQUE_ID_REPLY;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, 0x01234567, 2);
+    incoming_msg->payload_count = 8;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_unique_id_reply(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_get_unique_id_reply(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_get_unique_id_reply);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_get_unique_id_reply);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, unfreeze)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_UNFREEZE;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    incoming_msg->payload_count = 3;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_unfreeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_unfreeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_unfreeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_unfreeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_config_memory);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, freeze)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_FREEZE;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    incoming_msg->payload_count = 3;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_config_memory);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, update_complete)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_UPDATE_COMPLETE;
+    incoming_msg->payload_count = 2;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_update_complete(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_update_complete(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_update_complete);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_update_complete);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_RESET_REBOOT;
+    incoming_msg->payload_count = 2;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_reset_reboot(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_reset_reboot(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_reset_reboot);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_reset_reboot);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, factory_reset)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_FACTORY_RESET;
+    incoming_msg->payload_count = 2;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_factory_reset(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_factory_reset(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_factory_reset);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_factory_reset);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, cover_all_spaces)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_FREEZE;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    incoming_msg->payload_count = 3;
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO
+    // *****************************************
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_configuration_definition);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_ALL
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_ALL;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_all);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_CONFIGURATION_MEMORY
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_config_memory);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_acdi_manufacturer);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_ACDI_USER_ACCESS
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_acdi_user);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_traction_function_definition_info);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_traction_function_config_memory);
+
+    // *****************************************
+    // CONFIG_MEM_SPACE_FIRMWARE
+    // *****************************************
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_FIRMWARE;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_firmware);
+
+    // *****************************************
+    // INVALID
+    // *****************************************
+    *incoming_msg->payload[2] = 0x00;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
+    EXPECT_EQ(datagram_reply_code, 0x0000);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, request_options_cmd)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    uint16_t local_word = 0;
+    uint8_t local_byte = 0;
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_OPTIONS_CMD;
+    incoming_msg->payload_count = 2;
+
+    node_parameters_t local_node_parameters = _node_parameters_main_node;
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.space_info = nullptr;
+    config_mem_operations_request_info.operations_func = nullptr;
+
+    // Hook the options so we can change them on the fly
+    node1->parameters = (node_parameters_t *)&local_node_parameters;
+
+    // Command Flags
+    local_node_parameters.configuration_options.write_under_mask_supported = true;
+    local_node_parameters.configuration_options.unaligned_reads_supported = true;
+    local_node_parameters.configuration_options.unaligned_writes_supported = true;
+    local_node_parameters.configuration_options.read_from_manufacturer_space_0xfc_supported = true;
+    local_node_parameters.configuration_options.read_from_user_space_0xfb_supported = true;
+    local_node_parameters.configuration_options.write_to_user_space_0xfb_supported = true;
+
+    // Write Flags
+    local_node_parameters.configuration_options.stream_read_write_supported = true;
+
+    // *****************************************
+    // Get Options with all possible flags set and a Description string
+    // *****************************************
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_options_cmd(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 7 + strlen((char *)&local_node_parameters.configuration_options.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_OPTIONS_REPLY);
+    local_word = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_msg, 2);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK, CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS, CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES, CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ, CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ, CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE, CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE, CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE);
+    local_byte = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_msg, 4);
+    EXPECT_EQ(local_byte & 0x80, 0x80); // spec says should be set
+    EXPECT_EQ(local_byte & 0x40, 0x40); // spec says should be set
+    EXPECT_EQ(local_byte & 0x20, 0x20); // spec says should be set
+    // 0x10 can be either zero or one, ignore it
+    EXPECT_EQ(local_byte & 0x08, 0x00); // spec says should be clear
+    EXPECT_EQ(local_byte & 0x04, 0x00); // spec says should be clear
+    EXPECT_EQ(local_byte & 0x02, 0x02); // spec says should be one
+    EXPECT_EQ(local_byte & CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE, CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE);
+
+    local_node_parameters.configuration_options.write_under_mask_supported = false;
+
+    // *****************************************
+    // Get Options with all possible flags clear and no Description string and low address flag with low address set to 0x12345678
+    // *****************************************
+
+    // Command Flags
+    local_node_parameters.configuration_options.write_under_mask_supported = false;
+    local_node_parameters.configuration_options.unaligned_reads_supported = false;
+    local_node_parameters.configuration_options.unaligned_writes_supported = false;
+    local_node_parameters.configuration_options.read_from_manufacturer_space_0xfc_supported = false;
+    local_node_parameters.configuration_options.read_from_user_space_0xfb_supported = false;
+    local_node_parameters.configuration_options.write_to_user_space_0xfb_supported = false;
+
+    // Write Flags
+    local_node_parameters.configuration_options.stream_read_write_supported = false;
+
+    // Desciption String
+    local_node_parameters.configuration_options.description[0] = 0x00;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_options_cmd(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_GE(outgoing_msg->payload_count, 7);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_OPTIONS_REPLY);
+    local_word = OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing_msg, 2);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK, 0x00);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS, 0x00);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES, 0x00);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ, 0x00);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ, 0x00);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE, 0x00);
+    EXPECT_EQ(local_word & CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE, 0x00);
+    local_byte = OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing_msg, 4);
+    EXPECT_EQ(local_byte & 0x80, 0x80); // spec says should be set
+    EXPECT_EQ(local_byte & 0x40, 0x40); // spec says should be set
+    EXPECT_EQ(local_byte & 0x20, 0x20); // spec says should be set
+    // 0x10 can be either zero or one, ignore it
+    EXPECT_EQ(local_byte & 0x08, 0x00); // spec says should be clear
+    EXPECT_EQ(local_byte & 0x04, 0x00); // spec says should be clear
+    EXPECT_EQ(local_byte & 0x02, 0x02); // spec says should be one
+    EXPECT_EQ(local_byte & CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE, 0x00);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, request_get_address_space_info)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    // uint16_t local_word = 0;
+    // uint8_t local_byte = 0;
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    incoming_msg->payload_count = 3;
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.operations_func = nullptr;
+
+    // ************************************************************************
+    //  Get Info on the CDI Space (0xFF)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_configuration_definition;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8 + strlen((char *)&_node_parameters_main_node.address_space_configuration_definition.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_configuration_definition.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY);
+
+    // ************************************************************************
+    //  Get Info on the All Space (0xFE)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_ALL;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_all;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);  // No description string for this one
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_ALL);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_all.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY);
+
+    // ************************************************************************
+    //  Get Info on the All Space (0xFD)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_config_memory;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8 + strlen((char *)&_node_parameters_main_node.address_space_config_memory.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_CONFIGURATION_MEMORY);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_config_memory.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], 0x00);
+
+    // ************************************************************************
+    //  Get Info on the All Space (0xFC)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_acdi_manufacturer;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8 + strlen((char *)&_node_parameters_main_node.address_space_acdi_manufacturer.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_acdi_manufacturer.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY);
+
+    // ************************************************************************
+    //  Get Info on the All Space (0xFB)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_ACDI_USER_ACCESS;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_acdi_user;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8 + strlen((char *)&_node_parameters_main_node.address_space_acdi_user.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_ACDI_USER_ACCESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_acdi_user.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], 0x00);
+
+    // ************************************************************************
+    //  Get Info on the All Space (0xFA)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_traction_function_definition_info;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 12 + strlen((char *)&_node_parameters_main_node.address_space_traction_function_definition_info.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_traction_function_definition_info.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY | CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 8), _node_parameters_main_node.address_space_traction_function_definition_info.low_address);
+
+     // ************************************************************************
+    //  Get Info on the All Space (0xFA)
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_traction_function_config_memory;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 12 + strlen((char *)&_node_parameters_main_node.address_space_traction_function_config_memory.description) + 1);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_traction_function_config_memory.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 8), _node_parameters_main_node.address_space_traction_function_config_memory.low_address);
+
+     // ************************************************************************
+    //  Space that is not present
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_FIRMWARE;
+    config_mem_operations_request_info.space_info =  &_node_parameters_main_node.address_space_firmware;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_FIRMWARE);
+
+    // ************************************************************************
+    //  Invalid space info
+    // ************************************************************************
+
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    config_mem_operations_request_info.space_info = nullptr;
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY);
+
+
+}
+
+TEST(ProtocolConfigMemOperationsHandler, request_reserve_lock)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_RESERVE_LOCK;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, SOURCE_ID, 2);
+    incoming_msg->payload_count = 8;
+
+    config_mem_operations_request_info_t config_mem_operations_request_info;
+
+    config_mem_operations_request_info.space_info = nullptr;
+    config_mem_operations_request_info.operations_func = nullptr;
+
+    // *****************************************
+    // Node not previously locked so we lock it
+    // *****************************************
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+
+    // *****************************************
+    // Node not previously locked so we lock it
+    // *****************************************
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+
+    // *****************************************
+    // Node previously locked by us relock it, should succeed
+    // *****************************************
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+
+    // *****************************************
+    // Node previously locked by SOURCE_ID so this should fail and return the SOURCE ID
+    // *****************************************
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, DEST_ID, 2);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), SOURCE_ID);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+
+    // *****************************************
+    // Clear the Lock
+    // *****************************************
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, NULL_NODE_ID, 2);
+
+    _reset_variables();
+    ProtocolConfigMemOperationsHandler_request_reserve_lock(&statemachine_info, &config_mem_operations_request_info);
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->payload_count, 8);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_RESERVE_LOCK_REPLY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing_msg, 2), NULL_NODE_ID);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+}
+
+TEST(ProtocolConfigMemOperationsHandler, options_cmd_nulls)
+{
+
+    _reset_variables();
+    _global_initialize_nulls();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_OPTIONS_CMD;
+    incoming_msg->payload_count = 2;
+
+    // *****************************************
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    _reset_variables();
     ProtocolConfigMemOperationsHandler_options_cmd(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 }

@@ -65,8 +65,7 @@ void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_state
         mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
 
     }
-    
-    
+     
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -85,6 +84,8 @@ void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_state
     statemachine_info->openlcb_node->state.initialized = true;
     statemachine_info->openlcb_node->producers.enumerator.running = true;
     statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
+    statemachine_info->openlcb_node->consumers.enumerator.running = false;
+    statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
     statemachine_info->outgoing_msg_info.valid = true;
 
     statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
@@ -96,6 +97,8 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
     if (statemachine_info->openlcb_node->producers.count == 0) {
 
         statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+        
+        statemachine_info->outgoing_msg_info.valid = false;
 
         return;
 
@@ -143,6 +146,8 @@ void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_i
     if (statemachine_info->openlcb_node->consumers.count == 0) {
 
         statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
+        
+        statemachine_info->outgoing_msg_info.valid = false;
 
         return;
 
