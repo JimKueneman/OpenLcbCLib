@@ -515,7 +515,7 @@ TEST(OpenLcbApplication, read_configuration_memory_null)
 
     configuration_memory_buffer_t buffer;
 
-    EXPECT_EQ(OpenLcbApplication_read_configuration_memory(node1, 0x0000FFFF, 0x10, &buffer), 0x00);
+    EXPECT_EQ(OpenLcbApplication_read_configuration_memory(node1, 0x0000FFFF, 0x10, &buffer), 0xFFFF);
 }
 
 TEST(OpenLcbApplication, write_configuration_memory_null)
@@ -531,5 +531,5 @@ TEST(OpenLcbApplication, write_configuration_memory_null)
 
     configuration_memory_buffer_t buffer;
 
-    EXPECT_EQ(OpenLcbApplication_write_configuration_memory(node1, 0x0000FFFF, 0x10, &buffer), 0x00);
+    EXPECT_EQ(OpenLcbApplication_write_configuration_memory(node1, 0x0000FFFF, 0x10, &buffer), 0xFFFF);
 }

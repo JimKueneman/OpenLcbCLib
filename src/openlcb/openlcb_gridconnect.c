@@ -61,7 +61,7 @@ static bool _is_valid_hex_char(uint8_t next_byte) {
     
 }
 
-uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer) {
+bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer) {
 
     switch (_current_state) {
 

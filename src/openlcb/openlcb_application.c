@@ -136,7 +136,7 @@ uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *node, uint
 
     }
 
-    return false;
+    return 0xFFFF;
 }
 
 uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
@@ -147,5 +147,5 @@ uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *node, uin
 
     }
 
-    return false;
+    return 0xFFFF;
 }
