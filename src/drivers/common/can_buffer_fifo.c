@@ -116,6 +116,7 @@ can_msg_t *CanBufferFifo_pop(void) {
 
 }
 
+
 uint8_t CanBufferFifo_is_empty(void) {
 
     return can_msg_buffer_fifo.head == can_msg_buffer_fifo.tail;

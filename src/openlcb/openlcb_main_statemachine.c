@@ -41,7 +41,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h> // printf
-#include "unistd.h"
 
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"

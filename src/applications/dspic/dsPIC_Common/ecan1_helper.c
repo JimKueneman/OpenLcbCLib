@@ -102,7 +102,7 @@ __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(dma), aligned(ECAN1_FI
 __eds__ ECAN1MSGBUF ecan1msgBuf __attribute__((eds, space(xmemory), aligned(ECAN1_FIFO_LENGTH_BYTES)));
 #endif
 
-static void ecan1_write_rx_acpt_filter(int16_t n, int32_t identifier, uint16_t exide, uint16_t bufPnt, uint16_t maskSel) {
+static void ecan1_write_rx_acpt_filter(int16_t n, uint32_t identifier, uint16_t exide, uint16_t bufPnt, uint16_t maskSel) {
 
     uint32_t sid10_0 = 0;
 
@@ -193,7 +193,7 @@ static void _ecan1_tx_buffer_set_transmit(uint16_t buf) {
     }
 }
 
-static void _ecan1_write_tx_msg_buf_id(uint16_t buf, int32_t txIdentifier, uint16_t ide, uint16_t remoteTransmit) {
+static void _ecan1_write_tx_msg_buf_id(uint16_t buf, uint32_t txIdentifier, uint16_t ide, uint16_t remoteTransmit) {
     uint32_t word0 = 0;
 
     uint32_t word1 = 0;

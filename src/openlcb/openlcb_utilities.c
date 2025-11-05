@@ -352,7 +352,7 @@ bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb
 
         if (openlcb_node->producers.list[i].event == event_id) {
 
-            (*event_index) = i;
+            (*event_index) = (uint16_t) i;
 
             return true;
 
@@ -370,7 +370,7 @@ bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb
 
         if (openlcb_node->consumers.list[i].event == event_id) {
 
-            (*event_index) = i;
+            (*event_index) = (uint16_t) i;
 
             return true;
 
