@@ -82,6 +82,15 @@ node_parameters_t _node_parameters_main_node = {
 };
 
 void *called_function_ptr = nullptr;
+bool fail_send_msg = false;
+bool fail_first_node = false;
+bool fail_next_node = false;
+bool fail_handle_outgoing_openlcb_message = false;
+bool fail_handle_try_reenumerate = false;
+bool fail_handle_try_enumerate_first_node = false;
+bool fail_handle_try_enumerate_next_node = false;
+openlcb_node_t *first_node = nullptr;
+openlcb_node_t *next_node = nullptr;
 
 void _update_called_function_ptr(void *function_ptr)
 {
@@ -112,6 +121,12 @@ bool _send_openlcb_msg(openlcb_msg_t *outgoing_msg)
 
     _update_called_function_ptr((void *)&_send_openlcb_msg);
 
+    if (fail_send_msg)
+    {
+
+        return false;
+    }
+
     return true;
 }
 
@@ -120,7 +135,13 @@ openlcb_node_t *_openlcb_node_get_first(uint8_t key)
 
     _update_called_function_ptr((void *)&_openlcb_node_get_first);
 
-    return nullptr;
+    if (fail_first_node)
+    {
+
+        return nullptr;
+    }
+
+    return first_node;
 }
 
 openlcb_node_t *_openlcb_node_get_next(uint8_t key)
@@ -128,7 +149,13 @@ openlcb_node_t *_openlcb_node_get_next(uint8_t key)
 
     _update_called_function_ptr((void *)&_openlcb_node_get_next);
 
-    return nullptr;
+    if (fail_next_node)
+    {
+
+        return nullptr;
+    }
+
+    return next_node;
 }
 
 void _process_login_statemachine(openlcb_login_statemachine_info_t *openlcb_statemachine_info)
@@ -142,6 +169,12 @@ bool _handle_outgoing_openlcb_message(void)
 
     _update_called_function_ptr((void *)&_handle_outgoing_openlcb_message);
 
+    if (fail_handle_outgoing_openlcb_message)
+    {
+
+        return false;
+    }
+
     return true;
 }
 
@@ -149,6 +182,12 @@ bool _handle_try_reenumerate(void)
 {
 
     _update_called_function_ptr((void *)&_handle_try_reenumerate);
+
+    if (fail_handle_try_reenumerate)
+    {
+
+        return false;
+    }
 
     return true;
 }
@@ -158,6 +197,12 @@ bool _handle_try_enumerate_first_node(void)
 
     _update_called_function_ptr((void *)&_handle_try_enumerate_first_node);
 
+    if (fail_handle_try_enumerate_first_node)
+    {
+
+        return false;
+    }
+
     return true;
 }
 
@@ -165,6 +210,12 @@ bool _handle_try_enumerate_next_node(void)
 {
 
     _update_called_function_ptr((void *)&_handle_try_enumerate_next_node);
+
+    if (fail_handle_try_enumerate_next_node)
+    {
+
+        return false;
+    }
 
     return true;
 }
@@ -195,6 +246,15 @@ void _reset_variables(void)
 {
 
     called_function_ptr = nullptr;
+    fail_send_msg = false;
+    first_node = nullptr;
+    next_node = nullptr;
+    fail_first_node = false;
+    fail_next_node = false;
+    fail_handle_outgoing_openlcb_message = false;
+    fail_handle_try_reenumerate = false;
+    fail_handle_try_enumerate_first_node = false;
+    fail_handle_try_enumerate_next_node = false;
 }
 
 void _global_initialize(void)
@@ -213,10 +273,8 @@ TEST(CanLoginStateMachine, initialize)
     _reset_variables();
 }
 
-TEST(CanLoginStateMachine, run)
+TEST(CanLoginStateMachine, process)
 {
-
-#define NODE_ID 0x010203040506
 
     _reset_variables();
     _global_initialize();
@@ -255,4 +313,539 @@ TEST(CanLoginStateMachine, run)
     statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
     OpenLcbLoginStateMachine_process(&statemachine_info);
     EXPECT_EQ(called_function_ptr, &_load_producer_events);
+}
+
+TEST(CanLoginStateMachine, handle_outgoing_openlcb_message)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+
+    statemachine_info->outgoing_msg_info.valid = false;
+    statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+
+    statemachine_info->openlcb_node = node1;
+    statemachine_info->outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // ************************************************************************
+    // No message to send
+    // ************************************************************************
+    _reset_variables();
+
+    statemachine_info->outgoing_msg_info.valid = false;
+    fail_send_msg = true;
+
+    bool result = OpenLcbLoginStatemachine_handle_outgoing_openlcb_message();
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_FALSE(result);
+
+    // ************************************************************************
+    // Valid message to send but the send function failed
+    // ************************************************************************
+
+    _reset_variables();
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    fail_send_msg = true;
+
+    result = OpenLcbLoginStatemachine_handle_outgoing_openlcb_message();
+
+    EXPECT_EQ(called_function_ptr, &_send_openlcb_msg);
+    EXPECT_TRUE(statemachine_info->outgoing_msg_info.valid);
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // Valid message to send and the send function succeed
+    // ************************************************************************
+
+    _reset_variables();
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    fail_send_msg = false;
+
+    result = OpenLcbLoginStatemachine_handle_outgoing_openlcb_message();
+
+    EXPECT_EQ(called_function_ptr, &_send_openlcb_msg);
+    EXPECT_FALSE(statemachine_info->outgoing_msg_info.valid);
+    EXPECT_TRUE(result);
+}
+
+TEST(CanLoginStateMachine, handle_try_reenumerate)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+
+    statemachine_info->openlcb_node = node1;
+    statemachine_info->outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // ************************************************************************
+    // No message to send
+    // ************************************************************************
+    _reset_variables();
+
+    statemachine_info->outgoing_msg_info.enumerate = false;
+
+    bool result = OpenLcbLoginStatemachine_handle_try_reenumerate();
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_FALSE(result);
+
+    // ************************************************************************
+    // No message to send
+    // ************************************************************************
+    _reset_variables();
+
+    statemachine_info->outgoing_msg_info.enumerate = true;
+
+    result = OpenLcbLoginStatemachine_handle_try_reenumerate();
+
+    EXPECT_EQ(called_function_ptr, &_process_login_statemachine);
+    EXPECT_TRUE(result);
+}
+
+TEST(CanLoginStateMachine, handle_try_enumerate_first_node)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    openlcb_node_t *node_2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node);
+    node_1->alias = DEST_ALIAS;
+    node_2->alias = DEST_ALIAS + 1;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node_1, nullptr);
+    EXPECT_NE(node_2, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+    statemachine_info->outgoing_msg_info.enumerate = false;
+
+    statemachine_info->openlcb_node = nullptr;
+    statemachine_info->outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // ************************************************************************
+    // No Nodes to run
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_INIT;
+    next_node->state.run_state = RUNSTATE_INIT;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    bool result = OpenLcbLoginStatemachine_handle_try_enumerate_first_node();
+
+    EXPECT_EQ(called_function_ptr, &_openlcb_node_get_first);
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // One Node to run and it is still logging in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_INIT;
+    next_node->state.run_state = RUNSTATE_INIT;
+
+    fail_first_node = false;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_first_node();
+
+    EXPECT_EQ(called_function_ptr, (void *)((uint64_t)&_openlcb_node_get_first + (uint64_t)&_process_login_statemachine));
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // One Node to run and it is fully logged in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_RUN;
+    next_node->state.run_state = RUNSTATE_RUN;
+
+    fail_first_node = false;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_first_node();
+
+    EXPECT_EQ(called_function_ptr, &_openlcb_node_get_first);
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // Node already selected in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_INIT;
+    next_node->state.run_state = RUNSTATE_INIT;
+
+    fail_first_node = false;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = node_2;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_first_node();
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_FALSE(result);
+}
+
+TEST(CanLoginStateMachine, handle_try_enumerate_next_node)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    openlcb_node_t *node_2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node);
+    node_1->alias = DEST_ALIAS;
+    node_2->alias = DEST_ALIAS + 1;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node_1, nullptr);
+    EXPECT_NE(node_2, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+    statemachine_info->outgoing_msg_info.enumerate = false;
+
+    statemachine_info->openlcb_node = nullptr;
+    statemachine_info->outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // ************************************************************************
+    // No Nodes to run
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_INIT;
+    next_node->state.run_state = RUNSTATE_INIT;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    bool result = OpenLcbLoginStatemachine_handle_try_enumerate_next_node();
+
+    EXPECT_FALSE(result);
+
+    // ************************************************************************
+    // One Node to run and it is still logging in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_INIT;
+    next_node->state.run_state = RUNSTATE_INIT;
+
+    fail_first_node = true;
+    fail_next_node = false;
+
+    statemachine_info->openlcb_node = node_1;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_next_node();
+
+    EXPECT_EQ(called_function_ptr, (void *)((uint64_t)&_openlcb_node_get_next + (uint64_t)&_process_login_statemachine));
+    EXPECT_EQ(statemachine_info->openlcb_node, node_2);
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // One Node to run and it is fully logged in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_RUN;
+    next_node->state.run_state = RUNSTATE_RUN;
+
+    fail_first_node = true;
+    fail_next_node = false;
+
+    statemachine_info->openlcb_node = node_1;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_next_node();
+
+    EXPECT_EQ(called_function_ptr, &_openlcb_node_get_next);
+    EXPECT_EQ(statemachine_info->openlcb_node, node_2);
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // No Node to run and it is fully logged in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_RUN;
+    next_node->state.run_state = RUNSTATE_RUN;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = node_1;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_next_node();
+
+    EXPECT_EQ(called_function_ptr, &_openlcb_node_get_next);
+    EXPECT_EQ(statemachine_info->openlcb_node, nullptr);
+    EXPECT_TRUE(result);
+
+    // ************************************************************************
+    // Node already selected in
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    first_node->state.run_state = RUNSTATE_INIT;
+    next_node->state.run_state = RUNSTATE_INIT;
+
+    fail_first_node = true;
+    fail_next_node = false;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    result = OpenLcbLoginStatemachine_handle_try_enumerate_next_node();
+
+    EXPECT_EQ(called_function_ptr, nullptr);
+    EXPECT_FALSE(result);
+}
+
+TEST(CanLoginStateMachine, run)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    openlcb_node_t *node_2 = OpenLcbNode_allocate(DEST_ID + 1, &_node_parameters_main_node);
+    node_1->alias = DEST_ALIAS;
+    node_2->alias = DEST_ALIAS + 1;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node_1, nullptr);
+    EXPECT_NE(node_2, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+
+    statemachine_info->outgoing_msg_info.valid = true;
+    statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info->outgoing_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+    statemachine_info->outgoing_msg_info.enumerate = false;
+
+    statemachine_info->openlcb_node = nullptr;
+    statemachine_info->outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // ************************************************************************
+    //  Outgoing Message true
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    fail_handle_outgoing_openlcb_message = false;
+    fail_handle_try_reenumerate = false;
+    fail_handle_try_enumerate_first_node = false;
+    fail_handle_try_enumerate_next_node = false;
+
+     OpenLcbLoginMainStatemachine_run();
+
+    EXPECT_EQ(called_function_ptr, _handle_outgoing_openlcb_message);
+
+
+    // ************************************************************************
+    //  Reenumerate  true
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    fail_handle_outgoing_openlcb_message = true;
+    fail_handle_try_reenumerate = false;
+    fail_handle_try_enumerate_first_node = false;
+    fail_handle_try_enumerate_next_node = false;
+
+     OpenLcbLoginMainStatemachine_run();
+
+    EXPECT_EQ(called_function_ptr, (void*) ((uint64_t) &_handle_outgoing_openlcb_message + (uint64_t) &_handle_try_reenumerate));
+    EXPECT_NE(called_function_ptr, _handle_try_enumerate_first_node);
+    EXPECT_NE(called_function_ptr, _handle_try_enumerate_next_node);
+
+    // ************************************************************************
+    //  Get first node
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    fail_handle_outgoing_openlcb_message = true;
+    fail_handle_try_reenumerate = true;
+    fail_handle_try_enumerate_first_node = false;
+    fail_handle_try_enumerate_next_node = false;
+
+     OpenLcbLoginMainStatemachine_run();
+
+    EXPECT_EQ(called_function_ptr, (void*) ((uint64_t) &_handle_outgoing_openlcb_message + (uint64_t) &_handle_try_reenumerate  + (uint64_t) &_handle_try_enumerate_first_node));
+
+
+    // ************************************************************************
+    //  Get next node
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    fail_handle_outgoing_openlcb_message = true;
+    fail_handle_try_reenumerate = true;
+    fail_handle_try_enumerate_first_node = true;
+    fail_handle_try_enumerate_next_node = false;
+
+     OpenLcbLoginMainStatemachine_run();
+
+    EXPECT_EQ(called_function_ptr, (void*) ((uint64_t) &_handle_outgoing_openlcb_message + (uint64_t) &_handle_try_reenumerate  + (uint64_t) &_handle_try_enumerate_first_node +  (uint64_t) &_handle_try_enumerate_next_node));
+
+     // ************************************************************************
+    // All
+    // ************************************************************************
+
+    _reset_variables();
+
+    first_node = node_1;
+    next_node = node_2;
+
+    fail_first_node = true;
+    fail_next_node = true;
+
+    statemachine_info->openlcb_node = nullptr;
+
+    fail_handle_outgoing_openlcb_message = true;
+    fail_handle_try_reenumerate = true;
+    fail_handle_try_enumerate_first_node = true;
+    fail_handle_try_enumerate_next_node = true;
+
+     OpenLcbLoginMainStatemachine_run();
+
+    EXPECT_EQ(called_function_ptr, (void*) ((uint64_t) &_handle_outgoing_openlcb_message + (uint64_t) &_handle_try_reenumerate  + (uint64_t) &_handle_try_enumerate_first_node +  (uint64_t) &_handle_try_enumerate_next_node));
+
+
 }

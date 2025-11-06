@@ -202,7 +202,7 @@ void CanRxMessageHandler_middle_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
 void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start_index) {
     
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
-    int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t * target_openlcb_msg = OpenLcbBufferList_find(source_alias, dest_alias, mti);
@@ -235,7 +235,7 @@ void CanRxMessageHandler_single_frame(can_msg_t* can_msg, uint8_t can_buffer_sta
     }
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
-    int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
     OpenLcbUtilities_load_openlcb_message(
             target_openlcb_msg, 
@@ -259,7 +259,7 @@ void CanRxMessageHandler_can_legacy_snip(can_msg_t* can_msg, uint8_t can_buffer_
     // Early implementations did not have the multi-frame bits to use... special case
 
     uint16_t dest_alias = CanUtilities_extract_dest_alias_from_can_message(can_msg);
-    int16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
     uint16_t mti = CanUtilities_convert_can_mti_to_openlcb_mti(can_msg);
 
     openlcb_msg_t* openlcb_msg_inprocess = OpenLcbBufferList_find(source_alias, dest_alias, mti);
