@@ -63,6 +63,8 @@ extern "C" {
     extern void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
 
     extern void OpenLcbLoginMainStatemachine_run(void);
+    
+    // For test coverage
 
     extern void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
     
@@ -73,6 +75,8 @@ extern "C" {
     extern bool OpenLcbLoginStatemachine_handle_try_enumerate_first_node(void);
 
     extern bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void);
+    
+    extern openlcb_login_statemachine_info_t *OpenLcbLoginStatemachine_get_statemachine_info(void);
 
 #ifdef	__cplusplus
 }

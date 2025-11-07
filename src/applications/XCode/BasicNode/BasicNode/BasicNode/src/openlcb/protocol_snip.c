@@ -57,7 +57,7 @@ void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_
 
 }
 
-static uint16_t _write_user_data(int32_t address, uint16_t byte_count, configuration_memory_buffer_t* buffer) {
+static uint16_t _write_user_data(uint32_t address, uint16_t byte_count, configuration_memory_buffer_t* buffer) {
 
     if (_interface->configuration_memory_write) {
 
@@ -108,7 +108,7 @@ static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_
 
 }
 
-static uint8_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *payload_data_offset, const uint8_t version) {
+static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *payload_data_offset, const uint8_t version) {
 
 
     *outgoing_msg->payload[*payload_data_offset] = version;
@@ -116,6 +116,8 @@ static uint8_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *payl
     (*payload_data_offset)++;
 
     return *payload_data_offset;
+    
+    
 
 
 }
