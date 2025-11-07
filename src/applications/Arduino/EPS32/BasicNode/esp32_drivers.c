@@ -47,19 +47,20 @@
 #include "esp_system.h"
 #include "esp32-hal-timer.h"
 
-bool _is_clock_running = false;
+bool _is_100ms_timer_running = false;
 
 hw_timer_t *Timer0_Cfg = NULL;
 
 void IRAM_ATTR Timer0_ISR() {
-  _is_clock_running = true;
+  _is_100ms_timer_running = true;
 
   OpenLcbNode_100ms_timer_tick();
   ProtocolDatagramHandler_100ms_timer_tick();
 }
 
-bool Esp32Drivers_100ms_is_connected() {
-  return _is_clock_running;
+bool Esp32Drivers_100ms_running() {
+
+  return _is_100ms_timer_running;
 }
 
 void Esp32Drivers_setup(void) {

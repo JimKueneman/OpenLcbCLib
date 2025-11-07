@@ -56,7 +56,7 @@ extern "C"
 
     extern void Esp32Drivers_unlock_shared_resources();
 
-    extern bool Esp32Drivers_100ms_is_connected(void);
+    extern bool Esp32Drivers_100ms_running(void);
 
 #ifdef __cplusplus
 }

@@ -190,13 +190,13 @@ uint16_t _configuration_memory_write(uint32_t address, uint16_t count, configura
 
 interface_openlcb_application_t interface_openlcb_application = {
 
-    .transmit_openlcb_message = &_transmit_openlcb_message,
+    .send_openlcb_msg = &_transmit_openlcb_message,
     .configuration_memory_read = &_configuration_memory_read,
     .configuration_memory_write = &_configuration_memory_write};
 
 interface_openlcb_application_t interface_openlcb_application_nulls = {
 
-    .transmit_openlcb_message = NULL,
+    .send_openlcb_msg = NULL,
     .configuration_memory_read = NULL,
     .configuration_memory_write = NULL};
 

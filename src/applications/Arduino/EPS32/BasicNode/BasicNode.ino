@@ -108,8 +108,8 @@ static void _on_can_tx_callback(can_msg_t* can_msg) {
 
 static void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 
-  //   printf("Alias Allocation: 0x%02X  ", new_alias);
-  //  printf("NodeID: 0x%06llX\n\n", node_id);
+     printf("Alias Allocation: 0x%02X  ", new_alias);
+    printf("NodeID: 0x%06llX\n\n", node_id);
 }
 
 
