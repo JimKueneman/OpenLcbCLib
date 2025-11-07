@@ -8,7 +8,7 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_buffer_fifo.h"
 
-uint16_t handler_mti = 0x00;
+void *called_function_ptr = nullptr;
 bool load_interaction_rejected_called = false;
 bool reply_to_protocol_support_inquiry = false;
 bool force_process_statemachine_to_fail = false;
@@ -20,6 +20,8 @@ bool does_node_process_msg = false;
 openlcb_node_t *node_get_first = nullptr;
 openlcb_node_t *node_get_next = nullptr;
 bool allow_successful_transmit = true;
+bool force_true_does_node_process_msg = false;
+bool force_false_does_node_process_msg = false;
 
 node_parameters_t _node_parameters_main_node = {
 
@@ -89,39 +91,41 @@ node_parameters_t _node_parameters_main_node = {
 
 };
 
+void _update_called_function_ptr(void *function_ptr)
+{
+
+    called_function_ptr = (void *)((long long)function_ptr + (long long)called_function_ptr);
+}
+
 void _ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolSnip_handle_simple_node_info_request);
 }
 
 void _ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolSnip_handle_simple_node_info_reply);
 }
 
 void _ProtocolMessageNetwork_initialization_complete(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_initialization_complete);
 }
 
 void _ProtocolMessageNetwork_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_initialization_complete_simple);
 }
 
 void _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    fprintf(stderr, "\n_ProtocolMessageNetwork_handle_protocol_support_inquiry = called\n");
-
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_protocol_support_inquiry);
 
     if (reply_to_protocol_support_inquiry)
     {
-
-        fprintf(stderr, "\nreply_to_protocol_support_inquiry = true\n");
 
         statemachine_info->outgoing_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_REPLY;
         statemachine_info->outgoing_msg_info.valid = true;
@@ -131,214 +135,214 @@ void _ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachin
 void _ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_protocol_support_reply);
 }
 
 void _ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_verify_node_id_addressed);
 }
 
 void _ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_verify_node_id_global);
 }
 
 void _ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_verified_node_id);
 }
 
 void _ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_optional_interaction_rejected);
 }
 
 void _ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolMessageNetwork_handle_terminate_due_to_error);
 }
 
 void _ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_consumer_identify);
 }
 
 void _ProtocolEventTransport_handle_consumer_range_identified(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_consumer_range_identified);
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_unknown(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_consumer_identified_unknown);
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_set(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_consumer_identified_set);
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_clear(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_consumer_identified_clear);
 }
 
 void _ProtocolEventTransport_handle_consumer_identified_reserved(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_consumer_identified_reserved);
 }
 
 void _ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t *statemachine_info)
 {
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_producer_identify);
 }
 
 void _ProtocolEventTransport_handle_producer_range_identified(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_producer_range_identified);
 }
 
 void _ProtocolEventTransport_handle_producer_identified_unknown(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_producer_identified_unknown);
 }
 
 void _ProtocolEventTransport_handle_producer_identified_set(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_producer_identified_set);
 }
 
 void _ProtocolEventTransport_handle_producer_identified_clear(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_producer_identified_clear);
 }
 
 void _ProtocolEventTransport_handle_producer_identified_reserved(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_producer_identified_reserved);
 }
 
 void _ProtocolEventTransport_handle_identify_dest(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_identify_dest);
 }
 
 void _ProtocolEventTransport_handle_identify(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_identify);
 }
 
 void _ProtocolEventTransport_handle_event_learn(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_event_learn);
 }
 
 void _ProtocolEventTransport_handle_pc_event_report(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_pc_event_report);
 }
 
 void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_pc_event_report_with_payload);
 }
 
 void _ProtocolTractionControl_command(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolTractionControl_command);
 }
 
 void _ProtocolTractionControl_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolTractionControl_reply);
 }
 
 void _ProtocolSimpleTrainNodeIdentInfo_request(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolSimpleTrainNodeIdentInfo_request);
 }
 
 void _ProtocolSimpleTrainNodeIdentInfo_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolSimpleTrainNodeIdentInfo_reply);
 }
 
 void _ProtocolDatagram_handle_datagram(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolDatagram_handle_datagram);
 }
 
 void _Protocol_Datagram_handle_datagram_ok_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_Protocol_Datagram_handle_datagram_ok_reply);
 }
 
 void _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolDatagram_handle_datagram_rejected_reply);
 }
 
 void _OpenLcbUtilities_load_interaction_rejected(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    load_interaction_rejected_called = true;
+    _update_called_function_ptr((void *)&_OpenLcbUtilities_load_interaction_rejected);
 }
 
 void _ProtocolStream_initiate_request(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolStream_initiate_request);
 }
 
 void _ProtocolStream_initiate_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolStream_initiate_reply);
 }
 
 void _ProtocolStream_send_data(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolStream_send_data);
 }
 
 void _ProtocolStream_data_proceed(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolStream_data_proceed);
 }
 
 void _ProtocolStream_data_complete(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    handler_mti = statemachine_info->incoming_msg_info.msg_ptr->mti;
+    _update_called_function_ptr((void *)&_ProtocolStream_data_complete);
 }
 
 void _ExampleDrivers_lock_shared_resources(void)
@@ -403,13 +407,33 @@ void _OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_inf
 bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    bool result = OpenLcbMainStatemachine_does_node_process_msg(statemachine_info);
+    fprintf(stderr, "\n\n\n _OpenLcbMainStatemachine_does_node_process_msg\n");
 
-    does_node_process_msg = result;
+    if (force_true_does_node_process_msg)
+    {
 
-    fprintf(stderr, "OpenLcbMainStatemachine_does_node_process_msg: %d\n", result);
+        fprintf(stderr, "\n\n\n Force True\n");
 
-    return result;
+        does_node_process_msg = true;
+
+        return true;
+    }
+
+    if (force_false_does_node_process_msg)
+    {
+
+        fprintf(stderr, "\n\n\n Force False\n");
+
+        does_node_process_msg = true;
+
+        return false;
+    }
+
+    fprintf(stderr, "\n\n\n Do the math\n");
+
+    does_node_process_msg = OpenLcbMainStatemachine_does_node_process_msg(statemachine_info);
+
+    return does_node_process_msg;
 }
 
 bool _OpenLcbMainStatemachine_handle_outgoing_openlcb_message(void)
@@ -596,7 +620,9 @@ void _reset_variables(void)
     node_get_first = nullptr;
     node_get_next = nullptr;
     force_process_statemachine_to_fail = false;
-    handler_mti = 0x00;
+    called_function_ptr = nullptr;
+    force_true_does_node_process_msg = false;
+    force_false_does_node_process_msg = false;
 }
 
 void _global_initialize(void)
@@ -690,6 +716,85 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg)
     }
 }
 
+typedef void (*process_main_statemachine_func)(openlcb_statemachine_info_t *statemachine_info);
+
+static void process_msg(openlcb_statemachine_info_t *statemachine_info, process_main_statemachine_func process_main_statemachine, bool force_process_true)
+{
+
+    _reset_variables();
+
+    if (force_process_true)
+    {
+
+        force_true_does_node_process_msg = true;
+        force_false_does_node_process_msg = false;
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        if (statemachine_info)
+        {
+
+            EXPECT_EQ((uint64_t)process_main_statemachine, (uint64_t)called_function_ptr);
+        }
+        else
+        {
+
+            EXPECT_EQ(called_function_ptr, nullptr);
+        }
+    }
+    else
+    {
+
+        force_true_does_node_process_msg = false;
+        force_false_does_node_process_msg = true;
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        EXPECT_EQ(called_function_ptr, nullptr);
+    }
+
+}
+
+TEST(OpenLcbMainStatemachine, process_main_statemachine)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.outgoing_msg_info.msg_ptr = nullptr;
+
+    statemachine_info.incoming_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info.incoming_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info.incoming_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info.incoming_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+
+    process_msg(nullptr, nullptr, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, false);
+}
+
+
 TEST(OpenLcbMainStatemachine, run)
 {
 
@@ -714,10 +819,10 @@ TEST(OpenLcbMainStatemachine, run)
 
     // openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     // EXPECT_NE(openlcb_msg1, nullptr);
-    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0); // Initization Complete
+    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100); // Initization Complete
     // OpenLcbBufferFifo_push(openlcb_msg1);
 
-    // OpenLcbMainStatemachine_run();
+    // OpenLcbMainStatemachine_process_main_statemachine();
     // EXPECT_TRUE(OpenLcbBufferFifo_is_empty());                   // should have popped it
     // EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 0); // should have freed it
     // EXPECT_FALSE(send_openlcb_msg_called);
@@ -736,12 +841,12 @@ TEST(OpenLcbMainStatemachine, run)
     // // ************************************************************************
     // openlcb_msg_t *openlcb_msg2 = OpenLcbBufferStore_allocate_buffer(BASIC);
     // EXPECT_NE(openlcb_msg2, nullptr);
-    // OpenLcbUtilities_load_openlcb_message(openlcb_msg2, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0); // Initization Complete
+    // OpenLcbUtilities_load_openlcb_message(openlcb_msg2, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100); // Initization Complete
     // OpenLcbBufferFifo_push(openlcb_msg2);
 
     // fprintf(stderr, "\n****************** one node: one message ********************\n");
     // _reset_variables();
-    // OpenLcbMainStatemachine_run();
+    // OpenLcbMainStatemachine_process_main_statemachine();
     // EXPECT_TRUE(OpenLcbBufferFifo_is_empty());                   // should have popped it
     // EXPECT_EQ(OpenLcbBufferStore_basic_messages_allocated(), 1); // but not freed it yet
     // EXPECT_FALSE(send_openlcb_msg_called);
@@ -777,7 +882,7 @@ TEST(OpenLcbMainStatemachine, run)
 
     // openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     // EXPECT_NE(openlcb_msg1, nullptr);
-    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100, 0); // Initization Complete
+    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x100); // Initization Complete
     // OpenLcbBufferFifo_push(openlcb_msg1);
 
     // fprintf(stderr, "\n****************** one node: one message  ******************\n");
@@ -800,7 +905,7 @@ TEST(OpenLcbMainStatemachine, run)
 
     // openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     // EXPECT_NE(openlcb_msg1, nullptr);
-    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488, 0); // Verify Node ID addressed
+    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488); // Verify Node ID addressed
     // OpenLcbBufferFifo_push(openlcb_msg1);
 
     // fprintf(stderr, "\n****************** two nodes: one message addressed to the second node  ******************\n");
@@ -830,7 +935,7 @@ TEST(OpenLcbMainStatemachine, run)
 
     // openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     // EXPECT_NE(openlcb_msg1, nullptr);
-    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488, 0); // Verify Node ID addressed
+    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, 0x488); // Verify Node ID addressed
     // OpenLcbBufferFifo_push(openlcb_msg1);
 
     // fprintf(stderr, "\n****************** two nodes: one message addressed to the second node process statemachine fails  ******************\n");
@@ -894,7 +999,7 @@ TEST(OpenLcbMainStatemachine, run)
 
     // openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
     // EXPECT_NE(openlcb_msg1, nullptr);
-    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID, 0x488, 0); // Verify Node ID addressed
+    // OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID, 0x488); // Verify Node ID addressed
     // OpenLcbBufferFifo_push(openlcb_msg1);
 
     // fprintf(stderr, "\n****************** two nodes: one message addressed to neither ******************\n");
@@ -951,7 +1056,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg_t *openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REQUEST);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -967,7 +1072,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(SNIP);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_NODE_INFO_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -983,7 +1088,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_INITIALIZATION_COMPLETE, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_INITIALIZATION_COMPLETE);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -999,7 +1104,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_INITIALIZATION_COMPLETE_SIMPLE, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_INITIALIZATION_COMPLETE_SIMPLE);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1015,7 +1120,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_ADDRESSED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_ADDRESSED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1031,7 +1136,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFY_NODE_ID_GLOBAL);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1047,7 +1152,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFIED_NODE_ID, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_VERIFIED_NODE_ID);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1063,7 +1168,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_OPTIONAL_INTERACTION_REJECTED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_OPTIONAL_INTERACTION_REJECTED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1079,7 +1184,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TERMINATE_DO_TO_ERROR, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TERMINATE_DO_TO_ERROR);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1095,7 +1200,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_INQUIRY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1111,7 +1216,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PROTOCOL_SUPPORT_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1127,7 +1232,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1143,7 +1248,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_RANGE_IDENTIFIED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1159,7 +1264,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1175,7 +1280,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_SET);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1191,7 +1296,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_CLEAR);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1207,7 +1312,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_CONSUMER_IDENTIFIED_RESERVED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1223,7 +1328,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1239,7 +1344,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_RANGE_IDENTIFIED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1255,7 +1360,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1271,7 +1376,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_SET);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1287,7 +1392,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_CLEAR);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1303,7 +1408,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PRODUCER_IDENTIFIED_RESERVED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1319,7 +1424,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY_DEST, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY_DEST);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1335,7 +1440,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1351,7 +1456,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENT_LEARN);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1367,7 +1472,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1383,7 +1488,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_PC_EVENT_REPORT_WITH_PAYLOAD);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1400,7 +1505,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TRACTION_PROTOCOL, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TRACTION_PROTOCOL);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1416,7 +1521,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TRACTION_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TRACTION_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1432,7 +1537,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_TRAIN_INFO_REQUEST, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_TRAIN_INFO_REQUEST);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1448,7 +1553,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_TRAIN_INFO_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_SIMPLE_TRAIN_INFO_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1464,7 +1569,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1480,7 +1585,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM_OK_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM_OK_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1496,7 +1601,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM_REJECTED_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM_REJECTED_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1512,7 +1617,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM_REJECTED_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_DATAGRAM_REJECTED_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1528,7 +1633,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_INIT_REQUEST, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_INIT_REQUEST);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1544,7 +1649,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_INIT_REPLY, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_INIT_REPLY);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1560,7 +1665,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_SEND, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_SEND);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1576,7 +1681,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_PROCEED, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_PROCEED);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
@@ -1592,7 +1697,7 @@ TEST(OpenLcbMainStatemachine, run)
 //     // ************************************************************************
 //     openlcb_msg1 = OpenLcbBufferStore_allocate_buffer(BASIC);
 //     EXPECT_NE(openlcb_msg1, nullptr);
-//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_COMPLETE, 0);
+//     OpenLcbUtilities_load_openlcb_message(openlcb_msg1, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_STREAM_COMPLETE);
 //     OpenLcbBufferFifo_push(openlcb_msg1);
 
 //     _reset_variables();
