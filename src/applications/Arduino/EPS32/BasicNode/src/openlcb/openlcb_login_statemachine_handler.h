@@ -24,43 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_tx_driver.c
+ * \file can_login_message_handler.h
  *
- * Implementation of the Openlcb message transmit engine.  It calls the CAN Tx Driver
- * to send the message and blocks until the entire message is sent (on CAN that could 
- * be many CAN frames.  If the transmitter is busy it skips by and lets the main loop 
- * run until it finds an open transmit channel. 
+ * When a node is logging into the network on a CAN bus it must follow a specific
+ * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
+ * that is called from the CAN main statemachine to accomplish that when a new node
+ * is created.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-#include "openlcb_tx_driver.h"
+// This is a guard condition so that contents of this file are not included
+// more than once.  
+#ifndef __OPENLCB_LOGIN_MESSAGE_HANDLER__
+#define	__OPENLCB_LOGIN_MESSAGE_HANDLER__
 
-#include "stdio.h"  // printf
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
-#include "openlcb_node.h"
 
-#include "../drivers/common/can_tx_statemachine.h"
+typedef struct {
+        
+        uint16_t(*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
+        uint16_t(*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
 
-uint8_olcb_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg) {
-  
-    can_msg_t can_msg;
-    
-    uint16_olcb_t payload_index = 0;
-    uint16_olcb_t bytes_transmitted = 0;
-    
-    // TODO:  I don't like this coupling into the CAN drivers here... need to come up with a better way so this file does not need to access
-    //        the can driver files... maybe a callback function that connects this library to the desired TX driver... need to think about it.
-    while (payload_index < openlcb_msg->payload_count) {
-        
-        bytes_transmitted = CanTxStatemachine_try_transmit_openlcb_message(&can_msg, openlcb_msg, payload_index);
-        
-        payload_index = payload_index + bytes_transmitted;
-        
-    }
-    
-    return TRUE;
-    
-    
+    } interface_openlcb_login_message_handler_t;
+
+
+#ifdef	__cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+    extern void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message_handler_t *interface);
+
+    extern void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+
+    extern void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+
+    extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+
+
+#ifdef	__cplusplus
 }
+#endif /* __cplusplus */
+
+#endif	/* __CAN_LOGIN_MESSAGE_HANDLER__ */
+

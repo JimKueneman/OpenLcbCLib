@@ -1,3 +1,4 @@
+#include <stdbool.h>
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -36,6 +37,7 @@
 
 #include "esp32_can_drivers.h"
 
+#include "src/drivers/common/can_rx_statemachine.h"
 #include "src/drivers/common/can_types.h"
 #include "src/openlcb/openlcb_gridconnect.h"
 #include "src/utilities/mustangpeak_string_helper.h"
@@ -46,12 +48,10 @@
 
 // So the mutex will function
 #define INCLUDE_vTaskSuspend 1
-#define CHANNEL_1 1
 
-can_rx_callback_func_t internal_can_rx_callback_func;
-uint8_olcb_t _is_connected = FALSE;
+bool _is_connected = false;
 TaskHandle_t receive_task_handle = (void *)0;
-uint8_t _rx_paused = FALSE;
+bool _rx_paused = false;
 SemaphoreHandle_t mutex;
 
 void receive_task(void *arg)
@@ -71,14 +71,14 @@ void receive_task(void *arg)
             esp_err_t err = twai_receive(&message, pdMS_TO_TICKS(0));
             if (err == ESP_OK)
             {
-                if (message.extd && internal_can_rx_callback_func)
+                if (message.extd)
                 {
                     can_msg.identifier = message.identifier;
                     can_msg.payload_count = message.data_length_code;
                     for (int i = 0; i < message.data_length_code; i++)
                         can_msg.payload[i] = message.data[i];
 
-                    internal_can_rx_callback_func(CHANNEL_1, &can_msg);
+                    CanRxStatemachine_incoming_can_driver_callback(&can_msg);
 
                     digitalWrite(2, !digitalRead(2)); // blink the onboard LED
                 }
@@ -97,7 +97,7 @@ void receive_task(void *arg)
     }
 }
 
-void Esp32CanDriver_config_mem_factory_reset(void) {
+void Esp32CanDriver_config_mem_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
     
     printf("Resetting to Factory Defaults\n");
     
@@ -105,20 +105,27 @@ void Esp32CanDriver_config_mem_factory_reset(void) {
  
 }
 
-uint8_olcb_t Esp32CanDriver_is_connected(void)
+void Esp32CanDriver_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+
+    printf("Rebooting\n");
+
+    // TODO: Implement
+}
+
+bool Esp32CanDriver_is_connected(void)
 {
 
     return _is_connected;
 }
 
-uint8_olcb_t Esp32CanDriver_is_can_tx_buffer_clear(uint16_olcb_t channel)
+bool Esp32CanDriver_is_can_tx_buffer_clear(void)
 {
     // The Esp32CanDriver_transmit_raw_can_frame will return FALSE if it can't send it for now.
     // Keep looking for an answer......
-    return TRUE;
+    return true;
 }
 
-uint8_olcb_t Esp32CanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *msg)
+bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg)
 {
 
     // Configure message to transmit
@@ -134,31 +141,30 @@ uint8_olcb_t Esp32CanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg
     // Queue message for transmission
     if (twai_transmit(&message, pdMS_TO_TICKS(1000)) == ESP_OK)
     {
-        return TRUE;
+        return true;
     }
     else
     {
-        return FALSE;
+        return false;
     }
 }
 
-void Esp32CanDriver_pause_can_rx()
+void Esp32CanDriver_pause_can_rx(void)
 {
     xSemaphoreTake(mutex, portMAX_DELAY); //  INCLUDE_vTaskSuspend is defined as 1 above so this is a forever wait
-    _rx_paused = TRUE;
+    _rx_paused = true;
     xSemaphoreGive(mutex);
 }
 
-void Esp32CanDriver_resume_can_rx()
+void Esp32CanDriver_resume_can_rx(void)
 {
     xSemaphoreTake(mutex, portMAX_DELAY); //  INCLUDE_vTaskSuspend is defined as 1 above so this is a forever wait
-    _rx_paused = FALSE;
+    _rx_paused = false;
     xSemaphoreGive(mutex);
 }
 
-void Esp32CanDriver_setup(can_rx_callback_func_t can_rx_callback)
+void Esp32CanDriver_setup(void)
 {
-    internal_can_rx_callback_func = can_rx_callback;
 
     // Initialize configuration structures using macro initializers
     twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(GPIO_NUM_21, GPIO_NUM_22, TWAI_MODE_NORMAL);
@@ -171,7 +177,7 @@ void Esp32CanDriver_setup(can_rx_callback_func_t can_rx_callback)
         // Start CAN driver
         if (twai_start() == ESP_OK)
         {
-            _is_connected = TRUE;
+            _is_connected = true;
 
             mutex = xSemaphoreCreateMutex();
 

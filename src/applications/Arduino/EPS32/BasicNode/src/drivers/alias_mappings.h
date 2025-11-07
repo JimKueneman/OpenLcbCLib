@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,35 +24,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_tx_driver.h
+ * \file alias_mappings.h
  *
- * Implementation of the Openlcb message transmit engine.  It calls the CAN Tx Driver
- * to send the message and blocks until the entire message is sent (on CAN that could 
- * be many CAN frames.  If the transmitter is busy it skips by and lets the main loop 
- * run until it finds an open transmit channel. 
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 27 Sept 2025
  */
-
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __OPENLCB_TX_DRIVER__
-#define	__OPENLCB_TX_DRIVER__
+#ifndef __ALIAS_MAPPINGS__
+#define	__ALIAS_MAPPINGS__
 
-#include "openlcb_types.h"
-#include "openlcb_node.h"
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "common/can_types.h"
+#include "../openlcb/openlcb_types.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-extern uint8_olcb_t OpenLcbTxDriver_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
+    extern void AliasMappings_initialize(void);
+    
+    extern alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void);
+    
+    extern void AliasMappings_set_has_duplicate_alias_flag(void);
+    
+    extern alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id);
+    
+    extern void AliasMappings_unregister(uint16_t alias);
+    
+    extern alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias);
+    
+    extern alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id);
 
-
+   
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_TX_DRIVER__ */
+#endif	/* __ALIAS_MAPPINGS__ */
 

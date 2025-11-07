@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,44 +24,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_datagram.h
+ * \file can_login_statemachine.h
  *
- * Implementation of the Openlcb Datagram Protocol.  Handlers are call from the 
- * openlcb_main_statemachine.c processing when a datagram message is being processed
- * from the FIFO buffer.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 12 Aug 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __PROTOCOL_DATAGRAM__
-#define	__PROTOCOL_DATAGRAM__
+#ifndef __CAN_LOGIN_STATEMACHINE__
+#define	__CAN_LOGIN_STATEMACHINE__
 
-#include "openlcb_types.h"
+#include "can_types.h"
+#include "../../openlcb/openlcb_types.h"
+
+
+typedef struct {
+    
+     void (*state_init)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_generate_seed)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_generate_alias)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid07)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid06)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid05)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_cid04)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_wait_200ms)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_rid)(can_statemachine_info_t *can_statemachine_info);
+     void (*state_load_amd)(can_statemachine_info_t *can_statemachine_info);
+    
+    
+} interface_can_login_state_machine_t;
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-extern void ProtocolDatagram_initialize(void);
-
-extern void ProtocolDatagram_handle_datagram(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-   
-extern void Protocol_Datagram_handle_datagram_ok_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-
-extern void ProtocolDatagram_handle_datagram_rejected_reply(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
-
-extern void ProtocolDatagram_clear_resend_datagram_message(openlcb_node_t* openlcb_node);
     
-extern void DatagramProtocol_100ms_time_tick(void);
+    extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
 
-extern void ProtocolDatagram_try_transmit(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __PROTOCOL_DATAGRAM__ */
+#endif	/* __CAN_LOGIN_STATEMACHINE__ */
 

@@ -26,42 +26,44 @@
  *
  * \file openlcb_buffer_list.h
  *
- * A linear search list that the incoming CAN Rx module uses to hold messages that 
- * are being collected into a single OpenLcb message on the CAN bus.  
+ * A linear search list that the incoming CAN Rx module uses to hold messages that
+ * are being collected into a single OpenLcb message on the CAN bus.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_LIST__
-#define	__OPENLCB_LIST__
+#define __OPENLCB_LIST__
+
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "openlcb_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void BufferList_initialiaze(void);
+    extern void OpenLcbBufferList_initialize(void);
 
-extern openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len);  
+    extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
-extern openlcb_msg_t* BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti); 
+    extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
-extern void BufferList_free(openlcb_msg_t* msg);
+    extern bool OpenLcbBufferList_free(openlcb_msg_t *msg);
 
-extern void BufferList_release(openlcb_msg_t* msg); 
+    extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 
-extern openlcb_msg_t* BufferList_index_of(uint16_olcb_t index);
+    extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
-extern uint8_olcb_t BufferList_is_empty(void);
+    extern bool OpenLcbBufferList_is_empty(void);
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_LIST__ */
-
+#endif /* __OPENLCB_LIST__ */

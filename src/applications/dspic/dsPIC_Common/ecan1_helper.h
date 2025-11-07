@@ -60,7 +60,7 @@ extern void Ecan1Helper_pause_can_rx(void);
 
 extern void Ecan1Helper_resume_can_rx(void);
 
-extern bool Ecan1Helper_transmit_can_frame(can_msg_t* msg);
+extern bool Ecan1Helper_transmit_can_frame(can_msg_t *msg);
 
 extern void Ecan1Helper_C1_interrupt_handler(void);
 

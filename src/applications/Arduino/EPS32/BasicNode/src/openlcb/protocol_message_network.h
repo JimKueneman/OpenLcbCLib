@@ -39,28 +39,39 @@
 #ifndef __PROTOCOL_MESSAGE_NETWORK__
 #define	__PROTOCOL_MESSAGE_NETWORK__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "openlcb_types.h"
+
+typedef struct {
+  
+
+} interface_openlcb_protocol_message_network_t;
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-extern void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolMessageNetwork_initialize(const interface_openlcb_protocol_message_network_t *interface_openlcb_protocol_message_network);
 
-extern void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolMessageNetwork_handle_initialization_complete(openlcb_statemachine_info_t *statemachine_info);
 
-extern void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolMessageNetwork_handle_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info);
 
-extern void ProtocolMessageNetwork_handle_verified_node_id(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info);
+    
+    extern void ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_statemachine_info_t *statemachine_info);
 
-extern void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_info_t *statemachine_info);
 
-extern void ProtocolMessageNetwork_send_interaction_rejected(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg, openlcb_msg_t* worker_msg);
+    extern void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info);
 
-extern void ProtocolMessageNetwork_buffer_optional_interaction_message_for_resend(openlcb_node_t* openlcb_node, openlcb_msg_t* openlcb_msg);
+    extern void ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t *statemachine_info);
 
-extern void ProtocolMessageNetwork_clear_resend_optional_message(openlcb_node_t* openlcb_node);
+    extern void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info);
 
+    extern void ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info);
 
 #ifdef	__cplusplus
 }

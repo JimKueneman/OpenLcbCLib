@@ -40,6 +40,9 @@
 #ifndef __CAN_BUFFER_STORE__
 #define	__CAN_BUFFER_STORE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 
 #ifdef	__cplusplus
@@ -47,17 +50,19 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-extern void CanBufferStore_initialize(void);
+    extern void CanBufferStore_initialize(void);
 
-extern can_msg_t* CanBufferStore_allocateBuffer(void);
+    extern can_msg_t* CanBufferStore_allocate_buffer(void);
 
-extern void CanBufferStore_freeBuffer(can_msg_t* msg);
+    extern void CanBufferStore_free_buffer(can_msg_t* msg);
 
-extern void CanBufferStore_clear_can_message(can_msg_t* msg);
+    extern void CanBufferStore_clear_can_message(can_msg_t* msg);
 
-extern uint16_olcb_t CanBufferStore_messages_allocated(void);
+    extern uint16_t CanBufferStore_messages_allocated(void);
 
-extern uint16_olcb_t CanBufferStore_messages_max_allocated(void);
+    extern uint16_t CanBufferStore_messages_max_allocated(void);
+
+    extern void CanBufferStore_clear_max_allocated(void);
 
 #ifdef	__cplusplus
 }

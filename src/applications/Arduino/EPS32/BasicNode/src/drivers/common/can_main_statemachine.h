@@ -38,25 +38,53 @@
 #ifndef __CAN_MAIN_STATEMACHINE__
 #define	__CAN_MAIN_STATEMACHINE__
 
-#include "../common/can_types.h"
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "can_types.h"
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+    typedef struct {
+        void (*lock_shared_resources)(void);
+        void (*unlock_shared_resources)(void);
+        bool (*send_can_message)(can_msg_t *msg);
+        openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
+        openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
+        openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);
+        void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
+        alias_mapping_info_t*(*alias_mapping_get_alias_mapping_info)(void);
+        void (*alias_mapping_unregister)(uint16_t alias);
 
-    extern void CanMainStatemachine_initialize(
-            can_rx_driver_callback_t can_rx_driver_callback,
-            transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
-            is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
-            parameterless_callback_t pause_can_rx_callback,
-            parameterless_callback_t resume_can_rx_callback
-            );
+        bool (*handle_duplicate_aliases)(void);
+        bool (*handle_outgoing_can_message)(void);
+        bool (*handle_login_outgoing_can_message)(void);
+        bool (*handle_try_enumerate_first_node)(void);
+        bool (*handle_try_enumerate_next_node)(void);
+
+
+
+    } interface_can_main_statemachine_t;
+
+    extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
 
     extern void CanMainStateMachine_run(void);
 
+    extern can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void);
 
-    extern can_main_statemachine_t can_helper;
+    extern bool CanMainStatemachine_handle_duplicate_aliases(void);
+
+    extern bool CanMainStatemachine_handle_login_outgoing_can_message(void);
+
+    extern bool CanMainStatemachine_handle_outgoing_can_message(void);
+
+    extern bool CanMainStatemachine_handle_try_enumerate_first_node(void);
+
+    extern bool CanMainStatemachine_handle_try_enumerate_next_node(void);
+
 
 #ifdef	__cplusplus
 }

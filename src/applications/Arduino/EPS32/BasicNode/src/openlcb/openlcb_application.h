@@ -34,39 +34,51 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __APPLICATION__
-#define	__APPLICATION__
+#ifndef __OPENLCB_APPLICATION__
+#define	__OPENLCB_APPLICATION__
 
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "openlcb_types.h"
+
+typedef struct {
+    
+    bool (*send_openlcb_msg)(openlcb_msg_t* openlcb_msg);
+    uint16_t (*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t (*configuration_memory_write) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+
+} interface_openlcb_application_t;
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+    extern void OpenLcbApplication_initialize(const interface_openlcb_application_t *interface_openlcb_application);
 
     // Event ID helpers
-    extern void Application_clear_consumer_eventids(openlcb_node_t* node);
+    extern void OpenLcbApplication_clear_consumer_eventids(openlcb_node_t* node);
 
-    extern void Application_clear_producer_eventids(openlcb_node_t* node);
+    extern void OpenLcbApplication_clear_producer_eventids(openlcb_node_t* node);
 
-    extern uint16_olcb_t Application_register_consumer_eventid(openlcb_node_t* node, event_id_t eventid);
+    extern uint16_t OpenLcbApplication_register_consumer_eventid(openlcb_node_t* node, event_id_t event_id, event_status_enum event_status);
 
-    extern uint16_olcb_t Application_register_producer_eventid(openlcb_node_t* node, event_id_t eventid);
+    extern uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t* node, event_id_t event_id, event_status_enum event_status);
 
-    extern uint8_olcb_t Application_send_event_pc_report(openlcb_node_t* node, event_id_t eventid);
+    extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t* node, event_id_t event_id);
     
-    extern uint8_olcb_t Application_send_teach_event(openlcb_node_t* node, event_id_t eventid);
+    extern bool OpenLcbApplication_send_teach_event(openlcb_node_t* node, event_id_t event_id);
 
 
     // Configuration Memory helpers
-    extern uint16_olcb_t Application_read_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_olcb_t Application_write_configuration_memory(openlcb_node_t *node, uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __APPLICATION__ */
+#endif	/* __OPENLCB_APPLICATION__ */
 

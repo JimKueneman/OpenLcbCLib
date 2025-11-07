@@ -24,43 +24,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_frame_message_hander.h
+ * \file can_tx_message_handler.h
  *
- * As CAN only frame messages come in they need to be processed by the node(s) to see
- * if there is a response required.  These are the handlers called by the CAN main
- * statemachine to accomplish that.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Aug 2025
  */
+
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_MSG_HANDLER__
-#define	__CAN_MSG_HANDLER__
+#ifndef __CAN_TX_MESSAGE_HANDLER__
+#define	__CAN_TX_MESSAGE_HANDLER__
+
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "can_types.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_node.h"
+#include "../../openlcb/openlcb_types.h"
+
+typedef struct {
+    
+    bool (*transmit_can_frame)(can_msg_t* can_msg);
+     // Callback events
+    void (*on_transmit)(can_msg_t* can_msg);
+    
+} interface_can_tx_message_handler_t;
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
+    
+    extern void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler);
 
-
-extern void CanFrameMessageHandler_cid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg) ;
-
-extern void CanFrameMessageHandler_rid(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
-
-extern void CanFrameMessageHandler_amd(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
-
-extern void CanFrameMessageHandler_ame(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
-
-extern void CanFrameMessageHandler_amr(openlcb_node_t* can_node, can_msg_t* can_msg, can_msg_t* worker_msg); 
-
-
+    extern bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+    
+    extern bool CanTxMessageHandler_can_frame(can_msg_t* can_msg);
+   
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_MSG_HANDLER__ */
+#endif	/* XC_HEADER_TEMPLATE_H */
 

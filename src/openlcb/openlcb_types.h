@@ -103,9 +103,6 @@ extern "C" {
 
     // *********************END USER DEFINED VARIABLES *****************************
 
-#define LOW 0
-#define HIGH 1
-
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
 
