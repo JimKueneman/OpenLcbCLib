@@ -129,13 +129,15 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
         return;
 
     }
+
     
     if (!_interface->does_node_process_msg(statemachine_info)) {
-        
+     
         return;
         
     }
 
+ 
     switch (statemachine_info->incoming_msg_info.msg_ptr->mti) {
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
@@ -163,7 +165,7 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             break;
 
         case MTI_INITIALIZATION_COMPLETE:
-
+ 
             if (_interface->message_network_initialization_complete) {
 
                 _interface->message_network_initialization_complete(statemachine_info);
