@@ -90,13 +90,18 @@ extern "C" {
 #define USER_DEFINED_CONSUMER_COUNT 32 // USER DEFINED Max of 126 for an 8 bit processor (8 bit signed integer)
 #endif
 
+#ifndef USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
+#define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS 0x00000000 // USER DEFINED Address into the Configuration Memory to save the User Defined Name string
+#endif
+
+#ifndef USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
+#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS LEN_SNIP_USER_NAME_BUFFER // USER DEFINED Address into the Configuration Memory to save the User Defined Name string
+#endif
+
 #define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION 64 - 1       // space for null Size is limited by required return values - the max size of a datagram (72)
 #define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION 60 - 1 // space for null; If the low address is used then we only will have 72-12 = 60 bytes (including the null)
 
     // *********************END USER DEFINED VARIABLES *****************************
-
-#define LOW 0
-#define HIGH 1
 
 #define NULL_NODE_ID 0x000000000000
 #define NULL_EVENT_ID 0x0000000000000000
@@ -115,11 +120,12 @@ extern "C" {
 #define LEN_SNIP_VERSION 1
 #define LEN_SNIP_USER_VERSION 1
 
-#define LEN_SNIP_STRUCTURE 253
+    // Event with Payload = 256 Payload + 8 bytes for Event ID = 264; SNIP max = 253
+#define LEN_SNIP_STRUCTURE 264
 
 #define LEN_MESSAGE_BYTES_BASIC 16 // most are 8 bytes but a few protocols take 2 frames like Traction
 #define LEN_MESSAGE_BYTES_DATAGRAM 72
-#define LEN_MESSAGE_BYTES_SNIP 256 // will cover Event with Payload as well
+#define LEN_MESSAGE_BYTES_SNIP 256 // will cover Events with Payload as well
 #define LEN_MESSAGE_BYTES_STREAM 512
 
 #define LEN_EVENT_ID 8
@@ -128,7 +134,7 @@ extern "C" {
 
 #define LEN_DATAGRAM_MAX_PAYLOAD 64 // After subtracting the overhead of a datagram message the remaining bytes available to carry the payload
 
-#define LEN_EVENT_PAYLOAD 256
+#define LEN_EVENT_PAYLOAD LEN_MESSAGE_BYTES_SNIP
 
     typedef enum {
         BASIC,
@@ -178,8 +184,8 @@ extern "C" {
     typedef uint8_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
 
     typedef struct {
-        uint8_t allocated : 1; // message has been allocated and is in use
-        uint8_t inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
+        bool allocated : 1; // message has been allocated and is in use
+        bool inprocess : 1; // message is being collected from multiple CAN frames and not complete yet
     } openlcb_msg_state_t;
 
     typedef struct {
@@ -219,22 +225,22 @@ extern "C" {
     } user_snip_struct_t;
 
     typedef struct {
-        uint8_t write_under_mask_supported : 1;
-        uint8_t unaligned_reads_supported : 1;
-        uint8_t unaligned_writes_supported : 1;
-        uint8_t read_from_manufacturer_space_0xfc_supported : 1;
-        uint8_t read_from_user_space_0xfb_supported : 1;
-        uint8_t write_to_user_space_0xfb_supported : 1;
-        uint8_t stream_read_write_supported : 1;
+        bool write_under_mask_supported : 1;
+        bool unaligned_reads_supported : 1;
+        bool unaligned_writes_supported : 1;
+        bool read_from_manufacturer_space_0xfc_supported : 1;
+        bool read_from_user_space_0xfb_supported : 1;
+        bool write_to_user_space_0xfb_supported : 1;
+        bool stream_read_write_supported : 1;
         uint8_t high_address_space;
         uint8_t low_address_space;
         char description[LEN_CONFIG_MEM_OPTIONS_DESCRIPTION];
     } user_configuration_options;
 
     typedef struct {
-        uint8_t present : 1;
-        uint8_t read_only : 1;
-        uint8_t low_address_valid : 1;
+        bool present : 1;
+        bool read_only : 1;
+        bool low_address_valid : 1;
         uint8_t address_space;
         uint32_t highest_address;
         uint32_t low_address;
@@ -263,7 +269,7 @@ extern "C" {
     // Event ID Structures
 
     typedef struct {
-        uint8_t running : 1; // Alway, always, always reset these to false when you have finished processing a
+        bool running : 1; // Alway, always, always reset these to false when you have finished processing a
         uint8_t enum_index; // allows a counter for enumerating the event ids
     } event_id_enum_t;
 
@@ -283,14 +289,13 @@ extern "C" {
 
     typedef struct {
         uint8_t run_state : 5; // Run state... limits the number to how many bits here.... 32 possible states.
-        uint8_t allocated : 1; // Allocated to be used
-        uint8_t permitted : 1; // Has the CAN alias been allocated and the network notified
-        uint8_t initalized : 1; // Has the node been logged into the the network
-        uint8_t duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
-        uint8_t duplicate_alias_detected : 1; // Can engine has detected a duplicate alias and flagged it for reallocation
-        uint8_t openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack/nack to say it was successfully received (or not) then the actual response.  This tracks which state the node is in
-        uint8_t resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
-        uint8_t firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
+        bool allocated : 1; // Allocated to be used
+        bool permitted : 1; // Has the CAN alias been allocated and the network notified
+        bool initialized : 1; // Has the node been logged into the the network
+        bool duplicate_id_detected : 1; // Node has detected a duplicated Node ID and has sent the PCER
+        bool openlcb_datagram_ack_sent : 1; // replying to a datagram requires two messages to be sent, first an ack/nack to say it was successfully received (or not) then the actual response.  This tracks which state the node is in
+        bool resend_datagram : 1; // if set the message loop will bypass pulling the next message from the fifo and send the message in sent_datagrams first
+        bool firmware_upgrade_active : 1; // Set if the node is in firmware upgrade mode
     } openlcb_node_state_t;
 
     typedef struct {
@@ -302,7 +307,7 @@ extern "C" {
         event_id_producer_list_t producers;
         const node_parameters_t *parameters;
         uint16_t timerticks; // Counts the 100ms timer ticks during the CAN alias allocation
-        uint64_t lock_node; // node that has this node locked
+        uint64_t owner_node; // node that has this node locked
         openlcb_msg_t *last_received_datagram;
         uint8_t index; // what index in the node list this node is, used to help with offsets for config memory, fdi memory, etc.
     } openlcb_node_t;
@@ -310,8 +315,7 @@ extern "C" {
     typedef struct {
         openlcb_node_t node[USER_DEFINED_NODE_BUFFER_DEPTH];
         uint16_t count; // How many have been allocated, you can not deallocate a node so one it is allocated it is there to the end (it can be not permitted)
-        //  openlcb_msg_t* working_msg; // When a OpenLcb message is sent on CAN it may need to be taken apart and sent in various frames.  Once popped it is stored here as the current working message that is being sent out
-
+       
     } openlcb_nodes_t;
 
     typedef struct {
@@ -321,25 +325,88 @@ extern "C" {
     } openlcb_statemachine_worker_t;
 
     typedef void (*parameterless_callback_t)(void);
-    typedef uint16_t(*configuration_mem_callback_t) (uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
 
     typedef struct {
-        uint16_t alias;
-        node_id_t node_id;
+        openlcb_msg_t openlcb_msg;
+        payload_stream_t openlcb_payload;
 
-    } alias_mapping_t;
-
+    } openlcb_stream_message_t;
 
     typedef struct {
-    
+        openlcb_msg_t *msg_ptr;
+        uint8_t valid : 1;
+        uint8_t enumerate : 1;
+        openlcb_stream_message_t openlcb_msg;
+
+    } openlcb_outgoing_stream_msg_info_t;
+
+    typedef struct {
+        openlcb_msg_t *msg_ptr;
+        uint8_t enumerate : 1;
+
+    } openlcb_incoming_msg_info_t;
+
+    typedef struct {
         openlcb_node_t *openlcb_node;
-        openlcb_msg_t *incoming_msg;
-        openlcb_msg_t *outgoing_msg;
-        uint8_t enumerating : 1;
-        uint8_t outgoing_msg_valid;
-       
+        openlcb_incoming_msg_info_t incoming_msg_info;
+        openlcb_outgoing_stream_msg_info_t outgoing_msg_info;
+
     } openlcb_statemachine_info_t;
 
+    typedef struct {
+        openlcb_msg_t openlcb_msg;
+        payload_basic_t openlcb_payload;
+
+    } openlcb_basic_message_t;
+
+    typedef struct {
+        openlcb_msg_t *msg_ptr;
+        uint8_t valid : 1;
+        uint8_t enumerate : 1;
+        openlcb_basic_message_t openlcb_msg;
+
+    } openlcb_outgoing_basic_msg_info_t;
+
+    typedef struct {
+        openlcb_node_t *openlcb_node;
+        openlcb_outgoing_basic_msg_info_t outgoing_msg_info;
+
+    } openlcb_login_statemachine_info_t;
+
+    struct config_mem_operations_request_info_TAG;
+    typedef void (*operations_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_operations_request_info_TAG *config_mem_operations_request_info);
+    typedef struct config_mem_operations_request_info_TAG {
+        const user_address_space_info_t *space_info;
+        operations_config_mem_space_func_t operations_func;
+
+    } config_mem_operations_request_info_t;
+
+
+
+    struct config_mem_read_request_info_TAG;
+    typedef void (*read_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_read_request_info_TAG *config_mem_read_request_info);
+    typedef struct config_mem_read_request_info_TAG {
+        space_encoding_enum encoding;
+        uint32_t address;
+        uint16_t bytes;
+        uint16_t data_start; // what offset into the payload to insert the data begin requested
+        const user_address_space_info_t *space_info;
+        read_config_mem_space_func_t read_space_func;
+
+    } config_mem_read_request_info_t;
+
+
+    struct config_mem_write_request_info_TAG;
+    typedef void (*write_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_write_request_info_TAG *config_mem_write_request_info);
+    typedef struct config_mem_write_request_info_TAG {
+        space_encoding_enum encoding;
+        uint32_t address;
+        uint16_t bytes;
+        uint16_t data_start; // what offset into the payload to insert the data begin requested
+        const user_address_space_info_t *space_info;
+        write_config_mem_space_func_t write_space_func;
+
+    } config_mem_write_request_info_t;
 
 #ifdef __cplusplus
 }

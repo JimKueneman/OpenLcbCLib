@@ -79,7 +79,7 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
                 break;
 
             default:
-                
+
                 return _interface->handle_addressed_msg_frame(openlcb_msg, worker_can_msg, payload_index);
 
                 break;
@@ -95,6 +95,9 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
 }
 
 bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
+    
+    can_msg_t worker_can_msg;
+    uint16_t payload_index = 0;
 
     if (!_interface->is_tx_buffer_empty()) {
 
@@ -102,26 +105,25 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
 
     }
 
-    can_msg_t worker_can_msg;
-    uint16_t payload_index = 0;
-    
     if (openlcb_msg->payload_count == 0) {
-        
+
         return _transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index);
-        
-    }
-
-    while (payload_index < openlcb_msg->payload_count) {
-        
-        if (!_transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index)) {
-            
-            return false;
-            
-        };
 
     }
 
-    return true;
+    if (_transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index)) {
+        
+        while (payload_index < openlcb_msg->payload_count) {                    // stall until everything is sent
+ 
+            _transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index);
+
+        }
+        
+        return true;
+
+    }
+
+    return false;
 
 }
 

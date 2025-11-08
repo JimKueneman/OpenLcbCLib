@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
@@ -51,6 +52,10 @@ extern "C" {
 
 #ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH  // USER DEFINED MAX VALUE = 0xFE = 254
 #define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 10 
+#endif
+    
+#ifndef USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH  
+#define USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH USER_DEFINED_NODE_BUFFER_DEPTH 
 #endif
 
     // *********************END USER DEFINED VARIABLES *****************************
@@ -66,6 +71,12 @@ extern "C" {
 #define OFFSET_CAN_WITHOUT_DEST_ADDRESS 0
 #define OFFSET_CAN_WITH_DEST_ADDRESS 2
 
+#define _OPENLCB_GLOBAL_ADDRESSED (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
+
+#define _DATAGRAM_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12))
+#define _OPTIONAL_INTERACTION_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12))
+    
+    
     // Structure for a basic CAN payload
     typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
@@ -85,6 +96,32 @@ extern "C" {
     typedef struct {
         openlcb_statemachine_worker_t *openlcb_worker;
     } can_main_statemachine_t;
+
+    typedef struct {
+        openlcb_node_t *openlcb_node;
+        can_msg_t *login_outgoing_can_msg;
+        uint8_t login_outgoing_can_msg_valid : 1;
+        can_msg_t *outgoing_can_msg;   
+        uint8_t enumerating : 1;
+
+    } can_statemachine_info_t;
+    
+    typedef struct {
+        
+        node_id_t node_id;
+        uint16_t alias;   
+        uint8_t is_duplicate: 1;
+        uint8_t is_permitted: 1;
+    
+    } alias_mapping_t;
+    
+    typedef struct {
+        
+        alias_mapping_t list[USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH];
+        bool has_duplicate_alias;
+        
+    } alias_mapping_info_t;
+
 
 
 #ifdef __cplusplus

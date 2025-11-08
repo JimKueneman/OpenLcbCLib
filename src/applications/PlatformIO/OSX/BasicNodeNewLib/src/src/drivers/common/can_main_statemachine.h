@@ -49,20 +49,42 @@ extern "C" {
 #endif /* __cplusplus */
 
     typedef struct {
-        void (*lock_can_buffer_fifo)(void);
-        void (*unlock_can_buffer_fifo)(void);
+        void (*lock_shared_resources)(void);
+        void (*unlock_shared_resources)(void);
         bool (*send_can_message)(can_msg_t *msg);
-        bool (*send_openlcb_message)(openlcb_msg_t *openlcb_msg);
-        bool (*is_tx_buffer_empty)(void);
-        openlcb_node_t *(*node_get_first)(uint8_t key);
-        openlcb_node_t *(*node_get_next)(uint8_t key);
-        void (*login_statemachine_run)(openlcb_node_t* openlcb_node, can_msg_t *can_msg, openlcb_msg_t *openlcb_msg);
+        openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
+        openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
+        openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);
+        void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
+        alias_mapping_info_t*(*alias_mapping_get_alias_mapping_info)(void);
+        void (*alias_mapping_unregister)(uint16_t alias);
+
+        bool (*handle_duplicate_aliases)(void);
+        bool (*handle_outgoing_can_message)(void);
+        bool (*handle_login_outgoing_can_message)(void);
+        bool (*handle_try_enumerate_first_node)(void);
+        bool (*handle_try_enumerate_next_node)(void);
+
+
 
     } interface_can_main_statemachine_t;
 
     extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
 
     extern void CanMainStateMachine_run(void);
+
+    extern can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void);
+
+    extern bool CanMainStatemachine_handle_duplicate_aliases(void);
+
+    extern bool CanMainStatemachine_handle_login_outgoing_can_message(void);
+
+    extern bool CanMainStatemachine_handle_outgoing_can_message(void);
+
+    extern bool CanMainStatemachine_handle_try_enumerate_first_node(void);
+
+    extern bool CanMainStatemachine_handle_try_enumerate_next_node(void);
+
 
 #ifdef	__cplusplus
 }

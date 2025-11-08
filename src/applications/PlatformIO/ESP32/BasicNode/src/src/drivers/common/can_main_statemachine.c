@@ -35,454 +35,252 @@
 
 #include "can_main_statemachine.h"
 
-#include "stdio.h"  // printf
-#include "../../openlcb/openlcb_types.h"
-#include "../../openlcb/openlcb_defines.h"
-#include "../../openlcb/openlcb_buffer_store.h"
-#include "../../openlcb/openlcb_buffer_fifo.h"
-#include "../../openlcb/openlcb_main_statemachine.h"
-#include "../../openlcb/openlcb_tx_driver.h"
-#include "../../openlcb/protocol_message_network.h"
-#include "../../openlcb/protocol_datagram.h"
-#include "../../openlcb/application_callbacks.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h> // printf
+
 #include "can_types.h"
-#include "can_buffer_fifo.h"
-#include "can_frame_message_handler.h"
 #include "can_buffer_store.h"
-#include "can_login_message_handler.h"
-#include "can_tx_statemachine.h"
-#include "can_rx_statemachine.h"
-#include "../driver_can.h"
-#include "../driver_100ms_clock.h"
+#include "can_buffer_fifo.h"
+#include "can_utilities.h"
+#include "../../openlcb/openlcb_defines.h"
+#include "../../openlcb/openlcb_types.h"
+#include "../../openlcb/openlcb_utilities.h"
+#include "../../openlcb/openlcb_buffer_store.h"
+
+// TODO Get this out of here
+#include "../../openlcb/openlcb_node.h"
 
 
-can_main_statemachine_t can_helper;
 
-void CanMainStatemachine_initialize(
-        can_rx_driver_callback_t can_rx_driver_callback,
-        transmit_raw_can_frame_func_t transmit_raw_can_frame_callback,
-        is_can_tx_buffer_clear_func_t is_can_tx_buffer_clear_callback,
-        parameterless_callback_t pause_can_rx_callback,
-        parameterless_callback_t resume_can_rx_callback
-        ) {
+static interface_can_main_statemachine_t *_interface;
 
-    DriverCan_initialization(transmit_raw_can_frame_callback, is_can_tx_buffer_clear_callback, pause_can_rx_callback, resume_can_rx_callback);
+static can_statemachine_info_t _can_statemachine_info;
+static can_msg_t _can_msg;
 
-    CanBufferStore_initialize();
-    CanBufferFifo_initialiaze();
-    CanRxStatemachine_initialize(can_rx_driver_callback);
-    CanTxStatemachine_initialize();
+void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine) {
 
-    can_helper.openlcb_worker = &openlcb_helper;
-    can_helper.active_msg = (void*) 0;
-    can_helper.can_worker.state.allocated = TRUE;
-    can_helper.can_worker.state.direct_tx = FALSE;
-    can_helper.can_worker.identifier = 0x0000000000;
-    can_helper.can_worker.payload_count = 0;
-    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++)
-        can_helper.can_worker.payload[i] = 0x00;
+    _interface = (interface_can_main_statemachine_t*) interface_can_main_statemachine;
+
+    CanUtilities_clear_can_message(&_can_msg);
+  
+    _can_statemachine_info.login_outgoing_can_msg = &_can_msg;
+    _can_statemachine_info.openlcb_node = NULL;
+    _can_statemachine_info.login_outgoing_can_msg_valid = false;
+    _can_statemachine_info.enumerating = false;
+    _can_statemachine_info.outgoing_can_msg = NULL;
 
 }
 
-void _run_can_frame_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_msg, can_msg_t* worker_msg) {
+static void _reset_node(openlcb_node_t *openlcb_node) {
 
+    if (!openlcb_node) {
 
-    if (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+        return;
 
-        switch (can_msg->identifier & MASK_CAN_FRAME_SEQUENCE_NUMBER) {
+    }
 
-            case CAN_CONTROL_FRAME_CID7:
-            case CAN_CONTROL_FRAME_CID6:
-            case CAN_CONTROL_FRAME_CID5:
-            case CAN_CONTROL_FRAME_CID4:
+    openlcb_node->alias = 0x00;
+    openlcb_node->state.permitted = false;
+    openlcb_node->state.initialized = false;
+    openlcb_node->state.duplicate_id_detected = false;
+    openlcb_node->state.firmware_upgrade_active = false;
+    openlcb_node->state.resend_datagram = false;
+    openlcb_node->state.openlcb_datagram_ack_sent = false;
+    if (openlcb_node->last_received_datagram) {
 
-                CanFrameMessageHandler_cid(openlcb_node, can_msg, worker_msg);
+        OpenLcbBufferStore_free_buffer(openlcb_node->last_received_datagram);
+        openlcb_node->last_received_datagram = NULL;
 
-                return;
+    }
 
-            case CAN_CONTROL_FRAME_CID3:
-            case CAN_CONTROL_FRAME_CID2:
-            case CAN_CONTROL_FRAME_CID1:
+    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias  
 
-                openlcb_node->state.can_msg_handled = TRUE;
+}
 
-                return;
+static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info) {
 
-            default:
+    bool result = false;
 
-                openlcb_node->state.can_msg_handled = TRUE;
+    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
-                return;
+        uint16_t alias = alias_mapping_info->list[i].alias;
 
-        }
+        if ((alias > 0) && alias_mapping_info->list[i].is_duplicate) {
 
-    } else {
+            _interface->alias_mapping_unregister(alias);
 
-        switch (can_msg->identifier & MASK_CAN_VARIABLE_FIELD) {
+            _reset_node(_interface->openlcb_node_find_by_alias(alias));
 
-            case CAN_CONTROL_FRAME_RID: // Reserve ID
-
-                CanFrameMessageHandler_rid(openlcb_node, can_msg, worker_msg);
-
-                return;
-
-            case CAN_CONTROL_FRAME_AMD: // Alias Map Definition
-
-                CanFrameMessageHandler_amd(openlcb_node, can_msg, worker_msg);
-
-                return;
-
-            case CAN_CONTROL_FRAME_AME:
-
-                CanFrameMessageHandler_ame(openlcb_node, can_msg, worker_msg);
-
-                return;
-
-            case CAN_CONTROL_FRAME_AMR:
-
-                CanFrameMessageHandler_amr(openlcb_node, can_msg, worker_msg);
-
-                return;
-
-            case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0:
-            case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1:
-            case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2:
-            case CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3:
-                // Advanced feature for gateways/routers/etc.
-
-                openlcb_node->state.can_msg_handled = TRUE;
-
-                return;
-
-            default:
-
-                openlcb_node->state.can_msg_handled = TRUE;
-
-                return;
+            result = true;
 
         }
 
     }
 
+    alias_mapping_info->has_duplicate_alias = false;
+
+    return result;
 
 }
 
-void _run_can_login_statemachine(openlcb_node_t* openlcb_node, can_msg_t* can_msg, openlcb_msg_t* openlcb_msg) {
+can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void) {
 
-    switch (openlcb_node->state.run_state) {
+    return (&_can_statemachine_info);
 
-        case RUNSTATE_INIT:
-            CanLoginMessageHandler_init(openlcb_node);
-            return;
-        case RUNSTATE_GENERATE_SEED:
-            CanFrameMessageHandler_generate_seed(openlcb_node);
-            return;
-        case RUNSTATE_GENERATE_ALIAS:
-            CanFrameMessageHandler_generate_alias(openlcb_node);
-            return;
-        case RUNSTATE_SEND_CHECK_ID_07:
-            CanFrameMessageHandler_transmit_cid07(openlcb_node, can_msg);
-            return;
-        case RUNSTATE_SEND_CHECK_ID_06:
-            CanFrameMessageHandler_transmit_cid06(openlcb_node, can_msg);
-            return;
-        case RUNSTATE_SEND_CHECK_ID_05:
-            CanFrameMessageHandler_transmit_cid05(openlcb_node, can_msg);
-            return;
-        case RUNSTATE_SEND_CHECK_ID_04:
-            CanFrameMessageHandler_transmit_cid04(openlcb_node, can_msg);
-            return;
-        case RUNSTATE_WAIT_200ms:
-            CanFrameMessageHandler_wait_200ms(openlcb_node);
-            return;
-        case RUNSTATE_TRANSMIT_RESERVE_ID:
-            CanFrameMessageHandler_transmit_rid(openlcb_node, can_msg);
-            return;
-        case RUNSTATE_TRANSMIT_ALIAS_MAP_DEFINITION:
-            CanFrameMessageHandler_transmit_amd(openlcb_node, can_msg);
-            return;
-        case RUNSTATE_TRANSMIT_INITIALIZATION_COMPLETE:
-            CanFrameMessageHandler_transmit_initialization_complete(openlcb_node, can_msg, openlcb_msg);
-            return;
-        case RUNSTATE_TRANSMIT_PRODUCER_EVENTS:
-            CanFrameMessageHandler_transmit_producer_events(openlcb_node, can_msg, openlcb_msg);
-            return;
-        case RUNSTATE_TRANSMIT_CONSUMER_EVENTS:
-            CanFrameMessageHandler_transmit_consumer_events(openlcb_node, can_msg, openlcb_msg);
-            return;
-        case RUNSTATE_RUN:
+}
 
-            return;
+bool CanMainStatemachine_handle_duplicate_aliases(void) {
+
+    bool result = false;
+
+    _interface->lock_shared_resources();
+
+    alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
+
+    if (alias_mapping_info->has_duplicate_alias) {
+
+        _process_duplicate_aliases(alias_mapping_info);
+
+        result = true;
 
     }
 
+    _interface->unlock_shared_resources();
+
+    return result;
+
 }
 
-uint8_olcb_t _pop_next_can_helper_active_message(void) {
+bool CanMainStatemachine_handle_outgoing_can_message(void) {
 
-    if (can_helper.active_msg)
-        return FALSE;
+    if (!_can_statemachine_info.outgoing_can_msg) {
 
-    Driver100msClock_pause_100ms_timer();
-    DriverCan_pause_can_rx();
-    can_helper.active_msg = CanBufferFifo_pop();
-    DriverCan_resume_can_rx();
-    Driver100msClock_resume_100ms_timer();
+        _interface->lock_shared_resources();
+        _can_statemachine_info.outgoing_can_msg = CanBufferFifo_pop();
+        _interface->unlock_shared_resources();
 
-    if (can_helper.active_msg) {
+    }
 
-        if (ApplicationCallbacks_get_can_rx()) {
+    if (_can_statemachine_info.outgoing_can_msg) {
 
-            ApplicationCallbacks_get_can_rx()();
+        if (_interface->send_can_message(_can_statemachine_info.outgoing_can_msg)) {
+
+            _interface->lock_shared_resources();
+            CanBufferStore_free_buffer(_can_statemachine_info.outgoing_can_msg);
+            _interface->unlock_shared_resources();
+
+            _can_statemachine_info.outgoing_can_msg = NULL;
 
         }
 
-        return TRUE;
-
-    } else {
-
-        return FALSE;
+        return true; // done for this loop, try again next time
 
     }
 
+    return false;
+
 }
 
-uint8_olcb_t _pop_next_openlcb_worker_active_message(void) {
+bool CanMainStatemachine_handle_login_outgoing_can_message(void) {
 
-    if (can_helper.openlcb_worker->active_msg)
-        return FALSE;
+    if (_can_statemachine_info.login_outgoing_can_msg_valid) {
 
-    Driver100msClock_pause_100ms_timer();
-    DriverCan_pause_can_rx();
-    can_helper.openlcb_worker->active_msg = BufferFifo_pop();
-    DriverCan_resume_can_rx();
-    Driver100msClock_resume_100ms_timer();
+        if (_interface->send_can_message(_can_statemachine_info.login_outgoing_can_msg)) {
 
-
-    if (can_helper.openlcb_worker->active_msg) {
-
-        if (ApplicationCallbacks_get_can_rx()) {
-
-            ApplicationCallbacks_get_can_rx()();
+            _can_statemachine_info.login_outgoing_can_msg_valid = false;
 
         }
 
-        return TRUE;
-
-    } else {
-
-        return FALSE;
+        return true; // done for this loop, try again next time
 
     }
 
+    return false;
+
 }
 
-uint8_olcb_t is_direct_tx_message(uint8_olcb_t is_new_popped_message) {
+bool CanMainStatemachine_handle_try_enumerate_first_node(void) {
 
-    // Direct Tx messages are added in the CAN Rx statemachine but actually replies
-    // that have already been dealt with, such as error messages created in response 
-    // out of order frames, etc so they just need to be sent out and not dispatched 
-    // to the nodes.
+    if (!_can_statemachine_info.openlcb_node) {
 
-    if (is_new_popped_message && can_helper.active_msg->state.direct_tx) {
+        _can_statemachine_info.openlcb_node = _interface->openlcb_node_get_first(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
+        if (!_can_statemachine_info.openlcb_node) {
 
-        if (CanTxStatemachine_try_transmit_can_message(can_helper.active_msg)) {
-
-            can_helper.active_msg->state.direct_tx = FALSE;
-            CanBufferStore_freeBuffer(can_helper.active_msg);
-            can_helper.active_msg = (void*) 0;
-
-            return TRUE;
+            return true; // done, nothing to do
 
         }
 
-        return TRUE; // still trying but did not make it yet.
+        // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-    }
+        if (_can_statemachine_info.openlcb_node->state.run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE) {
 
-    return FALSE;
+            _interface->login_statemachine_run(&_can_statemachine_info);
 
-}
-
-void _reset_message_handled_flags_if_required(openlcb_node_t* next_node, uint8_olcb_t newly_popped_can_active_msg, uint8_olcb_t newly_popped_openlcb_active_msg) {
-
-    if (newly_popped_can_active_msg) {
-        next_node->state.can_msg_handled = FALSE;
-
-    }
-
-    if (newly_popped_openlcb_active_msg) {
-
-        next_node->state.openlcb_datagram_ack_sent = FALSE;
-        next_node->state.openlcb_msg_handled = FALSE;
-
-    }
-
-}
-
-void _reset_active_message_buffers_if_done(uint8_olcb_t active_can_msg_processiong_complete, uint8_olcb_t active_openlcb_msg_processing_complete) {
-
-    // Are all the nodes finished handling the incoming CAN message?
-    if (active_can_msg_processiong_complete) {
-
-        CanBufferStore_freeBuffer(can_helper.active_msg);
-        can_helper.active_msg = (void*) 0; // Clear the "flag" the next loop _pop_next_can_message() will get a new message)
-
-    }
-
-    // Are all the nodes finished handling the incoming Openlcb message?
-    if (active_openlcb_msg_processing_complete) {
-
-        BufferStore_freeBuffer(can_helper.openlcb_worker->active_msg);
-        can_helper.openlcb_worker->active_msg = (void*) 0; // Clear the "flag" the next loop _pop_next_openlcb_message() will get a new message)
-
-    }
-
-}
-
-void _process_login_statemachine(openlcb_node_t* next_node) {
-
-    // Process any login states ( )
-    if (next_node->state.run_state != RUNSTATE_RUN)
-        _run_can_login_statemachine(next_node, &can_helper.can_worker, &can_helper.openlcb_worker->worker);
-
-}
-
-uint8_olcb_t _resend_datagram_message_from_ack_failure_reply(openlcb_node_t* next_node) {
-
-    if (next_node->state.resend_datagram && next_node->last_received_datagram) {
-
-        next_node->state.openlcb_msg_handled = FALSE;
-
-        MainStatemachine_run_single_node(next_node, next_node->last_received_datagram, &can_helper.openlcb_worker->worker);
-
-        if (next_node->state.openlcb_msg_handled) {
-
-            ProtocolDatagram_clear_resend_datagram_message(next_node);
-
-            return FALSE;
         }
 
-        return TRUE; // need to retry
+        return true; // done
 
     }
 
-    return FALSE;
+    return false;
 
 }
 
-uint8_olcb_t _resend_optional_message_from_oir_reply(openlcb_node_t* next_node) {
+bool CanMainStatemachine_handle_try_enumerate_next_node(void) {
 
-    if (next_node->state.resend_optional_message && next_node->last_received_optional_interaction) {
+    _can_statemachine_info.openlcb_node = _interface->openlcb_node_get_next(CAN_STATEMACHINE_NODE_ENUMRATOR_KEY);
 
-        next_node->state.openlcb_msg_handled = FALSE;
+    if (!_can_statemachine_info.openlcb_node) {
 
-        MainStatemachine_run_single_node(next_node, next_node->last_received_optional_interaction, &can_helper.openlcb_worker->worker);
-
-        if (next_node->state.openlcb_msg_handled) {
-
-            ProtocolMessageNetwork_clear_resend_optional_message(next_node);
-
-            return FALSE;
-        }
-
-        return TRUE; // need to retry
+        return true; // done, nothing to do
 
     }
 
-    return FALSE;
+    // Need to make sure the correct state-machine is run depending of if the Node had finished the login process
 
-}
+    if (_can_statemachine_info.openlcb_node->state.run_state < RUNSTATE_LOAD_INITIALIZATION_COMPLETE) {
 
-void _dispatch_next_can_message_to_node(openlcb_node_t* next_node, uint8_olcb_t* is_active_can_msg_processiong_complete) {
-
-    if (can_helper.active_msg) {
-
-        _run_can_frame_statemachine(next_node, can_helper.active_msg, &can_helper.can_worker);
-
-        if (!next_node->state.can_msg_handled)
-
-            *is_active_can_msg_processiong_complete = FALSE;
+        _interface->login_statemachine_run(&_can_statemachine_info);
 
     }
 
-}
-
-void _dispatch_next_openlcb_message_to_node(openlcb_node_t* next_node, uint8_olcb_t* is_active_openlcb_msg_processiong_complete) {
-
-    if (can_helper.openlcb_worker->active_msg) {
-
-        MainStatemachine_run_single_node(next_node, can_helper.openlcb_worker->active_msg, &can_helper.openlcb_worker->worker);
-
-        if (!next_node->state.openlcb_msg_handled)
-
-            *is_active_openlcb_msg_processiong_complete = FALSE;
-
-    }
+    return false;
 
 }
 
 void CanMainStateMachine_run(void) {
 
+    if (_interface->handle_duplicate_aliases()) {
 
-    //    probably should have a separate loop to run the resends.....
-    //    the can get the buffer handled flags screwed up....        
-    //            
-    uint8_olcb_t is_newly_popped_can_active_msg = _pop_next_can_helper_active_message();
-    uint8_olcb_t is_newly_popped_openlcb_active_msg = _pop_next_openlcb_worker_active_message();
-
-    // optimistic from the beginning
-    uint8_olcb_t is_active_can_msg_processiong_complete = TRUE;
-    uint8_olcb_t is_active_openlcb_msg_processing_complete = TRUE;
-
-    // handle the can message if it is a direct send (there is no node specific processing on it to do, it just needs to get sent)
-    if (is_direct_tx_message(is_newly_popped_can_active_msg))
         return;
-
-
-
-    openlcb_node_t* next_node = Node_get_first(0);
-
-    while (next_node) {
-
-        _reset_message_handled_flags_if_required(next_node, is_newly_popped_can_active_msg, is_newly_popped_openlcb_active_msg);
-
-
-        if (next_node->state.initalized) { // process any incoming messages that were popped if the node is initialized
-
-            // these need to get out asap so don't waste time processing normal messages below until we can get these out
-            if (_resend_datagram_message_from_ack_failure_reply(next_node))
-
-                break;
-
-            // these need to get out asap so don't waste time processing normal messages below until we can get these out
-            if (_resend_optional_message_from_oir_reply(next_node))
-
-                break;
-
-            _dispatch_next_can_message_to_node(next_node, &is_active_can_msg_processiong_complete);
-
-            _dispatch_next_openlcb_message_to_node(next_node, &is_active_openlcb_msg_processing_complete);
-
-        }
-
-        _process_login_statemachine(next_node);
-
-        next_node = Node_get_next(0);
 
     }
 
-    _reset_active_message_buffers_if_done(is_active_can_msg_processiong_complete, is_active_openlcb_msg_processing_complete);
+    if (_interface->handle_outgoing_can_message()) {
 
-    // update callbacks
-    if (is_newly_popped_can_active_msg || is_newly_popped_openlcb_active_msg) {
+        return;
 
-        if (ApplicationCallbacks_get_can_rx()) {
+    }
 
-            ApplicationCallbacks_get_can_rx()();
+    if (_interface->handle_login_outgoing_can_message()) {
 
-        }
+        return;
+
+    }
+
+    if (_interface->handle_try_enumerate_first_node()) {
+
+        return;
+
+    }
+
+    if (_interface->handle_try_enumerate_next_node()) {
+
+        return;
 
     }
 

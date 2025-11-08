@@ -43,8 +43,9 @@
 #include "openlcb_types.h" // include processor files - each processor file is guarded.  
 
 typedef struct {
-    void (*lock_node_list)(void);
-    void (*unlock_node_list)(void);
+   
+    // callbacks
+    void (*on_100ms_timer_tick)(void);
 
 } interface_openlcb_node_t;
 

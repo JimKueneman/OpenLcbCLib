@@ -62,9 +62,6 @@ extern "C"
 
     extern bool Esp32CanDriver_is_connected(void);
 
-    extern void Esp32CanDriver_config_mem_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-
-    extern void Esp32CanDriver_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
 #ifdef __cplusplus
 }

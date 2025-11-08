@@ -28,9 +28,9 @@
  *
  * Implementation of the FIFO where the OpenLcb messages are placed by the receive
  * module.  The main loop pulls them out one at a time and dispatched them to the handlers.
- * Caution is required as the receive module may be putting new messages in within the 
- * context of an interrupt or thread so when the main loop access this buffer it must 
- * use the lock the Can Rx and 100ms timer modules with the Pause and Resume functions 
+ * Caution is required as the receive module may be putting new messages in within the
+ * context of an interrupt or thread so when the main loop access this buffer it must
+ * use the lock the Can Rx and 100ms timer modules with the Pause and Resume functions
  * exported by them respectively.
  *
  * @author Jim Kueneman
@@ -38,34 +38,33 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_FIFO__
-#define	__OPENLCB_FIFO__
+#define __OPENLCB_FIFO__
+
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "openlcb_types.h"
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-extern void BufferFifo_initialiaze(void);
+    extern void OpenLcbBufferFifo_initialize(void);
 
-extern openlcb_msg_t* BufferFifo_push(uint16_olcb_t data_len); 
+    extern openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
 
-extern openlcb_msg_t* BufferFifo_push_existing(openlcb_msg_t* existing_msg);
+    extern openlcb_msg_t *OpenLcbBufferFifo_push_existing(openlcb_msg_t *existing_msg);
 
-openlcb_msg_t* BufferFifo_push_existing_to_front(openlcb_msg_t* existing_msg);
+    extern openlcb_msg_t *OpenLcbBufferFifo_pop(void);
 
-extern openlcb_msg_t* BufferFifo_pop(void);
+    extern uint8_t OpenLcbBufferFifo_is_empty(void);
 
-extern uint8_olcb_t BufferFifo_is_empty(void);
+    extern uint16_t OpenLcbBufferFifo_get_allocated_count(void);
 
-extern uint16_olcb_t BufferFifo_get_allocated_count(void);
-
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_FIFO__ */
-
+#endif /* __OPENLCB_FIFO__ */

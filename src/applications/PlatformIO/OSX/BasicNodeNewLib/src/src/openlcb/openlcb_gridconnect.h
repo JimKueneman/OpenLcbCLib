@@ -64,7 +64,7 @@ typedef uint8_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
 extern "C" {
 #endif /* __cplusplus */
 
-    extern uint8_t OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t* buffer);
+    extern bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t* buffer);
     
     extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
 

@@ -38,80 +38,110 @@
 
 #include "can_buffer_store.h"
 
-#include "stdio.h"  // printf
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h> // printf
+#include <string.h>
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
 
-can_buffer_store_t _can_buffer_store;
-uint16_olcb_t _can_buffer_store_message_allocated = 0;
-uint16_olcb_t _can_buffer_store_message_max_allocated = 0;
+static can_msg_array_t _can_buffer_store;
+static uint16_t _can_buffer_store_message_allocated;
+static uint16_t _can_buffer_store_message_max_allocated;
 
 void CanBufferStore_initialize(void) {
-
+    
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
-        _can_buffer_store[i].state.allocated = FALSE;
-        _can_buffer_store[i].state.direct_tx = FALSE;
+        _can_buffer_store[i].state.allocated = false;
         _can_buffer_store[i].identifier = 0;
         _can_buffer_store[i].payload_count = 0;
-        for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++)
+
+        for (int j = 0; j < LEN_CAN_BYTE_ARRAY; j++) {
+
             _can_buffer_store[i].payload[j] = 0;
 
+        }
+
     }
+    
+    _can_buffer_store_message_allocated = 0;
+    _can_buffer_store_message_max_allocated = 0;
+
 }
 
 void CanBufferStore_clear_can_message(can_msg_t* msg) {
 
     msg->identifier = 0;
     msg->payload_count = 0;
-    
+
+    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
+
+        msg->payload[i] = 0;
+
+    }
+
 }
 
-can_msg_t* CanBufferStore_allocateBuffer(void) {
+can_msg_t* CanBufferStore_allocate_buffer(void) {
 
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         if (!_can_buffer_store[i].state.allocated) {
 
             _can_buffer_store_message_allocated = _can_buffer_store_message_allocated + 1;
-            
-            if (_can_buffer_store_message_allocated > _can_buffer_store_message_max_allocated)
+
+            if (_can_buffer_store_message_allocated > _can_buffer_store_message_max_allocated) {
+
                 _can_buffer_store_message_max_allocated = _can_buffer_store_message_allocated;
-            
-            
+
+            }
+
             CanBufferStore_clear_can_message(&_can_buffer_store[i]);
-            _can_buffer_store[i].state.allocated = TRUE;
-            _can_buffer_store[i].state.direct_tx = FALSE;
-      
+            
+             _can_buffer_store[i].state.allocated = true;
+
             return &_can_buffer_store[i];
 
         }
 
     }
-    
-    return (void*) 0;
+
+    return NULL;
 
 }
 
-void CanBufferStore_freeBuffer(can_msg_t* msg) {
-
-    if (!msg) return;
+void CanBufferStore_free_buffer(can_msg_t* msg) {
+    
+    if (!msg) {
+        
+        return;
+        
+    }
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;
-    msg->state.allocated = FALSE;
-    msg->state.direct_tx = FALSE;
+    msg->state.allocated = false;
 
 }
 
-uint16_olcb_t CanBufferStore_messages_allocated(void) {
+uint16_t CanBufferStore_messages_allocated(void) {
 
     return _can_buffer_store_message_allocated;
 
 }
 
-uint16_olcb_t CanBufferStore_messages_max_allocated(void) {
-    
+uint16_t CanBufferStore_messages_max_allocated(void) {
+
     return _can_buffer_store_message_max_allocated;
-    
+
+}
+
+void CanBufferStore_clear_max_allocated(void) {
+
+    _can_buffer_store_message_max_allocated = 0;
+
 }
