@@ -280,6 +280,10 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
 
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
+// ************************************************************************
+// Required message handlers
+// ************************************************************************ 
+
   // MESSAGE NETWORK
   .message_network_initialization_complete = ProtocolMessageNetwork_handle_initialization_complete,
   .message_network_initialization_complete_simple = ProtocolMessageNetwork_handle_initialization_complete_simple,
@@ -292,6 +296,27 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
   // PROTOCOL SUPPORT
   .message_network_protocol_support_inquiry = &ProtocolMessageNetwork_handle_protocol_support_inquiry,
   .message_network_protocol_support_reply = &ProtocolMessageNetwork_handle_protocol_support_reply,
+
+// General
+  .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,      //  HARDWARE INTERFACE
+  .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC,  //  HARDWARE INTERFACE
+  .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
+  .openlcb_node_get_first = &OpenLcbNode_get_first,
+  .openlcb_node_get_next = &OpenLcbNode_get_next,
+  .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
+
+  // Test injection
+  .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
+  .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
+  .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+  .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
+  .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+  .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+  .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+
+  // ************************************************************************
+  // Optional message handlers
+  // ************************************************************************
 
   // SNIP
   .snip_simple_node_info_request = &ProtocolSnip_handle_simple_node_info_request,
@@ -334,25 +359,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
   .stream_initiate_reply = NULL,
   .stream_send_data = NULL,
   .stream_data_proceed = NULL,
-  .stream_data_complete = NULL,
-
-  // required
-  .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,      //  HARDWARE INTERFACE
-  .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC,  //  HARDWARE INTERFACE
-  .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
-  .openlcb_node_get_first = &OpenLcbNode_get_first,
-  .openlcb_node_get_next = &OpenLcbNode_get_next,
-  .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
-
-  // for test injection
-  .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
-  .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
-  .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-  .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
-  .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
-  .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
-  .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node
-
+  .stream_data_complete = NULL
 };
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {

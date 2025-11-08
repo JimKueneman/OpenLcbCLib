@@ -51,6 +51,7 @@
 
 bool _is_connected = false;
 TaskHandle_t receive_task_handle = (void *)0;
+int _tx_queue_len = 0;
 
 void receive_task(void *arg) {
 
@@ -111,14 +112,52 @@ bool Esp32CanDriver_is_connected(void) {
 }
 
 bool Esp32CanDriver_is_can_tx_buffer_clear(void) {
-  // The Esp32CanDriver_transmit_raw_can_frame will return FALSE if it can't send it for now.
-  // Keep looking for an answer......
-  return true;
+
+  twai_status_info_t status;
+
+  // This return value is broken, twai_get_status_info returns TWAI_STATE_STOPPED (also equal to ESP_OK = 0) for a valid system which is not right.  
+  // That said the value of status.state IS correct on the return of this call
+  twai_get_status_info(&status);
+
+  switch (status.state) {
+
+    case TWAI_STATE_STOPPED:  //  // = "0" Same value as ESP_OK
+
+      return false;
+
+    break;
+
+    case TWAI_STATE_RUNNING: // = "1"
+
+       return ((_tx_queue_len - status.msgs_to_tx) > 0);
+
+    break;
+
+    case TWAI_STATE_BUS_OFF:  // = "2"
+
+      twai_initiate_recovery(); 
+
+      return false;
+
+    break;
+
+    case TWAI_STATE_RECOVERING:  // = "3"
+
+      return false;
+
+    break;
+
+    default:
+
+      return false;
+
+      break;
+
+  }
+
 }
 
 bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg) {
-
-  //vTaskSuspend(receive_task_handle);
 
   // Configure message to transmit
   twai_message_t message;
@@ -130,7 +169,6 @@ bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg) {
   message.self = 0;               // Whether the message is a self reception request (loopback)
   message.dlc_non_comp = 0;       // DLC is less than 8
   
-
   for (int i = 0; i < msg->payload_count; i++) {
 
     message.data[i] = msg->payload[i];
@@ -148,7 +186,6 @@ bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg) {
 
   }
 
-  //vTaskResume(receive_task_handle);
 }
 
 void Esp32CanDriver_pause_can_rx(void) {
@@ -169,6 +206,9 @@ void Esp32CanDriver_setup(void) {
   twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(GPIO_NUM_21, GPIO_NUM_22, TWAI_MODE_NORMAL);
   twai_timing_config_t t_config = TWAI_TIMING_CONFIG_125KBITS();
   twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
+
+
+  _tx_queue_len = g_config.tx_queue_len;
 
   // Install CAN driver
   if (twai_driver_install(&g_config, &t_config, &f_config) == ESP_OK) {

@@ -62,7 +62,7 @@ typedef struct {
     void (*message_network_protocol_support_inquiry)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_protocol_support_reply)(openlcb_statemachine_info_t *statemachine_info);
 
-    // required
+    // General
     void (*lock_shared_resources)(void);
     void (*unlock_shared_resources)(void);
     bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
@@ -70,7 +70,7 @@ typedef struct {
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
     void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
 
-    // for test injection
+    // Test injection
     void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);
     bool (*does_node_process_msg)(openlcb_statemachine_info_t *_statemachine_info); 
     bool (*handle_outgoing_openlcb_message)(void);
