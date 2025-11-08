@@ -39,6 +39,9 @@
 #ifndef __ESP32_CAN_DRIVERS__
 #define __ESP32_CAN_DRIVERS__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "src/openlcb/openlcb_types.h"
 #include "src/drivers/common/can_types.h"
 
@@ -47,17 +50,21 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void Esp32CanDriver_setup(can_rx_callback_func_t can_rx_callback);
+    extern void Esp32CanDriver_setup(void);
 
-    extern uint8_olcb_t Esp32CanDriver_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+    extern bool Esp32CanDriver_is_can_tx_buffer_clear(void);
 
     extern void Esp32CanDriver_pause_can_rx(void);
 
     extern void Esp32CanDriver_resume_can_rx(void);
 
-    extern uint8_olcb_t Esp32CanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *msg);
+    extern bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg);
 
-    extern uint8_olcb_t Esp32CanDriver_is_connected(void);
+    extern bool Esp32CanDriver_is_connected(void);
+
+    extern void Esp32CanDriver_config_mem_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
+    extern void Esp32CanDriver_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
 #ifdef __cplusplus
 }

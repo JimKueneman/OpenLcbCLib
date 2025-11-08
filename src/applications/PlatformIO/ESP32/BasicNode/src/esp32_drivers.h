@@ -29,7 +29,7 @@
  *
  *
  * @author Jim Kueneman
- * @date 3 Jan 2025
+ * @date 7 Nov 2025
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -39,29 +39,24 @@
 
 #include "src/openlcb/openlcb_types.h"
 
-// Assign the function pointer to where the UART Rx should call back with the byte it received
-// WARNING: Is in the context of the interrupt, be careful
-// void func(rx_data);
-typedef void (*uart_rx_callback_t)(uint16_olcb_t);
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void Esp32Drivers_setup(parameterless_callback_t _100ms_timer_sink);
+    extern void Esp32Drivers_setup(void);
 
     extern void Esp32Drivers_reboot(void);
 
-    extern uint16_olcb_t Esp32Drivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_olcb_t Esp32Drivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t Esp32Drivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern void Esp32Drivers_pause_100ms_timer();
+    extern void Esp32Drivers_lock_shared_resources();
 
-    extern void Esp32Drivers_resume_100ms_timer();
+    extern void Esp32Drivers_unlock_shared_resources();
 
-    extern uint8_olcb_t Esp32Drivers_100ms_is_connected(void);
+    extern bool Esp32Drivers_100ms_running(void);
 
 #ifdef __cplusplus
 }

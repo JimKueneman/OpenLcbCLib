@@ -34,73 +34,98 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __CAN_TYPES__
-#define	__CAN_TYPES__
-  
+#define __CAN_TYPES__
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "../../openlcb/openlcb_defines.h"
 #include "../../openlcb/openlcb_types.h"
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-
     // ************************ USER DEFINED VARIABLES *****************************
 
-#ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH
-#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH                    10   // USER DEFINED 
+#ifndef USER_DEFINED_CAN_MSG_BUFFER_DEPTH  // USER DEFINED MAX VALUE = 0xFE = 254
+#define USER_DEFINED_CAN_MSG_BUFFER_DEPTH 10 
+#endif
+    
+#ifndef USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH  
+#define USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH USER_DEFINED_NODE_BUFFER_DEPTH 
 #endif
 
     // *********************END USER DEFINED VARIABLES *****************************
 
+    // add one slot to the fifo so it can be full without head == tail
+#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 
+
 #define TX_CHANNEL_CAN_CONTROL 0
 #define TX_CHANNEL_OPENLCB_MSG 0
 
-#define LEN_CAN_BYTE_ARRAY   8
+#define LEN_CAN_BYTE_ARRAY 8
 
-#define OFFSET_CAN_WITHOUT_DEST_ADDRESS   0
-#define OFFSET_CAN_WITH_DEST_ADDRESS      2
+#define OFFSET_CAN_WITHOUT_DEST_ADDRESS 0
+#define OFFSET_CAN_WITH_DEST_ADDRESS 2
+
+#define _OPENLCB_GLOBAL_ADDRESSED (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
+
+#define _DATAGRAM_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12))
+#define _OPTIONAL_INTERACTION_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12))
+    
+    
+    // Structure for a basic CAN payload
+    typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
+
+    typedef struct {
+        uint8_t allocated : 1;
+    } can_msg_state_t;
+
+    typedef struct {
+        can_msg_state_t state;
+        uint32_t identifier; // CAN 29 bit identifier (extended)
+        uint8_t payload_count; // How many bytes are valid
+        payload_bytes_can_t payload; // Payload bytes
+    } can_msg_t;
+
+    typedef can_msg_t can_msg_array_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
+
+    typedef struct {
+        openlcb_statemachine_worker_t *openlcb_worker;
+    } can_main_statemachine_t;
+
+    typedef struct {
+        openlcb_node_t *openlcb_node;
+        can_msg_t *login_outgoing_can_msg;
+        uint8_t login_outgoing_can_msg_valid : 1;
+        can_msg_t *outgoing_can_msg;   
+        uint8_t enumerating : 1;
+
+    } can_statemachine_info_t;
+    
+    typedef struct {
+        
+        node_id_t node_id;
+        uint16_t alias;   
+        uint8_t is_duplicate: 1;
+        uint8_t is_permitted: 1;
+    
+    } alias_mapping_t;
+    
+    typedef struct {
+        
+        alias_mapping_t list[USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH];
+        bool has_duplicate_alias;
+        
+    } alias_mapping_info_t;
 
 
-// Structure for a basic CAN payload
-typedef uint8_olcb_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
-typedef struct {
-    uint8_olcb_t allocated: 1;
-    uint8_olcb_t direct_tx: 1;    // If set the CAN statemachine will simply directly send it assuming all the source/dest/mti/data is all set up.  Mainly for sending error found during Can frame reception to allow for the rx thread/interrupt to not have to reach across boundries to send it.
-} can_msg_state_t;
-
-typedef struct {
-    can_msg_state_t state;
-    uint32_olcb_t identifier;              // CAN 29 bit identifier (extended)
-    uint8_olcb_t payload_count;            // How many bytes are valid
-    payload_bytes_can_t payload;      // Payload bytes
-} can_msg_t;
-
-
-typedef can_msg_t can_buffer_store_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
-
-typedef struct {
-    openlcb_statemachine_worker_t* openlcb_worker;
-    can_msg_t can_worker;
-    can_msg_t* active_msg;
-} can_main_statemachine_t;
-
-// Assign the function pointer to where the incoming CAN messages should be dispatched to.
-// WARNING: Is in the context of the interrupt, be careful
-// void func(uint8_olcb_t channel, can_msg_t* can_msg)
-typedef void (*can_rx_callback_func_t) (uint8_olcb_t, can_msg_t*);
-
-typedef uint8_olcb_t (*transmit_raw_can_frame_func_t) (uint8_olcb_t, can_msg_t*);
-
-typedef uint8_olcb_t (*is_can_tx_buffer_clear_func_t) (uint16_olcb_t); 
-
-typedef void(*can_rx_driver_callback_t) (can_rx_callback_func_t);
-
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_TYPES__ */
-
+#endif /* __CAN_TYPES__ */

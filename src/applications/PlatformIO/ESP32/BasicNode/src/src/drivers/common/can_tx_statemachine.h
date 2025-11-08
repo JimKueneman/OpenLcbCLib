@@ -27,7 +27,7 @@
  * \file can_tx_statemachine.h
  *
  * Takes an OpenLcb message structure and splits it into CAN frames to transmit if 
- * necessary, else it packs up the CAN frame from the message struture and send it
+ * necessary, else it packs up the CAN frame from the message structure and send it
  * to the CAN Driver to transmit on the physical layer.
  *
  * @author Jim Kueneman
@@ -39,6 +39,9 @@
 #ifndef __CAN_TX_STATEMACHINE__
 #define	__CAN_TX_STATEMACHINE__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
@@ -46,15 +49,22 @@
 extern "C" {
 #endif /* __cplusplus */
 
+    typedef struct {
+        bool (*is_tx_buffer_empty)(void);
+        bool (*handle_addressed_msg_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+        bool (*handle_unaddressed_msg_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+        bool (*handle_datagram_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+        bool (*handle_stream_frame)(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
+        bool (*handle_can_frame)(can_msg_t* can_msg);
+    } interface_can_tx_statemachine_t;
 
-extern void CanTxStatemachine_initialize(void);
 
-// returns the number of bytes that were written to the CAN bus for this iteration (openlcb_start_index + 8 max)
-extern uint16_olcb_t CanTxStatemachine_try_transmit_openlcb_message(can_msg_t* can_msg_worker, openlcb_msg_t* openlcb_msg, uint16_olcb_t openlcb_start_index);
+    extern void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interface_can_tx_statemachine);
 
-// returns the number of bytes that were written to the CAN bus
-extern uint8_olcb_t CanTxStatemachine_try_transmit_can_message(can_msg_t* can_msg);
- 
+    extern bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg);
+
+    extern bool CanTxStatemachine_send_can_message(can_msg_t* can_msg);
+
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */

@@ -64,7 +64,7 @@ void receive_task(void *arg) {
 
 
     twai_message_t message;
-    esp_err_t err = twai_receive(&message, pdMS_TO_TICKS(0));
+    esp_err_t err = twai_receive(&message, pdMS_TO_TICKS(100));
     if (err == ESP_OK) {
       if (message.extd)  // only accept extended format
       {
@@ -84,7 +84,7 @@ void receive_task(void *arg) {
 
     xSemaphoreGive(local_mutex);
 
-    vTaskDelay(10 / portTICK_PERIOD_MS);  // 10ms
+   // vTaskDelay(10 / portTICK_PERIOD_MS);  // 10ms
   }
 }
 
@@ -127,7 +127,7 @@ bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg) {
   }
 
   // Queue message for transmission
-  if (twai_transmit(&message, pdMS_TO_TICKS(1000)) == ESP_OK) {
+  if (twai_transmit(&message, pdMS_TO_TICKS(1)) == ESP_OK) {
     return true;
   } else {
     return false;
