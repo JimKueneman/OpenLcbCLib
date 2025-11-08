@@ -141,13 +141,19 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
     switch (statemachine_info->incoming_msg_info.msg_ptr->mti) {
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
+            
+            fprintf(stderr, "\n\nMTI_SIMPLE_NODE_INFO_REQUEST\n\n");
 
             if (_interface->snip_simple_node_info_request) {
+                
+                fprintf(stderr, "\n\nsnip_simple_node_info_request\n\n");
 
                 _interface->snip_simple_node_info_request(statemachine_info);
 
             } else {
-
+                
+                fprintf(stderr, "\n\nload_interaction_rejected\n\n");
+         
                 _interface->load_interaction_rejected(statemachine_info);
 
             }
