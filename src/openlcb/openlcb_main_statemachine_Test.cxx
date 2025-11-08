@@ -297,10 +297,10 @@ void _ProtocolDatagram_handle_datagram(openlcb_statemachine_info_t *statemachine
     _update_called_function_ptr((void *)&_ProtocolDatagram_handle_datagram);
 }
 
-void _Protocol_Datagram_handle_datagram_ok_reply(openlcb_statemachine_info_t *statemachine_info)
+void _ProtocolDatagram_handle_datagram_ok_reply(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_Protocol_Datagram_handle_datagram_ok_reply);
+    _update_called_function_ptr((void *)&_ProtocolDatagram_handle_datagram_ok_reply);
 }
 
 void _ProtocolDatagram_handle_datagram_rejected_reply(openlcb_statemachine_info_t *statemachine_info)
@@ -407,12 +407,8 @@ void _OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_inf
 bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    fprintf(stderr, "\n\n\n _OpenLcbMainStatemachine_does_node_process_msg\n");
-
     if (force_true_does_node_process_msg)
     {
-
-        fprintf(stderr, "\n\n\n Force True\n");
 
         does_node_process_msg = true;
 
@@ -422,14 +418,10 @@ bool _OpenLcbMainStatemachine_does_node_process_msg(openlcb_statemachine_info_t 
     if (force_false_does_node_process_msg)
     {
 
-        fprintf(stderr, "\n\n\n Force False\n");
-
         does_node_process_msg = true;
 
         return false;
     }
-
-    fprintf(stderr, "\n\n\n Do the math\n");
 
     does_node_process_msg = OpenLcbMainStatemachine_does_node_process_msg(statemachine_info);
 
@@ -469,7 +461,7 @@ bool _OpenLcbMainStatemachine_handle_try_enumerate_next_node(void)
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
     .snip_simple_node_info_request = &_ProtocolSnip_handle_simple_node_info_request,
-    .snip_simple_node_info_reply = &_ProtocolSnip_handle_simple_node_info_request,
+    .snip_simple_node_info_reply = &_ProtocolSnip_handle_simple_node_info_reply,
 
     .message_network_initialization_complete = &_ProtocolMessageNetwork_initialization_complete,
     .message_network_initialization_complete_simple = &_ProtocolMessageNetwork_initialization_complete_simple,
@@ -507,7 +499,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .simple_train_node_ident_info_reply = &_ProtocolSimpleTrainNodeIdentInfo_reply,
 
     .datagram = &_ProtocolDatagram_handle_datagram,
-    .datagram_ok_reply = &_Protocol_Datagram_handle_datagram_ok_reply,
+    .datagram_ok_reply = &_ProtocolDatagram_handle_datagram_ok_reply,
     .datagram_rejected_reply = &_ProtocolDatagram_handle_datagram_rejected_reply,
 
     .stream_initiate_request = &_ProtocolStream_initiate_request,
@@ -643,6 +635,71 @@ void _global_initialize_null_handlers(void)
     OpenLcbBufferStore_initialize();
 }
 
+typedef void (*process_main_statemachine_func)(openlcb_statemachine_info_t *statemachine_info);
+
+static void _process_msg_null_handlers(openlcb_statemachine_info_t *statemachine_info, process_main_statemachine_func process_main_statemachine, bool expect_oir_reply)
+{
+
+    _reset_variables();
+
+  
+    if (expect_oir_reply)
+    {
+
+        force_true_does_node_process_msg = true;
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        EXPECT_EQ((uint64_t)_ProtocolMessageNetwork_handle_optional_interaction_rejected, (uint64_t)called_function_ptr);
+    }
+    else
+    {
+
+        force_true_does_node_process_msg = true;
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        EXPECT_EQ(called_function_ptr, nullptr);
+    }
+}
+
+static void _process_msg(openlcb_statemachine_info_t *statemachine_info, process_main_statemachine_func process_main_statemachine, bool force_process_true)
+{
+
+    _reset_variables();
+
+    if (!statemachine_info)
+    {
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        EXPECT_EQ(called_function_ptr, nullptr);
+
+        return;
+    }
+
+    if (force_process_true)
+    {
+
+        force_true_does_node_process_msg = true;
+        force_false_does_node_process_msg = false;
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        EXPECT_EQ((uint64_t)process_main_statemachine, (uint64_t)called_function_ptr);
+    }
+    else
+    {
+
+        force_true_does_node_process_msg = false;
+        force_false_does_node_process_msg = true;
+
+        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
+
+        EXPECT_EQ(called_function_ptr, nullptr);
+    }
+}
+
 #define SOURCE_ALIAS 0x222
 #define SOURCE_ID 0x010203040506
 #define DEST_ALIAS 0xBBB
@@ -716,45 +773,6 @@ TEST(OpenLcbMainStatemachine, does_node_process_msg)
     }
 }
 
-typedef void (*process_main_statemachine_func)(openlcb_statemachine_info_t *statemachine_info);
-
-static void process_msg(openlcb_statemachine_info_t *statemachine_info, process_main_statemachine_func process_main_statemachine, bool force_process_true)
-{
-
-    _reset_variables();
-
-    if (force_process_true)
-    {
-
-        force_true_does_node_process_msg = true;
-        force_false_does_node_process_msg = false;
-
-        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
-
-        if (statemachine_info)
-        {
-
-            EXPECT_EQ((uint64_t)process_main_statemachine, (uint64_t)called_function_ptr);
-        }
-        else
-        {
-
-            EXPECT_EQ(called_function_ptr, nullptr);
-        }
-    }
-    else
-    {
-
-        force_true_does_node_process_msg = false;
-        force_false_does_node_process_msg = true;
-
-        OpenLcbMainStatemachine_process_main_statemachine(statemachine_info);
-
-        EXPECT_EQ(called_function_ptr, nullptr);
-    }
-
-}
-
 TEST(OpenLcbMainStatemachine, process_main_statemachine)
 {
     _reset_variables();
@@ -779,21 +797,394 @@ TEST(OpenLcbMainStatemachine, process_main_statemachine)
     statemachine_info.incoming_msg_info.msg_ptr->dest_id = DEST_ID;
     statemachine_info.incoming_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
 
-    process_msg(nullptr, nullptr, true);
+    _process_msg(nullptr, nullptr, true);
 
     statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
-    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, true);
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, true);
 
     statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
-    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, false);
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, false);
 
     statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
-    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, true);
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, true);
 
     statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
-    process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, false);
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_NODE_INFO_REQUEST;
+    _process_msg(&statemachine_info, &_ProtocolSnip_handle_simple_node_info_request, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_NODE_INFO_REQUEST;
+    _process_msg(&statemachine_info, &_ProtocolSnip_handle_simple_node_info_request, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_NODE_INFO_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolSnip_handle_simple_node_info_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_INQUIRY;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_protocol_support_inquiry, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_INQUIRY;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_protocol_support_inquiry, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_protocol_support_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_protocol_support_inquiry, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_verify_node_id_addressed, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_verify_node_id_addressed, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_verify_node_id_global, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_verify_node_id_global, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFIED_NODE_ID;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_verified_node_id, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFIED_NODE_ID;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_verified_node_id, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_OPTIONAL_INTERACTION_REJECTED;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_optional_interaction_rejected, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_OPTIONAL_INTERACTION_REJECTED;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_optional_interaction_rejected, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TERMINATE_DO_TO_ERROR;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_terminate_due_to_error, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TERMINATE_DO_TO_ERROR;
+    _process_msg(&statemachine_info, &_ProtocolMessageNetwork_handle_terminate_due_to_error, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFY;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identify, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFY;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identify, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_RANGE_IDENTIFIED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_range_identified, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_RANGE_IDENTIFIED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_range_identified, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_UNKNOWN;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_unknown, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_UNKNOWN;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_unknown, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_CLEAR;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_clear, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_CLEAR;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_clear, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_SET;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_set, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_SET;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_set, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_RESERVED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_reserved, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_RESERVED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_reserved, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFY;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identify, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFY;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identify, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_RANGE_IDENTIFIED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_range_identified, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_RANGE_IDENTIFIED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_range_identified, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_UNKNOWN;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_unknown, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_UNKNOWN;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_unknown, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_CLEAR;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_clear, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_CLEAR;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_clear, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_SET;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_set, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_SET;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_set, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_RESERVED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_reserved, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_RESERVED;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_reserved, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENTS_IDENTIFY_DEST;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_identify_dest, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENTS_IDENTIFY_DEST;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_identify_dest, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENTS_IDENTIFY;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_identify, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENTS_IDENTIFY;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_identify, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENT_LEARN;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_event_learn, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENT_LEARN;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_event_learn, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PC_EVENT_REPORT;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_pc_event_report, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PC_EVENT_REPORT;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_pc_event_report, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PC_EVENT_REPORT_WITH_PAYLOAD;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_pc_event_report_with_payload, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PC_EVENT_REPORT_WITH_PAYLOAD;
+    _process_msg(&statemachine_info, &_ProtocolEventTransport_handle_pc_event_report_with_payload, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TRACTION_PROTOCOL;
+    _process_msg(&statemachine_info, &_ProtocolTractionControl_command, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TRACTION_PROTOCOL;
+    _process_msg(&statemachine_info, &_ProtocolTractionControl_command, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TRACTION_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolTractionControl_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TRACTION_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolTractionControl_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_TRAIN_INFO_REQUEST;
+    _process_msg(&statemachine_info, &_ProtocolSimpleTrainNodeIdentInfo_request, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_TRAIN_INFO_REQUEST;
+    _process_msg(&statemachine_info, &_ProtocolSimpleTrainNodeIdentInfo_request, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_TRAIN_INFO_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolSimpleTrainNodeIdentInfo_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_TRAIN_INFO_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolSimpleTrainNodeIdentInfo_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM;
+    _process_msg(&statemachine_info, &_ProtocolDatagram_handle_datagram, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM;
+    _process_msg(&statemachine_info, &_ProtocolDatagram_handle_datagram, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_OK_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolDatagram_handle_datagram_ok_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_OK_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolDatagram_handle_datagram_ok_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_REJECTED_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolDatagram_handle_datagram_rejected_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_REJECTED_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolDatagram_handle_datagram_rejected_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_INIT_REQUEST;
+    _process_msg(&statemachine_info, &_ProtocolStream_initiate_request, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_INIT_REQUEST;
+    _process_msg(&statemachine_info, &_ProtocolStream_initiate_request, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_INIT_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolStream_initiate_reply, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_INIT_REPLY;
+    _process_msg(&statemachine_info, &_ProtocolStream_initiate_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_SEND;
+    _process_msg(&statemachine_info, &_ProtocolStream_send_data, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_SEND;
+    _process_msg(&statemachine_info, &_ProtocolStream_send_data, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_PROCEED;
+    _process_msg(&statemachine_info, &_ProtocolStream_data_proceed, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_PROCEED;
+    _process_msg(&statemachine_info, &_ProtocolStream_data_proceed, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_COMPLETE;
+    _process_msg(&statemachine_info, &_ProtocolStream_data_complete, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_COMPLETE;
+    _process_msg(&statemachine_info, &_ProtocolStream_data_complete, false);
 }
 
+TEST(OpenLcbMainStatemachine, process_main_statemachine_null_handlers)
+{
+    _reset_variables();
+    _global_initialize_null_handlers();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.outgoing_msg_info.msg_ptr = nullptr;
+
+    statemachine_info.incoming_msg_info.msg_ptr->source_id = SOURCE_ID;
+    statemachine_info.incoming_msg_info.msg_ptr->source_alias = SOURCE_ALIAS;
+    statemachine_info.incoming_msg_info.msg_ptr->dest_id = DEST_ID;
+    statemachine_info.incoming_msg_info.msg_ptr->dest_alias = DEST_ALIAS;
+
+
+     statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE;
+     _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_initialization_complete_simple, false);
+
+    fprintf(stderr, "\n\nTEST\n\n");
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_NODE_INFO_REQUEST;
+  //  _process_msg_null_handlers(&statemachine_info, &_ProtocolSnip_handle_simple_node_info_request, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_INQUIRY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_protocol_support_inquiry, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PROTOCOL_SUPPORT_REPLY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_protocol_support_inquiry, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_ADDRESSED;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_verify_node_id_addressed, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFY_NODE_ID_GLOBAL;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_verify_node_id_global, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_VERIFIED_NODE_ID;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_verified_node_id, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_OPTIONAL_INTERACTION_REJECTED;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_optional_interaction_rejected, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TERMINATE_DO_TO_ERROR;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolMessageNetwork_handle_terminate_due_to_error, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identify, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_RANGE_IDENTIFIED;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_consumer_range_identified, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_UNKNOWN;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_unknown, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_CLEAR;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_clear, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_SET;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_set, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_CONSUMER_IDENTIFIED_RESERVED;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_consumer_identified_reserved, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_producer_identify, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_RANGE_IDENTIFIED;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_producer_range_identified, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_UNKNOWN;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_unknown, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_CLEAR;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_clear, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_SET;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_set, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PRODUCER_IDENTIFIED_RESERVED;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_producer_identified_reserved, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENTS_IDENTIFY_DEST;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_identify_dest, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENTS_IDENTIFY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_identify, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_EVENT_LEARN;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_event_learn, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PC_EVENT_REPORT;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_pc_event_report, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_PC_EVENT_REPORT_WITH_PAYLOAD;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolEventTransport_handle_pc_event_report_with_payload, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TRACTION_PROTOCOL;
+  //  _process_msg_null_handlers(&statemachine_info, &_ProtocolTractionControl_command, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_TRACTION_REPLY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolTractionControl_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_TRAIN_INFO_REQUEST;
+  //  _process_msg_null_handlers(&statemachine_info, &_ProtocolSimpleTrainNodeIdentInfo_request, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_SIMPLE_TRAIN_INFO_REPLY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolSimpleTrainNodeIdentInfo_reply, false);
+
+
+
+
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM;
+  //  _process_msg_null_handlers(&statemachine_info, &_ProtocolDatagram_handle_datagram, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_OK_REPLY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolDatagram_handle_datagram_ok_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_DATAGRAM_REJECTED_REPLY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolDatagram_handle_datagram_rejected_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_INIT_REQUEST;
+  //  _process_msg_null_handlers(&statemachine_info, &_ProtocolStream_initiate_request, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_INIT_REPLY;
+    _process_msg_null_handlers(&statemachine_info, &_ProtocolStream_initiate_reply, false);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_SEND;
+ //   _process_msg_null_handlers(&statemachine_info, &_ProtocolStream_send_data, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_PROCEED;
+//    _process_msg_null_handlers(&statemachine_info, &_ProtocolStream_data_proceed, true);
+
+    statemachine_info.incoming_msg_info.msg_ptr->mti = MTI_STREAM_COMPLETE;
+ //   _process_msg_null_handlers(&statemachine_info, &_ProtocolStream_data_complete, true);
+
+}
 
 TEST(OpenLcbMainStatemachine, run)
 {
