@@ -62,64 +62,66 @@ static void _load_duplicate_node_id(openlcb_statemachine_info_t *statemachine_in
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg,
-                                          statemachine_info->openlcb_node->alias,
-                                          statemachine_info->openlcb_node->id,
-                                          statemachine_info->incoming_msg->source_alias,
-                                          statemachine_info->incoming_msg->source_id,
-                                          MTI_PC_EVENT_REPORT,
-                                          8);
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_PC_EVENT_REPORT);
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            EVENT_ID_DUPLICATE_NODE_DETECTED);
+
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
     
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg, EVENT_ID_DUPLICATE_NODE_DETECTED);
     statemachine_info->openlcb_node->state.duplicate_id_detected = true;
-    
-    statemachine_info->outgoing_msg_valid = true;
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
-
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg,
-                                          statemachine_info->openlcb_node->alias,
-                                          statemachine_info->openlcb_node->id,
-                                          statemachine_info->incoming_msg->source_alias,
-                                          statemachine_info->incoming_msg->source_id,
-                                          MTI_VERIFIED_NODE_ID,
-                                          6);
     
-    OpenLcbUtilities_copy_node_id_to_openlcb_payload(statemachine_info->outgoing_msg, statemachine_info->openlcb_node->id, 0);
-
+    uint16_t mti = MTI_VERIFIED_NODE_ID;
+    
     if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
 
-        statemachine_info->outgoing_msg->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
+        mti = MTI_VERIFIED_NODE_ID_SIMPLE;
 
-    }
+    } 
+
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            mti);
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->openlcb_node->id, 
+            0);
+
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
     
-    statemachine_info->outgoing_msg_valid = true;
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 void ProtocolMessageNetwork_handle_initialization_complete(openlcb_statemachine_info_t *statemachine_info) {
-    
-    statemachine_info->outgoing_msg_valid = false;
-    
+
+    statemachine_info->outgoing_msg_info.valid = false;
+
 }
 
 void ProtocolMessageNetwork_handle_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info) {
-    
-    statemachine_info->outgoing_msg_valid = false;
-    
+
+    statemachine_info->outgoing_msg_info.valid = false;
+
 }
 
 void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info) {
-    
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg,
-                                          statemachine_info->openlcb_node->alias,
-                                          statemachine_info->openlcb_node->id,
-                                          statemachine_info->incoming_msg->source_alias,
-                                          statemachine_info->incoming_msg->source_id,
-                                          MTI_PROTOCOL_SUPPORT_REPLY,
-                                          6);
 
     uint64_t support_flags = statemachine_info->openlcb_node->parameters->protocol_support;
 
@@ -128,44 +130,53 @@ void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine
         support_flags = (support_flags & ~((uint64_t) PSI_FIRMWARE_UPGRADE)) | (uint64_t) PSI_FIRMWARE_UPGRADE_ACTIVE;
 
     }
-
-    *statemachine_info->outgoing_msg->payload[0] = (uint8_t) (support_flags >> 16) & 0xFF;
-    *statemachine_info->outgoing_msg->payload[1] = (uint8_t) (support_flags >> 8) & 0xFF;
-    *statemachine_info->outgoing_msg->payload[2] = (uint8_t) (support_flags >> 0) & 0xFF;
-    *statemachine_info->outgoing_msg->payload[3] = 0;
-    *statemachine_info->outgoing_msg->payload[4] = 0;
-    *statemachine_info->outgoing_msg->payload[5] = 0;
     
-    statemachine_info->outgoing_msg_valid = true;
+    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_PROTOCOL_SUPPORT_REPLY);
+    
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 16) & 0xFF, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 8) & 0xFF, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, (uint8_t) (support_flags >> 0) & 0xFF, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 4);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, 0x00, 5);
+    
+ //   statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
+    
+    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
 void ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_statemachine_info_t *statemachine_info) {
 
-    statemachine_info->outgoing_msg_valid = false;
-    
+    statemachine_info->outgoing_msg_info.valid = false;
+
 }
 
 void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (statemachine_info->incoming_msg->payload_count > 0) {
+    if (statemachine_info->incoming_msg_info.msg_ptr->payload_count > 0) {
 
-        if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg, 0) == statemachine_info->openlcb_node->id) {
+        if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
 
             _load_verified_node_id(statemachine_info);
-            
+
             return;
 
         }
-        
-        statemachine_info->outgoing_msg_valid = false;  // nothing to do
-        
+
+        statemachine_info->outgoing_msg_info.valid = false; // nothing to do
+
         return;
 
     }
 
     _load_verified_node_id(statemachine_info);
-    
+
 }
 
 void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine_info_t *statemachine_info) {
@@ -176,28 +187,28 @@ void ProtocolMessageNetwork_handle_verify_node_id_addressed(openlcb_statemachine
 
 void ProtocolMessageNetwork_handle_verified_node_id(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg, 0) == statemachine_info->openlcb_node->id) {
-        
+    if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
+
         _load_duplicate_node_id(statemachine_info);
-   
+
         return;
-  
+
     }
-    
-    statemachine_info->outgoing_msg_valid = false;
-    
+
+    statemachine_info->outgoing_msg_info.valid = false;
+
 }
 
 void ProtocolMessageNetwork_handle_optional_interaction_rejected(openlcb_statemachine_info_t *statemachine_info) {
-    
-    statemachine_info->outgoing_msg_valid = false;
-    
+
+    statemachine_info->outgoing_msg_info.valid = false;
+
 }
 
 void ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info) {
-    
-    statemachine_info->outgoing_msg_valid = false;
-    
+
+    statemachine_info->outgoing_msg_info.valid = false;
+
 }
 
 

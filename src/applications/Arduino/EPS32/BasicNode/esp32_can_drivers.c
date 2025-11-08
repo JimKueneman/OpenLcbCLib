@@ -51,55 +51,58 @@
 
 bool _is_connected = false;
 TaskHandle_t receive_task_handle = (void *)0;
-SemaphoreHandle_t mutex;
 
 void receive_task(void *arg) {
 
-  SemaphoreHandle_t local_mutex = (SemaphoreHandle_t)arg;
+//  SemaphoreHandle_t local_mutex = (SemaphoreHandle_t)arg;
   can_msg_t can_msg;
   can_msg.state.allocated = 1;
 
   while (1) {
-    xSemaphoreTake(local_mutex, portMAX_DELAY);  //  INCLUDE_vTaskSuspend is defined as 1 above so this is a forever wait
+
+      twai_message_t message;
+      esp_err_t err = twai_receive(&message, pdMS_TO_TICKS(100));
+
+      switch (err) {
+ 
+        case ESP_OK:
+
+          if (message.extd)  // only accept extended format  
+          {
+
+            can_msg.identifier = message.identifier;
+            can_msg.payload_count = message.data_length_code;
+            for (int i = 0; i < message.data_length_code; i++) {
+
+              can_msg.payload[i] = message.data[i];
+
+            }
+
+            CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+
+            digitalWrite(2, !digitalRead(2));  // blink the onboard LED
+
+          }
+
+        break;
 
 
-    twai_message_t message;
-    esp_err_t err = twai_receive(&message, pdMS_TO_TICKS(100));
-    if (err == ESP_OK) {
-      if (message.extd)  // only accept extended format
-      {
-        can_msg.identifier = message.identifier;
-        can_msg.payload_count = message.data_length_code;
-        for (int i = 0; i < message.data_length_code; i++)
-          can_msg.payload[i] = message.data[i];
+        case ESP_ERR_TIMEOUT:
 
-        CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+          digitalWrite(2, 0);  // turn off the LED
 
-        digitalWrite(2, !digitalRead(2));  // blink the onboard LED
+        break;
+
+
+        default:
+
+
+        break;
+
       }
-    } else if (err == ESP_ERR_TIMEOUT) {
-      digitalWrite(2, 0);  // turn off the LED
-    } else {
-    }
 
-    xSemaphoreGive(local_mutex);
-
-   // vTaskDelay(10 / portTICK_PERIOD_MS);  // 10ms
   }
-}
 
-void Esp32CanDriver_config_mem_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-  printf("Resetting to Factory Defaults\n");
-
-  // TODO: implement based on how Config Mem is stored
-}
-
-void Esp32CanDriver_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-  printf("Rebooting\n");
-
-  // TODO: Implement
 }
 
 bool Esp32CanDriver_is_connected(void) {
@@ -115,36 +118,49 @@ bool Esp32CanDriver_is_can_tx_buffer_clear(void) {
 
 bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg) {
 
-  //xSemaphoreTake(mutex, portMAX_DELAY);  //  INCLUDE_vTaskSuspend is defined as 1 above so this is a forever wait
+  //vTaskSuspend(receive_task_handle);
 
   // Configure message to transmit
   twai_message_t message;
   message.identifier = msg->identifier;
-  message.extd = 1;
+  message.extd = 1;                // Standard vs extended format
   message.data_length_code = msg->payload_count;
+  message.rtr = 0;                // Data vs RTR frame
+  message.ss = 0;                 // Whether the message is single shot (i.e., does not repeat on error)
+  message.self = 0;               // Whether the message is a self reception request (loopback)
+  message.dlc_non_comp = 0;       // DLC is less than 8
+  
+
   for (int i = 0; i < msg->payload_count; i++) {
+
     message.data[i] = msg->payload[i];
+
   }
 
   // Queue message for transmission
-  if (twai_transmit(&message, pdMS_TO_TICKS(1)) == ESP_OK) {
+  if (twai_transmit(&message, 0) == ESP_OK) {
+
     return true;
+
   } else {
+
     return false;
+
   }
 
-  //xSemaphoreGive(mutex);  //  INCLUDE_vTaskSuspend is defined as 1 above so this is a forever wait
+  //vTaskResume(receive_task_handle);
 }
 
 void Esp32CanDriver_pause_can_rx(void) {
 
-  xSemaphoreTake(mutex, portMAX_DELAY);  //  INCLUDE_vTaskSuspend is defined as 1 above so this is a forever wait
-
+  vTaskSuspend(receive_task_handle);
+ 
 }
 
 void Esp32CanDriver_resume_can_rx(void) {
 
-  xSemaphoreGive(mutex);
+  vTaskResume(receive_task_handle);
+
 }
 
 void Esp32CanDriver_setup(void) {
@@ -158,19 +174,23 @@ void Esp32CanDriver_setup(void) {
   if (twai_driver_install(&g_config, &t_config, &f_config) == ESP_OK) {
     // Start CAN driver
     if (twai_start() == ESP_OK) {
-      _is_connected = true;
 
-      mutex = xSemaphoreCreateMutex();
+      _is_connected = true;
 
       xTaskCreate(
         receive_task,           // [IN] function to call
         "receive_task",         // [IN] user identifier
         1024,                   // [IN] Stack Size
-        (void *)mutex,          // [IN] Paramter to pass
+        NULL,                   // [IN] Paramter to pass
         10,                     // [IN] Task Priority
         &receive_task_handle);  // [OUT] Task Handle send pointer to a TaskHandle_t variable
+
     } else {
+
     }
+
   } else {
+
   }
+
 }

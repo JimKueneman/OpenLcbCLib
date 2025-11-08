@@ -27,7 +27,7 @@
  *
  * \file can_buffer_fifo.c
  *
- * Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages 
+ * Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages
  * that need to be passed on to the nodes.  This buffer is accessed in the CAN Rx
  * statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms
  * timer when accessing it is critical.
@@ -38,30 +38,32 @@
 
 #include "can_buffer_fifo.h"
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h> // printf
+
 #include "can_types.h"
-#include "../../openlcb/openlcb_types.h"
-#include "../../openlcb/openlcb_defines.h"
 #include "can_buffer_store.h"
 
-
-#define LEN_CAN_FIFO_BUFFER  USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1  // add one slot to the fifo so it can be full without head == tail
+// add one slot to the fifo so it can be full without head == tail
+#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 
 
 typedef struct {
-    can_msg_t* list[LEN_CAN_FIFO_BUFFER];  
-    uint8_olcb_t head;
-    uint8_olcb_t tail;
+    can_msg_t *list[LEN_CAN_FIFO_BUFFER];
+    uint8_t head;
+    uint8_t tail;
 } can_fifo_t;
 
+static can_fifo_t can_msg_buffer_fifo;
 
-can_fifo_t can_msg_buffer_fifo;
+void CanBufferFifo_initialize(void) {
 
-
-void CanBufferFifo_initialiaze(void) {
-    
     for (int i = 0; i < LEN_CAN_FIFO_BUFFER; i++) {
 
-        can_msg_buffer_fifo.list[i] = (void*) 0;
-        
+        can_msg_buffer_fifo.list[i] = NULL;
+
     }
 
     can_msg_buffer_fifo.head = 0;
@@ -69,60 +71,59 @@ void CanBufferFifo_initialiaze(void) {
 
 }
 
-can_msg_t* CanBufferFifo_push(void) {
+bool CanBufferFifo_push(can_msg_t* new_msg) {
 
-    uint16_olcb_t next = can_msg_buffer_fifo.head + 1;
-    if (next >= LEN_CAN_FIFO_BUFFER)
+    uint8_t next = can_msg_buffer_fifo.head + 1;
+
+    if (next >= LEN_CAN_FIFO_BUFFER) {
+
         next = 0;
 
+    }
+
     if (next != can_msg_buffer_fifo.tail) {
-        
-        can_msg_t* new_msg = CanBufferStore_allocateBuffer();
-        
-        if (!new_msg)
-            return (void*) 0;
 
         can_msg_buffer_fifo.list[can_msg_buffer_fifo.head] = new_msg;
-
         can_msg_buffer_fifo.head = next;
-        
-        return new_msg;
+
+        return true;
 
     }
 
-    return (void*) 0;
+    return false;
 
 }
 
-can_msg_t* CanBufferFifo_pop(void) {
+can_msg_t *CanBufferFifo_pop(void) {
 
-    // Is there something here?
     if (can_msg_buffer_fifo.head != can_msg_buffer_fifo.tail) {
 
-        can_msg_t* msg = can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail];
-        
-        can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail] = (void*) 0;
+        can_msg_t *msg = can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail];
+        can_msg_buffer_fifo.list[can_msg_buffer_fifo.tail] = NULL;
+        can_msg_buffer_fifo.tail++;
 
-        can_msg_buffer_fifo.tail = can_msg_buffer_fifo.tail + 1;
+        if (can_msg_buffer_fifo.tail >= LEN_CAN_FIFO_BUFFER) {
 
-        if (can_msg_buffer_fifo.tail >= LEN_CAN_FIFO_BUFFER)
             can_msg_buffer_fifo.tail = 0;
 
+        }
+
         return msg;
-        
+
     }
 
-    return (void*) 0;
+    return NULL;
 
 }
 
-uint8_olcb_t CanBufferFifo_is_empty(void) {
+
+uint8_t CanBufferFifo_is_empty(void) {
 
     return can_msg_buffer_fifo.head == can_msg_buffer_fifo.tail;
 
 }
 
-uint16_olcb_t CanBufferFifo_get_allocated_count(void) {
+uint16_t CanBufferFifo_get_allocated_count(void) {
 
     if (can_msg_buffer_fifo.tail > can_msg_buffer_fifo.head) {
 

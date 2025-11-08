@@ -112,6 +112,12 @@ static void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
     printf("NodeID: 0x%06llX\n\n", node_id);
 }
 
+static void _operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+
+    printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
+
+}
+
 
 #define TRANSMIT_CAN_FRAME_FUNC &Esp32CanDriver_transmit_raw_can_frame
 #define IS_TX_BUFFER_EMPTY_FUNC &Esp32CanDriver_is_can_tx_buffer_clear
@@ -119,8 +125,8 @@ static void _alias_change_callback(uint16_t new_alias, node_id_t node_id) {
 #define UNLOCK_SHARED_RESOURCES_FUNC &Esp32Drivers_unlock_shared_resources
 #define CONFIG_MEM_READ_FUNC &Esp32Drivers_config_mem_read
 #define CONFIG_MEM_WRITE_FUNC Esp32Drivers_config_mem_write
-#define OPERATIONS_REBOOT_FUNC &Esp32CanDriver_reboot
-#define OPERATIONS_FACTORY_RESET_FUNC &Esp32CanDriver_config_mem_factory_reset
+#define OPERATIONS_REBOOT_FUNC &Esp32Drivers_reboot
+#define OPERATIONS_FACTORY_RESET_FUNC &_operations_request_factory_reset
 
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {

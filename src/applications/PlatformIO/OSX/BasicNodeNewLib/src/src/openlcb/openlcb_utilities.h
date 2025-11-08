@@ -48,12 +48,14 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    extern void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t *openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti, uint16_t payload_count);
+    extern void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t *openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti);
 
     extern void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t *openlcb_msg, event_id_t event_id);
 
     extern void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t *openlcb_msg, node_id_t node_id, uint16_t index);
 
+    extern void OpenLcbUtilities_copy_byte_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_t byte, uint16_t offset);
+    
     extern void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t word, uint16_t index);
 
     extern void OpenLcbUtilities_copy_dword_to_openlcb_payload(openlcb_msg_t *openlcb_msg, uint32_t doubleword, uint16_t index);
@@ -70,10 +72,12 @@ extern "C" {
 
     extern event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t *openlcb_msg);
 
+    extern uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t index);
+
     extern uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t index);
 
     extern uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t *openlcb_msg, uint16_t index);
-
+    
     extern uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload(openlcb_msg_t *openlcb_msg);
 
     extern bool OpenLcbUtilities_is_addressed_openlcb_message(openlcb_msg_t *openlcb_msg);

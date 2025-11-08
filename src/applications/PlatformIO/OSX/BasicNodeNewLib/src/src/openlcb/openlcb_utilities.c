@@ -89,14 +89,14 @@ uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node_t
 
 }
 
-void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti, uint16_t payload_count) {
+void OpenLcbUtilities_load_openlcb_message(openlcb_msg_t* openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti) {
 
     openlcb_msg->dest_alias = dest_alias;
     openlcb_msg->dest_id = dest_id;
     openlcb_msg->source_alias = source_alias;
     openlcb_msg->source_id = source_id;
     openlcb_msg->mti = mti;
-    openlcb_msg->payload_count = payload_count;
+    openlcb_msg->payload_count = 0;
     openlcb_msg->timerticks = 0;
 
     uint16_t data_count = OpenLcbUtilities_payload_type_to_len(openlcb_msg->payload_type);
@@ -143,11 +143,18 @@ void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_ms
     for (int i = 7; i >= 0; i--) {
 
         *openlcb_msg->payload[i] = event_id & 0xFF;
+        openlcb_msg->payload_count++;
         event_id = event_id >> 8;
 
     }
 
-    openlcb_msg->payload_count = 8;
+}
+
+void OpenLcbUtilities_copy_byte_to_openlcb_payload(openlcb_msg_t* openlcb_msg, uint8_t byte, uint16_t offset) {
+
+    *openlcb_msg->payload[offset] = byte;
+
+    openlcb_msg->payload_count++;
 
 }
 
@@ -155,6 +162,8 @@ void OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg_t* openlcb_msg, u
 
     *openlcb_msg->payload[0 + offset] = (uint8_t) ((word >> 8) & 0xFF);
     *openlcb_msg->payload[1 + offset] = (uint8_t) (word & 0xFF);
+
+    openlcb_msg->payload_count += 2;
 
 }
 
@@ -164,6 +173,8 @@ void OpenLcbUtilities_copy_dword_to_openlcb_payload(openlcb_msg_t* openlcb_msg, 
     *openlcb_msg->payload[1 + offset] = (uint8_t) ((doubleword >> 16) & 0xFF);
     *openlcb_msg->payload[2 + offset] = (uint8_t) ((doubleword >> 8) & 0xFF);
     *openlcb_msg->payload[3 + offset] = (uint8_t) (doubleword & 0xFF);
+
+    openlcb_msg->payload_count += 4;
 
 }
 
@@ -179,6 +190,7 @@ uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_
         if ((counter + payload_index) < payload_len - 1) { // leave room for a null
 
             *openlcb_msg->payload[counter + payload_index] = (uint8_t) string[counter];
+            openlcb_msg->payload_count++;
             counter++;
 
         } else {
@@ -190,6 +202,7 @@ uint16_t OpenLcbUtilities_copy_string_to_openlcb_payload(openlcb_msg_t* openlcb_
     }
 
     *openlcb_msg->payload[counter + payload_index] = 0x00;
+    openlcb_msg->payload_count++;
     counter++;
 
     return counter;
@@ -208,6 +221,7 @@ uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload(openlcb_msg_t* open
         if ((i + payload_index) < payload_len) {
 
             *openlcb_msg->payload[i + payload_index] = byte_array[i];
+            openlcb_msg->payload_count++;
             counter++;
 
         } else {
@@ -227,6 +241,7 @@ void OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg_t* openlcb_msg
     for (int i = 5; i >= 0; i--) {
 
         *openlcb_msg->payload[(uint16_t) i + index] = node_id & 0xFF;
+        openlcb_msg->payload_count++;
         node_id = node_id >> 8;
 
     }
@@ -258,6 +273,12 @@ event_id_t OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg_t*
             ((uint64_t) * openlcb_msg->payload[6] << 8) |
             ((uint64_t) * openlcb_msg->payload[7])
             );
+
+}
+
+uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload(openlcb_msg_t* openlcb_msg, uint16_t offset) {
+
+    return (*openlcb_msg->payload[offset]);
 
 }
 
@@ -331,7 +352,7 @@ bool OpenLcbUtilities_is_producer_event_assigned_to_node(openlcb_node_t* openlcb
 
         if (openlcb_node->producers.list[i].event == event_id) {
 
-            (*event_index) = i;
+            (*event_index) = (uint16_t) i;
 
             return true;
 
@@ -349,7 +370,7 @@ bool OpenLcbUtilities_is_consumer_event_assigned_to_node(openlcb_node_t* openlcb
 
         if (openlcb_node->consumers.list[i].event == event_id) {
 
-            (*event_index) = i;
+            (*event_index) = (uint16_t) i;
 
             return true;
 

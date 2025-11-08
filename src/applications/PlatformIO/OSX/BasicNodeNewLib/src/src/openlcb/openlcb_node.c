@@ -45,7 +45,7 @@
 #include "openlcb_buffer_store.h"
 
 static openlcb_nodes_t _openlcb_nodes;
-static uint16_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
+static uint8_t _node_enum_index_array[MAX_NODE_ENUM_KEY_VALUES];
 
 static interface_openlcb_node_t *_interface;
 
@@ -57,14 +57,13 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
     openlcb_node->state.run_state = RUNSTATE_INIT;
     openlcb_node->state.allocated = false;
     openlcb_node->state.duplicate_id_detected = false;
-    openlcb_node->state.duplicate_alias_detected = false;
-    openlcb_node->state.initalized = false;
+    openlcb_node->state.initialized = false;
     openlcb_node->state.permitted = false;
     openlcb_node->state.openlcb_datagram_ack_sent = false;
     openlcb_node->state.resend_datagram = false;
     openlcb_node->state.firmware_upgrade_active = false;
     openlcb_node->timerticks = 0;
-    openlcb_node->lock_node = 0;
+    openlcb_node->owner_node = 0;
     openlcb_node->index = 0;
 
     openlcb_node->last_received_datagram = NULL;
@@ -87,6 +86,13 @@ static void _clear_node(openlcb_node_t* openlcb_node) {
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
+    
+    
+    for (int i = 0; i < MAX_NODE_ENUM_KEY_VALUES; i++) {
+        
+        _node_enum_index_array[i] = 0;
+        
+    }
 
 }
 
@@ -105,6 +111,12 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface) {
 }
 
 openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
+    
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
+        
+        return NULL;
+        
+    }
 
     _node_enum_index_array[key] = 0;
 
@@ -120,6 +132,12 @@ openlcb_node_t* OpenLcbNode_get_first(uint8_t key) {
 }
 
 openlcb_node_t* OpenLcbNode_get_next(uint8_t key) {
+    
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
+        
+        return NULL;
+        
+    }
 
     _node_enum_index_array[key] = _node_enum_index_array[key] + 1;
 
@@ -240,9 +258,15 @@ void OpenLcbNode_100ms_timer_tick(void) {
 
     for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        _openlcb_nodes.node[i].timerticks = _openlcb_nodes.node[i].timerticks + 1;
+        _openlcb_nodes.node[i].timerticks++;
 
     };
+    
+    if (_interface->on_100ms_timer_tick) {
+        
+        _interface->on_100ms_timer_tick();
+        
+    }
 
 }
 

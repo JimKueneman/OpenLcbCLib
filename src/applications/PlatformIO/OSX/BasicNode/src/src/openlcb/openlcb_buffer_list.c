@@ -26,45 +26,43 @@
  *
  * \file openlcb_buffer_list.c
  *
- * A linear search list that the incoming CAN Rx module uses to hold messages that 
- * are being collected into a single OpenLcb message on the CAN bus.  
+ * A linear search list that the incoming CAN Rx module uses to hold messages that
+ * are being collected into a single OpenLcb message on the CAN bus.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-
 #include "openlcb_buffer_list.h"
+
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h> // printf
 
 #include "openlcb_types.h"
 #include "openlcb_buffer_store.h"
 
+static openlcb_msg_t *_openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
 
-
-openlcb_msg_t* openlcb_msg_buffer_list[LEN_MESSAGE_BUFFER];
-
-void BufferList_initialiaze(void) {
-
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++)
-        openlcb_msg_buffer_list[i] = (void*) 0;
-
-}
-
-openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len) {
-
-    openlcb_msg_t* new_msg;
+void OpenLcbBufferList_initialize(void) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        if (!openlcb_msg_buffer_list[i]) {
+        _openlcb_msg_buffer_list[i] = NULL;
 
-            new_msg = BufferStore_allocateBuffer(data_len);
+    }
 
-            if (!new_msg)
+}
 
-                return (void*) 0;
+openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg) {
 
-            openlcb_msg_buffer_list[i] = new_msg;
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        if (!_openlcb_msg_buffer_list[i]) {
+
+            _openlcb_msg_buffer_list[i] = new_msg;
 
             return new_msg;
 
@@ -72,88 +70,100 @@ openlcb_msg_t* BufferList_allocate(uint16_olcb_t data_len) {
 
     }
 
-    return (void*) 0;
-
+    return NULL;
 }
 
-openlcb_msg_t* BufferList_find(uint16_olcb_t source_alias, uint16_olcb_t dest_alias, uint16_olcb_t mti) {
+openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti) {
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        if (openlcb_msg_buffer_list[i]) {
+        if (_openlcb_msg_buffer_list[i]) {
 
-            if ((openlcb_msg_buffer_list[i]->dest_alias == dest_alias) &&
-                    (openlcb_msg_buffer_list[i]->source_alias == source_alias) &&
-                    (openlcb_msg_buffer_list[i]->mti == mti))
+            if ((_openlcb_msg_buffer_list[i]->dest_alias == dest_alias) &&
+                    (_openlcb_msg_buffer_list[i]->source_alias == source_alias) &&
+                    (_openlcb_msg_buffer_list[i]->mti == mti)) {
 
-                return openlcb_msg_buffer_list[i];
+                return _openlcb_msg_buffer_list[i];
+
+            }
 
         }
 
     }
 
-    return (void*) 0;
-
+    return NULL;
 }
 
-void BufferList_free(openlcb_msg_t * msg) {
+bool OpenLcbBufferList_free(openlcb_msg_t *msg) {
 
-    if (!msg)
-        return;
-
+    if (!msg) {
+        
+        return false;
+        
+    }
+        
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        if (openlcb_msg_buffer_list[i] == msg) {
+        if (_openlcb_msg_buffer_list[i] == msg) {
 
-            openlcb_msg_buffer_list[i] = (void*) 0;
+            _openlcb_msg_buffer_list[i] = NULL;
 
-            BufferStore_freeBuffer(msg);
+            OpenLcbBufferStore_free_buffer(msg);
 
-            return;
+            return true;
 
         }
 
     }
 
+    return false;
 }
 
-void BufferList_release(openlcb_msg_t* msg) {
+openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
 
-    if (!msg)
-        return;
+    if (!msg) {
+        
+        return NULL;
+        
+    }
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
 
-        if (openlcb_msg_buffer_list[i] == msg) {
+        if (_openlcb_msg_buffer_list[i] == msg) {
 
-            openlcb_msg_buffer_list[i] = (void*) 0;
+            _openlcb_msg_buffer_list[i] = NULL;
 
-            return;
+            return msg;
+
         }
 
     }
 
+    return NULL;
 }
 
-openlcb_msg_t* BufferList_index_of(uint16_olcb_t index) {
+openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index) {
 
-    if (index >= LEN_MESSAGE_BUFFER)
-        return (void*) 0;
+    if (index >= LEN_MESSAGE_BUFFER) {
 
-    return openlcb_msg_buffer_list[index];
-
-}
-
-uint8_olcb_t BufferList_is_empty(void) {
-
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
-
-        if (openlcb_msg_buffer_list[i] != (void*) 0)
-
-            return 1;
+        return NULL;
 
     }
 
-    return 0;
+    return _openlcb_msg_buffer_list[index];
+}
 
+bool OpenLcbBufferList_is_empty(void) {
+
+    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
+
+        if (_openlcb_msg_buffer_list[i] != NULL) {
+
+            return false;
+
+        }
+
+    }
+
+    return true;
 }

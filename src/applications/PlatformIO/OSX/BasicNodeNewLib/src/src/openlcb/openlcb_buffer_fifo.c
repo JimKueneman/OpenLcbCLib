@@ -76,8 +76,6 @@ void OpenLcbBufferFifo_initialize(void) {
 
 openlcb_msg_t* OpenLcbBufferFifo_push(openlcb_msg_t* new_msg) {
 
-    assert(new_msg);
-
     uint8_t next = openlcb_msg_buffer_fifo.head + 1;
     if (next >= LEN_MESSAGE_FIFO_BUFFER)
         next = 0;
@@ -96,8 +94,6 @@ openlcb_msg_t* OpenLcbBufferFifo_push(openlcb_msg_t* new_msg) {
 }
 
 openlcb_msg_t* OpenLcbBufferFifo_push_existing(openlcb_msg_t* existing_msg) {
-
-    assert(existing_msg);
 
     uint8_t next = openlcb_msg_buffer_fifo.head + 1;
     if (next >= LEN_MESSAGE_FIFO_BUFFER)

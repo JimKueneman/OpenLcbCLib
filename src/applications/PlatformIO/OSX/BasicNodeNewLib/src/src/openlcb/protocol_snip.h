@@ -48,6 +48,7 @@
 typedef struct {
     
     uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    uint16_t(*configuration_memory_write)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
 
 } interface_openlcb_protocol_snip_t;
 
@@ -61,21 +62,25 @@ extern "C" {
 
     extern void ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *statemachine_info);
 
-    extern uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_index, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_model(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_hardware_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_software_version(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_user_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
 
-    extern uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    extern uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
+    
+    extern uint16_t ProtocolSnip_write_user_name(uint16_t byte_count, configuration_memory_buffer_t* buffer);
+
+    extern uint16_t ProtocolSnip_write_user_description(uint16_t byte_count, configuration_memory_buffer_t* buffer);
     
     extern bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg);
 
