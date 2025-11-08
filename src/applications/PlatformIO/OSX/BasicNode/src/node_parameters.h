@@ -12,18 +12,25 @@
 #ifndef __NODE_DEFINITION__
 #define	__NODE_DEFINITION__
 
-#include "src/drivers/common/can_main_statemachine.h"
+#ifdef MPLAB
+#include "../../../openlcb/openlcb_types.h"
+#else
 #include "src/openlcb/openlcb_types.h"
+#endif
 
 // nice reply for multiple ways of defining constant structures
 // https://stackoverflow.com/questions/60375529/c-how-to-initialize-a-constant-structure
+
+
+extern const node_parameters_t NodeParameters_main_node;  // NOTE: explicit "extern" and no initializer
 
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    extern const node_parameters_t NodeParameters_main_node;  // NOTE: explicit "extern" and no initializer
+    // TODO If C++ is being used, regular C code needs function names to have C 
+    // linkage so the functions can be used by the c code. 
 
 #ifdef	__cplusplus
 }

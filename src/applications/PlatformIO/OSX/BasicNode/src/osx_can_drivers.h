@@ -47,17 +47,17 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OSxCanDriver_setup(can_rx_callback_func_t can_rx_callback);
+    extern void OSxCanDriver_setup(void);
 
-    extern uint8_olcb_t OSxCanDriver_is_can_tx_buffer_clear(uint16_olcb_t Channel);
+    extern bool OSxCanDriver_is_can_tx_buffer_clear(void);
 
     extern void OSxCanDriver_pause_can_rx(void);
 
     extern void OSxCanDriver_resume_can_rx(void);
 
-    extern uint8_olcb_t OSxCanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *msg);
+    extern bool OSxCanDriver_transmit_raw_can_frame(can_msg_t* can_msg);
 
-    extern uint8_olcb_t OSxCanDriver_is_connected(void);
+    extern bool OSxCanDriver_is_connected(void);
 
 #ifdef __cplusplus
 }

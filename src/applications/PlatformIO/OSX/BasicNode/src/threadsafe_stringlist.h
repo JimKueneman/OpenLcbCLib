@@ -74,7 +74,7 @@ extern "C"
     extern void ThreadSafeStringList_remove(StringList *list, const char *str);
 
     // Add a string to the list
-    extern uint8_olcb_t ThreadSafeStringList_push(StringList *list, const char *string);
+    extern uint8_t ThreadSafeStringList_push(StringList *list, const char *string);
 
     // Remove string from list; dont for get to free() the popped string
     extern char *ThreadSafeStringList_pop(StringList *list);

@@ -44,30 +44,28 @@
 // Assign the function pointer to where the UART Rx should call back with the byte it received
 // WARNING: Is in the context of the interrupt, be careful
 // void func(rx_data);
-typedef void (*uart_rx_callback_t)(uint16_olcb_t);
+typedef void (*uart_rx_callback_t)(uint16_t);
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OSxDrivers_setup(parameterless_callback_t _100ms_timer_sink);
+    extern void OSxDrivers_setup(void);
 
     extern void OSxDrivers_reboot(void);
 
-    extern uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
     extern void OSxDrivers_pause_100ms_timer(void);
 
     extern void OSxDrivers_resume_100ms_timer(void);
 
-    extern uint8_olcb_t OSxDrivers_100ms_is_connected(void);
+    extern uint8_t OSxDrivers_100ms_is_connected(void);
 
-    extern uint8_olcb_t OSxDrivers_input_is_connected(void);
-
-    extern void OSxDrivers_factory_reset(void);
+    extern uint8_t OSxDrivers_input_is_connected(void);
 
     extern pthread_mutex_t OSxDdrivers_input_mutex;
 

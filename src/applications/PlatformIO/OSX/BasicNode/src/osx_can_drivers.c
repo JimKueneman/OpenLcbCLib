@@ -37,6 +37,7 @@
 #include "src/drivers/common/can_types.h"
 #include "src/openlcb/openlcb_gridconnect.h"
 #include "src/utilities/mustangpeak_string_helper.h"
+#include "src/drivers/common/can_rx_statemachine.h"
 
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
@@ -52,17 +53,16 @@
 #include <pthread.h>
 #include "threadsafe_stringlist.h"
 
-can_rx_callback_func_t internal_can_rx_callback_func;
 
 #define RETRY_TIME 5
 #define PORT_NUMBER 12021
 
 // How full the chips CAN fifo has gotten if supported
-uint8_olcb_t DriverCan_max_can_fifo_depth = 0;
+uint8_t DriverCan_max_can_fifo_depth = 0;
 
 StringList _outgoing_gridconnect_strings;
-uint8_olcb_t _rx_paused = FALSE;
-uint8_olcb_t _is_connected = FALSE;
+uint8_t _rx_paused = false;
+uint8_t _is_connected = false;
 
 pthread_mutex_t can_mutex;
 
@@ -78,10 +78,10 @@ void _print_can_msg(can_msg_t *can_msg)
 }
 
 /** Returns true on success, or false if there was an error */
-uint8_olcb_t _set_blocking_socket_enabled(int fd, uint8_olcb_t blocking)
+uint8_t _set_blocking_socket_enabled(int fd, uint8_t blocking)
 {
     if (fd < 0)
-        return FALSE;
+        return false;
 
 #ifdef _WIN32
     unsigned long mode = blocking ? 0 : 1;
@@ -89,7 +89,7 @@ uint8_olcb_t _set_blocking_socket_enabled(int fd, uint8_olcb_t blocking)
 #else
     int flags = fcntl(fd, F_GETFL, 0);
     if (flags == -1)
-        return FALSE;
+        return false;
 
     if (blocking)
         flags = flags & ~O_NONBLOCK;
@@ -100,7 +100,7 @@ uint8_olcb_t _set_blocking_socket_enabled(int fd, uint8_olcb_t blocking)
 #endif
 }
 
-uint16_olcb_t _wait_for_connect_non_blocking(int socket_fd)
+uint16_t _wait_for_connect_non_blocking(int socket_fd)
 {
 
     // TODO: Get this working, this MAY have to do with using the local host address in testing... it likely always return true....
@@ -142,7 +142,7 @@ uint16_olcb_t _wait_for_connect_non_blocking(int socket_fd)
     }
 }
 
-int _connect_to_server(char ip_address[], uint16_olcb_t port)
+int _connect_to_server(char ip_address[], uint16_t port)
 {
 
     int socket_fd, connect_result;
@@ -186,28 +186,27 @@ void *thread_function_can(void *arg)
     int thread_id = *((int *)arg); // Access argument passed to thread
 
     char ip_address[] = "127.0.0.1";
-    uint16_olcb_t port = PORT_NUMBER;
+    uint16_t port = PORT_NUMBER;
 
     printf("TCP/IP GridConnect Thread %d started\n", thread_id);
 
     gridconnect_buffer_t gridconnect_buffer;
     char *gridconnect_buffer_ptr;
-    uint8_olcb_t next_byte;
+    uint8_t next_byte;
     long result = 0;
     int socket_fd = -1;
     can_msg_t can_message;
-    uint64_olcb_t timer = 0;
+    uint64_t timer = 0;
     char *msg = (void *)0;
 
     can_message.state.allocated = 1;
-    can_message.state.direct_tx = 0;
 
     socket_fd = _connect_to_server(ip_address, port);
     if (socket_fd < 0)
         exit(1);
 
-    _is_connected = TRUE;
-    _rx_paused = FALSE;
+    _is_connected = true;
+    _rx_paused = false;
 
     while (1)
     {
@@ -230,9 +229,9 @@ void *thread_function_can(void *arg)
                     msg = strcatnew("R", (char *)&gridconnect_buffer);
                     printf("%s\n", msg);
                     free(msg);
+                    
+                    CanRxStatemachine_incoming_can_driver_callback(&can_message);
 
-                    if (internal_can_rx_callback_func)
-                        internal_can_rx_callback_func(0, &can_message);
                 }
             }
             else if (result < 0) // zero is just timout for no data
@@ -258,7 +257,7 @@ void *thread_function_can(void *arg)
                 }
                 else
                 {
-                    _is_connected = FALSE;
+                    _is_connected = false;
                     printf("Connection error detected: %d\n", errno);
                     printf("Shutting down connection.... \n");
                     result = shutdown(socket_fd, 2);
@@ -272,38 +271,38 @@ void *thread_function_can(void *arg)
     }
 }
 
-uint8_olcb_t OSxCanDriver_is_connected(void)
+bool OSxCanDriver_is_connected(void)
 {
     pthread_mutex_lock(&can_mutex);
-    uint8_olcb_t result = _is_connected;
+    uint8_t result = _is_connected;
     pthread_mutex_unlock(&can_mutex);
     return result;
 }
 
-uint8_olcb_t OSxCanDriver_is_can_tx_buffer_clear(uint16_olcb_t channel)
+bool OSxCanDriver_is_can_tx_buffer_clear(void)
 {
 
     // Socket has more than enough buffer to always take it
-    return TRUE;
+    return true;
 }
 
-uint8_olcb_t OSxCanDriver_transmit_raw_can_frame(uint8_olcb_t channel, can_msg_t *msg)
+bool OSxCanDriver_transmit_raw_can_frame(can_msg_t* can_msg)
 {
 
     gridconnect_buffer_t gridconnect_buffer;
 
-    OpenLcbGridConnect_from_can_msg(&gridconnect_buffer, msg);
+    OpenLcbGridConnect_from_can_msg(&gridconnect_buffer, can_msg);
     // printf("decomposed gridconnect: %s\n", gridconnect_buffer);
     ThreadSafeStringList_push(&_outgoing_gridconnect_strings, (char *)&gridconnect_buffer);
 
-    return 0;
+    return true;
 }
 
 void OSxCanDriver_pause_can_rx(void)
 {
 
     pthread_mutex_lock(&can_mutex);
-    _rx_paused = TRUE;
+    _rx_paused = true;
     pthread_mutex_unlock(&can_mutex);
 }
 
@@ -311,14 +310,12 @@ void OSxCanDriver_resume_can_rx(void)
 {
 
     pthread_mutex_lock(&can_mutex);
-    _rx_paused = FALSE;
+    _rx_paused = false;
     pthread_mutex_unlock(&can_mutex);
 }
 
-void OSxCanDriver_setup(can_rx_callback_func_t can_rx_callback)
+void OSxCanDriver_setup(void)
 {
-
-    internal_can_rx_callback_func = can_rx_callback;
 
     printf("Mutex initialization for CAN - Result Code: %d\n", pthread_mutex_init(&can_mutex, NULL));
 

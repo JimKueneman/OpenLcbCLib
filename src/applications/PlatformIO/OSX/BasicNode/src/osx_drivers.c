@@ -36,27 +36,20 @@
 
 #include "src/openlcb/openlcb_types.h"
 #include "src/utilities/mustangpeak_string_helper.h"
+#include "src/openlcb/openlcb_node.h"
 
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h> // read(), write(), close()
 
-uint8_olcb_t _is_clock_running = FALSE;
-uint8_olcb_t _timer_pause = FALSE;
+uint8_t _is_clock_running = false;
+uint8_t _timer_pause = false;
 char *user_data;
-uint8_olcb_t _is_input_running = FALSE;
+uint8_t _is_input_running = false;
 
 pthread_mutex_t OSxDdrivers_input_mutex;
 
-parameterless_callback_t _100ms_timer_sink_func = (void *)0;
-
-void OSxDrivers_factory_reset(void) {
-
-    // nothing to do with an OSx program
-    
-}
-
-uint8_olcb_t OSxDrivers_input_is_connected(void)
+uint8_t OSxDrivers_input_is_connected(void)
 {
 
     return _is_input_running;
@@ -71,20 +64,31 @@ void *thread_function_input(void *arg)
 
     printf("Input Thread %d started\n", thread_id);
 
-    _is_input_running = TRUE;
+    _is_input_running = true;
 
     while (1)
     {
+
         scanf("%c", &key);
 
         pthread_mutex_lock(&OSxDdrivers_input_mutex);
 
         switch (key)
         {
-
-            // use this to handle any keyboard input
+                
+            case 'r':
+                
+                printf("reboot\n");
+                
+                openlcb_node_t *node = OpenLcbNode_get_first(2);
+                
+                node->state.run_state = 0;
+                node->state.initialized = false;
+                node->state.permitted = false;
+                
+                break;
+                
         }
-
         pthread_mutex_unlock(&OSxDdrivers_input_mutex);
 
         usleep(100000);
@@ -97,33 +101,32 @@ void *thread_function_timer(void *arg)
 
     printf("100ms Timer Thread %d started\n", thread_id);
 
-    _is_clock_running = TRUE;
+    _is_clock_running = true;
 
     while (1)
     {
 
         if (_timer_pause == 0)
         {
-            if (_100ms_timer_sink_func)
-                _100ms_timer_sink_func();
+            
+            OpenLcbNode_100ms_timer_tick();
+            
         }
 
         usleep(100000);
     }
 }
 
-uint8_olcb_t OSxDrivers_100ms_is_connected(void)
+uint8_t OSxDrivers_100ms_is_connected(void)
 {
 
     return _is_clock_running;
 }
 
-void OSxDrivers_setup(parameterless_callback_t _100ms_timer_sink)
+void OSxDrivers_setup(void)
 {
 
-    _100ms_timer_sink_func = _100ms_timer_sink;
-
-    user_data = strnew_initialized(LEN_SNIP_USER_NAME + LEN_SNIP_USER_DESCRIPTION + 1); // add extra null since these are 2 null terminated strings
+    user_data = strnew_initialized(LEN_SNIP_USER_NAME_BUFFER + LEN_SNIP_USER_DESCRIPTION_BUFFER + 1); // add extra null since these are 2 null terminated strings
 
     pthread_t thread2;
 
@@ -144,7 +147,7 @@ void OSxDrivers_reboot(void)
 {
 }
 
-uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
+uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
     //  printf("configmem read count: %d\n", count);
@@ -158,7 +161,7 @@ uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t co
 
     FILE *_file;
 
-    _file = fopen("../config_mem.dat", "rb"); // read binary
+    _file = fopen("./config_mem.dat", "rb"); // read binary
 
     if (_file)
     {
@@ -180,7 +183,7 @@ uint16_olcb_t OSxDrivers_config_mem_read(uint32_olcb_t address, uint16_olcb_t co
     return count; // just returning 0's
 }
 
-uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t count, configuration_memory_buffer_t *buffer)
+uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
     //  printf("configmem write\n");
@@ -190,9 +193,9 @@ uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t c
 
     FILE *_file;
 
-    _file = fopen("../config_mem.dat", "r+b"); // append will ONLY add to the EOF not past it but r+ will fail if the file does not exist
+    _file = fopen("./config_mem.dat", "r+b"); // append will ONLY add to the EOF not past it but r+ will fail if the file does not exist
     if (!_file)
-        _file = fopen("../config_mem.dat", "w+b"); // append binary
+        _file = fopen("./config_mem.dat", "w+b"); // append binary
 
     if (_file)
     {
@@ -216,10 +219,10 @@ uint16_olcb_t OSxDrivers_config_mem_write(uint32_olcb_t address, uint16_olcb_t c
 
 void OSxDrivers_pause_100ms_timer(void)
 {
-    _timer_pause = TRUE;
+    _timer_pause = true;
 }
 
 void OSxDrivers_resume_100ms_timer(void)
 {
-    _timer_pause = FALSE;
+    _timer_pause = false;
 }

@@ -51,11 +51,11 @@ void ThreadSafeStringList_init(StringList *list)
     pthread_mutex_init(&list->mutex, NULL);
 }
 
-uint8_olcb_t ThreadSafeStringList_push(StringList *list, const char *string)
+uint8_t ThreadSafeStringList_push(StringList *list, const char *string)
 {
     pthread_mutex_lock(&list->mutex);
 
-    uint8_olcb_t result = FALSE;
+    uint8_t result = false;
 
     int next = list->head + 1;
 
@@ -69,7 +69,7 @@ uint8_olcb_t ThreadSafeStringList_push(StringList *list, const char *string)
 
         list->strings[list->head] = strdup(string);
         list->head = next;
-        result = TRUE;
+        result = true;
     }
 
     pthread_mutex_unlock(&list->mutex);
