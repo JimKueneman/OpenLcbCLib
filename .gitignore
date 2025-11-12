@@ -32,3 +32,5 @@
 /src/applications/dspic/OpenLcb_Basic_Node.X/build/
 /src/applications/dspic/OpenLcb_Basic_Node.X/dist/
 /src/applications/PIC/PIC18F57Q84.X/dist/
+src/applications/TI_Thiea/MSPM03507_Launchpad/BasicNode/.theia
+src/applications/TI_Thiea/MSPM03507_Launchpad/BasicNode/.settings
