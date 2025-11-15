@@ -52,7 +52,7 @@ extern "C" {
 
 extern void TI_DriverLibDrivers_initialize(void);
 
-extern void TI_DriverLibDrivers_reboot(void);
+extern void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
 extern uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
 

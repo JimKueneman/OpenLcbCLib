@@ -9,11 +9,12 @@
 /**
  * Import the modules used in this configuration.
  */
-const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
-const GPIO1  = GPIO.addInstance();
-const MCAN   = scripting.addModule("/ti/driverlib/MCAN", {}, false);
-const MCAN1  = MCAN.addInstance();
-const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
+const GPIO    = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1   = GPIO.addInstance();
+const MCAN    = scripting.addModule("/ti/driverlib/MCAN", {}, false);
+const MCAN1   = MCAN.addInstance();
+const SYSCTL  = scripting.addModule("/ti/driverlib/SYSCTL");
+const SYSTICK = scripting.addModule("/ti/driverlib/SYSTICK");
 
 /**
  * Write custom configuration values to the imported modules.
@@ -44,15 +45,21 @@ pinFunction4.HFCLKMonitor = true;
 
 GPIO1.$name                         = "GPIO_LEDS";
 GPIO1.port                          = "PORTB";
-GPIO1.associatedPins.create(4);
+GPIO1.associatedPins.create(7);
 GPIO1.associatedPins[0].$name       = "USER_LED_1";
 GPIO1.associatedPins[0].assignedPin = "22";
 GPIO1.associatedPins[1].$name       = "USER_LED_2";
 GPIO1.associatedPins[1].assignedPin = "26";
 GPIO1.associatedPins[2].$name       = "USER_LED_3";
 GPIO1.associatedPins[2].assignedPin = "27";
-GPIO1.associatedPins[3].$name       = "USER_TEST";
-GPIO1.associatedPins[3].pin.$assign = "PB16";
+GPIO1.associatedPins[3].assignedPin = "16";
+GPIO1.associatedPins[3].$name       = "USER_TEST_B16";
+GPIO1.associatedPins[4].assignedPin = "0";
+GPIO1.associatedPins[4].$name       = "USER_TEST_B0";
+GPIO1.associatedPins[5].assignedPin = "6";
+GPIO1.associatedPins[5].$name       = "USER_TEST_B6";
+GPIO1.associatedPins[6].$name       = "USER_TEST_B7";
+GPIO1.associatedPins[6].assignedPin = "7";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
@@ -75,8 +82,6 @@ MCAN1.desiredNomRate           = 125;
 MCAN1.anfs                     = "2";
 MCAN1.anfe                     = "1";
 MCAN1.rrfe                     = true;
-MCAN1.interruptFlags           = ["DL_MCAN_INTERRUPT_ARA","DL_MCAN_INTERRUPT_BEU","DL_MCAN_INTERRUPT_BO","DL_MCAN_INTERRUPT_DRX","DL_MCAN_INTERRUPT_ELO","DL_MCAN_INTERRUPT_EP","DL_MCAN_INTERRUPT_EW","DL_MCAN_INTERRUPT_MRAF","DL_MCAN_INTERRUPT_PEA","DL_MCAN_INTERRUPT_PED","DL_MCAN_INTERRUPT_RF0N","DL_MCAN_INTERRUPT_RF1N","DL_MCAN_INTERRUPT_TC","DL_MCAN_INTERRUPT_TOO","DL_MCAN_INTERRUPT_TSW","DL_MCAN_INTERRUPT_WDI"];
-MCAN1.interruptLine1Flag       = ["DL_MCAN_INTERRUPT_DRX","DL_MCAN_INTERRUPT_RF0N","DL_MCAN_INTERRUPT_RF1N","DL_MCAN_INTERRUPT_TC"];
 MCAN1.lss                      = 0;
 MCAN1.txBufElemSize            = "DL_MCAN_ELEM_SIZE_8BYTES";
 MCAN1.rxBufElemSize            = "DL_MCAN_ELEM_SIZE_8BYTES";
@@ -86,6 +91,8 @@ MCAN1.rxFIFO0size              = 0;
 MCAN1.extFiltElem              = "010";
 MCAN1.rxFIFO1size              = 16;
 MCAN1.rxFIFO1waterMark         = 8;
+MCAN1.interruptFlags           = ["DL_MCAN_INTERRUPT_ARA","DL_MCAN_INTERRUPT_BEU","DL_MCAN_INTERRUPT_BO","DL_MCAN_INTERRUPT_DRX","DL_MCAN_INTERRUPT_ELO","DL_MCAN_INTERRUPT_EP","DL_MCAN_INTERRUPT_EW","DL_MCAN_INTERRUPT_MRAF","DL_MCAN_INTERRUPT_PEA","DL_MCAN_INTERRUPT_PED","DL_MCAN_INTERRUPT_RF1F","DL_MCAN_INTERRUPT_RF1L","DL_MCAN_INTERRUPT_RF1N","DL_MCAN_INTERRUPT_RF1W","DL_MCAN_INTERRUPT_TC","DL_MCAN_INTERRUPT_TOO","DL_MCAN_INTERRUPT_TSW","DL_MCAN_INTERRUPT_WDI"];
+MCAN1.interruptLine1Flag       = ["DL_MCAN_INTERRUPT_DRX","DL_MCAN_INTERRUPT_HPM","DL_MCAN_INTERRUPT_RF1F","DL_MCAN_INTERRUPT_RF1L","DL_MCAN_INTERRUPT_RF1N","DL_MCAN_INTERRUPT_RF1W","DL_MCAN_INTERRUPT_TC"];
 MCAN1.peripheral.$assign       = "CANFD0";
 MCAN1.peripheral.rxPin.$assign = "PA13";
 MCAN1.peripheral.txPin.$assign = "PA12";
@@ -93,6 +100,11 @@ MCAN1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric0";
 MCAN1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric1";
 
 SYSCTL.clockTreeEn = true;
+
+SYSTICK.periodEnable    = true;
+SYSTICK.interruptEnable = true;
+SYSTICK.systickEnable   = true;
+SYSTICK.period          = 4000000;
 
 /**
  * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
@@ -105,6 +117,10 @@ pinFunction4.peripheral.hfxOutPin.$suggestSolution = "PA6";
 GPIO1.associatedPins[0].pin.$suggestSolution       = "PB22";
 GPIO1.associatedPins[1].pin.$suggestSolution       = "PB26";
 GPIO1.associatedPins[2].pin.$suggestSolution       = "PB27";
+GPIO1.associatedPins[3].pin.$suggestSolution       = "PB16";
+GPIO1.associatedPins[4].pin.$suggestSolution       = "PB0";
+GPIO1.associatedPins[5].pin.$suggestSolution       = "PB6";
+GPIO1.associatedPins[6].pin.$suggestSolution       = "PB7";
 Board.peripheral.$suggestSolution                  = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution         = "PA20";
 Board.peripheral.swdioPin.$suggestSolution         = "PA19";

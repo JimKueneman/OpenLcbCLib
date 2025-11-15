@@ -35,7 +35,9 @@ extern void PrintCanMsg(can_msg_t* can_msg);
 
 extern void PrintNode(openlcb_node_t* node);
 
-extern void PrintFIFOStatus(DL_MCAN_RxFIFOStatus *fifo_Status);
+extern void PrintRxFIFOStatus(DL_MCAN_RxFIFOStatus *fifo_Status);
+
+extern void PrintfTxFIFOStatus(DL_MCAN_TxFIFOStatus *fifo_Status);
     
 
 extern uint8_t print_msg;

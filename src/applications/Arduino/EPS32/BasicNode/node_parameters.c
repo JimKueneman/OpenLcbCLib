@@ -46,7 +46,7 @@ const node_parameters_t NodeParameters_main_node = {
 
     .snip.mfg_version = 4, // early spec has this as 1, later it was changed to be the number of null present in this section so 4.  must treat them the same
     .snip.name = "Basic OpenLcb Node",
-    .snip.model = "ESP32 Arduino: Test Application",
+    .snip.model = "Test Application",
     .snip.hardware_version = "0.0.1",
     .snip.software_version = "0.0.1",
     .snip.user_version = 2, // early spec has this as 1, later it was changed to be the number of null present in this section so 2.  must treat them the same

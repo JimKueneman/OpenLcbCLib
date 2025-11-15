@@ -92,16 +92,34 @@ void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_
 
 }
 
-char user_name[11] = "ESP32 Node";
-
 uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-  // Todo
+    char str[] = "ESP32: CAN Wired";
 
-  for (int i = 0; i < count; i++)
-    (*buffer)[i] = 0x00;
+    for (int i = 0; i < count; i++) {
 
-  return count;
+        (*buffer)[i] = 0x00;
+
+    }
+
+    switch (address) {
+
+        case 0:
+
+            for (int i = 0; i < count; i++) {
+
+                (*buffer)[i] = str[i];
+
+            }
+
+            break;
+
+        default:
+
+            break;
+    }
+
+    return count;
 }
 
 uint16_t Esp32Drivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {

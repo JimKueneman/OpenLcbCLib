@@ -211,7 +211,7 @@ void print_interrupt(DL_MCAN_IIDX pending_interrupts) {
 
 void delay_pin_toggle(void) {
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_PIN);
+   
 
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
@@ -224,7 +224,6 @@ void delay_pin_toggle(void) {
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");  
 
-    DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_PIN);
 
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
@@ -237,7 +236,6 @@ void delay_pin_toggle(void) {
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_PIN);
 
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
@@ -250,7 +248,6 @@ void delay_pin_toggle(void) {
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
 
-    DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_PIN);
 
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
@@ -263,7 +260,6 @@ void delay_pin_toggle(void) {
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_PIN);
 
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
@@ -275,8 +271,6 @@ void delay_pin_toggle(void) {
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
     asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");asm(" NOP");
-
-    DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_PIN);
 
 }
 
@@ -610,9 +604,9 @@ void PrintDWord(uint32_t dword) {
 
 }
 
-void PrintFIFOStatus(DL_MCAN_RxFIFOStatus *fifo_Status) {
+void PrintRxFIFOStatus(DL_MCAN_RxFIFOStatus *fifo_Status) {
 
-   printf("Fifo Status: num = %d, fillLvl = %d, getIdx = %d, putIdx = %d, fifoFull = %d, msgLost = %d\n", 
+   printf("Rx Fifo Status: num = %d, fillLvl = %d, getIdx = %d, putIdx = %d, fifoFull = %d, msgLost = %d\n", 
      fifo_Status->num,
      fifo_Status->fillLvl,
      fifo_Status->getIdx,
@@ -620,4 +614,15 @@ void PrintFIFOStatus(DL_MCAN_RxFIFOStatus *fifo_Status) {
      fifo_Status->fifoFull,
      fifo_Status->msgLost
       );
+}
+
+void PrintfTxFIFOStatus(DL_MCAN_TxFIFOStatus *fifo_Status) {
+
+printf("Tx Fifo Status: freeLvl = %d, getIdx = %d, putIdx = %d, fifoFull = %d", 
+     fifo_Status->freeLvl,
+     fifo_Status->getIdx,
+     fifo_Status->putIdx,
+     fifo_Status->fifoFull
+      );
+
 }

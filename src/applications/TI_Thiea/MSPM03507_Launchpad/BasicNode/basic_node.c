@@ -30,34 +30,54 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "string.h"
 #include "stdio.h"
+#include "string.h"
 
-#include <ti/driverlib/m0p/dl_interrupt.h>
 #include "ti_msp_dl_config.h"
+#include <ti/driverlib/m0p/dl_interrupt.h>
 
 #include "debug_tools.h"
-#include "node_parameters.h"
 #include "dependency_injection.h"
+#include "node_parameters.h"
 #include "ti_driverlib_can_driver.h"
+#include "ti_driverlib_drivers.h"
 
+#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/common/can_rx_statemachine.h"
+#include "src/drivers/common/can_tx_statemachine.h"
+#include "src/drivers/common/can_types.h"
+#include "src/drivers/common/can_utilities.h"
+#include "src/openlcb/openlcb_login_statemachine.h"
+#include "src/openlcb/openlcb_main_statemachine.h"
+#include "src/openlcb/openlcb_node.h"
 
-#include "./src/drivers/common/can_types.h"
-#include "./src/drivers/common/can_rx_statemachine.h"
+#define NODE_ID 0x0501010107EE
+#define DELAY_TIME (50000000)
 
-int main(void)
-{
-    SYSCFG_DL_init();
+int main(void) {
 
-    TI_DriverLibCanDriver_initialize();
-    DependencyInjection_initialize();
+  can_msg_t can_msg;
 
-    printf("Booted\n");
-    
-    while (1) {
+  SYSCFG_DL_init();
 
+  DependencyInjection_initialize();
+  TI_DriverLibCanDriver_initialize();
+  TI_DriverLibDrivers_initialize();
 
-    }
+  printf("Booted\n");
+
+  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+  
+
+  while (1) {
+
+    DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B7_PIN);
+
+   //delay_cycles(DELAY_TIME);
+
+    CanMainStateMachine_run();
+    OpenLcbLoginMainStatemachine_run();
+    OpenLcbMainStatemachine_run();
+
+  }
 }
-
-

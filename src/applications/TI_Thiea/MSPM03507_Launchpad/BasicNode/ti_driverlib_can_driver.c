@@ -46,32 +46,36 @@
 
 #include "src/openlcb/openlcb_types.h"
 #include "src/drivers/common/can_types.h"
+#include "src/drivers/common/can_rx_statemachine.h"
 
+static bool _is_transmitting = false;
 
  void TI_DriverLibCanDriver_initialize(void) {
 
     // Enabled MCAN0 interrupts
     NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);
 
-    // Is this needed?
-    DL_MCAN_TXBufTransIntrEnable(MCAN0_INST, 1U, 1U);
-
  }
 
  bool TI_DriverLibCanDriver_is_can_tx_buffer_clear(void) {
 
-    return true;
+    TI_DriverLibCanDriver_pause_can_rx();
+    bool result = !_is_transmitting;
+    TI_DriverLibCanDriver_resume_can_rx();
+
+    return result;
 
  }
 
  void TI_DriverLibCanDriver_pause_can_rx(void) {
 
     NVIC_DisableIRQ(MCAN0_INST_INT_IRQN);
+
  }
 
  void TI_DriverLibCanDriver_resume_can_rx(void) {
 
-    NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);
+   NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);
 
  }
 
@@ -79,31 +83,37 @@
 
     DL_MCAN_TxBufElement txMsg;
 
+    if (TI_DriverLibCanDriver_is_can_tx_buffer_clear()) {
 
-   /* Initialize message to transmit. */
+         /* Initialize message to transmit. */
+        txMsg.id = msg->identifier;     // Identifier Value
+        txMsg.rtr = 0U;                 // Transmit data frame - normal frame
+        txMsg.xtd = 1U;                 // 11-bit standard identifier - no, it is a 19 bit frame
+        txMsg.esi = 0U;                 // ESI bit in CAN FD format depends only on gError passive flag - not a FD frame
+        txMsg.dlc = msg->payload_count; // Transmitting N bytes
+        txMsg.brs = 0U;                 // CAN FD frames transmitted with bit rate switching - not a FD frame
+        txMsg.fdf = 0U;                 // Frame transmitted in CAN FD format - not a FD frame
+        txMsg.efc = 1U;                 // Store Tx events - do throw TX events
+        txMsg.mm  = 0x00U;              // Message Marker - not sure what this does but seems like it is an ID key value
+        for (int i = 0; i < msg->payload_count; i++) {  // Copy the data
 
-    
-    txMsg.id = msg->identifier; //  Identifier Value
-    txMsg.rtr = 0U;                 // Transmit data frame - normal frame
-    txMsg.xtd = 1U;                 // 11-bit standard identifier - false it is a 19 bit frame
-    txMsg.esi = 0U;                 // ESI bit in CAN FD format depends only on gError passive flag - not a FD frame
-    txMsg.dlc = msg->payload_count; // Transmitting N bytes
-    txMsg.brs = 0U;                 // CAN FD frames transmitted with bit rate switching - not a FD frame
-    txMsg.fdf = 0U;  // Frame transmitted in CAN FD format - not a FD frame
-    txMsg.efc = 1U; // Store Tx events - do throw TX events
-    txMsg.mm = 0x00U;  // Message Marker - not sure what this does but seems like it is an ID key value
-    for (int i = 0; i < msg->payload_count; i++) {  // Copy the data
+            txMsg.data[i] = msg->payload[i];
 
-        txMsg.data[i] = msg->payload[i];
+        } 
 
-    } 
+        _is_transmitting = true;
+        // Write Tx Message to the Message RAM 
+        DL_MCAN_writeMsgRam(MCAN0_INST, DL_MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+        // Set the interrupt to be fired on this message
+        DL_MCAN_TXBufTransIntrEnable(MCAN0_INST, 0U, 1U);
+        // Add request for transmission
+        DL_MCAN_TXBufAddReq(MCAN0_INST, 0U);
 
-    // Write Tx Message to the Message RAM 
-    DL_MCAN_writeMsgRam(MCAN0_INST, DL_MCAN_MEM_TYPE_BUF, 1U, &txMsg);
-    // Add request for transmission
-    DL_MCAN_TXBufAddReq(MCAN0_INST, 1U);
+        return true;
 
-    return true;
+    }
+
+    return false;
 
  }
 
@@ -113,6 +123,10 @@
     DL_MCAN_RxFIFOStatus fifo_Status;
     DL_MCAN_RxBufElement rxMsg;
     can_msg_t can_msg;
+
+
+   DL_GPIO_setPins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B6_PIN);
+
 
     // Pull out the interrupt "group" that is triggered from the CAN0 instance
     DL_MCAN_IIDX pending_interrupt_index = DL_MCAN_getPendingInterrupt(MCAN0_INST);
@@ -137,6 +151,10 @@
             // Is the Rx FIFO 1 New Message interrupt (0x0010) flag set?
             if ((interrupt_flags & DL_MCAN_INTERRUPT_RF1N) == DL_MCAN_INTERRUPT_RF1N) {
 
+                DL_GPIO_setPins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B0_PIN);
+                delay_cycles(1000);
+                DL_GPIO_clearPins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B0_PIN);
+
                 // We are setup for passing the incoming messages into the FIFO memory and not the Buffer memory so we use
                 // the Rx FIFO DL_xxxx macros
 
@@ -148,8 +166,11 @@
                 // Run through the number avialable
                 DL_MCAN_getRxFIFOStatus(MCAN0_INST, &fifo_Status);
 
-                while (fifo_Status.fillLvl > 0) {
-         
+                uint16_t i_looper = fifo_Status.fillLvl;
+                while (i_looper > 0) {
+
+                    memset(&rxMsg, 0x00, sizeof(rxMsg));
+
                     // Reading RAM into the rxMsg structure in the FIFO memory (DL_MCAN_MEM_TYPE_FIFO), in Bank 1 (DL_MCAN_RX_FIFO_NUM_1)
                     // parameter 3 (0U) is not used in FIFO mode
                     DL_MCAN_readMsgRam(MCAN0_INST, DL_MCAN_MEM_TYPE_FIFO, 0U, DL_MCAN_RX_FIFO_NUM_1, &rxMsg);
@@ -165,21 +186,22 @@
 
                     }
 
-                    PrintCanMsg(&can_msg);
-                    printf("\n");
-                
-                // TODO Uncomment to make work
+                   CanRxStatemachine_incoming_can_driver_callback(&can_msg);
 
-          //         CanRxStatemachine_incoming_can_driver_callback(&can_msg);
-
-                    DL_MCAN_getRxFIFOStatus(MCAN0_INST, &fifo_Status);
-
+                    i_looper--;
                 }
 
             }
 
             // Is the Transmission Completed interrupt (0x0200) flag set?
             if ((interrupt_flags & DL_MCAN_INTERRUPT_TC) == DL_MCAN_INTERRUPT_TC) {
+
+               
+               _is_transmitting = false;
+
+               DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B16_PIN | GPIO_LEDS_USER_TEST_B16_PIN);
+               delay_cycles(1000);
+               DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B16_PIN | GPIO_LEDS_USER_TEST_B16_PIN);
 
             }
 
@@ -221,6 +243,10 @@
 
     }
 
+
+   DL_GPIO_togglePins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B6_PIN);
+
 }
+
 
 

@@ -63,15 +63,15 @@ void BasicNodeDrivers_initialize(void) {
     PLLFBDbits.PLLDIV = 60 + PLLDIV_OFFSET; // This should be 60 for 80 Mhz.  Need 80 Mhz because the CAN module is limited to Fcy = 40 Mhz
     CLKDIV = 0x0001; // PreScaler divide by 3; Post Scaler divide by 2
 
-//    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
-//    // CAN Pin Mapping
-//    RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
-//    RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
-//
-//    // UART Pin Mapping
-//    RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
-//    RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
-    
+    //    // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
+    //    // CAN Pin Mapping
+    //    RPINR26bits.C1RXR = 37; // RP37 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
+    //    RPOR2bits.RP38R = _RPOUT_C1TX; // RP38 CAN Tx (schematic naming is with respect to the MCU so this is the CAN_tx line)
+    //
+    //    // UART Pin Mapping
+    //    RPINR18bits.U1RXR = 42; // RP42 UART RX (schematic naming is with respect to the FTDI cable so this is the uart_tx line)
+    //    RPOR4bits.RP43R = _RPOUT_U1TX; // RP43  UART TX (schematic naming is with respect to the FTDI cable so this is the uart_rx line)
+
     // Make sure PPS Multiple reconfigurations is selected in the Configuration Fuse Bits
     // CAN Pin Mapping
     RPINR26bits.C1RXR = 47; // RPI47 CAN Rx (schematic naming is with respect to the MCU so this is the CAN_rx line)
@@ -165,10 +165,29 @@ void BasicNodeDrivers_config_mem_factory_reset(void) {
 
 uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
 
+    char str[] = "dsPIC33E256MC506";
+
     for (int i = 0; i < count; i++) {
-        
+
         (*buffer)[i] = 0x00;
-        
+
+    }
+
+    switch (address) {
+
+        case 0:
+
+            for (int i = 0; i < count; i++) {
+
+                (*buffer)[i] = str[i];
+
+            }
+
+            break;
+
+        default:
+
+            break;
     }
 
     return count;
@@ -218,7 +237,7 @@ void __attribute__((interrupt(no_auto_psv))) _U1RXInterrupt(void) {
 void __attribute__((interrupt(no_auto_psv))) _T2Interrupt(void) {
 
     IFS0bits.T2IF = 0; // Clear T2IF
-    
+
     OpenLcbNode_100ms_timer_tick();
     ProtocolDatagramHandler_100ms_timer_tick();
 

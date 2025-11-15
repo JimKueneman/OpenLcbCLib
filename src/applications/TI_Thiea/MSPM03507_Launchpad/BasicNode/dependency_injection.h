@@ -47,7 +47,7 @@
 #define UNLOCK_SHARED_RESOURCES_FUNC &TI_DriverLibDrivers_unlock_shared_resources
 #define CONFIG_MEM_READ_FUNC &TI_DriverLibDrivers_config_mem_read
 #define CONFIG_MEM_WRITE_FUNC &TI_DriverLibDrivers_config_mem_write
-#define OPERATIONS_REBOOT_FUNC NULL
+#define OPERATIONS_REBOOT_FUNC &TI_DriverLibDrivers_reboot
 #define OPERATIONS_FACTORY_RESET_FUNC NULL
 
 #include <stdbool.h>

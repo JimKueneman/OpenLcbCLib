@@ -75,7 +75,7 @@
 
 #include "esp_pm.h"
 
-#define NODE_ID 0x0501010107EE
+#define NODE_ID 0x050101010799
 
 #define LED_BUILTIN 2
 
