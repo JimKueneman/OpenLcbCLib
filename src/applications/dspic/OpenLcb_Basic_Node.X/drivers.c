@@ -153,15 +153,12 @@ void BasicNodeDrivers_initialize(void) {
 
 }
 
-void BasicNodeDrivers_reboot(void) {
+void BasicNodeDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
     asm("RESET ");
 
 }
 
-void BasicNodeDrivers_config_mem_factory_reset(void) {
-
-}
 
 uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
 
@@ -200,15 +197,19 @@ uint16_t BasicNodeDrivers_config_mem_write(uint32_t address, uint16_t count, con
 
 }
 
-void BasicNodeDrivers_pause_100ms_timer(void) {
+void BasicNodeDrivers_lock_shared_resources(void) {
 
     T2CONbits.TON = 0; // Turn off 100ms Timer
+    
+    Ecan1Helper_pause_can_rx();
 
 }
 
-void BasicNodeDrivers_resume_100ms_timer(void) {
+void BasicNodeDrivers_unlock_shared_resources(void) {
 
     T2CONbits.TON = 1; // Turn 0n 100ms Timer
+    
+    Ecan1Helper_resume_can_rx();
 
 }
 

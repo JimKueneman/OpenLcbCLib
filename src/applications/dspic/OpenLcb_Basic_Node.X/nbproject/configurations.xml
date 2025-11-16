@@ -60,6 +60,8 @@
         <itemPath>uart_handler.h</itemPath>
         <itemPath>traps.h</itemPath>
         <itemPath>common_debug_helper.h</itemPath>
+        <itemPath>dependency_injection.h</itemPath>
+        <itemPath>dependency_injectors.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -132,6 +134,8 @@
         <itemPath>uart_handler.c</itemPath>
         <itemPath>traps.c</itemPath>
         <itemPath>common_debug_helper.c</itemPath>
+        <itemPath>dependency_injection.c</itemPath>
+        <itemPath>dependency_injectors.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

@@ -225,10 +225,6 @@ void *thread_function_can(void *arg)
                 if (OpenLcbGridConnect_copy_out_gridconnect_when_done(next_byte, &gridconnect_buffer))
                 {
                     OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
-
-                    msg = strcatnew("R", (char *)&gridconnect_buffer);
-                    printf("%s\n", msg);
-                    free(msg);
                     
                     CanRxStatemachine_incoming_can_driver_callback(&can_message);
 
@@ -241,10 +237,7 @@ void *thread_function_can(void *arg)
                     gridconnect_buffer_ptr = ThreadSafeStringList_pop(&_outgoing_gridconnect_strings);
                     while (gridconnect_buffer_ptr)
                     {
-                        msg = strcatnew("S", gridconnect_buffer_ptr);
-                        printf("%s\n", msg);
-                        free(msg);
-
+                        
                         msg = strcatnew(gridconnect_buffer_ptr, "\n\r");
                         write(socket_fd, msg, strlen(msg));
                         free(msg);

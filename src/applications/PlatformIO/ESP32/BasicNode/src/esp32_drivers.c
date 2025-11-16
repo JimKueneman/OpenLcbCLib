@@ -51,19 +51,22 @@ bool _is_100ms_timer_running = false;
 
 hw_timer_t *Timer0_Cfg = NULL;
 
-void IRAM_ATTR Timer0_ISR() {
+void IRAM_ATTR Timer0_ISR()
+{
   _is_100ms_timer_running = true;
 
   OpenLcbNode_100ms_timer_tick();
   ProtocolDatagramHandler_100ms_timer_tick();
 }
 
-bool Esp32Drivers_100ms_running() {
+bool Esp32Drivers_100ms_running()
+{
 
   return _is_100ms_timer_running;
 }
 
-void Esp32Drivers_setup(void) {
+void Esp32Drivers_setup(void)
+{
 
   // Speed kills!
   setCpuFrequencyMhz(240);
@@ -76,42 +79,64 @@ void Esp32Drivers_setup(void) {
   // TimerTicks = 100ms * 80Mhz/80
 #ifdef PLATFORMIO
   Timer0_Cfg = timerBegin(0, 80, true);
-  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, false);  // level trigged (not edge as the example was true but that is not supported here)
-  timerAlarmWrite(Timer0_Cfg, 100000, true);             // Alarm (call ISR) when the timer hit the passed value then auto reload and restart it
-  timerAlarmEnable(Timer0_Cfg);                          // kick it off.
+  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, false); // level trigged (not edge as the example was true but that is not supported here)
+  timerAlarmWrite(Timer0_Cfg, 100000, true);            // Alarm (call ISR) when the timer hit the passed value then auto reload and restart it
+  timerAlarmEnable(Timer0_Cfg);                         // kick it off.
 #else
-  Timer0_Cfg = timerBegin(1000000);               // 1Mhz
-  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR);  // level trigged (not edge as the example was true but that is not supported here)
-  timerAlarm(Timer0_Cfg, 20000, true, 0);         // No idea why this gives 100ms but it does... poor documentation on these newer functions
+  Timer0_Cfg = timerBegin(1000000);              // 1Mhz
+  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR); // level trigged (not edge as the example was true but that is not supported here)
+  timerAlarm(Timer0_Cfg, 20000, true, 0);        // No idea why this gives 100ms but it does... poor documentation on these newer functions
 #endif
 }
 
-void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-  
-  esp_restart();
+void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
 
+  esp_restart();
 }
 
-char user_name[11] = "ESP32 Node";
+uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
 
-uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
-
-  // Todo
+  char str[] = "PlatformIO - ESP32 on CAN";
 
   for (int i = 0; i < count; i++)
+  {
+
     (*buffer)[i] = 0x00;
+  }
+
+  switch (address)
+  {
+
+  case 0:
+
+    for (int i = 0; i < count; i++)
+    {
+
+      (*buffer)[i] = str[i];
+    }
+
+    break;
+
+  default:
+
+    break;
+  }
 
   return count;
 }
 
-uint16_t Esp32Drivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
+uint16_t Esp32Drivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
 
   // Todo
 
   return count;
 }
 
-void Esp32Drivers_lock_shared_resources(void) {
+void Esp32Drivers_lock_shared_resources(void)
+{
 #ifdef PLATFORMIO
   timerAlarmDisable(Timer0_Cfg);
 #else
@@ -121,7 +146,8 @@ void Esp32Drivers_lock_shared_resources(void) {
   Esp32CanDriver_pause_can_rx();
 }
 
-void Esp32Drivers_unlock_shared_resources(void) {
+void Esp32Drivers_unlock_shared_resources(void)
+{
 #ifdef PLATFORMIO
   timerAlarmEnable(Timer0_Cfg);
 #else

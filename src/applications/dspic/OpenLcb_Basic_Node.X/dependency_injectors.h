@@ -25,38 +25,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_drivers.h
+ * \file dependency_injectors.h
  *
  *
  * @author Jim Kueneman
- * @date 3 Jan 2025
+ * @date 16 Nov 2025
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __TURNOUTBOSS_DRIVERS__
-#define	__TURNOUTBOSS_DRIVERS__
+// more than once.
+#ifndef __DEPENDENCY_INJECTORS__
+#define __DEPENDENCY_INJECTORS__
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+
+#include "xc.h"
+
 
 #include "../../../openlcb/openlcb_types.h"
+#include "../../../drivers/common/can_types.h"
+#include "../../../openlcb/openlcb_gridconnect.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#define LED_BLUE_TRIS _TRISA7
+#define LED_BLUE _LATA7
+
+#define LED_YELLOW_TRIS _TRISC5
+#define LED_YELLOW _LATC5
+
+
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-    // OpenLcbCLib defined callback functions that much be defined
+    extern void DependencyInjectors_initialize(void);
 
-    extern void BasicNodeDrivers_initialize(void);
+    extern void DependencyInjectors_on_100ms_timer_callback(void);
 
-    extern void BasicNodeDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    extern void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg);
 
-    extern uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    extern void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg);
 
-    extern uint16_t BasicNodeDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    extern void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id);
 
-    extern void BasicNodeDrivers_lock_shared_resources(void);
+    extern void DependencyInjectors_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void BasicNodeDrivers_unlock_shared_resources(void);
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
-
-#endif	/* __TURNOUTBOSS_DRIVERS__ */
-
+#endif /* __DEPENDENCY_INJECTORS__ */

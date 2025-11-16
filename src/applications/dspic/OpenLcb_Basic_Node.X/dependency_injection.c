@@ -40,39 +40,39 @@
 
 #include "dependency_injectors.h"
 
-#include "src/drivers/alias_mappings.h"
+#include "../../../drivers/alias_mappings.h"
 
-#include "src/drivers/common/can_types.h"
-#include "src/drivers/common/can_utilities.h"
-#include "src/drivers/common/can_buffer_store.h"
-#include "src/drivers/common/can_buffer_fifo.h"
-#include "src/drivers/common/can_login_message_handler.h"
-#include "src/drivers/common/can_login_statemachine.h"
-#include "src/drivers/common/can_rx_message_handler.h"
-#include "src/drivers/common/can_rx_statemachine.h"
-#include "src/drivers/common/can_tx_message_handler.h"
-#include "src/drivers/common/can_tx_statemachine.h"
-#include "src/drivers/common/can_main_statemachine.h"
+#include "../../../drivers/common/can_types.h"
+#include "../../../drivers/common/can_utilities.h"
+#include "../../../drivers/common/can_buffer_store.h"
+#include "../../../drivers/common/can_buffer_fifo.h"
+#include "../../../drivers/common/can_login_message_handler.h"
+#include "../../../drivers/common/can_login_statemachine.h"
+#include "../../../drivers/common/can_rx_message_handler.h"
+#include "../../../drivers/common/can_rx_statemachine.h"
+#include "../../../drivers/common/can_tx_message_handler.h"
+#include "../../../drivers/common/can_tx_statemachine.h"
+#include "../../../drivers/common/can_main_statemachine.h"
 
-#include "src/openlcb/openlcb_defines.h"
-#include "src/openlcb/openlcb_types.h"
-#include "src/openlcb/openlcb_utilities.h"
-#include "src/openlcb/openlcb_buffer_store.h"
-#include "src/openlcb/openlcb_buffer_list.h"
-#include "src/openlcb/openlcb_buffer_fifo.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/protocol_message_network.h"
-#include "src/openlcb/protocol_event_transport.h"
-#include "src/openlcb/protocol_snip.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/protocol_datagram_handler.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine_handler.h"
-#include "src/openlcb/protocol_config_mem_read_handler.h"
-#include "src/openlcb/protocol_config_mem_write_handler.h"
-#include "src/openlcb/protocol_config_mem_operations_handler.h"
+#include "../../../openlcb/openlcb_defines.h"
+#include "../../../openlcb/openlcb_types.h"
+#include "../../../openlcb/openlcb_utilities.h"
+#include "../../../openlcb/openlcb_buffer_store.h"
+#include "../../../openlcb/openlcb_buffer_list.h"
+#include "../../../openlcb/openlcb_buffer_fifo.h"
+#include "../../../openlcb/openlcb_node.h"
+#include "../../../openlcb/protocol_message_network.h"
+#include "../../../openlcb/protocol_event_transport.h"
+#include "../../../openlcb/protocol_snip.h"
+#include "../../../openlcb/openlcb_main_statemachine.h"
+#include "../../../openlcb/protocol_datagram_handler.h"
+#include "../../../openlcb/openlcb_login_statemachine.h"
+#include "../../../openlcb/openlcb_login_statemachine_handler.h"
+#include "../../../openlcb/protocol_config_mem_read_handler.h"
+#include "../../../openlcb/protocol_config_mem_write_handler.h"
+#include "../../../openlcb/protocol_config_mem_operations_handler.h"
 
-#include "src/openlcb/openlcb_application.h"
+#include "../../../openlcb/openlcb_application.h"
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
@@ -440,13 +440,13 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
   .memory_read_stream_space_traction_function_config_memory_reply_fail = NULL,
 
   // Config Memory Write
-  .memory_write_space_config_description_info = ProtocolConfigMemWriteHandler_write_space_config_description_info,
-  .memory_write_space_all = ProtocolConfigMemWriteHandler_write_space_all,
-  .memory_write_space_configuration_memory = &ProtocolConfigMemWriteHandler_write_space_config_memory,
-  .memory_write_space_acdi_manufacturer = ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer,
-  .memory_write_space_acdi_user = &ProtocolConfigMemWriteHandler_write_space_acdi_user,
-  .memory_write_space_traction_function_definition_info = ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info
-  .memory_write_space_traction_function_config_memory = ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory,
+  .memory_write_space_config_description_info = NULL,
+  .memory_write_space_all = NULL,
+  .memory_write_space_configuration_memory = NULL,
+  .memory_write_space_acdi_manufacturer = NULL,
+  .memory_write_space_acdi_user = NULL,
+  .memory_write_space_traction_function_definition_info = NULL,
+  .memory_write_space_traction_function_config_memory = NULL,
   .memory_write_space_firmware_upgrade = NULL,
 
   // Config Memory Write Reply Ok

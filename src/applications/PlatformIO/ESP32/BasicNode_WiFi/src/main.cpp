@@ -61,10 +61,8 @@
 
 void setup()
 {
-    pinMode(TEST_PIN, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
 
-    Serial.begin(230400);
+    Serial.begin(921600);
 
     DependencyInjectors_initialize();
     DependencyInjection_initialize();

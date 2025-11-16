@@ -80,9 +80,7 @@ void receive_task(void *arg) {
             }
 
             CanRxStatemachine_incoming_can_driver_callback(&can_msg);
-
-            digitalWrite(2, !digitalRead(2));  // blink the onboard LED
-
+     
           }
 
         break;
@@ -90,9 +88,9 @@ void receive_task(void *arg) {
 
         case ESP_ERR_TIMEOUT:
 
-          digitalWrite(2, 0);  // turn off the LED
+          
 
-        break;
+          break;
 
 
         default:
@@ -220,7 +218,7 @@ void Esp32CanDriver_setup(void) {
       xTaskCreate(
         receive_task,           // [IN] function to call
         "receive_task",         // [IN] user identifier
-        1024,                   // [IN] Stack Size
+        2048,                   // [IN] Stack Size
         NULL,                   // [IN] Paramter to pass
         10,                     // [IN] Task Priority
         &receive_task_handle);  // [OUT] Task Handle send pointer to a TaskHandle_t variable

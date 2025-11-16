@@ -33,16 +33,21 @@
 
 
 #include "dependency_injectors.h"
-#include "src/openlcb/openlcb_utilities.h"
+
+#include "../../../openlcb/openlcb_utilities.h"
 
 #define LED_PIN 2
 
 static uint16_t _100ms_ticks = 0;
 
 void DependencyInjectors_initialize(void) {
+    
+    LED_BLUE = 0;
+    LED_YELLOW = 0; // turn off
+    
+    LED_BLUE_TRIS = 0;
+    LED_YELLOW_TRIS = 0;
 
-    gpio_reset_pin(LED_PIN);
-    gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
 }
 
     void DependencyInjectors_on_100ms_timer_callback(void)
@@ -50,7 +55,8 @@ void DependencyInjectors_initialize(void) {
 
     if (_100ms_ticks > 5) {
 
-        gpio_set_level(LED_PIN, 0); // turn off
+        LED_BLUE = 0;
+        LED_YELLOW = 0; // turn off
 
         _100ms_ticks = 0;
     }
@@ -65,7 +71,7 @@ void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
     printf("[R] %s\n", (char*)&gridconnect);
 
-    gpio_set_level(LED_PIN, 1); // turn on
+    LED_BLUE = 1; // turn on
 }
 
  void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg)
@@ -74,9 +80,9 @@ void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
     gridconnect_buffer_t gridconnect;
 
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char *)&gridconnect);
+    printf("[S] %s\n", (char *)&gridconnect);
 
-    gpio_set_level(LED_PIN, 1); // turn on
+    LED_YELLOW = 1; // turn on
 }
 
  void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id)

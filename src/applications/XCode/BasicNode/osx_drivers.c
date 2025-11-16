@@ -156,8 +156,12 @@ uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configurat
     // printf("configmem read address: %02X\n", (*buffer)[0]);
 
     // Null out the buffer in case we have no data
-    for (int i = 0; i < sizeof(*buffer); i++)
+    for (int i = 0; i < sizeof(*buffer); i++) {
+       
         (*buffer)[i] = '\0';
+        
+    }
+        
 
     FILE *_file;
 
@@ -173,6 +177,7 @@ uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configurat
             {
 
                 fclose(_file);
+                
                 return count;
             }
         }
@@ -188,8 +193,11 @@ uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configura
 
     //  printf("configmem write\n");
 
-    if (count == 0)
+    if (count == 0) {
+        
         return 0;
+        
+    }
 
     FILE *_file;
 

@@ -70,28 +70,28 @@ static void _clear_node(openlcb_node_t *openlcb_node)
     openlcb_node->last_received_datagram = NULL;
 
     openlcb_node->consumers.count = 0;
-    for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++)
-    {
+    for (int i = 0; i < USER_DEFINED_CONSUMER_COUNT; i++) {
 
         openlcb_node->consumers.list[i].event = 0;
         openlcb_node->consumers.list[i].status = EVENT_STATUS_UNKNOWN;
+        
     }
 
     openlcb_node->producers.count = 0;
-    for (int i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++)
-    {
+    for (int i = 0; i < USER_DEFINED_PRODUCER_COUNT; i++) {
 
         openlcb_node->producers.list[i].event = 0;
         openlcb_node->producers.list[i].status = EVENT_STATUS_UNKNOWN;
+        
     }
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
 
-    for (int i = 0; i < MAX_NODE_ENUM_KEY_VALUES; i++)
-    {
+    for (int i = 0; i < MAX_NODE_ENUM_KEY_VALUES; i++) {
 
         _node_enum_index_array[i] = 0;
+        
     }
 }
 
@@ -100,10 +100,10 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface)
 
     _interface = (interface_openlcb_node_t *)interface;
 
-    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++)
-    {
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
         _clear_node(&_openlcb_nodes.node[i]);
+        
     }
 
     _openlcb_nodes.count = 0;
@@ -112,18 +112,18 @@ void OpenLcbNode_initialize(const interface_openlcb_node_t *interface)
 openlcb_node_t *OpenLcbNode_get_first(uint8_t key)
 {
 
-    if (key >= MAX_NODE_ENUM_KEY_VALUES)
-    {
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
 
         return NULL;
+        
     }
 
     _node_enum_index_array[key] = 0;
 
-    if (_openlcb_nodes.count == 0)
-    {
-
+    if (_openlcb_nodes.count == 0) { 
+        
         return NULL;
+        
     }
 
     return (&_openlcb_nodes.node[_node_enum_index_array[key]]);
@@ -132,18 +132,18 @@ openlcb_node_t *OpenLcbNode_get_first(uint8_t key)
 openlcb_node_t *OpenLcbNode_get_next(uint8_t key)
 {
 
-    if (key >= MAX_NODE_ENUM_KEY_VALUES)
-    {
+    if (key >= MAX_NODE_ENUM_KEY_VALUES) {
 
         return NULL;
+        
     }
 
     _node_enum_index_array[key] = _node_enum_index_array[key] + 1;
 
-    if (_node_enum_index_array[key] >= _openlcb_nodes.count)
-    {
+    if (_node_enum_index_array[key] >= _openlcb_nodes.count) {
 
         return NULL;
+        
     }
 
     return (&_openlcb_nodes.node[_node_enum_index_array[key]]);
@@ -156,32 +156,32 @@ static void _generate_event_ids(openlcb_node_t *openlcb_node)
     uint16_t indexer = 0;
 
     openlcb_node->consumers.count = 0;
-    for (int i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++)
-    {
+    for (int i = 0; i < openlcb_node->parameters->consumer_count_autocreate; i++) {
 
-        if (i < USER_DEFINED_CONSUMER_COUNT)
-        { // safety net
+        if (i < USER_DEFINED_CONSUMER_COUNT) { // safety net
 
             openlcb_node->consumers.list[i].event = node_id + indexer;
             openlcb_node->consumers.count = openlcb_node->consumers.count + 1;
+            
         }
 
         indexer++;
+        
     }
 
     indexer = 0;
     openlcb_node->producers.count = 0;
-    for (int i = 0; i < openlcb_node->parameters->producer_count_autocreate; i++)
-    {
+    for (int i = 0; i < openlcb_node->parameters->producer_count_autocreate; i++) {
 
-        if (i < USER_DEFINED_PRODUCER_COUNT)
-        { // safety net
+        if (i < USER_DEFINED_PRODUCER_COUNT) { // safety net
 
             openlcb_node->producers.list[i].event = node_id + indexer;
             openlcb_node->producers.count = openlcb_node->producers.count + 1;
+            
         }
 
         indexer++;
+        
     }
 
     openlcb_node->consumers.enumerator.running = false;
@@ -189,16 +189,15 @@ static void _generate_event_ids(openlcb_node_t *openlcb_node)
 
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->producers.enumerator.enum_index = 0;
+    
 }
 
 openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *node_parameters)
 {
 
-    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++)
-    {
+    for (int i = 0; i < USER_DEFINED_NODE_BUFFER_DEPTH; i++) {
 
-        if (!_openlcb_nodes.node[i].state.allocated)
-        {
+        if (!_openlcb_nodes.node[i].state.allocated) {
 
             _clear_node(&_openlcb_nodes.node[i]);
 
@@ -215,6 +214,7 @@ openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *
 
             return &_openlcb_nodes.node[i];
         }
+        
     }
 
     return NULL;
@@ -223,15 +223,15 @@ openlcb_node_t *OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *
 openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias)
 {
 
-    for (int i = 0; i < _openlcb_nodes.count; i++)
-    {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        if (_openlcb_nodes.node[i].alias == alias)
-        {
+        if (_openlcb_nodes.node[i].alias == alias) {
 
             return &_openlcb_nodes.node[i];
+            
         }
-    };
+        
+    }
 
     return NULL;
 }
@@ -239,15 +239,15 @@ openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias)
 openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t nodeid)
 {
 
-    for (int i = 0; i < _openlcb_nodes.count; i++)
-    {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
-        if (_openlcb_nodes.node[i].id == nodeid)
-        {
+        if (_openlcb_nodes.node[i].id == nodeid) {
 
             return &_openlcb_nodes.node[i];
+            
         }
-    };
+        
+    }
 
     return NULL;
 }
@@ -255,27 +255,29 @@ openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t nodeid)
 void OpenLcbNode_100ms_timer_tick(void)
 {
 
-    for (int i = 0; i < _openlcb_nodes.count; i++)
-    {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
         _openlcb_nodes.node[i].timerticks++;
+        
     };
 
-    if (_interface->on_100ms_timer_tick)
-    {
+    if (_interface->on_100ms_timer_tick) {
 
         _interface->on_100ms_timer_tick();
+        
     }
+    
 }
 
 void OpenLcbNode_reset_state(void)
 {
 
-    for (int i = 0; i < _openlcb_nodes.count; i++)
-    {
+    for (int i = 0; i < _openlcb_nodes.count; i++) {
 
         _openlcb_nodes.node[i].state.run_state = RUNSTATE_INIT;
         _openlcb_nodes.node[i].state.permitted = false;
         _openlcb_nodes.node[i].state.initialized = false;
-    };
+        
+    }
+    
 }

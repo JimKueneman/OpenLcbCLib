@@ -1,6 +1,5 @@
-
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,38 +24,68 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_drivers.h
+ * \file dependency_injectors.c
  *
  *
  * @author Jim Kueneman
- * @date 3 Jan 2025
+ * @date 11 Nov 2024
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __TURNOUTBOSS_DRIVERS__
-#define	__TURNOUTBOSS_DRIVERS__
 
-#include "../../../openlcb/openlcb_types.h"
+#include "dependency_injectors.h"
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#include "../../../openlcb/openlcb_utilities.h"
 
-    // OpenLcbCLib defined callback functions that much be defined
+#define LED_PIN 2
 
-    extern void BasicNodeDrivers_initialize(void);
+static uint16_t _100ms_ticks = 0;
 
-    extern void BasicNodeDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-
-    extern uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-
-    extern uint16_t BasicNodeDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-
-    extern void BasicNodeDrivers_lock_shared_resources(void);
-
-    extern void BasicNodeDrivers_unlock_shared_resources(void);
+void DependencyInjectors_initialize(void) {
+    
 
 
-#endif	/* __TURNOUTBOSS_DRIVERS__ */
+}
 
+    void DependencyInjectors_on_100ms_timer_callback(void)
+{
+
+    if (_100ms_ticks > 5) {
+
+
+        _100ms_ticks = 0;
+    }
+
+    _100ms_ticks++;
+}
+
+void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
+{
+    gridconnect_buffer_t gridconnect;
+
+    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
+    printf("[R] %s\n", (char*)&gridconnect);
+
+}
+
+ void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg)
+{
+
+    gridconnect_buffer_t gridconnect;
+
+    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
+    printf("[S] %s\n", (char *)&gridconnect);
+
+}
+
+ void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id)
+{
+
+    printf("Alias Allocation: 0x%02X  ", new_alias);
+    printf("NodeID: 0x%06llX\n\n", node_id);
+}
+
+void DependencyInjectors_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
+
+    printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
+}

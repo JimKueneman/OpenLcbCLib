@@ -60,13 +60,13 @@ static void _extract_write_command_parameters(openlcb_statemachine_info_t *state
     if (*statemachine_info->incoming_msg_info.msg_ptr->payload[1] == CONFIG_MEM_WRITE_SPACE_IN_BYTE_6) {
 
         config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_6;
-        config_mem_write_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[7];
+        config_mem_write_request_info->bytes = statemachine_info->incoming_msg_info.msg_ptr->payload_count - 7;
         config_mem_write_request_info->data_start = 7;
 
     } else {
 
         config_mem_write_request_info->encoding = ADDRESS_SPACE_IN_BYTE_1;
-        config_mem_write_request_info->bytes = *statemachine_info->incoming_msg_info.msg_ptr->payload[6];
+        config_mem_write_request_info->bytes = statemachine_info->incoming_msg_info.msg_ptr->payload_count - 6;
         config_mem_write_request_info->data_start = 6;
     }
 

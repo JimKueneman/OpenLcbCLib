@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -25,38 +24,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file turnoutboss_drivers.h
+ * \file dependency_injection.h
  *
  *
  * @author Jim Kueneman
- * @date 3 Jan 2025
+* @date 11 Nov 2025
  */
+
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __TURNOUTBOSS_DRIVERS__
-#define	__TURNOUTBOSS_DRIVERS__
+#ifndef __DEPENDENCY_INJECTION__
+#define	__DEPENDENCY_INJECTION__
 
-#include "../../../openlcb/openlcb_types.h"
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "esp32_drivers.h"
+#include "esp32_can_drivers.h"
+
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/common/can_types.h"
+
+#define TRANSMIT_CAN_FRAME_FUNC &Esp32CanDriver_transmit_raw_can_frame
+#define IS_TX_BUFFER_EMPTY_FUNC &Esp32CanDriver_is_can_tx_buffer_clear
+#define LOCK_SHARED_RESOURCES_FUNC &Esp32Drivers_lock_shared_resources
+#define UNLOCK_SHARED_RESOURCES_FUNC &Esp32Drivers_unlock_shared_resources
+#define CONFIG_MEM_READ_FUNC &Esp32Drivers_config_mem_read
+#define CONFIG_MEM_WRITE_FUNC Esp32Drivers_config_mem_write
+#define OPERATIONS_REBOOT_FUNC &Esp32Drivers_reboot
+#define OPERATIONS_FACTORY_RESET_FUNC DependencyInjectors_operations_request_factory_reset
+
+ // Application defined injector functions, defined in dependency_injectors.h
+#define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
+#define ON_CAN_RX_CALLBACK &DependencyInjectors_on_can_rx_callback
+#define ON_CAN_TX_CALLBACK &DependencyInjectors_on_can_tx_callback
+#define ON_ALIAS_CHANGE_CALLBACK &DependencyInjectors_alias_change_callback
+
 
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-    // OpenLcbCLib defined callback functions that much be defined
+extern void DependencyInjection_initialize(void);
 
-    extern void BasicNodeDrivers_initialize(void);
+#ifdef	__cplusplus
+}
+#endif /* __cplusplus */
 
-    extern void BasicNodeDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-
-    extern uint16_t BasicNodeDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-
-    extern uint16_t BasicNodeDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-
-    extern void BasicNodeDrivers_lock_shared_resources(void);
-
-    extern void BasicNodeDrivers_unlock_shared_resources(void);
-
-
-#endif	/* __TURNOUTBOSS_DRIVERS__ */
-
+#endif	/* __DEPENDENCY_INJECTION__ */

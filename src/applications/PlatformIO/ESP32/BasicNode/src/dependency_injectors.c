@@ -74,7 +74,7 @@ void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
     gridconnect_buffer_t gridconnect;
 
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char *)&gridconnect);
+    printf("[S] %s\n", (char *)&gridconnect);
 
     gpio_set_level(LED_PIN, 1); // turn on
 }

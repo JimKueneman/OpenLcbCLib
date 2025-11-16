@@ -94,7 +94,7 @@ void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_
 
 uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-    char str[] = "ESP32: CAN Wired";
+    char str[] = "Arduino - ESP32: CAN Wired";
 
     for (int i = 0; i < count; i++) {
 

@@ -54,8 +54,7 @@
 #define CONFIG_MEM_READ_FUNC &Esp32Drivers_config_mem_read
 #define CONFIG_MEM_WRITE_FUNC Esp32Drivers_config_mem_write
 #define OPERATIONS_REBOOT_FUNC &Esp32Drivers_reboot
-#define OPERATIONS_FACTORY_RESET_FUNC NULL
-
+#define OPERATIONS_FACTORY_RESET_FUNC DependencyInjectors_operations_request_factory_reset
 
 // Application defined injector functions, defined in dependency_injectors.h
 #define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
