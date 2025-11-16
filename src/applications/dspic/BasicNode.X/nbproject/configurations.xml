@@ -4,6 +4,24 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="OpenLcb_Basic_Node.X"
+                     displayName="BasicNode.X"
+                     projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="dist" displayName="dist" projectFiles="true">
+        </logicalFolder>
+        <itemPath>node_parameters.h</itemPath>
+        <itemPath>drivers.h</itemPath>
+        <itemPath>uart_handler.h</itemPath>
+        <itemPath>traps.h</itemPath>
+        <itemPath>common_debug_helper.h</itemPath>
+        <itemPath>dependency_injection.h</itemPath>
+        <itemPath>dependency_injectors.h</itemPath>
+        <itemPath>common_loader_app.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../drivers/common/can_rx_statemachine.h</itemPath>
@@ -46,23 +64,6 @@
         <itemPath>../../../openlcb/protocol_config_mem_read_handler.h</itemPath>
         <itemPath>../../../openlcb/protocol_config_mem_write_handler.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="OpenLcb_Basic_Node.X"
-                     displayName="OpenLcb_Basic_Node.X"
-                     projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-        </logicalFolder>
-        <itemPath>node_parameters.h</itemPath>
-        <itemPath>drivers.h</itemPath>
-        <itemPath>uart_handler.h</itemPath>
-        <itemPath>traps.h</itemPath>
-        <itemPath>common_debug_helper.h</itemPath>
-        <itemPath>dependency_injection.h</itemPath>
-        <itemPath>dependency_injectors.h</itemPath>
-      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -76,6 +77,28 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="OpenLcb_Basic_Node.X"
+                     displayName="BasicNode.X"
+                     projectFiles="true">
+        <logicalFolder name="debug" displayName="debug" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="dist" displayName="dist" projectFiles="true">
+          <logicalFolder name="default" displayName="default" projectFiles="true">
+            <logicalFolder name="production" displayName="production" projectFiles="true">
+            </logicalFolder>
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>main.c</itemPath>
+        <itemPath>drivers.c</itemPath>
+        <itemPath>node_parameters.c</itemPath>
+        <itemPath>uart_handler.c</itemPath>
+        <itemPath>traps.c</itemPath>
+        <itemPath>common_debug_helper.c</itemPath>
+        <itemPath>dependency_injection.c</itemPath>
+        <itemPath>dependency_injectors.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="common" displayName="common" projectFiles="true">
           <itemPath>../../../drivers/common/can_tx_message_handler.c</itemPath>
@@ -114,28 +137,6 @@
         <itemPath>../../../openlcb/protocol_config_mem_operations_handler.c</itemPath>
         <itemPath>../../../openlcb/protocol_config_mem_read_handler.c</itemPath>
         <itemPath>../../../openlcb/protocol_config_mem_write_handler.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="OpenLcb_Basic_Node.X"
-                     displayName="OpenLcb_Basic_Node.X"
-                     projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
-        <itemPath>main.c</itemPath>
-        <itemPath>drivers.c</itemPath>
-        <itemPath>node_parameters.c</itemPath>
-        <itemPath>uart_handler.c</itemPath>
-        <itemPath>traps.c</itemPath>
-        <itemPath>common_debug_helper.c</itemPath>
-        <itemPath>dependency_injection.c</itemPath>
-        <itemPath>dependency_injectors.c</itemPath>
       </logicalFolder>
     </logicalFolder>
   </logicalFolder>

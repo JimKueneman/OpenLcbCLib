@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>OpenLcb_Basic_Node</name>
+            <name>BasicNode</name>
             <creation-uuid>ce5603bb-eee8-43b7-a1e8-2000f0b5f371</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>

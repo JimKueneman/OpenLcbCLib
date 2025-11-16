@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=OpenLcb_Basic_Node.X
+PROJECTNAME=BasicNode.X
 
 # Active Configuration
 DEFAULTCONF=default

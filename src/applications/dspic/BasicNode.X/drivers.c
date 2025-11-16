@@ -41,7 +41,7 @@
 
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "uart_handler.h"
-#include "../TurnoutBossCommon/common_loader_app.h"
+#include "common_loader_app.h"
 #include "../../../openlcb/openlcb_node.h"
 #include "../../../openlcb/protocol_datagram_handler.h"
 

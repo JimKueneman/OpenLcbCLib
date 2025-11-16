@@ -38,6 +38,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "dependency_injectors.h"
+
 #include "src/drivers/alias_mappings.h"
 
 #include "src/drivers/common/can_types.h"
@@ -72,14 +74,12 @@
 
 #include "src/openlcb/openlcb_application.h"
 
-
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
-  .alias_mapping_register = &AliasMappings_register,
-  .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-  // Callback events
-  .on_alias_change = NULL
-
+    .alias_mapping_register = &AliasMappings_register,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    // Callback events
+    .on_alias_change = ON_ALIAS_CHANGE_CALLBACK // application defined
 };
 
 const interface_can_login_state_machine_t interface_can_login_state_machine = {
@@ -110,29 +110,29 @@ const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
 
 const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 
-  .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
-  .handle_single_frame = &CanRxMessageHandler_single_frame,
-  .handle_first_frame = &CanRxMessageHandler_first_frame,
-  .handle_middle_frame = &CanRxMessageHandler_middle_frame,
-  .handle_last_frame = &CanRxMessageHandler_last_frame,
-  .handle_stream_frame = &CanRxMessageHandler_stream_frame,
-  .handle_rid_frame = CanRxMessageHandler_rid_frame,
-  .handle_amd_frame = CanRxMessageHandler_amd_frame,
-  .handle_ame_frame = CanRxMessageHandler_ame_frame,
-  .handle_amr_frame = CanRxMessageHandler_amr_frame,
-  .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
-  .handle_cid_frame = CanRxMessageHandler_cid_frame,
-  .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-  // Callback events
-  .on_receive = NULL
+    .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
+    .handle_single_frame = &CanRxMessageHandler_single_frame,
+    .handle_first_frame = &CanRxMessageHandler_first_frame,
+    .handle_middle_frame = &CanRxMessageHandler_middle_frame,
+    .handle_last_frame = &CanRxMessageHandler_last_frame,
+    .handle_stream_frame = &CanRxMessageHandler_stream_frame,
+    .handle_rid_frame = CanRxMessageHandler_rid_frame,
+    .handle_amd_frame = CanRxMessageHandler_amd_frame,
+    .handle_ame_frame = CanRxMessageHandler_ame_frame,
+    .handle_amr_frame = CanRxMessageHandler_amr_frame,
+    .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
+    .handle_cid_frame = CanRxMessageHandler_cid_frame,
+    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
+    // Callback events
+    .on_receive = ON_CAN_RX_CALLBACK // application defined
 
 };
 
 const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
-  .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC,  //  HARDWARE INTERFACE
-  // Callback events
-  .on_transmit = NULL
+    .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
+    // Callback events
+    .on_transmit = ON_CAN_TX_CALLBACK // application defined
 
 };
 
@@ -169,8 +169,8 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 
 const interface_openlcb_node_t interface_openlcb_node = {
 
-  // Callback events
-  .on_100ms_timer_tick = NULL
+    // Callback events
+    .on_100ms_timer_tick = ON_100MS_TIMER_CALLBACK
 
 };
 
@@ -440,13 +440,13 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
   .memory_read_stream_space_traction_function_config_memory_reply_fail = NULL,
 
   // Config Memory Write
-  .memory_write_space_config_description_info = NULL,
-  .memory_write_space_all = NULL,
-  .memory_write_space_configuration_memory = NULL,
-  .memory_write_space_acdi_manufacturer = NULL,
-  .memory_write_space_acdi_user = NULL,
-  .memory_write_space_traction_function_definition_info = NULL,
-  .memory_write_space_traction_function_config_memory = NULL,
+  .memory_write_space_config_description_info = ProtocolConfigMemWriteHandler_write_space_config_description_info,
+  .memory_write_space_all = ProtocolConfigMemWriteHandler_write_space_all,
+  .memory_write_space_configuration_memory = &ProtocolConfigMemWriteHandler_write_space_config_memory,
+  .memory_write_space_acdi_manufacturer = ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer,
+  .memory_write_space_acdi_user = &ProtocolConfigMemWriteHandler_write_space_acdi_user,
+  .memory_write_space_traction_function_definition_info = ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info,
+  .memory_write_space_traction_function_config_memory = ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory,
   .memory_write_space_firmware_upgrade = NULL,
 
   // Config Memory Write Reply Ok

@@ -30,12 +30,12 @@ ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 IMAGE_TYPE=debug
 OUTPUT_SUFFIX=elf
 DEBUGGABLE_SUFFIX=elf
-FINAL_IMAGE=${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+FINAL_IMAGE=${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 else
 IMAGE_TYPE=production
 OUTPUT_SUFFIX=hex
 DEBUGGABLE_SUFFIX=elf
-FINAL_IMAGE=${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+FINAL_IMAGE=${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 endif
 
 ifeq ($(COMPARE_BUILD), true)
@@ -82,7 +82,7 @@ FIXDEPS=fixDeps
 ifneq ($(INFORMATION_MESSAGE), )
 	@echo $(INFORMATION_MESSAGE)
 endif
-	${MAKE}  -f nbproject/Makefile-default.mk ${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+	${MAKE}  -f nbproject/Makefile-default.mk ${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 
 MP_PROCESSOR_OPTION=33EP512MC506
 MP_LINKER_FILE_OPTION=,--script=p33EP512MC506.gld
@@ -263,49 +263,49 @@ ${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o: ../../../openlc
 	@${RM} ${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/protocol_config_mem_write_handler.c  -o ${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/52faf1ef008f738f32e74ba27a13ccb12777549e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/48ec37aed285a33814b3c7ebe2ec03fd06613145 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/drivers.o: drivers.c  .generated_files/flags/default/ebcb1f5f5c7e06a45fce65215e625042f4a96681 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/drivers.o: drivers.c  .generated_files/flags/default/d85a54ec7890f1633b588d1d5c6bbcdbab537389 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/drivers.o.d 
 	@${RM} ${OBJECTDIR}/drivers.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  drivers.c  -o ${OBJECTDIR}/drivers.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/drivers.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/74795b107324cceeca581379f11a63c58145c381 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/ccf6fd086964a9b8b43f4d750bb3c3ca04a7cc9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/node_parameters.o.d 
 	@${RM} ${OBJECTDIR}/node_parameters.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/uart_handler.o: uart_handler.c  .generated_files/flags/default/5a17c7a90c4c106c82c90cbc75c183d9d7d03fc3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/uart_handler.o: uart_handler.c  .generated_files/flags/default/69236c680ba7a96073c0a1623deb47a446a91cf2 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/uart_handler.o.d 
 	@${RM} ${OBJECTDIR}/uart_handler.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  uart_handler.c  -o ${OBJECTDIR}/uart_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/uart_handler.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/26889044014201f28b0e39ddaca1bfc2996286fc .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/20f2d0f1724ed8ab412e1e9b43c1d9b143b0d53 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/traps.o.d 
 	@${RM} ${OBJECTDIR}/traps.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/common_debug_helper.o: common_debug_helper.c  .generated_files/flags/default/1dc0e6894a9754abd66a32af783ac35dc150c7d6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/common_debug_helper.o: common_debug_helper.c  .generated_files/flags/default/3f8e14e9afa7951fae3b4b6ae7a80f010fcded9a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/common_debug_helper.o.d 
 	@${RM} ${OBJECTDIR}/common_debug_helper.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  common_debug_helper.c  -o ${OBJECTDIR}/common_debug_helper.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/common_debug_helper.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/dependency_injection.o: dependency_injection.c  .generated_files/flags/default/1e5cb42d869b8a8e97750c92390a32368dc9c2a6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/dependency_injection.o: dependency_injection.c  .generated_files/flags/default/d78358072de4106c04e8df1221f577c81cc46396 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dependency_injection.o.d 
 	@${RM} ${OBJECTDIR}/dependency_injection.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  dependency_injection.c  -o ${OBJECTDIR}/dependency_injection.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/dependency_injection.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -mno-eds-warn  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/dependency_injectors.o: dependency_injectors.c  .generated_files/flags/default/9c500c11476fd3e53bb183932a223fd64fbf095b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/dependency_injectors.o: dependency_injectors.c  .generated_files/flags/default/7982cb6b31b07e6a68031b205f2f71979d0faae6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dependency_injectors.o.d 
 	@${RM} ${OBJECTDIR}/dependency_injectors.o 
@@ -486,49 +486,49 @@ ${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o: ../../../openlc
 	@${RM} ${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../../../openlcb/protocol_config_mem_write_handler.c  -o ${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/_ext/156864402/protocol_config_mem_write_handler.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/460df99684dd963f3692cc1f49efcf7d73f3e666 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/3262360de34abcd110ced4875da3088617bd6e24 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/drivers.o: drivers.c  .generated_files/flags/default/6214805ddba8d2899bee07a309beab1b202b0be9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/drivers.o: drivers.c  .generated_files/flags/default/bb3183c2806a681faeee054dfb5cb9d65978303d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/drivers.o.d 
 	@${RM} ${OBJECTDIR}/drivers.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  drivers.c  -o ${OBJECTDIR}/drivers.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/drivers.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/926d73e897916c31b661b997c89763a7435a56e3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/node_parameters.o: node_parameters.c  .generated_files/flags/default/6e2a5fa5925cd48728a493db731da1d1a12b85d9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/node_parameters.o.d 
 	@${RM} ${OBJECTDIR}/node_parameters.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  node_parameters.c  -o ${OBJECTDIR}/node_parameters.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/node_parameters.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/uart_handler.o: uart_handler.c  .generated_files/flags/default/a9369e48c6342faf2e9888e3f316f9d0f7a69779 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/uart_handler.o: uart_handler.c  .generated_files/flags/default/b2ef9f4bba4c90493750e69173987b6ae4e43f72 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/uart_handler.o.d 
 	@${RM} ${OBJECTDIR}/uart_handler.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  uart_handler.c  -o ${OBJECTDIR}/uart_handler.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/uart_handler.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/d3facf56af7703aec25d1d52b2f7ab90f3103ece .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/traps.o: traps.c  .generated_files/flags/default/d7c4034774f927d633099e5ed1b87d33dcf69efe .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/traps.o.d 
 	@${RM} ${OBJECTDIR}/traps.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  traps.c  -o ${OBJECTDIR}/traps.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/traps.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/common_debug_helper.o: common_debug_helper.c  .generated_files/flags/default/3801e670ea2bc093900349a24fedefd54a24b02d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/common_debug_helper.o: common_debug_helper.c  .generated_files/flags/default/566ab0474a85c9ba232aad828eb44b1932c3dd1d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/common_debug_helper.o.d 
 	@${RM} ${OBJECTDIR}/common_debug_helper.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  common_debug_helper.c  -o ${OBJECTDIR}/common_debug_helper.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/common_debug_helper.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/dependency_injection.o: dependency_injection.c  .generated_files/flags/default/4ffe760167b0b4991415c1412f93dcb1311eabd4 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/dependency_injection.o: dependency_injection.c  .generated_files/flags/default/b0f687fc5b8841f05847b77da6d1f8fcdb7c3cee .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dependency_injection.o.d 
 	@${RM} ${OBJECTDIR}/dependency_injection.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  dependency_injection.c  -o ${OBJECTDIR}/dependency_injection.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/dependency_injection.o.d"      -mno-eds-warn  -g -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/dependency_injectors.o: dependency_injectors.c  .generated_files/flags/default/6b9ec6e63e39a2ef535563e4b219784d940c4f28 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/dependency_injectors.o: dependency_injectors.c  .generated_files/flags/default/9411227b3c84d1704ce9b1c2aa951a7a5b8f405f .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dependency_injectors.o.d 
 	@${RM} ${OBJECTDIR}/dependency_injectors.o 
@@ -551,15 +551,15 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: link
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
 	@${MKDIR} ${DISTDIR} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG=__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)      -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D__DEBUG=__DEBUG,--defsym=__MPLAB_DEBUGGER_SIMULATOR=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -D__DEBUG=__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)      -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D__DEBUG=__DEBUG,--defsym=__MPLAB_DEBUGGER_SIMULATOR=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
 	
 else
-${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
+${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
 	@${MKDIR} ${DISTDIR} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
-	${MP_CC_DIR}/xc16-bin2hex ${DISTDIR}/OpenLcb_Basic_Node.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} -a  -omf=elf   -mdfp="${DFP_DIR}/xc16" 
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -o ${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -mcpu=$(MP_PROCESSOR_OPTION)        -omf=elf -DFCY=40000000 -DEXCLUDE_FIRMWARE_ADDRESS_SPACE -DUSER_DEFINED_CDI_LENGTH=1200 -DUSER_DEFINED_FDI_LENGTH=0 -DUSER_DEFINED_PRODUCER_COUNT=10 -DUSER_DEFINED_CONSUMER_COUNT=10 -DUSER_DEFINED_NODE_BUFFER_DEPTH=10 -DUSER_DEFINED_SNIP_BUFFER_DEPTH=20 -DUSER_DEFINED_DATAGRAM_BUFFER_DEPTH=20 -DUSER_DEFINED_BASIC_BUFFER_DEPTH=50 -DUSER_DEFINED_STREAM_BUFFER_DEPTH=2 -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,$(MP_LINKER_FILE_OPTION),--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--report-mem,--memorysummary,${DISTDIR}/memoryfile.xml$(MP_EXTRA_LD_POST)  -mdfp="${DFP_DIR}/xc16" 
+	${MP_CC_DIR}/xc16-bin2hex ${DISTDIR}/BasicNode.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} -a  -omf=elf   -mdfp="${DFP_DIR}/xc16" 
 	
 endif
 

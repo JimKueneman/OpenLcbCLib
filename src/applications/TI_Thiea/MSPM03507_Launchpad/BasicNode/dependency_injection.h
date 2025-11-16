@@ -37,8 +37,17 @@
 #ifndef __DEPENDENCY_INJECTION__
 #define	__DEPENDENCY_INJECTION__
 
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "ti_msp_dl_config.h"
+
 #include "ti_driverlib_can_driver.h"
 #include "ti_driverlib_drivers.h"
+
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/common/can_types.h"
 
 // Application defined function pointer to connect to the OpenLcbCLib
 #define TRANSMIT_CAN_FRAME_FUNC &TI_DriverLibCanDriver_transmit_can_frame
@@ -48,13 +57,14 @@
 #define CONFIG_MEM_READ_FUNC &TI_DriverLibDrivers_config_mem_read
 #define CONFIG_MEM_WRITE_FUNC &TI_DriverLibDrivers_config_mem_write
 #define OPERATIONS_REBOOT_FUNC &TI_DriverLibDrivers_reboot
-#define OPERATIONS_FACTORY_RESET_FUNC NULL
+#define OPERATIONS_FACTORY_RESET_FUNC DependencyInjectors_operations_request_factory_reset
 
-#include <stdbool.h>
-#include <stdint.h>
+ // Application defined injector functions, defined in dependency_injectors.h
+#define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
+#define ON_CAN_RX_CALLBACK &DependencyInjectors_on_can_rx_callback
+#define ON_CAN_TX_CALLBACK &DependencyInjectors_on_can_tx_callback
+#define ON_ALIAS_CHANGE_CALLBACK &DependencyInjectors_alias_change_callback
 
-#include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
 
 #ifdef	__cplusplus
 extern "C" {

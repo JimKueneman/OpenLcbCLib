@@ -38,6 +38,7 @@
 
 #include "debug_tools.h"
 #include "dependency_injection.h"
+#include "dependency_injectors.h"
 #include "node_parameters.h"
 #include "ti_driverlib_can_driver.h"
 #include "ti_driverlib_drivers.h"
@@ -54,6 +55,7 @@
 #define NODE_ID 0x0501010107EE
 #define DELAY_TIME (50000000)
 
+
 int main(void) {
 
   can_msg_t can_msg;
@@ -61,6 +63,8 @@ int main(void) {
   SYSCFG_DL_init();
 
   DependencyInjection_initialize();
+  DependencyInjectors_initialize();
+
   TI_DriverLibCanDriver_initialize();
   TI_DriverLibDrivers_initialize();
 
