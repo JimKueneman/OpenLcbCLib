@@ -1,5 +1,6 @@
+
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,55 +25,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_node.h
+ * \file dependency_injectors.h
  *
- * Implementation of the OpenLcb node structures and buffers with functions to manipulate them
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 16 Nov 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_NODE__
-#define __OPENLCB_NODE__
+#ifndef __DEPENDENCY_INJECTORS__
+#define __DEPENDENCY_INJECTORS__
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
-#include "openlcb_types.h" // include processor files - each processor file is guarded.
+#include "driver/gpio.h"
 
-typedef struct
-{
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/common/can_types.h"
+#include "src/openlcb/openlcb_gridconnect.h"
 
-    // callbacks
-    void (*on_100ms_timer_tick)(void);
-
-} interface_openlcb_node_t;
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
+    extern void DependencyInjectors_initialize(void);
 
-    extern openlcb_node_t *OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t *node_parameters);
+    extern void DependencyInjectors_on_100ms_timer_callback(void);
 
-    extern openlcb_node_t *OpenLcbNode_get_first(uint8_t key);
+    extern void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg);
 
-    extern openlcb_node_t *OpenLcbNode_get_next(uint8_t key);
+    extern void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg);
 
-    extern openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias);
-
-    extern openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t nodeid);
-
-    extern void OpenLcbNode_reset_state(void);
-
-    extern void OpenLcbNode_100ms_timer_tick(void);
+    extern void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* XC_HEADER_TEMPLATE_H */
+#endif /* __DEPENDENCY_INJECTORS__ */

@@ -31,9 +31,9 @@
  * @date 27 Sept 2025
  */
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __ALIAS_MAPPINGS__
-#define	__ALIAS_MAPPINGS__
+#define __ALIAS_MAPPINGS__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -41,28 +41,29 @@
 #include "common/can_types.h"
 #include "../openlcb/openlcb_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
     extern void AliasMappings_initialize(void);
-    
+
     extern alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void);
-    
+
     extern void AliasMappings_set_has_duplicate_alias_flag(void);
-    
+
     extern alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id);
-    
+
     extern void AliasMappings_unregister(uint16_t alias);
-    
+
     extern alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias);
-    
+
     extern alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id);
 
-   
-#ifdef	__cplusplus
+    extern void AliasMappings_flush(void);
+
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __ALIAS_MAPPINGS__ */
-
+#endif /* __ALIAS_MAPPINGS__ */

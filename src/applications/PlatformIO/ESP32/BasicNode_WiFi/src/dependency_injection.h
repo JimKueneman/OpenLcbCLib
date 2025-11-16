@@ -56,6 +56,14 @@
 #define OPERATIONS_REBOOT_FUNC &Esp32Drivers_reboot
 #define OPERATIONS_FACTORY_RESET_FUNC NULL
 
+
+// Application defined injector functions, defined in dependency_injectors.h
+#define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
+#define ON_CAN_RX_CALLBACK &DependencyInjectors_on_can_rx_callback
+#define ON_CAN_TX_CALLBACK &DependencyInjectors_on_can_tx_callback
+#define ON_ALIAS_CHANGE_CALLBACK &DependencyInjectors_alias_change_callback
+
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* __cplusplus */

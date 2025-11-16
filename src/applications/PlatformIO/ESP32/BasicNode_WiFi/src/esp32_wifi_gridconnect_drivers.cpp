@@ -112,7 +112,7 @@ static void _receive_task(void *arg)
 
           OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
 
-          printf("[R] %s\n", (char *)&gridconnect_buffer);
+     //     printf("[R] %s\n", (char *)&gridconnect_buffer);
   
           CanRxStatemachine_incoming_can_driver_callback(&can_message);
 
@@ -162,7 +162,7 @@ bool Esp32WiFiGridconnectDriver_transmit_raw_can_frame(can_msg_t *msg)
 
   OpenLcbGridConnect_from_can_msg(&gridconnect_buffer, msg);
 
-  printf("[S] %s\n", (char *)&gridconnect_buffer);
+ // printf("[S] %s\n", (char *)&gridconnect_buffer);
 
   return (send(WifiTools_get_socket(), &gridconnect_buffer, strlen((char*)&gridconnect_buffer), 0) > 0);
 }

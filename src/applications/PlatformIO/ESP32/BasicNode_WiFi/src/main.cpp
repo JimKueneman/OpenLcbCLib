@@ -6,11 +6,12 @@
 
 #include "esp32_drivers.h"
 #include "esp32_wifi_gridconnect_drivers.h"
-#include "dependency_injection.h"
+
 #include "wifi_tools.h"
 #include "wifi_tools_debug.h"
-
 #include "node_parameters.h"
+#include "dependency_injectors.h"
+#include "dependency_injection.h"
 
 #include "src/drivers/alias_mappings.h"
 
@@ -53,28 +54,10 @@
 
 #define SSID "sonoita01"
 #define PASSWORD "KylieKaelyn"
-#define SERVER_IP "10.255.255.16"
+#define SERVER_IP "10.255.255.10"
 #define SERVER_PORT 12021
 #define SERVER_CONNECT_RETRY_TIME_MICROSECONDS 5000000
 
-void _on_100ms_timer_callback(void)
-{
-}
-
-static void _on_can_rx_callback(can_msg_t *can_msg)
-{
-}
-
-static void _on_can_tx_callback(can_msg_t *can_msg)
-{
-}
-
-static void _alias_change_callback(uint16_t new_alias, node_id_t node_id)
-{
-
-    printf("Alias Allocation: 0x%02X  ", new_alias);
-    printf("NodeID: 0x%06llX\n\n", node_id);
-}
 
 void setup()
 {
@@ -83,6 +66,7 @@ void setup()
 
     Serial.begin(230400);
 
+    DependencyInjectors_initialize();
     DependencyInjection_initialize();
 
     Serial.println("Setting up Drivers.....");
@@ -121,8 +105,9 @@ void loop()
             if (socket > 0) {
 
                 printf("Success connecting to Server, Socket Handle: %d\n", socket);
+                AliasMappings_flush();
+                OpenLcbNode_reset_state();
                 Esp32WiFiGridconnectDriver_start(&socket);
-                
             }
 
         }

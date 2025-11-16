@@ -33,44 +33,46 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_NODE__
-#define	__OPENLCB_NODE__
+#define __OPENLCB_NODE__
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "openlcb_types.h" // include processor files - each processor file is guarded.  
+#include "openlcb_types.h" // include processor files - each processor file is guarded.
 
-typedef struct {
-   
+typedef struct
+{
+
     // callbacks
     void (*on_100ms_timer_tick)(void);
 
 } interface_openlcb_node_t;
 
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
     extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
 
-    extern openlcb_node_t* OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t* node_parameters);
+    extern openlcb_node_t *OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t *node_parameters);
 
-    extern openlcb_node_t* OpenLcbNode_get_first(uint8_t key);
+    extern openlcb_node_t *OpenLcbNode_get_first(uint8_t key);
 
-    extern openlcb_node_t* OpenLcbNode_get_next(uint8_t key);
+    extern openlcb_node_t *OpenLcbNode_get_next(uint8_t key);
 
-    extern openlcb_node_t* OpenLcbNode_find_by_alias(uint16_t alias);
+    extern openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias);
 
-    extern openlcb_node_t* OpenLcbNode_find_by_node_id(uint64_t nodeid);
+    extern openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t nodeid);
+
+    extern void OpenLcbNode_reset_state(void);
 
     extern void OpenLcbNode_100ms_timer_tick(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* XC_HEADER_TEMPLATE_H */
-
+#endif /* XC_HEADER_TEMPLATE_H */
