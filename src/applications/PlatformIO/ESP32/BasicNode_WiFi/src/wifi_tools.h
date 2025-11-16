@@ -61,7 +61,11 @@ extern bool WiFiTools_is_connected_to_access_point(void);
 
 extern bool WiFiTools_is_connected_to_server(void);
 
-extern void WiFiTools_connect_to_server(const char *ip_address, const uint16_t port);
+extern int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port); // return the socket handle or -1 if fails
+
+extern void WiFiTools_close_server(void);
+
+extern int WifiTools_get_socket(void);
 
 #ifdef	__cplusplus
 }

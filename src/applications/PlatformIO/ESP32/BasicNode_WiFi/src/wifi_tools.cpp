@@ -86,6 +86,7 @@ typedef struct
 	uint16_t port;
 	bool is_connected_to_access_point;
 	bool is_connected_to_server;
+	int sock;
 
 } esp32_wifi_connection_info_t;
 
@@ -94,6 +95,7 @@ static esp32_wifi_info_t _esp32_wifi_info = {
 	.reconnect_timer = 0,
 	.should_reconnect = false,
 	.first_disconnect = false
+
 };
 
 static esp32_wifi_connection_info_t _esp32_wifi_connection_info = {
@@ -101,7 +103,10 @@ static esp32_wifi_connection_info_t _esp32_wifi_connection_info = {
 	.ip_address = 0x00000000,
 	.port = 12021,
 	.is_connected_to_access_point = false,
-	.is_connected_to_server = false};
+	.is_connected_to_server = false,
+    .sock = -1
+
+};
 
 static const char *TAG = "TCP SOCKET Client";
 static const char *payload = "Message from ESP32 TCP Socket Client";
@@ -190,7 +195,25 @@ bool WiFiTools_is_connected_to_server(void)
 	return _esp32_wifi_connection_info.is_connected_to_server;
 }
 
-void WiFiTools_connect_to_server(const char *ip_address, const uint16_t port)
+void WiFiTools_close_server(void) {
+
+	if (_esp32_wifi_connection_info.sock > 0) {
+
+		closesocket(_esp32_wifi_connection_info.sock);
+
+	}
+
+	_esp32_wifi_connection_info.is_connected_to_server = false;
+
+}
+
+int WifiTools_get_socket(void) {
+
+	return _esp32_wifi_connection_info.sock;
+
+}
+
+int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port)
 {
 
 	if (!_esp32_wifi_connection_info.is_connected_to_server)
@@ -209,31 +232,36 @@ void WiFiTools_connect_to_server(const char *ip_address, const uint16_t port)
 
 		printf("Creating a Socket...\n");
 
-		int sock = socket(addr_family, SOCK_STREAM, ip_protocol);
-		if (sock < 0)
+		_esp32_wifi_connection_info.sock = socket(addr_family, SOCK_STREAM, ip_protocol);
+		
+		if (_esp32_wifi_connection_info.sock < 0)
 		{
 
 			printf("Unable to create socket: errno %d\n", errno);
 			_esp32_wifi_connection_info.is_connected_to_server = false;
 
-			return;
+			return -1;
 		}
 
 		printf("Socket Created\n");
 		printf("Connecting to %s:%d\n", ip_address, port);
 
-
-		int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+		int err = connect(_esp32_wifi_connection_info.sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
 
 		if (err != 0)
 		{
 			printf("Socket unable to connect: errno %d\n", errno);
 			_esp32_wifi_connection_info.is_connected_to_server = false;
-			return;
+			closesocket(_esp32_wifi_connection_info.sock);
+
+			return -1;
 		}
 
 		printf("Successfully connected\n");
 
 		_esp32_wifi_connection_info.is_connected_to_server = true;
 	}
+
+	return _esp32_wifi_connection_info.sock;
+
 }

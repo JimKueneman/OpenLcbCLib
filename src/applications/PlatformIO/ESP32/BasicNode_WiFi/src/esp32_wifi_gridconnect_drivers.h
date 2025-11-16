@@ -50,7 +50,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void Esp32WiFiGridconnectDriver_log_into_access_point(const char * ssid, const char * pass);
+    extern void Esp32WiFiGridconnectDriver_start(int *socket);
 
     extern bool Esp32WiFiGridconnectDriver_is_can_tx_buffer_clear(void);
 
@@ -59,10 +59,6 @@ extern "C"
     extern void Esp32WiFiGridconnectDriver_resume_can_rx(void);
 
     extern bool Esp32WiFiGridconnectDriver_transmit_raw_can_frame(can_msg_t *msg);
-
-    extern bool Esp32WiFiGridconnectDriver_is_connected_to_access_point(void);
-
-    extern bool Esp32WiFiGridconnectDriver_is_connected_to_server(void);
 
 
 #ifdef __cplusplus

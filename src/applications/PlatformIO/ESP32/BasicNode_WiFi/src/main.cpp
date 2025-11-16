@@ -55,7 +55,7 @@
 #define PASSWORD "KylieKaelyn"
 #define SERVER_IP "10.255.255.16"
 #define SERVER_PORT 12021
-#define SERVER_CONNECT_RETRY_TIME_MICROSECONDS 10000
+#define SERVER_CONNECT_RETRY_TIME_MICROSECONDS 5000000
 
 void _on_100ms_timer_callback(void)
 {
@@ -81,7 +81,7 @@ void setup()
     pinMode(TEST_PIN, OUTPUT);
     pinMode(LED_BUILTIN, OUTPUT);
 
-    Serial.begin(9600);
+    Serial.begin(230400);
 
     DependencyInjection_initialize();
 
@@ -100,23 +100,34 @@ void setup()
 void loop()
 {
 
+    int socket = -1;
+
     if (WiFiTools_is_connected_to_access_point())
     {
 
         if (WiFiTools_is_connected_to_server()) {
 
-          // CanMainStateMachine_run();
-          // OpenLcbLoginMainStatemachine_run();
-          // OpenLcbMainStatemachine_run();
+           CanMainStateMachine_run();
+           OpenLcbLoginMainStatemachine_run();
+           OpenLcbMainStatemachine_run();
 
         } else {
 
             delayMicroseconds(SERVER_CONNECT_RETRY_TIME_MICROSECONDS);
-            WiFiTools_connect_to_server(SERVER_IP, SERVER_PORT);
+
+            printf("Connecting to Server.....");
+            socket = WiFiTools_connect_to_server(SERVER_IP, SERVER_PORT);
+
+            if (socket > 0) {
+
+                printf("Success connecting to Server, Socket Handle: %d\n", socket);
+                Esp32WiFiGridconnectDriver_start(&socket);
+                
+            }
 
         }
 
     }
 
-    WiFiToolsDebug_log_status();
+   // WiFiToolsDebug_log_status();
 }

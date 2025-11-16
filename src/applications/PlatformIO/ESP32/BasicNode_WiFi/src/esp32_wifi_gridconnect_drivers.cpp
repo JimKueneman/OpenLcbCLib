@@ -74,73 +74,73 @@
 #include "src/drivers/common/can_types.h"
 #include "src/openlcb/openlcb_gridconnect.h"
 #include "src/utilities/mustangpeak_string_helper.h"
+#include "src/openlcb/openlcb_gridconnect.h"
 
-// So the mutex will function
 #define INCLUDE_vTaskSuspend 1
 
-static const char *TAG = "TCP SOCKET Client";
-static const char *payload = "Message from ESP32 TCP Socket Client";
-TaskHandle_t receive_task_handle = (void *)0;
+static TaskHandle_t _receive_task_handle = NULL;
 
-void receive_task(void *arg)
+static void _receive_task(void *arg)
 {
 
-  // //  SemaphoreHandle_t local_mutex = (SemaphoreHandle_t)arg;
-  // can_msg_t can_msg;
-  // can_msg.state.allocated = 1;
+  can_msg_t can_message;
+  gridconnect_buffer_t gridconnect_buffer;
+  char *msg;
+  char next_char;
+  bool connected = WiFiTools_is_connected_to_server();
+  int socket = WifiTools_get_socket();
+  bool do_delay = true;
 
-  // char rx_buffer[128];
-  // char host_ip[] = "192.168.1.160"; // Server IP
-  // int addr_family = 0;
-  // int ip_protocol = 0;
-  // uint16_t port = 12021;
+  if (socket <= 0) {
 
-  // struct sockaddr_in dest_addr;
-
-  // inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
-  // dest_addr.sin_family = AF_INET;
-  // dest_addr.sin_port = htons(port);
-
-  // addr_family = AF_INET;
-  // ip_protocol = IPPROTO_IP;
-
-  // int sock = socket(addr_family, SOCK_STREAM, ip_protocol);
-  // if (sock < 0)
-  // {
-
-  //   ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
-
-  // }
-
-  // ESP_LOGI(TAG, "Socket created ");
-  // ESP_LOGI(TAG, "Connecting to %s:%d", host_ip, PORT);
-
-  // int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-  // if (err != 0)
-  // {
-  //   ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
-    
-  // }
-
-  // ESP_LOGI(TAG, "Successfully connected");
+    return;
+  }
 
   while (1)
   {
+       int bytes_received = recv(socket, &next_char, 1, MSG_DONTWAIT);
 
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+      // bytes_received is 0 on connection close and errno gets set to ENOTCONN (128)
+      // bytes_received is -1 when no data is received and errno is set to EAGAIN (11)
+      // bytes_received is > 0 when data is received and errno is set to EAGAIN (11) still.
+
+      if (bytes_received > 0) {
+
+        do_delay = false; // may be more coming
+
+        if (OpenLcbGridConnect_copy_out_gridconnect_when_done(next_char, &gridconnect_buffer)) {
+
+          OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
+
+          printf("[R] %s\n", (char *)&gridconnect_buffer);
+  
+          CanRxStatemachine_incoming_can_driver_callback(&can_message);
+
+        }
+      
+      } else if (bytes_received == 0) {  // error found...socket closed?
+
+        printf("return %d. errno %d\n", bytes_received, errno);
+
+        WiFiTools_close_server();
+        _receive_task_handle = NULL;
+
+        vTaskDelete(NULL);
+
+      } else {
+
+        do_delay = true;  // returned no bytes in receive so restart the delay
+
+      }
+  
+      if (do_delay) {
+
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+      }
+
   }
-}
 
-bool Esp32WiFiGridconnectDriver_is_connected_to_access_point(void)
-{
-
-  return WiFiTools_is_connected_to_access_point();
-}
-
-bool Esp32WiFiGridconnectDriver_is_connected_to_server(void)
-{
-
-  return WiFiTools_is_connected_to_server();
 }
 
 bool Esp32WiFiGridconnectDriver_is_can_tx_buffer_clear(void)
@@ -152,30 +152,52 @@ bool Esp32WiFiGridconnectDriver_is_can_tx_buffer_clear(void)
 bool Esp32WiFiGridconnectDriver_transmit_raw_can_frame(can_msg_t *msg)
 {
 
-  return true;
+  gridconnect_buffer_t gridconnect_buffer;
+  ssize_t result = 0;
+
+  if (!WiFiTools_is_connected_to_server) {
+
+    return false;
+  }
+
+  OpenLcbGridConnect_from_can_msg(&gridconnect_buffer, msg);
+
+  printf("[S] %s\n", (char *)&gridconnect_buffer);
+
+  return (send(WifiTools_get_socket(), &gridconnect_buffer, strlen((char*)&gridconnect_buffer), 0) > 0);
 }
 
 void Esp32WiFiGridconnectDriver_pause_can_rx(void)
 {
+  if(_receive_task_handle) {
 
-  vTaskSuspend(receive_task_handle);
+    vTaskSuspend(_receive_task_handle);
+
+  }
+
 }
 
 void Esp32WiFiGridconnectDriver_resume_can_rx(void)
 {
 
-  vTaskResume(receive_task_handle);
+  if (_receive_task_handle) {
+
+    vTaskResume(_receive_task_handle);
+
+  }
+
 }
 
-void Esp32WiFiGridconnectDriver_log_into_access_point(const char *ssid, const char *pass)
+void Esp32WiFiGridconnectDriver_start(int *socket)
 {
 
-
   xTaskCreate(
-      receive_task,          // [IN] function to call
-      "receive_task",        // [IN] user identifier
-      1024,                  // [IN] Stack Size
-      NULL,                  // [IN] Paramter to pass
-      10,                    // [IN] Task Priority
-      &receive_task_handle); // [OUT] Task Handle send pointer to a TaskHandle_t variable
+      _receive_task,        // [IN] function to call
+      "receive_task",       // [IN] user identifier
+      2048,                 // [IN] Stack Size
+      NULL,                 // [IN] Parameter to pass
+      10,                   // [IN] Task Priority
+      &_receive_task_handle // [OUT] Task Handle send pointer to a TaskHandle_t variable
+  );
+
 }

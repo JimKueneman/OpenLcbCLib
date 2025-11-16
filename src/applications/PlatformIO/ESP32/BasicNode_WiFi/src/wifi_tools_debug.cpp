@@ -56,14 +56,14 @@ void WiFiToolsDebug_log_status(void) {
 		_status_timer = millis();
 
 		switch (status) {
-			case WL_NO_SHIELD:			Serial.print("NO_SHIELD"); 			break; // 255
-			case WL_IDLE_STATUS:		Serial.print("IDLE_STATUS"); 		break; // 0
-			case WL_NO_SSID_AVAIL:		Serial.print("NO_SSID_AVAIL"); 		break; // 1
-			case WL_SCAN_COMPLETED:		Serial.print("SCAN_COMPLETED"); 	break; // 2
-			case WL_CONNECTED:			Serial.print("CONNECTED"); 			break; // 3
-			case WL_CONNECT_FAILED:		Serial.print("CONNECT_FAILED"); 	break; // 4
-			case WL_CONNECTION_LOST:	Serial.print("CONNECTION_LOST"); 	break; // 5
-			case WL_DISCONNECTED:		Serial.print("DISCONNECTED"); 		break; // 6		
+			case WL_NO_SHIELD:			Serial.print("AP: NO_SHIELD"); 			break; // 255
+			case WL_IDLE_STATUS:		Serial.print("AP: IDLE_STATUS"); 		break; // 0
+			case WL_NO_SSID_AVAIL:		Serial.print("AP: NO_SSID_AVAIL"); 		break; // 1
+			case WL_SCAN_COMPLETED:		Serial.print("AP: SCAN_COMPLETED"); 	break; // 2
+			case WL_CONNECTED:			Serial.print("AP: CONNECTED"); 			break; // 3
+			case WL_CONNECT_FAILED:		Serial.print("AP: CONNECT_FAILED"); 	break; // 4
+			case WL_CONNECTION_LOST:	Serial.print("AP: CONNECTION_LOST"); 	break; // 5
+			case WL_DISCONNECTED:		Serial.print("AP: DISCONNECTED"); 		break; // 6		
 		}
 
 		Serial.print("\t  rssi: ");
