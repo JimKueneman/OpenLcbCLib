@@ -64,3 +64,12 @@ cp ./utilities/*.c ./applications/TI_Thiea/MSPM03507_Launchpad/BasicNode/src/uti
 cp ./utilities/*.h ./applications/TI_Thiea/MSPM03507_Launchpad/BasicNode/src/utilities/
 
 
+
+cp ./openlcb/*.c ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/openlcb/
+cp ./openlcb/*.h ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/openlcb/
+cp ./drivers/*.c ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/drivers/
+cp ./drivers/*.h ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/drivers/
+cp ./drivers/common/*.c ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/drivers/common/
+cp ./drivers/common/*.h ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/drivers/common/
+cp ./utilities/*.c ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/utilities/
+cp ./utilities/*.h ./applications/STM32_CubeIDE/STM32F407-Discovery/BasicNode/Core/Src/src/utilities/
