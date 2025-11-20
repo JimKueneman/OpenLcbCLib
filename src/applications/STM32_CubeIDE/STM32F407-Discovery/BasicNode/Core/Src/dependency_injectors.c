@@ -33,6 +33,7 @@
 
 
 #include "dependency_injectors.h"
+#include "main.h"
 
 #include "src/openlcb/openlcb_utilities.h"
 
@@ -48,8 +49,8 @@ void DependencyInjectors_initialize(void) {
 
     if (_100ms_ticks > 5) {
 
-   //     DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);  // turn off
-   //     DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);
+    	HAL_GPIO_WritePin(CAN_RX_ORANGE_LED_GPIO_Port, CAN_RX_ORANGE_LED_Pin, GPIO_PIN_RESET); // turn off
+    	HAL_GPIO_WritePin(CAN_TX_LED_BLUE_GPIO_Port, CAN_TX_LED_BLUE_Pin, GPIO_PIN_RESET);
 
         _100ms_ticks = 0;
     }
@@ -59,23 +60,25 @@ void DependencyInjectors_initialize(void) {
 
 void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
 {
-    gridconnect_buffer_t gridconnect;
+ //   gridconnect_buffer_t gridconnect;
 
-    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char*)&gridconnect);
+ //   OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
+ //   printf("[R] %s\n", (char*)&gridconnect);
 
- //   DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);  // turn on
+    HAL_GPIO_WritePin(CAN_RX_ORANGE_LED_GPIO_Port, CAN_RX_ORANGE_LED_Pin, GPIO_PIN_SET); // turn on
+
 }
 
  void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg)
 {
 
-    gridconnect_buffer_t gridconnect;
+//    gridconnect_buffer_t gridconnect;
+//
+//    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
+//    printf("[S] %s\n", (char *)&gridconnect);
 
-    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[S] %s\n", (char *)&gridconnect);
+    HAL_GPIO_WritePin(CAN_TX_LED_BLUE_GPIO_Port, CAN_TX_LED_BLUE_Pin, GPIO_PIN_SET); // turn on
 
- //   DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);  // turn on
 }
 
  void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id)
