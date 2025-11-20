@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     while (1)
     {
         
-        usleep(25);
+        usleep(2);
         
         CanMainStateMachine_run();
         OpenLcbLoginMainStatemachine_run();

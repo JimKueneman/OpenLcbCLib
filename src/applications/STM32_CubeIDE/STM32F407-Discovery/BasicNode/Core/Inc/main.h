@@ -89,8 +89,8 @@ void Error_Handler(void);
 #define MAIN_LOOP_GREEN_LED_GPIO_Port GPIOD
 #define CAN_RX_ORANGE_LED_Pin GPIO_PIN_13
 #define CAN_RX_ORANGE_LED_GPIO_Port GPIOD
-#define LD5_Pin GPIO_PIN_14
-#define LD5_GPIO_Port GPIOD
+#define _100MS_TIMER_LED_RED_Pin GPIO_PIN_14
+#define _100MS_TIMER_LED_RED_GPIO_Port GPIOD
 #define CAN_TX_LED_BLUE_Pin GPIO_PIN_15
 #define CAN_TX_LED_BLUE_GPIO_Port GPIOD
 #define I2S3_MCK_Pin GPIO_PIN_7

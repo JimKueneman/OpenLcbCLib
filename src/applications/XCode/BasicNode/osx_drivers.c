@@ -149,43 +149,73 @@ void OSxDrivers_reboot(void)
 
 uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
+    
+    
+    char str[] = "iMac M1 on XCode";
 
-    //  printf("configmem read count: %d\n", count);
-    //  printf("configmem read address: %08lX\n", address);
+    for (int i = 0; i < count; i++) {
 
-    // printf("configmem read address: %02X\n", (*buffer)[0]);
+        (*buffer)[i] = 0x00;
 
-    // Null out the buffer in case we have no data
-    for (int i = 0; i < sizeof(*buffer); i++) {
-       
-        (*buffer)[i] = '\0';
-        
     }
-        
 
-    FILE *_file;
+    switch (address) {
 
-    _file = fopen("./config_mem.dat", "rb"); // read binary
+    case 0:
 
-    if (_file)
-    {
+        for (int i = 0; i < count; i++) {
 
-        if (fseek(_file, address, SEEK_SET) == 0)
-        {
+            (*buffer)[i] = str[i];
 
-            if (fread(buffer, 1, count, _file) == count)
-            {
-
-                fclose(_file);
-                
-                return count;
-            }
         }
 
-        fclose(_file);
+        break;
+
+    default:
+
+        break;
     }
 
-    return count; // just returning 0's
+    return count;
+    
+    
+//
+//    //  printf("configmem read count: %d\n", count);
+//    //  printf("configmem read address: %08lX\n", address);
+//
+//    // printf("configmem read address: %02X\n", (*buffer)[0]);
+//
+//    // Null out the buffer in case we have no data
+//    for (int i = 0; i < sizeof(*buffer); i++) {
+//       
+//        (*buffer)[i] = '\0';
+//        
+//    }
+//        
+//
+//    FILE *_file;
+//
+//    _file = fopen("./config_mem.dat", "rb"); // read binary
+//
+//    if (_file)
+//    {
+//
+//        if (fseek(_file, address, SEEK_SET) == 0)
+//        {
+//
+//            if (fread(buffer, 1, count, _file) == count)
+//            {
+//
+//                fclose(_file);
+//                
+//                return count;
+//            }
+//        }
+//
+//        fclose(_file);
+//    }
+//
+//    return count; // just returning 0's
 }
 
 uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
@@ -198,31 +228,33 @@ uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configura
         return 0;
         
     }
+    
+    return count;
 
-    FILE *_file;
-
-    _file = fopen("./config_mem.dat", "r+b"); // append will ONLY add to the EOF not past it but r+ will fail if the file does not exist
-    if (!_file)
-        _file = fopen("./config_mem.dat", "w+b"); // append binary
-
-    if (_file)
-    {
-
-        if (fseek(_file, address, SEEK_SET) == 0)
-        {
-
-            if (fwrite(buffer, 1, count, _file) == count)
-            {
-
-                fclose(_file);
-                return count;
-            }
-        }
-
-        fclose(_file);
-    }
-
-    return 0;
+//    FILE *_file;
+//
+//    _file = fopen("./config_mem.dat", "r+b"); // append will ONLY add to the EOF not past it but r+ will fail if the file does not exist
+//    if (!_file)
+//        _file = fopen("./config_mem.dat", "w+b"); // append binary
+//
+//    if (_file)
+//    {
+//
+//        if (fseek(_file, address, SEEK_SET) == 0)
+//        {
+//
+//            if (fwrite(buffer, 1, count, _file) == count)
+//            {
+//
+//                fclose(_file);
+//                return count;
+//            }
+//        }
+//
+//        fclose(_file);
+//    }
+//
+//    return 0;
 }
 
 void OSxDrivers_pause_100ms_timer(void)

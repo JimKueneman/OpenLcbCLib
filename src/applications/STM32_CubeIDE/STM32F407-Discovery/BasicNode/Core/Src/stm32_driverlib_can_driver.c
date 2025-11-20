@@ -98,7 +98,10 @@ void STM32_DriverLibCanDriver_pause_can_rx(void) {
 
 void STM32_DriverLibCanDriver_resume_can_rx(void) {
 
-	HAL_CAN_ActivateNotification(_hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+	HAL_CAN_ActivateNotification(_hcan1,
+				CAN_IT_TX_MAILBOX_EMPTY |
+		        CAN_IT_RX_FIFO0_MSG_PENDING
+				);
 
 }
 
@@ -116,6 +119,8 @@ bool STM32_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg) {
 		TxHeader.IDE = CAN_ID_EXT;
 		TxHeader.TransmitGlobalTime = DISABLE;
 		TxHeader.StdId = 0x00;
+
+		TxMailBox = 0;
 
 		for (int i = 0; i < msg->payload_count; i++) {  // Copy the data
 
@@ -146,6 +151,18 @@ void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan) {
 
 }
 
+void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan) {
+
+	_is_transmitting = false;
+
+}
+
+void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan) {
+
+	_is_transmitting = false;
+
+}
+
 // Override the WEAK defined version of this callback in the HAL
 // The filter only points to FIFO 0 so that is all we need.
 
@@ -155,12 +172,12 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	uint8_t aData[8];
 	can_msg_t can_msg;
 
+	memset(&RxHeader, 0x00, sizeof(RxHeader));
+	memset(&can_msg, 0x00, sizeof(can_msg));
+
 	while (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, aData) == HAL_OK) {
 
 		if ((RxHeader.IDE == CAN_ID_EXT) && (RxHeader.RTR == CAN_RTR_DATA)) {
-
-			memset(&RxHeader, 0x00, sizeof(RxHeader));
-			memset(&can_msg, 0x00, sizeof(can_msg));
 
 			can_msg.state.allocated = true;
 			can_msg.identifier = RxHeader.ExtId;

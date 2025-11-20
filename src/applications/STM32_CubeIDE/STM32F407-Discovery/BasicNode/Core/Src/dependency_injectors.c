@@ -47,6 +47,8 @@ void DependencyInjectors_initialize(void) {
     void DependencyInjectors_on_100ms_timer_callback(void)
 {
 
+    HAL_GPIO_TogglePin(_100MS_TIMER_LED_RED_GPIO_Port, _100MS_TIMER_LED_RED_Pin);
+
     if (_100ms_ticks > 5) {
 
     	HAL_GPIO_WritePin(CAN_RX_ORANGE_LED_GPIO_Port, CAN_RX_ORANGE_LED_Pin, GPIO_PIN_RESET); // turn off
