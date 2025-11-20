@@ -52,14 +52,14 @@ static CAN_HandleTypeDef *_hcan1;
 
 void STM32_DriverLibCanDriver_initialize(CAN_HandleTypeDef *hcan1) {
 
-	_hcan1 = hcan1;
-
 	CAN_FilterTypeDef RxFilter;
+
+	_hcan1 = hcan1;
 
 	RxFilter.FilterActivation = CAN_FILTER_ENABLE;
 	RxFilter.FilterBank = 0;
 	RxFilter.SlaveStartFilterBank = 0;
-	RxFilter.FilterFIFOAssignment = CAN_RX_FIFO0;
+	RxFilter.FilterFIFOAssignment = CAN_RX_FIFO0;  // send to FIFO0
 	RxFilter.FilterIdHigh = 0;
 	RxFilter.FilterIdLow = 0;
 	RxFilter.FilterMaskIdHigh = 0;
@@ -74,8 +74,9 @@ void STM32_DriverLibCanDriver_initialize(CAN_HandleTypeDef *hcan1) {
 
 	// Enabled Interrupts
 	HAL_CAN_ActivateNotification(hcan1,
-	CAN_IT_TX_MAILBOX_EMPTY |
-	CAN_IT_RX_FIFO0_MSG_PENDING);
+			CAN_IT_TX_MAILBOX_EMPTY |
+	        CAN_IT_RX_FIFO0_MSG_PENDING
+			);
 
 }
 
@@ -97,9 +98,7 @@ void STM32_DriverLibCanDriver_pause_can_rx(void) {
 
 void STM32_DriverLibCanDriver_resume_can_rx(void) {
 
-	HAL_CAN_ActivateNotification(_hcan1,
-	CAN_IT_TX_MAILBOX_EMPTY |
-	CAN_IT_RX_FIFO0_MSG_PENDING);
+	HAL_CAN_ActivateNotification(_hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
 }
 
@@ -124,8 +123,7 @@ bool STM32_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg) {
 
 		}
 
-		if (HAL_CAN_AddTxMessage(_hcan1, &TxHeader, aData, &TxMailBox)
-				== HAL_OK) {
+		if (HAL_CAN_AddTxMessage(_hcan1, &TxHeader, aData, &TxMailBox) == HAL_OK) {
 
 			_is_transmitting = true;
 

@@ -25,6 +25,23 @@
 
 #include "stdio.h"
 
+
+#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/common/can_rx_statemachine.h"
+#include "src/drivers/common/can_tx_statemachine.h"
+#include "src/drivers/common/can_types.h"
+#include "src/drivers/common/can_utilities.h"
+#include "src/openlcb/openlcb_login_statemachine.h"
+#include "src/openlcb/openlcb_main_statemachine.h"
+#include "src/openlcb/openlcb_node.h"
+
+#include "stm32_driverlib_can_driver.h"
+#include "stm32_driverlib_drivers.h"
+#include "debug_tools.h"
+#include "dependency_injection.h"
+#include "dependency_injectors.h"
+#include "node_parameters.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,6 +51,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define NODE_ID 0x0501010107EE
+#define DELAY_TIME (50000000)
 
 /* USER CODE END PD */
 
@@ -145,6 +165,16 @@ int main(void)
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 
+  DependencyInjection_initialize();
+  DependencyInjectors_initialize();
+
+  STM32_DriverLibCanDriver_initialize(&hcan1);
+  STM32_DriverLibDrivers_initialize(&htim7);
+
+  printf("Booted\n");
+
+  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+
 
   /* USER CODE END 2 */
 
@@ -158,13 +188,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+    CanMainStateMachine_run();
+    OpenLcbLoginMainStatemachine_run();
+    OpenLcbMainStatemachine_run();
 
-    HAL_Delay(2000);
-
-    HAL_GPIO_TogglePin(LED_RED_GPIO_PORT, LED_RED);
-
-
-    HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE, GPIO_PIN_SET);
 
   }
   /* USER CODE END 3 */

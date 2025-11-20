@@ -41,11 +41,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "./stm32_driverlib_can_driver.h"
+#include "stm32_driverlib_can_driver.h"
 #include "stm32_driverlib_drivers.h"
+#include "dependency_injectors.h"
 
 #include "src/openlcb/openlcb_types.h"
 #include "src/drivers/common/can_types.h"
+
 
 // Application defined function pointer to connect to the OpenLcbCLib
 #define TRANSMIT_CAN_FRAME_FUNC &STM32_DriverLibCanDriver_transmit_can_frame
