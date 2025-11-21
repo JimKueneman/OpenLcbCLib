@@ -718,9 +718,8 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_space_config_mem_bad_size_param
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
-    *incoming_msg->payload[7] = 64 + 1; // Invalid number of bytes to read
-    incoming_msg->payload_count = 8;
-
+    incoming_msg->payload_count = 64 + 7 + 1;  // Invalid number of bytes to read
+ 
     // *****************************************
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
@@ -731,7 +730,7 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_space_config_mem_bad_size_param
 
     // *****************************************
     _reset_variables();
-    *incoming_msg->payload[7] = 0; // Invalid number of bytes to read
+    incoming_msg->payload_count = 7; // Invalid number of bytes to read (zero bytes)
 
     ProtocolConfigMemWriteHandler_write_space_config_memory(&statemachine_info);
 
@@ -747,16 +746,6 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_space_config_mem_bad_size_param
 
     EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
     EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
-
-    // *****************************************
-    _reset_variables();
-    *incoming_msg->payload[7] = 0; // Invalid number of bytes to write
-    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-
-    ProtocolConfigMemWriteHandler_write_space_config_memory(&statemachine_info);
-
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
     // *****************************************
     _reset_variables();
@@ -835,8 +824,7 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_spaces)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
-    *incoming_msg->payload[7] = 64;
-    incoming_msg->payload_count = 8;
+    incoming_msg->payload_count = 64 + 7;
 
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
@@ -1014,8 +1002,7 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_spaces_delayed)
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
     *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO;
-    *incoming_msg->payload[7] = 64;
-    incoming_msg->payload_count = 8;
+    incoming_msg->payload_count = 64 + 7;
 
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
@@ -1067,8 +1054,7 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_space_config_description_short_
     *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_FF;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
-    *incoming_msg->payload[6] = 64;
-    incoming_msg->payload_count = 7;
+    incoming_msg->payload_count = 64 + 6;
 
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 
