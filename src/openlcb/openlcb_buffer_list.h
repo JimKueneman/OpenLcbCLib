@@ -1,5 +1,8 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * 
+ * **NOTE - Applications rarely need to access these functions directly**
+ * 
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,11 +29,13 @@
  *
  * \file openlcb_buffer_list.h
  *
- * A linear search list that the incoming CAN Rx module uses to hold messages that
- * are being collected into a single OpenLcb message on the CAN bus.
- *
+ * A buffer list that can hold openlcb message structures.  Used to hold
+ * messages that are coming in using a CAN physical layer adaptation of the openlcb 
+ * message where it can be sent in 1 or many frames.  This buffer can hold partially 
+ * received messages until they are fully assembled
+ * 
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 14 Dec 2025
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -48,18 +53,63 @@ extern "C"
 {
 #endif /* __cplusplus */
 
+    /**
+     * @brief Initializes the OpenLcb Message Buffer List
+     * @brief This must always be called at the beginning of the application execution
+     * 
+     * @param none
+     * 
+     * @return none
+     */
     extern void OpenLcbBufferList_initialize(void);
 
+    /**
+     * @brief Inserts a new OpenLcb message into the buffer at the first open slot 
+     *   see \ref OpenLcbBufferStore_allocate_buffer() 
+     * 
+     * @param openlcb_msg_t *new_msg [in] - Pointer to a message allocated from the OpenLcb Buffer Pool
+     * 
+     * @return *openlcb_msg_t - Pointer to the message or NULL if it fails
+     */
     extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
+    /**
+     * @brief Searches the buffer for a message that matches the passed parameters
+     * 
+     * @param uint16_t source_alias [in] - the CAN alias of the node sending the message frame
+     * @param uint16_t dest_alias   [in] - the CAN alias of the node receiving the message frame
+     * @param uint16_t mti          [in] - the CAN MTI code of the message frame type
+     * 
+     * @return *openlcb_msg_t - Pointer to the message or NULL if the buffer is empty
+     */
     extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
-    extern bool OpenLcbBufferList_free(openlcb_msg_t *msg);
-
+    /**
+     * @brief Removes an OpenLcb message from the buffer, the caller is responsible for freeing the message
+     *   see \ref OpenLcbBufferStore_free_buffer() 
+     * 
+     * @param openlcb_msg_t *new_msg [in] - Pointer to a message to be released from the list
+     * 
+     * @return *openlcb_msg_t - Pointer to the message or NULL if the message does not exist
+     */
     extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 
+    /**
+     * @brief Returns a Pointer to the message at the passed index
+     * 
+     * @param uint16_t index [in] - Index of the message requested
+     * 
+     * @return *openlcb_msg_t - Pointer to the message at the passed index or NULL if the index is out of bounds or the list slot is empty
+     */
     extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
+    /**
+     * @brief Test to see if there are any messages stored in the buffer list
+     * 
+     * @param none
+     * 
+     * @return bool - True if the list is empty False if there is a least one non NULL message pointer in the list
+     */
     extern bool OpenLcbBufferList_is_empty(void);
 
 #ifdef __cplusplus

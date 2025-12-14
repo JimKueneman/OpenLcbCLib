@@ -220,7 +220,7 @@ void CanRxMessageHandler_last_frame(can_msg_t* can_msg, uint8_t can_buffer_start
     target_openlcb_msg->state.inprocess = false;
 
     OpenLcbBufferList_release(target_openlcb_msg);
-    OpenLcbBufferFifo_push_existing(target_openlcb_msg);
+    OpenLcbBufferFifo_push(target_openlcb_msg);
 
 }
 

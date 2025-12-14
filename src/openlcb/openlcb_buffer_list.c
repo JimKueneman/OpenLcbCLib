@@ -94,31 +94,6 @@ openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias
     return NULL;
 }
 
-bool OpenLcbBufferList_free(openlcb_msg_t *msg) {
-
-    if (!msg) {
-        
-        return false;
-        
-    }
-        
-    for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {
-
-        if (_openlcb_msg_buffer_list[i] == msg) {
-
-            _openlcb_msg_buffer_list[i] = NULL;
-
-            OpenLcbBufferStore_free_buffer(msg);
-
-            return true;
-
-        }
-
-    }
-
-    return false;
-}
-
 openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
 
     if (!msg) {

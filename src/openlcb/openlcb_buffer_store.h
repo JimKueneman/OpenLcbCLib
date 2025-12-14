@@ -1,5 +1,8 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * 
+ * **NOTE - Applications rarely need to access these functions directly**
+ * 
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,9 +34,10 @@
  * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
  * so care must be taken to Pause and Resume those calls if the main loop needs to
  * access the buffers.
+ * 
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 14 Dec 2025
  */
 
 // This is a guard condition so that contents of this file are not included
