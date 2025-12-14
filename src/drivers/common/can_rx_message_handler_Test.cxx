@@ -1436,7 +1436,8 @@ TEST(CanRxMessageHandler, handle_first_frame_frame)
     EXPECT_NE(openlcb_msg, nullptr);
     uint8_t bytes[6] = {0x04, 0x4D, 0x75, 0x73, 0x74, 0x61};
     EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, MTI_SIMPLE_NODE_INFO_REPLY, 0x0000, SOURCE_ALIAS, 0x0000, NODE_ALIAS_2, 6, bytes));
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
 
@@ -1461,7 +1462,8 @@ TEST(CanRxMessageHandler, handle_first_frame_frame)
 
     openlcb_msg = OpenLcbBufferList_find(SOURCE_ALIAS, NODE_ALIAS_2, MTI_SIMPLE_NODE_INFO_REPLY);
     EXPECT_NE(openlcb_msg, nullptr);
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
 
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -1509,7 +1511,8 @@ TEST(CanRxMessageHandler, handle_first_frame_frame)
 
     uint8_t bytes3[8] = {0x20, 0x53, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x3F};
     EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, 0x1C48, 0x0000, SOURCE_ALIAS, 0x0000, NODE_ALIAS_1, 8, bytes3));
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
 
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -1535,7 +1538,8 @@ TEST(CanRxMessageHandler, handle_first_frame_frame)
 
     openlcb_msg = OpenLcbBufferList_find(SOURCE_ALIAS, NODE_ALIAS_1, MTI_DATAGRAM);
     EXPECT_NE(openlcb_msg, nullptr);
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
 
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
@@ -1743,7 +1747,8 @@ TEST(CanRxMessageHandler, multi_frame_sequence_snip_frame)
                          0x37, 0x2E, 0x30, 0x37, 0x35, 0x37,
                          0x31, 0x38, 0x00, 0x02, 0x00, 0x00};
     EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, 0x0A08, 0x0000, 0x6be, 0x0000, 0x999, 66, bytes));
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
 }
@@ -1790,7 +1795,8 @@ TEST(CanRxMessageHandler, multi_frame_sequence_datagram_frame)
                          0x69, 0x6F, 0x6E, 0x3D, 0x22, 0x31, 0x2E, 0x30,
                          0x22, 0x20};
     EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, 0x1C48, 0x0000, 0x6be, 0x0000, 0x777, 26, bytes));
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
 
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -1856,7 +1862,8 @@ TEST(CanRxMessageHandler, multi_frame_sequence_legacy_snip_frame)
                          0x37, 0x2E, 0x30, 0x37, 0x35, 0x37,
                          0x31, 0x38, 0x00, 0x02, 0x00, 0x00};
     EXPECT_TRUE(_compare_openlcb_msg(openlcb_msg, 0x0A08, 0x0000, 0x6be, 0x0000, 0x999, 66, bytes));
-    OpenLcbBufferList_free(openlcb_msg);
+    OpenLcbBufferList_release(openlcb_msg);
+    OpenLcbBufferStore_free_buffer(openlcb_msg);
     EXPECT_TRUE(CanBufferFifo_is_empty());
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
 }

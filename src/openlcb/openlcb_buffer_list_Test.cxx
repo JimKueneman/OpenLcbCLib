@@ -46,7 +46,8 @@ TEST(OpenLcbBufferList, allocate_free)
     EXPECT_EQ(added_msg, msg);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
 
-    EXPECT_TRUE(OpenLcbBufferList_free(msg));
+    EXPECT_TRUE(OpenLcbBufferList_release(msg));
+    OpenLcbBufferStore_free_buffer(msg);
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
 }
 
@@ -62,7 +63,7 @@ TEST(OpenLcbBufferList, free_invalid)
     EXPECT_EQ(added_msg, &msg);
     EXPECT_FALSE(OpenLcbBufferList_is_empty());
 
-    EXPECT_FALSE(OpenLcbBufferList_free(&msg + 10));
+    EXPECT_FALSE(OpenLcbBufferList_release(&msg + 10));
 
     EXPECT_TRUE(OpenLcbBufferList_release(&msg));
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -114,7 +115,8 @@ TEST(OpenLcbBufferList, allocate_index_of)
 
     for (int i = 0; i < LOOP_COUNT; i++)
     {
-        OpenLcbBufferList_free(msg_array[i]);
+        OpenLcbBufferList_release(msg_array[i]);
+        OpenLcbBufferStore_free_buffer(msg_array[i]);
     }
 
     EXPECT_TRUE(OpenLcbBufferList_is_empty());
@@ -128,7 +130,7 @@ TEST(OpenLcbBufferList, release_null)
     openlcb_msg_t *msg = nullptr;
     EXPECT_EQ(OpenLcbBufferList_release(msg), nullptr);
 
-    EXPECT_FALSE(OpenLcbBufferList_free(msg));
+    EXPECT_FALSE(OpenLcbBufferList_release(msg));
 }
 
 TEST(OpenLcbBufferList, release_stress)
