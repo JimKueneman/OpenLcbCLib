@@ -1,8 +1,16 @@
-/** \copyright
+/** 
  * 
- * **NOTE - Applications rarely need to access these functions directly**
+ * @subsection Description
  * 
- * Copyright (c) 2025, Jim Kueneman
+ * Implementation of the FIFO where the OpenLcb messages are placed by the receive
+ * module.  The main loop pulls them out one at a time and dispatched them to the handlers. 
+ * 
+ * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
+ *  
+ * @subsection License
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,18 +34,12 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * \file openlcb_buffer_fifo.h
- *
- * Implementation of the FIFO where the OpenLcb messages are placed by the receive
- * module.  The main loop pulls them out one at a time and dispatched them to the handlers.
- * Caution is required as the receive module may be putting new messages in within the
- * context of an interrupt or thread so when the main loop access this buffer it must
- * use the lock resources Can Rx and 100ms timer modules with the Pause and Resume functions
- * exported by them respectively.
  * 
+ * @copyright Copyright (c) 2025, Jim Kueneman
  * @author Jim Kueneman
  * @date 14 Dec 2025
+ * @file openlcb_buffer_fifo.h
+ *
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -55,12 +57,13 @@ extern "C" {
 #endif /* __cplusplus */
     
     /**
-     * @brief Initializes the OpenLcb Message Buffer FIFO
-     * @brief This must always be called at the beginning of the application execution
+     * @brief Initializes the OpenLcb Message Buffer FIFO<br>
      * 
      * @param none
      * 
      * @return none
+     * 
+     * @note This must always be called during application initialization
      */
     extern void OpenLcbBufferFifo_initialize(void);
     

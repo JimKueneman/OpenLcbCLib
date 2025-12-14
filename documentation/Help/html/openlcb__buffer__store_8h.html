@@ -103,70 +103,50 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aaa929fa9f3796aa554fb29771116b864" id="r_aaa929fa9f3796aa554fb29771116b864"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa929fa9f3796aa554fb29771116b864">OpenLcbBufferStore_initialize</a> (void)</td></tr>
-<tr class="memdesc:aaa929fa9f3796aa554fb29771116b864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Buffer Store.  <br /></td></tr>
 <tr class="separator:aaa929fa9f3796aa554fb29771116b864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56857b0d3eaed4ee651e9ac794cad201" id="r_a56857b0d3eaed4ee651e9ac794cad201"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56857b0d3eaed4ee651e9ac794cad201">OpenLcbBufferStore_allocate_buffer</a> (<a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> payload_type)</td></tr>
-<tr class="memdesc:a56857b0d3eaed4ee651e9ac794cad201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new buffer of the type passed.  <br /></td></tr>
 <tr class="separator:a56857b0d3eaed4ee651e9ac794cad201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a678e335cc01529581d2b7e69ae0ad023" id="r_a678e335cc01529581d2b7e69ae0ad023"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:a678e335cc01529581d2b7e69ae0ad023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the buffer so it can be reused.<br  />
- <b>NOTE</b> the buffers are reference counted (see <a class="el" href="#aec01e595ccfb614dfcb901aa443a5598">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse.  <br /></td></tr>
 <tr class="separator:a678e335cc01529581d2b7e69ae0ad023"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8a5aa017d1dc54ceda7f0fa7c47d709" id="r_ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8a5aa017d1dc54ceda7f0fa7c47d709">OpenLcbBufferStore_basic_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Basic messages currently allocated in the buffer store.  <br /></td></tr>
 <tr class="separator:ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f3a667dbdbbf14793cadeb40b545331" id="r_a4f3a667dbdbbf14793cadeb40b545331"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f3a667dbdbbf14793cadeb40b545331">OpenLcbBufferStore_basic_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a4f3a667dbdbbf14793cadeb40b545331"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of Basic messages that have been allocated in the buffer store. Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
 <tr class="separator:a4f3a667dbdbbf14793cadeb40b545331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a775b6eb9b94b465a263a76b969cad4d3" id="r_a775b6eb9b94b465a263a76b969cad4d3"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a775b6eb9b94b465a263a76b969cad4d3">OpenLcbBufferStore_datagram_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a775b6eb9b94b465a263a76b969cad4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Datagram messages currently allocated in the buffer store.  <br /></td></tr>
 <tr class="separator:a775b6eb9b94b465a263a76b969cad4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa047102a7e56925413814ead6e493723" id="r_aa047102a7e56925413814ead6e493723"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa047102a7e56925413814ead6e493723">OpenLcbBufferStore_datagram_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:aa047102a7e56925413814ead6e493723"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of Datagram messages that have been allocated in the buffer store. Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
 <tr class="separator:aa047102a7e56925413814ead6e493723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e17b0f879f93af66cd832a2f6c4c801" id="r_a5e17b0f879f93af66cd832a2f6c4c801"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e17b0f879f93af66cd832a2f6c4c801">OpenLcbBufferStore_snip_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a5e17b0f879f93af66cd832a2f6c4c801"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of SNIP message currently allocated in the buffer store.  <br /></td></tr>
 <tr class="separator:a5e17b0f879f93af66cd832a2f6c4c801"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1300bfb3d8db0268f6aa3024c87d464c" id="r_a1300bfb3d8db0268f6aa3024c87d464c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1300bfb3d8db0268f6aa3024c87d464c">OpenLcbBufferStore_snip_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a1300bfb3d8db0268f6aa3024c87d464c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of SNIP messages that have been allocated in the buffer store. Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
 <tr class="separator:a1300bfb3d8db0268f6aa3024c87d464c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8263b6b25707d7cbd8040128d14800c0" id="r_a8263b6b25707d7cbd8040128d14800c0"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8263b6b25707d7cbd8040128d14800c0">OpenLcbBufferStore_stream_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a8263b6b25707d7cbd8040128d14800c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Stream message buffers currently allocated in the buffer store.  <br /></td></tr>
 <tr class="separator:a8263b6b25707d7cbd8040128d14800c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ca556cbdeaa4f86800156e103c872fa" id="r_a3ca556cbdeaa4f86800156e103c872fa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ca556cbdeaa4f86800156e103c872fa">OpenLcbBufferStore_stream_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a3ca556cbdeaa4f86800156e103c872fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of Stream messages that have been allocated in the buffer store. Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
 <tr class="separator:a3ca556cbdeaa4f86800156e103c872fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec01e595ccfb614dfcb901aa443a5598" id="r_aec01e595ccfb614dfcb901aa443a5598"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec01e595ccfb614dfcb901aa443a5598">OpenLcbBufferStore_inc_reference_count</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="memdesc:aec01e595ccfb614dfcb901aa443a5598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the reference count on the allocated buffer. When <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)</a> is called it is only freed when the reference count reaches zero.  <br /></td></tr>
 <tr class="separator:aec01e595ccfb614dfcb901aa443a5598"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad94eea5a323ffed37a490fdf71ea9d55" id="r_ad94eea5a323ffed37a490fdf71ea9d55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad94eea5a323ffed37a490fdf71ea9d55">OpenLcbBufferStore_clear_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:ad94eea5a323ffed37a490fdf71ea9d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the running count of the Maximum number of buffer of each type allocated.  <br /></td></tr>
 <tr class="separator:ad94eea5a323ffed37a490fdf71ea9d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd></dd></dl>
-<p><b>NOTE - Applications rarely need to access these functions directly</b></p>
-<p>Copyright (c) 2025, Jim Kueneman All rights reserved.</p>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implements the core buffers for normal, snip, datagram, and stream length buffers. The FIFO and List buffers are arrays of pointers to these core buffers that are allocated and freed. The CAN Rx and 100ms timer access these buffers so care must be taken to Pause and Resume those calls if the main loop needs to access the buffers.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>14 Dec 2025</dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implements the core buffers for normal, snip, datagram, and stream length buffers. The FIFO and List buffers are arrays of pointers to these core buffers that are allocated and freed through access. The CAN Rx and 100ms timer access these buffers so care must be taken to Pause and Resume those calls if the main loop needs to access the buffers. <br  />
+<div class="textblock"><h2><a class="anchor" id="Description"></a>
+Description</h2>
+<p>Implements the core buffers for normal, snip, datagram, and stream length buffers. The FIFO and List buffers are arrays of pointers to these core buffers that are allocated and freed. <br  />
 </p>
+<dl class="section note"><dt>Note</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason.</dd></dl>
+<h2><a class="anchor" id="License"></a>
+License</h2>
+<p>All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025, Jim Kueneman </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>14 Dec 2025 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a56857b0d3eaed4ee651e9ac794cad201" name="a56857b0d3eaed4ee651e9ac794cad201"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a56857b0d3eaed4ee651e9ac794cad201">&#9670;&#160;</a></span>OpenLcbBufferStore_allocate_buffer()</h2>
@@ -388,14 +368,18 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Frees the buffer so it can be reused.<br  />
- <b>NOTE</b> the buffers are reference counted (see <a class="el" href="#aec01e595ccfb614dfcb901aa443a5598">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse. </p>
+ </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<ul>
+<li><dl class="section note"><dt>Note</dt><dd>The buffers are reference counted (see <a class="el" href="#aec01e595ccfb614dfcb901aa443a5598">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse </dd></dl>
+</li>
+</ul>
 
 </div>
 </div>
@@ -422,14 +406,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Increases the reference count on the allocated buffer. When <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)</a> is called it is only freed when the reference count reaches zero. </p>
+<p>Increases the reference count on the allocated buffer. <br  />
+ </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>When <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)</a> is called it is only freed when the reference count reaches zero </dd></dl>
 
 </div>
 </div>
@@ -456,15 +442,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the OpenLcb Buffer Store. </p>
-<p>This must always be called at the beginning of the application execution</p>
+<p>Initializes the OpenLcb Buffer Store<br  />
+ </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">none</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>

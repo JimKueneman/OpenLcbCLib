@@ -103,35 +103,35 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ad977454a2b373e1e67d269232e41db3b" id="r_ad977454a2b373e1e67d269232e41db3b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad977454a2b373e1e67d269232e41db3b">OpenLcbBufferList_initialize</a> (void)</td></tr>
-<tr class="memdesc:ad977454a2b373e1e67d269232e41db3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Message Buffer List.  <br /></td></tr>
 <tr class="separator:ad977454a2b373e1e67d269232e41db3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb62e6cfb246eaeea5cb13e9df3cf4f7" id="r_aeb62e6cfb246eaeea5cb13e9df3cf4f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb62e6cfb246eaeea5cb13e9df3cf4f7">OpenLcbBufferList_add</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *new_msg)</td></tr>
-<tr class="memdesc:aeb62e6cfb246eaeea5cb13e9df3cf4f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts a new OpenLcb message into the buffer at the first open slot see <a class="el" href="openlcb__buffer__store_8h.html#a56857b0d3eaed4ee651e9ac794cad201">OpenLcbBufferStore_allocate_buffer()</a>  <br /></td></tr>
 <tr class="separator:aeb62e6cfb246eaeea5cb13e9df3cf4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3588df82dfb9547d9150cb4350f3710" id="r_ac3588df82dfb9547d9150cb4350f3710"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3588df82dfb9547d9150cb4350f3710">OpenLcbBufferList_find</a> (uint16_t source_alias, uint16_t dest_alias, uint16_t mti)</td></tr>
-<tr class="memdesc:ac3588df82dfb9547d9150cb4350f3710"><td class="mdescLeft">&#160;</td><td class="mdescRight">Searches the buffer for a message that matches the passed parameters.  <br /></td></tr>
 <tr class="separator:ac3588df82dfb9547d9150cb4350f3710"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5f7c4484feef516fc703ae7fa38ec6c" id="r_ab5f7c4484feef516fc703ae7fa38ec6c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5f7c4484feef516fc703ae7fa38ec6c">OpenLcbBufferList_release</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:ab5f7c4484feef516fc703ae7fa38ec6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an OpenLcb message from the buffer, the caller is responsible for freeing the message see <a class="el" href="openlcb__buffer__store_8h.html#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer()</a>  <br /></td></tr>
 <tr class="separator:ab5f7c4484feef516fc703ae7fa38ec6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a293cd4aa8d64db386fc6de0b524a80bf" id="r_a293cd4aa8d64db386fc6de0b524a80bf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a293cd4aa8d64db386fc6de0b524a80bf">OpenLcbBufferList_index_of</a> (uint16_t index)</td></tr>
-<tr class="memdesc:a293cd4aa8d64db386fc6de0b524a80bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a Pointer to the message at the passed index.  <br /></td></tr>
 <tr class="separator:a293cd4aa8d64db386fc6de0b524a80bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab15c0df7469df0e2203f3a67bc3620af" id="r_ab15c0df7469df0e2203f3a67bc3620af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab15c0df7469df0e2203f3a67bc3620af">OpenLcbBufferList_is_empty</a> (void)</td></tr>
-<tr class="memdesc:ab15c0df7469df0e2203f3a67bc3620af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test to see if there are any messages stored in the buffer list.  <br /></td></tr>
 <tr class="separator:ab15c0df7469df0e2203f3a67bc3620af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd></dd></dl>
-<p><b>NOTE - Applications rarely need to access these functions directly</b></p>
-<p>Copyright (c) 2025, Jim Kueneman All rights reserved.</p>
+<div class="textblock"><h2><a class="anchor" id="Description"></a>
+Description</h2>
+<p>A buffer list that can hold openlcb message structures. Used to hold messages that are coming in using a CAN physical layer adaptation of the openlcb message where it can be sent in 1 or many frames. This buffer can hold partially received messages until they are fully assembled</p>
+<dl class="section note"><dt>Note</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason.</dd>
+<dd>
+This is an internal list and the Application should not access it</dd></dl>
+<h2><a class="anchor" id="License"></a>
+License</h2>
+<p>All rights reserved.</p>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>A buffer list that can hold openlcb message structures. Used to hold messages that are coming in using a CAN physical layer adaptation of the openlcb message where it can be sent in 1 or many frames. This buffer can hold partially received messages until they are fully assembled</p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025, Jim Kueneman </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>14 Dec 2025 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -271,15 +271,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the OpenLcb Message Buffer List. </p>
-<p>This must always be called at the beginning of the application execution</p>
+<p>Initializes the OpenLcb Message Buffer List<br  />
+ </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">none</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>

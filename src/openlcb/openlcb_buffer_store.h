@@ -1,8 +1,17 @@
-/** \copyright
+/** 
  * 
- * **NOTE - Applications rarely need to access these functions directly**
+ * @subsection Description
  * 
- * Copyright (c) 2025, Jim Kueneman
+ * Implements the core buffers for normal, snip, datagram, and stream length buffers.
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are
+ * allocated and freed.  
+ * 
+ * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
+ *  
+ * @subsection License
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,18 +35,12 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * \file openlcb_buffer_store.h
- *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are
- * allocated and freed.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to
- * access the buffers.
  * 
- *
+ * @copyright Copyright (c) 2025, Jim Kueneman
  * @author Jim Kueneman
  * @date 14 Dec 2025
+ * @file openlcb_buffer_store.h
+ *
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -51,17 +54,17 @@
 #include "openlcb_types.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the OpenLcb Buffer Store
-     * @brief This must always be called at the beginning of the application execution
+     * @brief Initializes the OpenLcb Buffer Store<br>
      * 
      * @param none
      * 
      * @return none
+     * 
+     * @note This must always be called during application initialization
      */
     extern void OpenLcbBufferStore_initialize(void);
 
@@ -76,14 +79,15 @@ extern "C"
 
     /**
      * @brief Frees the buffer so it can be reused.<br>
-     * **NOTE** the buffers are reference counted
-     * (see \ref OpenLcbBufferStore_inc_reference_count) so this call may or may not actually
-     * release that buffer slot for reuse.  If the count drops to zero then it will be released 
-     * for reuse
      * 
      * @param openlcb_msg_t *msg [in] - Pointer to a message to be freed
      * 
      * @return none
+     * 
+     * * @note The buffers are reference counted
+     * (see \ref OpenLcbBufferStore_inc_reference_count) so this call may or may not actually
+     * release that buffer slot for reuse.  If the count drops to zero then it will be released 
+     * for reuse
      */
     extern void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg);
 
@@ -164,17 +168,18 @@ extern "C"
     extern uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void);
 
     /**
-     * @brief Increases the reference count on the allocated buffer.  When 
-     * \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) is called it is only
-     * freed when the reference count reaches zero
+     * @brief Increases the reference count on the allocated buffer.  
      * 
      * @param openlcb_msg_t *msg [in] - Pointer to a message to be freed
      * 
      * @return none
+     * 
+     * @note When \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) is called it is only
+     * freed when the reference count reaches zero
      */
     extern void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg);
 
-    
+
     /**
      * @brief Resets the running count of the Maximum number of buffer of each type allocated
      * 

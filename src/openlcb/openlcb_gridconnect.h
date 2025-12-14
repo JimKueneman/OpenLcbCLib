@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_buffer_store.h
+ * @file openlcb_gridconnect.h
  *
  * Implements the core buffers for normal, snip, datagram, and stream length buffers.
  * The FIFO and List buffers are arrays of pointers to these core buffers that are 
