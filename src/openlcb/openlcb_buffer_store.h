@@ -45,8 +45,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_BUFFER_STORE__
-#define __OPENLCB_BUFFER_STORE__
+#ifndef __OPENLCB_OPENLCB_BUFFER_STORE__
+#define __OPENLCB_OPENLCB_BUFFER_STORE__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -177,11 +177,10 @@ extern "C" {
      * @note When \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) is called it is only
      * freed when the reference count reaches zero
      */
-    extern void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg);
-
+    extern void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *msg);
 
     /**
-     * @brief Resets the running count of the Maximum number of buffer of each type allocated
+     * @brief Resets the running count of the Maximum number of buffer of each type have been allocated at a one time
      * 
      * @param none
      * 
@@ -193,4 +192,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_BUFFER_STORE__ */
+#endif /* __OPENLCB_OPENLCB_BUFFER_STORE__ */

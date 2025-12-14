@@ -1,6 +1,7 @@
 #include "test/main_Test.hxx"
 
 #include "can_buffer_store.h"
+#include "can_utilities.h"
 #include "can_types.h"
 
 TEST(CAN_BufferStore, nitialize)
@@ -64,7 +65,7 @@ TEST(CAN_BufferStore, clear_message)
             can_msg->payload[i] = i;
         }
 
-        CanBufferStore_clear_can_message(can_msg);
+        CanUtilities_clear_can_message(can_msg);
 
         EXPECT_EQ(can_msg->identifier, 0);
         EXPECT_EQ(can_msg->payload_count, 0);

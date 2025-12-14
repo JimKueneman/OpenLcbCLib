@@ -32,8 +32,8 @@
  */
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __ALIAS_MAPPINGS__
-#define __ALIAS_MAPPINGS__
+#ifndef __DRIVERS_ALIAS_MAPPINGS__
+#define __DRIVERS_ALIAS_MAPPINGS__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -66,4 +66,4 @@ extern "C"
 }
 #endif /* __cplusplus */
 
-#endif /* __ALIAS_MAPPINGS__ */
+#endif /* __DRIVERS_ALIAS_MAPPINGS__ */

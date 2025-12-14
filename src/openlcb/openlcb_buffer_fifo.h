@@ -44,8 +44,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_FIFO__
-#define __OPENLCB_FIFO__
+#ifndef __OPENLCB_OPENLCB_FIFO__
+#define __OPENLCB_OPENLCB_FIFO__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -67,6 +67,7 @@ extern "C" {
      */
     extern void OpenLcbBufferFifo_initialize(void);
     
+    
      /**
      * @brief Pushes a new OpenLcb message into the FIFO buffer that was allocated 
      *   see \ref OpenLcbBufferStore_allocate_buffer()
@@ -80,7 +81,7 @@ extern "C" {
     
     /**
      * @brief Pops a OpenLcb message off the FIFO buffer.  The caller is responsible to free the message when done 
-     *   see \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg)
+     *   see \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)
      * 
      * @param none
      * 
@@ -113,4 +114,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_FIFO__ */
+#endif /* __OPENLCB_OPENLCB_FIFO__ */

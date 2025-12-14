@@ -37,8 +37,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __ECAN1_HELPER__
-#define	__ECAN1_HELPER__
+#ifndef __DSPIC_COMMON_ECAN1_HELPER__
+#define	__DSPIC_COMMON_ECAN1_HELPER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -77,5 +77,5 @@ extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
 }
 #endif /* __cplusplus */
 
-#endif	/* __ECAN1_HELPER__ */
+#endif	/* __DSPIC_COMMON_ECAN1_HELPER__ */
 

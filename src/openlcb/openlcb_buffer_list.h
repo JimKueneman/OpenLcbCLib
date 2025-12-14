@@ -48,8 +48,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_LIST__
-#define __OPENLCB_LIST__
+#ifndef __OPENLCB_OPENLCB_LIST__
+#define __OPENLCB_OPENLCB_LIST__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -72,6 +72,7 @@ extern "C"
      */
     extern void OpenLcbBufferList_initialize(void);
 
+    
     /**
      * @brief Inserts a new OpenLcb message into the buffer at the first open slot 
      *   see \ref OpenLcbBufferStore_allocate_buffer() 
@@ -82,6 +83,7 @@ extern "C"
      */
     extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
+    
     /**
      * @brief Searches the buffer for a message that matches the passed parameters
      * 
@@ -93,6 +95,7 @@ extern "C"
      */
     extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
+    
     /**
      * @brief Removes an OpenLcb message from the buffer, the caller is responsible for freeing the message
      *   see \ref OpenLcbBufferStore_free_buffer() 
@@ -103,6 +106,7 @@ extern "C"
      */
     extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 
+    
     /**
      * @brief Returns a Pointer to the message at the passed index
      * 
@@ -112,6 +116,7 @@ extern "C"
      */
     extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
+    
     /**
      * @brief Test to see if there are any messages stored in the buffer list
      * 
@@ -125,4 +130,4 @@ extern "C"
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_LIST__ */
+#endif /* __OPENLCB_OPENLCB_LIST__ */

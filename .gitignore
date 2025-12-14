@@ -35,3 +35,4 @@
 src/applications/TI_Thiea/MSPM03507_Launchpad/BasicNode/.theia
 src/applications/TI_Thiea/MSPM03507_Launchpad/BasicNode/.settings
 /src/applications/dspic/BasicNode.X/dist/
+/src/applications/dspic/BasicNode.X/build/

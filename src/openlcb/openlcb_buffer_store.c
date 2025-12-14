@@ -312,9 +312,9 @@ uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void) {
     
 }
 
-void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *openlcb_msg) {
+void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *msg) {
 
-    openlcb_msg->reference_count = openlcb_msg->reference_count + 1;
+    msg->reference_count = msg->reference_count + 1;
     
 }
 

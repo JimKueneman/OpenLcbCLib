@@ -1,3 +1,54 @@
+/** 
+ * 
+ * @subsection Description
+ * 
+ * When a node is logging into the network on a CAN bus it must follow a specific
+ * flow to allocate a unique alias ID and broadcast its events.  This module defines 
+ * the specific handlers to respond to a CAN level requests and login requirements.  
+ * Each function completes a task that is required for an associated request or login
+ * state.<br><br>
+ * 
+ * These functions are assigned to the \ref interface_can_login_state_machine_t which 
+ * are called from within the CAN login statemachine switch statement.<br>
+ * 
+ * @note Any handler may be overridden by assigning a custom function pointer to the 
+ * \ref interface_can_login_state_machine_t field during initialization of the application.<br>
+ * \ref CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
+ * 
+ *  
+ * @subsection License
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * @copyright Copyright (c) 2025, Jim Kueneman
+ * @author Jim Kueneman
+ * @date 14 Dec 2025
+ * @file can_login_message_handler.h
+ *
+ */
+
+
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -37,8 +88,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_LOGIN_MESSAGE_HANDLER__
-#define	__CAN_LOGIN_MESSAGE_HANDLER__
+#ifndef __DRIVERS_COMMON_CAN_CAN_LOGIN_MESSAGE_HANDLER__
+#define	__DRIVERS_COMMON_CAN_CAN_LOGIN_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -86,5 +137,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_LOGIN_MESSAGE_HANDLER__ */
+#endif	/* __DRIVERS_COMMON_CAN_CAN_LOGIN_MESSAGE_HANDLER__ */
 

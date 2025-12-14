@@ -40,8 +40,8 @@
 // This is a guard condition so that contents of this file are not included
 // more than once.  
 
-#ifndef __OPENLCB_GRIDCONNECT__
-#define	__OPENLCB_GRIDCONNECT__
+#ifndef __OPENLCB_OPENLCB_GRIDCONNECT__
+#define	__OPENLCB_OPENLCB_GRIDCONNECT__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -74,4 +74,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_BUFFER_STORE__ */
+#endif	/* __OPENLCB_OPENLCB_BUFFER_STORE__ */
