@@ -8,7 +8,8 @@ var indexSectionsWithContent =
   5: "cegmnoprw",
   6: "eps",
   7: "abdes",
-  8: "_cdeglmnoprstu"
+  8: "_cdeglmnoprstu",
+  9: "do"
 };
 
 var indexSectionNames =
@@ -21,7 +22,8 @@ var indexSectionNames =
   5: "typedefs",
   6: "enums",
   7: "enumvalues",
-  8: "defines"
+  8: "defines",
+  9: "pages"
 };
 
 var indexSectionLabels =
@@ -34,6 +36,7 @@ var indexSectionLabels =
   5: "Typedefs",
   6: "Enumerations",
   7: "Enumerator",
-  8: "Macros"
+  8: "Macros",
+  9: "Pages"
 };
 

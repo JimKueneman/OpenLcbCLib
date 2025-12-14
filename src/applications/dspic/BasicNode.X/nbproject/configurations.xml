@@ -64,6 +64,7 @@
         <itemPath>../../../openlcb/protocol_config_mem_read_handler.h</itemPath>
         <itemPath>../../../openlcb/protocol_config_mem_write_handler.h</itemPath>
       </logicalFolder>
+      <itemPath>../../../mainpage.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -141,11 +142,7 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../TurnoutBOSS.X/local_drivers/_PCA9685</Elem>
-    <Elem>../../../drivers</Elem>
-    <Elem>../../../openlcb</Elem>
-    <Elem>.</Elem>
-    <Elem>../dsPIC_Common</Elem>
+    <Elem>../../..</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

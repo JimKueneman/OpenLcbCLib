@@ -9,11 +9,7 @@
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>../TurnoutBOSS.X/local_drivers/_PCA9685</sourceRootElem>
-                <sourceRootElem>../../../drivers</sourceRootElem>
-                <sourceRootElem>../../../openlcb</sourceRootElem>
-                <sourceRootElem>.</sourceRootElem>
-                <sourceRootElem>../dsPIC_Common</sourceRootElem>
+                <sourceRootElem>../../..</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
