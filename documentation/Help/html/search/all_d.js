@@ -87,7 +87,7 @@ var searchData=
   ['openlcbbufferstore_5fclear_5fmax_5fallocated_84',['OpenLcbBufferStore_clear_max_allocated',['../openlcb__buffer__store_8h.html#ad94eea5a323ffed37a490fdf71ea9d55',1,'openlcb_buffer_store.h']]],
   ['openlcbbufferstore_5fdatagram_5fmessages_5fallocated_85',['OpenLcbBufferStore_datagram_messages_allocated',['../openlcb__buffer__store_8h.html#a775b6eb9b94b465a263a76b969cad4d3',1,'openlcb_buffer_store.h']]],
   ['openlcbbufferstore_5fdatagram_5fmessages_5fmax_5fallocated_86',['OpenLcbBufferStore_datagram_messages_max_allocated',['../openlcb__buffer__store_8h.html#aa047102a7e56925413814ead6e493723',1,'openlcb_buffer_store.h']]],
-  ['openlcbbufferstore_5ffree_5fbuffer_87',['OpenLcbBufferStore_free_buffer',['../openlcb__buffer__store_8h.html#a887d2ab1f7183d34ad3a72d410b643a5',1,'openlcb_buffer_store.h']]],
+  ['openlcbbufferstore_5ffree_5fbuffer_87',['OpenLcbBufferStore_free_buffer',['../openlcb__buffer__store_8h.html#a678e335cc01529581d2b7e69ae0ad023',1,'openlcb_buffer_store.h']]],
   ['openlcbbufferstore_5finc_5freference_5fcount_88',['OpenLcbBufferStore_inc_reference_count',['../openlcb__buffer__store_8h.html#aec01e595ccfb614dfcb901aa443a5598',1,'openlcb_buffer_store.h']]],
   ['openlcbbufferstore_5finitialize_89',['OpenLcbBufferStore_initialize',['../openlcb__buffer__store_8h.html#aaa929fa9f3796aa554fb29771116b864',1,'openlcb_buffer_store.h']]],
   ['openlcbbufferstore_5fsnip_5fmessages_5fallocated_90',['OpenLcbBufferStore_snip_messages_allocated',['../openlcb__buffer__store_8h.html#a5e17b0f879f93af66cd832a2f6c4c801',1,'openlcb_buffer_store.h']]],

@@ -214,23 +214,23 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
     
 }
 
-void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
+void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) {
 
-    if (!openlcb_msg) {
+    if (!msg) {
         
         return;
         
     }
 
-    openlcb_msg->reference_count = openlcb_msg->reference_count - 1;
+    msg->reference_count = msg->reference_count - 1;
 
-    if (openlcb_msg->reference_count > 0) {
+    if (msg->reference_count > 0) {
         
         return;
         
     }
 
-    switch (openlcb_msg->payload_type) {
+    switch (msg->payload_type) {
 
         case BASIC:
             
@@ -258,9 +258,9 @@ void OpenLcbBufferStore_free_buffer(openlcb_msg_t *openlcb_msg) {
             
     }
 
-    openlcb_msg->reference_count = 0;
+    msg->reference_count = 0;
 
-    openlcb_msg->state.allocated = false;
+    msg->state.allocated = false;
     
 }
 
