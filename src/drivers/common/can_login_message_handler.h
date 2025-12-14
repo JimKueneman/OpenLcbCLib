@@ -13,7 +13,7 @@
  * 
  * @note Any handler may be overridden by assigning a custom function pointer to the 
  * \ref interface_can_login_state_machine_t field during initialization of the application.<br>
- * \ref CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
+ * see: \ref CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
  * 
  *  
  * @subsection License
