@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: drivers/common/can_main_statemachine.h Source File</title>
+<title>OpenLcbCLib: src/drivers/common/can_main_statemachine.h Source File</title>
+<link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -84,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_14bc92f4b96c8519b376567118ac28b3.html">drivers</a></li><li class="navelem"><a class="el" href="dir_f6d3c039b6879ab98229fa6cd45f701a.html">common</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_c718a368270b13c54d94892d20736f45.html">drivers</a></li><li class="navelem"><a class="el" href="dir_7e72bc68965e89f2bfb1bf9e643bd664.html">common</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -95,8 +96,8 @@ $(function(){ initResizable(false); });
 <a href="can__main__statemachine_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">// more than once.  </span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#ifndef __CAN_MAIN_STATEMACHINE__</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#define __CAN_MAIN_STATEMACHINE__</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#ifndef __DRIVERS_COMMON_CAN_CAN_MAIN_STATEMACHINE__</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#define __DRIVERS_COMMON_CAN_CAN_MAIN_STATEMACHINE__</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
@@ -152,7 +153,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#endif  </span><span class="comment">/* __CAN_MAIN_STATEMACHINE__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#endif  </span><span class="comment">/* __DRIVERS_COMMON_CAN_CAN_MAIN_STATEMACHINE__ */</span><span class="preprocessor"></span></div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
 <div class="ttc" id="acan__main__statemachine_8h_html_a326e8a6b5051c0b6821a460fab2ba410"><div class="ttname"><a href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node</a></div><div class="ttdeci">bool CanMainStatemachine_handle_try_enumerate_next_node(void)</div></div>
 <div class="ttc" id="acan__main__statemachine_8h_html_a360ebdb7ef110fdd62097a5fc56310f1"><div class="ttname"><a href="can__main__statemachine_8h.html#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize</a></div><div class="ttdeci">void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine)</div></div>
@@ -169,10 +170,39 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="astructinterface__can__main__statemachine__t_html"><div class="ttname"><a href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a></div><div class="ttdef"><b>Definition</b> can_main_statemachine.h:51</div></div>
 <div class="ttc" id="astructopenlcb__node__t_html"><div class="ttname"><a href="structopenlcb__node__t.html">openlcb_node_t</a></div><div class="ttdef"><b>Definition</b> openlcb_types.h:301</div></div>
 </div><!-- fragment --></div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
-</small></address>
-</div><!-- doc-content -->
-</body>
+<!doctype html>
+<html>
+    <body>
+        <hr>
+        <h2>
+            License
+        </h2>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            <b>Copyright (c)</b> 2026 Jim Kueneman 
+        </p>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            All rights reserved.
+            Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        </p>
+        <ul style="margin-left: 50px; margin-right: 50px;">
+            <li>
+                Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+            </li>
+            <li>
+                Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+            </li>
+        </ul>
+        <p style="margin-left: 50px; margin-right: 50px;"> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+            POSSIBILITY OF SUCH DAMAGE.
+        </p>
+    </body>
 </html>

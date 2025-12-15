@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_message_handler.h
+ * \file openlcb_login_statemachine_handler.h
  *
  * When a node is logging into the network on a CAN bus it must follow a specific
  * flow to allocate a unique alias ID and broadcast its events.  This is the handler 

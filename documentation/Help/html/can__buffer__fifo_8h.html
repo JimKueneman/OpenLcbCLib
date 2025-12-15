@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: drivers/common/can_buffer_fifo.h File Reference</title>
+<title>OpenLcbCLib: src/drivers/common/can_buffer_fifo.h File Reference</title>
+<link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -84,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_14bc92f4b96c8519b376567118ac28b3.html">drivers</a></li><li class="navelem"><a class="el" href="dir_f6d3c039b6879ab98229fa6cd45f701a.html">common</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_c718a368270b13c54d94892d20736f45.html">drivers</a></li><li class="navelem"><a class="el" href="dir_7e72bc68965e89f2bfb1bf9e643bd664.html">common</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -114,16 +115,8 @@ Functions</h2></td></tr>
 <tr class="separator:a93d3428dcf398427024b61c4cfe096c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages that need to be passed on to the nodes. This buffer is accessed in the CAN Rx statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms timer when accessing it is critical.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<div class="textblock"><p>Implementation of the FIFO where the CAN messages are placed by the receive module. The main CAN loop pulls them out one at a time and dispatched them to the handlers.</p>
+<dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a93d3428dcf398427024b61c4cfe096c3" name="a93d3428dcf398427024b61c4cfe096c3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93d3428dcf398427024b61c4cfe096c3">&#9670;&#160;</a></span>CanBufferFifo_get_allocated_count()</h2>
@@ -147,6 +140,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns the number of messages in the FIFO buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of messages in the buffer </dd></dl>
 
 </div>
 </div>
@@ -173,6 +175,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initializes the CAN Message Buffer FIFO<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+
 </div>
 </div>
 <a id="ad52fb1602439269439924aa2c962db07" name="ad52fb1602439269439924aa2c962db07"></a>
@@ -197,6 +210,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Tests if there is a message in the FIFO buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if there is at least one message, false if the list is empty </dd></dl>
 
 </div>
 </div>
@@ -223,6 +245,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Pops a CAN message off the FIFO buffer. The caller is responsible to free the message when done see <a class="el" href="can__buffer__store_8h.html#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer(can_msg_t *msg)</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the message or NULL if the buffer is empty </dd></dl>
+
 </div>
 </div>
 <a id="a9506021e46c1e62c700b125252276346" name="a9506021e46c1e62c700b125252276346"></a>
@@ -248,13 +279,51 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Pushes a new CAN message into the FIFO buffer that was allocated see <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the message or NULL if it fails </dd></dl>
+
 </div>
 </div>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
-</small></address>
-</div><!-- doc-content -->
-</body>
+<!doctype html>
+<html>
+    <body>
+        <hr>
+        <h2>
+            License
+        </h2>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            <b>Copyright (c)</b> 2026 Jim Kueneman 
+        </p>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            All rights reserved.
+            Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        </p>
+        <ul style="margin-left: 50px; margin-right: 50px;">
+            <li>
+                Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+            </li>
+            <li>
+                Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+            </li>
+        </ul>
+        <p style="margin-left: 50px; margin-right: 50px;"> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+            POSSIBILITY OF SUCH DAMAGE.
+        </p>
+    </body>
 </html>

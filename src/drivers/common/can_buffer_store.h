@@ -1,16 +1,4 @@
-/** 
- * 
- * @subsection Description
- * 
- * Implements the core buffers for CAN message buffers. The CAN FIFO buffer is an 
- * array of pointers to these core buffers that are allocated and freed.  
- * 
- * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
- * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
- *  
- * @subsection License
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,9 +23,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * 
- * @copyright Copyright (c) 2025, Jim Kueneman
- * @author Jim Kueneman
- * @date 14 Dec 2025
+ * 14 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+/** 
+ * 
+ * Implements the core buffers for CAN message buffers. The CAN FIFO buffer is an 
+ * array of pointers to these core buffers that are allocated and freed.  
+ * 
+ * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
  * @file can_buffer_store.h
  *
  */
@@ -63,7 +61,7 @@ extern "C" {
      * 
      * @return none
      * 
-     * @note This must always be called during application initialization
+     * @attention This must always be called during application initialization
      */
     extern void CanBufferStore_initialize(void);
 
@@ -73,7 +71,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return *can_msg_t - Pointer to the message buffer or NULL if it fails
+     * @return Pointer to the message buffer or NULL if it fails
      */
     extern can_msg_t* CanBufferStore_allocate_buffer(void);
  
@@ -94,7 +92,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Number of CAN messages currently allocated
+     * @return Number of CAN messages currently allocated
      */
     extern uint16_t CanBufferStore_messages_allocated(void);
 
@@ -105,7 +103,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Maximum number of CAN sized messages that have been allocated currently
+     * @return Maximum number of CAN sized messages that have been allocated currently
      */
     extern uint16_t CanBufferStore_messages_max_allocated(void);
 

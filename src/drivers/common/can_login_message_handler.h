@@ -1,6 +1,33 @@
-/** 
+/*
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * 
- * @subsection Description
+ * 14 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+/** 
  * 
  * When a node is logging into the network on a CAN bus it must follow a specific
  * flow to allocate a unique alias ID and broadcast its events.  This module defines 
@@ -13,78 +40,12 @@
  * 
  * @note Any handler may be overridden by assigning a custom function pointer to the 
  * \ref interface_can_login_state_machine_t field during initialization of the application.<br>
- * see: \ref CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
+ * see: \ref CanLoginStateMachine_initialize();
  * 
- *  
- * @subsection License
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  - Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * 
- * @copyright Copyright (c) 2025, Jim Kueneman
- * @author Jim Kueneman
- * @date 14 Dec 2025
  * @file can_login_message_handler.h
  *
  */
 
-
-/** \copyright
- * Copyright (c) 2024, Jim Kueneman
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  - Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * \file can_login_message_handler.h
- *
- * When a node is logging into the network on a CAN bus it must follow a specific
- * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
- * that is called from the CAN main statemachine to accomplish that when a new node
- * is created.
- *
- * @author Jim Kueneman
- * @date 5 Dec 2024
- */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
@@ -102,28 +63,34 @@ extern "C" {
 
     /**
      * @struct interface_can_login_message_handler_t
-     * @brief A structure to define function dependancies that this module requires.
+     * @brief A structure to define function dependencies that this module requires.
      */
     typedef struct {
-        /** Registers an Alias Mapping pair */
+        /** Pointer to a function that registers an Mapping between the passed alias and node ID 
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_register()
+         */
         alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
-        /** Finds an Alias Mapping by the Alias */
+        /** Pointer to a function that finds a Mapping structure that matches the alias passed to it 
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias()
+         */
         alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
         // Callback events
-        /** Callback function for an Application to be notified when an Alias has been successfully registered */
+        /** Pointer to a function for an Application to be notified when an Alias has been successfully registered 
+         *@note <b>Optional</b> application callback.  Defaults to NULL
+        */
         void (*on_alias_change)(uint16_t alias, node_id_t node_id);
 
     } interface_can_login_message_handler_t;
 
 
     /**
-     * @brief Initializes the CAN Login Message Handler module<br>
+     * @brief Initializes the CAN Login Message Handler module
      * 
-     * @param none
+     * @param const interface_can_login_message_handler_t *interface - Pointers to function dependencies this module requires
      * 
      * @return none
      * 
-     * @note This must always be called during application initialization
+     * @attention This must always be called during application initialization
      */
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 

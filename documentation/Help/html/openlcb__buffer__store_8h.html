@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: openlcb/openlcb_buffer_store.h File Reference</title>
+<title>OpenLcbCLib: src/openlcb/openlcb_buffer_store.h File Reference</title>
+<link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -84,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_b8569835f95a5750220052892eb1f1b9.html">openlcb</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_2e7e6c944bd9908e2f8181efb624bb5a.html">openlcb</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -124,8 +125,8 @@ Functions</h2></td></tr>
 <tr class="separator:a8263b6b25707d7cbd8040128d14800c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ca556cbdeaa4f86800156e103c872fa" id="r_a3ca556cbdeaa4f86800156e103c872fa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ca556cbdeaa4f86800156e103c872fa">OpenLcbBufferStore_stream_messages_max_allocated</a> (void)</td></tr>
 <tr class="separator:a3ca556cbdeaa4f86800156e103c872fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec01e595ccfb614dfcb901aa443a5598" id="r_aec01e595ccfb614dfcb901aa443a5598"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec01e595ccfb614dfcb901aa443a5598">OpenLcbBufferStore_inc_reference_count</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="separator:aec01e595ccfb614dfcb901aa443a5598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36d2ba67201acfcfa2a5c67b406161e6" id="r_a36d2ba67201acfcfa2a5c67b406161e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36d2ba67201acfcfa2a5c67b406161e6">OpenLcbBufferStore_inc_reference_count</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
+<tr class="separator:a36d2ba67201acfcfa2a5c67b406161e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad94eea5a323ffed37a490fdf71ea9d55" id="r_ad94eea5a323ffed37a490fdf71ea9d55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad94eea5a323ffed37a490fdf71ea9d55">OpenLcbBufferStore_clear_max_allocated</a> (void)</td></tr>
 <tr class="separator:ad94eea5a323ffed37a490fdf71ea9d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -265,7 +266,7 @@ License</h2>
       </table>
 </div><div class="memdoc">
 
-<p>Resets the running count of the Maximum number of buffer of each type allocated. </p>
+<p>Resets the running count of the Maximum number of buffer of each type have been allocated at a one time. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">none</td><td></td></tr>
@@ -377,14 +378,14 @@ License</h2>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
 <ul>
-<li><dl class="section note"><dt>Note</dt><dd>The buffers are reference counted (see <a class="el" href="#aec01e595ccfb614dfcb901aa443a5598">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse </dd></dl>
+<li><dl class="section note"><dt>Note</dt><dd>The buffers are reference counted (see <a class="el" href="#a36d2ba67201acfcfa2a5c67b406161e6">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse </dd></dl>
 </li>
 </ul>
 
 </div>
 </div>
-<a id="aec01e595ccfb614dfcb901aa443a5598" name="aec01e595ccfb614dfcb901aa443a5598"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec01e595ccfb614dfcb901aa443a5598">&#9670;&#160;</a></span>OpenLcbBufferStore_inc_reference_count()</h2>
+<a id="a36d2ba67201acfcfa2a5c67b406161e6" name="a36d2ba67201acfcfa2a5c67b406161e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36d2ba67201acfcfa2a5c67b406161e6">&#9670;&#160;</a></span>OpenLcbBufferStore_inc_reference_count()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -395,7 +396,7 @@ License</h2>
         <tr>
           <td class="memname">void OpenLcbBufferStore_inc_reference_count </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -592,10 +593,39 @@ License</h2>
 </div>
 </div>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
-</small></address>
-</div><!-- doc-content -->
-</body>
+<!doctype html>
+<html>
+    <body>
+        <hr>
+        <h2>
+            License
+        </h2>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            <b>Copyright (c)</b> 2026 Jim Kueneman 
+        </p>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            All rights reserved.
+            Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        </p>
+        <ul style="margin-left: 50px; margin-right: 50px;">
+            <li>
+                Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+            </li>
+            <li>
+                Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+            </li>
+        </ul>
+        <p style="margin-left: 50px; margin-right: 50px;"> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+            POSSIBILITY OF SUCH DAMAGE.
+        </p>
+    </body>
 </html>

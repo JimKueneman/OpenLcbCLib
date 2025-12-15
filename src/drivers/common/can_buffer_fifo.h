@@ -1,16 +1,4 @@
-/** 
- * 
- * @subsection Description
- * 
- * Implementation of the FIFO where the CAN messages are placed by the receive
- * module.  The main CAN loop pulls them out one at a time and dispatched them to the handlers. 
- * 
- * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
- * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
- *  
- * @subsection License
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,9 +23,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * 
- * @copyright Copyright (c) 2025, Jim Kueneman
- * @author Jim Kueneman
- * @date 14 Dec 2025
+ * 15 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+/** 
+ * 
+ * Implementation of the FIFO where the CAN messages are placed by the receive
+ * module.  The main CAN loop pulls them out one at a time and dispatched them to the handlers. 
+ * 
+ * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
  * @file can_buffer_fifo.h
  *
  */
@@ -63,7 +61,7 @@ extern "C" {
      * 
      * @return none
      * 
-     * @note This must always be called during application initialization
+     * @attention This must always be called during application initialization
      */
     extern void CanBufferFifo_initialize(void);
 
@@ -74,7 +72,7 @@ extern "C" {
      * 
      * @param can_msg_t *new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool
      * 
-     * @return *can_msg_t - Pointer to the message or NULL if it fails
+     * @return Pointer to the message or NULL if it fails
      */
     extern bool CanBufferFifo_push(can_msg_t* new_msg);
 
@@ -85,7 +83,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return *can_msg_t - Pointer to the message or NULL if the buffer is empty
+     * @return Pointer to the message or NULL if the buffer is empty
      */
     extern can_msg_t *CanBufferFifo_pop(void);
 
@@ -95,7 +93,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return bool true if there is at least one message, false if the list is empty
+     * @return true if there is at least one message, false if the list is empty
      */
     extern uint8_t CanBufferFifo_is_empty(void);
 
@@ -105,7 +103,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t the number of messages in the buffer
+     * @return The number of messages in the buffer
      */
     extern uint16_t CanBufferFifo_get_allocated_count(void);
 

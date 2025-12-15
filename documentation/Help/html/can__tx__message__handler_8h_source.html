@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: drivers/common/can_tx_message_handler.h Source File</title>
+<title>OpenLcbCLib: src/drivers/common/can_tx_message_handler.h Source File</title>
+<link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -84,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_14bc92f4b96c8519b376567118ac28b3.html">drivers</a></li><li class="navelem"><a class="el" href="dir_f6d3c039b6879ab98229fa6cd45f701a.html">common</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_c718a368270b13c54d94892d20736f45.html">drivers</a></li><li class="navelem"><a class="el" href="dir_7e72bc68965e89f2bfb1bf9e643bd664.html">common</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -95,8 +96,8 @@ $(function(){ initResizable(false); });
 <a href="can__tx__message__handler_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">// more than once.  </span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#ifndef __CAN_TX_MESSAGE_HANDLER__</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#define __CAN_TX_MESSAGE_HANDLER__</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#ifndef __DRIVERS_COMMON_CAN_TX_MESSAGE_HANDLER__</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#define __DRIVERS_COMMON_CAN_TX_MESSAGE_HANDLER__</span></div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
@@ -135,7 +136,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>}</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="preprocessor">#endif  </span><span class="comment">/* XC_HEADER_TEMPLATE_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="preprocessor">#endif  </span><span class="comment">/* __DRIVERS_COMMON_CAN_TX_MESSAGE_HANDLER__ */</span><span class="preprocessor"></span></div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
 <div class="ttc" id="acan__tx__message__handler_8h_html_a0281e625469a52aec7f1e85a464c6222"><div class="ttname"><a href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222">CanTxMessageHandler_unaddressed_msg_frame</a></div><div class="ttdeci">bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index)</div></div>
 <div class="ttc" id="acan__tx__message__handler_8h_html_a156df311b2fa14eea4912334cda0ca78"><div class="ttname"><a href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a></div><div class="ttdeci">bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index)</div></div>
@@ -149,10 +150,39 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="astructinterface__can__tx__message__handler__t_html"><div class="ttname"><a href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a></div><div class="ttdef"><b>Definition</b> can_tx_message_handler.h:45</div></div>
 <div class="ttc" id="astructopenlcb__msg__t_html"><div class="ttname"><a href="structopenlcb__msg__t.html">openlcb_msg_t</a></div><div class="ttdef"><b>Definition</b> openlcb_types.h:191</div></div>
 </div><!-- fragment --></div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
-</small></address>
-</div><!-- doc-content -->
-</body>
+<!doctype html>
+<html>
+    <body>
+        <hr>
+        <h2>
+            License
+        </h2>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            <b>Copyright (c)</b> 2026 Jim Kueneman 
+        </p>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            All rights reserved.
+            Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        </p>
+        <ul style="margin-left: 50px; margin-right: 50px;">
+            <li>
+                Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+            </li>
+            <li>
+                Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+            </li>
+        </ul>
+        <p style="margin-left: 50px; margin-right: 50px;"> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+            POSSIBILITY OF SUCH DAMAGE.
+        </p>
+    </body>
 </html>

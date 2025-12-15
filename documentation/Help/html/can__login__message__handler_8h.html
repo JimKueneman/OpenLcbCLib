@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenLcbCLib: drivers/common/can_login_message_handler.h File Reference</title>
+<title>OpenLcbCLib: src/drivers/common/can_login_message_handler.h File Reference</title>
+<link rel="icon" href="Diesel.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -84,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_14bc92f4b96c8519b376567118ac28b3.html">drivers</a></li><li class="navelem"><a class="el" href="dir_f6d3c039b6879ab98229fa6cd45f701a.html">common</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_c718a368270b13c54d94892d20736f45.html">drivers</a></li><li class="navelem"><a class="el" href="dir_7e72bc68965e89f2bfb1bf9e643bd664.html">common</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -132,16 +133,14 @@ Functions</h2></td></tr>
 <tr class="separator:a86ceb4c89ce3880a1a34fcd8805b4064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>When a node is logging into the network on a CAN bus it must follow a specific flow to allocate a unique alias ID and broadcast its events. This is the handler that is called from the CAN main statemachine to accomplish that when a new node is created.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<div class="textblock"><p>When a node is logging into the network on a CAN bus it must follow a specific flow to allocate a unique alias ID and broadcast its events. This module defines the specific handlers to respond to a CAN level requests and login requirements. <br  />
+ Each function completes a task that is required for an associated request or login state.<br  />
+<br  />
+</p>
+<p>These functions are assigned to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> which are called from within the CAN login statemachine switch statement.<br  />
+</p>
+<dl class="section note"><dt>Note</dt><dd>Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application.<br  />
+ see: <a class="el" href="can__login__statemachine_8h.html#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>; </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a5c515891dde09e1d2376e0d0ecc392ec" name="a5c515891dde09e1d2376e0d0ecc392ec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5c515891dde09e1d2376e0d0ecc392ec">&#9670;&#160;</a></span>CanLoginMessageHandler_initialize()</h2>
@@ -165,6 +164,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the CAN Login Message Handler module. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to define function dependencies that this module requires.">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -419,10 +428,39 @@ Functions</h2></td></tr>
 </div>
 </div>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
-</small></address>
-</div><!-- doc-content -->
-</body>
+<!doctype html>
+<html>
+    <body>
+        <hr>
+        <h2>
+            License
+        </h2>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            <b>Copyright (c)</b> 2026 Jim Kueneman 
+        </p>
+        <p style="margin-left: 50px; margin-right: 50px;">
+            All rights reserved.
+            Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        </p>
+        <ul style="margin-left: 50px; margin-right: 50px;">
+            <li>
+                Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+            </li>
+            <li>
+                Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+            </li>
+        </ul>
+        <p style="margin-left: 50px; margin-right: 50px;"> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+            AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+            IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+            LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+            CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+            INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+            CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+            POSSIBILITY OF SUCH DAMAGE.
+        </p>
+    </body>
 </html>
