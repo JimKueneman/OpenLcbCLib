@@ -100,16 +100,31 @@
 extern "C" {
 #endif /* __cplusplus */
 
+    /**
+     * @struct interface_can_login_message_handler_t
+     * @brief A structure to define function dependancies that this module requires.
+     */
     typedef struct {
-   
-        alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);    
+        /** Registers an Alias Mapping pair */
+        alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
+        /** Finds an Alias Mapping by the Alias */
         alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
         // Callback events
+        /** Callback function for an Application to be notified when an Alias has been successfully registered */
         void (*on_alias_change)(uint16_t alias, node_id_t node_id);
 
     } interface_can_login_message_handler_t;
 
 
+    /**
+     * @brief Initializes the CAN Login Message Handler module<br>
+     * 
+     * @param none
+     * 
+     * @return none
+     * 
+     * @note This must always be called during application initialization
+     */
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 
     extern void CanLoginMessageHandler_state_init(can_statemachine_info_t *can_statemachine_info);
