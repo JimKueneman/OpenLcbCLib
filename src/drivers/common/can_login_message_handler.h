@@ -66,6 +66,9 @@ extern "C" {
      * @brief A structure to define function dependencies that this module requires.
      */
     typedef struct {
+        
+        // Required functions
+        
         /** Pointer to a function that registers an Mapping between the passed alias and node ID 
          * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_register()
          */
@@ -74,7 +77,9 @@ extern "C" {
          * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias()
          */
         alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
+        
         // Callback events
+        
         /** Pointer to a function for an Application to be notified when an Alias has been successfully registered 
          *@note <b>Optional</b> application callback.  Defaults to NULL
         */
