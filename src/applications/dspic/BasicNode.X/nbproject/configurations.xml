@@ -64,7 +64,6 @@
         <itemPath>../../../openlcb/protocol_config_mem_read_handler.h</itemPath>
         <itemPath>../../../openlcb/protocol_config_mem_write_handler.h</itemPath>
       </logicalFolder>
-      <itemPath>../../../mainpage.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -81,16 +80,6 @@
       <logicalFolder name="OpenLcb_Basic_Node.X"
                      displayName="BasicNode.X"
                      projectFiles="true">
-        <logicalFolder name="debug" displayName="debug" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-          </logicalFolder>
-        </logicalFolder>
-        <logicalFolder name="dist" displayName="dist" projectFiles="true">
-          <logicalFolder name="default" displayName="default" projectFiles="true">
-            <logicalFolder name="production" displayName="production" projectFiles="true">
-            </logicalFolder>
-          </logicalFolder>
-        </logicalFolder>
         <itemPath>main.c</itemPath>
         <itemPath>drivers.c</itemPath>
         <itemPath>node_parameters.c</itemPath>
