@@ -32,9 +32,9 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__
-#define	__DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__
+#define __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -42,34 +42,53 @@
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
 
-typedef struct {
-    
-    bool (*transmit_can_frame)(can_msg_t* can_msg);
-     // Callback events
-    void (*on_transmit)(can_msg_t* can_msg);
-    
+/**
+ * @brief A structure to hold pointers to functions for dependencies this module requires, \ref can_tx_message_handler.h.
+ * @details OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the
+ * functions that are used can be modeled in the test and return valid OR invalid results to fully
+ * test all program flows in the module.  It also allows for reducing the program size. If a particular
+ * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
+ * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
+ * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
+ */
+typedef struct
+{
+
+    /*@{*/
+
+    // REQUIRED FUNCTIONS
+
+    bool (*transmit_can_frame)(can_msg_t *can_msg);
+
+    // OPTIONAL FUNCTION
+
+    // CALLBACK FUNCTIONS
+
+    void (*on_transmit)(can_msg_t *can_msg);
+
+    /*@}*/
+
 } interface_can_tx_message_handler_t;
 
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
-    
+
     extern void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler);
 
-    extern bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-    
-    extern bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-    
-    extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-    
-    extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t* openlcb_msg, can_msg_t* can_msg_worker, uint16_t *openlcb_start_index);
-    
-    extern bool CanTxMessageHandler_can_frame(can_msg_t* can_msg);
-   
-#ifdef	__cplusplus
+    extern bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+
+    extern bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+
+    extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+
+    extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+
+    extern bool CanTxMessageHandler_can_frame(can_msg_t *can_msg);
+
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__ */
-
+#endif /* __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__ */

@@ -123,15 +123,102 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a74e23c8dcaedb643f11cb3c3791e7aad" id="r_a74e23c8dcaedb643f11cb3c3791e7aad"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74e23c8dcaedb643f11cb3c3791e7aad">on_receive</a> )(<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td></tr>
 <tr class="separator:a74e23c8dcaedb643f11cb3c3791e7aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
-<a id="a91e0e61d6e690cb434694399ee865976" name="a91e0e61d6e690cb434694399ee865976"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91e0e61d6e690cb434694399ee865976">&#9670;&#160;</a></span>alias_mapping_find_mapping_by_alias</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires, <a class="el" href="can__rx__statemachine_8h.html">can_rx_statemachine.h</a>. </p>
+<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="acc847b73ff968af8107375cff87361d4" name="acc847b73ff968af8107375cff87361d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc847b73ff968af8107375cff87361d4">&#9670;&#160;</a></span>handle_can_legacy_snip</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structalias__mapping__t.html">alias_mapping_t</a> *(* alias_mapping_find_mapping_by_alias) (uint16_t alias)</td>
+          <td class="memname">void(* handle_can_legacy_snip) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1973119244adeb99dd8b457819402769" name="a1973119244adeb99dd8b457819402769"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1973119244adeb99dd8b457819402769">&#9670;&#160;</a></span>handle_single_frame</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* handle_single_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a76c3866a768988783ce81268322f5513" name="a76c3866a768988783ce81268322f5513"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76c3866a768988783ce81268322f5513">&#9670;&#160;</a></span>handle_first_frame</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* handle_first_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3c30ca82b5ef1ec2a9994ecb03ff0dfc" name="a3c30ca82b5ef1ec2a9994ecb03ff0dfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c30ca82b5ef1ec2a9994ecb03ff0dfc">&#9670;&#160;</a></span>handle_middle_frame</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* handle_middle_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afa1c71b477d43270b643f6fa9d403afe" name="afa1c71b477d43270b643f6fa9d403afe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa1c71b477d43270b643f6fa9d403afe">&#9670;&#160;</a></span>handle_last_frame</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* handle_last_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0abd7c437fda69edaa4266d367980989" name="a0abd7c437fda69edaa4266d367980989"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0abd7c437fda69edaa4266d367980989">&#9670;&#160;</a></span>handle_stream_frame</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* handle_stream_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aef989e56f82c30837a1b0fffe625afd0" name="aef989e56f82c30837a1b0fffe625afd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef989e56f82c30837a1b0fffe625afd0">&#9670;&#160;</a></span>handle_rid_frame</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* handle_rid_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -180,14 +267,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="acc847b73ff968af8107375cff87361d4" name="acc847b73ff968af8107375cff87361d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc847b73ff968af8107375cff87361d4">&#9670;&#160;</a></span>handle_can_legacy_snip</h2>
+<a id="aaec8b91f618746f781b94154313764ad" name="aaec8b91f618746f781b94154313764ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaec8b91f618746f781b94154313764ad">&#9670;&#160;</a></span>handle_error_info_report_frame</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* handle_can_legacy_snip) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
+          <td class="memname">void(* handle_error_info_report_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -208,98 +295,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="aaec8b91f618746f781b94154313764ad" name="aaec8b91f618746f781b94154313764ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaec8b91f618746f781b94154313764ad">&#9670;&#160;</a></span>handle_error_info_report_frame</h2>
+<a id="a91e0e61d6e690cb434694399ee865976" name="a91e0e61d6e690cb434694399ee865976"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91e0e61d6e690cb434694399ee865976">&#9670;&#160;</a></span>alias_mapping_find_mapping_by_alias</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* handle_error_info_report_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a76c3866a768988783ce81268322f5513" name="a76c3866a768988783ce81268322f5513"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76c3866a768988783ce81268322f5513">&#9670;&#160;</a></span>handle_first_frame</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* handle_first_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afa1c71b477d43270b643f6fa9d403afe" name="afa1c71b477d43270b643f6fa9d403afe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa1c71b477d43270b643f6fa9d403afe">&#9670;&#160;</a></span>handle_last_frame</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* handle_last_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3c30ca82b5ef1ec2a9994ecb03ff0dfc" name="a3c30ca82b5ef1ec2a9994ecb03ff0dfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c30ca82b5ef1ec2a9994ecb03ff0dfc">&#9670;&#160;</a></span>handle_middle_frame</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* handle_middle_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aef989e56f82c30837a1b0fffe625afd0" name="aef989e56f82c30837a1b0fffe625afd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef989e56f82c30837a1b0fffe625afd0">&#9670;&#160;</a></span>handle_rid_frame</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* handle_rid_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a1973119244adeb99dd8b457819402769" name="a1973119244adeb99dd8b457819402769"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1973119244adeb99dd8b457819402769">&#9670;&#160;</a></span>handle_single_frame</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* handle_single_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a0abd7c437fda69edaa4266d367980989" name="a0abd7c437fda69edaa4266d367980989"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0abd7c437fda69edaa4266d367980989">&#9670;&#160;</a></span>handle_stream_frame</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* handle_stream_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td>
+          <td class="memname"><a class="el" href="structalias__mapping__t.html">alias_mapping_t</a> *(* alias_mapping_find_mapping_by_alias) (uint16_t alias)</td>
         </tr>
       </table>
 </div><div class="memdoc">

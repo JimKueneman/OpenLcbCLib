@@ -99,21 +99,10 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a3bd106e7dc7aaf36e1bcc49cbb54725c" id="r_a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bd106e7dc7aaf36e1bcc49cbb54725c">on_transmit</a> )(<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td></tr>
 <tr class="separator:a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
-<a id="a3bd106e7dc7aaf36e1bcc49cbb54725c" name="a3bd106e7dc7aaf36e1bcc49cbb54725c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3bd106e7dc7aaf36e1bcc49cbb54725c">&#9670;&#160;</a></span>on_transmit</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* on_transmit) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires, <a class="el" href="can__tx__message__handler_8h.html">can_tx_message_handler.h</a>. </p>
+<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL </p>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="abb132b7264a3f080f84953c8d3aa6b0e" name="abb132b7264a3f080f84953c8d3aa6b0e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abb132b7264a3f080f84953c8d3aa6b0e">&#9670;&#160;</a></span>transmit_can_frame</h2>
 
@@ -122,6 +111,20 @@ Data Fields</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool(* transmit_can_frame) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3bd106e7dc7aaf36e1bcc49cbb54725c" name="a3bd106e7dc7aaf36e1bcc49cbb54725c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bd106e7dc7aaf36e1bcc49cbb54725c">&#9670;&#160;</a></span>on_transmit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_transmit) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td>
         </tr>
       </table>
 </div><div class="memdoc">

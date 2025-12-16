@@ -118,76 +118,6 @@ Data Fields</h2></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a21e0289f2a6d968d59d8f2392e7238d9" name="a21e0289f2a6d968d59d8f2392e7238d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21e0289f2a6d968d59d8f2392e7238d9">&#9670;&#160;</a></span>handle_outgoing_openlcb_message</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* handle_outgoing_openlcb_message) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ace54b5c03eafd093615c3de2f76587b1" name="ace54b5c03eafd093615c3de2f76587b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace54b5c03eafd093615c3de2f76587b1">&#9670;&#160;</a></span>handle_try_enumerate_first_node</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* handle_try_enumerate_first_node) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a41dbaa73eb2229932ffc76416db879e7" name="a41dbaa73eb2229932ffc76416db879e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41dbaa73eb2229932ffc76416db879e7">&#9670;&#160;</a></span>handle_try_enumerate_next_node</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* handle_try_enumerate_next_node) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a87d0bb10ab97a4dfb5cc19819656c7db" name="a87d0bb10ab97a4dfb5cc19819656c7db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87d0bb10ab97a4dfb5cc19819656c7db">&#9670;&#160;</a></span>handle_try_reenumerate</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* handle_try_reenumerate) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a580f2ad00e2adbd8091236f015cd1f3c" name="a580f2ad00e2adbd8091236f015cd1f3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a580f2ad00e2adbd8091236f015cd1f3c">&#9670;&#160;</a></span>load_consumer_events</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* load_consumer_events) (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a1423a4675d09949c3d5c0fa2416a0410" name="a1423a4675d09949c3d5c0fa2416a0410"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1423a4675d09949c3d5c0fa2416a0410">&#9670;&#160;</a></span>load_initialization_complete</h2>
 
@@ -210,6 +140,34 @@ Data Fields</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void(* load_producer_events) (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a580f2ad00e2adbd8091236f015cd1f3c" name="a580f2ad00e2adbd8091236f015cd1f3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a580f2ad00e2adbd8091236f015cd1f3c">&#9670;&#160;</a></span>load_consumer_events</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* load_consumer_events) (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a216efd7bdc468e6395aa0e5ba04f1060" name="a216efd7bdc468e6395aa0e5ba04f1060"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a216efd7bdc468e6395aa0e5ba04f1060">&#9670;&#160;</a></span>send_openlcb_msg</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* send_openlcb_msg) (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -258,14 +216,56 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a216efd7bdc468e6395aa0e5ba04f1060" name="a216efd7bdc468e6395aa0e5ba04f1060"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a216efd7bdc468e6395aa0e5ba04f1060">&#9670;&#160;</a></span>send_openlcb_msg</h2>
+<a id="a21e0289f2a6d968d59d8f2392e7238d9" name="a21e0289f2a6d968d59d8f2392e7238d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21e0289f2a6d968d59d8f2392e7238d9">&#9670;&#160;</a></span>handle_outgoing_openlcb_message</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool(* send_openlcb_msg) (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg)</td>
+          <td class="memname">bool(* handle_outgoing_openlcb_message) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a87d0bb10ab97a4dfb5cc19819656c7db" name="a87d0bb10ab97a4dfb5cc19819656c7db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87d0bb10ab97a4dfb5cc19819656c7db">&#9670;&#160;</a></span>handle_try_reenumerate</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* handle_try_reenumerate) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ace54b5c03eafd093615c3de2f76587b1" name="ace54b5c03eafd093615c3de2f76587b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace54b5c03eafd093615c3de2f76587b1">&#9670;&#160;</a></span>handle_try_enumerate_first_node</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* handle_try_enumerate_first_node) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a41dbaa73eb2229932ffc76416db879e7" name="a41dbaa73eb2229932ffc76416db879e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41dbaa73eb2229932ffc76416db879e7">&#9670;&#160;</a></span>handle_try_enumerate_next_node</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* handle_try_enumerate_next_node) (void)</td>
         </tr>
       </table>
 </div><div class="memdoc">

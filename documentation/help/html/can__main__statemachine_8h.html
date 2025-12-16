@@ -131,11 +131,60 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Where the real work in dispatching the incoming OpenLcb messages to the various handlers to process. It will call the OpenLcb main statemachine when needed. <br  />
-</p>
+<p>Where the real work in dispatching the incoming OpenLcb messages to the various handlers to process. It will call the OpenLcb main statemachine when needed.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a360ebdb7ef110fdd62097a5fc56310f1" name="a360ebdb7ef110fdd62097a5fc56310f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a360ebdb7ef110fdd62097a5fc56310f1">&#9670;&#160;</a></span>CanMainStatemachine_initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanMainStatemachine_initialize </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_can_main_statemachine</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9bdef5a88eff72849f2506381fe1742f" name="a9bdef5a88eff72849f2506381fe1742f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bdef5a88eff72849f2506381fe1742f">&#9670;&#160;</a></span>CanMainStateMachine_run()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanMainStateMachine_run </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a514df581e108e12f527d4de248458357" name="a514df581e108e12f527d4de248458357"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a514df581e108e12f527d4de248458357">&#9670;&#160;</a></span>CanMainStateMachine_get_can_statemachine_info()</h2>
 
@@ -272,56 +321,6 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool CanMainStatemachine_handle_try_enumerate_next_node </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a360ebdb7ef110fdd62097a5fc56310f1" name="a360ebdb7ef110fdd62097a5fc56310f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a360ebdb7ef110fdd62097a5fc56310f1">&#9670;&#160;</a></span>CanMainStatemachine_initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanMainStatemachine_initialize </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_can_main_statemachine</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9bdef5a88eff72849f2506381fe1742f" name="a9bdef5a88eff72849f2506381fe1742f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bdef5a88eff72849f2506381fe1742f">&#9670;&#160;</a></span>CanMainStateMachine_run()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanMainStateMachine_run </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>

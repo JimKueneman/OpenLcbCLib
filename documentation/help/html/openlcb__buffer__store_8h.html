@@ -146,6 +146,42 @@ License</h2>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>14 Dec 2025 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="aaa929fa9f3796aa554fb29771116b864" name="aaa929fa9f3796aa554fb29771116b864"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa929fa9f3796aa554fb29771116b864">&#9670;&#160;</a></span>OpenLcbBufferStore_initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbBufferStore_initialize </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initializes the OpenLcb Buffer Store<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
+
+</div>
+</div>
 <a id="a56857b0d3eaed4ee651e9ac794cad201" name="a56857b0d3eaed4ee651e9ac794cad201"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a56857b0d3eaed4ee651e9ac794cad201">&#9670;&#160;</a></span>OpenLcbBufferStore_allocate_buffer()</h2>
 
@@ -177,6 +213,45 @@ License</h2>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>*openlcb_msg_t - Pointer to the message buffer or NULL if it fails </dd></dl>
+
+</div>
+</div>
+<a id="a678e335cc01529581d2b7e69ae0ad023" name="a678e335cc01529581d2b7e69ae0ad023"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a678e335cc01529581d2b7e69ae0ad023">&#9670;&#160;</a></span>OpenLcbBufferStore_free_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbBufferStore_free_buffer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Frees the buffer so it can be reused.<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<ul>
+<li><dl class="section note"><dt>Note</dt><dd>The buffers are reference counted (see <a class="el" href="#a36d2ba67201acfcfa2a5c67b406161e6">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse </dd></dl>
+</li>
+</ul>
 
 </div>
 </div>
@@ -248,32 +323,6 @@ License</h2>
 
 </div>
 </div>
-<a id="ad94eea5a323ffed37a490fdf71ea9d55" name="ad94eea5a323ffed37a490fdf71ea9d55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad94eea5a323ffed37a490fdf71ea9d55">&#9670;&#160;</a></span>OpenLcbBufferStore_clear_max_allocated()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbBufferStore_clear_max_allocated </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Resets the running count of the Maximum number of buffer of each type have been allocated at a one time. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
-
-</div>
-</div>
 <a id="a775b6eb9b94b465a263a76b969cad4d3" name="a775b6eb9b94b465a263a76b969cad4d3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a775b6eb9b94b465a263a76b969cad4d3">&#9670;&#160;</a></span>OpenLcbBufferStore_datagram_messages_allocated()</h2>
 
@@ -339,117 +388,6 @@ License</h2>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>uint16_t - Maximum number of Datagram sized messages that have been allocated currently </dd></dl>
-
-</div>
-</div>
-<a id="a678e335cc01529581d2b7e69ae0ad023" name="a678e335cc01529581d2b7e69ae0ad023"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a678e335cc01529581d2b7e69ae0ad023">&#9670;&#160;</a></span>OpenLcbBufferStore_free_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbBufferStore_free_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Frees the buffer so it can be reused.<br  />
- </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<ul>
-<li><dl class="section note"><dt>Note</dt><dd>The buffers are reference counted (see <a class="el" href="#a36d2ba67201acfcfa2a5c67b406161e6">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse </dd></dl>
-</li>
-</ul>
-
-</div>
-</div>
-<a id="a36d2ba67201acfcfa2a5c67b406161e6" name="a36d2ba67201acfcfa2a5c67b406161e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36d2ba67201acfcfa2a5c67b406161e6">&#9670;&#160;</a></span>OpenLcbBufferStore_inc_reference_count()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbBufferStore_inc_reference_count </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Increases the reference count on the allocated buffer. <br  />
- </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>When <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)</a> is called it is only freed when the reference count reaches zero </dd></dl>
-
-</div>
-</div>
-<a id="aaa929fa9f3796aa554fb29771116b864" name="aaa929fa9f3796aa554fb29771116b864"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa929fa9f3796aa554fb29771116b864">&#9670;&#160;</a></span>OpenLcbBufferStore_initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbBufferStore_initialize </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes the OpenLcb Buffer Store<br  />
- </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -586,6 +524,68 @@ License</h2>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>uint16_t - Maximum number of Stream sized messages that have been allocated currently </dd></dl>
+
+</div>
+</div>
+<a id="a36d2ba67201acfcfa2a5c67b406161e6" name="a36d2ba67201acfcfa2a5c67b406161e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36d2ba67201acfcfa2a5c67b406161e6">&#9670;&#160;</a></span>OpenLcbBufferStore_inc_reference_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbBufferStore_inc_reference_count </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Increases the reference count on the allocated buffer. <br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>When <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)</a> is called it is only freed when the reference count reaches zero </dd></dl>
+
+</div>
+</div>
+<a id="ad94eea5a323ffed37a490fdf71ea9d55" name="ad94eea5a323ffed37a490fdf71ea9d55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad94eea5a323ffed37a490fdf71ea9d55">&#9670;&#160;</a></span>OpenLcbBufferStore_clear_max_allocated()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbBufferStore_clear_max_allocated </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resets the running count of the Maximum number of buffer of each type have been allocated at a one time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>

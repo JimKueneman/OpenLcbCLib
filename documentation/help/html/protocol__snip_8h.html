@@ -136,8 +136,8 @@ Functions</h2></td></tr>
 <tr class="separator:ad9dd288bc1780719e4078408eef25b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a627c27accd1419434607d03030548079" name="a627c27accd1419434607d03030548079"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a627c27accd1419434607d03030548079">&#9670;&#160;</a></span>ProtocolSnip_handle_simple_node_info_reply()</h2>
+<a id="a299e55a84322665954521e5e913372d8" name="a299e55a84322665954521e5e913372d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a299e55a84322665954521e5e913372d8">&#9670;&#160;</a></span>ProtocolSnip_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,9 +146,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolSnip_handle_simple_node_info_reply </td>
+          <td class="memname">void ProtocolSnip_initialize </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structinterface__openlcb__protocol__snip__t.html">interface_openlcb_protocol_snip_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_openlcb_protocol_snip</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -186,8 +186,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a299e55a84322665954521e5e913372d8" name="a299e55a84322665954521e5e913372d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a299e55a84322665954521e5e913372d8">&#9670;&#160;</a></span>ProtocolSnip_initialize()</h2>
+<a id="a627c27accd1419434607d03030548079" name="a627c27accd1419434607d03030548079"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a627c27accd1419434607d03030548079">&#9670;&#160;</a></span>ProtocolSnip_handle_simple_node_info_reply()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,49 +196,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolSnip_initialize </td>
+          <td class="memname">void ProtocolSnip_handle_simple_node_info_reply </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structinterface__openlcb__protocol__snip__t.html">interface_openlcb_protocol_snip_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_openlcb_protocol_snip</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
           <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adb14903c04790ef108f4adeb6a94eb23" name="adb14903c04790ef108f4adeb6a94eb23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb14903c04790ef108f4adeb6a94eb23">&#9670;&#160;</a></span>ProtocolSnip_load_hardware_version()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t ProtocolSnip_load_hardware_version </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>outgoing_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_offset</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>requested_bytes</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -273,6 +234,45 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>requested_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a528b194a475f4b65a679ce49b434a0b3" name="a528b194a475f4b65a679ce49b434a0b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a528b194a475f4b65a679ce49b434a0b3">&#9670;&#160;</a></span>ProtocolSnip_load_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t ProtocolSnip_load_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>outgoing_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_offset</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -328,8 +328,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a528b194a475f4b65a679ce49b434a0b3" name="a528b194a475f4b65a679ce49b434a0b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a528b194a475f4b65a679ce49b434a0b3">&#9670;&#160;</a></span>ProtocolSnip_load_name()</h2>
+<a id="adb14903c04790ef108f4adeb6a94eb23" name="adb14903c04790ef108f4adeb6a94eb23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb14903c04790ef108f4adeb6a94eb23">&#9670;&#160;</a></span>ProtocolSnip_load_hardware_version()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -338,7 +338,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t ProtocolSnip_load_name </td>
+          <td class="memname">uint16_t ProtocolSnip_load_hardware_version </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
@@ -406,8 +406,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a0a2c11c40fcff40f495ffd2a271cd54e" name="a0a2c11c40fcff40f495ffd2a271cd54e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a2c11c40fcff40f495ffd2a271cd54e">&#9670;&#160;</a></span>ProtocolSnip_load_user_description()</h2>
+<a id="abe0da89740478610a11fe2a835d40d4e" name="abe0da89740478610a11fe2a835d40d4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe0da89740478610a11fe2a835d40d4e">&#9670;&#160;</a></span>ProtocolSnip_load_user_version_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -416,7 +416,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t ProtocolSnip_load_user_description </td>
+          <td class="memname">uint16_t ProtocolSnip_load_user_version_id </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
@@ -484,8 +484,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="abe0da89740478610a11fe2a835d40d4e" name="abe0da89740478610a11fe2a835d40d4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe0da89740478610a11fe2a835d40d4e">&#9670;&#160;</a></span>ProtocolSnip_load_user_version_id()</h2>
+<a id="a0a2c11c40fcff40f495ffd2a271cd54e" name="a0a2c11c40fcff40f495ffd2a271cd54e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a2c11c40fcff40f495ffd2a271cd54e">&#9670;&#160;</a></span>ProtocolSnip_load_user_description()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -494,7 +494,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t ProtocolSnip_load_user_version_id </td>
+          <td class="memname">uint16_t ProtocolSnip_load_user_description </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
@@ -523,8 +523,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad9dd288bc1780719e4078408eef25b03" name="ad9dd288bc1780719e4078408eef25b03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9dd288bc1780719e4078408eef25b03">&#9670;&#160;</a></span>ProtocolSnip_validate_snip_reply()</h2>
+<a id="ab389edd115c9ab9fc11a7b2bd0f0f8ce" name="ab389edd115c9ab9fc11a7b2bd0f0f8ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab389edd115c9ab9fc11a7b2bd0f0f8ce">&#9670;&#160;</a></span>ProtocolSnip_write_user_name()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -533,10 +533,14 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool ProtocolSnip_validate_snip_reply </td>
+          <td class="memname">uint16_t ProtocolSnip_write_user_name </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>snip_reply_msg</em></span></td><td>)</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>byte_count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -577,8 +581,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab389edd115c9ab9fc11a7b2bd0f0f8ce" name="ab389edd115c9ab9fc11a7b2bd0f0f8ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab389edd115c9ab9fc11a7b2bd0f0f8ce">&#9670;&#160;</a></span>ProtocolSnip_write_user_name()</h2>
+<a id="ad9dd288bc1780719e4078408eef25b03" name="ad9dd288bc1780719e4078408eef25b03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9dd288bc1780719e4078408eef25b03">&#9670;&#160;</a></span>ProtocolSnip_validate_snip_reply()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -587,14 +591,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t ProtocolSnip_write_user_name </td>
+          <td class="memname">bool ProtocolSnip_validate_snip_reply </td>
           <td>(</td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>byte_count</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>snip_reply_msg</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

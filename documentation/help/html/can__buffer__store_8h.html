@@ -114,10 +114,47 @@ Functions</h2></td></tr>
 <tr class="separator:ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements the core buffers for CAN message buffers. The CAN FIFO buffer is an array of pointers to these core buffers that are allocated and freed. <br  />
-</p>
+<div class="textblock"><p>Implements the core buffers for CAN frames. </p>
+<p>The CAN FIFO buffer is an array of pointers to CAN frame buffer ( <a class="el" href="structcan__msg__t.html">can_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> and <a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access these buffers directly, they should use the helpers to send messages in <a class="el" href="openlcb__application_8h.html">openlcb_application.h</a></dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a49fcb6055f37edb9e56977295cd0eaf2" name="a49fcb6055f37edb9e56977295cd0eaf2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49fcb6055f37edb9e56977295cd0eaf2">&#9670;&#160;</a></span>CanBufferStore_initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanBufferStore_initialize </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initializes the CAN Buffer Store<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+
+</div>
+</div>
 <a id="afd3358d37ab07ff0f8ec918c00fffe99" name="afd3358d37ab07ff0f8ec918c00fffe99"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd3358d37ab07ff0f8ec918c00fffe99">&#9670;&#160;</a></span>CanBufferStore_allocate_buffer()</h2>
 
@@ -152,40 +189,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab6eded9ea67c83dfe9fff89a79f36ad6" name="ab6eded9ea67c83dfe9fff89a79f36ad6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6eded9ea67c83dfe9fff89a79f36ad6">&#9670;&#160;</a></span>CanBufferStore_clear_max_allocated()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanBufferStore_clear_max_allocated </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Resets the running count of the Maximum number of CAN buffer that have been allocated at one time. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
-
-</div>
-</div>
 <a id="ad95fb1127ec823f0cc9117848b78e5a7" name="ad95fb1127ec823f0cc9117848b78e5a7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad95fb1127ec823f0cc9117848b78e5a7">&#9670;&#160;</a></span>CanBufferStore_free_buffer()</h2>
 
@@ -209,8 +212,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Frees the buffer so it can be reused.<br  />
- </p>
+<p>Frees the buffer so it can be reused. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
@@ -218,42 +220,6 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
-
-</div>
-</div>
-<a id="a49fcb6055f37edb9e56977295cd0eaf2" name="a49fcb6055f37edb9e56977295cd0eaf2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49fcb6055f37edb9e56977295cd0eaf2">&#9670;&#160;</a></span>CanBufferStore_initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanBufferStore_initialize </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes the CAN Buffer Store<br  />
- </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -322,6 +288,40 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Maximum number of CAN sized messages that have been allocated currently </dd></dl>
+
+</div>
+</div>
+<a id="ab6eded9ea67c83dfe9fff89a79f36ad6" name="ab6eded9ea67c83dfe9fff89a79f36ad6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6eded9ea67c83dfe9fff89a79f36ad6">&#9670;&#160;</a></span>CanBufferStore_clear_max_allocated()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanBufferStore_clear_max_allocated </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Resets the running count of the Maximum number of CAN buffer that have been allocated at one time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>

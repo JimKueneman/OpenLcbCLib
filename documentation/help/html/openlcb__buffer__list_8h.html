@@ -114,25 +114,49 @@ Functions</h2></td></tr>
 <tr class="separator:ab15c0df7469df0e2203f3a67bc3620af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h2><a class="anchor" id="Description"></a>
-Description</h2>
+<div class="textblock"><p>Implementation of the FIFO where the OpenLcb messages are placed by the receive module. The main loop pulls them out one at a time and dispatched them to the handlers.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access these buffers directly, they should use the helpers to send messages in <a class="el" href="openlcb__application_8h.html">openlcb_application.h</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason.</dd></dl>
 <p>A buffer list that can hold openlcb message structures. Used to hold messages that are coming in using a CAN physical layer adaptation of the openlcb message where it can be sent in 1 or many frames. This buffer can hold partially received messages until they are fully assembled</p>
-<dl class="section note"><dt>Note</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason.</dd>
-<dd>
-This is an internal list and the Application should not access it</dd></dl>
-<h2><a class="anchor" id="License"></a>
-License</h2>
-<p>All rights reserved.</p>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025, Jim Kueneman </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>14 Dec 2025 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access these buffers directly, they should use the helpers to send messages in <a class="el" href="openlcb__application_8h.html">openlcb_application.h</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="ad977454a2b373e1e67d269232e41db3b" name="ad977454a2b373e1e67d269232e41db3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad977454a2b373e1e67d269232e41db3b">&#9670;&#160;</a></span>OpenLcbBufferList_initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbBufferList_initialize </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initializes the OpenLcb Message Buffer List<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
+
+</div>
+</div>
 <a id="aeb62e6cfb246eaeea5cb13e9df3cf4f7" name="aeb62e6cfb246eaeea5cb13e9df3cf4f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeb62e6cfb246eaeea5cb13e9df3cf4f7">&#9670;&#160;</a></span>OpenLcbBufferList_add()</h2>
 
@@ -212,6 +236,40 @@ License</h2>
 
 </div>
 </div>
+<a id="ab5f7c4484feef516fc703ae7fa38ec6c" name="ab5f7c4484feef516fc703ae7fa38ec6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5f7c4484feef516fc703ae7fa38ec6c">&#9670;&#160;</a></span>OpenLcbBufferList_release()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> * OpenLcbBufferList_release </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Removes an OpenLcb message from the buffer, the caller is responsible for freeing the message see <a class="el" href="openlcb__buffer__store_8h.html#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer()</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*new_msg [in] - Pointer to a message to be released from the list</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*openlcb_msg_t - Pointer to the message or NULL if the message does not exist </dd></dl>
+
+</div>
+</div>
 <a id="a293cd4aa8d64db386fc6de0b524a80bf" name="a293cd4aa8d64db386fc6de0b524a80bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a293cd4aa8d64db386fc6de0b524a80bf">&#9670;&#160;</a></span>OpenLcbBufferList_index_of()</h2>
 
@@ -246,42 +304,6 @@ License</h2>
 
 </div>
 </div>
-<a id="ad977454a2b373e1e67d269232e41db3b" name="ad977454a2b373e1e67d269232e41db3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad977454a2b373e1e67d269232e41db3b">&#9670;&#160;</a></span>OpenLcbBufferList_initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbBufferList_initialize </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes the OpenLcb Message Buffer List<br  />
- </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
-
-</div>
-</div>
 <a id="ab15c0df7469df0e2203f3a67bc3620af" name="ab15c0df7469df0e2203f3a67bc3620af"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab15c0df7469df0e2203f3a67bc3620af">&#9670;&#160;</a></span>OpenLcbBufferList_is_empty()</h2>
 
@@ -313,40 +335,6 @@ License</h2>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool - True if the list is empty False if there is a least one non NULL message pointer in the list </dd></dl>
-
-</div>
-</div>
-<a id="ab5f7c4484feef516fc703ae7fa38ec6c" name="ab5f7c4484feef516fc703ae7fa38ec6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5f7c4484feef516fc703ae7fa38ec6c">&#9670;&#160;</a></span>OpenLcbBufferList_release()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> * OpenLcbBufferList_release </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Removes an OpenLcb message from the buffer, the caller is responsible for freeing the message see <a class="el" href="openlcb__buffer__store_8h.html#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer()</a> </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*new_msg [in] - Pointer to a message to be released from the list</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>*openlcb_msg_t - Pointer to the message or NULL if the message does not exist </dd></dl>
 
 </div>
 </div>

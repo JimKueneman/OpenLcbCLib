@@ -123,7 +123,108 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>. </p>
+<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* lock_shared_resources) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a654fa7c6260aa2ac2c0589f57fcd67e9" name="a654fa7c6260aa2ac2c0589f57fcd67e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a654fa7c6260aa2ac2c0589f57fcd67e9">&#9670;&#160;</a></span>unlock_shared_resources</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* unlock_shared_resources) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af0bbea8088c0d628d4e066570baf35f3" name="af0bbea8088c0d628d4e066570baf35f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0bbea8088c0d628d4e066570baf35f3">&#9670;&#160;</a></span>send_can_message</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* send_can_message) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *msg)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a642f075eed427764e99bda659f1fd22f" name="a642f075eed427764e99bda659f1fd22f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a642f075eed427764e99bda659f1fd22f">&#9670;&#160;</a></span>openlcb_node_get_first</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_first) (uint8_t key)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae198d49b6505cbba8429aeb49fa3879e" name="ae198d49b6505cbba8429aeb49fa3879e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae198d49b6505cbba8429aeb49fa3879e">&#9670;&#160;</a></span>openlcb_node_get_next</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_next) (uint8_t key)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afcc26a9aa6bd99c8b8c09cfac42e0125" name="afcc26a9aa6bd99c8b8c09cfac42e0125"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcc26a9aa6bd99c8b8c09cfac42e0125">&#9670;&#160;</a></span>openlcb_node_find_by_alias</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_find_by_alias) (uint16_t alias)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac202b101b9553f768970f16f84691cdd" name="ac202b101b9553f768970f16f84691cdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac202b101b9553f768970f16f84691cdd">&#9670;&#160;</a></span>login_statemachine_run</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* login_statemachine_run) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a11d6f4e079fa28cc00a01cdc38e526f6" name="a11d6f4e079fa28cc00a01cdc38e526f6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a11d6f4e079fa28cc00a01cdc38e526f6">&#9670;&#160;</a></span>alias_mapping_get_alias_mapping_info</h2>
 
@@ -166,20 +267,6 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a28e939b74de1df461b469f2ddf7d663c" name="a28e939b74de1df461b469f2ddf7d663c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28e939b74de1df461b469f2ddf7d663c">&#9670;&#160;</a></span>handle_login_outgoing_can_message</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* handle_login_outgoing_can_message) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a21202484ac69bd5be4a3304038cf2f5f" name="a21202484ac69bd5be4a3304038cf2f5f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a21202484ac69bd5be4a3304038cf2f5f">&#9670;&#160;</a></span>handle_outgoing_can_message</h2>
 
@@ -188,6 +275,20 @@ Data Fields</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool(* handle_outgoing_can_message) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a28e939b74de1df461b469f2ddf7d663c" name="a28e939b74de1df461b469f2ddf7d663c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28e939b74de1df461b469f2ddf7d663c">&#9670;&#160;</a></span>handle_login_outgoing_can_message</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* handle_login_outgoing_can_message) (void)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -216,104 +317,6 @@ Data Fields</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool(* handle_try_enumerate_next_node) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* lock_shared_resources) (void)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac202b101b9553f768970f16f84691cdd" name="ac202b101b9553f768970f16f84691cdd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac202b101b9553f768970f16f84691cdd">&#9670;&#160;</a></span>login_statemachine_run</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* login_statemachine_run) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afcc26a9aa6bd99c8b8c09cfac42e0125" name="afcc26a9aa6bd99c8b8c09cfac42e0125"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcc26a9aa6bd99c8b8c09cfac42e0125">&#9670;&#160;</a></span>openlcb_node_find_by_alias</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_find_by_alias) (uint16_t alias)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a642f075eed427764e99bda659f1fd22f" name="a642f075eed427764e99bda659f1fd22f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a642f075eed427764e99bda659f1fd22f">&#9670;&#160;</a></span>openlcb_node_get_first</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_first) (uint8_t key)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae198d49b6505cbba8429aeb49fa3879e" name="ae198d49b6505cbba8429aeb49fa3879e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae198d49b6505cbba8429aeb49fa3879e">&#9670;&#160;</a></span>openlcb_node_get_next</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(* openlcb_node_get_next) (uint8_t key)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="af0bbea8088c0d628d4e066570baf35f3" name="af0bbea8088c0d628d4e066570baf35f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0bbea8088c0d628d4e066570baf35f3">&#9670;&#160;</a></span>send_can_message</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* send_can_message) (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *msg)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a654fa7c6260aa2ac2c0589f57fcd67e9" name="a654fa7c6260aa2ac2c0589f57fcd67e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a654fa7c6260aa2ac2c0589f57fcd67e9">&#9670;&#160;</a></span>unlock_shared_resources</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* unlock_shared_resources) (void)</td>
         </tr>
       </table>
 </div><div class="memdoc">

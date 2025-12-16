@@ -22,23 +22,26 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * 15 Dec 2025
  * Copyright (c) 2025, Jim Kueneman
  */
 
-/** 
- * 
- * Implementation of the FIFO where the CAN messages are placed by the receive
- * module.  The main CAN loop pulls them out one at a time and dispatched them to the handlers. 
- * 
- * @note Applications typically have no reason to access these buffers directly, 
- * they should use the helpers to send messages in \ref openlcb_application.h  
- * 
- * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+/**
+ *
+ * @brief Implementation of a FIFO buffer for CAN message strutures.
+ *
+ * CAN messages as allocated from the buffer store (\ref can_buffer_store.h) then placed into the FIFO by the
+ * CAN Rx module (\ref can_rx_statemachine.h) and then the main CAN loop (\ref can_main_statemachine.h) pulls
+ * them out one at a time and dispatches them to the handlers.
+ *
+ * @note Applications typically have no reason to access these buffers directly,
+ * they should use the helpers to send messages in \ref openlcb_application.h
+ *
+ * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the
  * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
+ *
  * @file can_buffer_fifo.h
  *
  */
@@ -54,58 +57,55 @@
 #include "can_types.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
-     /**
+    /**
      * @brief Initializes the CAN Message Buffer FIFO<br>
-     * 
+     *
      * @param none
-     * 
+     *
      * @return none
-     * 
+     *
      * @attention This must always be called during application initialization
      */
     extern void CanBufferFifo_initialize(void);
 
-    
     /**
-     * @brief Pushes a new CAN message into the FIFO buffer that was allocated 
+     * @brief Pushes a new CAN message into the FIFO buffer that was allocated
      *   see \ref CanBufferStore_allocate_buffer()
-     * 
+     *
      * @param can_msg_t *new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool
-     * 
+     *
      * @return Pointer to the message or NULL if it fails
      */
-    extern bool CanBufferFifo_push(can_msg_t* new_msg);
+    extern bool CanBufferFifo_push(can_msg_t *new_msg);
 
-    
     /**
-     * @brief Pops a CAN message off the FIFO buffer.  The caller is responsible to free the message when done 
+     * @brief Pops a CAN message off the FIFO buffer.  The caller is responsible to free the message when done
      *   see \ref CanBufferStore_free_buffer(can_msg_t *msg)
-     * 
+     *
      * @param none
-     * 
+     *
      * @return Pointer to the message or NULL if the buffer is empty
      */
     extern can_msg_t *CanBufferFifo_pop(void);
 
-    
-     /**
+    /**
      * @brief Tests if there is a message in the FIFO buffer.
-     * 
+     *
      * @param none
-     * 
+     *
      * @return true if there is at least one message, false if the list is empty
      */
     extern uint8_t CanBufferFifo_is_empty(void);
 
-    
     /**
      * @brief Returns the number of messages in the FIFO buffer.
-     * 
+     *
      * @param none
-     * 
+     *
      * @return The number of messages in the buffer
      */
     extern uint16_t CanBufferFifo_get_allocated_count(void);

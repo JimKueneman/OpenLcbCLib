@@ -122,34 +122,6 @@ Data Fields</h2></td></tr>
 <tr class="separator:a82baac869860da64982f0bde9385d3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a02e31f9ce067276f3ecc433b4d92f54d" name="a02e31f9ce067276f3ecc433b4d92f54d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02e31f9ce067276f3ecc433b4d92f54d">&#9670;&#160;</a></span>config_memory_write</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t(* config_memory_write) (uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a82baac869860da64982f0bde9385d3bb" name="a82baac869860da64982f0bde9385d3bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82baac869860da64982f0bde9385d3bb">&#9670;&#160;</a></span>delayed_reply_time</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t(* delayed_reply_time) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
 
@@ -178,14 +150,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a3c76be875d994e65abf0ddb7b17b2d24" name="a3c76be875d994e65abf0ddb7b17b2d24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c76be875d994e65abf0ddb7b17b2d24">&#9670;&#160;</a></span>snip_user_description_write</h2>
+<a id="a02e31f9ce067276f3ecc433b4d92f54d" name="a02e31f9ce067276f3ecc433b4d92f54d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02e31f9ce067276f3ecc433b4d92f54d">&#9670;&#160;</a></span>config_memory_write</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t(* snip_user_description_write) (uint16_t byte_count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+          <td class="memname">uint16_t(* config_memory_write) (uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -200,6 +172,62 @@ Data Fields</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint16_t(* snip_user_name_write) (uint16_t byte_count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3c76be875d994e65abf0ddb7b17b2d24" name="a3c76be875d994e65abf0ddb7b17b2d24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c76be875d994e65abf0ddb7b17b2d24">&#9670;&#160;</a></span>snip_user_description_write</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t(* snip_user_description_write) (uint16_t byte_count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a545751219d325aa68a2b1273413cf878" name="a545751219d325aa68a2b1273413cf878"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a545751219d325aa68a2b1273413cf878">&#9670;&#160;</a></span>write_request_config_definition_info</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* write_request_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acff2433f8c654934553b1f6c243efe78" name="acff2433f8c654934553b1f6c243efe78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acff2433f8c654934553b1f6c243efe78">&#9670;&#160;</a></span>write_request_all</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* write_request_all) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a074aba0e50bf1f7c7b66b0fa10983543" name="a074aba0e50bf1f7c7b66b0fa10983543"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a074aba0e50bf1f7c7b66b0fa10983543">&#9670;&#160;</a></span>write_request_config_mem</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* write_request_config_mem) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -234,48 +262,6 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="acff2433f8c654934553b1f6c243efe78" name="acff2433f8c654934553b1f6c243efe78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acff2433f8c654934553b1f6c243efe78">&#9670;&#160;</a></span>write_request_all</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* write_request_all) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a545751219d325aa68a2b1273413cf878" name="a545751219d325aa68a2b1273413cf878"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a545751219d325aa68a2b1273413cf878">&#9670;&#160;</a></span>write_request_config_definition_info</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* write_request_config_definition_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a074aba0e50bf1f7c7b66b0fa10983543" name="a074aba0e50bf1f7c7b66b0fa10983543"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a074aba0e50bf1f7c7b66b0fa10983543">&#9670;&#160;</a></span>write_request_config_mem</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* write_request_config_mem) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a362ac18567dad9cda70eb41742f2f07a" name="a362ac18567dad9cda70eb41742f2f07a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a362ac18567dad9cda70eb41742f2f07a">&#9670;&#160;</a></span>write_request_traction_function_config_definition_info</h2>
 
@@ -298,6 +284,20 @@ Data Fields</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void(* write_request_traction_function_config_memory) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a82baac869860da64982f0bde9385d3bb" name="a82baac869860da64982f0bde9385d3bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82baac869860da64982f0bde9385d3bb">&#9670;&#160;</a></span>delayed_reply_time</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t(* delayed_reply_time) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -112,43 +112,11 @@ Functions</h2></td></tr>
 <tr class="separator:a93d3428dcf398427024b61c4cfe096c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implementation of the FIFO where the CAN messages are placed by the receive module. The main CAN loop pulls them out one at a time and dispatched them to the handlers.</p>
+<div class="textblock"><p>Implementation of a FIFO buffer for CAN message strutures. </p>
+<p>CAN messages as allocated from the buffer store (<a class="el" href="can__buffer__store_8h.html">can_buffer_store.h</a>) then placed into the FIFO by the CAN Rx module (<a class="el" href="can__rx__statemachine_8h.html">can_rx_statemachine.h</a>) and then the main CAN loop (<a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>) pulls them out one at a time and dispatches them to the handlers.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access these buffers directly, they should use the helpers to send messages in <a class="el" href="openlcb__application_8h.html">openlcb_application.h</a></dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a93d3428dcf398427024b61c4cfe096c3" name="a93d3428dcf398427024b61c4cfe096c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93d3428dcf398427024b61c4cfe096c3">&#9670;&#160;</a></span>CanBufferFifo_get_allocated_count()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t CanBufferFifo_get_allocated_count </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the number of messages in the FIFO buffer. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of messages in the buffer </dd></dl>
-
-</div>
-</div>
 <a id="ab0652f39f104350007ad642b955ddbad" name="ab0652f39f104350007ad642b955ddbad"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab0652f39f104350007ad642b955ddbad">&#9670;&#160;</a></span>CanBufferFifo_initialize()</h2>
 
@@ -185,8 +153,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad52fb1602439269439924aa2c962db07" name="ad52fb1602439269439924aa2c962db07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad52fb1602439269439924aa2c962db07">&#9670;&#160;</a></span>CanBufferFifo_is_empty()</h2>
+<a id="a9506021e46c1e62c700b125252276346" name="a9506021e46c1e62c700b125252276346"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9506021e46c1e62c700b125252276346">&#9670;&#160;</a></span>CanBufferFifo_push()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,9 +163,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t CanBufferFifo_is_empty </td>
+          <td class="memname">bool CanBufferFifo_push </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>new_msg</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -208,14 +176,14 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Tests if there is a message in the FIFO buffer. </p>
+<p>Pushes a new CAN message into the FIFO buffer that was allocated see <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if there is at least one message, false if the list is empty </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the message or NULL if it fails </dd></dl>
 
 </div>
 </div>
@@ -253,8 +221,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a9506021e46c1e62c700b125252276346" name="a9506021e46c1e62c700b125252276346"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9506021e46c1e62c700b125252276346">&#9670;&#160;</a></span>CanBufferFifo_push()</h2>
+<a id="ad52fb1602439269439924aa2c962db07" name="ad52fb1602439269439924aa2c962db07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad52fb1602439269439924aa2c962db07">&#9670;&#160;</a></span>CanBufferFifo_is_empty()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -263,9 +231,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool CanBufferFifo_push </td>
+          <td class="memname">uint8_t CanBufferFifo_is_empty </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>new_msg</em></span></td><td>)</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -276,14 +244,48 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Pushes a new CAN message into the FIFO buffer that was allocated see <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> </p>
+<p>Tests if there is a message in the FIFO buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool</td></tr>
+    <tr><td class="paramname">none</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the message or NULL if it fails </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if there is at least one message, false if the list is empty </dd></dl>
+
+</div>
+</div>
+<a id="a93d3428dcf398427024b61c4cfe096c3" name="a93d3428dcf398427024b61c4cfe096c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93d3428dcf398427024b61c4cfe096c3">&#9670;&#160;</a></span>CanBufferFifo_get_allocated_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t CanBufferFifo_get_allocated_count </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the number of messages in the FIFO buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of messages in the buffer </dd></dl>
 
 </div>
 </div>

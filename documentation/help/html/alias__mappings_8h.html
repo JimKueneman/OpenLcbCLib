@@ -118,18 +118,13 @@ Functions</h2></td></tr>
 <tr class="separator:a689def4649f0c550f4105dac8846bd93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>27 Sept 2025 </dd></dl>
+<div class="textblock"><p>Implements a buffer that stores Alias/NodeID pairs. </p>
+<p>This does not track external nodes it only tracks internal nodes. It's main purpose is to allow the CAN Rx Handler to search through allocated Alias and NodeIDs when processing incoming messages and not need to access the raw Node data structures in <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a>. This is because the Rx Handler is typically running in an interrupt or thread so this keeps a secondary list that have clear insert/remove points that can be protected through resource locking (pausing interrupts, threads, etc).</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access this structure as it can directly use the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> to look at this information in the main loop safely.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a30c9579dd57feb9bb1ebe5f07f60bb42" name="a30c9579dd57feb9bb1ebe5f07f60bb42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30c9579dd57feb9bb1ebe5f07f60bb42">&#9670;&#160;</a></span>AliasMappings_find_mapping_by_alias()</h2>
+<a id="a999c2dabeacd5ed0c21c9dbbdd263297" name="a999c2dabeacd5ed0c21c9dbbdd263297"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a999c2dabeacd5ed0c21c9dbbdd263297">&#9670;&#160;</a></span>AliasMappings_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -138,57 +133,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structalias__mapping__t.html">alias_mapping_t</a> * AliasMappings_find_mapping_by_alias </td>
-          <td>(</td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>alias</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a084208e2d690494fb75159a2251b41e8" name="a084208e2d690494fb75159a2251b41e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a084208e2d690494fb75159a2251b41e8">&#9670;&#160;</a></span>AliasMappings_find_mapping_by_node_id()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structalias__mapping__t.html">alias_mapping_t</a> * AliasMappings_find_mapping_by_node_id </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a689def4649f0c550f4105dac8846bd93" name="a689def4649f0c550f4105dac8846bd93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a689def4649f0c550f4105dac8846bd93">&#9670;&#160;</a></span>AliasMappings_flush()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void AliasMappings_flush </td>
+          <td class="memname">void AliasMappings_initialize </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -200,6 +145,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the Alias Mapping buffers<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -226,10 +182,19 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Allows access to the Alias Mapping Buffer itself. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the alias message buffer or NULL if it fails </dd></dl>
+
 </div>
 </div>
-<a id="a999c2dabeacd5ed0c21c9dbbdd263297" name="a999c2dabeacd5ed0c21c9dbbdd263297"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a999c2dabeacd5ed0c21c9dbbdd263297">&#9670;&#160;</a></span>AliasMappings_initialize()</h2>
+<a id="a1e2639729c40c4ba017fa2529493c2d7" name="a1e2639729c40c4ba017fa2529493c2d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e2639729c40c4ba017fa2529493c2d7">&#9670;&#160;</a></span>AliasMappings_set_has_duplicate_alias_flag()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,7 +203,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void AliasMappings_initialize </td>
+          <td class="memname">void AliasMappings_set_has_duplicate_alias_flag </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -250,6 +215,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sets a flag that tells the main loop that a received message has been found to be using an Alias we have reserved. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -280,30 +254,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a1e2639729c40c4ba017fa2529493c2d7" name="a1e2639729c40c4ba017fa2529493c2d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e2639729c40c4ba017fa2529493c2d7">&#9670;&#160;</a></span>AliasMappings_set_has_duplicate_alias_flag()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void AliasMappings_set_has_duplicate_alias_flag </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Registers a new Alias/NodeID pair. If the NodeID exists then the old Alias is replaced by the passed one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">uint16_t</td><td>alias - The Alias to store </td></tr>
+    <tr><td class="paramname">node_id_t</td><td>node_id - The NodeID to store</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly registered AliasMapping or NULL if fails </dd></dl>
 
 </div>
 </div>
@@ -329,6 +288,117 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Deregisters an existing Alias/NodeID pair. If the pair does not exist it does nothing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">uint16_t</td><td>alias - The Alias to unregister</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="a30c9579dd57feb9bb1ebe5f07f60bb42" name="a30c9579dd57feb9bb1ebe5f07f60bb42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30c9579dd57feb9bb1ebe5f07f60bb42">&#9670;&#160;</a></span>AliasMappings_find_mapping_by_alias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structalias__mapping__t.html">alias_mapping_t</a> * AliasMappings_find_mapping_by_alias </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>alias</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finds a Alias/NodeID pair that matches the Alias passed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">uint16_t</td><td>alias - The Alias to search for</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL </dd></dl>
+
+</div>
+</div>
+<a id="a084208e2d690494fb75159a2251b41e8" name="a084208e2d690494fb75159a2251b41e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a084208e2d690494fb75159a2251b41e8">&#9670;&#160;</a></span>AliasMappings_find_mapping_by_node_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structalias__mapping__t.html">alias_mapping_t</a> * AliasMappings_find_mapping_by_node_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finds a Alias/NodeID pair that matches the NodeID passed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">uint16_t</td><td>alias - The NodeID to search for</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL </dd></dl>
+
+</div>
+</div>
+<a id="a689def4649f0c550f4105dac8846bd93" name="a689def4649f0c550f4105dac8846bd93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a689def4649f0c550f4105dac8846bd93">&#9670;&#160;</a></span>AliasMappings_flush()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void AliasMappings_flush </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Released all stored Alias Mapping pairs. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>

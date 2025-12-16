@@ -145,8 +145,8 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a6bab92fd769c43b46c7254b8a8ed4e79" name="a6bab92fd769c43b46c7254b8a8ed4e79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6bab92fd769c43b46c7254b8a8ed4e79">&#9670;&#160;</a></span>ProtocolDatagramHandler_100ms_timer_tick()</h2>
+<a id="a87c419434a44020752f0fd815f1a0832" name="a87c419434a44020752f0fd815f1a0832"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87c419434a44020752f0fd815f1a0832">&#9670;&#160;</a></span>ProtocolDatagramHandler_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -155,9 +155,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolDatagramHandler_100ms_timer_tick </td>
+          <td class="memname">void ProtocolDatagramHandler_initialize </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_protocol_datagram_handler</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -170,8 +170,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af7b23593b33a3a3c66f3afcd6886ebce" name="af7b23593b33a3a3c66f3afcd6886ebce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7b23593b33a3a3c66f3afcd6886ebce">&#9670;&#160;</a></span>ProtocolDatagramHandler_clear_resend_datagram_message()</h2>
+<a id="abe5f21fda782ce61534588d89163ccff" name="abe5f21fda782ce61534588d89163ccff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe5f21fda782ce61534588d89163ccff">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,10 +180,43 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolDatagramHandler_clear_resend_datagram_message </td>
+          <td class="memname">void ProtocolDatagramHandler_load_datagram_received_ok_message </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>reply_pending_time_in_seconds</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a74c7ab99bff8408f9a00f77ed79da9f4" name="a74c7ab99bff8408f9a00f77ed79da9f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74c7ab99bff8408f9a00f77ed79da9f4">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_rejected_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolDatagramHandler_load_datagram_rejected_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>return_code</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -270,8 +303,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a87c419434a44020752f0fd815f1a0832" name="a87c419434a44020752f0fd815f1a0832"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87c419434a44020752f0fd815f1a0832">&#9670;&#160;</a></span>ProtocolDatagramHandler_initialize()</h2>
+<a id="af7b23593b33a3a3c66f3afcd6886ebce" name="af7b23593b33a3a3c66f3afcd6886ebce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7b23593b33a3a3c66f3afcd6886ebce">&#9670;&#160;</a></span>ProtocolDatagramHandler_clear_resend_datagram_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -280,9 +313,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolDatagramHandler_initialize </td>
+          <td class="memname">void ProtocolDatagramHandler_clear_resend_datagram_message </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface_protocol_datagram_handler</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -295,8 +328,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="abe5f21fda782ce61534588d89163ccff" name="abe5f21fda782ce61534588d89163ccff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe5f21fda782ce61534588d89163ccff">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_received_ok_message()</h2>
+<a id="a6bab92fd769c43b46c7254b8a8ed4e79" name="a6bab92fd769c43b46c7254b8a8ed4e79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bab92fd769c43b46c7254b8a8ed4e79">&#9670;&#160;</a></span>ProtocolDatagramHandler_100ms_timer_tick()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -305,43 +338,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ProtocolDatagramHandler_load_datagram_received_ok_message </td>
+          <td class="memname">void ProtocolDatagramHandler_100ms_timer_tick </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>reply_pending_time_in_seconds</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a74c7ab99bff8408f9a00f77ed79da9f4" name="a74c7ab99bff8408f9a00f77ed79da9f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74c7ab99bff8408f9a00f77ed79da9f4">&#9670;&#160;</a></span>ProtocolDatagramHandler_load_datagram_rejected_message()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ProtocolDatagramHandler_load_datagram_rejected_message </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>return_code</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

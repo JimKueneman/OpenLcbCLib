@@ -135,8 +135,8 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ad69a221293d91383b8f8214ca9a38b40" name="ad69a221293d91383b8f8214ca9a38b40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad69a221293d91383b8f8214ca9a38b40">&#9670;&#160;</a></span>OpenLcbNode_100ms_timer_tick()</h2>
+<a id="a7beb45af246c8e2bf112bfca6c11375b" name="a7beb45af246c8e2bf112bfca6c11375b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7beb45af246c8e2bf112bfca6c11375b">&#9670;&#160;</a></span>OpenLcbNode_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -145,9 +145,9 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void OpenLcbNode_100ms_timer_tick </td>
+          <td class="memname">void OpenLcbNode_initialize </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -178,56 +178,6 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *</td>          <td class="paramname"><span class="paramname"><em>node_parameters</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a02012a27bb89bffc68816a980279949e" name="a02012a27bb89bffc68816a980279949e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02012a27bb89bffc68816a980279949e">&#9670;&#160;</a></span>OpenLcbNode_find_by_alias()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> * OpenLcbNode_find_by_alias </td>
-          <td>(</td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>alias</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a2720f6597cb2133ef99f37b8d05868dc" name="a2720f6597cb2133ef99f37b8d05868dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2720f6597cb2133ef99f37b8d05868dc">&#9670;&#160;</a></span>OpenLcbNode_find_by_node_id()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> * OpenLcbNode_find_by_node_id </td>
-          <td>(</td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>nodeid</em></span></td><td>)</td>
-          <td></td>
         </tr>
       </table>
   </td>
@@ -289,8 +239,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a7beb45af246c8e2bf112bfca6c11375b" name="a7beb45af246c8e2bf112bfca6c11375b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7beb45af246c8e2bf112bfca6c11375b">&#9670;&#160;</a></span>OpenLcbNode_initialize()</h2>
+<a id="a02012a27bb89bffc68816a980279949e" name="a02012a27bb89bffc68816a980279949e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02012a27bb89bffc68816a980279949e">&#9670;&#160;</a></span>OpenLcbNode_find_by_alias()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -299,9 +249,34 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void OpenLcbNode_initialize </td>
+          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> * OpenLcbNode_find_by_alias </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>interface</em></span></td><td>)</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>alias</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2720f6597cb2133ef99f37b8d05868dc" name="a2720f6597cb2133ef99f37b8d05868dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2720f6597cb2133ef99f37b8d05868dc">&#9670;&#160;</a></span>OpenLcbNode_find_by_node_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> * OpenLcbNode_find_by_node_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>nodeid</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -325,6 +300,31 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void OpenLcbNode_reset_state </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad69a221293d91383b8f8214ca9a38b40" name="ad69a221293d91383b8f8214ca9a38b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad69a221293d91383b8f8214ca9a38b40">&#9670;&#160;</a></span>OpenLcbNode_100ms_timer_tick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbNode_100ms_timer_tick </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>

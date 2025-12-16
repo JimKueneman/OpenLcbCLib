@@ -130,11 +130,10 @@ Functions</h2></td></tr>
 <tr class="separator:a86ceb4c89ce3880a1a34fcd8805b4064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>When a node is logging into the network on a CAN bus it must follow a specific flow to allocate a unique alias ID and broadcast its events. This module defines the specific handlers to respond to a CAN level requests and login requirements. <br  />
- Each function completes a task that is required for an associated request or login state.<br  />
-<br  />
+<div class="textblock"><p>Implements handlers for the messages and alias creation tasks a node must follow to login to the OpenLcb/LCC network. </p>
+<p>When a node is logging into the network on a CAN bus it must follow a specific flow to generate/allocate/notify a unique alias ID then broadcast its events. This module defines the specific handlers for each step of this login procedure.<br  />
 </p>
-<p>These functions are assigned to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> which are called from within the CAN login statemachine switch statement.<br  />
+<p>These functions are used in the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> which are called from within the CAN login statemachine switch statement.<br  />
 </p>
 <dl class="section note"><dt>Note</dt><dd>Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application.<br  />
  see: <a class="el" href="can__login__statemachine_8h.html#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>; </dd></dl>
@@ -165,62 +164,12 @@ Functions</h2></td></tr>
 <p>Initializes the CAN Login Message Handler module. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to define function dependencies that this module requires.">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires</td></tr>
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to define function dependencies that this module requires, can_login_message_handler....">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
-
-</div>
-</div>
-<a id="acbada8cf2b6a3c5dc73bac3cb57ad6b0" name="acbada8cf2b6a3c5dc73bac3cb57ad6b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbada8cf2b6a3c5dc73bac3cb57ad6b0">&#9670;&#160;</a></span>CanLoginMessageHandler_state_generate_alias()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanLoginMessageHandler_state_generate_alias </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a49950e3b1ce029449d252aa5bcf2c799" name="a49950e3b1ce029449d252aa5bcf2c799"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49950e3b1ce029449d252aa5bcf2c799">&#9670;&#160;</a></span>CanLoginMessageHandler_state_generate_seed()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanLoginMessageHandler_state_generate_seed </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -247,10 +196,19 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Handles the first state in the CAN login sequence. It resets internal structures and moves on to the next state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
-<a id="a86ceb4c89ce3880a1a34fcd8805b4064" name="a86ceb4c89ce3880a1a34fcd8805b4064"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86ceb4c89ce3880a1a34fcd8805b4064">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_amd()</h2>
+<a id="a49950e3b1ce029449d252aa5bcf2c799" name="a49950e3b1ce029449d252aa5bcf2c799"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49950e3b1ce029449d252aa5bcf2c799">&#9670;&#160;</a></span>CanLoginMessageHandler_state_generate_seed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -259,7 +217,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CanLoginMessageHandler_state_load_amd </td>
+          <td class="memname">void CanLoginMessageHandler_state_generate_seed </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
           <td></td>
@@ -272,10 +230,19 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Handles the second state in the CAN login sequence. It generates a seed to create the Alias and moves on to the next state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
-<a id="aa2d0270b36a9e0b33fb6966d08f1b390" name="aa2d0270b36a9e0b33fb6966d08f1b390"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2d0270b36a9e0b33fb6966d08f1b390">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_cid04()</h2>
+<a id="acbada8cf2b6a3c5dc73bac3cb57ad6b0" name="acbada8cf2b6a3c5dc73bac3cb57ad6b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbada8cf2b6a3c5dc73bac3cb57ad6b0">&#9670;&#160;</a></span>CanLoginMessageHandler_state_generate_alias()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -284,7 +251,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CanLoginMessageHandler_state_load_cid04 </td>
+          <td class="memname">void CanLoginMessageHandler_state_generate_alias </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
           <td></td>
@@ -297,55 +264,14 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a452fa6a87c0be4de318f40958579e72c" name="a452fa6a87c0be4de318f40958579e72c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a452fa6a87c0be4de318f40958579e72c">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_cid05()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanLoginMessageHandler_state_load_cid05 </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8d6501a2abea5d9a1660b1005a0f79c6" name="a8d6501a2abea5d9a1660b1005a0f79c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d6501a2abea5d9a1660b1005a0f79c6">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_cid06()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanLoginMessageHandler_state_load_cid06 </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_infog</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Handles the third state in the CAN login sequence. It generates an Alias from the seed and moves on to the next state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -372,10 +298,19 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Handles the fourth state in the CAN login sequence. It loads the output buffer with a CID message with the top 3 bytes of the NodeID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
-<a id="a41f40ed325a32cf2f61fb66522c21977" name="a41f40ed325a32cf2f61fb66522c21977"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41f40ed325a32cf2f61fb66522c21977">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_rid()</h2>
+<a id="a8d6501a2abea5d9a1660b1005a0f79c6" name="a8d6501a2abea5d9a1660b1005a0f79c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d6501a2abea5d9a1660b1005a0f79c6">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_cid06()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -384,7 +319,41 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CanLoginMessageHandler_state_load_rid </td>
+          <td class="memname">void CanLoginMessageHandler_state_load_cid06 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_infog</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles the fifth state in the CAN login sequence. It loads the output buffer with a CID message with the next 3 bytes of the NodeID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="a452fa6a87c0be4de318f40958579e72c" name="a452fa6a87c0be4de318f40958579e72c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a452fa6a87c0be4de318f40958579e72c">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_cid05()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanLoginMessageHandler_state_load_cid05 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
           <td></td>
@@ -396,6 +365,49 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Handles the sixth state in the CAN login sequence. It loads the output buffer with a CID message with the next 3 bytes of the NodeID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="aa2d0270b36a9e0b33fb6966d08f1b390" name="aa2d0270b36a9e0b33fb6966d08f1b390"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2d0270b36a9e0b33fb6966d08f1b390">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_cid04()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanLoginMessageHandler_state_load_cid04 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles the seventh state in the CAN login sequence. It loads the output buffer with a CID message with the last 3 bytes of the NodeID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -421,6 +433,83 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Handles the eight state in the CAN login sequence. It waits for a minimum of 200ms before moving to the next state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="a41f40ed325a32cf2f61fb66522c21977" name="a41f40ed325a32cf2f61fb66522c21977"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41f40ed325a32cf2f61fb66522c21977">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_rid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanLoginMessageHandler_state_load_rid </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles the ninth state in the CAN login sequence. It loads the output buffer with a RID message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="a86ceb4c89ce3880a1a34fcd8805b4064" name="a86ceb4c89ce3880a1a34fcd8805b4064"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86ceb4c89ce3880a1a34fcd8805b4064">&#9670;&#160;</a></span>CanLoginMessageHandler_state_load_amd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CanLoginMessageHandler_state_load_amd </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles the tenth state in the CAN login sequence. It loads the output buffer with an AMD message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing message that may be necessary. The incoming message is not used.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>

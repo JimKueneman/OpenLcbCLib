@@ -115,18 +115,22 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a895fa3aaf066f4be8472df376b8b0085" id="r_a895fa3aaf066f4be8472df376b8b0085"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a895fa3aaf066f4be8472df376b8b0085">state_load_amd</a> )(<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
 <tr class="separator:a895fa3aaf066f4be8472df376b8b0085"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
-<a id="a95703898648991c51af730d12235365b" name="a95703898648991c51af730d12235365b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95703898648991c51af730d12235365b">&#9670;&#160;</a></span>state_generate_alias</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>. </p>
+<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="ae18f79f1e098bc647b2cdf20b904c82e" name="ae18f79f1e098bc647b2cdf20b904c82e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae18f79f1e098bc647b2cdf20b904c82e">&#9670;&#160;</a></span>state_init</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* state_generate_alias) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+          <td class="memname">void(* state_init) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for the Initialization State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a15578ce7b04e385b036135db0fe04248">CanLoginMessageHandler_state_init()</a> </dd></dl>
 
 </div>
 </div>
@@ -141,76 +145,22 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for the Generate Seed State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a49950e3b1ce029449d252aa5bcf2c799">CanLoginMessageHandler_state_generate_seed()</a> </dd></dl>
 
 </div>
 </div>
-<a id="ae18f79f1e098bc647b2cdf20b904c82e" name="ae18f79f1e098bc647b2cdf20b904c82e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae18f79f1e098bc647b2cdf20b904c82e">&#9670;&#160;</a></span>state_init</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* state_init) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a895fa3aaf066f4be8472df376b8b0085" name="a895fa3aaf066f4be8472df376b8b0085"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a895fa3aaf066f4be8472df376b8b0085">&#9670;&#160;</a></span>state_load_amd</h2>
+<a id="a95703898648991c51af730d12235365b" name="a95703898648991c51af730d12235365b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95703898648991c51af730d12235365b">&#9670;&#160;</a></span>state_generate_alias</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* state_load_amd) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+          <td class="memname">void(* state_generate_alias) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-</div>
-</div>
-<a id="a4cfae0c1448bc09741769000b73c46c3" name="a4cfae0c1448bc09741769000b73c46c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cfae0c1448bc09741769000b73c46c3">&#9670;&#160;</a></span>state_load_cid04</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* state_load_cid04) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ace4c8a5e73d84f6e9bf90e82b449efcf" name="ace4c8a5e73d84f6e9bf90e82b449efcf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace4c8a5e73d84f6e9bf90e82b449efcf">&#9670;&#160;</a></span>state_load_cid05</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* state_load_cid05) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac9131bf514441a07d644f5c792eff292" name="ac9131bf514441a07d644f5c792eff292"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9131bf514441a07d644f5c792eff292">&#9670;&#160;</a></span>state_load_cid06</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* state_load_cid06) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Pointer to a function for the Generate Alias State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#acbada8cf2b6a3c5dc73bac3cb57ad6b0">CanLoginMessageHandler_state_generate_alias()</a> </dd></dl>
 
 </div>
 </div>
@@ -225,20 +175,52 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for the CID7 State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#ad417a47b53614faa89382dd1f724c311">CanLoginMessageHandler_state_load_cid07()</a> </dd></dl>
 
 </div>
 </div>
-<a id="acf6268c4e81684bb335695fe7e0305a1" name="acf6268c4e81684bb335695fe7e0305a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf6268c4e81684bb335695fe7e0305a1">&#9670;&#160;</a></span>state_load_rid</h2>
+<a id="ac9131bf514441a07d644f5c792eff292" name="ac9131bf514441a07d644f5c792eff292"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9131bf514441a07d644f5c792eff292">&#9670;&#160;</a></span>state_load_cid06</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* state_load_rid) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+          <td class="memname">void(* state_load_cid06) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for the CID6 State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a8d6501a2abea5d9a1660b1005a0f79c6">CanLoginMessageHandler_state_load_cid06()</a> </dd></dl>
+
+</div>
+</div>
+<a id="ace4c8a5e73d84f6e9bf90e82b449efcf" name="ace4c8a5e73d84f6e9bf90e82b449efcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace4c8a5e73d84f6e9bf90e82b449efcf">&#9670;&#160;</a></span>state_load_cid05</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* state_load_cid05) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pointer to a function for the CID5 State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a452fa6a87c0be4de318f40958579e72c">CanLoginMessageHandler_state_load_cid05()</a> </dd></dl>
+
+</div>
+</div>
+<a id="a4cfae0c1448bc09741769000b73c46c3" name="a4cfae0c1448bc09741769000b73c46c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cfae0c1448bc09741769000b73c46c3">&#9670;&#160;</a></span>state_load_cid04</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* state_load_cid04) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pointer to a function for the CID4 State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#aa2d0270b36a9e0b33fb6966d08f1b390">CanLoginMessageHandler_state_load_cid04()</a> </dd></dl>
 
 </div>
 </div>
@@ -253,6 +235,37 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for the 200ms Wait State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a3ceb83bfdd574957d1e8ddc6d820caed">CanLoginMessageHandler_state_wait_200ms()</a> </dd></dl>
+
+</div>
+</div>
+<a id="acf6268c4e81684bb335695fe7e0305a1" name="acf6268c4e81684bb335695fe7e0305a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf6268c4e81684bb335695fe7e0305a1">&#9670;&#160;</a></span>state_load_rid</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* state_load_rid) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pointer to a function for the RID State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a41f40ed325a32cf2f61fb66522c21977">CanLoginMessageHandler_state_load_rid()</a> </dd></dl>
+
+</div>
+</div>
+<a id="a895fa3aaf066f4be8472df376b8b0085" name="a895fa3aaf066f4be8472df376b8b0085"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a895fa3aaf066f4be8472df376b8b0085">&#9670;&#160;</a></span>state_load_amd</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* state_load_amd) (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pointer to a function for the AMD State Handler for the Login StateMachine </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8h.html#a86ceb4c89ce3880a1a34fcd8805b4064">CanLoginMessageHandler_state_load_amd()</a> </dd></dl>
 
 </div>
 </div>

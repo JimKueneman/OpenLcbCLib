@@ -169,8 +169,8 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a539043042b27fa7a28f82ff4f20278cd" name="a539043042b27fa7a28f82ff4f20278cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a539043042b27fa7a28f82ff4f20278cd">&#9670;&#160;</a></span>OpenLcbUtilities_calculate_memory_offset_into_node_space()</h2>
+<a id="a6b320eb92f3b9990fb78b35e4a93b8c0" name="a6b320eb92f3b9990fb78b35e4a93b8c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b320eb92f3b9990fb78b35e4a93b8c0">&#9670;&#160;</a></span>OpenLcbUtilities_load_openlcb_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -179,99 +179,97 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aae9c2b155851377c1ce5eadca6a64a17" name="aae9c2b155851377c1ce5eadca6a64a17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae9c2b155851377c1ce5eadca6a64a17">&#9670;&#160;</a></span>OpenLcbUtilities_clear_openlcb_message()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbUtilities_clear_openlcb_message </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a20a0aa6ddbb623d5cab4308765c47477" name="a20a0aa6ddbb623d5cab4308765c47477"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20a0aa6ddbb623d5cab4308765c47477">&#9670;&#160;</a></span>OpenLcbUtilities_clear_openlcb_message_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbUtilities_clear_openlcb_message_payload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3441776fb6a40d339d480f0795210e38" name="a3441776fb6a40d339d480f0795210e38"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3441776fb6a40d339d480f0795210e38">&#9670;&#160;</a></span>OpenLcbUtilities_copy_byte_array_to_openlcb_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload </td>
+          <td class="memname">void OpenLcbUtilities_load_openlcb_message </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte_array</em></span>[], </td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>source_alias</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_index</em></span>, </td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>source_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>requested_bytes</em></span>&#160;)</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>dest_alias</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>dest_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>mti</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5e94dfb13e33b2d191f446a38364b7e5" name="a5e94dfb13e33b2d191f446a38364b7e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e94dfb13e33b2d191f446a38364b7e5">&#9670;&#160;</a></span>OpenLcbUtilities_copy_event_id_to_openlcb_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_copy_event_id_to_openlcb_payload </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a742803a983082b92f5c84fefbe3e7c76" name="a742803a983082b92f5c84fefbe3e7c76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a742803a983082b92f5c84fefbe3e7c76">&#9670;&#160;</a></span>OpenLcbUtilities_copy_node_id_to_openlcb_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_copy_node_id_to_openlcb_payload </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -317,8 +315,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a28f602cb5ef7385e117f152614bd613b" name="a28f602cb5ef7385e117f152614bd613b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28f602cb5ef7385e117f152614bd613b">&#9670;&#160;</a></span>OpenLcbUtilities_copy_config_mem_buffer_to_event_id()</h2>
+<a id="ae33d2002dddf51667cf4d2f626195f1d" name="ae33d2002dddf51667cf4d2f626195f1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae33d2002dddf51667cf4d2f626195f1d">&#9670;&#160;</a></span>OpenLcbUtilities_copy_word_to_openlcb_payload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -327,14 +325,19 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_copy_config_mem_buffer_to_event_id </td>
+          <td class="memname">void OpenLcbUtilities_copy_word_to_openlcb_payload </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>word</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -364,137 +367,6 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>doubleword</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aad0305cbd41a639ad54ff12bd599cce9" name="aad0305cbd41a639ad54ff12bd599cce9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad0305cbd41a639ad54ff12bd599cce9">&#9670;&#160;</a></span>OpenLcbUtilities_copy_event_id_to_config_mem_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbUtilities_copy_event_id_to_config_mem_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5e94dfb13e33b2d191f446a38364b7e5" name="a5e94dfb13e33b2d191f446a38364b7e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e94dfb13e33b2d191f446a38364b7e5">&#9670;&#160;</a></span>OpenLcbUtilities_copy_event_id_to_openlcb_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbUtilities_copy_event_id_to_openlcb_payload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="af892a2ef64dfd26cb36667a62ae0f8dc" name="af892a2ef64dfd26cb36667a62ae0f8dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af892a2ef64dfd26cb36667a62ae0f8dc">&#9670;&#160;</a></span>OpenLcbUtilities_copy_node_id_to_config_mem_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbUtilities_copy_node_id_to_config_mem_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a742803a983082b92f5c84fefbe3e7c76" name="a742803a983082b92f5c84fefbe3e7c76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a742803a983082b92f5c84fefbe3e7c76">&#9670;&#160;</a></span>OpenLcbUtilities_copy_node_id_to_openlcb_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OpenLcbUtilities_copy_node_id_to_openlcb_payload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -545,8 +417,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ae33d2002dddf51667cf4d2f626195f1d" name="ae33d2002dddf51667cf4d2f626195f1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae33d2002dddf51667cf4d2f626195f1d">&#9670;&#160;</a></span>OpenLcbUtilities_copy_word_to_openlcb_payload()</h2>
+<a id="a3441776fb6a40d339d480f0795210e38" name="a3441776fb6a40d339d480f0795210e38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3441776fb6a40d339d480f0795210e38">&#9670;&#160;</a></span>OpenLcbUtilities_copy_byte_array_to_openlcb_payload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -555,14 +427,98 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void OpenLcbUtilities_copy_word_to_openlcb_payload </td>
+          <td class="memname">uint16_t OpenLcbUtilities_copy_byte_array_to_openlcb_payload </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>word</em></span>, </td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte_array</em></span>[], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>requested_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a20a0aa6ddbb623d5cab4308765c47477" name="a20a0aa6ddbb623d5cab4308765c47477"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20a0aa6ddbb623d5cab4308765c47477">&#9670;&#160;</a></span>OpenLcbUtilities_clear_openlcb_message_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_clear_openlcb_message_payload </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aae9c2b155851377c1ce5eadca6a64a17" name="aae9c2b155851377c1ce5eadca6a64a17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae9c2b155851377c1ce5eadca6a64a17">&#9670;&#160;</a></span>OpenLcbUtilities_clear_openlcb_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_clear_openlcb_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5ee22d8b74d163c76c7cc4caa2f68cc5" name="a5ee22d8b74d163c76c7cc4caa2f68cc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ee22d8b74d163c76c7cc4caa2f68cc5">&#9670;&#160;</a></span>OpenLcbUtilities_extract_node_id_from_openlcb_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> OpenLcbUtilities_extract_node_id_from_openlcb_payload </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -579,8 +535,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a763ed68f05ad99a4902de3826c2e005f" name="a763ed68f05ad99a4902de3826c2e005f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a763ed68f05ad99a4902de3826c2e005f">&#9670;&#160;</a></span>OpenLcbUtilities_count_nulls_in_openlcb_payload()</h2>
+<a id="ac06eeb0060f209fa2a094e252473eb3e" name="ac06eeb0060f209fa2a094e252473eb3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac06eeb0060f209fa2a094e252473eb3e">&#9670;&#160;</a></span>OpenLcbUtilities_extract_event_id_from_openlcb_payload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -589,7 +545,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload </td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_extract_event_id_from_openlcb_payload </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
           <td></td>
@@ -615,6 +571,35 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint8_t OpenLcbUtilities_extract_byte_from_openlcb_payload </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a10bb7e92d9537f986ce80e62676a5da0" name="a10bb7e92d9537f986ce80e62676a5da0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10bb7e92d9537f986ce80e62676a5da0">&#9670;&#160;</a></span>OpenLcbUtilities_extract_word_from_openlcb_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
         </tr>
@@ -662,8 +647,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac06eeb0060f209fa2a094e252473eb3e" name="ac06eeb0060f209fa2a094e252473eb3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac06eeb0060f209fa2a094e252473eb3e">&#9670;&#160;</a></span>OpenLcbUtilities_extract_event_id_from_openlcb_payload()</h2>
+<a id="a763ed68f05ad99a4902de3826c2e005f" name="a763ed68f05ad99a4902de3826c2e005f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a763ed68f05ad99a4902de3826c2e005f">&#9670;&#160;</a></span>OpenLcbUtilities_count_nulls_in_openlcb_payload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -672,155 +657,10 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_extract_event_id_from_openlcb_payload </td>
+          <td class="memname">uint8_t OpenLcbUtilities_count_nulls_in_openlcb_payload </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span></td><td>)</td>
           <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8adb3fe5dc4d64da02e252d5bfea2922" name="a8adb3fe5dc4d64da02e252d5bfea2922"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8adb3fe5dc4d64da02e252d5bfea2922">&#9670;&#160;</a></span>OpenLcbUtilities_extract_node_id_from_config_mem_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> OpenLcbUtilities_extract_node_id_from_config_mem_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5ee22d8b74d163c76c7cc4caa2f68cc5" name="a5ee22d8b74d163c76c7cc4caa2f68cc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ee22d8b74d163c76c7cc4caa2f68cc5">&#9670;&#160;</a></span>OpenLcbUtilities_extract_node_id_from_openlcb_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> OpenLcbUtilities_extract_node_id_from_openlcb_payload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a43ad8d02f8415a5ae8563b5f01dd26ad" name="a43ad8d02f8415a5ae8563b5f01dd26ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43ad8d02f8415a5ae8563b5f01dd26ad">&#9670;&#160;</a></span>OpenLcbUtilities_extract_word_from_config_mem_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t OpenLcbUtilities_extract_word_from_config_mem_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a10bb7e92d9537f986ce80e62676a5da0" name="a10bb7e92d9537f986ce80e62676a5da0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10bb7e92d9537f986ce80e62676a5da0">&#9670;&#160;</a></span>OpenLcbUtilities_extract_word_from_openlcb_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t OpenLcbUtilities_extract_word_from_openlcb_payload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9204bcb0afbada951297d5be1d719b33" name="a9204bcb0afbada951297d5be1d719b33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9204bcb0afbada951297d5be1d719b33">&#9670;&#160;</a></span>OpenLcbUtilities_is_addressed_message_for_node()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenLcbUtilities_is_addressed_message_for_node </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -857,8 +697,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6cf19f4c15949979c691d4141278ee22" name="a6cf19f4c15949979c691d4141278ee22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cf19f4c15949979c691d4141278ee22">&#9670;&#160;</a></span>OpenLcbUtilities_is_consumer_event_assigned_to_node()</h2>
+<a id="a8ce2d7da1a094193ee6b5bc327911910" name="a8ce2d7da1a094193ee6b5bc327911910"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ce2d7da1a094193ee6b5bc327911910">&#9670;&#160;</a></span>OpenLcbUtilities_set_multi_frame_flag()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -867,19 +707,43 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool OpenLcbUtilities_is_consumer_event_assigned_to_node </td>
+          <td class="memname">void OpenLcbUtilities_set_multi_frame_flag </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>target</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>flag</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9204bcb0afbada951297d5be1d719b33" name="a9204bcb0afbada951297d5be1d719b33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9204bcb0afbada951297d5be1d719b33">&#9670;&#160;</a></span>OpenLcbUtilities_is_addressed_message_for_node()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_is_addressed_message_for_node </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>event_index</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -925,8 +789,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6b320eb92f3b9990fb78b35e4a93b8c0" name="a6b320eb92f3b9990fb78b35e4a93b8c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b320eb92f3b9990fb78b35e4a93b8c0">&#9670;&#160;</a></span>OpenLcbUtilities_load_openlcb_message()</h2>
+<a id="a6cf19f4c15949979c691d4141278ee22" name="a6cf19f4c15949979c691d4141278ee22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cf19f4c15949979c691d4141278ee22">&#9670;&#160;</a></span>OpenLcbUtilities_is_consumer_event_assigned_to_node()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -935,34 +799,44 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void OpenLcbUtilities_load_openlcb_message </td>
+          <td class="memname">bool OpenLcbUtilities_is_consumer_event_assigned_to_node </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>source_alias</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>source_id</em></span>, </td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>event_index</em></span>&#160;)</td>
         </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a539043042b27fa7a28f82ff4f20278cd" name="a539043042b27fa7a28f82ff4f20278cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a539043042b27fa7a28f82ff4f20278cd">&#9670;&#160;</a></span>OpenLcbUtilities_calculate_memory_offset_into_node_space()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
         <tr>
-          <td class="paramkey"></td>
+          <td class="memname">uint32_t OpenLcbUtilities_calculate_memory_offset_into_node_space </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>dest_alias</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>dest_id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>mti</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -999,8 +873,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8ce2d7da1a094193ee6b5bc327911910" name="a8ce2d7da1a094193ee6b5bc327911910"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ce2d7da1a094193ee6b5bc327911910">&#9670;&#160;</a></span>OpenLcbUtilities_set_multi_frame_flag()</h2>
+<a id="a8adb3fe5dc4d64da02e252d5bfea2922" name="a8adb3fe5dc4d64da02e252d5bfea2922"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8adb3fe5dc4d64da02e252d5bfea2922">&#9670;&#160;</a></span>OpenLcbUtilities_extract_node_id_from_config_mem_buffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1009,14 +883,140 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void OpenLcbUtilities_set_multi_frame_flag </td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> OpenLcbUtilities_extract_node_id_from_config_mem_buffer </td>
           <td>(</td>
-          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>target</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>flag</em></span>&#160;)</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a43ad8d02f8415a5ae8563b5f01dd26ad" name="a43ad8d02f8415a5ae8563b5f01dd26ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43ad8d02f8415a5ae8563b5f01dd26ad">&#9670;&#160;</a></span>OpenLcbUtilities_extract_word_from_config_mem_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbUtilities_extract_word_from_config_mem_buffer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af892a2ef64dfd26cb36667a62ae0f8dc" name="af892a2ef64dfd26cb36667a62ae0f8dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af892a2ef64dfd26cb36667a62ae0f8dc">&#9670;&#160;</a></span>OpenLcbUtilities_copy_node_id_to_config_mem_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_copy_node_id_to_config_mem_buffer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aad0305cbd41a639ad54ff12bd599cce9" name="aad0305cbd41a639ad54ff12bd599cce9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad0305cbd41a639ad54ff12bd599cce9">&#9670;&#160;</a></span>OpenLcbUtilities_copy_event_id_to_config_mem_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_copy_event_id_to_config_mem_buffer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a28f602cb5ef7385e117f152614bd613b" name="a28f602cb5ef7385e117f152614bd613b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28f602cb5ef7385e117f152614bd613b">&#9670;&#160;</a></span>OpenLcbUtilities_copy_config_mem_buffer_to_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_copy_config_mem_buffer_to_event_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

@@ -112,15 +112,8 @@ Functions</h2></td></tr>
 <tr class="separator:a19d57826974209f27f8883a2fa443aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>12 Aug 2025 </dd></dl>
+<div class="textblock"><p>Implements the statemachine to log into the OpenLcb/LCC network. </p>
+<p>This is the main statemachine to process nodes as they log into the network. An applications message loop should call <a class="el" href="#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run()</a> as fast as possible. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a2837c06613e89097db3602bf773332a8" name="a2837c06613e89097db3602bf773332a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2837c06613e89097db3602bf773332a8">&#9670;&#160;</a></span>CanLoginStateMachine_initialize()</h2>
@@ -144,6 +137,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the CAN Main Statemachine<br  />
+ </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__state__machine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_statemachin...">interface_can_login_state_machine_t</a> *interface_can_login_state_machine - Pointer to a <a class="el" href="structinterface__can__login__state__machine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_statemachin...">interface_can_login_state_machine_t</a> struct containing the functions that this module requires.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -169,6 +173,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Runs the main statemachine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t<br  />
+</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a structure that contains the incoming CAN message for the passed Node. If a handler is found it will process the message else it the appropriate error code will be returned.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible. </dd></dl>
 
 </div>
 </div>

@@ -27,28 +27,44 @@
  * \file can_main_statemachine.h
  *
  * Where the real work in dispatching the incoming OpenLcb messages to the various
- * handlers to process.  It will call the OpenLcb main statemachine when needed.  
+ * handlers to process.  It will call the OpenLcb main statemachine when needed.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__
-#define	__DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__
+#define __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "can_types.h"
 
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-    typedef struct {
+    /**
+     * @brief A structure to hold pointers to functions for dependencies this module requires \ref can_main_statemachine.h.
+     *
+     * @details OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the
+     * functions that are used can be modeled in the test and return valid OR invalid results to fully
+     * test all program flows in the module.  It also allows for reducing the program size. If a particular
+     * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
+     * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
+     * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
+     */
+    typedef struct
+    {
+
+        /*@{*/
+
+        // REQUIRED FUNCTIONS
+
         void (*lock_shared_resources)(void);
         void (*unlock_shared_resources)(void);
         bool (*send_can_message)(can_msg_t *msg);
@@ -56,7 +72,7 @@ extern "C" {
         openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
         openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);
         void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
-        alias_mapping_info_t*(*alias_mapping_get_alias_mapping_info)(void);
+        alias_mapping_info_t *(*alias_mapping_get_alias_mapping_info)(void);
         void (*alias_mapping_unregister)(uint16_t alias);
 
         bool (*handle_duplicate_aliases)(void);
@@ -65,7 +81,11 @@ extern "C" {
         bool (*handle_try_enumerate_first_node)(void);
         bool (*handle_try_enumerate_next_node)(void);
 
+        // OPTIONAL FUNCTION
 
+        // CALLBACK FUNCTIONS
+
+        /*@}*/
 
     } interface_can_main_statemachine_t;
 
@@ -85,10 +105,8 @@ extern "C" {
 
     extern bool CanMainStatemachine_handle_try_enumerate_next_node(void);
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__ */
-
+#endif /* __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__ */

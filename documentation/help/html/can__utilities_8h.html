@@ -141,40 +141,6 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a2591481bd835aa02f5616b6d67e5fdaa" name="a2591481bd835aa02f5616b6d67e5fdaa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2591481bd835aa02f5616b6d67e5fdaa">&#9670;&#160;</a></span>CanUtilities_append_can_payload_to_openlcb_payload()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t CanUtilities_append_can_payload_to_openlcb_payload </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>can_start_index</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="abfe5743512ca91b1c44460250e347949" name="abfe5743512ca91b1c44460250e347949"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abfe5743512ca91b1c44460250e347949">&#9670;&#160;</a></span>CanUtilities_clear_can_message()</h2>
 
@@ -200,8 +166,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af7966bc5a6bdae46b3fe8f04f42975d3" name="af7966bc5a6bdae46b3fe8f04f42975d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7966bc5a6bdae46b3fe8f04f42975d3">&#9670;&#160;</a></span>CanUtilities_convert_can_mti_to_openlcb_mti()</h2>
+<a id="a569505bc24481994b70112a655190be2" name="a569505bc24481994b70112a655190be2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a569505bc24481994b70112a655190be2">&#9670;&#160;</a></span>CanUtilities_load_can_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,97 +176,59 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t CanUtilities_convert_can_mti_to_openlcb_mti </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6152e06386e4950e1bb9af82e063355f" name="a6152e06386e4950e1bb9af82e063355f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6152e06386e4950e1bb9af82e063355f">&#9670;&#160;</a></span>CanUtilities_copy_64_bit_to_can_message()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool CanUtilities_copy_64_bit_to_can_message </td>
+          <td class="memname">void CanUtilities_load_can_message </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>data</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a261fcacdd87c3640cca2c4bf62245af9" name="a261fcacdd87c3640cca2c4bf62245af9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a261fcacdd87c3640cca2c4bf62245af9">&#9670;&#160;</a></span>CanUtilities_copy_can_message()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool CanUtilities_copy_can_message </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg_source</em></span>, </td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>identifier</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg_target</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a60e18bfd2de54ce3e70a6ea2b560cc6e" name="a60e18bfd2de54ce3e70a6ea2b560cc6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60e18bfd2de54ce3e70a6ea2b560cc6e">&#9670;&#160;</a></span>CanUtilities_copy_node_id_to_can_payload_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanUtilities_copy_node_id_to_can_payload_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>payload_size</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="can__types_8h.html#af7e65c69ad6084a5b21698667757c8bd">payload_bytes_can_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte3</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte4</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte5</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte6</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte7</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte8</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -385,8 +313,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab35d2bca8422d132b04b62719e77de25" name="ab35d2bca8422d132b04b62719e77de25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab35d2bca8422d132b04b62719e77de25">&#9670;&#160;</a></span>CanUtilities_count_nulls_in_payloads()</h2>
+<a id="a2591481bd835aa02f5616b6d67e5fdaa" name="a2591481bd835aa02f5616b6d67e5fdaa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2591481bd835aa02f5616b6d67e5fdaa">&#9670;&#160;</a></span>CanUtilities_append_can_payload_to_openlcb_payload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -395,14 +323,77 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t CanUtilities_count_nulls_in_payloads </td>
+          <td class="memname">uint8_t CanUtilities_append_can_payload_to_openlcb_payload </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>can_start_index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6152e06386e4950e1bb9af82e063355f" name="a6152e06386e4950e1bb9af82e063355f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6152e06386e4950e1bb9af82e063355f">&#9670;&#160;</a></span>CanUtilities_copy_64_bit_to_can_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CanUtilities_copy_64_bit_to_can_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>data</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a261fcacdd87c3640cca2c4bf62245af9" name="a261fcacdd87c3640cca2c4bf62245af9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a261fcacdd87c3640cca2c4bf62245af9">&#9670;&#160;</a></span>CanUtilities_copy_can_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CanUtilities_copy_can_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg_source</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg_target</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -425,31 +416,6 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint64_t CanUtilities_extract_can_payload_as_node_id </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8ec782c47b8a21c25996367620278267" name="a8ec782c47b8a21c25996367620278267"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ec782c47b8a21c25996367620278267">&#9670;&#160;</a></span>CanUtilities_extract_dest_alias_from_can_message()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint16_t CanUtilities_extract_dest_alias_from_can_message </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span></td><td>)</td>
           <td></td>
@@ -489,6 +455,85 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a8ec782c47b8a21c25996367620278267" name="a8ec782c47b8a21c25996367620278267"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ec782c47b8a21c25996367620278267">&#9670;&#160;</a></span>CanUtilities_extract_dest_alias_from_can_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t CanUtilities_extract_dest_alias_from_can_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af7966bc5a6bdae46b3fe8f04f42975d3" name="af7966bc5a6bdae46b3fe8f04f42975d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7966bc5a6bdae46b3fe8f04f42975d3">&#9670;&#160;</a></span>CanUtilities_convert_can_mti_to_openlcb_mti()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t CanUtilities_convert_can_mti_to_openlcb_mti </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab35d2bca8422d132b04b62719e77de25" name="ab35d2bca8422d132b04b62719e77de25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab35d2bca8422d132b04b62719e77de25">&#9670;&#160;</a></span>CanUtilities_count_nulls_in_payloads()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t CanUtilities_count_nulls_in_payloads </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac6cf0e5812d45a55473653d2b99d6718" name="ac6cf0e5812d45a55473653d2b99d6718"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac6cf0e5812d45a55473653d2b99d6718">&#9670;&#160;</a></span>CanUtilities_is_openlcb_message()</h2>
 
@@ -514,8 +559,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a569505bc24481994b70112a655190be2" name="a569505bc24481994b70112a655190be2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a569505bc24481994b70112a655190be2">&#9670;&#160;</a></span>CanUtilities_load_can_message()</h2>
+<a id="a60e18bfd2de54ce3e70a6ea2b560cc6e" name="a60e18bfd2de54ce3e70a6ea2b560cc6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60e18bfd2de54ce3e70a6ea2b560cc6e">&#9670;&#160;</a></span>CanUtilities_copy_node_id_to_can_payload_buffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -524,59 +569,14 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CanUtilities_load_can_message </td>
+          <td class="memname">void CanUtilities_copy_node_id_to_can_payload_buffer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>identifier</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>payload_size</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte1</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte2</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte3</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte4</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte5</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte6</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte7</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>byte8</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="can__types_8h.html#af7e65c69ad6084a5b21698667757c8bd">payload_bytes_can_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
