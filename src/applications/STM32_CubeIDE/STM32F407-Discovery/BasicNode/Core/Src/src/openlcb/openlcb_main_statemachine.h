@@ -36,8 +36,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_MAIN_STATEMACHINE__
-#define __OPENLCB_MAIN_STATEMACHINE__
+#ifndef __OPENLCB_OPENLCB_MAIN_STATEMACHINE__
+#define __OPENLCB_OPENLCB_MAIN_STATEMACHINE__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -160,4 +160,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_MAIN_STATEMACHINE__ */
+#endif /* __OPENLCB_OPENLCB_MAIN_STATEMACHINE__ */

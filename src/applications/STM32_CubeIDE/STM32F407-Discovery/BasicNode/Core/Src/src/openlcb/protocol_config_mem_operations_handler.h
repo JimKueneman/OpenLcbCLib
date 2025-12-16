@@ -33,8 +33,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef _PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER_
-#define	_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER_
+#ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__
+#define	__OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -111,5 +111,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* _PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER_ */
+#endif	/* __OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__ */
 
