@@ -1,7 +1,0 @@
-../Core/Src/src/openlcb/openlcb_buffer_list.c:49:6:OpenLcbBufferList_initialize	16	static
-../Core/Src/src/openlcb/openlcb_buffer_list.c:59:16:OpenLcbBufferList_add	24	static
-../Core/Src/src/openlcb/openlcb_buffer_list.c:76:16:OpenLcbBufferList_find	24	static
-../Core/Src/src/openlcb/openlcb_buffer_list.c:97:6:OpenLcbBufferList_free	24	static
-../Core/Src/src/openlcb/openlcb_buffer_list.c:122:16:OpenLcbBufferList_release	24	static
-../Core/Src/src/openlcb/openlcb_buffer_list.c:145:16:OpenLcbBufferList_index_of	16	static
-../Core/Src/src/openlcb/openlcb_buffer_list.c:156:6:OpenLcbBufferList_is_empty	16	static

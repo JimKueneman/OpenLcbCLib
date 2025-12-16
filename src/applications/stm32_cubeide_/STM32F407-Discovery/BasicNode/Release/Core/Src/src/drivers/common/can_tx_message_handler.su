@@ -1,7 +1,0 @@
-../Core/Src/src/drivers/common/can_tx_message_handler.c:74:13:_transmit_can_frame	16	static
-../Core/Src/src/drivers/common/can_tx_message_handler.c:32:6:CanTxMessageHandler_initialize	0	static
-../Core/Src/src/drivers/common/can_tx_message_handler.c:151:6:CanTxMessageHandler_datagram_frame	24	static
-../Core/Src/src/drivers/common/can_tx_message_handler.c:184:6:CanTxMessageHandler_unaddressed_msg_frame	24	static
-../Core/Src/src/drivers/common/can_tx_message_handler.c:211:6:CanTxMessageHandler_addressed_msg_frame	24	static
-../Core/Src/src/drivers/common/can_tx_message_handler.c:248:6:CanTxMessageHandler_stream_frame	0	static
-../Core/Src/src/drivers/common/can_tx_message_handler.c:254:6:CanTxMessageHandler_can_frame	0	static

@@ -1,8 +1,0 @@
-../Core/Src/src/drivers/common/can_main_statemachine.c:63:6:CanMainStatemachine_initialize	1
-../Core/Src/src/drivers/common/can_main_statemachine.c:129:26:CanMainStateMachine_get_can_statemachine_info	1
-../Core/Src/src/drivers/common/can_main_statemachine.c:135:6:CanMainStatemachine_handle_duplicate_aliases	7
-../Core/Src/src/drivers/common/can_main_statemachine.c:157:6:CanMainStatemachine_handle_outgoing_can_message	4
-../Core/Src/src/drivers/common/can_main_statemachine.c:187:6:CanMainStatemachine_handle_login_outgoing_can_message	3
-../Core/Src/src/drivers/common/can_main_statemachine.c:205:6:CanMainStatemachine_handle_try_enumerate_first_node	4
-../Core/Src/src/drivers/common/can_main_statemachine.c:233:6:CanMainStatemachine_handle_try_enumerate_next_node	3
-../Core/Src/src/drivers/common/can_main_statemachine.c:255:6:CanMainStateMachine_run	5

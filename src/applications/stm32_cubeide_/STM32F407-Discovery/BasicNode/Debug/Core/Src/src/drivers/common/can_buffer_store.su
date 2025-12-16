@@ -1,7 +1,0 @@
-../Core/Src/src/drivers/common/can_buffer_store.c:56:6:CanBufferStore_initialize	16	static
-../Core/Src/src/drivers/common/can_buffer_store.c:77:6:CanBufferStore_clear_can_message	24	static
-../Core/Src/src/drivers/common/can_buffer_store.c:90:12:CanBufferStore_allocate_buffer	16	static
-../Core/Src/src/drivers/common/can_buffer_store.c:118:6:CanBufferStore_free_buffer	16	static
-../Core/Src/src/drivers/common/can_buffer_store.c:131:10:CanBufferStore_messages_allocated	4	static
-../Core/Src/src/drivers/common/can_buffer_store.c:137:10:CanBufferStore_messages_max_allocated	4	static
-../Core/Src/src/drivers/common/can_buffer_store.c:143:6:CanBufferStore_clear_max_allocated	4	static

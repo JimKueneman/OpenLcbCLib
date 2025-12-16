@@ -1,8 +1,0 @@
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:52:6:OpenLcbLoginStateMachine_initialize	16	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:67:6:OpenLcbLoginStateMachine_process	16	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:97:6:OpenLcbLoginStatemachine_handle_outgoing_openlcb_message	8	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:115:6:OpenLcbLoginStatemachine_handle_try_reenumerate	8	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:129:6:OpenLcbLoginStatemachine_handle_try_enumerate_first_node	8	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:155:6:OpenLcbLoginStatemachine_handle_try_enumerate_next_node	8	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:180:6:OpenLcbLoginMainStatemachine_run	8	static
-../Core/Src/src/openlcb/openlcb_login_statemachine.c:212:36:OpenLcbLoginStatemachine_get_statemachine_info	4	static
