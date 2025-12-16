@@ -35,8 +35,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_UTILITIES__
-#define __OPENLCB_UTILITIES__
+#ifndef __OPENLCB_OPENLCB_UTILITIES__
+#define __OPENLCB_OPENLCB_UTILITIES__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -108,4 +108,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_UTILITIES__ */
+#endif /* __OPENLCB_OPENLCB_UTILITIES__ */

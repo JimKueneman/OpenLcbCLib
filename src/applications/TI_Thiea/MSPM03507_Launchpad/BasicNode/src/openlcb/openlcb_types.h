@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_TYPES__
-#define __OPENLCB_TYPES__
+#ifndef __OPENLCB_OPENLCB_TYPES__
+#define __OPENLCB_OPENLCB_TYPES__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -412,4 +412,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_TYPES__ */
+#endif /* __OPENLCB_OPENLCB_TYPES__ */

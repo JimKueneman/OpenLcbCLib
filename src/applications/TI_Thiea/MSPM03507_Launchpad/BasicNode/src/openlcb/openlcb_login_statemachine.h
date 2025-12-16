@@ -33,8 +33,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __OPENLCB_LOGIN_STATEMACHINE__
-#define	__OPENLCB_LOGIN_STATEMACHINE__
+#ifndef __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
+#define	__OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
 
 #include "openlcb_types.h"
 
@@ -82,4 +82,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_LOGIN_STATEMACHINE__ */
+#endif	/* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__ */

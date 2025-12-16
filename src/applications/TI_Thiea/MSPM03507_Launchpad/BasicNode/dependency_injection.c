@@ -33,15 +33,13 @@
 
 #include "dependency_injection.h"
 
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
 
 #include "dependency_injectors.h"
 
-#include "src/drivers/alias_mappings.h"
-
+#include "src/drivers/common/alias_mappings.h"
 #include "src/drivers/common/can_types.h"
 #include "src/drivers/common/can_utilities.h"
 #include "src/drivers/common/can_buffer_store.h"
