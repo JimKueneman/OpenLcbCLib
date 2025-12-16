@@ -43,13 +43,13 @@ include_directories(
 # Add libraries that have test enabled.
 set(GTEST ON)
 add_subdirectory(${ROOT_DIR}/src/utilities utilities)
-add_subdirectory(${ROOT_DIR}/src/drivers/common/ common_drivers)
-add_subdirectory(${ROOT_DIR}/src/openlcb/ openlcb)
+add_subdirectory(${ROOT_DIR}/src/drivers/canbus canbus)
+add_subdirectory(${ROOT_DIR}/src/openlcb openlcb)
 
 
 set(LINK_LIBS ${LINK_LIBS}
     utilities
-    common_drivers
+    canbus
     openlcb
 )
 

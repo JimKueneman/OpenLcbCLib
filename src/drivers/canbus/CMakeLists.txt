@@ -1,4 +1,4 @@
-project(common_drivers C)
+project(canbus C)
 
 set(
 SOURCES 
