@@ -35,8 +35,8 @@
           <itemPath>../../../drivers/common/can_main_statemachine.h</itemPath>
           <itemPath>../../../drivers/common/can_rx_message_handler.h</itemPath>
           <itemPath>../../../drivers/common/can_login_message_handler.h</itemPath>
+          <itemPath>../../../drivers/common/alias_mappings.h</itemPath>
         </logicalFolder>
-        <itemPath>../../../drivers/alias_mappings.h</itemPath>
       </logicalFolder>
       <logicalFolder name="dsPIC_Common"
                      displayName="dsPIC_Common"
@@ -112,8 +112,8 @@
           <itemPath>../../../drivers/common/can_login_statemachine.c</itemPath>
           <itemPath>../../../drivers/common/can_tx_statemachine.c</itemPath>
           <itemPath>../../../drivers/common/can_buffer_store.c</itemPath>
+          <itemPath>../../../drivers/common/alias_mappings.c</itemPath>
         </logicalFolder>
-        <itemPath>../../../drivers/alias_mappings.c</itemPath>
       </logicalFolder>
       <logicalFolder name="dsPIC_Common"
                      displayName="dsPIC_Common"

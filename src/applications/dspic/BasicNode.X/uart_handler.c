@@ -49,7 +49,7 @@
 #include "../../../drivers/common/can_tx_statemachine.h"
 #include "../../../drivers/common/can_main_statemachine.h"
 
-#include "../../../drivers/alias_mappings.h"
+#include "../../../drivers/common/alias_mappings.h"
 
 #include "../../../openlcb/openlcb_defines.h"
 #include "../../../openlcb/openlcb_types.h"

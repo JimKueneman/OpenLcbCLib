@@ -40,7 +40,7 @@
 
 #include "dependency_injectors.h"
 
-#include "../../../drivers/alias_mappings.h"
+#include "../../../drivers/common/alias_mappings.h"
 
 #include "../../../drivers/common/can_types.h"
 #include "../../../drivers/common/can_utilities.h"
