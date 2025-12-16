@@ -43,11 +43,9 @@ Core/Src/dependency_injection.o: ../Core/Src/dependency_injection.c \
  ../Core/Src/stm32_driverlib_drivers.h ../Core/Src/dependency_injectors.h \
  ../Core/Src/src/openlcb/openlcb_gridconnect.h \
  ../Core/Src/src/openlcb/../drivers/canbus/can_types.h \
- ../Core/Src/src/drivers/alias_mappings.h \
+ ../Core/Src/src/drivers/canbus/alias_mappings.h \
  ../Core/Src/src/drivers/canbus/can_types.h \
- ../Core/Src/src/drivers/../openlcb/openlcb_types.h \
  ../Core/Src/src/drivers/canbus/can_utilities.h \
- ../Core/Src/src/drivers/canbus/can_types.h \
  ../Core/Src/src/drivers/canbus/can_buffer_store.h \
  ../Core/Src/src/drivers/canbus/can_buffer_fifo.h \
  ../Core/Src/src/drivers/canbus/can_login_message_handler.h \
@@ -123,11 +121,9 @@ Core/Src/dependency_injection.o: ../Core/Src/dependency_injection.c \
 ../Core/Src/dependency_injectors.h:
 ../Core/Src/src/openlcb/openlcb_gridconnect.h:
 ../Core/Src/src/openlcb/../drivers/canbus/can_types.h:
-../Core/Src/src/drivers/alias_mappings.h:
+../Core/Src/src/drivers/canbus/alias_mappings.h:
 ../Core/Src/src/drivers/canbus/can_types.h:
-../Core/Src/src/drivers/../openlcb/openlcb_types.h:
 ../Core/Src/src/drivers/canbus/can_utilities.h:
-../Core/Src/src/drivers/canbus/can_types.h:
 ../Core/Src/src/drivers/canbus/can_buffer_store.h:
 ../Core/Src/src/drivers/canbus/can_buffer_fifo.h:
 ../Core/Src/src/drivers/canbus/can_login_message_handler.h:

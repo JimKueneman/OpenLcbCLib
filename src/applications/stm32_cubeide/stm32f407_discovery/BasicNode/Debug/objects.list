@@ -10,7 +10,7 @@
 "./Core/Src/syscalls.o"
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32f4xx.o"
-"./Core/Src/src/drivers/alias_mappings.o"
+"./Core/Src/src/drivers/canbus/alias_mappings.o"
 "./Core/Src/src/drivers/canbus/can_buffer_fifo.o"
 "./Core/Src/src/drivers/canbus/can_buffer_store.o"
 "./Core/Src/src/drivers/canbus/can_login_message_handler.o"
