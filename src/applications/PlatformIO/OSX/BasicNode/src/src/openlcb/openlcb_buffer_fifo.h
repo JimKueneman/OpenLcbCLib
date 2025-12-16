@@ -1,5 +1,16 @@
-/** \copyright
- * Copyright (c) 2024, Jim Kueneman
+/** 
+ * 
+ * @subsection Description
+ * 
+ * Implementation of the FIFO where the OpenLcb messages are placed by the receive
+ * module.  The main loop pulls them out one at a time and dispatched them to the handlers. 
+ * 
+ * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
+ *  
+ * @subsection License
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,24 +34,18 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * \file openlcb_buffer_fifo.h
- *
- * Implementation of the FIFO where the OpenLcb messages are placed by the receive
- * module.  The main loop pulls them out one at a time and dispatched them to the handlers.
- * Caution is required as the receive module may be putting new messages in within the
- * context of an interrupt or thread so when the main loop access this buffer it must
- * use the lock the Can Rx and 100ms timer modules with the Pause and Resume functions
- * exported by them respectively.
- *
+ * 
+ * @copyright Copyright (c) 2025, Jim Kueneman
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 14 Dec 2025
+ * @file openlcb_buffer_fifo.h
+ *
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_FIFO__
-#define __OPENLCB_FIFO__
+#ifndef __OPENLCB_OPENLCB_FIFO__
+#define __OPENLCB_OPENLCB_FIFO__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -50,21 +55,63 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
+    
+    /**
+     * @brief Initializes the OpenLcb Message Buffer FIFO<br>
+     * 
+     * @param none
+     * 
+     * @return none
+     * 
+     * @note This must always be called during application initialization
+     */
     extern void OpenLcbBufferFifo_initialize(void);
-
+    
+    
+     /**
+     * @brief Pushes a new OpenLcb message into the FIFO buffer that was allocated 
+     *   see \ref OpenLcbBufferStore_allocate_buffer()
+     * 
+     * @param openlcb_msg_t *new_msg [in] - Pointer to a message allocated from the OpenLcb Buffer Pool
+     * 
+     * @return *openlcb_msg_t - Pointer to the message or NULL if it fails
+     */
     extern openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
-
-    extern openlcb_msg_t *OpenLcbBufferFifo_push_existing(openlcb_msg_t *existing_msg);
-
+ 
+    
+    /**
+     * @brief Pops a OpenLcb message off the FIFO buffer.  The caller is responsible to free the message when done 
+     *   see \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)
+     * 
+     * @param none
+     * 
+     * @return *openlcb_msg_t - Pointer to the message or NULL if the buffer is empty
+     */
     extern openlcb_msg_t *OpenLcbBufferFifo_pop(void);
+    
 
-    extern uint8_t OpenLcbBufferFifo_is_empty(void);
-
+    /**
+     * @brief Tests if there is a message in the FIFO buffer.
+     * 
+     * @param none
+     * 
+     * @return bool true if there is at least one message, false if the list is empty
+     */
+    extern bool OpenLcbBufferFifo_is_empty(void);
+    
+    
+    /**
+     * @brief Returns the number of messages in the FIFO buffer.
+     * 
+     * @param none
+     * 
+     * @return uint16_t the number of messages in the buffer
+     */
     extern uint16_t OpenLcbBufferFifo_get_allocated_count(void);
+    
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_FIFO__ */
+#endif /* __OPENLCB_OPENLCB_FIFO__ */

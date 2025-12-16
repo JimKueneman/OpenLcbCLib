@@ -93,25 +93,6 @@ openlcb_msg_t* OpenLcbBufferFifo_push(openlcb_msg_t* new_msg) {
 
 }
 
-openlcb_msg_t* OpenLcbBufferFifo_push_existing(openlcb_msg_t* existing_msg) {
-
-    uint8_t next = openlcb_msg_buffer_fifo.head + 1;
-    if (next >= LEN_MESSAGE_FIFO_BUFFER)
-        next = 0;
-
-    if (next != openlcb_msg_buffer_fifo.tail) {
-
-        openlcb_msg_buffer_fifo.list[openlcb_msg_buffer_fifo.head] = existing_msg;
-        openlcb_msg_buffer_fifo.head = next;
-
-        return existing_msg;
-
-    }
-
-    return NULL;
-
-}
-
 openlcb_msg_t* OpenLcbBufferFifo_pop(void) {
 
     openlcb_msg_t* result = NULL;
@@ -131,7 +112,7 @@ openlcb_msg_t* OpenLcbBufferFifo_pop(void) {
 
 }
 
-uint8_t OpenLcbBufferFifo_is_empty(void) {
+bool OpenLcbBufferFifo_is_empty(void) {
 
     return (openlcb_msg_buffer_fifo.head == openlcb_msg_buffer_fifo.tail);
 

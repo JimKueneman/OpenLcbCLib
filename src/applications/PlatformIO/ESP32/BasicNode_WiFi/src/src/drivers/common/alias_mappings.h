@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,55 +24,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_node.h
+ * \file alias_mappings.h
  *
- * Implementation of the OpenLcb node structures and buffers with functions to manipulate them
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 27 Sept 2025
  */
-
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_OPENLCB_NODE__
-#define __OPENLCB_OPENLCB_NODE__
+#ifndef __DRIVERS_ALIAS_MAPPINGS__
+#define __DRIVERS_ALIAS_MAPPINGS__
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "openlcb_types.h" // include processor files - each processor file is guarded.
-
-typedef struct
-{
-
-    // callbacks
-    void (*on_100ms_timer_tick)(void);
-
-} interface_openlcb_node_t;
+#include "can_types.h"
+#include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OpenLcbNode_initialize(const interface_openlcb_node_t *interface);
+    extern void AliasMappings_initialize(void);
 
-    extern openlcb_node_t *OpenLcbNode_allocate(uint64_t nodeid, const node_parameters_t *node_parameters);
+    extern alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void);
 
-    extern openlcb_node_t *OpenLcbNode_get_first(uint8_t key);
+    extern void AliasMappings_set_has_duplicate_alias_flag(void);
 
-    extern openlcb_node_t *OpenLcbNode_get_next(uint8_t key);
+    extern alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id);
 
-    extern openlcb_node_t *OpenLcbNode_find_by_alias(uint16_t alias);
+    extern void AliasMappings_unregister(uint16_t alias);
 
-    extern openlcb_node_t *OpenLcbNode_find_by_node_id(uint64_t nodeid);
+    extern alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias);
 
-    extern void OpenLcbNode_reset_state(void);
+    extern alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id);
 
-    extern void OpenLcbNode_100ms_timer_tick(void);
+    extern void AliasMappings_flush(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __OPENLCB_OPENLCB_NODE__ */
+#endif /* __DRIVERS_ALIAS_MAPPINGS__ */

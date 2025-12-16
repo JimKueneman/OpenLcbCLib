@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef ___CAN_UTILITIES__
-#define ___CAN_UTILITIES__
+#ifndef ___DRIVERS_COMMON_CAN_UTILITIES__
+#define ___DRIVERS_COMMON_CAN_UTILITIES__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -79,4 +79,4 @@ extern "C"
 }
 #endif /* __cplusplus */
 
-#endif /* XC_HEADER_TEMPLATE_H */
+#endif /* ___DRIVERS_COMMON_CAN_UTILITIES__ */

@@ -41,8 +41,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __PROTOCOL_EVENT_TRANSPORT__
-#define __PROTOCOL_EVENT_TRANSPORT__
+#ifndef __OPENLCB_PROTOCOL_EVENT_TRANSPORT__
+#define __OPENLCB_PROTOCOL_EVENT_TRANSPORT__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -119,4 +119,4 @@ extern "C"
 }
 #endif /* __cplusplus */
 
-#endif /* __PROTOCOL_EVENT_TRANSPORT__ */
+#endif /* __OPENLCB_PROTOCOL_EVENT_TRANSPORT__ */

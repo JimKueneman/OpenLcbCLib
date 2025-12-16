@@ -36,8 +36,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __PROTOCOL_DATAGRAM_HANDLER__
-#define	__PROTOCOL_DATAGRAM_HANDLER__
+#ifndef __OPENLCB_PROTOCOL_DATAGRAM_HANDLER__
+#define	__OPENLCB_PROTOCOL_DATAGRAM_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -213,5 +213,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __PROTOCOL_DATAGRAM_HANDLER__ */
+#endif	/* __OPENLCB_PROTOCOL_DATAGRAM_HANDLER__ */
 

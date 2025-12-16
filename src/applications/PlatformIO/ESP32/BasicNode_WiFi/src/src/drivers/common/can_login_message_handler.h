@@ -1,5 +1,4 @@
-/** \copyright
- * Copyright (c) 2024, Jim Kueneman
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,22 +22,35 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * \file can_login_message_handler.h
- *
- * When a node is logging into the network on a CAN bus it must follow a specific
- * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
- * that is called from the CAN main statemachine to accomplish that when a new node
- * is created.
- *
- * @author Jim Kueneman
- * @date 5 Dec 2024
+ * 
+ * 14 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
  */
+
+/** 
+ * 
+ * When a node is logging into the network on a CAN bus it must follow a specific
+ * flow to allocate a unique alias ID and broadcast its events.  This module defines 
+ * the specific handlers to respond to a CAN level requests and login requirements.  
+ * Each function completes a task that is required for an associated request or login
+ * state.<br><br>
+ * 
+ * These functions are assigned to the \ref interface_can_login_state_machine_t which 
+ * are called from within the CAN login statemachine switch statement.<br>
+ * 
+ * @note Any handler may be overridden by assigning a custom function pointer to the 
+ * \ref interface_can_login_state_machine_t field during initialization of the application.<br>
+ * see: \ref CanLoginStateMachine_initialize();
+ * 
+ * @file can_login_message_handler.h
+ *
+ */
+
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_LOGIN_MESSAGE_HANDLER__
-#define	__CAN_LOGIN_MESSAGE_HANDLER__
+#ifndef __DRIVERS_COMMON_CAN_CAN_LOGIN_MESSAGE_HANDLER__
+#define	__DRIVERS_COMMON_CAN_CAN_LOGIN_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -49,16 +61,42 @@
 extern "C" {
 #endif /* __cplusplus */
 
+    /**
+     * @struct interface_can_login_message_handler_t
+     * @brief A structure to define function dependencies that this module requires.
+     */
     typedef struct {
-   
-        alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);    
+        
+        // Required functions
+        
+        /** Pointer to a function that registers an Mapping between the passed alias and node ID 
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_register()
+         */
+        alias_mapping_t*(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
+        /** Pointer to a function that finds a Mapping structure that matches the alias passed to it 
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias()
+         */
         alias_mapping_t*(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
+        
         // Callback events
+        
+        /** Pointer to a function for an Application to be notified when an Alias has been successfully registered 
+         *@note <b>Optional</b> application callback.  Defaults to NULL
+        */
         void (*on_alias_change)(uint16_t alias, node_id_t node_id);
 
     } interface_can_login_message_handler_t;
 
 
+    /**
+     * @brief Initializes the CAN Login Message Handler module
+     * 
+     * @param const interface_can_login_message_handler_t *interface - Pointers to function dependencies this module requires
+     * 
+     * @return none
+     * 
+     * @attention This must always be called during application initialization
+     */
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 
     extern void CanLoginMessageHandler_state_init(can_statemachine_info_t *can_statemachine_info);
@@ -86,5 +124,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_LOGIN_MESSAGE_HANDLER__ */
+#endif	/* __DRIVERS_COMMON_CAN_CAN_LOGIN_MESSAGE_HANDLER__ */
 

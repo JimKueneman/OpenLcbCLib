@@ -35,8 +35,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __CAN_TYPES__
-#define __CAN_TYPES__
+#ifndef __DRIVERS_COMMON_CAN_TYPES__
+#define __DRIVERS_COMMON_CAN_TYPES__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -128,4 +128,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* __CAN_TYPES__ */
+#endif /* __DRIVERS_COMMON_CAN_TYPES__ */

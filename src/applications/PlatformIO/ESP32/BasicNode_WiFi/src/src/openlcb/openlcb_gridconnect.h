@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_buffer_store.h
+ * @file openlcb_gridconnect.h
  *
  * Implements the core buffers for normal, snip, datagram, and stream length buffers.
  * The FIFO and List buffers are arrays of pointers to these core buffers that are 
@@ -40,8 +40,8 @@
 // This is a guard condition so that contents of this file are not included
 // more than once.  
 
-#ifndef __OPENLCB_GRIDCONNECT__
-#define	__OPENLCB_GRIDCONNECT__
+#ifndef __OPENLCB_OPENLCB_GRIDCONNECT__
+#define	__OPENLCB_OPENLCB_GRIDCONNECT__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -74,4 +74,4 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_BUFFER_STORE__ */
+#endif	/* __OPENLCB_OPENLCB_BUFFER_STORE__ */

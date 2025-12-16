@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OPENLCB_NODE__
-#define __OPENLCB_NODE__
+#ifndef __OPENLCB_OPENLCB_NODE__
+#define __OPENLCB_OPENLCB_NODE__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -75,4 +75,4 @@ extern "C"
 }
 #endif /* __cplusplus */
 
-#endif /* XC_HEADER_TEMPLATE_H */
+#endif /* __OPENLCB_OPENLCB_NODE__ */
