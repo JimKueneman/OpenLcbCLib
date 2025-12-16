@@ -41,11 +41,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-
 #include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+#include "../../../drivers/canbus/can_types.h"
 #include "../../../openlcb/openlcb_gridconnect.h"
-
 
 #ifdef __cplusplus
 extern "C"

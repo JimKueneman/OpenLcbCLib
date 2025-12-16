@@ -43,11 +43,11 @@
 #include "ti_driverlib_can_driver.h"
 #include "ti_driverlib_drivers.h"
 
-#include "src/drivers/common/can_main_statemachine.h"
-#include "src/drivers/common/can_rx_statemachine.h"
-#include "src/drivers/common/can_tx_statemachine.h"
-#include "src/drivers/common/can_types.h"
-#include "src/drivers/common/can_utilities.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
+#include "src/drivers/canbus/can_rx_statemachine.h"
+#include "src/drivers/canbus/can_tx_statemachine.h"
+#include "src/drivers/canbus/can_types.h"
+#include "src/drivers/canbus/can_utilities.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
@@ -55,8 +55,8 @@
 #define NODE_ID 0x0501010107EE
 #define DELAY_TIME (50000000)
 
-
-int main(void) {
+int main(void)
+{
 
   can_msg_t can_msg;
 
@@ -71,17 +71,16 @@ int main(void) {
   printf("Booted\n");
 
   OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
-  
 
-  while (1) {
+  while (1)
+  {
 
     DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B7_PIN);
 
-   //delay_cycles(DELAY_TIME);
+    // delay_cycles(DELAY_TIME);
 
     CanMainStateMachine_run();
     OpenLcbLoginMainStatemachine_run();
     OpenLcbMainStatemachine_run();
-
   }
 }

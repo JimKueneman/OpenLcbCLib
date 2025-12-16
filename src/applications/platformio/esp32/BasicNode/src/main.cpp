@@ -11,15 +11,13 @@
 #include "dependency_injection.h"
 #include "dependency_injectors.h"
 
-#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
 
 #include "src/openlcb/openlcb_node.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 
-
 #define NODE_ID 0x050101010788
-
 
 void setup()
 {

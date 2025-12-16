@@ -27,55 +27,52 @@
  * \file ecan1_driver.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
+ * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
-* @date 5 Jan 2025
+ * @date 5 Jan 2025
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __DSPIC_COMMON_ECAN1_HELPER__
-#define	__DSPIC_COMMON_ECAN1_HELPER__
+#define __DSPIC_COMMON_ECAN1_HELPER__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+#include "../../../drivers/canbus/can_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
- // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
-    
-extern void Ecan1Helper_initialize(void);
+    // OpenLcbCLib defined callback functions that much be defined if using the CAN statemachine
 
-extern bool Ecan1Helper_is_can_tx_buffer_clear(void);
+    extern void Ecan1Helper_initialize(void);
 
-extern void Ecan1Helper_pause_can_rx(void);
+    extern bool Ecan1Helper_is_can_tx_buffer_clear(void);
 
-extern void Ecan1Helper_resume_can_rx(void);
+    extern void Ecan1Helper_pause_can_rx(void);
 
-extern bool Ecan1Helper_transmit_can_frame(can_msg_t *msg);
+    extern void Ecan1Helper_resume_can_rx(void);
 
-extern void Ecan1Helper_C1_interrupt_handler(void);
+    extern bool Ecan1Helper_transmit_can_frame(can_msg_t *msg);
 
-extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
+    extern void Ecan1Helper_C1_interrupt_handler(void);
 
+    extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
 
-// Custom Driver functions
+    // Custom Driver functions
 
-// How full the chips CAN fifo has gotten
-extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
+    // How full the chips CAN fifo has gotten
+    extern uint8_t Ecan1Helper_get_max_can_fifo_depth(void);
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __DSPIC_COMMON_ECAN1_HELPER__ */
-
+#endif /* __DSPIC_COMMON_ECAN1_HELPER__ */

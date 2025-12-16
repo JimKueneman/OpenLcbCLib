@@ -37,14 +37,14 @@ Core/Src/stm32_driverlib_can_driver.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Core/Src/src/openlcb/openlcb_types.h \
- ../Core/Src/src/drivers/common/can_types.h \
- ../Core/Src/src/drivers/common/../../openlcb/openlcb_defines.h \
- ../Core/Src/src/drivers/common/../../openlcb/openlcb_types.h \
- ../Core/Src/debug_tools.h ../Core/Src/./src/drivers/common/can_types.h \
+ ../Core/Src/src/drivers/canbus/can_types.h \
+ ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h \
+ ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h \
+ ../Core/Src/debug_tools.h ../Core/Src/./src/drivers/canbus/can_types.h \
  ../Core/Src/./src/openlcb/openlcb_defines.h \
  ../Core/Src/./src/openlcb/openlcb_types.h \
- ../Core/Src/src/drivers/common/can_rx_statemachine.h \
- ../Core/Src/src/drivers/common/can_types.h
+ ../Core/Src/src/drivers/canbus/can_rx_statemachine.h \
+ ../Core/Src/src/drivers/canbus/can_types.h
 ../Core/Src/stm32_driverlib_can_driver.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -82,12 +82,12 @@ Core/Src/stm32_driverlib_can_driver.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 ../Core/Src/src/openlcb/openlcb_types.h:
-../Core/Src/src/drivers/common/can_types.h:
-../Core/Src/src/drivers/common/../../openlcb/openlcb_defines.h:
-../Core/Src/src/drivers/common/../../openlcb/openlcb_types.h:
+../Core/Src/src/drivers/canbus/can_types.h:
+../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h:
+../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h:
 ../Core/Src/debug_tools.h:
-../Core/Src/./src/drivers/common/can_types.h:
+../Core/Src/./src/drivers/canbus/can_types.h:
 ../Core/Src/./src/openlcb/openlcb_defines.h:
 ../Core/Src/./src/openlcb/openlcb_types.h:
-../Core/Src/src/drivers/common/can_rx_statemachine.h:
-../Core/Src/src/drivers/common/can_types.h:
+../Core/Src/src/drivers/canbus/can_rx_statemachine.h:
+../Core/Src/src/drivers/canbus/can_types.h:

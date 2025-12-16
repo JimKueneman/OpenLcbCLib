@@ -26,13 +26,13 @@
  *
  * \file ti_driverlib_can_driver.c
  *
- * Definition of the node at the application level.  
+ * Definition of the node at the application level.
  *
  * @author Jim Kueneman
  * @date 11 Nov 2024
  */
 
- #include "ti_driverlib_can_driver.h"
+#include "ti_driverlib_can_driver.h"
 
 #include <ti/driverlib/m0p/dl_interrupt.h>
 #include "ti_msp_dl_config.h"
@@ -45,47 +45,49 @@
 #include "debug_tools.h"
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
-#include "src/drivers/common/can_rx_statemachine.h"
+#include "src/drivers/canbus/can_types.h"
+#include "src/drivers/canbus/can_rx_statemachine.h"
 
 static bool _is_transmitting = false;
 
- void TI_DriverLibCanDriver_initialize(void) {
+void TI_DriverLibCanDriver_initialize(void)
+{
 
     // Enabled MCAN0 interrupts
     NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);
+}
 
- }
-
- bool TI_DriverLibCanDriver_is_can_tx_buffer_clear(void) {
+bool TI_DriverLibCanDriver_is_can_tx_buffer_clear(void)
+{
 
     TI_DriverLibCanDriver_pause_can_rx();
     bool result = !_is_transmitting;
     TI_DriverLibCanDriver_resume_can_rx();
 
     return result;
+}
 
- }
-
- void TI_DriverLibCanDriver_pause_can_rx(void) {
+void TI_DriverLibCanDriver_pause_can_rx(void)
+{
 
     NVIC_DisableIRQ(MCAN0_INST_INT_IRQN);
+}
 
- }
+void TI_DriverLibCanDriver_resume_can_rx(void)
+{
 
- void TI_DriverLibCanDriver_resume_can_rx(void) {
+    NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);
+}
 
-   NVIC_EnableIRQ(MCAN0_INST_INT_IRQN);
-
- }
-
- bool TI_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg) {
+bool TI_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg)
+{
 
     DL_MCAN_TxBufElement txMsg;
 
-    if (TI_DriverLibCanDriver_is_can_tx_buffer_clear()) {
+    if (TI_DriverLibCanDriver_is_can_tx_buffer_clear())
+    {
 
-         /* Initialize message to transmit. */
+        /* Initialize message to transmit. */
         txMsg.id = msg->identifier;     // Identifier Value
         txMsg.rtr = 0U;                 // Transmit data frame - normal frame
         txMsg.xtd = 1U;                 // 11-bit standard identifier - no, it is a 19 bit frame
@@ -94,15 +96,15 @@ static bool _is_transmitting = false;
         txMsg.brs = 0U;                 // CAN FD frames transmitted with bit rate switching - not a FD frame
         txMsg.fdf = 0U;                 // Frame transmitted in CAN FD format - not a FD frame
         txMsg.efc = 1U;                 // Store Tx events - do throw TX events
-        txMsg.mm  = 0x00U;              // Message Marker - not sure what this does but seems like it is an ID key value
-        for (int i = 0; i < msg->payload_count; i++) {  // Copy the data
+        txMsg.mm = 0x00U;               // Message Marker - not sure what this does but seems like it is an ID key value
+        for (int i = 0; i < msg->payload_count; i++)
+        { // Copy the data
 
             txMsg.data[i] = msg->payload[i];
-
-        } 
+        }
 
         _is_transmitting = true;
-        // Write Tx Message to the Message RAM 
+        // Write Tx Message to the Message RAM
         DL_MCAN_writeMsgRam(MCAN0_INST, DL_MCAN_MEM_TYPE_BUF, 0U, &txMsg);
         // Set the interrupt to be fired on this message
         DL_MCAN_TXBufTransIntrEnable(MCAN0_INST, 0U, 1U);
@@ -110,143 +112,133 @@ static bool _is_transmitting = false;
         DL_MCAN_TXBufAddReq(MCAN0_INST, 0U);
 
         return true;
-
     }
 
     return false;
+}
 
- }
-
- void MCAN0_INST_IRQHandler(void) {
+void MCAN0_INST_IRQHandler(void)
+{
 
     uint32_t interrupt_flags = 0;
     DL_MCAN_RxFIFOStatus fifo_Status;
     DL_MCAN_RxBufElement rxMsg;
     can_msg_t can_msg;
 
-
-   DL_GPIO_setPins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B6_PIN);
-
+    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B6_PIN);
 
     // Pull out the interrupt "group" that is triggered from the CAN0 instance
     DL_MCAN_IIDX pending_interrupt_index = DL_MCAN_getPendingInterrupt(MCAN0_INST);
 
-    switch (pending_interrupt_index) {
+    switch (pending_interrupt_index)
+    {
 
-        case DL_MCAN_IIDX_LINE0:
+    case DL_MCAN_IIDX_LINE0:
 
-            // We have no interrupts set up to use Line 0 so this is not used 
+        // We have no interrupts set up to use Line 0 so this is not used
 
         break;
 
-        case DL_MCAN_IIDX_LINE1:
-            
-            // Now we need to look into Line 1 interrupt and see what flags are set under this index, 
-            // including strip off any bits that are of unknown flags so when we clear them we don't 
-            // clear some unknown flag bit that could cause problems
-            interrupt_flags = DL_MCAN_getIntrStatus(MCAN0_INST) & MCAN0_INST_MCAN_INTERRUPTS;
-            // We have a copy of the flags set so now clear them
-            DL_MCAN_clearIntrStatus(MCAN0_INST, interrupt_flags, DL_MCAN_INTR_SRC_MCAN_LINE_1);
+    case DL_MCAN_IIDX_LINE1:
 
-            // Is the Rx FIFO 1 New Message interrupt (0x0010) flag set?
-            if ((interrupt_flags & DL_MCAN_INTERRUPT_RF1N) == DL_MCAN_INTERRUPT_RF1N) {
+        // Now we need to look into Line 1 interrupt and see what flags are set under this index,
+        // including strip off any bits that are of unknown flags so when we clear them we don't
+        // clear some unknown flag bit that could cause problems
+        interrupt_flags = DL_MCAN_getIntrStatus(MCAN0_INST) & MCAN0_INST_MCAN_INTERRUPTS;
+        // We have a copy of the flags set so now clear them
+        DL_MCAN_clearIntrStatus(MCAN0_INST, interrupt_flags, DL_MCAN_INTR_SRC_MCAN_LINE_1);
 
-                DL_GPIO_setPins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B0_PIN);
-                delay_cycles(1000);
-                DL_GPIO_clearPins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B0_PIN);
+        // Is the Rx FIFO 1 New Message interrupt (0x0010) flag set?
+        if ((interrupt_flags & DL_MCAN_INTERRUPT_RF1N) == DL_MCAN_INTERRUPT_RF1N)
+        {
 
-                // We are setup for passing the incoming messages into the FIFO memory and not the Buffer memory so we use
-                // the Rx FIFO DL_xxxx macros
+            DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B0_PIN);
+            delay_cycles(1000);
+            DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B0_PIN);
 
-                // clear the fifo status buffer, BUT what is not obvious is the num parameter is [IN/OUT] and selects what FIFO bank you want
-                // Note we have the .sysconf set so only FIFO 1 is used
-                memset(&fifo_Status, 0x00, sizeof(fifo_Status));
-                fifo_Status.num = DL_MCAN_RX_FIFO_NUM_1;
+            // We are setup for passing the incoming messages into the FIFO memory and not the Buffer memory so we use
+            // the Rx FIFO DL_xxxx macros
 
-                // Run through the number avialable
-                DL_MCAN_getRxFIFOStatus(MCAN0_INST, &fifo_Status);
+            // clear the fifo status buffer, BUT what is not obvious is the num parameter is [IN/OUT] and selects what FIFO bank you want
+            // Note we have the .sysconf set so only FIFO 1 is used
+            memset(&fifo_Status, 0x00, sizeof(fifo_Status));
+            fifo_Status.num = DL_MCAN_RX_FIFO_NUM_1;
 
-                uint16_t i_looper = fifo_Status.fillLvl;
-                while (i_looper > 0) {
+            // Run through the number avialable
+            DL_MCAN_getRxFIFOStatus(MCAN0_INST, &fifo_Status);
 
-                    memset(&rxMsg, 0x00, sizeof(rxMsg));
+            uint16_t i_looper = fifo_Status.fillLvl;
+            while (i_looper > 0)
+            {
 
-                    // Reading RAM into the rxMsg structure in the FIFO memory (DL_MCAN_MEM_TYPE_FIFO), in Bank 1 (DL_MCAN_RX_FIFO_NUM_1)
-                    // parameter 3 (0U) is not used in FIFO mode
-                    DL_MCAN_readMsgRam(MCAN0_INST, DL_MCAN_MEM_TYPE_FIFO, 0U, DL_MCAN_RX_FIFO_NUM_1, &rxMsg);
-                    // Now update the FIFO parameters to increment the getIndex to the next position
-                    DL_MCAN_writeRxFIFOAck(MCAN0_INST, DL_MCAN_RX_FIFO_NUM_1, fifo_Status.getIdx);
-                   
-                    can_msg.identifier = rxMsg.id;
-                    can_msg.state.allocated = true;
-                    can_msg.payload_count = rxMsg.dlc;
-                    for (int iData = 0; iData < rxMsg.dlc; iData++) {
+                memset(&rxMsg, 0x00, sizeof(rxMsg));
 
-                       can_msg.payload[iData] = rxMsg.data[iData];
+                // Reading RAM into the rxMsg structure in the FIFO memory (DL_MCAN_MEM_TYPE_FIFO), in Bank 1 (DL_MCAN_RX_FIFO_NUM_1)
+                // parameter 3 (0U) is not used in FIFO mode
+                DL_MCAN_readMsgRam(MCAN0_INST, DL_MCAN_MEM_TYPE_FIFO, 0U, DL_MCAN_RX_FIFO_NUM_1, &rxMsg);
+                // Now update the FIFO parameters to increment the getIndex to the next position
+                DL_MCAN_writeRxFIFOAck(MCAN0_INST, DL_MCAN_RX_FIFO_NUM_1, fifo_Status.getIdx);
 
-                    }
+                can_msg.identifier = rxMsg.id;
+                can_msg.state.allocated = true;
+                can_msg.payload_count = rxMsg.dlc;
+                for (int iData = 0; iData < rxMsg.dlc; iData++)
+                {
 
-                   CanRxStatemachine_incoming_can_driver_callback(&can_msg);
-
-                    i_looper--;
+                    can_msg.payload[iData] = rxMsg.data[iData];
                 }
 
+                CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+
+                i_looper--;
             }
+        }
 
-            // Is the Transmission Completed interrupt (0x0200) flag set?
-            if ((interrupt_flags & DL_MCAN_INTERRUPT_TC) == DL_MCAN_INTERRUPT_TC) {
+        // Is the Transmission Completed interrupt (0x0200) flag set?
+        if ((interrupt_flags & DL_MCAN_INTERRUPT_TC) == DL_MCAN_INTERRUPT_TC)
+        {
 
-               
-               _is_transmitting = false;
+            _is_transmitting = false;
 
-               DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B16_PIN | GPIO_LEDS_USER_TEST_B16_PIN);
-               delay_cycles(1000);
-               DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B16_PIN | GPIO_LEDS_USER_TEST_B16_PIN);
+            DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B16_PIN | GPIO_LEDS_USER_TEST_B16_PIN);
+            delay_cycles(1000);
+            DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B16_PIN | GPIO_LEDS_USER_TEST_B16_PIN);
+        }
 
-            }
-
-            // We have other interrupts enabled in the .sysconf file for errors that can be handled here if desired, DL_MCAN_INTERRUPT_xxxxx
-
-        break;
-
-
-        case DL_MCAN_IIDX_WAKEUP:
-
-            // We don't use low power mode so this is not used
+        // We have other interrupts enabled in the .sysconf file for errors that can be handled here if desired, DL_MCAN_INTERRUPT_xxxxx
 
         break;
 
-        case DL_MCAN_IIDX_TIMESTAMP_OVERFLOW:
+    case DL_MCAN_IIDX_WAKEUP:
 
-            // Need to do more research as to what this actually does and if we care about it
-
-        break;
-
-        case DL_MCAN_IIDX_DOUBLE_ERROR_DETECTION:
-
-            // Need to do more research as to what this actually does and if we care about it
+        // We don't use low power mode so this is not used
 
         break;
 
-        case DL_MCAN_IIDX_SINGLE_ERROR_CORRECTION:
-        
-            // Need to do more research as to what this actually does and if we care about it
+    case DL_MCAN_IIDX_TIMESTAMP_OVERFLOW:
+
+        // Need to do more research as to what this actually does and if we care about it
 
         break;
 
+    case DL_MCAN_IIDX_DOUBLE_ERROR_DETECTION:
 
-        default:
-
-           // Unknown interrupt index
+        // Need to do more research as to what this actually does and if we care about it
 
         break;
 
+    case DL_MCAN_IIDX_SINGLE_ERROR_CORRECTION:
+
+        // Need to do more research as to what this actually does and if we care about it
+
+        break;
+
+    default:
+
+        // Unknown interrupt index
+
+        break;
     }
 
-
-   DL_GPIO_togglePins(GPIO_LEDS_PORT,  GPIO_LEDS_USER_TEST_B6_PIN);
-
+    DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_TEST_B6_PIN);
 }
-
-
-

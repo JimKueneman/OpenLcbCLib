@@ -27,46 +27,45 @@
  * \file ti_driverlib_drivers.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
+ * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
-* @date 11 Nov 2025
+ * @date 11 Nov 2025
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __TI_DRIVERLIB_DRIVERS__
-#define	__TI_DRIVERLIB_DRIVERS__
+#define __TI_DRIVERLIB_DRIVERS__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void TI_DriverLibDrivers_initialize(void);
+    extern void TI_DriverLibDrivers_initialize(void);
 
-extern void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    extern void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-extern uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+    extern uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-extern uint16_t TI_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    
-extern void TI_DriverLibDrivers_config_mem_factory_reset(void);
+    extern uint16_t TI_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-extern void TI_DriverLibDrivers_lock_shared_resources(void);
+    extern void TI_DriverLibDrivers_config_mem_factory_reset(void);
 
-extern void TI_DriverLibDrivers_unlock_shared_resources(void);
+    extern void TI_DriverLibDrivers_lock_shared_resources(void);
 
+    extern void TI_DriverLibDrivers_unlock_shared_resources(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TI_DRIVERLIB_CAN_DRIVER__ */
+#endif /* __TI_DRIVERLIB_CAN_DRIVER__ */

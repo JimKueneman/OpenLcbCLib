@@ -43,7 +43,7 @@
 #include <stdint.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -61,7 +61,6 @@ extern "C"
     extern bool Esp32CanDriver_transmit_raw_can_frame(can_msg_t *msg);
 
     extern bool Esp32CanDriver_is_connected(void);
-
 
 #ifdef __cplusplus
 }

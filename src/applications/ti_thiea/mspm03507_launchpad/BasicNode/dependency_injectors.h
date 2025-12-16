@@ -44,9 +44,8 @@
 #include "ti_msp_dl_config.h"
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 #include "src/openlcb/openlcb_gridconnect.h"
-
 
 #ifdef __cplusplus
 extern "C"

@@ -43,9 +43,8 @@
 
 #include "xc.h"
 
-
 #include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/common/can_types.h"
+#include "../../../drivers/canbus/can_types.h"
 #include "../../../openlcb/openlcb_gridconnect.h"
 
 #define LED_BLUE_TRIS _TRISA7
@@ -53,7 +52,6 @@
 
 #define LED_YELLOW_TRIS _TRISC5
 #define LED_YELLOW _LATC5
-
 
 #ifdef __cplusplus
 extern "C"

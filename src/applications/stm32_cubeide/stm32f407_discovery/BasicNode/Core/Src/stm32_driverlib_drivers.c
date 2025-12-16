@@ -26,7 +26,7 @@
  *
  * \file ti_driverlib_drivers.c
  *
- * Definition of the node at the application level.  
+ * Definition of the node at the application level.
  *
  * @author Jim Kueneman
  * @date 11 Nov 2024
@@ -42,45 +42,47 @@
 #include <string.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h" 
+#include "src/drivers/canbus/can_types.h"
 #include "src/openlcb/openlcb_node.h"
 #include "src/openlcb/protocol_datagram_handler.h"
 
 static TIM_HandleTypeDef *_htim7;
 
-void STM32_DriverLibDrivers_initialize(TIM_HandleTypeDef *htim7) {
+void STM32_DriverLibDrivers_initialize(TIM_HandleTypeDef *htim7)
+{
 
 	_htim7 = htim7;
 
 	// Start Timer 7
 	HAL_TIM_Base_Start_IT(htim7);
-
 }
 
-void STM32_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+void STM32_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
 
 	// DL_SYSCTL_resetDevice(0x03);
-
 }
 
-uint16_t STM32_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
+uint16_t STM32_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
 
 	char str[] = "STM32F407 Discovery";
 
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++)
+	{
 
 		(*buffer)[i] = 0x00;
-
 	}
 
-	switch (address) {
+	switch (address)
+	{
 
 	case 0:
 
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++)
+		{
 
 			(*buffer)[i] = str[i];
-
 		}
 
 		break;
@@ -91,43 +93,41 @@ uint16_t STM32_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count
 	}
 
 	return count;
-
 }
 
-uint16_t STM32_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
+uint16_t STM32_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
 
 	return count;
-
 }
 
-void STM32_DriverLibDrivers_config_mem_factory_reset(void) {
-
+void STM32_DriverLibDrivers_config_mem_factory_reset(void)
+{
 }
 
-void STM32_DriverLibDrivers_lock_shared_resources(void) {
+void STM32_DriverLibDrivers_lock_shared_resources(void)
+{
 
 	STM32_DriverLibCanDriver_pause_can_rx();
 
 	HAL_TIM_Base_Stop(_htim7);
-
 }
 
-void STM32_DriverLibDrivers_unlock_shared_resources(void) {
+void STM32_DriverLibDrivers_unlock_shared_resources(void)
+{
 
 	STM32_DriverLibCanDriver_resume_can_rx();
 
 	HAL_TIM_Base_Start_IT(_htim7);
-
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 
-	if (htim == _htim7) {
+	if (htim == _htim7)
+	{
 
 		OpenLcbNode_100ms_timer_tick();
 		ProtocolDatagramHandler_100ms_timer_tick();
-
 	}
-
 }
-

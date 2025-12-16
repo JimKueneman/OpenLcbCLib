@@ -35,14 +35,14 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../USB_HOST/App/usb_host.h \
- ../Core/Src/src/drivers/common/can_main_statemachine.h \
- ../Core/Src/src/drivers/common/can_types.h \
- ../Core/Src/src/drivers/common/../../openlcb/openlcb_defines.h \
- ../Core/Src/src/drivers/common/../../openlcb/openlcb_types.h \
- ../Core/Src/src/drivers/common/can_rx_statemachine.h \
- ../Core/Src/src/drivers/common/can_tx_statemachine.h \
- ../Core/Src/src/drivers/common/can_types.h \
- ../Core/Src/src/drivers/common/can_utilities.h \
+ ../Core/Src/src/drivers/canbus/can_main_statemachine.h \
+ ../Core/Src/src/drivers/canbus/can_types.h \
+ ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h \
+ ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h \
+ ../Core/Src/src/drivers/canbus/can_rx_statemachine.h \
+ ../Core/Src/src/drivers/canbus/can_tx_statemachine.h \
+ ../Core/Src/src/drivers/canbus/can_types.h \
+ ../Core/Src/src/drivers/canbus/can_utilities.h \
  ../Core/Src/src/openlcb/openlcb_login_statemachine.h \
  ../Core/Src/src/openlcb/openlcb_types.h \
  ../Core/Src/src/openlcb/openlcb_main_statemachine.h \
@@ -50,12 +50,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/stm32_driverlib_can_driver.h \
  ../Core/Src/src/openlcb/openlcb_types.h \
  ../Core/Src/stm32_driverlib_drivers.h ../Core/Src/debug_tools.h \
- ../Core/Src/./src/drivers/common/can_types.h \
+ ../Core/Src/./src/drivers/canbus/can_types.h \
  ../Core/Src/./src/openlcb/openlcb_defines.h \
  ../Core/Src/./src/openlcb/openlcb_types.h \
  ../Core/Src/dependency_injection.h ../Core/Src/dependency_injectors.h \
  ../Core/Src/src/openlcb/openlcb_gridconnect.h \
- ../Core/Src/src/openlcb/../drivers/common/can_types.h \
+ ../Core/Src/src/openlcb/../drivers/canbus/can_types.h \
  ../Core/Src/node_parameters.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -94,14 +94,14 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 ../USB_HOST/App/usb_host.h:
-../Core/Src/src/drivers/common/can_main_statemachine.h:
-../Core/Src/src/drivers/common/can_types.h:
-../Core/Src/src/drivers/common/../../openlcb/openlcb_defines.h:
-../Core/Src/src/drivers/common/../../openlcb/openlcb_types.h:
-../Core/Src/src/drivers/common/can_rx_statemachine.h:
-../Core/Src/src/drivers/common/can_tx_statemachine.h:
-../Core/Src/src/drivers/common/can_types.h:
-../Core/Src/src/drivers/common/can_utilities.h:
+../Core/Src/src/drivers/canbus/can_main_statemachine.h:
+../Core/Src/src/drivers/canbus/can_types.h:
+../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h:
+../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h:
+../Core/Src/src/drivers/canbus/can_rx_statemachine.h:
+../Core/Src/src/drivers/canbus/can_tx_statemachine.h:
+../Core/Src/src/drivers/canbus/can_types.h:
+../Core/Src/src/drivers/canbus/can_utilities.h:
 ../Core/Src/src/openlcb/openlcb_login_statemachine.h:
 ../Core/Src/src/openlcb/openlcb_types.h:
 ../Core/Src/src/openlcb/openlcb_main_statemachine.h:
@@ -110,11 +110,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/src/openlcb/openlcb_types.h:
 ../Core/Src/stm32_driverlib_drivers.h:
 ../Core/Src/debug_tools.h:
-../Core/Src/./src/drivers/common/can_types.h:
+../Core/Src/./src/drivers/canbus/can_types.h:
 ../Core/Src/./src/openlcb/openlcb_defines.h:
 ../Core/Src/./src/openlcb/openlcb_types.h:
 ../Core/Src/dependency_injection.h:
 ../Core/Src/dependency_injectors.h:
 ../Core/Src/src/openlcb/openlcb_gridconnect.h:
-../Core/Src/src/openlcb/../drivers/common/can_types.h:
+../Core/Src/src/openlcb/../drivers/canbus/can_types.h:
 ../Core/Src/node_parameters.h:

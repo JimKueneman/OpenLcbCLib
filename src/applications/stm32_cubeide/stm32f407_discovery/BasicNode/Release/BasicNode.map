@@ -223,71 +223,71 @@ Discarded input sections
  .bss           0x00000000        0x0 ./Core/Src/system_stm32f4xx.o
  .text.SystemCoreClockUpdate
                 0x00000000       0x6c ./Core/Src/system_stm32f4xx.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/alias_mappings.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/alias_mappings.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/alias_mappings.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/alias_mappings.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/alias_mappings.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/alias_mappings.o
  .text.AliasMappings_flush
-                0x00000000        0x4 ./Core/Src/src/drivers/common/alias_mappings.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_buffer_fifo.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_buffer_fifo.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/alias_mappings.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
  .text.CanBufferFifo_is_empty
-                0x00000000       0x18 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x00000000       0x18 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
  .text.CanBufferFifo_get_allocated_count
-                0x00000000       0x1c ./Core/Src/src/drivers/common/can_buffer_fifo.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_buffer_store.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_buffer_store.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x00000000       0x1c ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_buffer_store.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_buffer_store.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .text.CanBufferStore_messages_allocated
-                0x00000000        0xc ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x00000000        0xc ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .text.CanBufferStore_messages_max_allocated
-                0x00000000        0xc ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x00000000        0xc ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .text.CanBufferStore_clear_max_allocated
-                0x00000000        0xc ./Core/Src/src/drivers/common/can_buffer_store.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_login_message_handler.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_login_message_handler.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_login_message_handler.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_login_statemachine.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_login_statemachine.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_login_statemachine.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_main_statemachine.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_main_statemachine.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x00000000        0xc ./Core/Src/src/drivers/canbus/can_buffer_store.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
  .text.CanMainStateMachine_get_can_statemachine_info
-                0x00000000        0x8 ./Core/Src/src/drivers/common/can_main_statemachine.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_rx_message_handler.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_rx_message_handler.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_rx_message_handler.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_rx_statemachine.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_rx_statemachine.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_rx_statemachine.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_tx_message_handler.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_tx_message_handler.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000000        0x8 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .rodata.OPENLCB_MESSAGE_DATAGRAM_ADDRESSED
-                0x00000000        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .rodata.OPENLCB_MESSAGE_DATAGRAM_UNADDRESSED
-                0x00000000        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .rodata.OPENLCB_MESSAGE_DATAGRAM_LAST_FRAME
-                0x00000000        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .rodata.OPENLCB_MESSAGE_DATAGRAM_MIDDLE_FRAME
-                0x00000000        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .rodata.OPENLCB_MESSAGE_DATAGRAM_FIRST_FRAME
-                0x00000000        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .rodata.OPENLCB_MESSAGE_DATAGRAM_ONLY
-                0x00000000        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_tx_statemachine.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_tx_statemachine.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_tx_statemachine.o
- .text          0x00000000        0x0 ./Core/Src/src/drivers/common/can_utilities.o
- .data          0x00000000        0x0 ./Core/Src/src/drivers/common/can_utilities.o
- .bss           0x00000000        0x0 ./Core/Src/src/drivers/common/can_utilities.o
+                0x00000000        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
+ .text          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_utilities.o
+ .data          0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_utilities.o
+ .bss           0x00000000        0x0 ./Core/Src/src/drivers/canbus/can_utilities.o
  .text.CanUtilities_load_can_message
-                0x00000000       0x32 ./Core/Src/src/drivers/common/can_utilities.o
+                0x00000000       0x32 ./Core/Src/src/drivers/canbus/can_utilities.o
  .text.CanUtilities_copy_64_bit_to_can_message
-                0x00000000       0x24 ./Core/Src/src/drivers/common/can_utilities.o
+                0x00000000       0x24 ./Core/Src/src/drivers/canbus/can_utilities.o
  .text.CanUtilities_copy_can_message
-                0x00000000       0x30 ./Core/Src/src/drivers/common/can_utilities.o
+                0x00000000       0x30 ./Core/Src/src/drivers/canbus/can_utilities.o
  .text          0x00000000        0x0 ./Core/Src/src/openlcb/openlcb_application.o
  .data          0x00000000        0x0 ./Core/Src/src/openlcb/openlcb_application.o
  .bss           0x00000000        0x0 ./Core/Src/src/openlcb/openlcb_application.o
@@ -1873,17 +1873,17 @@ LOAD ./Core/Src/stm32f4xx_it.o
 LOAD ./Core/Src/syscalls.o
 LOAD ./Core/Src/sysmem.o
 LOAD ./Core/Src/system_stm32f4xx.o
-LOAD ./Core/Src/src/drivers/common/alias_mappings.o
-LOAD ./Core/Src/src/drivers/common/can_buffer_fifo.o
-LOAD ./Core/Src/src/drivers/common/can_buffer_store.o
-LOAD ./Core/Src/src/drivers/common/can_login_message_handler.o
-LOAD ./Core/Src/src/drivers/common/can_login_statemachine.o
-LOAD ./Core/Src/src/drivers/common/can_main_statemachine.o
-LOAD ./Core/Src/src/drivers/common/can_rx_message_handler.o
-LOAD ./Core/Src/src/drivers/common/can_rx_statemachine.o
-LOAD ./Core/Src/src/drivers/common/can_tx_message_handler.o
-LOAD ./Core/Src/src/drivers/common/can_tx_statemachine.o
-LOAD ./Core/Src/src/drivers/common/can_utilities.o
+LOAD ./Core/Src/src/drivers/canbus/alias_mappings.o
+LOAD ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
+LOAD ./Core/Src/src/drivers/canbus/can_buffer_store.o
+LOAD ./Core/Src/src/drivers/canbus/can_login_message_handler.o
+LOAD ./Core/Src/src/drivers/canbus/can_login_statemachine.o
+LOAD ./Core/Src/src/drivers/canbus/can_main_statemachine.o
+LOAD ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
+LOAD ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
+LOAD ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
+LOAD ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
+LOAD ./Core/Src/src/drivers/canbus/can_utilities.o
 LOAD ./Core/Src/src/openlcb/openlcb_application.o
 LOAD ./Core/Src/src/openlcb/openlcb_buffer_fifo.o
 LOAD ./Core/Src/src/openlcb/openlcb_buffer_list.o
@@ -2139,223 +2139,223 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
                 0x0800104c       0x14 ./Core/Src/system_stm32f4xx.o
                 0x0800104c                SystemInit
  .text._reset_mappings
-                0x08001060       0x30 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x08001060       0x30 ./Core/Src/src/drivers/canbus/alias_mappings.o
  .text.AliasMappings_initialize
-                0x08001090        0x4 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x08001090        0x4 ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x08001090                AliasMappings_initialize
  .text.AliasMappings_get_alias_mapping_info
-                0x08001094        0x8 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x08001094        0x8 ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x08001094                AliasMappings_get_alias_mapping_info
  .text.AliasMappings_set_has_duplicate_alias_flag
-                0x0800109c       0x10 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x0800109c       0x10 ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x0800109c                AliasMappings_set_has_duplicate_alias_flag
  .text.AliasMappings_register
-                0x080010ac       0x3c ./Core/Src/src/drivers/common/alias_mappings.o
+                0x080010ac       0x3c ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x080010ac                AliasMappings_register
  .text.AliasMappings_unregister
-                0x080010e8       0x38 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x080010e8       0x38 ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x080010e8                AliasMappings_unregister
  .text.AliasMappings_find_mapping_by_alias
-                0x08001120       0x28 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x08001120       0x28 ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x08001120                AliasMappings_find_mapping_by_alias
  .text.AliasMappings_find_mapping_by_node_id
-                0x08001148       0x2c ./Core/Src/src/drivers/common/alias_mappings.o
+                0x08001148       0x2c ./Core/Src/src/drivers/canbus/alias_mappings.o
                 0x08001148                AliasMappings_find_mapping_by_node_id
  .text.CanBufferFifo_initialize
-                0x08001174       0x18 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x08001174       0x18 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
                 0x08001174                CanBufferFifo_initialize
  .text.CanBufferFifo_push
-                0x0800118c       0x2c ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x0800118c       0x2c ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
                 0x0800118c                CanBufferFifo_push
  .text.CanBufferFifo_pop
-                0x080011b8       0x34 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x080011b8       0x34 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
                 0x080011b8                CanBufferFifo_pop
  .text.CanBufferStore_initialize
-                0x080011ec       0x48 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x080011ec       0x48 ./Core/Src/src/drivers/canbus/can_buffer_store.o
                 0x080011ec                CanBufferStore_initialize
  .text.CanBufferStore_allocate_buffer
-                0x08001234       0x58 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x08001234       0x58 ./Core/Src/src/drivers/canbus/can_buffer_store.o
                 0x08001234                CanBufferStore_allocate_buffer
  .text.CanBufferStore_free_buffer
-                0x0800128c       0x18 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x0800128c       0x18 ./Core/Src/src/drivers/canbus/can_buffer_store.o
                 0x0800128c                CanBufferStore_free_buffer
  .text.CanLoginMessageHandler_initialize
-                0x080012a4        0xc ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x080012a4        0xc ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x080012a4                CanLoginMessageHandler_initialize
  .text.CanLoginMessageHandler_state_init
-                0x080012b0       0x16 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x080012b0       0x16 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x080012b0                CanLoginMessageHandler_state_init
  *fill*         0x080012c6        0x2 
  .text.CanLoginMessageHandler_state_generate_seed
-                0x080012c8       0x58 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x080012c8       0x58 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x080012c8                CanLoginMessageHandler_state_generate_seed
  .text.CanLoginMessageHandler_state_generate_alias
-                0x08001320       0x58 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x08001320       0x58 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x08001320                CanLoginMessageHandler_state_generate_alias
  .text.CanLoginMessageHandler_state_load_cid07
-                0x08001378       0x34 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x08001378       0x34 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x08001378                CanLoginMessageHandler_state_load_cid07
  .text.CanLoginMessageHandler_state_load_cid06
-                0x080013ac       0x3c ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x080013ac       0x3c ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x080013ac                CanLoginMessageHandler_state_load_cid06
  .text.CanLoginMessageHandler_state_load_cid05
-                0x080013e8       0x34 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x080013e8       0x34 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x080013e8                CanLoginMessageHandler_state_load_cid05
  .text.CanLoginMessageHandler_state_load_cid04
-                0x0800141c       0x38 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x0800141c       0x38 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x0800141c                CanLoginMessageHandler_state_load_cid04
  .text.CanLoginMessageHandler_state_wait_200ms
-                0x08001454       0x16 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x08001454       0x16 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x08001454                CanLoginMessageHandler_state_wait_200ms
  .text.CanLoginMessageHandler_state_load_rid
-                0x0800146a       0x28 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x0800146a       0x28 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x0800146a                CanLoginMessageHandler_state_load_rid
  *fill*         0x08001492        0x2 
  .text.CanLoginMessageHandler_state_load_amd
-                0x08001494       0x58 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x08001494       0x58 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                 0x08001494                CanLoginMessageHandler_state_load_amd
  .text.CanLoginStateMachine_initialize
-                0x080014ec        0xc ./Core/Src/src/drivers/common/can_login_statemachine.o
+                0x080014ec        0xc ./Core/Src/src/drivers/canbus/can_login_statemachine.o
                 0x080014ec                CanLoginStateMachine_initialize
  .text.CanLoginStateMachine_run
-                0x080014f8       0x70 ./Core/Src/src/drivers/common/can_login_statemachine.o
+                0x080014f8       0x70 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
                 0x080014f8                CanLoginStateMachine_run
  .text.CanMainStatemachine_initialize
-                0x08001568       0x38 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x08001568       0x38 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x08001568                CanMainStatemachine_initialize
  .text.CanMainStatemachine_handle_duplicate_aliases
-                0x080015a0       0x8c ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x080015a0       0x8c ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x080015a0                CanMainStatemachine_handle_duplicate_aliases
  .text.CanMainStatemachine_handle_outgoing_can_message
-                0x0800162c       0x4c ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x0800162c       0x4c ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x0800162c                CanMainStatemachine_handle_outgoing_can_message
  .text.CanMainStatemachine_handle_login_outgoing_can_message
-                0x08001678       0x2c ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x08001678       0x2c ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x08001678                CanMainStatemachine_handle_login_outgoing_can_message
  .text.CanMainStatemachine_handle_try_enumerate_first_node
-                0x080016a4       0x38 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x080016a4       0x38 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x080016a4                CanMainStatemachine_handle_try_enumerate_first_node
  .text.CanMainStatemachine_handle_try_enumerate_next_node
-                0x080016dc       0x38 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x080016dc       0x38 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x080016dc                CanMainStatemachine_handle_try_enumerate_next_node
  .text.CanMainStateMachine_run
-                0x08001714       0x34 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x08001714       0x34 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                 0x08001714                CanMainStateMachine_run
  .text._load_reject_message
-                0x08001748       0x68 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001748       0x68 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
  .text._check_for_duplicate_alias
-                0x080017b0       0x5c ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x080017b0       0x5c ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
  .text.CanRxMessageHandler_initialize
-                0x0800180c        0xc ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x0800180c        0xc ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x0800180c                CanRxMessageHandler_initialize
  .text.CanRxMessageHandler_first_frame
-                0x08001818       0x8c ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001818       0x8c ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001818                CanRxMessageHandler_first_frame
  .text.CanRxMessageHandler_middle_frame
-                0x080018a4       0x48 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x080018a4       0x48 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x080018a4                CanRxMessageHandler_middle_frame
  .text.CanRxMessageHandler_last_frame
-                0x080018ec       0x5e ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x080018ec       0x5e ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x080018ec                CanRxMessageHandler_last_frame
  *fill*         0x0800194a        0x2 
  .text.CanRxMessageHandler_single_frame
-                0x0800194c       0x64 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x0800194c       0x64 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x0800194c                CanRxMessageHandler_single_frame
  .text.CanRxMessageHandler_can_legacy_snip
-                0x080019b0       0x56 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x080019b0       0x56 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x080019b0                CanRxMessageHandler_can_legacy_snip
  .text.CanRxMessageHandler_stream_frame
-                0x08001a06        0x2 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001a06        0x2 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001a06                CanRxMessageHandler_stream_frame
  .text.CanRxMessageHandler_cid_frame
-                0x08001a08       0x34 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001a08       0x34 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001a08                CanRxMessageHandler_cid_frame
  .text.CanRxMessageHandler_rid_frame
-                0x08001a3c        0x4 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001a3c        0x4 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001a3c                CanRxMessageHandler_rid_frame
  .text.CanRxMessageHandler_amd_frame
-                0x08001a40        0x4 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001a40        0x4 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001a40                CanRxMessageHandler_amd_frame
  .text.CanRxMessageHandler_ame_frame
-                0x08001a44       0xa0 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001a44       0xa0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001a44                CanRxMessageHandler_ame_frame
  .text.CanRxMessageHandler_amr_frame
-                0x08001ae4        0x4 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001ae4        0x4 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001ae4                CanRxMessageHandler_amr_frame
  .text.CanRxMessageHandler_error_info_report_frame
-                0x08001ae8        0x4 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x08001ae8        0x4 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                 0x08001ae8                CanRxMessageHandler_error_info_report_frame
  .text.CanRxStatemachine_initialize
-                0x08001aec        0xc ./Core/Src/src/drivers/common/can_rx_statemachine.o
+                0x08001aec        0xc ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
                 0x08001aec                CanRxStatemachine_initialize
  .text.CanRxStatemachine_incoming_can_driver_callback
-                0x08001af8      0x244 ./Core/Src/src/drivers/common/can_rx_statemachine.o
+                0x08001af8      0x244 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
                 0x08001af8                CanRxStatemachine_incoming_can_driver_callback
  .text._transmit_can_frame
-                0x08001d3c       0x24 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001d3c       0x24 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .text.CanTxMessageHandler_initialize
-                0x08001d60        0xc ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001d60        0xc ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                 0x08001d60                CanTxMessageHandler_initialize
  .text.CanTxMessageHandler_datagram_frame
-                0x08001d6c       0x56 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001d6c       0x56 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                 0x08001d6c                CanTxMessageHandler_datagram_frame
  *fill*         0x08001dc2        0x2 
  .text.CanTxMessageHandler_unaddressed_msg_frame
-                0x08001dc4       0x44 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001dc4       0x44 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                 0x08001dc4                CanTxMessageHandler_unaddressed_msg_frame
  .text.CanTxMessageHandler_addressed_msg_frame
-                0x08001e08       0x68 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001e08       0x68 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                 0x08001e08                CanTxMessageHandler_addressed_msg_frame
  .text.CanTxMessageHandler_stream_frame
-                0x08001e70        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001e70        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                 0x08001e70                CanTxMessageHandler_stream_frame
  .text.CanTxMessageHandler_can_frame
-                0x08001e74        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x08001e74        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                 0x08001e74                CanTxMessageHandler_can_frame
  .text.CanTxStatemachine_initialize
-                0x08001e78        0xc ./Core/Src/src/drivers/common/can_tx_statemachine.o
+                0x08001e78        0xc ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
                 0x08001e78                CanTxStatemachine_initialize
  .text._transmit_openlcb_message
-                0x08001e84       0x5c ./Core/Src/src/drivers/common/can_tx_statemachine.o
+                0x08001e84       0x5c ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
                 0x08001e84                _transmit_openlcb_message
  .text.CanTxStatemachine_send_openlcb_message
-                0x08001ee0       0x58 ./Core/Src/src/drivers/common/can_tx_statemachine.o
+                0x08001ee0       0x58 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
                 0x08001ee0                CanTxStatemachine_send_openlcb_message
  .text.CanTxStatemachine_send_can_message
-                0x08001f38        0xc ./Core/Src/src/drivers/common/can_tx_statemachine.o
+                0x08001f38        0xc ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
                 0x08001f38                CanTxStatemachine_send_can_message
  .text.CanUtilities_clear_can_message
-                0x08001f44       0x10 ./Core/Src/src/drivers/common/can_utilities.o
+                0x08001f44       0x10 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08001f44                CanUtilities_clear_can_message
  .text.CanUtilities_extract_source_alias_from_can_identifier
-                0x08001f54        0x8 ./Core/Src/src/drivers/common/can_utilities.o
+                0x08001f54        0x8 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08001f54                CanUtilities_extract_source_alias_from_can_identifier
  .text.CanUtilities_extract_dest_alias_from_can_message
-                0x08001f5c       0x4a ./Core/Src/src/drivers/common/can_utilities.o
+                0x08001f5c       0x4a ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08001f5c                CanUtilities_extract_dest_alias_from_can_message
  .text.CanUtilities_convert_can_mti_to_openlcb_mti
-                0x08001fa6       0x48 ./Core/Src/src/drivers/common/can_utilities.o
+                0x08001fa6       0x48 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08001fa6                CanUtilities_convert_can_mti_to_openlcb_mti
  .text.CanUtilities_append_can_payload_to_openlcb_payload
-                0x08001fee       0x3a ./Core/Src/src/drivers/common/can_utilities.o
+                0x08001fee       0x3a ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08001fee                CanUtilities_append_can_payload_to_openlcb_payload
  .text.CanUtilities_count_nulls_in_payloads
-                0x08002028       0x32 ./Core/Src/src/drivers/common/can_utilities.o
+                0x08002028       0x32 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08002028                CanUtilities_count_nulls_in_payloads
  .text.CanUtilities_is_openlcb_message
-                0x0800205a        0x8 ./Core/Src/src/drivers/common/can_utilities.o
+                0x0800205a        0x8 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x0800205a                CanUtilities_is_openlcb_message
  .text.CanUtilities_extract_can_payload_as_node_id
-                0x08002062       0x20 ./Core/Src/src/drivers/common/can_utilities.o
+                0x08002062       0x20 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08002062                CanUtilities_extract_can_payload_as_node_id
  .text.CanUtilities_copy_openlcb_payload_to_can_payload
-                0x08002082       0x38 ./Core/Src/src/drivers/common/can_utilities.o
+                0x08002082       0x38 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x08002082                CanUtilities_copy_openlcb_payload_to_can_payload
  .text.CanUtilities_copy_node_id_to_payload
-                0x080020ba       0x32 ./Core/Src/src/drivers/common/can_utilities.o
+                0x080020ba       0x32 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x080020ba                CanUtilities_copy_node_id_to_payload
  .text.CanUtilities_copy_node_id_to_can_payload_buffer
-                0x080020ec       0x16 ./Core/Src/src/drivers/common/can_utilities.o
+                0x080020ec       0x16 ./Core/Src/src/drivers/canbus/can_utilities.o
                 0x080020ec                CanUtilities_copy_node_id_to_can_payload_buffer
  *fill*         0x08002102        0x2 
  .text.OpenLcbApplication_initialize
@@ -3761,32 +3761,32 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
                 0x20000218        0x4 ./Core/Src/sysmem.o
  *fill*         0x2000021c        0x4 
  .bss._alias_mapping_info
-                0x20000220       0x48 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x20000220       0x48 ./Core/Src/src/drivers/canbus/alias_mappings.o
  .bss.can_msg_buffer_fifo
-                0x20000268       0x30 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x20000268       0x30 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
  .bss._can_buffer_store_message_max_allocated
-                0x20000298        0x2 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x20000298        0x2 ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .bss._can_buffer_store_message_allocated
-                0x2000029a        0x2 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x2000029a        0x2 ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .bss._can_buffer_store
-                0x2000029c       0xc8 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x2000029c       0xc8 ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .bss._interface
-                0x20000364        0x4 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x20000364        0x4 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
  .bss._interface
-                0x20000368        0x4 ./Core/Src/src/drivers/common/can_login_statemachine.o
- .bss._can_msg  0x2000036c       0x14 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x20000368        0x4 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
+ .bss._can_msg  0x2000036c       0x14 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
  .bss._can_statemachine_info
-                0x20000380       0x14 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x20000380       0x14 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
  .bss._interface
-                0x20000394        0x4 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x20000394        0x4 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
  .bss._interface
-                0x20000398        0x4 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x20000398        0x4 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
  .bss._interface
-                0x2000039c        0x4 ./Core/Src/src/drivers/common/can_rx_statemachine.o
+                0x2000039c        0x4 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
  .bss._interface
-                0x200003a0        0x4 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x200003a0        0x4 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .bss._interface
-                0x200003a4        0x4 ./Core/Src/src/drivers/common/can_tx_statemachine.o
+                0x200003a4        0x4 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
  .bss._interface
                 0x200003a8        0x4 ./Core/Src/src/openlcb/openlcb_application.o
  .bss.openlcb_msg_buffer_fifo
@@ -3925,27 +3925,27 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
  .ARM.attributes
                 0x0000025e       0x34 ./Core/Src/system_stm32f4xx.o
  .ARM.attributes
-                0x00000292       0x34 ./Core/Src/src/drivers/common/alias_mappings.o
+                0x00000292       0x34 ./Core/Src/src/drivers/canbus/alias_mappings.o
  .ARM.attributes
-                0x000002c6       0x34 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+                0x000002c6       0x34 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
  .ARM.attributes
-                0x000002fa       0x34 ./Core/Src/src/drivers/common/can_buffer_store.o
+                0x000002fa       0x34 ./Core/Src/src/drivers/canbus/can_buffer_store.o
  .ARM.attributes
-                0x0000032e       0x34 ./Core/Src/src/drivers/common/can_login_message_handler.o
+                0x0000032e       0x34 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
  .ARM.attributes
-                0x00000362       0x34 ./Core/Src/src/drivers/common/can_login_statemachine.o
+                0x00000362       0x34 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
  .ARM.attributes
-                0x00000396       0x34 ./Core/Src/src/drivers/common/can_main_statemachine.o
+                0x00000396       0x34 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
  .ARM.attributes
-                0x000003ca       0x34 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+                0x000003ca       0x34 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
  .ARM.attributes
-                0x000003fe       0x34 ./Core/Src/src/drivers/common/can_rx_statemachine.o
+                0x000003fe       0x34 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
  .ARM.attributes
-                0x00000432       0x34 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+                0x00000432       0x34 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .ARM.attributes
-                0x00000466       0x34 ./Core/Src/src/drivers/common/can_tx_statemachine.o
+                0x00000466       0x34 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
  .ARM.attributes
-                0x0000049a       0x34 ./Core/Src/src/drivers/common/can_utilities.o
+                0x0000049a       0x34 ./Core/Src/src/drivers/canbus/can_utilities.o
  .ARM.attributes
                 0x000004ce       0x34 ./Core/Src/src/openlcb/openlcb_application.o
  .ARM.attributes
@@ -4121,27 +4121,27 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
                                  0x44 (size before relaxing)
  .comment       0x00000043        0x0 ./Core/Src/system_stm32f4xx.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/alias_mappings.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/alias_mappings.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_buffer_fifo.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_buffer_store.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_buffer_store.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_login_message_handler.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_login_statemachine.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_main_statemachine.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_rx_message_handler.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_rx_statemachine.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_tx_message_handler.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_tx_statemachine.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
                                  0x44 (size before relaxing)
- .comment       0x00000043        0x0 ./Core/Src/src/drivers/common/can_utilities.o
+ .comment       0x00000043        0x0 ./Core/Src/src/drivers/canbus/can_utilities.o
                                  0x44 (size before relaxing)
  .comment       0x00000043        0x0 ./Core/Src/src/openlcb/openlcb_application.o
                                  0x44 (size before relaxing)

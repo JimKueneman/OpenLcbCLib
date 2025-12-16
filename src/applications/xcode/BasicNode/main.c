@@ -12,28 +12,25 @@
 #include "dependency_injection.h"
 #include "dependency_injectors.h"
 
-#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
 
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
 
-
 #define NODE_ID 0x050701010033
-
 
 int main(int argc, char *argv[])
 {
 
   printf("Initializing...\n");
-    
+
   DependencyInjection_initialize();
   DependencyInjectors_initialize();
-    
+
   OSxDrivers_setup();
   OSxCanDriver_setup();
-    
-  
+
   printf("Waiting for CAN and 100ms Timer Drivers to connect\n");
 
   while (!(OSxDrivers_100ms_is_connected() && OSxCanDriver_is_connected() && OSxDrivers_input_is_connected()))
@@ -45,15 +42,13 @@ int main(int argc, char *argv[])
   OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
   printf("Node Allocated.....\n");
 
-    while (1)
-    {
-        
-        usleep(2);
-        
-        CanMainStateMachine_run();
-        OpenLcbLoginMainStatemachine_run();
-        OpenLcbMainStatemachine_run();
-        
-    }
-    
+  while (1)
+  {
+
+    usleep(2);
+
+    CanMainStateMachine_run();
+    OpenLcbLoginMainStatemachine_run();
+    OpenLcbMainStatemachine_run();
   }
+}

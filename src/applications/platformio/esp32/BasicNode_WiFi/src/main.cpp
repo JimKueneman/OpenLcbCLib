@@ -13,14 +13,12 @@
 #include "dependency_injectors.h"
 #include "dependency_injection.h"
 
-
-#include "src/drivers/common/alias_mappings.h"
-#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/canbus/alias_mappings.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
 
 #include "src/openlcb/openlcb_node.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
-
 
 // put function declarations here:
 
@@ -34,7 +32,6 @@
 #define SERVER_PORT 12021
 #define SERVER_CONNECT_RETRY_TIME_MICROSECONDS 5000000
 
-
 void setup()
 {
 
@@ -45,14 +42,13 @@ void setup()
 
     Serial.println("Setting up Drivers.....");
     Esp32Drivers_setup();
-    
+
     Serial.println("Creating Node.....");
     OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
 
     Serial.println("Logging into Network..");
     WiFiTools_log_events(true);
     WiFiTools_connect_to_access_point(SSID, PASSWORD);
-
 }
 
 void loop()
@@ -63,30 +59,31 @@ void loop()
     if (WiFiTools_is_connected_to_access_point())
     {
 
-        if (WiFiTools_is_connected_to_server()) {
+        if (WiFiTools_is_connected_to_server())
+        {
 
-           CanMainStateMachine_run();
-           OpenLcbLoginMainStatemachine_run();
-           OpenLcbMainStatemachine_run();
-
-        } else {
+            CanMainStateMachine_run();
+            OpenLcbLoginMainStatemachine_run();
+            OpenLcbMainStatemachine_run();
+        }
+        else
+        {
 
             delayMicroseconds(SERVER_CONNECT_RETRY_TIME_MICROSECONDS);
 
             printf("Connecting to Server.....");
             socket = WiFiTools_connect_to_server(SERVER_IP, SERVER_PORT);
 
-            if (socket > 0) {
+            if (socket > 0)
+            {
 
                 printf("Success connecting to Server, Socket Handle: %d\n", socket);
                 AliasMappings_flush();
                 OpenLcbNode_reset_state();
                 Esp32WiFiGridconnectDriver_start(&socket);
             }
-
         }
-
     }
 
-   // WiFiToolsDebug_log_status();
+    // WiFiToolsDebug_log_status();
 }

@@ -1,2 +1,2 @@
-../Core/Src/src/drivers/common/can_login_statemachine.c:49:6:CanLoginStateMachine_initialize	0	static
-../Core/Src/src/drivers/common/can_login_statemachine.c:55:6:CanLoginStateMachine_run	0	static
+../Core/Src/src/drivers/canbus/can_login_statemachine.c:49:6:CanLoginStateMachine_initialize	0	static
+../Core/Src/src/drivers/canbus/can_login_statemachine.c:55:6:CanLoginStateMachine_run	0	static

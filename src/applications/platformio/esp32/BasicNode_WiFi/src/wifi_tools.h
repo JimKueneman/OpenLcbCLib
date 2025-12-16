@@ -29,14 +29,13 @@
  *
  *
  * @author Jim Kueneman
-* @date 15 Nov 2025
+ * @date 15 Nov 2025
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __WIFI_TOOLS___
-#define	__WIFI_TOOLS___
+#define __WIFI_TOOLS___
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -45,30 +44,31 @@
 #include <stdint.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
 #define RECONNECT_INTERVAL 100
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void WiFiTools_connect_to_access_point(const char * ssid, const char * pass);
+    extern void WiFiTools_connect_to_access_point(const char *ssid, const char *pass);
 
-extern void WiFiTools_log_events(bool do_enable);
+    extern void WiFiTools_log_events(bool do_enable);
 
-extern bool WiFiTools_is_connected_to_access_point(void);
+    extern bool WiFiTools_is_connected_to_access_point(void);
 
-extern bool WiFiTools_is_connected_to_server(void);
+    extern bool WiFiTools_is_connected_to_server(void);
 
-extern int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port); // return the socket handle or -1 if fails
+    extern int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port); // return the socket handle or -1 if fails
 
-extern void WiFiTools_close_server(void);
+    extern void WiFiTools_close_server(void);
 
-extern int WifiTools_get_socket(void);
+    extern int WifiTools_get_socket(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __WIFI_TOOLS__ */
+#endif /* __WIFI_TOOLS__ */

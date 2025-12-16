@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -25,12 +25,11 @@
 
 #include "stdio.h"
 
-
-#include "src/drivers/common/can_main_statemachine.h"
-#include "src/drivers/common/can_rx_statemachine.h"
-#include "src/drivers/common/can_tx_statemachine.h"
-#include "src/drivers/common/can_types.h"
-#include "src/drivers/common/can_utilities.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
+#include "src/drivers/canbus/can_rx_statemachine.h"
+#include "src/drivers/canbus/can_tx_statemachine.h"
+#include "src/drivers/canbus/can_types.h"
+#include "src/drivers/canbus/can_utilities.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
@@ -89,7 +88,6 @@ void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
 
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -108,30 +106,29 @@ void MX_USB_HOST_Process(void);
 #define LED_BLUE_GPIO_PORT LD6_GPIO_Port
 
 #define CAN_RX_FILTER_ID = 0x00;
-#define CAN_RX_FILTER_MASK = 0x00;  // All bit are ignored take all IDs
+#define CAN_RX_FILTER_MASK = 0x00; // All bit are ignored take all IDs
 
 // Send printf to uart1
 
-//int _write(int fd, char *ptr, int len) {
-//    HAL_StatusTypeDef hstatus;
+// int _write(int fd, char *ptr, int len) {
+//     HAL_StatusTypeDef hstatus;
 //
-//    if (fd == 1 || fd == 2) {
-//        hstatus = HAL_UART_Transmit(&huart2, (uint8_t*) ptr, len, HAL_MAX_DELAY);
-//        if (hstatus == HAL_OK)
-//            return len;
-//        else
-//            return -1;
-//    }
-//    return -1;
-//}
-
+//     if (fd == 1 || fd == 2) {
+//         hstatus = HAL_UART_Transmit(&huart2, (uint8_t*) ptr, len, HAL_MAX_DELAY);
+//         if (hstatus == HAL_OK)
+//             return len;
+//         else
+//             return -1;
+//     }
+//     return -1;
+// }
 
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
 
@@ -173,7 +170,6 @@ int main(void)
 
   OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
 
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -191,29 +187,27 @@ int main(void)
     CanMainStateMachine_run();
     OpenLcbLoginMainStatemachine_run();
     OpenLcbMainStatemachine_run();
-
-
   }
   /* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -228,9 +222,8 @@ void SystemClock_Config(void)
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
@@ -243,10 +236,10 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief CAN1 Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief CAN1 Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_CAN1_Init(void)
 {
 
@@ -276,14 +269,13 @@ static void MX_CAN1_Init(void)
   /* USER CODE BEGIN CAN1_Init 2 */
 
   /* USER CODE END CAN1_Init 2 */
-
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief I2C1 Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_I2C1_Init(void)
 {
 
@@ -310,14 +302,13 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
-
 }
 
 /**
-  * @brief I2S3 Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief I2S3 Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_I2S3_Init(void)
 {
 
@@ -344,14 +335,13 @@ static void MX_I2S3_Init(void)
   /* USER CODE BEGIN I2S3_Init 2 */
 
   /* USER CODE END I2S3_Init 2 */
-
 }
 
 /**
-  * @brief SPI1 Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief SPI1 Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_SPI1_Init(void)
 {
 
@@ -382,14 +372,13 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
-
 }
 
 /**
-  * @brief TIM7 Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief TIM7 Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_TIM7_Init(void)
 {
 
@@ -420,14 +409,13 @@ static void MX_TIM7_Init(void)
   /* USER CODE BEGIN TIM7_Init 2 */
 
   /* USER CODE END TIM7_Init 2 */
-
 }
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
+ * @brief GPIO Initialization Function
+ * @param None
+ * @retval None
+ */
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -450,8 +438,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, MAIN_LOOP_GREEN_LED_Pin|CAN_RX_ORANGE_LED_Pin|_100MS_TIMER_LED_RED_Pin|CAN_TX_LED_BLUE_Pin
-                          |Audio_RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, MAIN_LOOP_GREEN_LED_Pin | CAN_RX_ORANGE_LED_Pin | _100MS_TIMER_LED_RED_Pin | CAN_TX_LED_BLUE_Pin | Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : CS_I2C_SPI_Pin */
   GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
@@ -497,8 +484,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : MAIN_LOOP_GREEN_LED_Pin CAN_RX_ORANGE_LED_Pin _100MS_TIMER_LED_RED_Pin CAN_TX_LED_BLUE_Pin
                            Audio_RST_Pin */
-  GPIO_InitStruct.Pin = MAIN_LOOP_GREEN_LED_Pin|CAN_RX_ORANGE_LED_Pin|_100MS_TIMER_LED_RED_Pin|CAN_TX_LED_BLUE_Pin
-                          |Audio_RST_Pin;
+  GPIO_InitStruct.Pin = MAIN_LOOP_GREEN_LED_Pin | CAN_RX_ORANGE_LED_Pin | _100MS_TIMER_LED_RED_Pin | CAN_TX_LED_BLUE_Pin | Audio_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -526,9 +512,9 @@ static void MX_GPIO_Init(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -541,12 +527,12 @@ void Error_Handler(void)
 }
 #ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */

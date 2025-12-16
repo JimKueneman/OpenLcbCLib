@@ -28,14 +28,13 @@
  *
  *
  * @author Jim Kueneman
-* @date 15 Nov 2025
+ * @date 15 Nov 2025
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __WIFI_TOOLS_DEBUG__
-#define	__WIFI_TOOLS_DEBUG__
+#define __WIFI_TOOLS_DEBUG__
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -44,21 +43,19 @@
 #include <stdint.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
      extern void WifiToolsDebug_log_event(WiFiEvent_t event, WiFiEventInfo_t info);
-     
+
      extern void WiFiToolsDebug_log_status(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __WIFI_TOOLS_DEBUG__ */
-
-
-
+#endif /* __WIFI_TOOLS_DEBUG__ */

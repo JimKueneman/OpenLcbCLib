@@ -26,14 +26,14 @@
  *
  * \file ti_driverlib_drivers.c
  *
- * Definition of the node at the application level.  
+ * Definition of the node at the application level.
  *
  * @author Jim Kueneman
  * @date 11 Nov 2024
  */
 
- #include "ti_driverlib_drivers.h"
- #include <ti/driverlib/m0p/dl_sysctl.h>
+#include "ti_driverlib_drivers.h"
+#include <ti/driverlib/m0p/dl_sysctl.h>
 
 #include <ti/driverlib/m0p/dl_interrupt.h>
 #include "ti_msp_dl_config.h"
@@ -47,82 +47,81 @@
 #include "ti_driverlib_can_driver.h"
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h" 
+#include "src/drivers/canbus/can_types.h"
 #include "src/openlcb/openlcb_node.h"
 #include "src/openlcb/protocol_datagram_handler.h"
 
+void TI_DriverLibDrivers_initialize(void)
+{
+}
 
- 
- void TI_DriverLibDrivers_initialize(void) {
+void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
 
- }
+   DL_SYSCTL_resetDevice(0x03);
+}
 
- void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
-
-  DL_SYSCTL_resetDevice(0x03);
-
- }
-
- uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
+uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
 
    char str[] = "MSPM03507 Launchpad";
 
-    for (int i = 0; i < count; i++) {
+   for (int i = 0; i < count; i++)
+   {
 
-        (*buffer)[i] = 0x00;
+      (*buffer)[i] = 0x00;
+   }
 
-    }
+   switch (address)
+   {
 
-    switch (address) {
+   case 0:
 
-        case 0:
+      for (int i = 0; i < count; i++)
+      {
 
-            for (int i = 0; i < count; i++) {
+         (*buffer)[i] = str[i];
+      }
 
-                (*buffer)[i] = str[i];
+      break;
 
-            }
+   default:
 
-            break;
+      break;
+   }
 
-        default:
+   return count;
+}
 
-            break;
-    }
+uint16_t TI_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
 
-    return count;
+   return count;
+}
 
- }
+void TI_DriverLibDrivers_config_mem_factory_reset(void)
+{
+}
 
- uint16_t TI_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer) {
+void TI_DriverLibDrivers_lock_shared_resources(void)
+{
 
-    return count;
+   TI_DriverLibCanDriver_pause_can_rx();
 
- }
-    
- void TI_DriverLibDrivers_config_mem_factory_reset(void) {
+   DL_SYSTICK_disable();
+}
 
- }
+void TI_DriverLibDrivers_unlock_shared_resources(void)
+{
 
- void TI_DriverLibDrivers_lock_shared_resources(void) {
+   TI_DriverLibCanDriver_resume_can_rx();
 
-    TI_DriverLibCanDriver_pause_can_rx();
+   DL_SYSTICK_enable();
+}
 
-    DL_SYSTICK_disable();
- }
-
- void TI_DriverLibDrivers_unlock_shared_resources(void) {
-
-    TI_DriverLibCanDriver_resume_can_rx();
-
-    DL_SYSTICK_enable();
-
- }
-
- void SysTick_Handler(void)
+void SysTick_Handler(void)
 {
 
    OpenLcbNode_100ms_timer_tick();
    ProtocolDatagramHandler_100ms_timer_tick();
-
 }

@@ -28,15 +28,13 @@
  *
  *
  * @author Jim Kueneman
-* @date 11 Nov 2025
+ * @date 11 Nov 2025
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __DEPENDENCY_INJECTION__
-#define	__DEPENDENCY_INJECTION__
-
+#define __DEPENDENCY_INJECTION__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -44,9 +42,8 @@
 #include "osx_can_drivers.h"
 #include "osx_drivers.h"
 
-
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
 #define TRANSMIT_CAN_FRAME_FUNC &OSxCanDriver_transmit_raw_can_frame
 #define IS_TX_BUFFER_EMPTY_FUNC &OSxCanDriver_is_can_tx_buffer_clear
@@ -57,22 +54,21 @@
 #define OPERATIONS_REBOOT_FUNC NULL
 #define OPERATIONS_FACTORY_RESET_FUNC NULL
 
-
 // Application defined injector functions, defined in dependency_injectors.h
 #define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
 #define ON_CAN_RX_CALLBACK &DependencyInjectors_on_can_rx_callback
 #define ON_CAN_TX_CALLBACK &DependencyInjectors_on_can_tx_callback
 #define ON_ALIAS_CHANGE_CALLBACK &DependencyInjectors_alias_change_callback
 
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void DependencyInjection_initialize(void);
+    extern void DependencyInjection_initialize(void);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __DEPENDENCY_INJECTION__ */
+#endif /* __DEPENDENCY_INJECTION__ */

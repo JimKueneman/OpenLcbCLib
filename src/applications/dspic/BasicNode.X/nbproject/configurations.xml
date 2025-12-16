@@ -23,19 +23,19 @@
         <itemPath>common_loader_app.h</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="common" displayName="common" projectFiles="true">
-          <itemPath>../../../drivers/common/can_rx_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_utilities.h</itemPath>
-          <itemPath>../../../drivers/common/can_login_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_types.h</itemPath>
-          <itemPath>../../../drivers/common/can_tx_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_store.h</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_fifo.h</itemPath>
-          <itemPath>../../../drivers/common/can_tx_message_handler.h</itemPath>
-          <itemPath>../../../drivers/common/can_main_statemachine.h</itemPath>
-          <itemPath>../../../drivers/common/can_rx_message_handler.h</itemPath>
-          <itemPath>../../../drivers/common/can_login_message_handler.h</itemPath>
-          <itemPath>../../../drivers/common/alias_mappings.h</itemPath>
+        <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
+          <itemPath>../../../drivers/canbus/can_rx_statemachine.h</itemPath>
+          <itemPath>../../../drivers/canbus/alias_mappings.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_utilities.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_login_statemachine.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_types.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_tx_statemachine.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_buffer_store.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_buffer_fifo.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_tx_message_handler.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_main_statemachine.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_rx_message_handler.h</itemPath>
+          <itemPath>../../../drivers/canbus/can_login_message_handler.h</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="dsPIC_Common"
@@ -101,18 +101,18 @@
         <itemPath>dependency_injectors.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
-        <logicalFolder name="common" displayName="common" projectFiles="true">
-          <itemPath>../../../drivers/common/can_tx_message_handler.c</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_fifo.c</itemPath>
-          <itemPath>../../../drivers/common/can_main_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_login_message_handler.c</itemPath>
-          <itemPath>../../../drivers/common/can_rx_message_handler.c</itemPath>
-          <itemPath>../../../drivers/common/can_utilities.c</itemPath>
-          <itemPath>../../../drivers/common/can_rx_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_login_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_tx_statemachine.c</itemPath>
-          <itemPath>../../../drivers/common/can_buffer_store.c</itemPath>
-          <itemPath>../../../drivers/common/alias_mappings.c</itemPath>
+        <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
+          <itemPath>../../../drivers/canbus/can_tx_message_handler.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_buffer_fifo.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_main_statemachine.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_login_message_handler.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_rx_message_handler.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_utilities.c</itemPath>
+          <itemPath>../../../drivers/canbus/alias_mappings.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_rx_statemachine.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_login_statemachine.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_tx_statemachine.c</itemPath>
+          <itemPath>../../../drivers/canbus/can_buffer_store.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="dsPIC_Common"

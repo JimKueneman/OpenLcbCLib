@@ -1,11 +1,11 @@
 Core/Src/dependency_injectors.o: ../Core/Src/dependency_injectors.c \
  ../Core/Src/dependency_injectors.h \
  ../Core/Src/src/openlcb/openlcb_types.h \
- ../Core/Src/src/drivers/common/can_types.h \
- ../Core/Src/src/drivers/common/../../openlcb/openlcb_defines.h \
- ../Core/Src/src/drivers/common/../../openlcb/openlcb_types.h \
+ ../Core/Src/src/drivers/canbus/can_types.h \
+ ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h \
+ ../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h \
  ../Core/Src/src/openlcb/openlcb_gridconnect.h \
- ../Core/Src/src/openlcb/../drivers/common/can_types.h ../Core/Inc/main.h \
+ ../Core/Src/src/openlcb/../drivers/canbus/can_types.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -46,11 +46,11 @@ Core/Src/dependency_injectors.o: ../Core/Src/dependency_injectors.c \
  ../Core/Src/src/openlcb/openlcb_types.h
 ../Core/Src/dependency_injectors.h:
 ../Core/Src/src/openlcb/openlcb_types.h:
-../Core/Src/src/drivers/common/can_types.h:
-../Core/Src/src/drivers/common/../../openlcb/openlcb_defines.h:
-../Core/Src/src/drivers/common/../../openlcb/openlcb_types.h:
+../Core/Src/src/drivers/canbus/can_types.h:
+../Core/Src/src/drivers/canbus/../../openlcb/openlcb_defines.h:
+../Core/Src/src/drivers/canbus/../../openlcb/openlcb_types.h:
 ../Core/Src/src/openlcb/openlcb_gridconnect.h:
-../Core/Src/src/openlcb/../drivers/common/can_types.h:
+../Core/Src/src/openlcb/../drivers/canbus/can_types.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:

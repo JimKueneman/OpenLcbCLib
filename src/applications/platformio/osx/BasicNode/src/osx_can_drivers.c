@@ -34,10 +34,10 @@
  * @date 5 Jan 2025
  */
 
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 #include "src/openlcb/openlcb_gridconnect.h"
 #include "src/utilities/mustangpeak_string_helper.h"
-#include "src/drivers/common/can_rx_statemachine.h"
+#include "src/drivers/canbus/can_rx_statemachine.h"
 
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>
@@ -52,7 +52,6 @@
 
 #include <pthread.h>
 #include "threadsafe_stringlist.h"
-
 
 #define RETRY_TIME 5
 #define PORT_NUMBER 12021
@@ -229,9 +228,8 @@ void *thread_function_can(void *arg)
                     msg = strcatnew("R", (char *)&gridconnect_buffer);
                     printf("%s\n", msg);
                     free(msg);
-                    
-                    CanRxStatemachine_incoming_can_driver_callback(&can_message);
 
+                    CanRxStatemachine_incoming_can_driver_callback(&can_message);
                 }
             }
             else if (result < 0) // zero is just timout for no data
@@ -286,7 +284,7 @@ bool OSxCanDriver_is_can_tx_buffer_clear(void)
     return true;
 }
 
-bool OSxCanDriver_transmit_raw_can_frame(can_msg_t* can_msg)
+bool OSxCanDriver_transmit_raw_can_frame(can_msg_t *can_msg)
 {
 
     gridconnect_buffer_t gridconnect_buffer;

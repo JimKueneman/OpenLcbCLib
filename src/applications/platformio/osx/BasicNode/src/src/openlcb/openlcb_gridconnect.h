@@ -27,26 +27,25 @@
  * @file openlcb_gridconnect.h
  *
  * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are 
+ * The FIFO and List buffers are arrays of pointers to these core buffers that are
  * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to 
- * access the buffers.  
+ * so care must be taken to Pause and Resume those calls if the main loop needs to
+ * access the buffers.
  *
  * @author Jim Kueneman
  * @date 5 Dec 2024
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 
 #ifndef __OPENLCB_OPENLCB_GRIDCONNECT__
-#define	__OPENLCB_OPENLCB_GRIDCONNECT__
+#define __OPENLCB_OPENLCB_GRIDCONNECT__
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../drivers/common/can_types.h"
+#include "../drivers/canbus/can_types.h"
 
 #define GRIDCONNECT_STATE_SYNC_START 0
 #define GRIDCONNECT_STATE_SYNC_FIND_HEADER 2
@@ -59,19 +58,19 @@
 
 typedef uint8_t gridconnect_buffer_t[MAX_GRID_CONNECT_LEN];
 
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-    extern bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t* buffer);
-    
+    extern bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer);
+
     extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
 
     extern void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_OPENLCB_BUFFER_STORE__ */
+#endif /* __OPENLCB_OPENLCB_BUFFER_STORE__ */

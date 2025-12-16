@@ -27,42 +27,41 @@
  * \file ti_driverlib_can_driver.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the 
+ * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
-* @date 11 Nov 2025
+ * @date 11 Nov 2025
  */
 
-
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __TI_DRIVERLIB_CAN_DRIVER__
-#define	__TI_DRIVERLIB_CAN_DRIVER__
+#define __TI_DRIVERLIB_CAN_DRIVER__
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-extern void TI_DriverLibCanDriver_initialize(void);
+    extern void TI_DriverLibCanDriver_initialize(void);
 
-extern bool TI_DriverLibCanDriver_is_can_tx_buffer_clear(void);
+    extern bool TI_DriverLibCanDriver_is_can_tx_buffer_clear(void);
 
-extern void TI_DriverLibCanDriver_pause_can_rx(void);
+    extern void TI_DriverLibCanDriver_pause_can_rx(void);
 
-extern void TI_DriverLibCanDriver_resume_can_rx(void);
+    extern void TI_DriverLibCanDriver_resume_can_rx(void);
 
-extern bool TI_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg);
+    extern bool TI_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg);
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __TI_DRIVERLIB_CAN_DRIVER__ */
+#endif /* __TI_DRIVERLIB_CAN_DRIVER__ */

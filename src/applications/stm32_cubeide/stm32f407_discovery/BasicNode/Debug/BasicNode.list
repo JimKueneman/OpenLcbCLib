@@ -1675,7 +1675,7 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8000cda:	e7fd      	b.n	8000cd8 <Error_Handler+0x8>
 
 08000cdc <STM32_DriverLibCanDriver_initialize>:
-#include "src/drivers/common/can_rx_statemachine.h"
+#include "src/drivers/canbus/can_rx_statemachine.h"
 
 static bool _is_transmitting = false;
 static CAN_HandleTypeDef *_hcan1;

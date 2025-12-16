@@ -43,7 +43,7 @@
 #include <stdint.h>
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -59,7 +59,6 @@ extern "C"
     extern void Esp32WiFiGridconnectDriver_resume_can_rx(void);
 
     extern bool Esp32WiFiGridconnectDriver_transmit_raw_can_frame(can_msg_t *msg);
-
 
 #ifdef __cplusplus
 }

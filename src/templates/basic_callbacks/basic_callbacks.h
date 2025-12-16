@@ -42,7 +42,7 @@
 #include <stdio.h>
 
 #include "../../../src/openlcb/openlcb_types.h"
-#include "../../../src/drivers/common/can_types.h"
+#include "../../../src/drivers/canbus/can_types.h"
 #include "../../../src/openlcb/openlcb_gridconnect.h"
 
 #ifdef __cplusplus

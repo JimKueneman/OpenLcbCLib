@@ -10,9 +10,9 @@
 #include "../../openlcb/openlcb_buffer_fifo.h"
 #include "../../openlcb/openlcb_buffer_list.h"
 #include "../../openlcb/openlcb_defines.h"
-#include "../../drivers/common/alias_mappings.h"
-#include "../../drivers/common/can_main_statemachine.h"
-#include "../../drivers/common/can_login_statemachine.h"
+#include "../../drivers/canbus/alias_mappings.h"
+#include "../../drivers/canbus/can_main_statemachine.h"
+#include "../../drivers/canbus/can_login_statemachine.h"
 
 #define NODE_ID_1 0x010203040506
 #define NODE_ID_2 0x010203040507

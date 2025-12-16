@@ -19,17 +19,17 @@ SOURCES
 if (${GTEST})
 set(TESTS ${TESTS}
     
-    ${ROOT_DIR}/src/drivers/common/can_buffer_fifo_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_buffer_store_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_rx_message_handler_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_login_message_handler_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_tx_message_handler_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_main_statemachine_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_rx_statemachine_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_login_statemachine_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_tx_statemachine_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/can_utilities_Test.cxx
-    ${ROOT_DIR}/src/drivers/common/alias_mappings_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_buffer_fifo_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_buffer_store_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_rx_message_handler_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_login_message_handler_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_tx_message_handler_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_main_statemachine_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_rx_statemachine_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_login_statemachine_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_tx_statemachine_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/can_utilities_Test.cxx
+    ${ROOT_DIR}/src/drivers/canbus/alias_mappings_Test.cxx
 
     PARENT_SCOPE
 )

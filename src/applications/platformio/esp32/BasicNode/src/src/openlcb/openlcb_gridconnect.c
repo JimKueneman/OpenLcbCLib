@@ -45,7 +45,7 @@
 #include <string.h>
 #include "openlcb_gridconnect.h"
 #include "openlcb_types.h"
-#include "../drivers/common/can_types.h"
+#include "../drivers/canbus/can_types.h"
 
 #include "stdio.h" // printf
 
@@ -53,159 +53,163 @@ static uint8_t _current_state = GRIDCONNECT_STATE_SYNC_START;
 static uint8_t _receive_buffer_index = 0;
 static gridconnect_buffer_t _receive_buffer;
 
-static bool _is_valid_hex_char(uint8_t next_byte) {
+static bool _is_valid_hex_char(uint8_t next_byte)
+{
 
     return (((next_byte >= '0') && (next_byte <= '9')) ||
             ((next_byte >= 'A') && (next_byte <= 'F')) ||
             ((next_byte >= 'a') && (next_byte <= 'f')));
-
 }
 
-bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer) {
+bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer)
+{
 
-    switch (_current_state) {
+    switch (_current_state)
+    {
 
-        case GRIDCONNECT_STATE_SYNC_START:
+    case GRIDCONNECT_STATE_SYNC_START:
 
-            if ((next_byte == 'X') || (next_byte == 'x')) {
+        if ((next_byte == 'X') || (next_byte == 'x'))
+        {
 
-                _receive_buffer_index = 0;
-                _receive_buffer[_receive_buffer_index] = ':';
-                _receive_buffer_index++;
-                _receive_buffer[_receive_buffer_index] = next_byte;
-                _receive_buffer_index++;
-                _current_state = GRIDCONNECT_STATE_SYNC_FIND_HEADER;
+            _receive_buffer_index = 0;
+            _receive_buffer[_receive_buffer_index] = ':';
+            _receive_buffer_index++;
+            _receive_buffer[_receive_buffer_index] = next_byte;
+            _receive_buffer_index++;
+            _current_state = GRIDCONNECT_STATE_SYNC_FIND_HEADER;
+        }
 
-            }
+        break;
 
-            break;
+    case GRIDCONNECT_STATE_SYNC_FIND_HEADER:
 
-        case GRIDCONNECT_STATE_SYNC_FIND_HEADER:
-
-            if (_receive_buffer_index > 10) {
-
-                _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
-
-                break;
-
-            }
-
-            if ((next_byte == 'N') || (next_byte == 'n')) {
-
-                if (_receive_buffer_index == 10) { // Just right number of characters for the header, all done
-
-                    _receive_buffer[_receive_buffer_index] = next_byte;
-                    _receive_buffer_index++; // skip over the "N"
-                    _current_state = GRIDCONNECT_STATE_SYNC_FIND_DATA;
-
-                } else {
-
-                    _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
-
-                    break;
-
-                }
-
-            } else {
-
-                if (!_is_valid_hex_char(next_byte)) {
-
-                    _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
-
-                    break;
-
-                }
-
-                _receive_buffer[_receive_buffer_index] = next_byte;
-                _receive_buffer_index++;
-
-            }
-
-            break;
-
-        case GRIDCONNECT_STATE_SYNC_FIND_DATA:
-
-            if (next_byte == ';') {
-
-                if ((_receive_buffer_index + 1) % 2 != 0) { // Need 2 strings to make a byte so always must be an even number of characters
-
-                    _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
-
-                    break;
-
-                }
-
-                _receive_buffer[_receive_buffer_index] = ';';
-                _receive_buffer[_receive_buffer_index + 1] = 0; // null
-                _current_state = GRIDCONNECT_STATE_SYNC_START;
-
-                for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++) {
-
-                    (*buffer)[i] = _receive_buffer[i];
-
-                }
-
-                return true; // Done
-
-            } else {
-
-                if (!_is_valid_hex_char(next_byte)) {
-
-                    _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
-
-                    break;
-
-                }
-
-                _receive_buffer[_receive_buffer_index] = next_byte;
-                _receive_buffer_index++;
-
-            }
-
-            if (_receive_buffer_index > (MAX_GRID_CONNECT_LEN - 1)) {
-
-                _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
-
-            }
-
-            break;
-
-        default:
+        if (_receive_buffer_index > 10)
+        {
 
             _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
 
             break;
+        }
 
+        if ((next_byte == 'N') || (next_byte == 'n'))
+        {
+
+            if (_receive_buffer_index == 10)
+            { // Just right number of characters for the header, all done
+
+                _receive_buffer[_receive_buffer_index] = next_byte;
+                _receive_buffer_index++; // skip over the "N"
+                _current_state = GRIDCONNECT_STATE_SYNC_FIND_DATA;
+            }
+            else
+            {
+
+                _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
+
+                break;
+            }
+        }
+        else
+        {
+
+            if (!_is_valid_hex_char(next_byte))
+            {
+
+                _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
+
+                break;
+            }
+
+            _receive_buffer[_receive_buffer_index] = next_byte;
+            _receive_buffer_index++;
+        }
+
+        break;
+
+    case GRIDCONNECT_STATE_SYNC_FIND_DATA:
+
+        if (next_byte == ';')
+        {
+
+            if ((_receive_buffer_index + 1) % 2 != 0)
+            { // Need 2 strings to make a byte so always must be an even number of characters
+
+                _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
+
+                break;
+            }
+
+            _receive_buffer[_receive_buffer_index] = ';';
+            _receive_buffer[_receive_buffer_index + 1] = 0; // null
+            _current_state = GRIDCONNECT_STATE_SYNC_START;
+
+            for (int i = 0; i < MAX_GRID_CONNECT_LEN; i++)
+            {
+
+                (*buffer)[i] = _receive_buffer[i];
+            }
+
+            return true; // Done
+        }
+        else
+        {
+
+            if (!_is_valid_hex_char(next_byte))
+            {
+
+                _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
+
+                break;
+            }
+
+            _receive_buffer[_receive_buffer_index] = next_byte;
+            _receive_buffer_index++;
+        }
+
+        if (_receive_buffer_index > (MAX_GRID_CONNECT_LEN - 1))
+        {
+
+            _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
+        }
+
+        break;
+
+    default:
+
+        _current_state = GRIDCONNECT_STATE_SYNC_START; // Error Start Over
+
+        break;
     }
 
     return false;
-
 }
 
-void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg) {
-
+void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg)
+{
 
     char byte_str[5]; // 2 + null
     uint8_t byte;
     char identifier_str[9]; // 8 + null
 
-    for (int i = 2; i < 10; i++) {
+    for (int i = 2; i < 10; i++)
+    {
 
         identifier_str[i - 2] = (*gridconnect)[i];
-
     }
     identifier_str[8] = 0;
 
     char hex_it[64] = "0x";
     strcat(hex_it, identifier_str);
-    can_msg->identifier = (uint32_t) strtoul(hex_it, NULL, 0);
+    can_msg->identifier = (uint32_t)strtoul(hex_it, NULL, 0);
 
-    unsigned long data_char_count = strlen((char *) gridconnect) - (12);
-    can_msg->payload_count = (uint8_t) (data_char_count / 2);
+    unsigned long data_char_count = strlen((char *)gridconnect) - (12);
+    can_msg->payload_count = (uint8_t)(data_char_count / 2);
 
     int payload_index = 0;
     int i = 11;
-    while (i < (data_char_count + 11)) {
+    while (i < (data_char_count + 11))
+    {
 
         byte_str[0] = '0';
         byte_str[1] = 'x';
@@ -213,35 +217,32 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
         byte_str[3] = (*gridconnect)[i + 1];
         byte_str[4] = 0;
 
-        byte = (uint8_t) strtoul(byte_str, NULL, 0);
+        byte = (uint8_t)strtoul(byte_str, NULL, 0);
         can_msg->payload[payload_index] = byte;
         payload_index++;
         i++;
         i++;
-
-
     }
-
 }
 
-void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t * can_msg) {
+void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg)
+{
 
     char temp_str[30];
 
     (*gridconnect)[0] = 0;
-    strcat((char *) gridconnect, ":");
-    strcat((char *) gridconnect, "X");
+    strcat((char *)gridconnect, ":");
+    strcat((char *)gridconnect, "X");
 
-    sprintf((char *) &temp_str, "%08lX", (unsigned long) can_msg->identifier);
-    strcat((char *) gridconnect, (char *) &temp_str);
-    strcat((char *) gridconnect, "N");
-    for (int i = 0; i < can_msg->payload_count; i++) {
+    sprintf((char *)&temp_str, "%08lX", (unsigned long)can_msg->identifier);
+    strcat((char *)gridconnect, (char *)&temp_str);
+    strcat((char *)gridconnect, "N");
+    for (int i = 0; i < can_msg->payload_count; i++)
+    {
 
-        sprintf((char *) &temp_str, "%02X", can_msg->payload[i]);
-        strcat((char *) gridconnect, (char *) &temp_str);
-
+        sprintf((char *)&temp_str, "%02X", can_msg->payload[i]);
+        strcat((char *)gridconnect, (char *)&temp_str);
     }
 
-    strcat((char *) gridconnect, ";");
-
+    strcat((char *)gridconnect, ";");
 }

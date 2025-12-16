@@ -33,7 +33,6 @@
  * @date 7 Jan 2025
  */
 
-
 #include "esp32_can_drivers.h"
 #include "esp32_drivers.h"
 
@@ -41,18 +40,18 @@
 #include "dependency_injection.h"
 #include "dependency_injectors.h"
 
-#include "src/drivers/common/can_main_statemachine.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
 
 #include "src/openlcb/openlcb_node.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 
-
 #include "esp_pm.h"
 
 #define NODE_ID 0x050101010777
 
-void setup() {
+void setup()
+{
   // put your setup code here, to run once:
 
   Serial.begin(9600);
@@ -69,7 +68,8 @@ void setup() {
   OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly
   CanMainStateMachine_run();
   OpenLcbLoginMainStatemachine_run();

@@ -40,7 +40,7 @@
 #define __OSX_CAN_DRIVERS__
 
 #include "src/openlcb/openlcb_types.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_types.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -55,7 +55,7 @@ extern "C"
 
     extern void OSxCanDriver_resume_can_rx(void);
 
-    extern bool OSxCanDriver_transmit_raw_can_frame(can_msg_t* can_msg);
+    extern bool OSxCanDriver_transmit_raw_can_frame(can_msg_t *can_msg);
 
     extern bool OSxCanDriver_is_connected(void);
 

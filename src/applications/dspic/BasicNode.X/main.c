@@ -37,36 +37,35 @@
 // 'C' source line config statements
 
 // FICD
-#pragma config ICS = PGD1               // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
-#pragma config JTAGEN = OFF             // JTAG Enable bit (JTAG is disabled)
+#pragma config ICS = PGD1   // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
+#pragma config JTAGEN = OFF // JTAG Enable bit (JTAG is disabled)
 
 // FPOR
-#pragma config ALTI2C1 = OFF            // Alternate I2C1 pins (I2C1 mapped to SDA1/SCL1 pins)
-#pragma config ALTI2C2 = OFF            // Alternate I2C2 pins (I2C2 mapped to SDA2/SCL2 pins)
-#pragma config WDTWIN = WIN25           // Watchdog Window Select bits (WDT Window is 25% of WDT period)
+#pragma config ALTI2C1 = OFF  // Alternate I2C1 pins (I2C1 mapped to SDA1/SCL1 pins)
+#pragma config ALTI2C2 = OFF  // Alternate I2C2 pins (I2C2 mapped to SDA2/SCL2 pins)
+#pragma config WDTWIN = WIN25 // Watchdog Window Select bits (WDT Window is 25% of WDT period)
 
 // FWDT
-#pragma config WDTPOST = PS32768        // Watchdog Timer Postscaler bits (1:32,768)
-#pragma config WDTPRE = PR128           // Watchdog Timer Prescaler bit (1:128)
-#pragma config PLLKEN = ON              // PLL Lock Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.)
-#pragma config WINDIS = OFF             // Watchdog Timer Window Enable bit (Watchdog Timer in Non-Window mode)
-#pragma config FWDTEN = OFF             // Watchdog Timer Enable bit (Watchdog timer enabled/disabled by user software)
+#pragma config WDTPOST = PS32768 // Watchdog Timer Postscaler bits (1:32,768)
+#pragma config WDTPRE = PR128    // Watchdog Timer Prescaler bit (1:128)
+#pragma config PLLKEN = ON       // PLL Lock Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.)
+#pragma config WINDIS = OFF      // Watchdog Timer Window Enable bit (Watchdog Timer in Non-Window mode)
+#pragma config FWDTEN = OFF      // Watchdog Timer Enable bit (Watchdog timer enabled/disabled by user software)
 
 // FOSC
-#pragma config POSCMD = HS              // Primary Oscillator Mode Select bits (HS Crystal Oscillator Mode)
-#pragma config OSCIOFNC = OFF           // OSC2 Pin Function bit (OSC2 is clock output)
-#pragma config IOL1WAY = OFF            // Peripheral pin select configuration (Allow multiple reconfigurations)
-#pragma config FCKSM = CSDCMD           // Clock Switching Mode bits (Both Clock switching and Fail-safe Clock Monitor are disabled)
+#pragma config POSCMD = HS    // Primary Oscillator Mode Select bits (HS Crystal Oscillator Mode)
+#pragma config OSCIOFNC = OFF // OSC2 Pin Function bit (OSC2 is clock output)
+#pragma config IOL1WAY = OFF  // Peripheral pin select configuration (Allow multiple reconfigurations)
+#pragma config FCKSM = CSDCMD // Clock Switching Mode bits (Both Clock switching and Fail-safe Clock Monitor are disabled)
 
 // FOSCSEL
-#pragma config FNOSC = PRIPLL           // Oscillator Source Selection (Primary Oscillator with PLL module (XT + PLL, HS + PLL, EC + PLL))
-#pragma config PWMLOCK = OFF            // PWM Lock Enable bit (PWM registers may be written without key sequence)
-#pragma config IESO = ON                // Two-speed Oscillator Start-up Enable bit (Start up device with FRC, then switch to user-selected oscillator source)
+#pragma config FNOSC = PRIPLL // Oscillator Source Selection (Primary Oscillator with PLL module (XT + PLL, HS + PLL, EC + PLL))
+#pragma config PWMLOCK = OFF  // PWM Lock Enable bit (PWM registers may be written without key sequence)
+#pragma config IESO = ON      // Two-speed Oscillator Start-up Enable bit (Start up device with FRC, then switch to user-selected oscillator source)
 
 // FGS
-#pragma config GWRP = OFF               // General Segment Write-Protect bit (General Segment may be written)
-#pragma config GCP = OFF                // General Segment Code-Protect bit (General Segment Code protect is Disabled)
-
+#pragma config GWRP = OFF // General Segment Write-Protect bit (General Segment may be written)
+#pragma config GCP = OFF  // General Segment Code-Protect bit (General Segment Code protect is Disabled)
 
 // Output so write to the latch
 #define _25AAxxx_CS _LATB4
@@ -90,7 +89,7 @@
 #include <libpic30.h>
 
 #include "xc.h"
-#include "stdio.h"  // printf
+#include "stdio.h" // printf
 #include "string.h"
 #include "stdlib.h"
 
@@ -100,19 +99,18 @@
 #include "dependency_injection.h"
 #include "dependency_injectors.h"
 
-#include "../../../drivers/common/can_main_statemachine.h"
+#include "../../../drivers/canbus/can_main_statemachine.h"
 
 #include "../../../openlcb/openlcb_node.h"
 #include "../../../openlcb/openlcb_main_statemachine.h"
 #include "../../../openlcb/openlcb_login_statemachine.h"
 
-
 #define NODE_ID 0x0501010107AA
 
 static uint16_t count = 0;
 
-void _initialize_io_early_for_test(void) {
-
+void _initialize_io_early_for_test(void)
+{
 
     ANSELA = 0x00; // Convert all I/O pins to digital
     ANSELB = 0x00;
@@ -125,48 +123,48 @@ void _initialize_io_early_for_test(void) {
     TEST_PIN_1402_TRIS = 0;
     TEST_PIN_1403_TRIS = 0;
     TEST_PIN_1404_TRIS = 0;
-
 }
 
-void _on_100ms_timer_callback(void) {
+void _on_100ms_timer_callback(void)
+{
 
     // Calls back every 100ms... don't do anything crazy here as it is in the context of the interrupt
 
     count++;
 
-    if (count > 10) {
+    if (count > 10)
+    {
 
         count = 0;
 
         LED_BLUE = 0;
         LED_YELLOW = 0;
     }
-
 }
 
-
-int main(void) {
+int main(void)
+{
 
     _initialize_io_early_for_test();
 
     Ecan1Helper_initialize();
     BasicNodeDrivers_initialize();
-    
+
     DependencyInjection_initialize();
     DependencyInjectors_initialize();
 
     printf("MCU Initialized\n");
-    
+
     OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
 
     printf("Node Allocated\n");
 
-    while (1) {
+    while (1)
+    {
 
         // Run the main Openlcb/LCC engine
         CanMainStateMachine_run();
         OpenLcbLoginMainStatemachine_run();
         OpenLcbMainStatemachine_run();
-
     }
 }

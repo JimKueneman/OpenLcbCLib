@@ -1,7 +1,7 @@
 #include "test/main_Test.hxx"
 
-#include "drivers/common/can_buffer_fifo.h"
-#include "drivers/common/can_buffer_store.h"
+#include "drivers/canbus/can_buffer_fifo.h"
+#include "drivers/canbus/can_buffer_store.h"
 
 TEST(CAN_BufferFIFO, CAN_BufferFIFO_initialize)
 {

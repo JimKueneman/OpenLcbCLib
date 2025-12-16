@@ -70,8 +70,8 @@
 #include "wifi_tools.h"
 #include "wifi_tools_debug.h"
 
-#include "src/drivers/common/can_rx_statemachine.h"
-#include "src/drivers/common/can_types.h"
+#include "src/drivers/canbus/can_rx_statemachine.h"
+#include "src/drivers/canbus/can_types.h"
 #include "src/openlcb/openlcb_gridconnect.h"
 #include "src/utilities/mustangpeak_string_helper.h"
 #include "src/openlcb/openlcb_gridconnect.h"
@@ -91,56 +91,57 @@ static void _receive_task(void *arg)
   int socket = WifiTools_get_socket();
   bool do_delay = true;
 
-  if (socket <= 0) {
+  if (socket <= 0)
+  {
 
     return;
   }
 
   while (1)
   {
-       int bytes_received = recv(socket, &next_char, 1, MSG_DONTWAIT);
+    int bytes_received = recv(socket, &next_char, 1, MSG_DONTWAIT);
 
-      // bytes_received is 0 on connection close and errno gets set to ENOTCONN (128)
-      // bytes_received is -1 when no data is received and errno is set to EAGAIN (11)
-      // bytes_received is > 0 when data is received and errno is set to EAGAIN (11) still.
+    // bytes_received is 0 on connection close and errno gets set to ENOTCONN (128)
+    // bytes_received is -1 when no data is received and errno is set to EAGAIN (11)
+    // bytes_received is > 0 when data is received and errno is set to EAGAIN (11) still.
 
-      if (bytes_received > 0) {
+    if (bytes_received > 0)
+    {
 
-        do_delay = false; // may be more coming
+      do_delay = false; // may be more coming
 
-        if (OpenLcbGridConnect_copy_out_gridconnect_when_done(next_char, &gridconnect_buffer)) {
+      if (OpenLcbGridConnect_copy_out_gridconnect_when_done(next_char, &gridconnect_buffer))
+      {
 
-          OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
+        OpenLcbGridConnect_to_can_msg(&gridconnect_buffer, &can_message);
 
-     //     printf("[R] %s\n", (char *)&gridconnect_buffer);
-  
-          CanRxStatemachine_incoming_can_driver_callback(&can_message);
+        //     printf("[R] %s\n", (char *)&gridconnect_buffer);
 
-        }
-      
-      } else if (bytes_received == 0) {  // error found...socket closed?
-
-        printf("return %d. errno %d\n", bytes_received, errno);
-
-        WiFiTools_close_server();
-        _receive_task_handle = NULL;
-
-        vTaskDelete(NULL);
-
-      } else {
-
-        do_delay = true;  // returned no bytes in receive so restart the delay
-
+        CanRxStatemachine_incoming_can_driver_callback(&can_message);
       }
-  
-      if (do_delay) {
+    }
+    else if (bytes_received == 0)
+    { // error found...socket closed?
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+      printf("return %d. errno %d\n", bytes_received, errno);
 
-      }
+      WiFiTools_close_server();
+      _receive_task_handle = NULL;
 
+      vTaskDelete(NULL);
+    }
+    else
+    {
+
+      do_delay = true; // returned no bytes in receive so restart the delay
+    }
+
+    if (do_delay)
+    {
+
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
   }
-
 }
 
 bool Esp32WiFiGridconnectDriver_is_can_tx_buffer_clear(void)
@@ -155,37 +156,36 @@ bool Esp32WiFiGridconnectDriver_transmit_raw_can_frame(can_msg_t *msg)
   gridconnect_buffer_t gridconnect_buffer;
   ssize_t result = 0;
 
-  if (!WiFiTools_is_connected_to_server) {
+  if (!WiFiTools_is_connected_to_server)
+  {
 
     return false;
   }
 
   OpenLcbGridConnect_from_can_msg(&gridconnect_buffer, msg);
 
- // printf("[S] %s\n", (char *)&gridconnect_buffer);
+  // printf("[S] %s\n", (char *)&gridconnect_buffer);
 
-  return (send(WifiTools_get_socket(), &gridconnect_buffer, strlen((char*)&gridconnect_buffer), 0) > 0);
+  return (send(WifiTools_get_socket(), &gridconnect_buffer, strlen((char *)&gridconnect_buffer), 0) > 0);
 }
 
 void Esp32WiFiGridconnectDriver_pause_can_rx(void)
 {
-  if(_receive_task_handle) {
+  if (_receive_task_handle)
+  {
 
     vTaskSuspend(_receive_task_handle);
-
   }
-
 }
 
 void Esp32WiFiGridconnectDriver_resume_can_rx(void)
 {
 
-  if (_receive_task_handle) {
+  if (_receive_task_handle)
+  {
 
     vTaskResume(_receive_task_handle);
-
   }
-
 }
 
 void Esp32WiFiGridconnectDriver_start(int *socket)
@@ -199,5 +199,4 @@ void Esp32WiFiGridconnectDriver_start(int *socket)
       10,                   // [IN] Task Priority
       &_receive_task_handle // [OUT] Task Handle send pointer to a TaskHandle_t variable
   );
-
 }
