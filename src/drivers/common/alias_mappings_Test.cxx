@@ -1,10 +1,10 @@
 #include "test/main_Test.hxx"
 
-#include "common/can_types.h"
+#include "can_types.h"
 
 #include "alias_mappings.h"
 
-#include "../openlcb/openlcb_types.h"
+#include "../../openlcb/openlcb_types.h"
 
 #define NODE_ID 0x010203040506
 #define NODE_ALIAS 0x0666

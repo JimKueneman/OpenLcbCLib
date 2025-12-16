@@ -5,7 +5,7 @@
 #include "can_types.h"
 #include "can_utilities.h"
 #include "../../openlcb/openlcb_defines.h"
-#include "../alias_mappings.h"
+#include "alias_mappings.h"
 
 bool can_legacy_snip_called = false;
 bool can_single_frame_called = false;

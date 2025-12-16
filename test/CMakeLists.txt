@@ -44,14 +44,12 @@ include_directories(
 set(GTEST ON)
 add_subdirectory(${ROOT_DIR}/src/utilities utilities)
 add_subdirectory(${ROOT_DIR}/src/drivers/common/ common_drivers)
-add_subdirectory(${ROOT_DIR}/src/drivers/ drivers)
 add_subdirectory(${ROOT_DIR}/src/openlcb/ openlcb)
 
 
 set(LINK_LIBS ${LINK_LIBS}
     utilities
     common_drivers
-    drivers
     openlcb
 )
 

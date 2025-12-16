@@ -8,7 +8,7 @@
 #include "can_buffer_store.h"
 #include "can_buffer_fifo.h"
 
-#include "../alias_mappings.h"
+#include "alias_mappings.h"
 
 #include "../../openlcb/openlcb_types.h"
 #include "../../openlcb/openlcb_buffer_store.h"
