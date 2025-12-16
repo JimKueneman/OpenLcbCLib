@@ -1,5 +1,4 @@
-/** \copyright
- * Copyright (c) 2024, Jim Kueneman
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,22 +22,28 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * 14 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+/** 
+ * 
+ * Implements the core buffers for CAN message buffers. The CAN FIFO buffer is an 
+ * array of pointers to these core buffers that are allocated and freed.  
+ * 
+ * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
+ * @file can_buffer_store.h
  *
- * \file can_buffer_store.h
- *
- * Implements a core buffers for CAN messages that hold CAN only frame messages 
- * that need to be passed on to the nodes.  This buffer is accessed in the CAN Rx
- * statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms
- * timer when accessing it is critical.
- *
- * @author Jim Kueneman
- * @date 5 Dec 2024
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __CAN_BUFFER_STORE__
-#define	__CAN_BUFFER_STORE__
+#ifndef __DRIVERS_COMMON_CAN_CAN_BUFFER_STORE__
+#define	__DRIVERS_COMMON_CAN_CAN_BUFFER_STORE__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -49,24 +54,72 @@
 extern "C" {
 #endif /* __cplusplus */
 
-
+    /**
+     * @brief Initializes the CAN Buffer Store<br>
+     * 
+     * @param none
+     * 
+     * @return none
+     * 
+     * @attention This must always be called during application initialization
+     */
     extern void CanBufferStore_initialize(void);
 
+    
+    /**
+     * @brief Allocates a new CAN buffer
+     * 
+     * @param none
+     * 
+     * @return Pointer to the message buffer or NULL if it fails
+     */
     extern can_msg_t* CanBufferStore_allocate_buffer(void);
-
+ 
+    
+    /**
+     * @brief Frees the buffer so it can be reused.<br>
+     * 
+     * @param can_msg_t *msg [in] - Pointer to a message to be freed
+     * 
+     * @return none
+     * 
+     */
     extern void CanBufferStore_free_buffer(can_msg_t* msg);
 
-    extern void CanBufferStore_clear_can_message(can_msg_t* msg);
-
+    
+    /**
+     * @brief The number of CAN messages currently allocated in the buffer store.
+     * 
+     * @param none
+     * 
+     * @return Number of CAN messages currently allocated
+     */
     extern uint16_t CanBufferStore_messages_allocated(void);
 
+    
+    /**
+     * @brief The maximum number of CAN messages that have been allocated in the buffer store.
+     * Useful for understanding how deep the buffer store needs to be during stress testing
+     * 
+     * @param none
+     * 
+     * @return Maximum number of CAN sized messages that have been allocated currently
+     */
     extern uint16_t CanBufferStore_messages_max_allocated(void);
 
+    
+    /**
+     * @brief Resets the running count of the Maximum number of CAN buffer that have been allocated at one time
+     * 
+     * @param none
+     * 
+     * @return none
+     */
     extern void CanBufferStore_clear_max_allocated(void);
 
 #ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_BUFFER_STORE__ */
+#endif	/* __DRIVERS_COMMON_CAN_CAN_BUFFER_STORE__ */
 
