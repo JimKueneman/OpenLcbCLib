@@ -39,8 +39,8 @@
 #include <stddef.h>
 #include <stdio.h> // printf
 
-#include "common/can_types.h"
-#include "../openlcb/openlcb_types.h"
+#include "can_types.h"
+#include "../../openlcb/openlcb_types.h"
 
 static alias_mapping_info_t _alias_mapping_info;
 

@@ -12,6 +12,7 @@ SOURCES
     can_login_statemachine.c 
     can_tx_statemachine.c 
     can_utilities.c
+    alias_mappings.c
 )
 
 
@@ -28,6 +29,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/drivers/common/can_login_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_tx_statemachine_Test.cxx
     ${ROOT_DIR}/src/drivers/common/can_utilities_Test.cxx
+    ${ROOT_DIR}/src/drivers/common/alias_mappings_Test.cxx
 
     PARENT_SCOPE
 )
