@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_message_handler.h
+ * \file openlcb_login_statemachine_handler.h
  *
  * When a node is logging into the network on a CAN bus it must follow a specific
  * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
@@ -37,8 +37,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __OPENLCB_LOGIN_MESSAGE_HANDLER__
-#define	__OPENLCB_LOGIN_MESSAGE_HANDLER__
+#ifndef __OPENLCB_OPENLCB_LOGIN_MESSAGE_HANDLER__
+#define	__OPENLCB_OPENLCB_LOGIN_MESSAGE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -70,5 +70,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __CAN_LOGIN_MESSAGE_HANDLER__ */
+#endif	/* __OPENLCB_OPENLCB_LOGIN_MESSAGE_HANDLER__ */
 

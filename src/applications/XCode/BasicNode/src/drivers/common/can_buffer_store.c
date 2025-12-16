@@ -46,6 +46,7 @@
 #include <string.h>
 
 #include "can_types.h"
+#include "can_utilities.h"
 #include "../../openlcb/openlcb_types.h"
 
 
@@ -74,19 +75,6 @@ void CanBufferStore_initialize(void) {
 
 }
 
-void CanBufferStore_clear_can_message(can_msg_t* msg) {
-
-    msg->identifier = 0;
-    msg->payload_count = 0;
-
-    for (int i = 0; i < LEN_CAN_BYTE_ARRAY; i++) {
-
-        msg->payload[i] = 0;
-
-    }
-
-}
-
 can_msg_t* CanBufferStore_allocate_buffer(void) {
 
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
@@ -101,7 +89,7 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 
             }
 
-            CanBufferStore_clear_can_message(&_can_buffer_store[i]);
+            CanUtilities_clear_can_message(&_can_buffer_store[i]);
             
              _can_buffer_store[i].state.allocated = true;
 

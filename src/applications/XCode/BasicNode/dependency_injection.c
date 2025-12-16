@@ -40,6 +40,8 @@
 
 #include "dependency_injectors.h"
 
+
+#include "src/drivers/common/alias_mappings.h"
 #include "src/drivers/common/can_types.h"
 #include "src/drivers/common/can_utilities.h"
 #include "src/drivers/common/can_buffer_store.h"
@@ -70,9 +72,6 @@
 #include "src/openlcb/protocol_config_mem_read_handler.h"
 #include "src/openlcb/protocol_config_mem_write_handler.h"
 #include "src/openlcb/protocol_config_mem_operations_handler.h"
-
-
-#include "src/drivers/alias_mappings.h"
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 
