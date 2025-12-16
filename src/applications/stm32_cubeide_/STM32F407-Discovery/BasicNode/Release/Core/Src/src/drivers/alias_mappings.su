@@ -1,0 +1,9 @@
+../Core/Src/src/drivers/alias_mappings.c:47:13:_reset_mappings	20	static
+../Core/Src/src/drivers/alias_mappings.c:60:6:AliasMappings_initialize	0	static
+../Core/Src/src/drivers/alias_mappings.c:65:23:AliasMappings_get_alias_mapping_info	0	static
+../Core/Src/src/drivers/alias_mappings.c:71:6:AliasMappings_set_has_duplicate_alias_flag	0	static
+../Core/Src/src/drivers/alias_mappings.c:77:18:AliasMappings_register	20	static
+../Core/Src/src/drivers/alias_mappings.c:95:6:AliasMappings_unregister	8	static
+../Core/Src/src/drivers/alias_mappings.c:114:18:AliasMappings_find_mapping_by_alias	8	static
+../Core/Src/src/drivers/alias_mappings.c:129:18:AliasMappings_find_mapping_by_node_id	16	static
+../Core/Src/src/drivers/alias_mappings.c:144:6:AliasMappings_flush	0	static

@@ -1,0 +1,13 @@
+../Core/Src/debug_tools.c:11:6:delay_pin_toggle	1
+../Core/Src/debug_tools.c:76:6:PrintInt64	1
+../Core/Src/debug_tools.c:85:6:PrintAlias	1
+../Core/Src/debug_tools.c:91:6:PrintNodeID	1
+../Core/Src/debug_tools.c:99:6:PrintAliasAndNodeID	1
+../Core/Src/debug_tools.c:106:6:PrintMtiName	73
+../Core/Src/debug_tools.c:236:6:PrintOpenLcbMsg	4
+../Core/Src/debug_tools.c:260:6:PrintCanMsg	3
+../Core/Src/debug_tools.c:287:6:PrintNode	2
+../Core/Src/debug_tools.c:313:6:PrintEventID	1
+../Core/Src/debug_tools.c:322:6:PrintCanFrameIdentifierName	28
+../Core/Src/debug_tools.c:393:6:PrintCanIdentifier	1
+../Core/Src/debug_tools.c:400:6:PrintDWord	1

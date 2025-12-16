@@ -1,0 +1,14 @@
+../Core/Src/src/drivers/common/can_utilities.c:47:6:CanUtilities_clear_can_message	0	static
+../Core/Src/src/drivers/common/can_utilities.c:60:10:CanUtilities_extract_source_alias_from_can_identifier	0	static
+../Core/Src/src/drivers/common/can_utilities.c:66:10:CanUtilities_extract_dest_alias_from_can_message	0	static
+../Core/Src/src/drivers/common/can_utilities.c:97:10:CanUtilities_convert_can_mti_to_openlcb_mti	0	static
+../Core/Src/src/drivers/common/can_utilities.c:134:9:CanUtilities_append_can_payload_to_openlcb_payload	24	static
+../Core/Src/src/drivers/common/can_utilities.c:176:9:CanUtilities_count_nulls_in_payloads	16	static
+../Core/Src/src/drivers/common/can_utilities.c:182:6:CanUtilities_is_openlcb_message	0	static
+../Core/Src/src/drivers/common/can_utilities.c:188:10:CanUtilities_extract_can_payload_as_node_id	8	static
+../Core/Src/src/drivers/common/can_utilities.c:201:9:CanUtilities_copy_openlcb_payload_to_can_payload	20	static
+../Core/Src/src/drivers/common/can_utilities.c:233:6:CanUtilities_load_can_message	0	static
+../Core/Src/src/drivers/common/can_utilities.c:248:9:CanUtilities_copy_node_id_to_payload	8	static
+../Core/Src/src/drivers/common/can_utilities.c:268:6:CanUtilities_copy_64_bit_to_can_message	8	static
+../Core/Src/src/drivers/common/can_utilities.c:282:6:CanUtilities_copy_can_message	12	static
+../Core/Src/src/drivers/common/can_utilities.c:297:6:CanUtilities_copy_node_id_to_can_payload_buffer	0	static

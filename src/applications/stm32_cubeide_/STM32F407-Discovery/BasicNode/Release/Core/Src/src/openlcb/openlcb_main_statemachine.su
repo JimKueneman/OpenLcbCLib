@@ -1,0 +1,11 @@
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:74:13:_free_incoming_message.constprop	16	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:57:6:OpenLcbMainStatemachine_initialize	8	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:89:6:OpenLcbMainStatemachine_does_node_process_msg	8	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:101:6:OpenLcbMainStatemachine_load_interaction_rejected	40	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:124:6:OpenLcbMainStatemachine_process_main_statemachine	16	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:571:6:OpenLcbMainStatemachine_handle_outgoing_openlcb_message	8	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:589:6:OpenLcbMainStatemachine_handle_try_reenumerate	8	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:603:6:OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message	16	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:619:6:OpenLcbMainStatemachine_handle_try_enumerate_first_node	16	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:647:6:OpenLcbMainStatemachine_handle_try_enumerate_next_node	16	static
+../Core/Src/src/openlcb/openlcb_main_statemachine.c:674:6:OpenLcbMainStatemachine_run	8	static

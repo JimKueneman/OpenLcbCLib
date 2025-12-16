@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/drivers/common/can_login_message_handler.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/mainpage.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/drivers/common/alias_mappings.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/drivers/common/can_buffer_store.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/drivers/common/alias_mappings.c</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/drivers/common/can_buffer_fifo.h</file>
+            <file>file:/Users/jimkueneman/Documents/OpenLcbCLib/src/openlcb/openlcb_login_statemachine_handler.h</file>
+        </group>
+    </open-files>
+</project-private>
