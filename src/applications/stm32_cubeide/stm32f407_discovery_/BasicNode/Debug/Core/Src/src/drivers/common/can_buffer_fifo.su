@@ -1,0 +1,5 @@
+../Core/Src/src/drivers/common/can_buffer_fifo.c:61:6:CanBufferFifo_initialize	16	static
+../Core/Src/src/drivers/common/can_buffer_fifo.c:74:6:CanBufferFifo_push	24	static
+../Core/Src/src/drivers/common/can_buffer_fifo.c:97:12:CanBufferFifo_pop	16	static
+../Core/Src/src/drivers/common/can_buffer_fifo.c:120:9:CanBufferFifo_is_empty	4	static
+../Core/Src/src/drivers/common/can_buffer_fifo.c:126:10:CanBufferFifo_get_allocated_count	4	static

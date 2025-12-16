@@ -1,0 +1,6 @@
+../Core/Src/src/openlcb/openlcb_buffer_fifo.c:64:6:OpenLcbBufferFifo_initialize	16	static
+../Core/Src/src/openlcb/openlcb_buffer_fifo.c:77:16:OpenLcbBufferFifo_push	24	static
+../Core/Src/src/openlcb/openlcb_buffer_fifo.c:96:16:OpenLcbBufferFifo_push_existing	24	static
+../Core/Src/src/openlcb/openlcb_buffer_fifo.c:115:16:OpenLcbBufferFifo_pop	16	static
+../Core/Src/src/openlcb/openlcb_buffer_fifo.c:134:9:OpenLcbBufferFifo_is_empty	4	static
+../Core/Src/src/openlcb/openlcb_buffer_fifo.c:140:10:OpenLcbBufferFifo_get_allocated_count	4	static
