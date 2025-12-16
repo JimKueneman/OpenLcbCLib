@@ -1,0 +1,6 @@
+"./syscfg/ti_msp_dl_config.o"
+"./startup_mspm0g351x_ticlang.o"
+"./app_a_main.o"
+"../app_a.cmd"
+-ldevice.cmd.genlibs
+-llibc.a

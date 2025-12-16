@@ -1,0 +1,267 @@
+******************************************************************************
+            TI ARM Clang Linker PC v3.2.2                      
+******************************************************************************
+>> Linked Tue Sep 24 18:42:11 2024
+
+OUTPUT FILE NAME:   <empty_mspm0g3519_nortos_ticlang.out>
+ENTRY POINT SYMBOL: "_c_int00_noinit_noargs"  address: 00000125
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  FLASH                 00000000   00080000  00000178  0007fe88  R  X
+  SRAM_BANK0            20200000   00010000  00000100  0000ff00  RW X
+  SRAM_BANK1            20210000   00010000  00000000  00010000  RW X
+  BCR_CONFIG            41c00000   000000ff  00000000  000000ff  R   
+  BSL_CONFIG            41c00100   00000080  00000000  00000080  R   
+  DATA                  41d00000   00004000  00000000  00004000  R   
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+00000000    00000000    00000178   00000178    r-x
+  00000000    00000000    000000c0   000000c0    r-- .intvecs
+  000000c0    000000c0    000000b8   000000b8    r-x .text
+2020ff00    2020ff00    00000100   00000000    rw-
+  2020ff00    2020ff00    00000100   00000000    rw- .stack
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.intvecs   0    00000000    000000c0     
+                  00000000    000000c0     startup_mspm0g351x_ticlang.o (.intvecs)
+
+.text      0    000000c0    000000b8     
+                  000000c0    00000034     ti_msp_dl_config.o (.text.SYSCFG_DL_initPower)
+                  000000f4    00000030     ti_msp_dl_config.o (.text.SYSCFG_DL_SYSCTL_init)
+                  00000124    00000020     libc.a : boot_cortex_m.c.obj (.text:_c_int00_noinit_noargs)
+                  00000144    00000010     ti_msp_dl_config.o (.text.SYSCFG_DL_init)
+                  00000154    0000000a     driverlib.a : dl_common.o (.text.DL_Common_delayCycles)
+                  0000015e    00000006     empty_mspm0g3519.o (.text.main)
+                  00000164    00000004     startup_mspm0g351x_ticlang.o (.text.Reset_Handler)
+                  00000168    00000004     libc.a : pre_init.c.obj (.text._system_pre_init)
+                  0000016c    00000004            : exit.c.obj (.text:abort)
+                  00000170    00000002     startup_mspm0g351x_ticlang.o (.text.Default_Handler)
+                  00000172    00000002     ti_msp_dl_config.o (.text.SYSCFG_DL_GPIO_init)
+                  00000174    00000004     --HOLE-- [fill = 0]
+
+.cinit     0    00000000    00000000     
+
+.init_array 
+*          0    00000000    00000000     UNINITIALIZED
+
+.binit     0    00000000    00000000     
+
+.stack     0    2020ff00    00000100     UNINITIALIZED
+                  2020ff00    00000004     libc.a : boot_cortex_m.c.obj (.stack)
+                  2020ff04    000000fc     --HOLE--
+
+__llvm_prf_cnts 
+*          0    20200000    00000000     UNINITIALIZED
+
+__llvm_prf_bits 
+*          0    20200000    00000000     UNINITIALIZED
+
+MODULE SUMMARY
+
+       Module                         code   ro data   rw data
+       ------                         ----   -------   -------
+    .\
+       startup_mspm0g351x_ticlang.o   6      192       0      
+       empty_mspm0g3519.o             6      0         0      
+    +--+------------------------------+------+---------+---------+
+       Total:                         12     192       0      
+                                                              
+    .\syscfg\
+       ti_msp_dl_config.o             118    0         0      
+    +--+------------------------------+------+---------+---------+
+       Total:                         118    0         0      
+                                                              
+    C:/ti/mspm0_sdk_2_02_00_05/source/ti/driverlib/lib/ticlang/m0p/mspm0gx51x/driverlib.a
+       dl_common.o                    10     0         0      
+    +--+------------------------------+------+---------+---------+
+       Total:                         10     0         0      
+                                                              
+    C:\ti\ccs1280\ccs\tools\compiler\ti-cgt-armllvm_3.2.2.LTS\lib\armv6m-ti-none-eabi/c/libc.a
+       boot_cortex_m.c.obj            32     0         0      
+       exit.c.obj                     4      0         0      
+       pre_init.c.obj                 4      0         0      
+    +--+------------------------------+------+---------+---------+
+       Total:                         40     0         0      
+                                                              
+       Stack:                         0      0         256    
+    +--+------------------------------+------+---------+---------+
+       Grand Total:                   180    192       256    
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address   name                    
+-------   ----                    
+00000171  ADC0_IRQHandler         
+00000171  ADC1_IRQHandler         
+00000171  AESADV_IRQHandler       
+0000016c  C$$EXIT                 
+00000171  CANFD0_IRQHandler       
+00000171  CANFD1_IRQHandler       
+00000171  DAC0_IRQHandler         
+00000155  DL_Common_delayCycles   
+00000171  DMA_IRQHandler          
+00000171  Default_Handler         
+00000171  GROUP0_IRQHandler       
+00000171  GROUP1_IRQHandler       
+00000171  HardFault_Handler       
+00000171  I2C0_IRQHandler         
+00000171  I2C1_IRQHandler         
+00000171  I2C2_IRQHandler         
+00000171  LFSS_IRQHandler         
+00000171  NMI_Handler             
+00000171  PendSV_Handler          
+00000165  Reset_Handler           
+00000171  SPI0_IRQHandler         
+00000171  SPI1_IRQHandler         
+00000171  SPI2_IRQHandler         
+00000171  SVC_Handler             
+00000173  SYSCFG_DL_GPIO_init     
+000000f5  SYSCFG_DL_SYSCTL_init   
+00000145  SYSCFG_DL_init          
+000000c1  SYSCFG_DL_initPower     
+00000171  SysTick_Handler         
+00000171  TIMA0_IRQHandler        
+00000171  TIMA1_IRQHandler        
+00000171  TIMG0_IRQHandler        
+00000171  TIMG12_IRQHandler       
+00000171  TIMG14_IRQHandler       
+00000171  TIMG6_IRQHandler        
+00000171  TIMG7_IRQHandler        
+00000171  TIMG8_IRQHandler        
+00000171  TIMG9_IRQHandler        
+00000171  UART0_IRQHandler        
+00000171  UART1_IRQHandler        
+00000171  UART3_IRQHandler        
+00000171  UART4_IRQHandler        
+00000171  UART5_IRQHandler        
+00000171  UART6_IRQHandler        
+00000171  UART7_IRQHandler        
+20210000  __STACK_END             
+00000100  __STACK_SIZE            
+00000000  __TI_ATRegion0_region_sz
+00000000  __TI_ATRegion0_src_addr 
+00000000  __TI_ATRegion0_trg_addr 
+00000000  __TI_ATRegion1_region_sz
+00000000  __TI_ATRegion1_src_addr 
+00000000  __TI_ATRegion1_trg_addr 
+00000000  __TI_ATRegion2_region_sz
+00000000  __TI_ATRegion2_src_addr 
+00000000  __TI_ATRegion2_trg_addr 
+00000000  __TI_CINIT_Base         
+00000000  __TI_CINIT_Limit        
+00000000  __TI_CINIT_Warm         
+ffffffff  __TI_pprof_out_hndl     
+ffffffff  __TI_prof_data_size     
+ffffffff  __TI_prof_data_start    
+00000000  __TI_static_base__      
+ffffffff  __binit__               
+UNDEFED   __mpu_init              
+2020ff00  __stack                 
+20200000  __start___llvm_prf_bits 
+20200000  __start___llvm_prf_cnts 
+20200000  __stop___llvm_prf_bits  
+20200000  __stop___llvm_prf_cnts  
+00000125  _c_int00_noinit_noargs  
+00000169  _system_pre_init        
+0000016d  abort                   
+ffffffff  binit                   
+00000000  interruptVectors        
+0000015f  main                    
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address   name                    
+-------   ----                    
+00000000  __TI_ATRegion0_region_sz
+00000000  __TI_ATRegion0_src_addr 
+00000000  __TI_ATRegion0_trg_addr 
+00000000  __TI_ATRegion1_region_sz
+00000000  __TI_ATRegion1_src_addr 
+00000000  __TI_ATRegion1_trg_addr 
+00000000  __TI_ATRegion2_region_sz
+00000000  __TI_ATRegion2_src_addr 
+00000000  __TI_ATRegion2_trg_addr 
+00000000  __TI_CINIT_Base         
+00000000  __TI_CINIT_Limit        
+00000000  __TI_CINIT_Warm         
+00000000  __TI_static_base__      
+00000000  interruptVectors        
+000000c1  SYSCFG_DL_initPower     
+000000f5  SYSCFG_DL_SYSCTL_init   
+00000100  __STACK_SIZE            
+00000125  _c_int00_noinit_noargs  
+00000145  SYSCFG_DL_init          
+00000155  DL_Common_delayCycles   
+0000015f  main                    
+00000165  Reset_Handler           
+00000169  _system_pre_init        
+0000016c  C$$EXIT                 
+0000016d  abort                   
+00000171  ADC0_IRQHandler         
+00000171  ADC1_IRQHandler         
+00000171  AESADV_IRQHandler       
+00000171  CANFD0_IRQHandler       
+00000171  CANFD1_IRQHandler       
+00000171  DAC0_IRQHandler         
+00000171  DMA_IRQHandler          
+00000171  Default_Handler         
+00000171  GROUP0_IRQHandler       
+00000171  GROUP1_IRQHandler       
+00000171  HardFault_Handler       
+00000171  I2C0_IRQHandler         
+00000171  I2C1_IRQHandler         
+00000171  I2C2_IRQHandler         
+00000171  LFSS_IRQHandler         
+00000171  NMI_Handler             
+00000171  PendSV_Handler          
+00000171  SPI0_IRQHandler         
+00000171  SPI1_IRQHandler         
+00000171  SPI2_IRQHandler         
+00000171  SVC_Handler             
+00000171  SysTick_Handler         
+00000171  TIMA0_IRQHandler        
+00000171  TIMA1_IRQHandler        
+00000171  TIMG0_IRQHandler        
+00000171  TIMG12_IRQHandler       
+00000171  TIMG14_IRQHandler       
+00000171  TIMG6_IRQHandler        
+00000171  TIMG7_IRQHandler        
+00000171  TIMG8_IRQHandler        
+00000171  TIMG9_IRQHandler        
+00000171  UART0_IRQHandler        
+00000171  UART1_IRQHandler        
+00000171  UART3_IRQHandler        
+00000171  UART4_IRQHandler        
+00000171  UART5_IRQHandler        
+00000171  UART6_IRQHandler        
+00000171  UART7_IRQHandler        
+00000173  SYSCFG_DL_GPIO_init     
+20200000  __start___llvm_prf_bits 
+20200000  __start___llvm_prf_cnts 
+20200000  __stop___llvm_prf_bits  
+20200000  __stop___llvm_prf_cnts  
+2020ff00  __stack                 
+20210000  __STACK_END             
+ffffffff  __TI_pprof_out_hndl     
+ffffffff  __TI_prof_data_size     
+ffffffff  __TI_prof_data_start    
+ffffffff  __binit__               
+ffffffff  binit                   
+UNDEFED   __mpu_init              
+
+[76 symbols]
