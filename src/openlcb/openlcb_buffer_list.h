@@ -1,20 +1,4 @@
-/** 
- * 
- * @subsection Description
- * 
- * A buffer list that can hold openlcb message structures.  Used to hold
- * messages that are coming in using a CAN physical layer adaptation of the openlcb 
- * message where it can be sent in 1 or many frames.  This buffer can hold partially 
- * received messages until they are fully assembled 
- * 
- * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
- * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
- * @note This is an internal list and the Application should not access it
- * 
- *  
- * @subsection License
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,9 +23,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  * 
- * @copyright Copyright (c) 2025, Jim Kueneman
- * @author Jim Kueneman
- * @date 14 Dec 2025
+ * 15 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+ /** 
+ * 
+ * A buffer list that can hold openlcb message structures.  Used to hold
+ * messages that are coming in using a CAN physical layer adaptation of the openlcb 
+ * message where it can be sent in 1 or many frames.  This buffer can hold partially 
+ * received messages until they are fully assembled 
+ * 
+ * @note Applications typically have no reason to access these buffers directly, 
+ * they should use the helpers to send messages in \ref openlcb_application.h 
+ * 
+ * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ * 
  * @file openlcb_buffer_list.h
  *
  */

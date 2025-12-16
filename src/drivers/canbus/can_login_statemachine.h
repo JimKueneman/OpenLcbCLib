@@ -33,8 +33,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __DRIVERS_COMMON_CAN_CAN_LOGIN_STATEMACHINE__
-#define	__DRIVERS_COMMON_CAN_CAN_LOGIN_STATEMACHINE__
+#ifndef __DRIVERS_CANBUS_CAN_LOGIN_STATEMACHINE__
+#define	__DRIVERS_CANBUS_CAN_LOGIN_STATEMACHINE__
 
 #include "can_types.h"
 #include "../../openlcb/openlcb_types.h"
@@ -68,5 +68,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __DRIVERS_COMMON_CAN_CAN_LOGIN_STATEMACHINE__ */
+#endif	/* __DRIVERS_CANBUS_CAN_LOGIN_STATEMACHINE__ */
 

@@ -37,8 +37,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __DRIVERS_COMMON_CAN_CAN_RX_STATEMACHINE__
-#define	__DRIVERS_COMMON_CAN_CAN_RX_STATEMACHINE__
+#ifndef __DRIVERS_CANBUS_CAN_RX_STATEMACHINE__
+#define	__DRIVERS_CANBUS_CAN_RX_STATEMACHINE__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -76,5 +76,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __DRIVERS_COMMON_CAN_CAN_RX_STATEMACHINE__ */
+#endif	/* __DRIVERS_CANBUS_CAN_RX_STATEMACHINE__ */
 

@@ -30,7 +30,10 @@
 /** 
  * 
  * Implements the core buffers for CAN message buffers. The CAN FIFO buffer is an 
- * array of pointers to these core buffers that are allocated and freed.  
+ * array of pointers to these core buffers that are allocated and freed. 
+ * 
+ * @note Applications typically have no reason to access these buffers directly, 
+ * they should use the helpers to send messages in \ref openlcb_application.h 
  * 
  * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
@@ -42,8 +45,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef __DRIVERS_COMMON_CAN_CAN_BUFFER_STORE__
-#define	__DRIVERS_COMMON_CAN_CAN_BUFFER_STORE__
+#ifndef __DRIVERS_CANBUS_CAN_BUFFER_STORE__
+#define	__DRIVERS_CANBUS_CAN_BUFFER_STORE__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -77,7 +80,7 @@ extern "C" {
  
     
     /**
-     * @brief Frees the buffer so it can be reused.<br>
+     * @brief Frees the buffer so it can be reused.
      * 
      * @param can_msg_t *msg [in] - Pointer to a message to be freed
      * 
@@ -121,5 +124,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* __DRIVERS_COMMON_CAN_CAN_BUFFER_STORE__ */
+#endif	/* __DRIVERS_CANBUS_CAN_BUFFER_STORE__ */
 

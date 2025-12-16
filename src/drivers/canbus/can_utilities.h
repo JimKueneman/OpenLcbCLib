@@ -34,8 +34,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef ___DRIVERS_COMMON_CAN_UTILITIES__
-#define ___DRIVERS_COMMON_CAN_UTILITIES__
+#ifndef ___DRIVERS_CANBUS_CAN_UTILITIES__
+#define ___DRIVERS_CANBUS_CAN_UTILITIES__
 
 #include <stdbool.h>
 #include <stdint.h>

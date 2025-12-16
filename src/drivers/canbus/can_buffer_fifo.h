@@ -32,6 +32,9 @@
  * Implementation of the FIFO where the CAN messages are placed by the receive
  * module.  The main CAN loop pulls them out one at a time and dispatched them to the handlers. 
  * 
+ * @note Applications typically have no reason to access these buffers directly, 
+ * they should use the helpers to send messages in \ref openlcb_application.h  
+ * 
  * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
  * interrupts or threads if the main loop needs to access the buffers for any reason.
@@ -42,8 +45,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __DRIVERS_COMMON_CAN_BUFFERS__
-#define __DRIVERS_COMMON_CAN_BUFFERS__
+#ifndef __DRIVERS_CANBUS_CAN_BUFFERS__
+#define __DRIVERS_CANBUS_CAN_BUFFERS__
 
 #include <stdbool.h>
 #include <stdint.h>
