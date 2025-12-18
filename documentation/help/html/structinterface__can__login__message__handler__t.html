@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_can_login_message_handler_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__message__handler_8h.html">can_login_message_handler.h</a>.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -102,7 +105,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:a015cf925a8f563f2ff7ab585ac9b809d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A structure to define function dependencies that this module requires, <a class="el" href="can__login__message__handler_8h.html">can_login_message_handler.h</a>. </p>
+<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__message__handler_8h.html">can_login_message_handler.h</a>. </p>
+<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a4e26a8a1f17944358a4e91f5b579fc23" name="a4e26a8a1f17944358a4e91f5b579fc23"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4e26a8a1f17944358a4e91f5b579fc23">&#9670;&#160;</a></span>alias_mapping_register</h2>
@@ -115,7 +119,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function that registers an Mapping between the passed alias and node ID </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#afe1490dc1fc7c2f410abc31cad6f6447">AliasMappings_register()</a> </dd></dl>
+<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to register an Mapping between the passed alias and node ID </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#afe1490dc1fc7c2f410abc31cad6f6447">AliasMappings_register()</a> </dd></dl>
 
 </div>
 </div>
@@ -130,7 +134,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function that finds a Mapping structure that matches the alias passed to it </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a30c9579dd57feb9bb1ebe5f07f60bb42">AliasMappings_find_mapping_by_alias()</a> </dd></dl>
+<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to find a Mapping structure that matches the alias passed to it </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a30c9579dd57feb9bb1ebe5f07f60bb42">AliasMappings_find_mapping_by_alias()</a> </dd></dl>
 
 </div>
 </div>

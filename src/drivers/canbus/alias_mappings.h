@@ -65,7 +65,7 @@ extern "C"
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the Alias Mapping buffers<br>
+     * @brief Initializes the Alias Mapping buffers
      *
      * @param none
      *

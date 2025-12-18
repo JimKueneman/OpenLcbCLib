@@ -29,7 +29,7 @@
 
 /**
  *
- * @brief Implementation of a FIFO buffer for CAN message strutures.
+ * @brief Implements a FIFO buffer for CAN message structures.
  *
  * CAN messages as allocated from the buffer store (\ref can_buffer_store.h) then placed into the FIFO by the
  * CAN Rx module (\ref can_rx_statemachine.h) and then the main CAN loop (\ref can_main_statemachine.h) pulls
@@ -62,7 +62,7 @@ extern "C"
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the CAN Message Buffer FIFO<br>
+     * @brief Initializes the CAN Message Buffer FIFO
      *
      * @param none
      *

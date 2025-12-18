@@ -74,6 +74,9 @@ typedef struct
     void (*handle_amr_frame)(can_msg_t *can_msg);
     void (*handle_error_info_report_frame)(can_msg_t *can_msg);
     void (*handle_cid_frame)(can_msg_t *can_msg);
+
+    /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
+     * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias() */
     alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
     // OPTIONAL FUNCTION

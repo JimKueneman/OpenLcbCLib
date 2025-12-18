@@ -61,7 +61,7 @@ extern "C"
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the CAN Buffer Store<br>
+     * @brief Initializes the CAN Buffer Store
      *
      * @param none
      *

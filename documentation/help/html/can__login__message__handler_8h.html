@@ -97,46 +97,58 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements handlers for the messages and alias creation tasks a node must follow to login to the OpenLcb/LCC network, <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>.  
+<a href="#details">More...</a></p>
+
 <p><a href="can__login__message__handler_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__login__message__handler__t.html">interface_can_login_message_handler_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__message__handler_8h.html">can_login_message_handler.h</a>.  <a href="structinterface__can__login__message__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a5c515891dde09e1d2376e0d0ecc392ec" id="r_a5c515891dde09e1d2376e0d0ecc392ec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c515891dde09e1d2376e0d0ecc392ec">CanLoginMessageHandler_initialize</a> (const <a class="el" href="structinterface__can__login__message__handler__t.html">interface_can_login_message_handler_t</a> *interface)</td></tr>
+<tr class="memdesc:a5c515891dde09e1d2376e0d0ecc392ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Login Message Handler module.  <br /></td></tr>
 <tr class="separator:a5c515891dde09e1d2376e0d0ecc392ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15578ce7b04e385b036135db0fe04248" id="r_a15578ce7b04e385b036135db0fe04248"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15578ce7b04e385b036135db0fe04248">CanLoginMessageHandler_state_init</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a15578ce7b04e385b036135db0fe04248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the first state in the CAN login sequence. It resets internal structures and moves on to the next state.  <br /></td></tr>
 <tr class="separator:a15578ce7b04e385b036135db0fe04248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49950e3b1ce029449d252aa5bcf2c799" id="r_a49950e3b1ce029449d252aa5bcf2c799"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49950e3b1ce029449d252aa5bcf2c799">CanLoginMessageHandler_state_generate_seed</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a49950e3b1ce029449d252aa5bcf2c799"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the second state in the CAN login sequence. It generates a seed to create the Alias and moves on to the next state.  <br /></td></tr>
 <tr class="separator:a49950e3b1ce029449d252aa5bcf2c799"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbada8cf2b6a3c5dc73bac3cb57ad6b0" id="r_acbada8cf2b6a3c5dc73bac3cb57ad6b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbada8cf2b6a3c5dc73bac3cb57ad6b0">CanLoginMessageHandler_state_generate_alias</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:acbada8cf2b6a3c5dc73bac3cb57ad6b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the third state in the CAN login sequence. It generates an Alias from the seed and moves on to the next state.  <br /></td></tr>
 <tr class="separator:acbada8cf2b6a3c5dc73bac3cb57ad6b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad417a47b53614faa89382dd1f724c311" id="r_ad417a47b53614faa89382dd1f724c311"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad417a47b53614faa89382dd1f724c311">CanLoginMessageHandler_state_load_cid07</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:ad417a47b53614faa89382dd1f724c311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the fourth state in the CAN login sequence. It loads the output buffer with a CID message with the top 3 bytes of the NodeID.  <br /></td></tr>
 <tr class="separator:ad417a47b53614faa89382dd1f724c311"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d6501a2abea5d9a1660b1005a0f79c6" id="r_a8d6501a2abea5d9a1660b1005a0f79c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d6501a2abea5d9a1660b1005a0f79c6">CanLoginMessageHandler_state_load_cid06</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_infog)</td></tr>
+<tr class="memdesc:a8d6501a2abea5d9a1660b1005a0f79c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the fifth state in the CAN login sequence. It loads the output buffer with a CID message with the next 3 bytes of the NodeID.  <br /></td></tr>
 <tr class="separator:a8d6501a2abea5d9a1660b1005a0f79c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a452fa6a87c0be4de318f40958579e72c" id="r_a452fa6a87c0be4de318f40958579e72c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a452fa6a87c0be4de318f40958579e72c">CanLoginMessageHandler_state_load_cid05</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a452fa6a87c0be4de318f40958579e72c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the sixth state in the CAN login sequence. It loads the output buffer with a CID message with the next 3 bytes of the NodeID.  <br /></td></tr>
 <tr class="separator:a452fa6a87c0be4de318f40958579e72c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2d0270b36a9e0b33fb6966d08f1b390" id="r_aa2d0270b36a9e0b33fb6966d08f1b390"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2d0270b36a9e0b33fb6966d08f1b390">CanLoginMessageHandler_state_load_cid04</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:aa2d0270b36a9e0b33fb6966d08f1b390"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the seventh state in the CAN login sequence. It loads the output buffer with a CID message with the last 3 bytes of the NodeID.  <br /></td></tr>
 <tr class="separator:aa2d0270b36a9e0b33fb6966d08f1b390"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ceb83bfdd574957d1e8ddc6d820caed" id="r_a3ceb83bfdd574957d1e8ddc6d820caed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ceb83bfdd574957d1e8ddc6d820caed">CanLoginMessageHandler_state_wait_200ms</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a3ceb83bfdd574957d1e8ddc6d820caed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the eight state in the CAN login sequence. It waits for a minimum of 200ms before moving to the next state.  <br /></td></tr>
 <tr class="separator:a3ceb83bfdd574957d1e8ddc6d820caed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41f40ed325a32cf2f61fb66522c21977" id="r_a41f40ed325a32cf2f61fb66522c21977"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41f40ed325a32cf2f61fb66522c21977">CanLoginMessageHandler_state_load_rid</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a41f40ed325a32cf2f61fb66522c21977"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the ninth state in the CAN login sequence. It loads the output buffer with a RID message.  <br /></td></tr>
 <tr class="separator:a41f40ed325a32cf2f61fb66522c21977"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86ceb4c89ce3880a1a34fcd8805b4064" id="r_a86ceb4c89ce3880a1a34fcd8805b4064"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86ceb4c89ce3880a1a34fcd8805b4064">CanLoginMessageHandler_state_load_amd</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a86ceb4c89ce3880a1a34fcd8805b4064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the tenth state in the CAN login sequence. It loads the output buffer with an AMD message.  <br /></td></tr>
 <tr class="separator:a86ceb4c89ce3880a1a34fcd8805b4064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements handlers for the messages and alias creation tasks a node must follow to login to the OpenLcb/LCC network. </p>
-<p>When a node is logging into the network on a CAN bus it must follow a specific flow to generate/allocate/notify a unique alias ID then broadcast its events. This module defines the specific handlers for each step of this login procedure.<br  />
-</p>
-<p>These functions are used in the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> which are called from within the CAN login statemachine switch statement.<br  />
-</p>
-<dl class="section note"><dt>Note</dt><dd>Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application.<br  />
- see: <a class="el" href="can__login__statemachine_8h.html#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>; </dd></dl>
+<div class="textblock"><p>Implements handlers for the messages and alias creation tasks a node must follow to login to the OpenLcb/LCC network, <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>. </p>
+<p>When a node is logging into the network on a CAN bus it must follow a specific flow to generate/allocate/notify a unique alias ID then broadcast its events. This module defines the specific handlers for each step of this login procedure.</p>
+<p>These functions are used in the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> which are called from within the CAN login statemachine switch statement.</p>
+<dl class="section note"><dt>Note</dt><dd>Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application. see: <a class="el" href="can__login__statemachine_8h.html#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>; </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a5c515891dde09e1d2376e0d0ecc392ec" name="a5c515891dde09e1d2376e0d0ecc392ec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5c515891dde09e1d2376e0d0ecc392ec">&#9670;&#160;</a></span>CanLoginMessageHandler_initialize()</h2>
@@ -164,7 +176,7 @@ Functions</h2></td></tr>
 <p>Initializes the CAN Login Message Handler module. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to define function dependencies that this module requires, can_login_message_handler....">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires</td></tr>
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_message_han...">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires</td></tr>
   </table>
   </dd>
 </dl>

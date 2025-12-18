@@ -97,23 +97,29 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements the state machine to log into the OpenLcb/LCC network.  
+<a href="#details">More...</a></p>
+
 <p><a href="can__login__statemachine_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>.  <a href="structinterface__can__login__state__machine__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a2837c06613e89097db3602bf773332a8" id="r_a2837c06613e89097db3602bf773332a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize</a> (const <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> *interface_can_login_state_machine)</td></tr>
+<tr class="memdesc:a2837c06613e89097db3602bf773332a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Main State Machine.  <br /></td></tr>
 <tr class="separator:a2837c06613e89097db3602bf773332a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19d57826974209f27f8883a2fa443aae" id="r_a19d57826974209f27f8883a2fa443aae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run</a> (<a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
+<tr class="memdesc:a19d57826974209f27f8883a2fa443aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the main state machine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>.  <br /></td></tr>
 <tr class="separator:a19d57826974209f27f8883a2fa443aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements the statemachine to log into the OpenLcb/LCC network. </p>
-<p>This is the main statemachine to process nodes as they log into the network. An applications message loop should call <a class="el" href="#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run()</a> as fast as possible. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>. </p>
+<div class="textblock"><p>Implements the state machine to log into the OpenLcb/LCC network. </p>
+<p>This is the login state machine to process nodes as they log into the network. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a2837c06613e89097db3602bf773332a8" name="a2837c06613e89097db3602bf773332a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2837c06613e89097db3602bf773332a8">&#9670;&#160;</a></span>CanLoginStateMachine_initialize()</h2>
@@ -138,8 +144,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Main Statemachine<br  />
- </p>
+<p>Initializes the CAN Main State Machine. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__state__machine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_statemachin...">interface_can_login_state_machine_t</a> *interface_can_login_state_machine - Pointer to a <a class="el" href="structinterface__can__login__state__machine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_statemachin...">interface_can_login_state_machine_t</a> struct containing the functions that this module requires.</td></tr>
@@ -174,8 +179,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Runs the main statemachine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t<br  />
-</a> </p>
+<p>Runs the main state machine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="structcan__statemachine__info__t.html">can_statemachine_info_t</a></td><td>*can_statemachine_info - Pointer to a structure that contains the incoming CAN message for the passed Node. If a handler is found it will process the message else it the appropriate error code will be returned.</td></tr>

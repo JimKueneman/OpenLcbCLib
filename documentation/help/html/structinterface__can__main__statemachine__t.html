@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_can_main_statemachine_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -138,6 +141,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to an Application supplied function that must stop the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to an Application defined function </dd></dl>
 
 </div>
 </div>
@@ -152,6 +156,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to an Application supplied function that must restart the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library buffers. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to an Application defined function </dd></dl>
 
 </div>
 </div>
@@ -166,6 +171,8 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to an Application supplied function that transmits the passed msg on the physical CAN line. </p><dl class="section note"><dt>Note</dt><dd>The implementation of this may either place the message in the hardwares transmit buffer or create an internal software buffer </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__statemachine_8h.html#acd862abdc607379d8c2854168949236f">CanTxStatemachine_send_can_message()</a> </dd></dl>
 
 </div>
 </div>
@@ -180,6 +187,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get enumerate current nodes </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="openlcb__node_8h.html#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first()</a> </dd></dl>
 
 </div>
 </div>
@@ -194,6 +202,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get enumerate current nodes </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="openlcb__node_8h.html#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next()</a> </dd></dl>
 
 </div>
 </div>
@@ -208,6 +217,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get find a current node using its Alias </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="openlcb__node_8h.html#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias()</a> </dd></dl>
 
 </div>
 </div>
@@ -222,6 +232,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for access into the <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a> functions to Run the Login state machine. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__statemachine_8h.html#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run()</a> </dd></dl>
 
 </div>
 </div>
@@ -236,6 +247,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to access the mapping pairs </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a2ea6e19b9de3e4be35e2340ee9dc4af2">AliasMappings_get_alias_mapping_info()</a> </dd></dl>
 
 </div>
 </div>
@@ -250,6 +262,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to unregister the mapping pairs, typically due to a duplicate Alias error </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a9f08c60c95f97546d47c8386270cc8b4">AliasMappings_unregister()</a> </dd></dl>
 
 </div>
 </div>
@@ -264,6 +277,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle duplicated Aliases that have been detected. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases()</a> </dd></dl>
 
 </div>
 </div>
@@ -278,6 +292,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle outgoing CAN messages. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#a619bfa722d577c1295ae862500aef386">CanMainStatemachine_handle_outgoing_can_message()</a> </dd></dl>
 
 </div>
 </div>
@@ -292,6 +307,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle outgoing login CAN messages. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#acefbd0fe819bfc0be958202dca4bbab8">CanMainStatemachine_handle_login_outgoing_can_message()</a> </dd></dl>
 
 </div>
 </div>
@@ -306,6 +322,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">CanMainStatemachine_handle_try_enumerate_first_node()</a> </dd></dl>
 
 </div>
 </div>
@@ -320,6 +337,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node()</a> </dd></dl>
 
 </div>
 </div>
