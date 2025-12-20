@@ -41,7 +41,7 @@
  *
  * @note Any handler may be overridden by assigning a custom function pointer to the
  * \ref interface_can_login_state_machine_t field during initialization of the application.
- * see: \ref CanLoginStateMachine_initialize();
+ * see: \ref CanLoginStateMachine_initialize().
  *
  * @file can_login_message_handler.h
  *
@@ -65,17 +65,17 @@
  * test all program flows in the module.  It also allows for reducing the program size. If a particular
  * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
  * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
- * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
+ * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL.
  */
 typedef struct {
     // REQUIRED FUNCTIONS
 
     /** Pointer to a function for access into the \ref alias_mappings.h functions to register an Mapping between the passed alias and node ID
-     * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_register() */
+     * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_register(). */
     alias_mapping_t *(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
 
     /** Pointer to a function for access into the \ref alias_mappings.h functions to find a Mapping structure that matches the alias passed to it
-     * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias() */
+     * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias(). */
     alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
     // OPTIONAL FUNCTION
@@ -83,7 +83,7 @@ typedef struct {
     // CALLBACK FUNCTIONS
 
     /** Pointer to a function for an Application to be notified when an Alias has been successfully registered
-     *@note <b>Optional</b> application callback.  Defaults to NULL*/
+     *@note <b>Optional</b> application callback.  Defaults to NULL. */
     void (*on_alias_change)(uint16_t alias, node_id_t node_id);
 
 } interface_can_login_message_handler_t;
@@ -94,19 +94,19 @@ extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the CAN Login Message Handler module
+     * @brief Initializes the CAN Login Message Handler module.
      *
-     * @param const interface_can_login_message_handler_t *interface - Pointers to function dependencies this module requires
+     * @param const interface_can_login_message_handler_t *interface - Pointers to function dependencies this module requires.
      *
      * @return none
      *
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void CanLoginMessageHandler_initialize(const interface_can_login_message_handler_t *interface);
 
 
     /**
-     * @brief Handles the first state in the CAN login sequence.  It resets internal structures and moves on to the next state
+     * @brief Handles the first state in the CAN login sequence.  It resets internal structures and moves on to the next state.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -117,7 +117,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the second state in the CAN login sequence.  It generates a seed to create the Alias and moves on to the next state
+     * @brief Handles the second state in the CAN login sequence.  It generates a seed to create the Alias and moves on to the next state.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -128,7 +128,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the third state in the CAN login sequence.  It generates an Alias from the seed and moves on to the next state
+     * @brief Handles the third state in the CAN login sequence.  It generates an Alias from the seed and moves on to the next state.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -138,7 +138,7 @@ extern "C" {
     extern void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_statemachine_info);
 
     /**
-     * @brief Handles the fourth state in the CAN login sequence.  It loads the output buffer with a CID message with the top 3 bytes of the NodeID
+     * @brief Handles the fourth state in the CAN login sequence.  It loads the output buffer with a CID message with the top 3 bytes of the NodeID.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -149,7 +149,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the fifth state in the CAN login sequence.  It loads the output buffer with a CID message with the next 3 bytes of the NodeID
+     * @brief Handles the fifth state in the CAN login sequence.  It loads the output buffer with a CID message with the next 3 bytes of the NodeID.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -160,7 +160,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the sixth state in the CAN login sequence.  It loads the output buffer with a CID message with the next 3 bytes of the NodeID
+     * @brief Handles the sixth state in the CAN login sequence.  It loads the output buffer with a CID message with the next 3 bytes of the NodeID.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -171,7 +171,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the seventh state in the CAN login sequence.  It loads the output buffer with a CID message with the last 3 bytes of the NodeID
+     * @brief Handles the seventh state in the CAN login sequence.  It loads the output buffer with a CID message with the last 3 bytes of the NodeID.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -182,7 +182,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the eight state in the CAN login sequence.  It waits for a minimum of 200ms before moving to the next state
+     * @brief Handles the eight state in the CAN login sequence.  It waits for a minimum of 200ms before moving to the next state.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -193,7 +193,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the ninth state in the CAN login sequence.  It loads the output buffer with a RID message
+     * @brief Handles the ninth state in the CAN login sequence.  It loads the output buffer with a RID message.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.
@@ -204,7 +204,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the tenth state in the CAN login sequence.  It loads the output buffer with an AMD message
+     * @brief Handles the tenth state in the CAN login sequence.  It loads the output buffer with an AMD message.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a struct that has the node and buffer for any outgoing
      * message that may be necessary.  The incoming message is not used.

@@ -63,7 +63,7 @@ extern "C" {
      * test all program flows in the module.  It also allows for reducing the program size. If a particular
      * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
      * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
-     * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
+     * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL.
      */
     typedef struct {
         /*@{*/
@@ -71,65 +71,65 @@ extern "C" {
         // REQUIRED FUNCTIONS
 
         /** Pointer to an Application supplied function that must stop the Application supplied 100ms Timer  and the hardware CAN Frame Receive (Rx) from accessing the library.
-         * @warning <b>Required</b> assignment.  Defaults to an Application defined function */
+         * @warning <b>Required</b> assignment.  Defaults to an Application defined function. */
         void (*lock_shared_resources)(void);
 
         /** Pointer to an Application supplied function that must restart the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library buffers.
-         * @warning <b>Required</b> assignment.  Defaults to an Application defined function */
+         * @warning <b>Required</b> assignment.  Defaults to an Application defined function. */
         void (*unlock_shared_resources)(void);
 
         /** Pointer to an Application supplied function that transmits the passed msg on the physical CAN line.
-         * @note The implementation of this may either place the message in the hardwares transmit buffer or create an internal software buffer
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanTxStatemachine_send_can_message() */
+         * @note The implementation of this may either place the message in the hardwares transmit buffer or create an internal software buffer.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanTxStatemachine_send_can_message(). */
         bool (*send_can_message)(can_msg_t *msg);
 
-        /** Pointer to a function for access into the \ref openlcb_node.h functions get enumerate current nodes
-         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbNode_get_first() */
+        /** Pointer to a function for access into the \ref openlcb_node.h functions get enumerate current nodes.
+         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbNode_get_first(). */
         openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
 
-        /** Pointer to a function for access into the \ref openlcb_node.h functions get enumerate current nodes
-         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbNode_get_next() */
+        /** Pointer to a function for access into the \ref openlcb_node.h functions get enumerate current nodes.
+         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbNode_get_next(). */
         openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
 
-        /** Pointer to a function for access into the \ref openlcb_node.h functions get find a current node using its Alias
-         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbNode_find_by_alias() */
+        /** Pointer to a function for access into the \ref openlcb_node.h functions get find a current node using its Alias.
+         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbNode_find_by_alias(). */
         openlcb_node_t *(*openlcb_node_find_by_alias)(uint16_t alias);
 
         /** Pointer to a function for access into the \ref can_login_statemachine.h functions to Run the Login state machine.
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginStateMachine_run() */
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginStateMachine_run(). */
         void (*login_statemachine_run)(can_statemachine_info_t *can_statemachine_info);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
-         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_get_alias_mapping_info() */
+        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_get_alias_mapping_info(). */
         alias_mapping_info_t *(*alias_mapping_get_alias_mapping_info)(void);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to unregister the mapping pairs, typically due to a duplicate Alias error
-         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_unregister() */
+        /** Pointer to a function for access into the \ref alias_mappings.h functions to unregister the mapping pairs, typically due to a duplicate Alias error.
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_unregister(). */
         void (*alias_mapping_unregister)(uint16_t alias);
 
         /** Pointer to a function to handle duplicated Aliases that have been detected. This function is defined and accessed from within this modules
-         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_duplicate_aliases() */
+         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_duplicate_aliases(). */
         bool (*handle_duplicate_aliases)(void);
 
         /** Pointer to a function to handle outgoing CAN messages. This function is defined and accessed from within this modules
-         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_outgoing_can_message() */
+         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_outgoing_can_message(). */
         bool (*handle_outgoing_can_message)(void);
 
         /** Pointer to a function to handle outgoing login CAN messages. This function is defined and accessed from within this modules
-         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_login_outgoing_can_message() */
+         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_login_outgoing_can_message(). */
         bool (*handle_login_outgoing_can_message)(void);
 
         /** Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules
-         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_try_enumerate_first_node() */
+         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_try_enumerate_first_node(). */
         bool (*handle_try_enumerate_first_node)(void);
 
         /** Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules
-         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_try_enumerate_next_node() */
+         * and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanMainStatemachine_handle_try_enumerate_next_node(). */
         bool (*handle_try_enumerate_next_node)(void);
 
         // OPTIONAL FUNCTION
@@ -141,21 +141,21 @@ extern "C" {
     } interface_can_main_statemachine_t;
 
     /**
-     * @brief Initializes the CAN Main Statemachine
+     * @brief Initializes the CAN Main Statemachine.
      *
      * @param const interface_can_main_statemachine_t *interface_can_main_statemachine - Pointer to a
      * interface_can_main_statemachine_t struct containing the functions that this module requires.
      *
      * @return none
      *
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine);
 
 
     /**
      * @brief Runs the main statemachine to handle incoming CAN messages and correctly respond to them through the
-     * handlers in the interface \ref interface_can_login_state_machine_t
+     * handlers in the interface \ref interface_can_login_state_machine_t.
      *
      * @param none
      *
@@ -168,49 +168,49 @@ extern "C" {
 
     /**
      * @brief Accesses the internal structure that the CAN Main State machine uses to maintain the Node that is currently being
-     * targeted, incoming CAN message and a buffer for sending a reply CAN message if necessary
+     * targeted, incoming CAN message and a buffer for sending a reply CAN message if necessary.
      *
      * @param none
      *
-     * @return Pointer to an internal structure that hold the current state of the CAN State machine
+     * @return Pointer to an internal structure that hold the current state of the CAN State machine.
      *
-     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application
+     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application.
      */
     extern can_statemachine_info_t *CanMainStateMachine_get_can_statemachine_info(void);
 
 
     /**
-     * @brief Checks for and handles any duplicate Alias that were detected on the incoming CAN receive state machine
+     * @brief Checks for and handles any duplicate Alias that were detected on the incoming CAN receive state machine.
      *
      * @param none
      *
      * @return none
      *
-     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application
+     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application.
      */
     extern bool CanMainStatemachine_handle_duplicate_aliases(void);
 
 
     /**
-     * @brief Checks for and handles any login messages that need to be sent for a Node login
+     * @brief Checks for and handles any login messages that need to be sent for a Node login.
      *
      * @param none
      *
      * @return none
      *
-     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application
+     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application.
      */
     extern bool CanMainStatemachine_handle_login_outgoing_can_message(void);
 
 
     /**
-     * @brief Checks for and handles any out going messages that were a result of replying to an incoming message
+     * @brief Checks for and handles any out going messages that were a result of replying to an incoming message.
      *
      * @param none
      *
      * @return none
      *
-     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application
+     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application.
      */
     extern bool CanMainStatemachine_handle_outgoing_can_message(void);
 
@@ -218,13 +218,13 @@ extern "C" {
     /**
      * @brief Enumerator to get the first Node to run the state machine on.  OpenLcbCLib is capable of running virtual Nodes 
      * limited only by memory of the device used and how many Node buffer slots where defined in the \ref USER_DEFINED_NODE_BUFFER_DEPTH
-     * constant
+     * constant.
      *
      * @param none
      *
      * @return none
      *
-     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application
+     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application.
      */
     extern bool CanMainStatemachine_handle_try_enumerate_first_node(void);
 
@@ -232,13 +232,13 @@ extern "C" {
     /**
      * @brief Enumerator to get the next Node to run the state machine on.  OpenLcbCLib is capable of running virtual Nodes 
      * limited only by memory of the device used and how many Node buffer slots where defined in the \ref USER_DEFINED_NODE_BUFFER_DEPTH
-     * constant
+     * constant.
      *
      * @param none
      *
      * @return none
      *
-     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application
+     * @note This access is for debugging and Google Test access, there should be no reason to access it from an Application.
      */
     extern bool CanMainStatemachine_handle_try_enumerate_next_node(void);
 

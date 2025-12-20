@@ -53,7 +53,7 @@
  * test all program flows in the module.  It also allows for reducing the program size. If a particular
  * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
  * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
- * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
+ * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL.
  */
 typedef struct
 {
