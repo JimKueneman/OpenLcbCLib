@@ -106,10 +106,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a49fcb6055f37edb9e56977295cd0eaf2" id="r_a49fcb6055f37edb9e56977295cd0eaf2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49fcb6055f37edb9e56977295cd0eaf2">CanBufferStore_initialize</a> (void)</td></tr>
 <tr class="memdesc:a49fcb6055f37edb9e56977295cd0eaf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Buffer Store.  <br /></td></tr>
 <tr class="separator:a49fcb6055f37edb9e56977295cd0eaf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd3358d37ab07ff0f8ec918c00fffe99" id="r_afd3358d37ab07ff0f8ec918c00fffe99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer</a> (void)</td></tr>
+<tr class="memitem:afd3358d37ab07ff0f8ec918c00fffe99" id="r_afd3358d37ab07ff0f8ec918c00fffe99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer</a> (void)</td></tr>
 <tr class="memdesc:afd3358d37ab07ff0f8ec918c00fffe99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new CAN buffer.  <br /></td></tr>
 <tr class="separator:afd3358d37ab07ff0f8ec918c00fffe99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad95fb1127ec823f0cc9117848b78e5a7" id="r_ad95fb1127ec823f0cc9117848b78e5a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer</a> (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *msg)</td></tr>
+<tr class="memitem:ad95fb1127ec823f0cc9117848b78e5a7" id="r_ad95fb1127ec823f0cc9117848b78e5a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *msg)</td></tr>
 <tr class="memdesc:ad95fb1127ec823f0cc9117848b78e5a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the buffer so it can be reused.  <br /></td></tr>
 <tr class="separator:ad95fb1127ec823f0cc9117848b78e5a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a114ce74d1c445b6df687c6148d62d6c6" id="r_a114ce74d1c445b6df687c6148d62d6c6"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a114ce74d1c445b6df687c6148d62d6c6">CanBufferStore_messages_allocated</a> (void)</td></tr>
@@ -124,7 +124,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the core buffers for CAN frames. </p>
-<p>The CAN FIFO buffer is an array of pointers to CAN frame buffer ( <a class="el" href="structcan__msg__t.html">can_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> and <a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer()</a>.</p>
+<p>The CAN FIFO buffer is an array of pointers to CAN frame buffer ( <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> and <a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer()</a>.</p>
 <dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access these buffers directly, they should use the helpers to send messages in <a class="el" href="openlcb__application_8h.html">openlcb_application.h</a></dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -173,7 +173,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structcan__msg__t.html">can_msg_t</a> * CanBufferStore_allocate_buffer </td>
+          <td class="memname"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> * CanBufferStore_allocate_buffer </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -209,7 +209,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void CanBufferStore_free_buffer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -223,7 +223,7 @@ Functions</h2></td></tr>
 <p>Frees the buffer so it can be reused. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*msg [in] - Pointer to a message to be freed</td></tr>
   </table>
   </dd>
 </dl>

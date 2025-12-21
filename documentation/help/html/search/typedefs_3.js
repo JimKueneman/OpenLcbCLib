@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['memory_5fhandler_5ft_0',['memory_handler_t',['../protocol__datagram__handler_8h.html#a34207c47984e37a0c4ecc774fcc1ca32',1,'protocol_datagram_handler.h']]]
+  ['gridconnect_5fbuffer_5ft_0',['gridconnect_buffer_t',['../openlcb__gridconnect_8h.html#a4c98183f234e8c8860bc48872c2c01b8',1,'openlcb_gridconnect.h']]]
 ];

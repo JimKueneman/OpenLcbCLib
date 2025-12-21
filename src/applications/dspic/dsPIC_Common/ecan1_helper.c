@@ -46,6 +46,9 @@
 
 static uint8_t _max_can_fifo_depth = 0;
 
+
+#define TX_CHANNEL_CAN_CONTROL 0
+
 // ECAN1 ------------------------------------------------------------------------
 // First buffer index that is a RX buffer
 const uint8_t FIFO_RX_START_INDEX = 8; // (8-31)

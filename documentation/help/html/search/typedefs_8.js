@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['write_5fconfig_5fmem_5fspace_5ffunc_5ft_0',['write_config_mem_space_func_t',['../openlcb__types_8h.html#a20b38f8882ef79b433f7461000ac1d12',1,'openlcb_types.h']]]
+  ['read_5fconfig_5fmem_5fspace_5ffunc_5ft_0',['read_config_mem_space_func_t',['../openlcb__types_8h.html#a7c0c44d2ca651aaca32761e9a2519843',1,'openlcb_types.h']]]
 ];

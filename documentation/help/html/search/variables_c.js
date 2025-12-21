@@ -1,8 +1,8 @@
 var searchData=
 [
   ['parameters_0',['parameters',['../structopenlcb__node__t.html#a04db8f444dd14993f6923f368d6a7e94',1,'openlcb_node_t']]],
-  ['payload_1',['payload',['../structopenlcb__msg__t.html#a9d64139c16ef95b417621bae1b14b7ff',1,'openlcb_msg_t::payload'],['../structcan__msg__t.html#afe956fa6fe2f9e1f60b339d6978accf6',1,'can_msg_t::payload']]],
-  ['payload_5fcount_2',['payload_count',['../structopenlcb__msg__t.html#a9cee5a02d61d3d69c127e8590c4a6702',1,'openlcb_msg_t::payload_count'],['../structcan__msg__t.html#a9a68e869a8d4ea2579a1c3c42ce03d9f',1,'can_msg_t::payload_count']]],
+  ['payload_1',['payload',['../structopenlcb__msg__t.html#a9d64139c16ef95b417621bae1b14b7ff',1,'openlcb_msg_t::payload'],['../structcan__msg__struct.html#afe956fa6fe2f9e1f60b339d6978accf6',1,'can_msg_struct::payload']]],
+  ['payload_5fcount_2',['payload_count',['../structopenlcb__msg__t.html#a9cee5a02d61d3d69c127e8590c4a6702',1,'openlcb_msg_t::payload_count'],['../structcan__msg__struct.html#a9a68e869a8d4ea2579a1c3c42ce03d9f',1,'can_msg_struct::payload_count']]],
   ['payload_5ftype_3',['payload_type',['../structopenlcb__msg__t.html#a9e12c939ca9b6d8140f1a9fc8bf72af7',1,'openlcb_msg_t']]],
   ['permitted_4',['permitted',['../structopenlcb__node__state__t.html#ae38a7a2fda7a71c6ca13ece7a820dc47',1,'openlcb_node_state_t']]],
   ['present_5',['present',['../structuser__address__space__info__t.html#aa84cc4dc60e16481b79b15b815aaea31',1,'user_address_space_info_t']]],

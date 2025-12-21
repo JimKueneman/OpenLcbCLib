@@ -353,7 +353,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
     alias_mapping_info_t *alias_mapping_info = _interface->alias_mapping_get_alias_mapping_info();
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (alias_mapping_info->list[i].alias != 0x00) {
 

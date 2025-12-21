@@ -130,7 +130,7 @@ void UartHandler_handle_rx(uint16_t code)
     case 'm':
 
         printf("\n");
-        for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++)
+        for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
         {
 
             printf("Index: %d, Alias: 0x%04X, NodeID: 0x%08llX\n", i, mapping_info->list[i].alias, mapping_info->list[i].node_id);

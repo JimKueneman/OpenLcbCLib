@@ -65,7 +65,7 @@ TEST(AliasMapping, register)
 
     alias_mapping_t *mapping = nullptr;
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++)
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
 
         mapping = AliasMappings_register(NODE_ALIAS + i, NODE_ID + i);
@@ -75,27 +75,27 @@ TEST(AliasMapping, register)
     mapping = AliasMappings_register(NODE_ALIAS - 1, NODE_ID - 1);
     EXPECT_EQ(mapping, nullptr);
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++)
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
 
         mapping = AliasMappings_find_mapping_by_alias(NODE_ALIAS + i);
         EXPECT_NE(mapping, nullptr);
     }
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++)
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
 
         mapping = AliasMappings_find_mapping_by_node_id(NODE_ID + i);
         EXPECT_NE(mapping, nullptr);
     }
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++)
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
 
         AliasMappings_unregister(NODE_ALIAS + i);
     }
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++)
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++)
     {
 
         mapping = AliasMappings_find_mapping_by_alias(NODE_ALIAS + i);

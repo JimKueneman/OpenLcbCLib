@@ -5,10 +5,10 @@ var indexSectionsWithContent =
   2: "acmop",
   3: "acops",
   4: "abcdefhilmnoprstuvw",
-  5: "cegmnoprw",
+  5: "acegmnoprw",
   6: "eps",
   7: "abdes",
-  8: "_cdeglmnoprstu",
+  8: "_acdeglmnoprsu",
   9: "do"
 };
 

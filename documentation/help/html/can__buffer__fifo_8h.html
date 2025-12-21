@@ -106,10 +106,10 @@ Functions</h2></td></tr>
 <tr class="memitem:ab0652f39f104350007ad642b955ddbad" id="r_ab0652f39f104350007ad642b955ddbad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0652f39f104350007ad642b955ddbad">CanBufferFifo_initialize</a> (void)</td></tr>
 <tr class="memdesc:ab0652f39f104350007ad642b955ddbad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Message Buffer FIFO.  <br /></td></tr>
 <tr class="separator:ab0652f39f104350007ad642b955ddbad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9506021e46c1e62c700b125252276346" id="r_a9506021e46c1e62c700b125252276346"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a> (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *new_msg)</td></tr>
+<tr class="memitem:a9506021e46c1e62c700b125252276346" id="r_a9506021e46c1e62c700b125252276346"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *new_msg)</td></tr>
 <tr class="memdesc:a9506021e46c1e62c700b125252276346"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pushes a new CAN message into the FIFO buffer that was allocated see <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a>.  <br /></td></tr>
 <tr class="separator:a9506021e46c1e62c700b125252276346"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ffec18f770ac9eeb09eb5efc586addc" id="r_a2ffec18f770ac9eeb09eb5efc586addc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a> (void)</td></tr>
+<tr class="memitem:a2ffec18f770ac9eeb09eb5efc586addc" id="r_a2ffec18f770ac9eeb09eb5efc586addc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a> (void)</td></tr>
 <tr class="memdesc:a2ffec18f770ac9eeb09eb5efc586addc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pops a CAN message off the FIFO buffer. The caller is responsible to free the message when done see <a class="el" href="can__buffer__store_8h.html#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer(can_msg_t *msg)</a>.  <br /></td></tr>
 <tr class="separator:a2ffec18f770ac9eeb09eb5efc586addc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad52fb1602439269439924aa2c962db07" id="r_ad52fb1602439269439924aa2c962db07"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad52fb1602439269439924aa2c962db07">CanBufferFifo_is_empty</a> (void)</td></tr>
@@ -172,7 +172,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool CanBufferFifo_push </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcan__msg__t.html">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>new_msg</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>new_msg</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -186,7 +186,7 @@ Functions</h2></td></tr>
 <p>Pushes a new CAN message into the FIFO buffer that was allocated see <a class="el" href="can__buffer__store_8h.html#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool.</td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*new_msg [in] - Pointer to a message allocated from the CAN Buffer Pool.</td></tr>
   </table>
   </dd>
 </dl>
@@ -204,7 +204,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structcan__msg__t.html">can_msg_t</a> * CanBufferFifo_pop </td>
+          <td class="memname"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> * CanBufferFifo_pop </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>

@@ -41,7 +41,7 @@ var searchData=
   ['openlcb_5fmsg_5farray_5ft_38',['openlcb_msg_array_t',['../openlcb__types_8h.html#a5cc5550a13db98f7bd586e9bfac4651e',1,'openlcb_types.h']]],
   ['openlcb_5fmsg_5fstate_5ft_39',['openlcb_msg_state_t',['../structopenlcb__msg__state__t.html',1,'']]],
   ['openlcb_5fmsg_5ft_40',['openlcb_msg_t',['../structopenlcb__msg__t.html',1,'']]],
-  ['openlcb_5fnode_41',['openlcb_node',['../structopenlcb__statemachine__info__t.html#ac122774ef5c3b5d237061918e3af6125',1,'openlcb_statemachine_info_t::openlcb_node'],['../structopenlcb__login__statemachine__info__t.html#ac122774ef5c3b5d237061918e3af6125',1,'openlcb_login_statemachine_info_t::openlcb_node'],['../structcan__statemachine__info__t.html#ac122774ef5c3b5d237061918e3af6125',1,'can_statemachine_info_t::openlcb_node']]],
+  ['openlcb_5fnode_41',['openlcb_node',['../structopenlcb__statemachine__info__t.html#ac122774ef5c3b5d237061918e3af6125',1,'openlcb_statemachine_info_t::openlcb_node'],['../structopenlcb__login__statemachine__info__t.html#ac122774ef5c3b5d237061918e3af6125',1,'openlcb_login_statemachine_info_t::openlcb_node'],['../structcan__statemachine__info__struct.html#ac122774ef5c3b5d237061918e3af6125',1,'can_statemachine_info_struct::openlcb_node']]],
   ['openlcb_5fnode_2eh_42',['openlcb_node.h',['../openlcb__node_8h.html',1,'']]],
   ['openlcb_5fnode_5ffind_5fby_5falias_43',['openlcb_node_find_by_alias',['../structinterface__can__main__statemachine__t.html#afcc26a9aa6bd99c8b8c09cfac42e0125',1,'interface_can_main_statemachine_t']]],
   ['openlcb_5fnode_5fget_5ffirst_44',['openlcb_node_get_first',['../structinterface__openlcb__login__state__machine__t.html#a642f075eed427764e99bda659f1fd22f',1,'interface_openlcb_login_state_machine_t::openlcb_node_get_first'],['../structinterface__openlcb__main__statemachine__t.html#a642f075eed427764e99bda659f1fd22f',1,'interface_openlcb_main_statemachine_t::openlcb_node_get_first'],['../structinterface__can__main__statemachine__t.html#a642f075eed427764e99bda659f1fd22f',1,'interface_can_main_statemachine_t::openlcb_node_get_first']]],
@@ -60,7 +60,7 @@ var searchData=
   ['openlcb_5fstream_5fmessage_5ft_57',['openlcb_stream_message_t',['../structopenlcb__stream__message__t.html',1,'']]],
   ['openlcb_5ftypes_2eh_58',['openlcb_types.h',['../openlcb__types_8h.html',1,'']]],
   ['openlcb_5futilities_2eh_59',['openlcb_utilities.h',['../openlcb__utilities_8h.html',1,'']]],
-  ['openlcb_5fworker_60',['openlcb_worker',['../structcan__main__statemachine__t.html#a054b6334e65b31ba24d7137f65099f1a',1,'can_main_statemachine_t']]],
+  ['openlcb_5fworker_60',['openlcb_worker',['../structcan__main__statemachine__struct.html#a054b6334e65b31ba24d7137f65099f1a',1,'can_main_statemachine_struct']]],
   ['openlcbapplication_5fclear_5fconsumer_5feventids_61',['OpenLcbApplication_clear_consumer_eventids',['../openlcb__application_8h.html#a1fe177addd72cad381abb7ee473e99bc',1,'openlcb_application.h']]],
   ['openlcbapplication_5fclear_5fproducer_5feventids_62',['OpenLcbApplication_clear_producer_eventids',['../openlcb__application_8h.html#a230d79b881950f787624820264550789',1,'openlcb_application.h']]],
   ['openlcbapplication_5finitialize_63',['OpenLcbApplication_initialize',['../openlcb__application_8h.html#a78c4dd26cc000fae9e2af5b6453ad511',1,'openlcb_application.h']]],
@@ -172,7 +172,7 @@ var searchData=
   ['operations_5frequest_5freset_5freboot_169',['operations_request_reset_reboot',['../structinterface__protocol__config__mem__operations__handler__t.html#ac6f4cb5cb298e0df3cd2b36c7d0dbee0',1,'interface_protocol_config_mem_operations_handler_t']]],
   ['operations_5frequest_5funfreeze_170',['operations_request_unfreeze',['../structinterface__protocol__config__mem__operations__handler__t.html#a885ea0d913c2e7cce681f3bd5aa35a4b',1,'interface_protocol_config_mem_operations_handler_t']]],
   ['operations_5frequest_5fupdate_5fcomplete_171',['operations_request_update_complete',['../structinterface__protocol__config__mem__operations__handler__t.html#ad5ee4b72a10d50c7f04a816aae20b8b3',1,'interface_protocol_config_mem_operations_handler_t']]],
-  ['outgoing_5fcan_5fmsg_172',['outgoing_can_msg',['../structcan__statemachine__info__t.html#a675153279f12b87deb9ca3032497951f',1,'can_statemachine_info_t']]],
+  ['outgoing_5fcan_5fmsg_172',['outgoing_can_msg',['../structcan__statemachine__info__struct.html#a675153279f12b87deb9ca3032497951f',1,'can_statemachine_info_struct']]],
   ['outgoing_5fmsg_5finfo_173',['outgoing_msg_info',['../structopenlcb__statemachine__info__t.html#a22d2a3dceeb96d5dfa7f535c25e10e11',1,'openlcb_statemachine_info_t::outgoing_msg_info'],['../structopenlcb__login__statemachine__info__t.html#aeb2d0dea45c13d8f19446d48f129107c',1,'openlcb_login_statemachine_info_t::outgoing_msg_info']]],
   ['owner_5fnode_174',['owner_node',['../structopenlcb__node__t.html#ad26f10784fb11e2834a9d0acba983cb1',1,'openlcb_node_t']]]
 ];
