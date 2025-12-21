@@ -105,7 +105,7 @@ extern "C" {
 
 
     /**
-     * @brief Initializes the CAN Receive (Rx) Statemachine
+     * @brief Initializes the CAN Receive (Rx) Message Handlers
      *
      * @param const interface_can_rx_message_handler_t *interface_can_frame_message_handler - Pointer to a
      * interface_can_rx_message_handler_t struct containing the functions that this module requires.

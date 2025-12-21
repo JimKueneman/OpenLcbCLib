@@ -1,5 +1,4 @@
-/** \copyright
- * Copyright (c) 2024, Jim Kueneman
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,15 +23,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_tx_statemachine.h
- *
- * Takes an OpenLcb message structure and splits it into CAN frames to transmit if
- * necessary, else it packs up the CAN frame from the message structure and send it
- * to the CAN Driver to transmit on the physical layer.
- *
- * @author Jim Kueneman
- * @date 5 Dec 2024
+ * 21 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
  */
+
+/**
+ *
+ * @brief Implements a state machine actually a large switch statement that decodes the 
+ * incoming message and calls the correct the can_tx_message_handler.h handler functions.
+ * 
+ * This is the core transmit functionality of the CAN frames.  It either sends a CAN
+ * message directly, which is a direct translation to the CAN physical layer or sends an
+ * OpenLcb/LCC message which may require being broken up into multiple CAN frames.
+ *
+ * @file can_tx_statemachine.h
+ *
+ */
+
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
@@ -46,8 +53,7 @@
 #include "../../openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
     /**
@@ -60,19 +66,34 @@ extern "C"
      * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
      * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
      */
-    typedef struct
-    {
-
+    typedef struct {
         /*@{*/
 
         // REQUIRED FUNCTIONS
 
+        /** Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send.
+         * @warning <b>Required</b> assignment. Application defined function */
         bool (*is_tx_buffer_empty)(void);
 
+
+        /** Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit.
+         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_addressed_msg_frame() */
         bool (*handle_addressed_msg_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+        
+        /** Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit.
+         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_unaddressed_msg_frame() */
         bool (*handle_unaddressed_msg_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+        
+        /** Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit.
+         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_datagram_frame() */
         bool (*handle_datagram_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+        
+        /** Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit.
+         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_stream_frame() */
         bool (*handle_stream_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
+        
+        /** Pointer to a function to handle a CAN message frame to transmit
+         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_can_frame() */
         bool (*handle_can_frame)(can_msg_t *can_msg);
 
         // OPTIONAL FUNCTION
@@ -83,10 +104,39 @@ extern "C"
 
     } interface_can_tx_statemachine_t;
 
+    
+    /**
+     * @brief Initializes the CAN Receive (Rx) state machine
+     *
+     * @param const interface_can_tx_statemachine_t *interface_can_tx_statemachine - Pointer to a
+     * interface_can_tx_statemachine_t struct containing the functions that this module requires.
+     *
+     * @return none
+     *
+     * @attention This must always be called during application initialization.
+     */
     extern void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interface_can_tx_statemachine);
 
+    
+    /**
+     * @brief Sends an OpenLcb/LCC message on the CAN physical layer
+     *
+     * @param openlcb_msg_t *openlcb_msg - Pointer to the OpenLcb/LCC message to transmit
+     *
+     * @return none
+     *
+     */
     extern bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg);
 
+    
+    /**
+     * @brief Sends an OpenLcb/LCC message on the CAN physical layer
+     *
+     * @param can_msg_t *can_msg - Pointer to the CAN message transmit
+     *
+     * @return none
+     *
+     */
     extern bool CanTxStatemachine_send_can_message(can_msg_t *can_msg);
 
 #ifdef __cplusplus

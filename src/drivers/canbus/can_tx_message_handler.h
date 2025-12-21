@@ -1,5 +1,4 @@
-/** \copyright
- * Copyright (c) 2024, Jim Kueneman
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +23,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_tx_message_handler.h
+ * 21 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+/**
+ *
+ * @brief Implements handlers for use by the CAN Transmit (Tx) statemachine \ref can_tx_statemachine.h
+ *
+ * As CAN and OpenLcb/LCC messages are transmitted these handlers transmit different types of messages.  
  *
  *
- * @author Jim Kueneman
- * @date 17 Aug 2025
+ * @file can_tx_message_handler.h
+ *
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -51,19 +58,23 @@
  * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
  * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
  */
-typedef struct
-{
-
+typedef struct {
     /*@{*/
 
     // REQUIRED FUNCTIONS
 
+    /** Pointer to an Application defined function to put the passed CAN frame onto the physical CAN bus.  The
+     * library will have called the Application defined function is_tx_buffer_empty before calling this function 
+     * is expected to succeeded in transmitting the frame unless there is problem.
+     * @warning <b>Required</b> assignment.  */
     bool (*transmit_can_frame)(can_msg_t *can_msg);
 
     // OPTIONAL FUNCTION
 
     // CALLBACK FUNCTIONS
 
+    /** Pointer to a function for an Application to be notified when a CAN frame is transmitted.
+     *@note <b>Optional</b> application callback.  Defaults to NULL
     void (*on_transmit)(can_msg_t *can_msg);
 
     /*@}*/
@@ -71,20 +82,82 @@ typedef struct
 } interface_can_tx_message_handler_t;
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif /* __cplusplus */
 
+    /**
+     * @brief Initializes the CAN Transmit (Tx) state machine handlers
+     *
+     * @param const interface_can_tx_message_handler_t *interface_can_tx_message_handler - Pointer to a
+     * interface_can_tx_message_handler_t struct containing the functions that this module requires.
+     *
+     * @return none
+     *
+     * @attention This must always be called during application initialization.
+     */
     extern void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler);
 
+
+    /**
+     * @brief Sends an addressed OpenLcb/LCC message on the CAN physical layer
+     *
+     * @param openlcb_msg_t *openlcb_msg - Pointer to the OpenLcb/LCC message to transmit
+     * @param can_msg_t *can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames)
+     * @param uint16_t *openlcb_start_index - Were in the OpenLcb Payload does the data start
+     * 
+     * @return none
+     *
+     */
     extern bool CanTxMessageHandler_addressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
+    
+    /**
+     * @brief Sends an unaddressed OpenLcb/LCC message on the CAN physical layer
+     *
+     * @param openlcb_msg_t *openlcb_msg - Pointer to the OpenLcb/LCC message to transmit
+     * @param can_msg_t *can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames)
+     * @param uint16_t *openlcb_start_index - Were in the OpenLcb Payload does the data start
+     * 
+     * @return none
+     *
+     */
     extern bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
+    
+    /**
+     * @brief Sends a datagram OpenLcb/LCC message on the CAN physical layer
+     *
+     * @param openlcb_msg_t *openlcb_msg - Pointer to the OpenLcb/LCC message to transmit
+     * @param can_msg_t *can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames)
+     * @param uint16_t *openlcb_start_index - Were in the OpenLcb Payload does the data start
+     * 
+     * @return none
+     *
+     */
     extern bool CanTxMessageHandler_datagram_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
+    
+    /**
+     * @brief Sends a stream OpenLcb/LCC message on the CAN physical layer
+     *
+     * @param openlcb_msg_t *openlcb_msg - Pointer to the OpenLcb/LCC message to transmit
+     * @param can_msg_t *can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames)
+     * @param uint16_t *openlcb_start_index - Were in the OpenLcb Payload does the data start
+     * 
+     * @return none
+     *
+     */
     extern bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
+    
+    /**
+     * @brief Sends an CAN message on the CAN physical layer
+     *
+     * @param can_msg_t *can_msg_worker - Pointer to a CAN message to transmit
+     * 
+     * @return none
+     *
+     */
     extern bool CanTxMessageHandler_can_frame(can_msg_t *can_msg);
 
 #ifdef __cplusplus
