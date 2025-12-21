@@ -74,7 +74,7 @@ typedef struct {
     // CALLBACK FUNCTIONS
 
     /** Pointer to a function for an Application to be notified when a CAN frame is transmitted.
-     *@note <b>Optional</b> application callback.  Defaults to NULL
+     *@note <b>Optional</b> application callback.  Defaults to NULL. */
     void (*on_transmit)(can_msg_t *can_msg);
 
     /*@}*/
