@@ -148,7 +148,7 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Implements handlers for the messages and alias creation tasks a node must follow to login to the OpenLcb/LCC network, <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>. </p>
 <p>When a node is logging into the network on a CAN bus it must follow a specific flow to generate/allocate/notify a unique alias ID then broadcast its events. This module defines the specific handlers for each step of this login procedure.</p>
 <p>These functions are used in the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> which are called from within the CAN login statemachine switch statement.</p>
-<dl class="section note"><dt>Note</dt><dd>Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application. see: <a class="el" href="can__login__statemachine_8h.html#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>; </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application. see: <a class="el" href="can__login__statemachine_8h.html#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a5c515891dde09e1d2376e0d0ecc392ec" name="a5c515891dde09e1d2376e0d0ecc392ec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5c515891dde09e1d2376e0d0ecc392ec">&#9670;&#160;</a></span>CanLoginMessageHandler_initialize()</h2>
@@ -176,12 +176,12 @@ Functions</h2></td></tr>
 <p>Initializes the CAN Login Message Handler module. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_message_han...">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires</td></tr>
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__login__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_message_han...">interface_can_login_message_handler_t</a> *interface - Pointers to function dependencies this module requires.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
 
 </div>
 </div>

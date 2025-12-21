@@ -55,51 +55,51 @@
  * test all program flows in the module.  It also allows for reducing the program size. If a particular
  * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
  * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
- * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL
+ * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL.
  */
 typedef struct {
     /*@{*/
 
     // REQUIRED FUNCTIONS
 
-    /** Pointer to a function for the Initialization State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_init() */
+    /** Pointer to a function for the Initialization State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_init(). */
     void (*state_init)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the Generate Seed State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_generate_seed() */
+    /** Pointer to a function for the Generate Seed State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_generate_seed(). */
     void (*state_generate_seed)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the Generate Alias State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_generate_alias() */
+    /** Pointer to a function for the Generate Alias State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_generate_alias(). */
     void (*state_generate_alias)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the CID7 State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid07() */
+    /** Pointer to a function for the CID7 State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid07(). */
     void (*state_load_cid07)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the CID6 State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid06() */
+    /** Pointer to a function for the CID6 State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid06(). */
     void (*state_load_cid06)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the CID5 State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid05() */
+    /** Pointer to a function for the CID5 State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid05(). */
     void (*state_load_cid05)(can_statemachine_info_t *can_statemachine_info);
 
     /** Pointer to a function for the CID4 State Handler for the Login StateMachine
      * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_cid04() */
     void (*state_load_cid04)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the 200ms Wait State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_wait_200ms() */
+    /** Pointer to a function for the 200ms Wait State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_wait_200ms(). */
     void (*state_wait_200ms)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the RID State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_rid() */
+    /** Pointer to a function for the RID State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_rid(). */
     void (*state_load_rid)(can_statemachine_info_t *can_statemachine_info);
 
-    /** Pointer to a function for the AMD State Handler for the Login StateMachine
-     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_amd() */
+    /** Pointer to a function for the AMD State Handler for the Login StateMachine.
+     * @warning <b>Required</b> assignment.  Defaults to \ref CanLoginMessageHandler_state_load_amd(). */
     void (*state_load_amd)(can_statemachine_info_t *can_statemachine_info);
 
     // OPTIONAL FUNCTION
@@ -115,21 +115,21 @@ extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the CAN Main State Machine
+     * @brief Initializes the CAN Main State Machine.
      *
      * @param const interface_can_login_state_machine_t *interface_can_login_state_machine - Pointer to a
      * interface_can_login_state_machine_t struct containing the functions that this module requires.
      *
      * @return none
      *
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
 
 
     /**
      * @brief Runs the main state machine to handle incoming CAN messages and correctly respond to them through the
-     * handlers in the interface \ref interface_can_login_state_machine_t
+     * handlers in the interface \ref interface_can_login_state_machine_t.
      *
      * @param can_statemachine_info_t *can_statemachine_info - Pointer to a structure that contains the incoming CAN message for the
      * passed Node.  If a handler is found it will process the message else it the appropriate error code will be returned.

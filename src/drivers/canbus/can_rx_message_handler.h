@@ -29,7 +29,7 @@
 
 /**
  *
- * @brief Implements handlers for use by the CAN Receive (Rx) statemachine \ref can_rx_statemachine.h
+ * @brief Implements handlers for use by the CAN Receive (Rx) statemachine \ref can_rx_statemachine.h.
  *
  * As CAN only frame messages come in they need to be processed by the node(s) to see
  * if there is a response required.  These are the handlers called by the CAN receive (Rx)
@@ -71,28 +71,28 @@ extern "C" {
 
         // REQUIRED FUNCTIONS
 
-        /** Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new CAN message buffer
-         * @warning <b>Required</b> assignment.  Defaults to \ref CanBufferStore_allocate_buffer() */
+        /** Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new CAN message buffer.
+         * @warning <b>Required</b> assignment.  Defaults to \ref CanBufferStore_allocate_buffer(). */
         can_msg_t *(*can_buffer_store_allocate_buffer)(void);
 
-        /** Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new Openlcb message buffer
-         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbBufferStore_allocate_buffer() */
+        /** Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new Openlcb message buffer.
+         * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbBufferStore_allocate_buffer(). */
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum payload_type);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
-         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias() */
+        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias(). */
         alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
-         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_node_id() */
+        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_node_id(). */
         alias_mapping_t *(*alias_mapping_find_mapping_by_node_id)(node_id_t node_id);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
-         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_get_alias_mapping_info() */
+        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_get_alias_mapping_info(). */
         alias_mapping_info_t *(*alias_mapping_get_alias_mapping_info)(void);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to set the flag to signal at least one of the pairs was found to be a duplicate Alias
-         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_set_has_duplicate_alias_flag() */
+        /** Pointer to a function for access into the \ref alias_mappings.h functions to set the flag to signal at least one of the pairs was found to be a duplicate Alias.
+         * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_set_has_duplicate_alias_flag(). */
         void (*alias_mapping_set_has_duplicate_alias_flag)(void);
 
         // OPTIONAL FUNCTION
@@ -120,7 +120,7 @@ extern "C" {
     /**
      * @brief Handles a first frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -134,7 +134,7 @@ extern "C" {
     /**
      * @brief Handles a middle frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      *
@@ -146,7 +146,7 @@ extern "C" {
     /**
      * @brief Handles the last frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      *
@@ -158,7 +158,7 @@ extern "C" {
     /**
      * @brief Handles a frame of an OpenLcb/LCC message that is a complete message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -178,7 +178,7 @@ extern "C" {
      * in the first 2 bytes of the CAN data.  This encoding allowed this message to be handled using the first/middle/last 
      * handlers above.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -192,7 +192,7 @@ extern "C" {
     /**
      * @brief Handles a stream frame of an OpenLcb/LCC message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -203,7 +203,7 @@ extern "C" {
 
 
     /**
-     * @brief Handles the reply if the received message is a RID CAN message
+     * @brief Handles the reply if the received message is a RID CAN message.
      *
      * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
      *
@@ -213,9 +213,9 @@ extern "C" {
 
 
     /**
-     * @brief Handles the reply if the received message is an AMD CAN message
+     * @brief Handles the reply if the received message is an AMD CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      *
      * @return none
      */
@@ -223,9 +223,9 @@ extern "C" {
 
 
     /**
-     * @brief Handles the reply if the received message is an AME CAN message
+     * @brief Handles the reply if the received message is an AME CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      *
      * @return none
      */
@@ -233,9 +233,9 @@ extern "C" {
 
 
     /**
-     * @brief Handles the reply if the received message is an AMR CAN message
+     * @brief Handles the reply if the received message is an AMR CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      *
      * @return none
      */
@@ -243,9 +243,9 @@ extern "C" {
 
 
     /**
-     * @brief Handles the reply if the received message is an Error Info Report CAN message
+     * @brief Handles the reply if the received message is an Error Info Report CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      *
      * @return none
      */
@@ -253,9 +253,9 @@ extern "C" {
 
 
     /**
-     * @brief Handles the reply if the received message is a CID CAN message
+     * @brief Handles the reply if the received message is a CID CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
      *
      * @return none
      */

@@ -65,22 +65,22 @@ extern "C"
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the Alias Mapping buffers
+     * @brief Initializes the Alias Mapping buffers.
      *
      * @param none
      *
      * @return none
      *
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void AliasMappings_initialize(void);
 
     /**
-     * @brief Allows access to the Alias Mapping Buffer itself
+     * @brief Allows access to the Alias Mapping Buffer itself.
      *
      * @param none
      *
-     * @return Pointer to the alias message buffer or NULL if it fails
+     * @return Pointer to the alias message buffer or NULL if it fails.
      */
     extern alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void);
 
@@ -96,45 +96,45 @@ extern "C"
 
     /**
      * @brief Registers a new Alias/NodeID pair.  If the NodeID exists then the old Alias is
-     * replaced by the passed one
+     * replaced by the passed one.
      *
-     * @param uint16_t alias - The Alias to store
-     * @param node_id_t node_id - The NodeID to store
+     * @param uint16_t alias - The Alias to store.
+     * @param node_id_t node_id - The NodeID to store.
      *
-     * @return Pointer to the newly registered AliasMapping or NULL if fails
+     * @return Pointer to the newly registered AliasMapping or NULL if fails.
      */
     extern alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id);
 
     /**
-     * @brief Deregisters an existing Alias/NodeID pair.  If the pair does not exist it does nothing
+     * @brief Deregisters an existing Alias/NodeID pair.  If the pair does not exist it does nothing.
      *
-     * @param uint16_t alias - The Alias to unregister
+     * @param uint16_t alias - The Alias to unregister.
      *
      * @return none
      */
     extern void AliasMappings_unregister(uint16_t alias);
 
     /**
-     * @brief Finds a Alias/NodeID pair that matches the Alias passed
+     * @brief Finds a Alias/NodeID pair that matches the Alias passed.
      *
-     * @param uint16_t alias - The Alias to search for
+     * @param uint16_t alias - The Alias to search for.
      *
-     * @return Pointer to the Alias Mapping pair if found, else NULL
+     * @return Pointer to the Alias Mapping pair if found, else NULL.
      */
     extern alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias);
 
     /**
-     * @brief Finds a Alias/NodeID pair that matches the NodeID passed
+     * @brief Finds a Alias/NodeID pair that matches the NodeID passed.
      *
-     * @param uint16_t alias - The NodeID to search for
+     * @param uint16_t alias - The NodeID to search for.
      *
-     * @return Pointer to the Alias Mapping pair if found, else NULL
+     * @return Pointer to the Alias Mapping pair if found, else NULL.
      *
      */
     extern alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id);
 
     /**
-     * @brief Released all stored Alias Mapping pairs
+     * @brief Released all stored Alias Mapping pairs.
      *
      * @param none
      *
