@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements handlers for use by the CAN Transmit (Tx) statemachine <a class="el" href="can__tx__statemachine_8h.html">can_tx_statemachine.h</a>.  
+<a href="#details">More...</a></p>
+
 <p><a href="can__tx__message__handler_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -108,28 +111,28 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a4bde37fc36f08ccbbb7dd4a9a17b2713" id="r_a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize</a> (const <a class="el" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a> *interface_can_tx_message_handler)</td></tr>
+<tr class="memdesc:a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Transmit (Tx) state machine handlers.  <br /></td></tr>
 <tr class="separator:a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79d6a3b6fd0db4921dc8630934e68bba" id="r_a79d6a3b6fd0db4921dc8630934e68bba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79d6a3b6fd0db4921dc8630934e68bba">CanTxMessageHandler_addressed_msg_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a79d6a3b6fd0db4921dc8630934e68bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an addressed OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:a79d6a3b6fd0db4921dc8630934e68bba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0281e625469a52aec7f1e85a464c6222" id="r_a0281e625469a52aec7f1e85a464c6222"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0281e625469a52aec7f1e85a464c6222">CanTxMessageHandler_unaddressed_msg_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a0281e625469a52aec7f1e85a464c6222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an unaddressed OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:a0281e625469a52aec7f1e85a464c6222"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9223150ff58342659336a51f75caf5a" id="r_aa9223150ff58342659336a51f75caf5a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9223150ff58342659336a51f75caf5a">CanTxMessageHandler_datagram_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:aa9223150ff58342659336a51f75caf5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a datagram OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:aa9223150ff58342659336a51f75caf5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a156df311b2fa14eea4912334cda0ca78" id="r_a156df311b2fa14eea4912334cda0ca78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a156df311b2fa14eea4912334cda0ca78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a stream OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:a156df311b2fa14eea4912334cda0ca78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa99ced3d0e3dc246de366c88031b6596" id="r_aa99ced3d0e3dc246de366c88031b6596"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa99ced3d0e3dc246de366c88031b6596">CanTxMessageHandler_can_frame</a> (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:aa99ced3d0e3dc246de366c88031b6596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an CAN message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:aa99ced3d0e3dc246de366c88031b6596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Aug 2025 </dd></dl>
+<div class="textblock"><p>Implements handlers for use by the CAN Transmit (Tx) statemachine <a class="el" href="can__tx__statemachine_8h.html">can_tx_statemachine.h</a>. </p>
+<p>As CAN and OpenLcb/LCC messages are transmitted these handlers transmit different types of messages. <br  />
+ </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a4bde37fc36f08ccbbb7dd4a9a17b2713" name="a4bde37fc36f08ccbbb7dd4a9a17b2713"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">&#9670;&#160;</a></span>CanTxMessageHandler_initialize()</h2>
@@ -153,6 +156,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the CAN Transmit (Tx) state machine handlers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__tx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...">interface_can_tx_message_handler_t</a> *interface_can_tx_message_handler - Pointer to a <a class="el" href="structinterface__can__tx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...">interface_can_tx_message_handler_t</a> struct containing the functions that this module requires.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
 
 </div>
 </div>
@@ -188,6 +201,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends an addressed OpenLcb/LCC message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
 <a id="a0281e625469a52aec7f1e85a464c6222" name="a0281e625469a52aec7f1e85a464c6222"></a>
@@ -221,6 +245,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends an unaddressed OpenLcb/LCC message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -256,6 +291,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a datagram OpenLcb/LCC message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
 <a id="a156df311b2fa14eea4912334cda0ca78" name="a156df311b2fa14eea4912334cda0ca78"></a>
@@ -290,6 +336,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a stream OpenLcb/LCC message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
 <a id="aa99ced3d0e3dc246de366c88031b6596" name="aa99ced3d0e3dc246de366c88031b6596"></a>
@@ -314,6 +371,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends an CAN message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*can_msg_worker - Pointer to a CAN message to transmit</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>

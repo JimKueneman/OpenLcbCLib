@@ -141,6 +141,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a legacy SNIP CAN frame. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#acb044ac13496dded9928edbdd6fa8927" title="Handles a frame of a multiple CAN frame OpenLcb/LCC SNIP message that is being sent in the original P...">CanRxMessageHandler_can_legacy_snip()</a> </dd></dl>
 
 </div>
 </div>
@@ -155,6 +156,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that is a complete message using a single CAN frame. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#afa5ab07059b228d93331a4871c64f0aa" title="Handles a frame of an OpenLcb/LCC message that is a complete message.">CanRxMessageHandler_single_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -169,6 +171,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that is the first of multiple frames required to make a complete message. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#afd9720395ccc0ac4c72018bb248c62b8" title="Handles a first frame of an OpenLcb/LCC message that is sent multiple CAN frames.">CanRxMessageHandler_first_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -183,6 +186,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that is in the middle of several frames required to make a complete message. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#a27b7356b73282d498d6c6d7066d4ccdd" title="Handles a middle frame of an OpenLcb/LCC message that is sent multiple CAN frames.">CanRxMessageHandler_middle_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -197,6 +201,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that is the last of multiple required to make a complete message. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#a11fa1d9a015fb786516b00eaa93aa3d4" title="Handles the last frame of an OpenLcb/LCC message that is sent multiple CAN frames.">CanRxMessageHandler_last_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -211,6 +216,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that is used in the Stream Protocol. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#a914e07fbe6d07d1c715d86d9045b66d5" title="Handles a stream frame of an OpenLcb/LCC message.">CanRxMessageHandler_stream_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -225,6 +231,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Reserve ID . </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#af5ab163a26257b020cff610f592a13d4" title="Handles the reply if the received message is a RID CAN message.">CanRxMessageHandler_rid_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -239,6 +246,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Map Definition . </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#ae0edca70265b5777d972dfe607776276" title="Handles the reply if the received message is an AMD CAN message.">CanRxMessageHandler_amd_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -253,6 +261,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Mapping Enquiry . </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#ad6a95cd9b0b64f9bce258072279e3e6e" title="Handles the reply if the received message is an AME CAN message.">CanRxMessageHandler_ame_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -267,6 +276,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Mapping Reply . </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#a46f286844287b488746bab5131c404f0" title="Handles the reply if the received message is an AMR CAN message.">CanRxMessageHandler_amr_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -281,6 +291,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Error Info Reporting . </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#a9c11e35eed23a505787d5c49b58dfd83" title="Handles the reply if the received message is an Error Info Report CAN message.">CanRxMessageHandler_error_info_report_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -295,6 +306,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Check ID </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__rx__message__handler_8h.html#aa958ec2e603dabb8eed0c6c0e0bacc94" title="Handles the reply if the received message is a CID CAN message.">CanRxMessageHandler_cid_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -324,6 +336,8 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to a function for an Application to be notified when a CAN frame is received. </p><dl class="section note"><dt>Note</dt><dd><b>Optional</b> application callback. Defaults to NULL </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This is called in the context of the Application defined interface to the CAN hardware so it it typically called from an interrupt of thread. Be care of what is done in the callback and make sure it does not consume too many clock cycles. </dd></dl>
 
 </div>
 </div>

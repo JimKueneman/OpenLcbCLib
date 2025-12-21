@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements a state machine actually a large switch statement that decodes the incoming message and calls the correct the <a class="el" href="can__tx__message__handler_8h.html" title="Implements handlers for use by the CAN Transmit (Tx) statemachine can_tx_statemachine....">can_tx_message_handler.h</a> handler functions.  
+<a href="#details">More...</a></p>
+
 <p><a href="can__tx__statemachine_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -108,23 +111,18 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:acbe458eae799fff061319448b1855b3d" id="r_acbe458eae799fff061319448b1855b3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbe458eae799fff061319448b1855b3d">CanTxStatemachine_initialize</a> (const <a class="el" href="structinterface__can__tx__statemachine__t.html">interface_can_tx_statemachine_t</a> *interface_can_tx_statemachine)</td></tr>
+<tr class="memdesc:acbe458eae799fff061319448b1855b3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Receive (Rx) state machine.  <br /></td></tr>
 <tr class="separator:acbe458eae799fff061319448b1855b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33de06b5158f3e1944cb5ea977a56e9e" id="r_a33de06b5158f3e1944cb5ea977a56e9e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33de06b5158f3e1944cb5ea977a56e9e">CanTxStatemachine_send_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:a33de06b5158f3e1944cb5ea977a56e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:a33de06b5158f3e1944cb5ea977a56e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd862abdc607379d8c2854168949236f" id="r_acd862abdc607379d8c2854168949236f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd862abdc607379d8c2854168949236f">CanTxStatemachine_send_can_message</a> (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:acd862abdc607379d8c2854168949236f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
 <tr class="separator:acd862abdc607379d8c2854168949236f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Takes an OpenLcb message structure and splits it into CAN frames to transmit if necessary, else it packs up the CAN frame from the message structure and send it to the CAN Driver to transmit on the physical layer.</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<div class="textblock"><p>Implements a state machine actually a large switch statement that decodes the incoming message and calls the correct the <a class="el" href="can__tx__message__handler_8h.html" title="Implements handlers for use by the CAN Transmit (Tx) statemachine can_tx_statemachine....">can_tx_message_handler.h</a> handler functions. </p>
+<p>This is the core transmit functionality of the CAN frames. It either sends a CAN message directly, which is a direct translation to the CAN physical layer or sends an OpenLcb/LCC message which may require being broken up into multiple CAN frames. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="acbe458eae799fff061319448b1855b3d" name="acbe458eae799fff061319448b1855b3d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbe458eae799fff061319448b1855b3d">&#9670;&#160;</a></span>CanTxStatemachine_initialize()</h2>
@@ -148,6 +146,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the CAN Receive (Rx) state machine. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__tx__statemachine__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_statemachine....">interface_can_tx_statemachine_t</a> *interface_can_tx_statemachine - Pointer to a <a class="el" href="structinterface__can__tx__statemachine__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_statemachine....">interface_can_tx_statemachine_t</a> struct containing the functions that this module requires.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
 
 </div>
 </div>
@@ -174,6 +182,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends an OpenLcb/LCC message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
 <a id="acd862abdc607379d8c2854168949236f" name="acd862abdc607379d8c2854168949236f"></a>
@@ -198,6 +215,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends an OpenLcb/LCC message on the CAN physical layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structcan__msg__t.html">can_msg_t</a></td><td>*can_msg - Pointer to the CAN message transmit</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>

@@ -111,7 +111,7 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aaa035b3a9b3535b413f441c4cb6d741f" id="r_aaa035b3a9b3535b413f441c4cb6d741f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa035b3a9b3535b413f441c4cb6d741f">CanRxMessageHandler_initialize</a> (const <a class="el" href="structinterface__can__rx__message__handler__t.html">interface_can_rx_message_handler_t</a> *interface_can_frame_message_handler)</td></tr>
-<tr class="memdesc:aaa035b3a9b3535b413f441c4cb6d741f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Receive (Rx) Statemachine.  <br /></td></tr>
+<tr class="memdesc:aaa035b3a9b3535b413f441c4cb6d741f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Receive (Rx) Message Handlers.  <br /></td></tr>
 <tr class="separator:aaa035b3a9b3535b413f441c4cb6d741f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd9720395ccc0ac4c72018bb248c62b8" id="r_afd9720395ccc0ac4c72018bb248c62b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd9720395ccc0ac4c72018bb248c62b8">CanRxMessageHandler_first_frame</a> (<a class="el" href="structcan__msg__t.html">can_msg_t</a> *can_msg, uint8_t offset, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td></tr>
 <tr class="memdesc:afd9720395ccc0ac4c72018bb248c62b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a first frame of an OpenLcb/LCC message that is sent multiple CAN frames.  <br /></td></tr>
@@ -177,7 +177,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Receive (Rx) Statemachine. </p>
+<p>Initializes the CAN Receive (Rx) Message Handlers. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__rx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_rx_message_handl...">interface_can_rx_message_handler_t</a> *interface_can_frame_message_handler - Pointer to a <a class="el" href="structinterface__can__rx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_rx_message_handl...">interface_can_rx_message_handler_t</a> struct containing the functions that this module requires.</td></tr>
