@@ -31,7 +31,7 @@
  *
  * @brief Implements the core buffers for CAN frames.
  *
- * The CAN FIFO buffer is an array of pointers to CAN frame buffer ( \ref can_msg_t) The are allocated and freed
+ * The CAN buffer store is an array of pointers to CAN frame buffer ( \ref can_msg_t) The are allocated and freed
  * through function calls \ref CanBufferStore_allocate_buffer() and \ref CanBufferStore_free_buffer().
  *
  * @note Applications typically only need to access the Initialize function in this module.

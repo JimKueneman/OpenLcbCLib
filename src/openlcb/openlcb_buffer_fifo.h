@@ -22,24 +22,26 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * 15 Dec 2025
  * Copyright (c) 2025, Jim Kueneman
  */
 
- /** 
+/**
+ *
+ * @brief Implements a FIFO buffer for OpenLcb/Lcc message structures.
+ *
+ * OpenLcb/LCC messages as allocated from the buffer store (\ref openlcb_buffer_store.h) then placed into the FIFO by the
+ * physical layer receive state machine and then the main OpenLcb/LCC loop (\ref openlcb_main_statemachine.h) pulls
+ * them out one at a time and dispatches them to the handlers.
+ *
+ * @note Applications typically only need to access the Initialize function in this module.
  * 
- * Implementation of the FIFO where the OpenLcb messages are placed by the receive
- * module.  The main loop pulls them out one at a time and dispatched them to the handlers. 
- * 
- * @note Applications typically have no reason to access these buffers directly, 
- * they should use the helpers to send messages in \ref openlcb_application.h 
- * 
- * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * @warning The physical layer receive state machines and 100ms timer access these buffers and typically
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the
  * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
- * @file openlcb_buffer_list.h
+ *
+ * @file openlcb_buffer_fifo.h
  *
  */
 
@@ -59,13 +61,13 @@ extern "C" {
 #endif /* __cplusplus */
     
     /**
-     * @brief Initializes the OpenLcb Message Buffer FIFO<br>
+     * @brief Initializes the OpenLcb Message Buffer FIFO
      * 
      * @param none
      * 
      * @return none
      * 
-     * @note This must always be called during application initialization
+     * @attention This must always be called during application initialization
      */
     extern void OpenLcbBufferFifo_initialize(void);
     

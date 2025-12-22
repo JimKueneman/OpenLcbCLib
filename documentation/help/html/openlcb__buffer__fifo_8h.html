@@ -96,13 +96,15 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements a FIFO buffer for OpenLcb/Lcc message structures.  
+<a href="#details">More...</a></p>
+
 <p><a href="openlcb__buffer__fifo_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a8a001a3bc68d6587d8d9b11c694e937e" id="r_a8a001a3bc68d6587d8d9b11c694e937e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a001a3bc68d6587d8d9b11c694e937e">OpenLcbBufferFifo_initialize</a> (void)</td></tr>
-<tr class="memdesc:a8a001a3bc68d6587d8d9b11c694e937e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Message Buffer FIFO<br  />
-  <br /></td></tr>
+<tr class="memdesc:a8a001a3bc68d6587d8d9b11c694e937e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Message Buffer FIFO.  <br /></td></tr>
 <tr class="separator:a8a001a3bc68d6587d8d9b11c694e937e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e461994b9ea26603691ef8bddce9686" id="r_a3e461994b9ea26603691ef8bddce9686"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e461994b9ea26603691ef8bddce9686">OpenLcbBufferFifo_push</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *new_msg)</td></tr>
 <tr class="memdesc:a3e461994b9ea26603691ef8bddce9686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pushes a new OpenLcb message into the FIFO buffer that was allocated see <a class="el" href="openlcb__buffer__store_8h.html#a56857b0d3eaed4ee651e9ac794cad201">OpenLcbBufferStore_allocate_buffer()</a>  <br /></td></tr>
@@ -117,7 +119,12 @@ Functions</h2></td></tr>
 <tr class="memdesc:a53c7bb1734270e37eeec4a1d180306cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of messages in the FIFO buffer.  <br /></td></tr>
 <tr class="separator:a53c7bb1734270e37eeec4a1d180306cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Implements a FIFO buffer for OpenLcb/Lcc message structures. </p>
+<p>OpenLcb/LCC messages as allocated from the buffer store (<a class="el" href="openlcb__buffer__store_8h.html">openlcb_buffer_store.h</a>) then placed into the FIFO by the physical layer receive state machine and then the main OpenLcb/LCC loop (<a class="el" href="openlcb__main__statemachine_8h.html">openlcb_main_statemachine.h</a>) pulls them out one at a time and dispatches them to the handlers.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The physical layer receive state machines and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a8a001a3bc68d6587d8d9b11c694e937e" name="a8a001a3bc68d6587d8d9b11c694e937e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8a001a3bc68d6587d8d9b11c694e937e">&#9670;&#160;</a></span>OpenLcbBufferFifo_initialize()</h2>
 
@@ -141,8 +148,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the OpenLcb Message Buffer FIFO<br  />
- </p>
+<p>Initializes the OpenLcb Message Buffer FIFO. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">none</td><td></td></tr>
@@ -150,7 +156,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>

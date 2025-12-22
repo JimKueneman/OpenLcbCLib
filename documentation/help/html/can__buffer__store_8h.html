@@ -124,7 +124,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the core buffers for CAN frames. </p>
-<p>The CAN FIFO buffer is an array of pointers to CAN frame buffer ( <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> and <a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer()</a>.</p>
+<p>The CAN buffer store is an array of pointers to CAN frame buffer ( <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> and <a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer()</a>.</p>
 <dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>

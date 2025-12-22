@@ -96,20 +96,21 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements the core buffers for OpenLcb/LCC message buffers.  
+<a href="#details">More...</a></p>
+
 <p><a href="openlcb__buffer__store_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:aaa929fa9f3796aa554fb29771116b864" id="r_aaa929fa9f3796aa554fb29771116b864"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa929fa9f3796aa554fb29771116b864">OpenLcbBufferStore_initialize</a> (void)</td></tr>
-<tr class="memdesc:aaa929fa9f3796aa554fb29771116b864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Buffer Store<br  />
-  <br /></td></tr>
+<tr class="memdesc:aaa929fa9f3796aa554fb29771116b864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Buffer Store.  <br /></td></tr>
 <tr class="separator:aaa929fa9f3796aa554fb29771116b864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56857b0d3eaed4ee651e9ac794cad201" id="r_a56857b0d3eaed4ee651e9ac794cad201"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56857b0d3eaed4ee651e9ac794cad201">OpenLcbBufferStore_allocate_buffer</a> (<a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> payload_type)</td></tr>
 <tr class="memdesc:a56857b0d3eaed4ee651e9ac794cad201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new buffer of the type passed.  <br /></td></tr>
 <tr class="separator:a56857b0d3eaed4ee651e9ac794cad201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a678e335cc01529581d2b7e69ae0ad023" id="r_a678e335cc01529581d2b7e69ae0ad023"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:a678e335cc01529581d2b7e69ae0ad023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the buffer so it can be reused.<br  />
-  <br /></td></tr>
+<tr class="memdesc:a678e335cc01529581d2b7e69ae0ad023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the buffer so it can be reused.  <br /></td></tr>
 <tr class="separator:a678e335cc01529581d2b7e69ae0ad023"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8a5aa017d1dc54ceda7f0fa7c47d709" id="r_ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8a5aa017d1dc54ceda7f0fa7c47d709">OpenLcbBufferStore_basic_messages_allocated</a> (void)</td></tr>
 <tr class="memdesc:ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Basic messages currently allocated in the buffer store.  <br /></td></tr>
@@ -144,23 +145,10 @@ Functions</h2></td></tr>
 <tr class="separator:ad94eea5a323ffed37a490fdf71ea9d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h2><a class="anchor" id="Description"></a>
-Description</h2>
-<p>Implements the core buffers for normal, snip, datagram, and stream length buffers. The FIFO and List buffers are arrays of pointers to these core buffers that are allocated and freed. <br  />
-</p>
-<dl class="section note"><dt>Note</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason.</dd></dl>
-<h2><a class="anchor" id="License"></a>
-License</h2>
-<p>All rights reserved.</p>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025, Jim Kueneman </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>14 Dec 2025 </dd></dl>
+<div class="textblock"><p>Implements the core buffers for OpenLcb/LCC message buffers. </p>
+<p>The OpenLcb/LCC buffer store is an array of pointers to OpenLcb/LCC buffers ( <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#a56857b0d3eaed4ee651e9ac794cad201">OpenLcbBufferStore_allocate_buffer()</a> and <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The Physical Layer Statemachines and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="aaa929fa9f3796aa554fb29771116b864" name="aaa929fa9f3796aa554fb29771116b864"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa929fa9f3796aa554fb29771116b864">&#9670;&#160;</a></span>OpenLcbBufferStore_initialize()</h2>
@@ -185,8 +173,7 @@ License</h2>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the OpenLcb Buffer Store<br  />
- </p>
+<p>Initializes the OpenLcb Buffer Store. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">none</td><td></td></tr>
@@ -194,7 +181,7 @@ License</h2>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This must always be called during application initialization </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -255,8 +242,7 @@ License</h2>
 </table>
 </div><div class="memdoc">
 
-<p>Frees the buffer so it can be reused.<br  />
- </p>
+<p>Frees the buffer so it can be reused. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*msg [in] - Pointer to a message to be freed</td></tr>

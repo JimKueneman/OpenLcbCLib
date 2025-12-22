@@ -22,28 +22,30 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * 15 Dec 2025
  * Copyright (c) 2025, Jim Kueneman
  */
 
- /** 
- * 
- * A buffer list that can hold openlcb message structures.  Used to hold
- * messages that are coming in using a CAN physical layer adaptation of the openlcb 
+/**
+ *
+ * @brief Implements a Linear search buffer list for OpenLcb/LCC message structures.
+ *
+ * A buffer list that can hold OpenLcb/LCC message structures.  Used to hold
+ * messages that are coming in using a physical layer adaptation of the OpenLcb/LCC  
  * message where it can be sent in 1 or many frames.  This buffer can hold partially 
  * received messages until they are fully assembled 
+ *
+ * @note Applications typically only need to access the Initialize function in this module.
  * 
- * @note Applications typically have no reason to access these buffers directly, 
- * they should use the helpers to send messages in \ref openlcb_application.h 
- * 
- * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
+ * @warning The physical layer receive state machines and 100ms timer access these buffers and typically
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the
  * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
+ *
  * @file openlcb_buffer_list.h
  *
  */
+
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
@@ -61,13 +63,13 @@ extern "C"
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the OpenLcb Message Buffer List<br>
+     * @brief Initializes the OpenLcb Message Buffer List
      * 
      * @param none
      * 
      * @return none
      * 
-     * @note This must always be called during application initialization
+     * @attention This must always be called during application initialization
      */
     extern void OpenLcbBufferList_initialize(void);
 

@@ -1,17 +1,4 @@
-/** 
- * 
- * @subsection Description
- * 
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are
- * allocated and freed.  
- * 
- * @note The CAN Receive Statemachine and 100ms timer access these buffers and typically 
- * run within interrupts and/or threads. Care must be taken to Pause and Resume the 
- * interrupts or threads if the main loop needs to access the buffers for any reason.
- * 
- *  
- * @subsection License
+/*
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,13 +22,28 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * @copyright Copyright (c) 2025, Jim Kueneman
- * @author Jim Kueneman
- * @date 14 Dec 2025
+ *
+ * 14 Dec 2025
+ * Copyright (c) 2025, Jim Kueneman
+ */
+
+/**
+ *
+ * @brief Implements the core buffers for OpenLcb/LCC message buffers.
+ *
+ * The OpenLcb/LCC buffer store is an array of pointers to OpenLcb/LCC buffers ( \ref openlcb_msg_t) The are allocated and freed
+ * through function calls \ref OpenLcbBufferStore_allocate_buffer() and \ref OpenLcbBufferStore_free_buffer().
+ *
+ * @note Applications typically only need to access the Initialize function in this module.
+ *
+ * @warning The Physical Layer Statemachines and 100ms timer access these buffers and typically
+ * run within interrupts and/or threads. Care must be taken to Pause and Resume the
+ * interrupts or threads if the main loop needs to access the buffers for any reason.
+ *
  * @file openlcb_buffer_store.h
  *
  */
+
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
@@ -58,13 +60,13 @@ extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the OpenLcb Buffer Store<br>
+     * @brief Initializes the OpenLcb Buffer Store
      * 
      * @param none
      * 
      * @return none
      * 
-     * @note This must always be called during application initialization
+     * @attention This must always be called during application initialization
      */
     extern void OpenLcbBufferStore_initialize(void);
 
@@ -78,7 +80,7 @@ extern "C" {
     extern openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type);
 
     /**
-     * @brief Frees the buffer so it can be reused.<br>
+     * @brief Frees the buffer so it can be reused.
      * 
      * @param openlcb_msg_t *msg [in] - Pointer to a message to be freed
      * 
