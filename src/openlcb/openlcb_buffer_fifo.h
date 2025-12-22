@@ -78,7 +78,7 @@ extern "C" {
      * 
      * @param openlcb_msg_t *new_msg [in] - Pointer to a message allocated from the OpenLcb Buffer Pool
      * 
-     * @return *openlcb_msg_t - Pointer to the message or NULL if it fails
+     * @return Pointer to the message or NULL if it fails
      */
     extern openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
  
@@ -89,7 +89,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return *openlcb_msg_t - Pointer to the message or NULL if the buffer is empty
+     * @return Pointer to the message or NULL if the buffer is empty
      */
     extern openlcb_msg_t *OpenLcbBufferFifo_pop(void);
     
@@ -99,7 +99,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return bool true if there is at least one message, false if the list is empty
+     * @return True if there is at least one message, false if the list is empty
      */
     extern bool OpenLcbBufferFifo_is_empty(void);
     
@@ -109,7 +109,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t the number of messages in the buffer
+     * @return The number of messages in the buffer
      */
     extern uint16_t OpenLcbBufferFifo_get_allocated_count(void);
     

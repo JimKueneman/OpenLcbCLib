@@ -75,7 +75,7 @@ extern "C" {
      * 
      * @param payload_type_enum payload_type [in] - Type of buffer that is requested to be allocated (Basic, SNIP, Datagram, Stream)
      * 
-     * @return *openlcb_msg_t - Pointer to the message buffer or NULL if it fails
+     * @return Pointer to the message buffer or NULL if it fails
      */
     extern openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type);
 
@@ -98,7 +98,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Number of Basic sized messages currently allocated
+     * @return Number of Basic sized messages currently allocated
      */
     extern uint16_t OpenLcbBufferStore_basic_messages_allocated(void);
 
@@ -108,7 +108,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Maximum number of Basic sized messages that have been allocated currently
+     * @return Maximum number of Basic sized messages that have been allocated currently
      */
     extern uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void);
 
@@ -117,7 +117,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Number of Datagram sized messages currently allocated
+     * @return Number of Datagram sized messages currently allocated
      */
     extern uint16_t OpenLcbBufferStore_datagram_messages_allocated(void);
 
@@ -127,7 +127,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Maximum number of Datagram sized messages that have been allocated currently
+     * @return Maximum number of Datagram sized messages that have been allocated currently
      */
     extern uint16_t OpenLcbBufferStore_datagram_messages_max_allocated(void);
 
@@ -136,7 +136,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Number of Basic sized messages currently allocated
+     * @return  Number of Basic sized messages currently allocated
      */
     extern uint16_t OpenLcbBufferStore_snip_messages_allocated(void);
 
@@ -146,7 +146,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Maximum number of SNIP sized messages that have been allocated currently
+     * @return Maximum number of SNIP sized messages that have been allocated currently
      */
     extern uint16_t OpenLcbBufferStore_snip_messages_max_allocated(void);
 
@@ -155,7 +155,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Number of Stream sized messages currently allocated
+     * @return Number of Stream sized messages currently allocated
      */
     extern uint16_t OpenLcbBufferStore_stream_messages_allocated(void);
 
@@ -165,7 +165,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return uint16_t - Maximum number of Stream sized messages that have been allocated currently
+     * @return Maximum number of Stream sized messages that have been allocated currently
      */
     extern uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void);
 

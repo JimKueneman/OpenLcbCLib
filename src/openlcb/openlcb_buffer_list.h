@@ -80,7 +80,7 @@ extern "C"
      * 
      * @param openlcb_msg_t *new_msg [in] - Pointer to a message allocated from the OpenLcb Buffer Pool
      * 
-     * @return *openlcb_msg_t - Pointer to the message or NULL if it fails
+     * @return Pointer to the message or NULL if it fails
      */
     extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
@@ -92,7 +92,7 @@ extern "C"
      * @param uint16_t dest_alias   [in] - the CAN alias of the node receiving the message frame
      * @param uint16_t mti          [in] - the CAN MTI code of the message frame type
      * 
-     * @return *openlcb_msg_t - Pointer to the message or NULL if the buffer is empty
+     * @return Pointer to the message or NULL if the buffer is empty
      */
     extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
@@ -103,7 +103,7 @@ extern "C"
      * 
      * @param openlcb_msg_t *new_msg [in] - Pointer to a message to be released from the list
      * 
-     * @return *openlcb_msg_t - Pointer to the message or NULL if the message does not exist
+     * @return Pointer to the message or NULL if the message does not exist
      */
     extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 
@@ -113,7 +113,7 @@ extern "C"
      * 
      * @param uint16_t index [in] - Index of the message requested
      * 
-     * @return *openlcb_msg_t - Pointer to the message at the passed index or NULL if the index is out of bounds or the list slot is empty
+     * @return Pointer to the message at the passed index or NULL if the index is out of bounds or the list slot is empty
      */
     extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
@@ -123,7 +123,7 @@ extern "C"
      * 
      * @param none
      * 
-     * @return bool - True if the list is empty False if there is a least one non NULL message pointer in the list
+     * @return True if the list is empty False if there is a least one non NULL message pointer in the list
      */
     extern bool OpenLcbBufferList_is_empty(void);
 
