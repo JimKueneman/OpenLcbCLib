@@ -163,7 +163,7 @@ extern "C"
     /**
      * @brief Handles a first frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received
      *
      * @return none
      * 

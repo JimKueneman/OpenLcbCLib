@@ -153,7 +153,7 @@ extern "C" {
     /**
      * @brief Sends an CAN message on the CAN physical layer
      *
-     * @param can_msg_t *can_msg_worker - Pointer to a CAN message to transmit
+     * @param can_msg_t *can_msg_worker - Pointer to a CAN buffer message to transmit
      * 
      * @return none
      *

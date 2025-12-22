@@ -120,7 +120,7 @@ extern "C" {
     /**
      * @brief Handles a first frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -134,7 +134,7 @@ extern "C" {
     /**
      * @brief Handles a middle frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      *
@@ -146,7 +146,7 @@ extern "C" {
     /**
      * @brief Handles the last frame of an OpenLcb/LCC message that is sent multiple CAN frames.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      *
@@ -158,7 +158,7 @@ extern "C" {
     /**
      * @brief Handles a frame of an OpenLcb/LCC message that is a complete message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -178,7 +178,7 @@ extern "C" {
      * in the first 2 bytes of the CAN data.  This encoding allowed this message to be handled using the first/middle/last 
      * handlers above.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -192,7 +192,7 @@ extern "C" {
     /**
      * @brief Handles a stream frame of an OpenLcb/LCC message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      * @param uint8_t offset - Offset in the Data array where the actual data begins.  Some 
      * messages place a target Alias in the first 2 bytes and some do not.
      * @param payload_type_enum data_type - Defines what data type will be required for this OpenLcb/LCC message.  
@@ -205,7 +205,7 @@ extern "C" {
     /**
      * @brief Handles the reply if the received message is a RID CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received
      *
      * @return none
      */
@@ -215,7 +215,7 @@ extern "C" {
     /**
      * @brief Handles the reply if the received message is an AMD CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      *
      * @return none
      */
@@ -225,7 +225,7 @@ extern "C" {
     /**
      * @brief Handles the reply if the received message is an AME CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      *
      * @return none
      */
@@ -235,7 +235,7 @@ extern "C" {
     /**
      * @brief Handles the reply if the received message is an AMR CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      *
      * @return none
      */
@@ -245,7 +245,7 @@ extern "C" {
     /**
      * @brief Handles the reply if the received message is an Error Info Report CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      *
      * @return none
      */
@@ -255,7 +255,7 @@ extern "C" {
     /**
      * @brief Handles the reply if the received message is a CID CAN message.
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN frame that was received.
+     * @param can_msg_t *can_msg - Pointer to the CAN frame buffer that was received.
      *
      * @return none
      */

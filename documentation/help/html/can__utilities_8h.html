@@ -96,50 +96,55 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Implements utility functions for manipulating CAN frame buffers.  
+<a href="#details">More...</a></p>
+
 <p><a href="can__utilities_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:abfe5743512ca91b1c44460250e347949" id="r_abfe5743512ca91b1c44460250e347949"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfe5743512ca91b1c44460250e347949">CanUtilities_clear_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:abfe5743512ca91b1c44460250e347949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the fields of the pointer to a can_msg_t structure to zero/NULL.  <br /></td></tr>
 <tr class="separator:abfe5743512ca91b1c44460250e347949"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a569505bc24481994b70112a655190be2" id="r_a569505bc24481994b70112a655190be2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a569505bc24481994b70112a655190be2">CanUtilities_load_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)</td></tr>
+<tr class="memdesc:a569505bc24481994b70112a655190be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initalizes the fields of the pointer to the passed parameters.  <br /></td></tr>
 <tr class="separator:a569505bc24481994b70112a655190be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c8cdd807ea3471409c6ae74a8472bfb" id="r_a1c8cdd807ea3471409c6ae74a8472bfb"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c8cdd807ea3471409c6ae74a8472bfb">CanUtilities_copy_node_id_to_payload</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint64_t node_id, uint8_t start_offset)</td></tr>
+<tr class="memdesc:a1c8cdd807ea3471409c6ae74a8472bfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and payload size fields of the passed CAN frame buffer with the passed Node ID starting at the passed offset in the array.  <br /></td></tr>
 <tr class="separator:a1c8cdd807ea3471409c6ae74a8472bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55b499e2a3270be5902c392ca29d1ce5" id="r_a55b499e2a3270be5902c392ca29d1ce5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55b499e2a3270be5902c392ca29d1ce5">CanUtilities_copy_openlcb_payload_to_can_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint16_t openlcb_start_index, uint8_t can_start_index)</td></tr>
+<tr class="memdesc:a55b499e2a3270be5902c392ca29d1ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and payload size fields of the passed OpenLcb/LCC message buffer to the payload fields in the passed CAN frame buffer at the offsets.  <br /></td></tr>
 <tr class="separator:a55b499e2a3270be5902c392ca29d1ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2591481bd835aa02f5616b6d67e5fdaa" id="r_a2591481bd835aa02f5616b6d67e5fdaa"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2591481bd835aa02f5616b6d67e5fdaa">CanUtilities_append_can_payload_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint8_t can_start_index)</td></tr>
+<tr class="memdesc:a2591481bd835aa02f5616b6d67e5fdaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and payload size fields of the passed CAN frame buffer with the payload fields in the passed OpenLcb/LCC message buffer at the offsets.  <br /></td></tr>
 <tr class="separator:a2591481bd835aa02f5616b6d67e5fdaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6152e06386e4950e1bb9af82e063355f" id="r_a6152e06386e4950e1bb9af82e063355f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6152e06386e4950e1bb9af82e063355f">CanUtilities_copy_64_bit_to_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint64_t data)</td></tr>
-<tr class="separator:a6152e06386e4950e1bb9af82e063355f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a261fcacdd87c3640cca2c4bf62245af9" id="r_a261fcacdd87c3640cca2c4bf62245af9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a261fcacdd87c3640cca2c4bf62245af9">CanUtilities_copy_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_source, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_target)</td></tr>
-<tr class="separator:a261fcacdd87c3640cca2c4bf62245af9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03a1fdf33c2dd1f76379f018dd4b7fad" id="r_a03a1fdf33c2dd1f76379f018dd4b7fad"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03a1fdf33c2dd1f76379f018dd4b7fad">CanUtilities_extract_can_payload_as_node_id</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="separator:a03a1fdf33c2dd1f76379f018dd4b7fad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9403121e6675ba910b3686f03e74cf3" id="r_ad9403121e6675ba910b3686f03e74cf3"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9403121e6675ba910b3686f03e74cf3">CanUtilities_copy_64_bit_to_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint64_t data)</td></tr>
+<tr class="memdesc:ad9403121e6675ba910b3686f03e74cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and updates the payload size field of the passed CAN frame buffer with the passed 64 bit value.  <br /></td></tr>
+<tr class="separator:ad9403121e6675ba910b3686f03e74cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99553bad6926e671e82b1c212d0960a9" id="r_a99553bad6926e671e82b1c212d0960a9"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99553bad6926e671e82b1c212d0960a9">CanUtilities_copy_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_source, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_target)</td></tr>
+<tr class="memdesc:a99553bad6926e671e82b1c212d0960a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the payload and the payload size fields from the source passed CAN frame buffer to the target payload and the payload size fields.  <br /></td></tr>
+<tr class="separator:a99553bad6926e671e82b1c212d0960a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86921db394b08564e4c4dc437b81e255" id="r_a86921db394b08564e4c4dc437b81e255"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86921db394b08564e4c4dc437b81e255">CanUtilities_extract_can_payload_as_node_id</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:a86921db394b08564e4c4dc437b81e255"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the first 6 bytes in the passed CAN frame buffer's payload as a Node ID.  <br /></td></tr>
+<tr class="separator:a86921db394b08564e4c4dc437b81e255"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff3ed91a41bacfc9882e497c5caa330d" id="r_aff3ed91a41bacfc9882e497c5caa330d"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff3ed91a41bacfc9882e497c5caa330d">CanUtilities_extract_source_alias_from_can_identifier</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:aff3ed91a41bacfc9882e497c5caa330d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the last 3 nibbles from the identifier field in the passed CAN frame buffer.  <br /></td></tr>
 <tr class="separator:aff3ed91a41bacfc9882e497c5caa330d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ec782c47b8a21c25996367620278267" id="r_a8ec782c47b8a21c25996367620278267"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ec782c47b8a21c25996367620278267">CanUtilities_extract_dest_alias_from_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:a8ec782c47b8a21c25996367620278267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts any destination Alias ID from the CAN frame buffer.  <br /></td></tr>
 <tr class="separator:a8ec782c47b8a21c25996367620278267"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7966bc5a6bdae46b3fe8f04f42975d3" id="r_af7966bc5a6bdae46b3fe8f04f42975d3"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7966bc5a6bdae46b3fe8f04f42975d3">CanUtilities_convert_can_mti_to_openlcb_mti</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:af7966bc5a6bdae46b3fe8f04f42975d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a CAN MTI to an OpenLcb/LCC MTI from the passed CAN frame identifier.  <br /></td></tr>
 <tr class="separator:af7966bc5a6bdae46b3fe8f04f42975d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab35d2bca8422d132b04b62719e77de25" id="r_ab35d2bca8422d132b04b62719e77de25"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab35d2bca8422d132b04b62719e77de25">CanUtilities_count_nulls_in_payloads</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:ab35d2bca8422d132b04b62719e77de25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs through the payloads of the passed buffers to count how many NULLs are in both combined.  <br /></td></tr>
 <tr class="separator:ab35d2bca8422d132b04b62719e77de25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6cf0e5812d45a55473653d2b99d6718" id="r_ac6cf0e5812d45a55473653d2b99d6718"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6cf0e5812d45a55473653d2b99d6718">CanUtilities_is_openlcb_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:ac6cf0e5812d45a55473653d2b99d6718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if the passed CAN frame buffer is either a complete or partial OpenLcb/LCC message (as opposed to a CAN only message frame).  <br /></td></tr>
 <tr class="separator:ac6cf0e5812d45a55473653d2b99d6718"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60e18bfd2de54ce3e70a6ea2b560cc6e" id="r_a60e18bfd2de54ce3e70a6ea2b560cc6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60e18bfd2de54ce3e70a6ea2b560cc6e">CanUtilities_copy_node_id_to_can_payload_buffer</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, <a class="el" href="can__types_8h.html#af7e65c69ad6084a5b21698667757c8bd">payload_bytes_can_t</a> *buffer)</td></tr>
-<tr class="separator:a60e18bfd2de54ce3e70a6ea2b560cc6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-<ul>
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-</ul>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Utilities to help deal with the CAN buffers</p>
-<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<div class="textblock"><p>Implements utility functions for manipulating CAN frame buffers. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="abfe5743512ca91b1c44460250e347949" name="abfe5743512ca91b1c44460250e347949"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abfe5743512ca91b1c44460250e347949">&#9670;&#160;</a></span>CanUtilities_clear_can_message()</h2>
@@ -163,6 +168,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sets the fields of the pointer to a can_msg_t structure to zero/NULL. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to a CAN frame buffer to clear.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -238,6 +252,25 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initalizes the fields of the pointer to the passed parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to a CAN frame buffer to fill in. </td></tr>
+    <tr><td class="paramname">uint32_t</td><td>identifier - CAN MTI to load. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>payload_size - How many bytes are valid in the payload. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 1. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 2. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 3. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 4. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 5. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 6. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 7. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>byte - Payload Byte 8.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
 </div>
 </div>
 <a id="a1c8cdd807ea3471409c6ae74a8472bfb" name="a1c8cdd807ea3471409c6ae74a8472bfb"></a>
@@ -271,6 +304,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Loads the payload and payload size fields of the passed CAN frame buffer with the passed Node ID starting at the passed offset in the array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to a CAN frame buffer to load the payload. </td></tr>
+    <tr><td class="paramname">uint64_t</td><td>node_id - Node ID to load into the CAN buffers payload array. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>start_offset - Where the Node ID starts in the 8 byte array.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied. </dd></dl>
 
 </div>
 </div>
@@ -311,6 +355,18 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads the payload and payload size fields of the passed OpenLcb/LCC message buffer to the payload fields in the passed CAN frame buffer at the offsets. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to an OpenLcb/LCC buffer as the source payload. </td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to a CAN frame buffer with the target payload. </td></tr>
+    <tr><td class="paramname">uint16_t</td><td>openlcb_start_index - Where in the OpenLcb/LCC buffer payload to start copying from. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>can_start_index - Where the CAN frame buffer to start copying to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied. </dd></dl>
+
 </div>
 </div>
 <a id="a2591481bd835aa02f5616b6d67e5fdaa" name="a2591481bd835aa02f5616b6d67e5fdaa"></a>
@@ -345,10 +401,22 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads the payload and payload size fields of the passed CAN frame buffer with the payload fields in the passed OpenLcb/LCC message buffer at the offsets. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to an OpenLcb/LCC buffer as the target payload. </td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to a CAN frame buffer with the source payload. </td></tr>
+    <tr><td class="paramname">uint16_t</td><td>openlcb_start_index - Where in the OpenLcb/LCC buffer payload to start copying to. </td></tr>
+    <tr><td class="paramname">uint8_t</td><td>can_start_index - Where the CAN frame buffer to start copying from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+
 </div>
 </div>
-<a id="a6152e06386e4950e1bb9af82e063355f" name="a6152e06386e4950e1bb9af82e063355f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6152e06386e4950e1bb9af82e063355f">&#9670;&#160;</a></span>CanUtilities_copy_64_bit_to_can_message()</h2>
+<a id="ad9403121e6675ba910b3686f03e74cf3" name="ad9403121e6675ba910b3686f03e74cf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9403121e6675ba910b3686f03e74cf3">&#9670;&#160;</a></span>CanUtilities_copy_64_bit_to_can_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -357,7 +425,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool CanUtilities_copy_64_bit_to_can_message </td>
+          <td class="memname">uint8_t CanUtilities_copy_64_bit_to_can_message </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span>, </td>
         </tr>
@@ -374,10 +442,20 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads the payload and updates the payload size field of the passed CAN frame buffer with the passed 64 bit value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to a CAN frame buffer to load the payload. </td></tr>
+    <tr><td class="paramname">uint64_t</td><td>node_id - 64 bit value to load into the CAN buffers payload array.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied. </dd></dl>
+
 </div>
 </div>
-<a id="a261fcacdd87c3640cca2c4bf62245af9" name="a261fcacdd87c3640cca2c4bf62245af9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a261fcacdd87c3640cca2c4bf62245af9">&#9670;&#160;</a></span>CanUtilities_copy_can_message()</h2>
+<a id="a99553bad6926e671e82b1c212d0960a9" name="a99553bad6926e671e82b1c212d0960a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99553bad6926e671e82b1c212d0960a9">&#9670;&#160;</a></span>CanUtilities_copy_can_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -386,7 +464,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool CanUtilities_copy_can_message </td>
+          <td class="memname">uint8_t CanUtilities_copy_can_message </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg_source</em></span>, </td>
         </tr>
@@ -403,10 +481,20 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies the payload and the payload size fields from the source passed CAN frame buffer to the target payload and the payload size fields. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer with the source payload fields. </td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_target - Pointer to a CAN frame buffer with the target payload fields.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied. </dd></dl>
+
 </div>
 </div>
-<a id="a03a1fdf33c2dd1f76379f018dd4b7fad" name="a03a1fdf33c2dd1f76379f018dd4b7fad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03a1fdf33c2dd1f76379f018dd4b7fad">&#9670;&#160;</a></span>CanUtilities_extract_can_payload_as_node_id()</h2>
+<a id="a86921db394b08564e4c4dc437b81e255" name="a86921db394b08564e4c4dc437b81e255"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86921db394b08564e4c4dc437b81e255">&#9670;&#160;</a></span>CanUtilities_extract_can_payload_as_node_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -415,7 +503,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint64_t CanUtilities_extract_can_payload_as_node_id </td>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> CanUtilities_extract_can_payload_as_node_id </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>can_msg</em></span></td><td>)</td>
           <td></td>
@@ -427,6 +515,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Extracts the first 6 bytes in the passed CAN frame buffer's payload as a Node ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer with the source payload fields.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The Node ID extracted. </dd></dl>
 
 </div>
 </div>
@@ -453,6 +550,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Extracts the last 3 nibbles from the identifier field in the passed CAN frame buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer with the identifier.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The source Alias extracted from the CAN identifier. </dd></dl>
+
 </div>
 </div>
 <a id="a8ec782c47b8a21c25996367620278267" name="a8ec782c47b8a21c25996367620278267"></a>
@@ -478,6 +584,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Extracts any destination Alias ID from the CAN frame buffer. </p>
+<dl class="section note"><dt>Note</dt><dd>This function examines the frame and pulls out the destination Alias based on what type of message it is. If the message does not carry a destination Alias it return 0.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer with the identifier.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The destination Alias extracted from the CAN identifier or 0 if there is no destination carried in this frame </dd></dl>
+
 </div>
 </div>
 <a id="af7966bc5a6bdae46b3fe8f04f42975d3" name="af7966bc5a6bdae46b3fe8f04f42975d3"></a>
@@ -502,6 +618,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Converts a CAN MTI to an OpenLcb/LCC MTI from the passed CAN frame identifier. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer with the identifier.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>OpenLcb MTI that was mapped to by the CAN MTI in the identifier. </dd></dl>
 
 </div>
 </div>
@@ -532,6 +657,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Runs through the payloads of the passed buffers to count how many NULLs are in both combined. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to a OpenLcb/LCC buffer with a payload. </td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer with a payload.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of NULL bytes in both buffer payloads within the valid space defined by the payload sizes. </dd></dl>
+
 </div>
 </div>
 <a id="ac6cf0e5812d45a55473653d2b99d6718" name="ac6cf0e5812d45a55473653d2b99d6718"></a>
@@ -557,34 +692,14 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a60e18bfd2de54ce3e70a6ea2b560cc6e" name="a60e18bfd2de54ce3e70a6ea2b560cc6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60e18bfd2de54ce3e70a6ea2b560cc6e">&#9670;&#160;</a></span>CanUtilities_copy_node_id_to_can_payload_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CanUtilities_copy_node_id_to_can_payload_buffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="can__types_8h.html#af7e65c69ad6084a5b21698667757c8bd">payload_bytes_can_t</a> *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Tests if the passed CAN frame buffer is either a complete or partial OpenLcb/LCC message (as opposed to a CAN only message frame). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">can_msg_t</td><td>*can_msg_source - Pointer to a CAN frame buffer to test.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the message is either a complete or partial OpenLcb/LCC message, else False </dd></dl>
 
 </div>
 </div>

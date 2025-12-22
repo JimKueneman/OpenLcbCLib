@@ -363,7 +363,7 @@ TEST(CAN_Utilities, copy_64_bit_to_can_message)
 
     result = CanUtilities_copy_64_bit_to_can_message(&can_msg, 0x5566778899AABBCC);
 
-    EXPECT_EQ(result, true);
+    EXPECT_EQ(result, 8);
     EXPECT_EQ(can_msg.state.allocated, 1);
     EXPECT_EQ(can_msg.identifier, 0xFFFF);
     EXPECT_EQ(can_msg.payload_count, 8);
@@ -393,7 +393,7 @@ TEST(CAN_Utilities, copy_can_message)
 
     result = CanUtilities_copy_can_message(&can_msg, &can_msg_target);
 
-    EXPECT_EQ(result, true);
+    EXPECT_EQ(result, 8);
     // No changes in first message
     EXPECT_EQ(can_msg.state.allocated, 1);
     EXPECT_EQ(can_msg.identifier, 0xFFFF);

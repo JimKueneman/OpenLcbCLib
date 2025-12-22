@@ -132,7 +132,7 @@ extern "C" {
     /**
      * @brief Sends an OpenLcb/LCC message on the CAN physical layer
      *
-     * @param can_msg_t *can_msg - Pointer to the CAN message transmit
+     * @param can_msg_t *can_msg - Pointer to the CAN message buffer transmit
      *
      * @return none
      *

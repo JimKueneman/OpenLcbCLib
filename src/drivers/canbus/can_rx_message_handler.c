@@ -123,9 +123,7 @@ static bool _check_for_duplicate_alias(can_msg_t* can_msg) {
    
         can_msg_t *outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
         outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMR | source_alias;
-        outgoing_can_msg->payload_count = 6;
-        CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &outgoing_can_msg->payload);
-
+        CanUtilities_copy_node_id_to_payload(outgoing_can_msg, alias_mapping->node_id, 0);
         CanBufferFifo_push(outgoing_can_msg);
 
     }
@@ -338,9 +336,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
  
             outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
             outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | alias_mapping->alias;
-            outgoing_can_msg->payload_count = 6;
-            CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping->node_id, &outgoing_can_msg->payload);
-
+            CanUtilities_copy_node_id_to_payload(outgoing_can_msg, alias_mapping->node_id, 0);
             CanBufferFifo_push(outgoing_can_msg);
 
             return;
@@ -359,9 +355,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
             outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
             outgoing_can_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_AMD | alias_mapping_info->list[i].alias;
-            outgoing_can_msg->payload_count = 6;
-            CanUtilities_copy_node_id_to_can_payload_buffer(alias_mapping_info->list[i].node_id, &outgoing_can_msg->payload);
-
+            CanUtilities_copy_node_id_to_payload(outgoing_can_msg, alias_mapping_info->list[i].node_id, 0);
             CanBufferFifo_push(outgoing_can_msg);
 
         }
