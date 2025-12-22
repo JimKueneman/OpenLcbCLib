@@ -137,7 +137,10 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the main state machine that dispatches incoming CAN messages to the target nodes and calls any handlers assigned for those messages. </p>
-<p>This is the main state machine to process nodes as CAN messages are received from the network. An applications message loop should call <a class="el" href="#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run()</a> as fast as possible. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize()</a>. </p>
+<p>This is the main state machine to process nodes as CAN messages are received from the network. An applications message loop should call <a class="el" href="#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run()</a> as fast as possible. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize and Run functions in this module.</dd>
+<dd>
+Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> field during initialization of the application. see: <a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize()</a>. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a360ebdb7ef110fdd62097a5fc56310f1" name="a360ebdb7ef110fdd62097a5fc56310f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a360ebdb7ef110fdd62097a5fc56310f1">&#9670;&#160;</a></span>CanMainStatemachine_initialize()</h2>

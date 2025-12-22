@@ -122,87 +122,87 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"> * Copyright (c) 2025, Jim Kueneman</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">// more than once.</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">// more than once.</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="foldopen" id="foldopen00068" data-start="{" data-end="};">
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html">   68</a></span>    <span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="comment">// REQUIRED FUNCTIONS</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ad5d977bbc45e071d19d77e261f17b7e7">   75</a></span>        void (*lock_shared_resources)(void);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9">   79</a></span>        void (*unlock_shared_resources)(void);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#af0bbea8088c0d628d4e066570baf35f3">   84</a></span>        bool (*send_can_message)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *msg);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="};">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html">   73</a></span>    <span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="comment">// REQUIRED FUNCTIONS</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ad5d977bbc45e071d19d77e261f17b7e7">   80</a></span>        void (*lock_shared_resources)(void);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a654fa7c6260aa2ac2c0589f57fcd67e9">   84</a></span>        void (*unlock_shared_resources)(void);</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a642f075eed427764e99bda659f1fd22f">   88</a></span>        <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*openlcb_node_get_first)(uint8_t key);</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ae198d49b6505cbba8429aeb49fa3879e">   92</a></span>        <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*openlcb_node_get_next)(uint8_t key);</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#afcc26a9aa6bd99c8b8c09cfac42e0125">   96</a></span>        <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*openlcb_node_find_by_alias)(uint16_t alias);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ac202b101b9553f768970f16f84691cdd">  100</a></span>        void (*login_statemachine_run)(<a class="code hl_struct" href="structcan__statemachine__info__struct.html">can_statemachine_info_t</a> *can_statemachine_info);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a11d6f4e079fa28cc00a01cdc38e526f6">  104</a></span>        <a class="code hl_struct" href="structalias__mapping__info__struct.html">alias_mapping_info_t</a> *(*alias_mapping_get_alias_mapping_info)(void);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ad579e2c105067c9311bb173b30cd9130">  108</a></span>        void (*alias_mapping_unregister)(uint16_t alias);</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf">  113</a></span>        bool (*handle_duplicate_aliases)(void);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#af0bbea8088c0d628d4e066570baf35f3">   89</a></span>        bool (*send_can_message)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *msg);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a642f075eed427764e99bda659f1fd22f">   93</a></span>        <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*openlcb_node_get_first)(uint8_t key);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ae198d49b6505cbba8429aeb49fa3879e">   97</a></span>        <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*openlcb_node_get_next)(uint8_t key);</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#afcc26a9aa6bd99c8b8c09cfac42e0125">  101</a></span>        <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*openlcb_node_find_by_alias)(uint16_t alias);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ac202b101b9553f768970f16f84691cdd">  105</a></span>        void (*login_statemachine_run)(<a class="code hl_struct" href="structcan__statemachine__info__struct.html">can_statemachine_info_t</a> *can_statemachine_info);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a11d6f4e079fa28cc00a01cdc38e526f6">  109</a></span>        <a class="code hl_struct" href="structalias__mapping__info__struct.html">alias_mapping_info_t</a> *(*alias_mapping_get_alias_mapping_info)(void);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ad579e2c105067c9311bb173b30cd9130">  113</a></span>        void (*alias_mapping_unregister)(uint16_t alias);</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f">  118</a></span>        bool (*handle_outgoing_can_message)(void);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf">  118</a></span>        bool (*handle_duplicate_aliases)(void);</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c">  123</a></span>        bool (*handle_login_outgoing_can_message)(void);</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f">  123</a></span>        bool (*handle_outgoing_can_message)(void);</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1">  128</a></span>        bool (*handle_try_enumerate_first_node)(void);</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c">  128</a></span>        bool (*handle_login_outgoing_can_message)(void);</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7">  133</a></span>        bool (*handle_try_enumerate_next_node)(void);</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1">  133</a></span>        bool (*handle_try_enumerate_first_node)(void);</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        <span class="comment">// OPTIONAL FUNCTION</span></div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        <span class="comment">// CALLBACK FUNCTIONS</span></div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    } <a class="code hl_struct" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a>;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno"><a class="line" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7">  138</a></span>        bool (*handle_try_enumerate_next_node)(void);</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        <span class="comment">// OPTIONAL FUNCTION</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        <span class="comment">// CALLBACK FUNCTIONS</span></div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    } <a class="code hl_struct" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a>;</div>
 </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a360ebdb7ef110fdd62097a5fc56310f1">  153</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> *interface_can_main_statemachine);</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a9bdef5a88eff72849f2506381fe1742f">  166</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a514df581e108e12f527d4de248458357">  179</a></span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structcan__statemachine__info__struct.html">can_statemachine_info_t</a> *<a class="code hl_function" href="can__main__statemachine_8h.html#a514df581e108e12f527d4de248458357">CanMainStateMachine_get_can_statemachine_info</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">  191</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#acefbd0fe819bfc0be958202dca4bbab8">  203</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#acefbd0fe819bfc0be958202dca4bbab8">CanMainStatemachine_handle_login_outgoing_can_message</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a619bfa722d577c1295ae862500aef386">  215</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a619bfa722d577c1295ae862500aef386">CanMainStatemachine_handle_outgoing_can_message</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span> </div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">  229</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">CanMainStatemachine_handle_try_enumerate_first_node</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">  243</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> </div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>}</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a360ebdb7ef110fdd62097a5fc56310f1">  158</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> *interface_can_main_statemachine);</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a9bdef5a88eff72849f2506381fe1742f">  171</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a514df581e108e12f527d4de248458357">  184</a></span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structcan__statemachine__info__struct.html">can_statemachine_info_t</a> *<a class="code hl_function" href="can__main__statemachine_8h.html#a514df581e108e12f527d4de248458357">CanMainStateMachine_get_can_statemachine_info</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">  196</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span> </div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#acefbd0fe819bfc0be958202dca4bbab8">  208</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#acefbd0fe819bfc0be958202dca4bbab8">CanMainStatemachine_handle_login_outgoing_can_message</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a619bfa722d577c1295ae862500aef386">  220</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a619bfa722d577c1295ae862500aef386">CanMainStatemachine_handle_outgoing_can_message</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">  234</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">CanMainStatemachine_handle_try_enumerate_first_node</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span> </div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno"><a class="line" href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">  248</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>}</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_CANBUS_CAN_MAIN_STATEMACHINE__ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="acan__main__statemachine_8h_html_a326e8a6b5051c0b6821a460fab2ba410"><div class="ttname"><a href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node</a></div><div class="ttdeci">bool CanMainStatemachine_handle_try_enumerate_next_node(void)</div><div class="ttdoc">Enumerator to get the next Node to run the state machine on. OpenLcbCLib is capable of running virtua...</div></div>
 <div class="ttc" id="acan__main__statemachine_8h_html_a360ebdb7ef110fdd62097a5fc56310f1"><div class="ttname"><a href="can__main__statemachine_8h.html#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize</a></div><div class="ttdeci">void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *interface_can_main_statemachine)</div><div class="ttdoc">Initializes the CAN Main Statemachine.</div></div>
 <div class="ttc" id="acan__main__statemachine_8h_html_a4c7be0999c73da181407f0ce473b4574"><div class="ttname"><a href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases</a></div><div class="ttdeci">bool CanMainStatemachine_handle_duplicate_aliases(void)</div><div class="ttdoc">Checks for and handles any duplicate Alias that were detected on the incoming CAN receive state machi...</div></div>
@@ -215,7 +215,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="astructalias__mapping__info__struct_html"><div class="ttname"><a href="structalias__mapping__info__struct.html">alias_mapping_info_struct</a></div><div class="ttdoc">Structure to hold an array of alias_mapping_t structures and a flag to flag the main loop that at lea...</div><div class="ttdef"><b>Definition</b> can_types.h:251</div></div>
 <div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdoc">Structure to hold information needed by a CAN message/frame.</div><div class="ttdef"><b>Definition</b> can_types.h:151</div></div>
 <div class="ttc" id="astructcan__statemachine__info__struct_html"><div class="ttname"><a href="structcan__statemachine__info__struct.html">can_statemachine_info_struct</a></div><div class="ttdoc">Structure to hold information needed by the CAN Statemachine as it is pulling messages from can_buffe...</div><div class="ttdef"><b>Definition</b> can_types.h:176</div></div>
-<div class="ttc" id="astructinterface__can__main__statemachine__t_html"><div class="ttname"><a href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a></div><div class="ttdoc">A structure to hold pointers to functions for dependencies this module requires can_main_statemachine...</div><div class="ttdef"><b>Definition</b> can_main_statemachine.h:68</div></div>
+<div class="ttc" id="astructinterface__can__main__statemachine__t_html"><div class="ttname"><a href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a></div><div class="ttdoc">A structure to hold pointers to functions for dependencies this module requires can_main_statemachine...</div><div class="ttdef"><b>Definition</b> can_main_statemachine.h:73</div></div>
 <div class="ttc" id="astructopenlcb__node__t_html"><div class="ttname"><a href="structopenlcb__node__t.html">openlcb_node_t</a></div><div class="ttdef"><b>Definition</b> openlcb_types.h:301</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!doctype html>

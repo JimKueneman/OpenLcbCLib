@@ -98,8 +98,10 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:abb132b7264a3f080f84953c8d3aa6b0e" id="r_abb132b7264a3f080f84953c8d3aa6b0e"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb132b7264a3f080f84953c8d3aa6b0e">transmit_can_frame</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:abb132b7264a3f080f84953c8d3aa6b0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an Application defined function to put the passed CAN frame onto the physical CAN bus. The library will have called the Application defined function is_tx_buffer_empty before calling this function is expected to succeeded in transmitting the frame unless there is problem.  <br /></td></tr>
 <tr class="separator:abb132b7264a3f080f84953c8d3aa6b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bd106e7dc7aaf36e1bcc49cbb54725c" id="r_a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bd106e7dc7aaf36e1bcc49cbb54725c">on_transmit</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for an Application to be notified when a CAN frame is transmitted.  <br /></td></tr>
 <tr class="separator:a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -117,7 +119,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to an Application defined function to put the passed CAN frame onto the physical CAN bus. The library will have called the Application defined function is_tx_buffer_empty before calling this function is expected to succeeded in transmitting the frame unless there is problem. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. <br  />
+
+<p>Pointer to an Application defined function to put the passed CAN frame onto the physical CAN bus. The library will have called the Application defined function is_tx_buffer_empty before calling this function is expected to succeeded in transmitting the frame unless there is problem. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. <br  />
  </dd></dl>
 
 </div>
@@ -133,7 +137,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function for an Application to be notified when a CAN frame is transmitted. </p><dl class="section note"><dt>Note</dt><dd><b>Optional</b> application callback. Defaults to NULL. </dd></dl>
+
+<p>Pointer to a function for an Application to be notified when a CAN frame is transmitted. </p>
+<dl class="section note"><dt>Note</dt><dd><b>Optional</b> application callback. Defaults to NULL. </dd></dl>
 
 </div>
 </div>

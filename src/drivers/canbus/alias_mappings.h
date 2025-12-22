@@ -37,8 +37,7 @@
  * is typically running in an interrupt or thread so this keeps a secondary list that have clear insert/remove
  * points that can be protected through resource locking (pausing interrupts, threads, etc).
  *
- * @note Applications typically have no reason to access this structure as it can directly use the
- * \ref openlcb_node.h to look at this information in the main loop safely.
+ * @note Applications typically only need to access the Initialize function in this module.
  *
  * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the

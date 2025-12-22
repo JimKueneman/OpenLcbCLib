@@ -35,6 +35,11 @@
  * if there is a response required.  These are the handlers called by the CAN receive (Rx)
  * state machine to accomplish that.
  *
+ * @note Applications typically only need to access the Initialize function in this module.
+ * 
+ * @note Any handler may be overridden by assigning a custom function pointer to the
+ * \ref interface_can_rx_message_handler_t field during initialization of the application.
+ * see: \ref CanRxMessageHandler_initialize().
  *
  * @file can_rx_message_handler.h
  *
@@ -71,27 +76,27 @@ extern "C" {
 
         // REQUIRED FUNCTIONS
 
-        /** Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new CAN message buffer.
+        /** @brief Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new CAN message buffer.
          * @warning <b>Required</b> assignment.  Defaults to \ref CanBufferStore_allocate_buffer(). */
         can_msg_t *(*can_buffer_store_allocate_buffer)(void);
 
-        /** Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new Openlcb message buffer.
+        /** @brief Pointer to a function for access into the \ref openlcb_buffer_store.h functions to allocate a new Openlcb message buffer.
          * @warning <b>Required</b> assignment.  Defaults to \ref OpenLcbBufferStore_allocate_buffer(). */
         openlcb_msg_t *(*openlcb_buffer_store_allocate_buffer)(payload_type_enum payload_type);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+        /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
          * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias(). */
         alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+        /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
          * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_node_id(). */
         alias_mapping_t *(*alias_mapping_find_mapping_by_node_id)(node_id_t node_id);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
+        /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs.
          * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_get_alias_mapping_info(). */
         alias_mapping_info_t *(*alias_mapping_get_alias_mapping_info)(void);
 
-        /** Pointer to a function for access into the \ref alias_mappings.h functions to set the flag to signal at least one of the pairs was found to be a duplicate Alias.
+        /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to set the flag to signal at least one of the pairs was found to be a duplicate Alias.
          * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_set_has_duplicate_alias_flag(). */
         void (*alias_mapping_set_has_duplicate_alias_flag)(void);
 

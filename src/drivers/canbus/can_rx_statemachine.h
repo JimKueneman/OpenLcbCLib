@@ -37,6 +37,12 @@
  * assembling multi-frame OpenLcb/LCC messages, automatically handling CAN only frames by generating
  * the correct response and placing it into the outgoing CAN frame FIFO in can_buffer_fifo.h
  *
+ * @note Applications typically only need to access the Initialize function in this module.
+ * 
+ * @note Any handler may be overridden by assigning a custom function pointer to the
+ * \ref interface_can_rx_statemachine_t field during initialization of the application.
+ * see: \ref CanRxStatemachine_initialize().
+ * 
  * @file can_rx_statemachine.h
  *
  */
@@ -68,40 +74,40 @@ typedef struct
 
     // REQUIRED FUNCTIONS
 
-    /** Pointer to a function to handle receiving a legacy SNIP CAN frame.
+    /** @brief Pointer to a function to handle receiving a legacy SNIP CAN frame.
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_can_legacy_snip() */
     void (*handle_can_legacy_snip)(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
   
     
-    /** Pointer to a function to handle receiving a CAN frame that is a complete message using a single CAN frame.
+    /** @brief Pointer to a function to handle receiving a CAN frame that is a complete message using a single CAN frame.
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_single_frame() */
     void (*handle_single_frame)(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
    
     
-    /** Pointer to a function to handle receiving a CAN frame that is the first of multiple frames required to make a complete message.
+    /** @brief Pointer to a function to handle receiving a CAN frame that is the first of multiple frames required to make a complete message.
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_first_frame() */
     void (*handle_first_frame)(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     
     
-    /** Pointer to a function to handle receiving a CAN frame that is in the middle of several frames required to make a complete message.
+    /** @brief Pointer to a function to handle receiving a CAN frame that is in the middle of several frames required to make a complete message.
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_middle_frame() */
     void (*handle_middle_frame)(can_msg_t *can_msg, uint8_t can_buffer_start_index);
     
-    /** Pointer to a function to handle receiving a CAN frame that is the last of multiple required to make a complete message.
+    /** @brief Pointer to a function to handle receiving a CAN frame that is the last of multiple required to make a complete message.
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_last_frame() */
     void (*handle_last_frame)(can_msg_t *can_msg, uint8_t can_buffer_start_index);
     
-    /** Pointer to a function to handle receiving a CAN frame that is used in the Stream Protocol.
+    /** @brief Pointer to a function to handle receiving a CAN frame that is used in the Stream Protocol.
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_stream_frame() */ 
     void (*handle_stream_frame)(can_msg_t *can_msg, uint8_t can_buffer_start_index, payload_type_enum data_type);
     
     
-    /** Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Reserve ID .
+    /** @brief Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Reserve ID .
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_rid_frame() */ 
     void (*handle_rid_frame)(can_msg_t *can_msg);
     
     
-    /** Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Map Definition .
+    /** @brief Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Map Definition .
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_amd_frame() */ 
     void (*handle_amd_frame)(can_msg_t *can_msg);
     
@@ -110,20 +116,20 @@ typedef struct
     void (*handle_ame_frame)(can_msg_t *can_msg);
     
     
-    /** Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Mapping Reply .
+    /** @brief Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Alias Mapping Reply .
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_amr_frame() */ 
     void (*handle_amr_frame)(can_msg_t *can_msg);
     
     
-    /** Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Error Info Reporting .
+    /** @brief Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Protocol for Error Info Reporting .
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_error_info_report_frame() */ 
     void (*handle_error_info_report_frame)(can_msg_t *can_msg);
     
-    /** Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Check ID
+    /** @brief Pointer to a function to handle receiving a CAN frame that in the CAN Frame Transfer Check ID
      * @warning <b>Required</b> assignment.  Defaults to CanRxMessageHandler_cid_frame() */ 
     void (*handle_cid_frame)(can_msg_t *can_msg);
 
-    /** Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
+    /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to access the mapping pairs
      * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias() */
     alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
@@ -131,7 +137,7 @@ typedef struct
 
     // CALLBACK FUNCTIONS
 
-    /** Pointer to a function for an Application to be notified when a CAN frame is received.
+    /** @brief Pointer to a function for an Application to be notified when a CAN frame is received.
      *@note <b>Optional</b> application callback.  Defaults to NULL
      *@warning This is called in the context of the Application defined interface to the CAN hardware 
      *so it it typically called from an interrupt of thread. Be care of what is done in the callback

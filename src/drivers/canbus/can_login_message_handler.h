@@ -39,6 +39,8 @@
  * These functions are used in the \ref interface_can_login_state_machine_t which
  * are called from within the CAN login statemachine switch statement.
  *
+ * @note Applications typically only need to access the Initialize function in this module.
+ * 
  * @note Any handler may be overridden by assigning a custom function pointer to the
  * \ref interface_can_login_state_machine_t field during initialization of the application.
  * see: \ref CanLoginStateMachine_initialize().
@@ -70,11 +72,11 @@
 typedef struct {
     // REQUIRED FUNCTIONS
 
-    /** Pointer to a function for access into the \ref alias_mappings.h functions to register an Mapping between the passed alias and node ID
+    /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to register an Mapping between the passed alias and node ID
      * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_register(). */
     alias_mapping_t *(*alias_mapping_register)(uint16_t alias, node_id_t node_id);
 
-    /** Pointer to a function for access into the \ref alias_mappings.h functions to find a Mapping structure that matches the alias passed to it
+    /** @brief Pointer to a function for access into the \ref alias_mappings.h functions to find a Mapping structure that matches the alias passed to it
      * @warning <b>Required</b> assignment.  Defaults to \ref AliasMappings_find_mapping_by_alias(). */
     alias_mapping_t *(*alias_mapping_find_mapping_by_alias)(uint16_t alias);
 
@@ -82,7 +84,7 @@ typedef struct {
 
     // CALLBACK FUNCTIONS
 
-    /** Pointer to a function for an Application to be notified when an Alias has been successfully registered
+    /** @brief Pointer to a function for an Application to be notified when an Alias has been successfully registered
      *@note <b>Optional</b> application callback.  Defaults to NULL. */
     void (*on_alias_change)(uint16_t alias, node_id_t node_id);
 

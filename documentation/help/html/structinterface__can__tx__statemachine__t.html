@@ -98,16 +98,22 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a2e9d4e2d961ae1797f5a9877b4771b15" id="r_a2e9d4e2d961ae1797f5a9877b4771b15"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e9d4e2d961ae1797f5a9877b4771b15">is_tx_buffer_empty</a> )(void)</td></tr>
+<tr class="memdesc:a2e9d4e2d961ae1797f5a9877b4771b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send.  <br /></td></tr>
 <tr class="separator:a2e9d4e2d961ae1797f5a9877b4771b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81d51fab47fc2b3b3e70f6e2b65a5148" id="r_a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81d51fab47fc2b3b3e70f6e2b65a5148">handle_addressed_msg_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit.  <br /></td></tr>
 <tr class="separator:a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93d8ee50aaa8499159254a17f204831a" id="r_a93d8ee50aaa8499159254a17f204831a"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93d8ee50aaa8499159254a17f204831a">handle_unaddressed_msg_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a93d8ee50aaa8499159254a17f204831a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit.  <br /></td></tr>
 <tr class="separator:a93d8ee50aaa8499159254a17f204831a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83d342c6149ca670451917a4e2c6f5ac" id="r_a83d342c6149ca670451917a4e2c6f5ac"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83d342c6149ca670451917a4e2c6f5ac">handle_datagram_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a83d342c6149ca670451917a4e2c6f5ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit.  <br /></td></tr>
 <tr class="separator:a83d342c6149ca670451917a4e2c6f5ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a4e9f86e31d011f4701ecb016e07167" id="r_a3a4e9f86e31d011f4701ecb016e07167"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a4e9f86e31d011f4701ecb016e07167">handle_stream_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
+<tr class="memdesc:a3a4e9f86e31d011f4701ecb016e07167"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit.  <br /></td></tr>
 <tr class="separator:a3a4e9f86e31d011f4701ecb016e07167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe35e3ecf6dcbcdbeaa1e991e2fd9da3" id="r_afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe35e3ecf6dcbcdbeaa1e991e2fd9da3">handle_can_frame</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle a CAN message frame to transmit.  <br /></td></tr>
 <tr class="separator:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -125,7 +131,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Application defined function </dd></dl>
+
+<p>Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Application defined function </dd></dl>
 
 </div>
 </div>
@@ -140,7 +148,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#a79d6a3b6fd0db4921dc8630934e68bba" title="Sends an addressed OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_addressed_msg_frame()</a> </dd></dl>
+
+<p>Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#a79d6a3b6fd0db4921dc8630934e68bba" title="Sends an addressed OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_addressed_msg_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -155,7 +165,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222" title="Sends an unaddressed OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_unaddressed_msg_frame()</a> </dd></dl>
+
+<p>Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222" title="Sends an unaddressed OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_unaddressed_msg_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -170,7 +182,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#aa9223150ff58342659336a51f75caf5a" title="Sends a datagram OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_datagram_frame()</a> </dd></dl>
+
+<p>Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#aa9223150ff58342659336a51f75caf5a" title="Sends a datagram OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_datagram_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -185,7 +199,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78" title="Sends a stream OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_stream_frame()</a> </dd></dl>
+
+<p>Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78" title="Sends a stream OpenLcb/LCC message on the CAN physical layer.">CanTxMessageHandler_stream_frame()</a> </dd></dl>
 
 </div>
 </div>
@@ -200,7 +216,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function to handle a CAN message frame to transmit </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#aa99ced3d0e3dc246de366c88031b6596" title="Sends an CAN message on the CAN physical layer.">CanTxMessageHandler_can_frame()</a> </dd></dl>
+
+<p>Pointer to a function to handle a CAN message frame to transmit. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__message__handler_8h.html#aa99ced3d0e3dc246de366c88031b6596" title="Sends an CAN message on the CAN physical layer.">CanTxMessageHandler_can_frame()</a> </dd></dl>
 
 </div>
 </div>

@@ -152,7 +152,10 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements handlers for use by the CAN Receive (Rx) statemachine <a class="el" href="can__rx__statemachine_8h.html">can_rx_statemachine.h</a>. </p>
-<p>As CAN only frame messages come in they need to be processed by the node(s) to see if there is a response required. These are the handlers called by the CAN receive (Rx) state machine to accomplish that. </p>
+<p>As CAN only frame messages come in they need to be processed by the node(s) to see if there is a response required. These are the handlers called by the CAN receive (Rx) state machine to accomplish that.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd>
+<dd>
+Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__rx__message__handler__t.html">interface_can_rx_message_handler_t</a> field during initialization of the application. see: <a class="el" href="#aaa035b3a9b3535b413f441c4cb6d741f">CanRxMessageHandler_initialize()</a>. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="aaa035b3a9b3535b413f441c4cb6d741f" name="aaa035b3a9b3535b413f441c4cb6d741f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa035b3a9b3535b413f441c4cb6d741f">&#9670;&#160;</a></span>CanRxMessageHandler_initialize()</h2>

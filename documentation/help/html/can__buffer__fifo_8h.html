@@ -122,7 +122,7 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements a FIFO buffer for CAN message structures. </p>
 <p>CAN messages as allocated from the buffer store (<a class="el" href="can__buffer__store_8h.html">can_buffer_store.h</a>) then placed into the FIFO by the CAN Rx module (<a class="el" href="can__rx__statemachine_8h.html">can_rx_statemachine.h</a>) and then the main CAN loop (<a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>) pulls them out one at a time and dispatches them to the handlers.</p>
-<dl class="section note"><dt>Note</dt><dd>Applications typically have no reason to access these buffers directly, they should use the helpers to send messages in <a class="el" href="openlcb__application_8h.html">openlcb_application.h</a>.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="ab0652f39f104350007ad642b955ddbad" name="ab0652f39f104350007ad642b955ddbad"></a>

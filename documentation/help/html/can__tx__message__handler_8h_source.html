@@ -122,58 +122,58 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"> * Copyright (c) 2025, Jim Kueneman</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">// more than once.</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#include &quot;<a class="code" href="openlcb__types_8h.html">../../openlcb/openlcb_types.h</a>&quot;</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="foldopen" id="foldopen00061" data-start="{" data-end="};">
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structinterface__can__tx__message__handler__t.html">   61</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="comment">// REQUIRED FUNCTIONS</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="structinterface__can__tx__message__handler__t.html#abb132b7264a3f080f84953c8d3aa6b0e">   70</a></span>    bool (*transmit_can_frame)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="comment">// OPTIONAL FUNCTION</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="comment">// CALLBACK FUNCTIONS</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structinterface__can__tx__message__handler__t.html#a3bd106e7dc7aaf36e1bcc49cbb54725c">   78</a></span>    void (*on_transmit)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>} <a class="code hl_struct" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment">// more than once.</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#include &quot;<a class="code" href="openlcb__types_8h.html">../../openlcb/openlcb_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="foldopen" id="foldopen00066" data-start="{" data-end="};">
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="structinterface__can__tx__message__handler__t.html">   66</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="comment">// REQUIRED FUNCTIONS</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structinterface__can__tx__message__handler__t.html#abb132b7264a3f080f84953c8d3aa6b0e">   75</a></span>    bool (*transmit_can_frame)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="comment">// OPTIONAL FUNCTION</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="comment">// CALLBACK FUNCTIONS</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="structinterface__can__tx__message__handler__t.html#a3bd106e7dc7aaf36e1bcc49cbb54725c">   83</a></span>    void (*on_transmit)(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>} <a class="code hl_struct" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a>;</div>
 </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a4bde37fc36f08ccbbb7dd4a9a17b2713">   98</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a> *interface_can_tx_message_handler);</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a79d6a3b6fd0db4921dc8630934e68bba">  111</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a79d6a3b6fd0db4921dc8630934e68bba">CanTxMessageHandler_addressed_msg_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    </div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222">  124</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222">CanTxMessageHandler_unaddressed_msg_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    </div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#aa9223150ff58342659336a51f75caf5a">  137</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#aa9223150ff58342659336a51f75caf5a">CanTxMessageHandler_datagram_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    </div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78">  150</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    </div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#aa99ced3d0e3dc246de366c88031b6596">  161</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#aa99ced3d0e3dc246de366c88031b6596">CanTxMessageHandler_can_frame</a>(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>}</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a4bde37fc36f08ccbbb7dd4a9a17b2713">  103</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a> *interface_can_tx_message_handler);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a79d6a3b6fd0db4921dc8630934e68bba">  116</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a79d6a3b6fd0db4921dc8630934e68bba">CanTxMessageHandler_addressed_msg_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222">  129</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222">CanTxMessageHandler_unaddressed_msg_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#aa9223150ff58342659336a51f75caf5a">  142</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#aa9223150ff58342659336a51f75caf5a">CanTxMessageHandler_datagram_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    </div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78">  155</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a>(<a class="code hl_struct" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno"><a class="line" href="can__tx__message__handler_8h.html#aa99ced3d0e3dc246de366c88031b6596">  166</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__tx__message__handler_8h.html#aa99ced3d0e3dc246de366c88031b6596">CanTxMessageHandler_can_frame</a>(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *can_msg);</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>}</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_CANBUS_CAN_TX_MESSAGE_HANDLER__ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="acan__tx__message__handler_8h_html_a0281e625469a52aec7f1e85a464c6222"><div class="ttname"><a href="can__tx__message__handler_8h.html#a0281e625469a52aec7f1e85a464c6222">CanTxMessageHandler_unaddressed_msg_frame</a></div><div class="ttdeci">bool CanTxMessageHandler_unaddressed_msg_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index)</div><div class="ttdoc">Sends an unaddressed OpenLcb/LCC message on the CAN physical layer.</div></div>
 <div class="ttc" id="acan__tx__message__handler_8h_html_a156df311b2fa14eea4912334cda0ca78"><div class="ttname"><a href="can__tx__message__handler_8h.html#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a></div><div class="ttdeci">bool CanTxMessageHandler_stream_frame(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index)</div><div class="ttdoc">Sends a stream OpenLcb/LCC message on the CAN physical layer.</div></div>
 <div class="ttc" id="acan__tx__message__handler_8h_html_a4bde37fc36f08ccbbb7dd4a9a17b2713"><div class="ttname"><a href="can__tx__message__handler_8h.html#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize</a></div><div class="ttdeci">void CanTxMessageHandler_initialize(const interface_can_tx_message_handler_t *interface_can_tx_message_handler)</div><div class="ttdoc">Initializes the CAN Transmit (Tx) state machine handlers.</div></div>
@@ -183,7 +183,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="acan__types_8h_html"><div class="ttname"><a href="can__types_8h.html">can_types.h</a></div><div class="ttdoc">Typedef and constants that define CAN specific data types.</div></div>
 <div class="ttc" id="aopenlcb__types_8h_html"><div class="ttname"><a href="openlcb__types_8h.html">openlcb_types.h</a></div></div>
 <div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdoc">Structure to hold information needed by a CAN message/frame.</div><div class="ttdef"><b>Definition</b> can_types.h:151</div></div>
-<div class="ttc" id="astructinterface__can__tx__message__handler__t_html"><div class="ttname"><a href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a></div><div class="ttdoc">A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...</div><div class="ttdef"><b>Definition</b> can_tx_message_handler.h:61</div></div>
+<div class="ttc" id="astructinterface__can__tx__message__handler__t_html"><div class="ttname"><a href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a></div><div class="ttdoc">A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...</div><div class="ttdef"><b>Definition</b> can_tx_message_handler.h:66</div></div>
 <div class="ttc" id="astructopenlcb__msg__t_html"><div class="ttname"><a href="structopenlcb__msg__t.html">openlcb_msg_t</a></div><div class="ttdef"><b>Definition</b> openlcb_types.h:191</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!doctype html>

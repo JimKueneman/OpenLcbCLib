@@ -98,10 +98,13 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a4e26a8a1f17944358a4e91f5b579fc23" id="r_a4e26a8a1f17944358a4e91f5b579fc23"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e26a8a1f17944358a4e91f5b579fc23">alias_mapping_register</a> )(uint16_t alias, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a4e26a8a1f17944358a4e91f5b579fc23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to register an Mapping between the passed alias and node ID.  <br /></td></tr>
 <tr class="separator:a4e26a8a1f17944358a4e91f5b579fc23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91e0e61d6e690cb434694399ee865976" id="r_a91e0e61d6e690cb434694399ee865976"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91e0e61d6e690cb434694399ee865976">alias_mapping_find_mapping_by_alias</a> )(uint16_t alias)</td></tr>
+<tr class="memdesc:a91e0e61d6e690cb434694399ee865976"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to find a Mapping structure that matches the alias passed to it.  <br /></td></tr>
 <tr class="separator:a91e0e61d6e690cb434694399ee865976"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a015cf925a8f563f2ff7ab585ac9b809d" id="r_a015cf925a8f563f2ff7ab585ac9b809d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a015cf925a8f563f2ff7ab585ac9b809d">on_alias_change</a> )(uint16_t alias, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
+<tr class="memdesc:a015cf925a8f563f2ff7ab585ac9b809d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for an Application to be notified when an Alias has been successfully registered.  <br /></td></tr>
 <tr class="separator:a015cf925a8f563f2ff7ab585ac9b809d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -119,7 +122,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to register an Mapping between the passed alias and node ID </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#afe1490dc1fc7c2f410abc31cad6f6447">AliasMappings_register()</a>. </dd></dl>
+
+<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to register an Mapping between the passed alias and node ID. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#afe1490dc1fc7c2f410abc31cad6f6447">AliasMappings_register()</a>. </dd></dl>
 
 </div>
 </div>
@@ -134,7 +139,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to find a Mapping structure that matches the alias passed to it </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a30c9579dd57feb9bb1ebe5f07f60bb42">AliasMappings_find_mapping_by_alias()</a>. </dd></dl>
+
+<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to find a Mapping structure that matches the alias passed to it. </p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a30c9579dd57feb9bb1ebe5f07f60bb42">AliasMappings_find_mapping_by_alias()</a>. </dd></dl>
 
 </div>
 </div>
@@ -149,7 +156,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function for an Application to be notified when an Alias has been successfully registered </p><dl class="section note"><dt>Note</dt><dd><b>Optional</b> application callback. Defaults to NULL. </dd></dl>
+
+<p>Pointer to a function for an Application to be notified when an Alias has been successfully registered. </p>
+<dl class="section note"><dt>Note</dt><dd><b>Optional</b> application callback. Defaults to NULL. </dd></dl>
 
 </div>
 </div>

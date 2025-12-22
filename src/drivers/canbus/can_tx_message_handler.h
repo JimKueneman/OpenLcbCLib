@@ -33,7 +33,12 @@
  *
  * As CAN and OpenLcb/LCC messages are transmitted these handlers transmit different types of messages.  
  *
+ * @note Applications typically only need to access the Initialize function in this module.
  *
+ * @note Any handler may be overridden by assigning a custom function pointer to the
+ * \ref interface_can_tx_message_handler_t field during initialization of the application.
+ * see: \ref CanTxMessageHandler_initialize().
+ * 
  * @file can_tx_message_handler.h
  *
  */
@@ -63,7 +68,7 @@ typedef struct {
 
     // REQUIRED FUNCTIONS
 
-    /** Pointer to an Application defined function to put the passed CAN frame onto the physical CAN bus.  The
+    /** @brief Pointer to an Application defined function to put the passed CAN frame onto the physical CAN bus.  The
      * library will have called the Application defined function is_tx_buffer_empty before calling this function 
      * is expected to succeeded in transmitting the frame unless there is problem.
      * @warning <b>Required</b> assignment.  */
@@ -73,7 +78,7 @@ typedef struct {
 
     // CALLBACK FUNCTIONS
 
-    /** Pointer to a function for an Application to be notified when a CAN frame is transmitted.
+    /** @brief Pointer to a function for an Application to be notified when a CAN frame is transmitted.
      *@note <b>Optional</b> application callback.  Defaults to NULL. */
     void (*on_transmit)(can_msg_t *can_msg);
 

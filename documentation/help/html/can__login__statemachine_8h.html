@@ -119,7 +119,10 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the state machine to log into the OpenLcb/LCC network. </p>
-<p>This is the login state machine to process nodes as they log into the network. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>. </p>
+<p>This is the login state machine to process nodes as they log into the network. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd>
+<dd>
+Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> field during initialization of the application. see: <a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize()</a>. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a2837c06613e89097db3602bf773332a8" name="a2837c06613e89097db3602bf773332a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2837c06613e89097db3602bf773332a8">&#9670;&#160;</a></span>CanLoginStateMachine_initialize()</h2>

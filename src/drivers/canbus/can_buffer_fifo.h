@@ -35,9 +35,8 @@
  * CAN Rx module (\ref can_rx_statemachine.h) and then the main CAN loop (\ref can_main_statemachine.h) pulls
  * them out one at a time and dispatches them to the handlers.
  *
- * @note Applications typically have no reason to access these buffers directly,
- * they should use the helpers to send messages in \ref openlcb_application.h.
- *
+ * @note Applications typically only need to access the Initialize function in this module.
+ * 
  * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the
  * interrupts or threads if the main loop needs to access the buffers for any reason.

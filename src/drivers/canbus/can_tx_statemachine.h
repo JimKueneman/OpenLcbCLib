@@ -35,6 +35,12 @@
  * This is the core transmit functionality of the CAN frames.  It either sends a CAN
  * message directly, which is a direct translation to the CAN physical layer or sends an
  * OpenLcb/LCC message which may require being broken up into multiple CAN frames.
+ * 
+ * @note Applications typically only need to access the Initialize function in this module.
+ * 
+ * @note Any handler may be overridden by assigning a custom function pointer to the
+ * \ref interface_can_tx_statemachine_t field during initialization of the application.
+ * see: \ref CanTxStatemachine_initialize().
  *
  * @file can_tx_statemachine.h
  *
@@ -71,28 +77,28 @@ extern "C" {
 
         // REQUIRED FUNCTIONS
 
-        /** Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send.
+        /** @brief Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send.
          * @warning <b>Required</b> assignment. Application defined function */
         bool (*is_tx_buffer_empty)(void);
 
 
-        /** Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit.
+        /** @brief Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit.
          * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_addressed_msg_frame() */
         bool (*handle_addressed_msg_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
         
-        /** Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit.
+        /** @brief Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit.
          * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_unaddressed_msg_frame() */
         bool (*handle_unaddressed_msg_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
         
-        /** Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit.
+        /** @brief Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit.
          * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_datagram_frame() */
         bool (*handle_datagram_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
         
-        /** Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit.
+        /** @brief Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit.
          * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_stream_frame() */
         bool (*handle_stream_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
         
-        /** Pointer to a function to handle a CAN message frame to transmit
+        /** @brief Pointer to a function to handle a CAN message frame to transmit
          * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_can_frame() */
         bool (*handle_can_frame)(can_msg_t *can_msg);
 

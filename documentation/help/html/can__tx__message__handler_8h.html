@@ -132,7 +132,10 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements handlers for use by the CAN Transmit (Tx) statemachine <a class="el" href="can__tx__statemachine_8h.html">can_tx_statemachine.h</a>. </p>
 <p>As CAN and OpenLcb/LCC messages are transmitted these handlers transmit different types of messages. <br  />
- </p>
+</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd>
+<dd>
+Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a> field during initialization of the application. see: <a class="el" href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize()</a>. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a4bde37fc36f08ccbbb7dd4a9a17b2713" name="a4bde37fc36f08ccbbb7dd4a9a17b2713"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">&#9670;&#160;</a></span>CanTxMessageHandler_initialize()</h2>

@@ -34,8 +34,7 @@
  * The CAN FIFO buffer is an array of pointers to CAN frame buffer ( \ref can_msg_t) The are allocated and freed
  * through function calls \ref CanBufferStore_allocate_buffer() and \ref CanBufferStore_free_buffer().
  *
- * @note Applications typically have no reason to access these buffers directly,
- * they should use the helpers to send messages in \ref openlcb_application.h
+ * @note Applications typically only need to access the Initialize function in this module.
  *
  * @warning The CAN Receive Statemachine and 100ms timer access these buffers and typically
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the

@@ -122,7 +122,10 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements a state machine actually a large switch statement that decodes the incoming message and calls the correct the <a class="el" href="can__tx__message__handler_8h.html" title="Implements handlers for use by the CAN Transmit (Tx) statemachine can_tx_statemachine....">can_tx_message_handler.h</a> handler functions. </p>
-<p>This is the core transmit functionality of the CAN frames. It either sends a CAN message directly, which is a direct translation to the CAN physical layer or sends an OpenLcb/LCC message which may require being broken up into multiple CAN frames. </p>
+<p>This is the core transmit functionality of the CAN frames. It either sends a CAN message directly, which is a direct translation to the CAN physical layer or sends an OpenLcb/LCC message which may require being broken up into multiple CAN frames.</p>
+<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd>
+<dd>
+Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__tx__statemachine__t.html">interface_can_tx_statemachine_t</a> field during initialization of the application. see: <a class="el" href="#acbe458eae799fff061319448b1855b3d">CanTxStatemachine_initialize()</a>. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="acbe458eae799fff061319448b1855b3d" name="acbe458eae799fff061319448b1855b3d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbe458eae799fff061319448b1855b3d">&#9670;&#160;</a></span>CanTxStatemachine_initialize()</h2>
