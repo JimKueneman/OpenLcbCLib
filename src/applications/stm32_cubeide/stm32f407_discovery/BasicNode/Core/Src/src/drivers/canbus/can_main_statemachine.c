@@ -104,7 +104,7 @@ static bool _process_duplicate_aliases(alias_mapping_info_t *alias_mapping_info)
 
     bool result = false;
 
-    for (int i = 0; i < USER_DEFINED_ALIAS_MAPPING_BUFFER_DEPTH; i++) {
+    for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         uint16_t alias = alias_mapping_info->list[i].alias;
 

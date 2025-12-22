@@ -185,16 +185,16 @@ bool CanUtilities_is_openlcb_message(can_msg_t *can_msg) {
 
 }
 
-uint64_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg) {
+node_id_t CanUtilities_extract_can_payload_as_node_id(can_msg_t *can_msg) {
 
 
     return (
-            ((uint64_t) can_msg->payload[0] << 40) |
-            ((uint64_t) can_msg->payload[1] << 32) |
-            ((uint64_t) can_msg->payload[2] << 24) |
-            ((uint64_t) can_msg->payload[3] << 16) |
-            ((uint64_t) can_msg->payload[4] << 8) |
-            ((uint64_t) can_msg->payload[5]));
+            ((node_id_t) can_msg->payload[0] << 40) |
+            ((node_id_t) can_msg->payload[1] << 32) |
+            ((node_id_t) can_msg->payload[2] << 24) |
+            ((node_id_t) can_msg->payload[3] << 16) |
+            ((node_id_t) can_msg->payload[4] << 8) |
+            ((node_id_t) can_msg->payload[5]));
 
 }
 
@@ -265,7 +265,7 @@ uint8_t CanUtilities_copy_node_id_to_payload(can_msg_t *can_msg, uint64_t node_i
 
 }
 
-bool CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t data) {
+uint8_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t data) {
 
     for (int i = 7; i >= 0; i--) {
 
@@ -275,11 +275,12 @@ bool CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t data) 
     }
 
     can_msg->payload_count = 8;
+    
+    return can_msg->payload_count;
 
-    return true;
 }
 
-bool CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target) {
+uint8_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg_target) {
 
     can_msg_target->identifier = can_msg_source->identifier;
 
@@ -290,19 +291,9 @@ bool CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_msg
     }
 
     can_msg_target->payload_count = can_msg_source->payload_count;
-
-    return true;
-}
-
-void CanUtilities_copy_node_id_to_can_payload_buffer(node_id_t node_id, payload_bytes_can_t *buffer) {
-
-    for (int i = 5; i > -1; i--) {
-
-        (*buffer)[i] = (uint8_t) (node_id & 0xFF);
-
-        node_id = node_id >> 8;
-
-    }
+    
+    return can_msg_target->payload_count;
 
 }
+
 
