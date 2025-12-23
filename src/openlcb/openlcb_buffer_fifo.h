@@ -61,35 +61,35 @@ extern "C" {
 #endif /* __cplusplus */
     
     /**
-     * @brief Initializes the OpenLcb Message Buffer FIFO
+     * @brief Initializes the OpenLcb Message Buffer FIFO.
      * 
      * @param none
      * 
      * @return none
      * 
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void OpenLcbBufferFifo_initialize(void);
     
     
      /**
      * @brief Pushes a new OpenLcb message into the FIFO buffer that was allocated 
-     *   see \ref OpenLcbBufferStore_allocate_buffer()
+     * see \ref OpenLcbBufferStore_allocate_buffer().
      * 
-     * @param openlcb_msg_t *new_msg [in] - Pointer to a message allocated from the OpenLcb Buffer Pool
+     * @param openlcb_msg_t *new_msg - Pointer to a message allocated from the OpenLcb Buffer Pool.
      * 
-     * @return Pointer to the message or NULL if it fails
+     * @return Pointer to the message or NULL if it fails.
      */
     extern openlcb_msg_t *OpenLcbBufferFifo_push(openlcb_msg_t *new_msg);
  
     
     /**
      * @brief Pops a OpenLcb message off the FIFO buffer.  The caller is responsible to free the message when done 
-     *   see \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)
+     *   see \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg).
      * 
      * @param none
      * 
-     * @return Pointer to the message or NULL if the buffer is empty
+     * @return Pointer to the message or NULL if the buffer is empty.
      */
     extern openlcb_msg_t *OpenLcbBufferFifo_pop(void);
     
@@ -99,7 +99,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return True if there is at least one message, false if the list is empty
+     * @return True if there is at least one message, false if the list is empty.
      */
     extern bool OpenLcbBufferFifo_is_empty(void);
     
@@ -109,7 +109,7 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return The number of messages in the buffer
+     * @return The number of messages in the buffer.
      */
     extern uint16_t OpenLcbBufferFifo_get_allocated_count(void);
     
