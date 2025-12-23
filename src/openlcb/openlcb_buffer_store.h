@@ -36,7 +36,7 @@
  *
  * @note Applications typically only need to access the Initialize function in this module.
  *
- * @warning The Physical Layer Statemachines and 100ms timer access these buffers and typically
+ * @warning The physical layer state machines and 100ms timer access these buffers and typically
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the
  * interrupts or threads if the main loop needs to access the buffers for any reason.
  *
