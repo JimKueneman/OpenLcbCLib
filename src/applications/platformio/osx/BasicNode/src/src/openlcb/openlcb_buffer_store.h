@@ -36,7 +36,7 @@
  *
  * @note Applications typically only need to access the Initialize function in this module.
  *
- * @warning The Physical Layer Statemachines and 100ms timer access these buffers and typically
+ * @warning The physical layer state machines and 100ms timer access these buffers and typically
  * run within interrupts and/or threads. Care must be taken to Pause and Resume the
  * interrupts or threads if the main loop needs to access the buffers for any reason.
  *
@@ -60,36 +60,36 @@ extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the OpenLcb Buffer Store
+     * @brief Initializes the OpenLcb Buffer Store.
      * 
      * @param none
      * 
      * @return none
      * 
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void OpenLcbBufferStore_initialize(void);
 
     /**
-     * @brief Allocates a new buffer of the type passed
+     * @brief Allocates a new buffer of the type passed.
      * 
-     * @param payload_type_enum payload_type [in] - Type of buffer that is requested to be allocated (Basic, SNIP, Datagram, Stream)
+     * @param payload_type_enum payload_type - Type of buffer that is requested to be allocated (Basic, SNIP, Datagram, Stream).
      * 
-     * @return Pointer to the message buffer or NULL if it fails
+     * @return Pointer to the message buffer or NULL if it fails.
      */
     extern openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type);
 
     /**
      * @brief Frees the buffer so it can be reused.
      * 
-     * @param openlcb_msg_t *msg [in] - Pointer to a message to be freed
+     * @param openlcb_msg_t *msg - Pointer to a message to be freed.
      * 
      * @return none
      * 
      * * @note The buffers are reference counted
      * (see \ref OpenLcbBufferStore_inc_reference_count) so this call may or may not actually
      * release that buffer slot for reuse.  If the count drops to zero then it will be released 
-     * for reuse
+     * for reuse.
      */
     extern void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg);
 
@@ -98,17 +98,17 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return Number of Basic sized messages currently allocated
+     * @return Number of Basic sized messages currently allocated.
      */
     extern uint16_t OpenLcbBufferStore_basic_messages_allocated(void);
 
     /**
      * @brief The maximum number of Basic messages that have been allocated in the buffer store.
-     * Useful for understanding how deep the buffer store needs to be during stress testing
+     * Useful for understanding how deep the buffer store needs to be during stress testing.
      * 
      * @param none
      * 
-     * @return Maximum number of Basic sized messages that have been allocated currently
+     * @return Maximum number of Basic sized messages that have been allocated currently.
      */
     extern uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void);
 
@@ -117,17 +117,17 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return Number of Datagram sized messages currently allocated
+     * @return Number of Datagram sized messages currently allocated.
      */
     extern uint16_t OpenLcbBufferStore_datagram_messages_allocated(void);
 
     /**
      * @brief The maximum number of Datagram messages that have been allocated in the buffer store.
-     * Useful for understanding how deep the buffer store needs to be during stress testing
+     * Useful for understanding how deep the buffer store needs to be during stress testing.
      * 
      * @param none
      * 
-     * @return Maximum number of Datagram sized messages that have been allocated currently
+     * @return Maximum number of Datagram sized messages that have been allocated currently.
      */
     extern uint16_t OpenLcbBufferStore_datagram_messages_max_allocated(void);
 
@@ -136,17 +136,17 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return  Number of Basic sized messages currently allocated
+     * @return  Number of Basic sized messages currently allocated.
      */
     extern uint16_t OpenLcbBufferStore_snip_messages_allocated(void);
 
     /**
      * @brief The maximum number of SNIP messages that have been allocated in the buffer store.
-     * Useful for understanding how deep the buffer store needs to be during stress testing
+     * Useful for understanding how deep the buffer store needs to be during stress testing.
      * 
      * @param none
      * 
-     * @return Maximum number of SNIP sized messages that have been allocated currently
+     * @return Maximum number of SNIP sized messages that have been allocated currently.
      */
     extern uint16_t OpenLcbBufferStore_snip_messages_max_allocated(void);
 
@@ -155,34 +155,34 @@ extern "C" {
      * 
      * @param none
      * 
-     * @return Number of Stream sized messages currently allocated
+     * @return Number of Stream sized messages currently allocated.
      */
     extern uint16_t OpenLcbBufferStore_stream_messages_allocated(void);
 
     /**
      * @brief The maximum number of Stream messages that have been allocated in the buffer store.
-     * Useful for understanding how deep the buffer store needs to be during stress testing
+     * Useful for understanding how deep the buffer store needs to be during stress testing.
      * 
      * @param none
      * 
-     * @return Maximum number of Stream sized messages that have been allocated currently
+     * @return Maximum number of Stream sized messages that have been allocated currently.
      */
     extern uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void);
 
     /**
-     * @brief Increases the reference count on the allocated buffer.  
+     * @brief Increases the reference count on the allocated buffer.
      * 
-     * @param openlcb_msg_t *msg [in] - Pointer to a message to be freed
+     * @param openlcb_msg_t *msg - Pointer to a message to increase the reference count.
      * 
      * @return none
      * 
      * @note When \ref OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) is called it is only
-     * freed when the reference count reaches zero
+     * freed when the reference count reaches zero.
      */
     extern void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *msg);
 
     /**
-     * @brief Resets the running count of the Maximum number of buffer of each type have been allocated at a one time
+     * @brief Resets the running count of the Maximum number of buffer of each type have been allocated at a one time.
      * 
      * @param none
      * 

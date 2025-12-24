@@ -34,7 +34,7 @@
  * A buffer list that can hold OpenLcb/LCC message structures.  Used to hold
  * messages that are coming in using a physical layer adaptation of the OpenLcb/LCC  
  * message where it can be sent in 1 or many frames.  This buffer can hold partially 
- * received messages until they are fully assembled 
+ * received messages until they are fully assembled.
  *
  * @note Applications typically only need to access the Initialize function in this module.
  * 
@@ -63,67 +63,67 @@ extern "C"
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the OpenLcb Message Buffer List
+     * @brief Initializes the OpenLcb Message Buffer List.
      * 
      * @param none
      * 
      * @return none
      * 
-     * @attention This must always be called during application initialization
+     * @attention This must always be called during application initialization.
      */
     extern void OpenLcbBufferList_initialize(void);
 
     
     /**
      * @brief Inserts a new OpenLcb message into the buffer at the first open slot 
-     *   see \ref OpenLcbBufferStore_allocate_buffer() 
+     *   see \ref OpenLcbBufferStore_allocate_buffer().
      * 
-     * @param openlcb_msg_t *new_msg [in] - Pointer to a message allocated from the OpenLcb Buffer Pool
+     * @param openlcb_msg_t *new_msg - Pointer to a message allocated from the OpenLcb Buffer Pool.
      * 
-     * @return Pointer to the message or NULL if it fails
+     * @return Pointer to the message or NULL if it fails.
      */
     extern openlcb_msg_t *OpenLcbBufferList_add(openlcb_msg_t *new_msg);
 
     
     /**
-     * @brief Searches the buffer for a message that matches the passed parameters
+     * @brief Searches the buffer for a message that matches the passed parameters.
      * 
-     * @param uint16_t source_alias [in] - the CAN alias of the node sending the message frame
-     * @param uint16_t dest_alias   [in] - the CAN alias of the node receiving the message frame
-     * @param uint16_t mti          [in] - the CAN MTI code of the message frame type
+     * @param uint16_t source_alias - the CAN alias of the node sending the message frame.
+     * @param uint16_t dest_alias - the CAN alias of the node receiving the message frame.
+     * @param uint16_t mti - the CAN MTI code of the message frame type.
      * 
-     * @return Pointer to the message or NULL if the buffer is empty
+     * @return Pointer to the message or NULL if the buffer is empty.
      */
     extern openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias, uint16_t mti);
 
     
     /**
      * @brief Removes an OpenLcb message from the buffer, the caller is responsible for freeing the message
-     *   see \ref OpenLcbBufferStore_free_buffer() 
+     *   see \ref OpenLcbBufferStore_free_buffer().
      * 
-     * @param openlcb_msg_t *new_msg [in] - Pointer to a message to be released from the list
+     * @param openlcb_msg_t *new_msg - Pointer to a message to be released from the list.
      * 
-     * @return Pointer to the message or NULL if the message does not exist
+     * @return Pointer to the message or NULL if the message does not exist.
      */
     extern openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg);
 
     
     /**
-     * @brief Returns a Pointer to the message at the passed index
+     * @brief Returns a Pointer to the message at the passed index.
      * 
-     * @param uint16_t index [in] - Index of the message requested
+     * @param uint16_t index - Index of the message requested.
      * 
-     * @return Pointer to the message at the passed index or NULL if the index is out of bounds or the list slot is empty
+     * @return Pointer to the message at the passed index or NULL if the index is out of bounds or the list slot is empty.
      */
     extern openlcb_msg_t *OpenLcbBufferList_index_of(uint16_t index);
 
     
     /**
-     * @brief Test to see if there are any messages stored in the buffer list
+     * @brief Test to see if there are any messages stored in the buffer list.
      * 
      * @param none
      * 
-     * @return True if the list is empty False if there is a least one non NULL message pointer in the list
+     * @return True if the list is empty False if there is a least one non NULL message pointer in the list.
      */
     extern bool OpenLcbBufferList_is_empty(void);
 

@@ -50,7 +50,7 @@
 #define LOCK_SHARED_RESOURCES_FUNC &BasicNodeDrivers_lock_shared_resources
 #define UNLOCK_SHARED_RESOURCES_FUNC &BasicNodeDrivers_unlock_shared_resources
 #define CONFIG_MEM_READ_FUNC &BasicNodeDrivers_config_mem_read
-#define CONFIG_MEM_WRITE_FUNC BasicNodeDrivers_config_mem_write
+#define CONFIG_MEM_WRITE_FUNC &BasicNodeDrivers_config_mem_write
 #define OPERATIONS_REBOOT_FUNC &BasicNodeDrivers_reboot
 #define OPERATIONS_FACTORY_RESET_FUNC &DependencyInjectors_operations_request_factory_reset
 

@@ -47,8 +47,11 @@
 #include "src/openlcb/openlcb_login_statemachine.h"
 
 #include "esp_pm.h"
+#include <Preferences.h>
 
 #define NODE_ID 0x050101010777
+
+Preferences preferences;
 
 void setup()
 {
