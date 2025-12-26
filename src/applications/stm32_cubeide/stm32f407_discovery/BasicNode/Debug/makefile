@@ -73,8 +73,8 @@ all: main-build
 main-build: BasicNode.elf secondary-outputs
 
 # Tool invocations
-BasicNode.elf BasicNode.map: $(OBJS) $(USER_OBJS) /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "BasicNode.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="BasicNode.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+BasicNode.elf BasicNode.map: $(OBJS) $(USER_OBJS) /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/STM32_CubeIDE/stm32f407_discovery/BasicNode/STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "BasicNode.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/STM32_CubeIDE/stm32f407_discovery/BasicNode/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="BasicNode.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

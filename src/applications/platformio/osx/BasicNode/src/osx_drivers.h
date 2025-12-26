@@ -55,9 +55,9 @@ extern "C"
 
     extern void OSxDrivers_reboot(void);
 
-    extern uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
     extern void OSxDrivers_pause_100ms_timer(void);
 

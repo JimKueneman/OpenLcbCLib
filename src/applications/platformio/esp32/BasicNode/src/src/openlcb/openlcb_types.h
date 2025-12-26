@@ -315,7 +315,7 @@ extern "C" {
     typedef struct {
         openlcb_node_t node[USER_DEFINED_NODE_BUFFER_DEPTH];
         uint16_t count; // How many have been allocated, you can not deallocate a node so one it is allocated it is there to the end (it can be not permitted)
-       
+
     } openlcb_nodes_t;
 
     typedef struct {
@@ -375,16 +375,16 @@ extern "C" {
 
     struct config_mem_operations_request_info_TAG;
     typedef void (*operations_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_operations_request_info_TAG *config_mem_operations_request_info);
+
     typedef struct config_mem_operations_request_info_TAG {
         const user_address_space_info_t *space_info;
         operations_config_mem_space_func_t operations_func;
 
     } config_mem_operations_request_info_t;
 
-
-
     struct config_mem_read_request_info_TAG;
     typedef void (*read_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_read_request_info_TAG *config_mem_read_request_info);
+
     typedef struct config_mem_read_request_info_TAG {
         space_encoding_enum encoding;
         uint32_t address;
@@ -398,10 +398,12 @@ extern "C" {
 
     struct config_mem_write_request_info_TAG;
     typedef void (*write_config_mem_space_func_t)(openlcb_statemachine_info_t *statemachine_info, struct config_mem_write_request_info_TAG *config_mem_write_request_info);
+
     typedef struct config_mem_write_request_info_TAG {
         space_encoding_enum encoding;
         uint32_t address;
         uint16_t bytes;
+        configuration_memory_buffer_t* write_buffer;
         uint16_t data_start; // what offset into the payload to insert the data begin requested
         const user_address_space_info_t *space_info;
         write_config_mem_space_func_t write_space_func;

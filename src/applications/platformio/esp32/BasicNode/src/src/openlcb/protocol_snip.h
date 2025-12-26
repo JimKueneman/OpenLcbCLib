@@ -47,8 +47,7 @@
 
 typedef struct {
     
-    uint16_t(*configuration_memory_read)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-    uint16_t(*configuration_memory_write)(uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
+   uint16_t(*config_memory_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
 
 } interface_openlcb_protocol_snip_t;
 
@@ -182,23 +181,7 @@ extern "C" {
      */
     extern uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_offset, uint16_t requested_bytes);
     
-    
-    /**
-     * @brief Writes the User Name (or segment) from the passed buffer into the persistent storage area (EEPROM/FLASH/etc).
-     * 
-     * @param openlcb_node_t* openlcb_node - Node begin requested for the information.
-     * @param openlcb_msg_t* outgoing_msg - Message to load the information into its payload.
-     * @param uint16_t payload_index - The Payload index to copy the information to.
-     * @param uint16_t requested_bytes - The max number of bytes to copy
-     * 
-     * @return The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)
-     * 
-     * @note The OpenLcb/LCC message's Payload Count is auto-updated.
-     */
-    extern uint16_t ProtocolSnip_write_user_name(uint16_t byte_count, configuration_memory_buffer_t* buffer);
-
-    extern uint16_t ProtocolSnip_write_user_description(uint16_t byte_count, configuration_memory_buffer_t* buffer);
-    
+     
     
     extern bool ProtocolSnip_validate_snip_reply(openlcb_msg_t* snip_reply_msg);
 

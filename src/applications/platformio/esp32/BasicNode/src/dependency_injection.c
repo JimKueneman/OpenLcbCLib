@@ -297,8 +297,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
-    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC
+    .config_memory_read = CONFIG_MEM_READ_FUNC
 
 };
 
@@ -334,8 +333,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .config_memory_write = CONFIG_MEM_WRITE_FUNC,
-    .snip_user_name_write = &ProtocolSnip_write_user_name,
-    .snip_user_description_write = ProtocolSnip_write_user_description,
 
     .write_request_config_definition_info = NULL,
     .write_request_all = NULL,
@@ -374,8 +371,8 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
 const interface_openlcb_application_t interface_openlcb_application = {
 
     .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
-    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
-    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC
+    .config_memory_read = CONFIG_MEM_READ_FUNC,
+    .config_memory_write = CONFIG_MEM_WRITE_FUNC
 
 };
 

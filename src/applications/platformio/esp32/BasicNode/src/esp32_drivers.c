@@ -95,7 +95,7 @@ void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_
   esp_restart();
 }
 
-uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t Esp32Drivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
   char str[] = "PlatformIO - ESP32 on CAN";
@@ -127,7 +127,7 @@ uint16_t Esp32Drivers_config_mem_read(uint32_t address, uint16_t count, configur
   return count;
 }
 
-uint16_t Esp32Drivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t Esp32Drivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
   // Todo

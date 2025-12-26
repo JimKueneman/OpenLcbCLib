@@ -57,23 +57,6 @@ void ProtocolSnip_initialize(const interface_openlcb_protocol_snip_t *interface_
 
 }
 
-static uint16_t _write_user_data(uint32_t address, uint16_t byte_count, configuration_memory_buffer_t* buffer) {
-
-    if (_interface->configuration_memory_write) {
-
-        uint16_t bytes_written = _interface->configuration_memory_write(
-                address,
-                byte_count,
-                buffer);
-
-        return bytes_written; // Will force an error message to be created in the caller if bytes_written < byte_count
-
-    }
-
-    return 0; // Will force an error message to be created in the caller
-
-}
-
 static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_offset, const char *str, uint16_t max_str_len, uint16_t byte_count) {
 
     bool result_is_null_terminated = false;
@@ -110,16 +93,12 @@ static void _process_snip_string(openlcb_msg_t* outgoing_msg, uint16_t *payload_
 
 static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *payload_data_offset, const uint8_t version) {
 
-
     *outgoing_msg->payload[*payload_data_offset] = version;
     outgoing_msg->payload_count++;
     (*payload_data_offset)++;
 
     return *payload_data_offset;
-    
-    
-
-
+   
 }
 
 uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_data_offset, uint16_t byte_count) {
@@ -190,9 +169,7 @@ uint16_t ProtocolSnip_load_user_name(openlcb_node_t* openlcb_node, openlcb_msg_t
 
     }
 
-    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
-
-    _interface->configuration_memory_read(data_address, byte_count, &configuration_memory_buffer);
+    _interface->config_memory_read(openlcb_node, data_address, byte_count, &configuration_memory_buffer);
 
     _process_snip_string(outgoing_msg, &payload_data_offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_NAME_BUFFER, byte_count);
 
@@ -211,9 +188,7 @@ uint16_t ProtocolSnip_load_user_description(openlcb_node_t* openlcb_node, openlc
 
     }
 
-    data_address = data_address + OpenLcbUtilities_calculate_memory_offset_into_node_space(openlcb_node); // offset for multiple nodes
-
-    _interface->configuration_memory_read(data_address, byte_count, &configuration_memory_buffer); // grab string from config memory
+    _interface->config_memory_read(openlcb_node, data_address, byte_count, &configuration_memory_buffer); // grab string from config memory
 
     _process_snip_string(outgoing_msg, &payload_data_offset, (char*) (&configuration_memory_buffer[0]), LEN_SNIP_USER_DESCRIPTION_BUFFER, byte_count);
 
@@ -282,18 +257,6 @@ void ProtocolSnip_handle_simple_node_info_request(openlcb_statemachine_info_t *s
 
     statemachine_info->outgoing_msg_info.valid = true;
 
-}
-
-uint16_t ProtocolSnip_write_user_name(uint16_t byte_count, configuration_memory_buffer_t* buffer) {
-
-    return _write_user_data(USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS, byte_count, buffer);
-
-}
-
-uint16_t ProtocolSnip_write_user_description(uint16_t byte_count, configuration_memory_buffer_t* buffer) {
-
-    return _write_user_data(USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS, byte_count, buffer);
-    
 }
 
 void ProtocolSnip_handle_simple_node_info_reply(openlcb_statemachine_info_t *statemachine_info) {

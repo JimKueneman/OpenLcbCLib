@@ -147,7 +147,7 @@ void OSxDrivers_reboot(void)
 {
 }
 
-uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
     
     
@@ -218,10 +218,10 @@ uint16_t OSxDrivers_config_mem_read(uint32_t address, uint16_t count, configurat
 //    return count; // just returning 0's
 }
 
-uint16_t OSxDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
-    //  printf("configmem write\n");
+    printf("configmem write\n");
 
     if (count == 0) {
         

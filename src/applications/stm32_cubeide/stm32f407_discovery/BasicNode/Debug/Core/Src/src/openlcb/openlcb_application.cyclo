@@ -6,4 +6,4 @@
 ../Core/Src/src/openlcb/openlcb_application.c:72:6:OpenLcbApplication_send_event_pc_report	2
 ../Core/Src/src/openlcb/openlcb_application.c:101:6:OpenLcbApplication_send_teach_event	2
 ../Core/Src/src/openlcb/openlcb_application.c:131:10:OpenLcbApplication_read_configuration_memory	2
-../Core/Src/src/openlcb/openlcb_application.c:142:10:OpenLcbApplication_write_configuration_memory	2
+../Core/Src/src/openlcb/openlcb_application.c:147:10:OpenLcbApplication_write_configuration_memory	2

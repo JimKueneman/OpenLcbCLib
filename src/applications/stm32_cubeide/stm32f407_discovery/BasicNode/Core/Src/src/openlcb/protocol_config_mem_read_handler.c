@@ -256,6 +256,7 @@ void ProtocolConfigMemReadHandler_read_request_config_mem(openlcb_statemachine_i
         _load_config_mem_reply_ok_message_header(statemachine_info, config_mem_read_request_info);
 
         uint16_t read_count = _interface->config_memory_read(
+                statemachine_info->openlcb_node,
                 config_mem_read_request_info->address,
                 config_mem_read_request_info->bytes,
                 (configuration_memory_buffer_t*) & statemachine_info->outgoing_msg_info.msg_ptr->payload[config_mem_read_request_info->data_start]

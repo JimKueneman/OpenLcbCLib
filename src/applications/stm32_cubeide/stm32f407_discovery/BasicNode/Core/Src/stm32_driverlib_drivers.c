@@ -63,7 +63,7 @@ void STM32_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_inf
 	// DL_SYSCTL_resetDevice(0x03);
 }
 
-uint16_t STM32_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t STM32_DriverLibDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
 	char str[] = "STM32F407 Discovery";
@@ -95,7 +95,7 @@ uint16_t STM32_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count
 	return count;
 }
 
-uint16_t STM32_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t STM32_DriverLibDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
 	return count;
