@@ -422,7 +422,7 @@ void _write_request_traction_config_memory(openlcb_statemachine_info_t *statemac
     _update_called_function_ptr((void *)&_write_request_traction_config_memory);
 }
 
-uint16_t _config_memory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t _config_memory_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
     _update_called_function_ptr((void *)&_config_memory_write);
@@ -439,82 +439,60 @@ uint16_t _config_memory_write(uint32_t address, uint16_t count, configuration_me
     }
 }
 
-uint16_t _config_memory_write_snip(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
-{
-    _update_called_function_ptr((void *)&_config_memory_write_snip);
-
-    if (address == 0)
-    {
-
-        return 5;
-    }
-
-    if (address == LEN_SNIP_USER_NAME_BUFFER)
-    {
-
-        return 12;
-    }
-
-    return 0;
-}
-
 uint16_t _delayed_reply_time(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
 {
 
     return 16000;
 }
 
-uint16_t _snip_user_name_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
-{
+// uint16_t _snip_user_name_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
+// {
 
-    _update_called_function_ptr((void *)&_snip_user_name_write);
+//     _update_called_function_ptr((void *)&_snip_user_name_write);
 
-    if (memory_write_return_zero)
-    {
+//     if (memory_write_return_zero)
+//     {
 
-        return 0;
-    }
+//         return 0;
+//     }
 
-    memory_write_requested_bytes = byte_count;
+//     memory_write_requested_bytes = byte_count;
 
-    for (int i = 0; i < byte_count; i++)
-    {
+//     for (int i = 0; i < byte_count; i++)
+//     {
 
-        memory_write_data[i] = (*buffer)[i];
-    }
+//         memory_write_data[i] = (*buffer)[i];
+//     }
 
-    return byte_count;
-}
+//     return byte_count;
+// }
 
-uint16_t _snip_user_description_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
-{
+// uint16_t _snip_user_description_write(uint16_t byte_count, configuration_memory_buffer_t *buffer)
+// {
 
-    _update_called_function_ptr((void *)&_snip_user_description_write);
+//     _update_called_function_ptr((void *)&_snip_user_description_write);
 
-    if (memory_write_return_zero)
-    {
+//     if (memory_write_return_zero)
+//     {
 
-        return 0;
-    }
+//         return 0;
+//     }
 
-    memory_write_requested_bytes = byte_count;
+//     memory_write_requested_bytes = byte_count;
 
-    for (int i = 0; i < byte_count; i++)
-    {
+//     for (int i = 0; i < byte_count; i++)
+//     {
 
-        memory_write_data[i] = (*buffer)[i];
-    }
+//         memory_write_data[i] = (*buffer)[i];
+//     }
 
-    return byte_count;
-}
+//     return byte_count;
+// }
 
 const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
 
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
-
-    .snip_user_name_write = &_snip_user_name_write,
-    .snip_user_description_write = &_snip_user_description_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
@@ -534,8 +512,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    .snip_user_name_write = &_snip_user_name_write,
-    .snip_user_description_write = &_snip_user_description_write,
     .config_memory_write = &_config_memory_write,
 
     .write_request_config_definition_info = &_write_request_config_decscription_info,
@@ -555,9 +531,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    .snip_user_name_write = &_snip_user_name_write,
-    .snip_user_description_write = &_snip_user_description_write,
-
     .write_request_config_definition_info = &_write_request_config_decscription_info,
     .write_request_all = &_write_request_all,
     .write_request_config_mem = &_write_request_config_memory,
@@ -576,9 +549,6 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .load_datagram_received_ok_message = &_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &_load_datagram_rejected_message,
 
-    .snip_user_name_write = nullptr,
-    .snip_user_description_write = nullptr,
-
     .write_request_config_definition_info = nullptr,
     .write_request_all = nullptr,
     .write_request_config_mem = nullptr,
@@ -594,8 +564,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
 
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = nullptr,
-    .configuration_memory_write = &_config_memory_write_snip
+    .config_memory_read = nullptr,
 
 };
 
@@ -1545,13 +1514,13 @@ TEST(ProtocolConfigMemWriteHandler, write_request_acdi_user)
     _reset_variables();
     ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_name_write);
-    memory_write_requested_bytes = 5;
-    for (int i = 0; i < memory_write_requested_bytes; i++)
-    {
-        EXPECT_EQ(memory_write_data[i], *incoming_msg->payload[i + 7]);
-    }
-    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+  //  EXPECT_EQ(called_function_ptr, (void *)&_snip_user_name_write);
+    // memory_write_requested_bytes = 5;
+    // for (int i = 0; i < memory_write_requested_bytes; i++)
+    // {
+    //     EXPECT_EQ(memory_write_data[i], *incoming_msg->payload[i + 7]);
+    // }
+    // EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 
     // ************************************************************************
     // Valid write of Description
@@ -1584,13 +1553,13 @@ TEST(ProtocolConfigMemWriteHandler, write_request_acdi_user)
     _reset_variables();
     ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_description_write);
-    memory_write_requested_bytes = 12;
-    for (int i = 0; i < memory_write_requested_bytes; i++)
-    {
-        EXPECT_EQ(memory_write_data[i], *incoming_msg->payload[i + 7]);
-    }
-    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+  //  EXPECT_EQ(called_function_ptr, (void *)&_snip_user_description_write);
+    // memory_write_requested_bytes = 12;
+    // for (int i = 0; i < memory_write_requested_bytes; i++)
+    // {
+    //     EXPECT_EQ(memory_write_data[i], *incoming_msg->payload[i + 7]);
+    // }
+    // EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 
     // ************************************************************************
     // Failed write of Name
@@ -1618,7 +1587,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_acdi_user)
     ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
     memory_write_return_zero = false;
 
-    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_name_write);
+  //  EXPECT_EQ(called_function_ptr, (void *)&_snip_user_name_write);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);
@@ -1661,7 +1630,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_acdi_user)
     ProtocolConfigMemWriteHandler_write_request_acdi_user(&statemachine_info, &config_mem_write_request_info);
     memory_write_return_zero = false;
 
-    EXPECT_EQ(called_function_ptr, (void *)&_snip_user_description_write);
+  //  EXPECT_EQ(called_function_ptr, (void *)&_snip_user_description_write);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6);

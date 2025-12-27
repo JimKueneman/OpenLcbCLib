@@ -147,7 +147,7 @@ bool _transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
     return true;
 }
 
-uint16_t _configuration_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t _configuration_memory_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
     EXPECT_EQ(address, 0x0000FFFF);
@@ -168,7 +168,7 @@ uint16_t _configuration_memory_read(uint32_t address, uint16_t count, configurat
     return count;
 }
 
-uint16_t _configuration_memory_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t _configuration_memory_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
     EXPECT_EQ(address, 0x0000FFFF);
     EXPECT_EQ(count, 0x10);
@@ -191,14 +191,14 @@ uint16_t _configuration_memory_write(uint32_t address, uint16_t count, configura
 interface_openlcb_application_t interface_openlcb_application = {
 
     .send_openlcb_msg = &_transmit_openlcb_message,
-    .configuration_memory_read = &_configuration_memory_read,
-    .configuration_memory_write = &_configuration_memory_write};
+    .config_memory_read = &_configuration_memory_read,
+    .config_memory_write = &_configuration_memory_write};
 
 interface_openlcb_application_t interface_openlcb_application_nulls = {
 
     .send_openlcb_msg = NULL,
-    .configuration_memory_read = NULL,
-    .configuration_memory_write = NULL};
+    .config_memory_read = NULL,
+    .config_memory_write = NULL};
 
 interface_openlcb_node_t interface_openlcb_node = {
 

@@ -418,7 +418,7 @@ void _read_request_traction_config_memory(openlcb_statemachine_info_t *statemach
     _update_called_function_ptr((void *)&_read_request_traction_config_memory);
 }
 
-uint16_t _config_memory_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t _config_memory_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
     _update_called_function_ptr((void *)&_config_memory_read);
@@ -441,7 +441,7 @@ uint16_t _config_memory_read(uint32_t address, uint16_t count, configuration_mem
     }
 }
 
-uint16_t _config_memory_read_snip(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t _config_memory_read_snip(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
     _update_called_function_ptr((void *)&_config_memory_read_snip);
 
@@ -593,14 +593,13 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
 
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = &_config_memory_read_snip,
-    .configuration_memory_write = nullptr
+    .config_memory_read = &_config_memory_read_snip
 
 };
 
 interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip_nulls = {
 
-    .configuration_memory_read = nullptr
+    .config_memory_read = nullptr
 
 };
 
