@@ -96,7 +96,5 @@ var searchData=
   ['protocolsnip_5fload_5fuser_5fdescription_93',['ProtocolSnip_load_user_description',['../protocol__snip_8h.html#a0a2c11c40fcff40f495ffd2a271cd54e',1,'protocol_snip.h']]],
   ['protocolsnip_5fload_5fuser_5fname_94',['ProtocolSnip_load_user_name',['../protocol__snip_8h.html#af14a9ceacfb27b569a56de8caa5c6b23',1,'protocol_snip.h']]],
   ['protocolsnip_5fload_5fuser_5fversion_5fid_95',['ProtocolSnip_load_user_version_id',['../protocol__snip_8h.html#abe0da89740478610a11fe2a835d40d4e',1,'protocol_snip.h']]],
-  ['protocolsnip_5fvalidate_5fsnip_5freply_96',['ProtocolSnip_validate_snip_reply',['../protocol__snip_8h.html#ad9dd288bc1780719e4078408eef25b03',1,'protocol_snip.h']]],
-  ['protocolsnip_5fwrite_5fuser_5fdescription_97',['ProtocolSnip_write_user_description',['../protocol__snip_8h.html#a1a5f478e4728f142782276a8db51b4e7',1,'protocol_snip.h']]],
-  ['protocolsnip_5fwrite_5fuser_5fname_98',['ProtocolSnip_write_user_name',['../protocol__snip_8h.html#ab389edd115c9ab9fc11a7b2bd0f0f8ce',1,'protocol_snip.h']]]
+  ['protocolsnip_5fvalidate_5fsnip_5freply_96',['ProtocolSnip_validate_snip_reply',['../protocol__snip_8h.html#ad9dd288bc1780719e4078408eef25b03',1,'protocol_snip.h']]]
 ];
