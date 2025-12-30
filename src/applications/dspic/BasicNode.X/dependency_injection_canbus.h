@@ -24,34 +24,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dependency_injection.h
- * 
- * This dependency injection file can be reused as is and the Application level drivers can be assigned
- * in the dependency_injection_defines.h file.
+ * \file dependency_injection_canbus.h
  *
  *
  * @author Jim Kueneman
- * @date 27 Dec 2025
+ * @date 27 Nov 2025
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.
-#ifndef __DEPENDENCY_INJECTION__
-#define __DEPENDENCY_INJECTION__
+// more than once.  
+#ifndef __DEPENDENCY_INJECTION_CANBUS__
+#define	__DEPENDENCY_INJECTION_CANBUS__
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#
-#ifdef __cplusplus
-extern "C"
-{
+#ifdef	__cplusplus
+extern "C" {
 #endif /* __cplusplus */
 
-    extern void DependencyInjection_initialize(void);
+    extern void DependencyInjectionCanBus_initialize(void);
 
-#ifdef __cplusplus
+#ifdef	__cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __DEPENDENCY_INJECTION__ */
+#endif	/* __DEPENDENCY_INJECTION_CANBUS__ */
+

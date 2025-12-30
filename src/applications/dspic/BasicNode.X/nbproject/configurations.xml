@@ -21,6 +21,8 @@
         <itemPath>dependency_injection.h</itemPath>
         <itemPath>dependency_injectors.h</itemPath>
         <itemPath>common_loader_app.h</itemPath>
+        <itemPath>dependency_injection_canbus.h</itemPath>
+        <itemPath>dependency_injection_defines.h</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="canbus" displayName="canbus" projectFiles="true">
@@ -88,6 +90,7 @@
         <itemPath>common_debug_helper.c</itemPath>
         <itemPath>dependency_injection.c</itemPath>
         <itemPath>dependency_injectors.c</itemPath>
+        <itemPath>dependency_injection_canbus.c</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
         <logicalFolder name="canbus" displayName="canbus" projectFiles="true">

@@ -97,6 +97,8 @@
 #include "../dsPIC_Common/ecan1_helper.h"
 #include "node_parameters.h"
 #include "dependency_injection.h"
+#include "dependency_injection_canbus.h"
+
 #include "dependency_injectors.h"
 
 #include "../../../drivers/canbus/can_main_statemachine.h"
@@ -150,6 +152,7 @@ int main(void)
     Ecan1Helper_initialize();
     BasicNodeDrivers_initialize();
 
+    DependencyInjectionCanBus_initialize();
     DependencyInjection_initialize();
     DependencyInjectors_initialize();
 
