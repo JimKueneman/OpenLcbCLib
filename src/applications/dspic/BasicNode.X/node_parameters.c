@@ -63,8 +63,8 @@ const node_parameters_t NodeParameters_main_node = {
     PSI_FIRMWARE_UPGRADE
     ),
 
-    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
-    .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO, // May need to change these
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_FIRMWARE,  // May need to change these
     .configuration_options.read_from_manufacturer_space_0xfc_supported = true,
     .configuration_options.read_from_user_space_0xfb_supported = true,
     .configuration_options.stream_read_write_supported = false,
@@ -79,8 +79,8 @@ const node_parameters_t NodeParameters_main_node = {
     //    make sure the CDI maps these 2 items to the first 128 bytes as well
     .address_space_configuration_definition.read_only = true,
     .address_space_configuration_definition.present = true,
-    .address_space_configuration_definition.low_address_valid = false, // assume the low address starts at 0
-    .address_space_configuration_definition.low_address = 0, // ignored if low_address_valid is false
+    .address_space_configuration_definition.low_address_valid = false, // assume the low address starts at 0 Don't Change!
+    .address_space_configuration_definition.low_address = 0, // ignored if low_address_valid is false Don't Change!
     .address_space_configuration_definition.highest_address = (1098 - 1), // length of the .cdi file byte array contents; see USER_DEFINED_CDI_LENGTH for array size
     .address_space_configuration_definition.address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
     .address_space_configuration_definition.description = "Configuration definition info",
@@ -171,6 +171,8 @@ const node_parameters_t NodeParameters_main_node = {
         0x3C, 0x2F, 0x63, 0x64, 0x69, 0x3E, 0x00 // </cdi>
                 
     },
+    
+    .fdi {},
 
 
 };

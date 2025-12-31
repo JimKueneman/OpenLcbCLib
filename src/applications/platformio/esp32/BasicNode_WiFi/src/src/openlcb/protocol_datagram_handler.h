@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
  * from the FIFO buffer.
  *
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 29 Dec 2025
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -45,7 +45,12 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    // Config Memory Read
+    
+    // Required function assignments
+    void (*lock_shared_resources)(void);
+    void (*unlock_shared_resources)(void);
+    
+    // Optional functions to implement Address Space access to Read Address Spaces, these are general functions that call the request functions defined in interface_protocol_config_mem_read_handler_t
     void (*memory_read_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_all)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
@@ -54,7 +59,7 @@ typedef struct {
     void (*memory_read_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Read Reply = Ok
+    // Optional functions to implement Address Space read replies (Only required if the node is requesting a datagram from some other node and this is the OK reply)
     void (*memory_read_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
@@ -63,7 +68,7 @@ typedef struct {
     void (*memory_read_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Read Reply = Failed
+    // Optional functions to implement Address Space read replies (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     void (*memory_read_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
@@ -72,7 +77,7 @@ typedef struct {
     void (*memory_read_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Stream Read
+    // Optional functions to implement Address Space access to Read Address Spaces through a Stream
     void (*memory_read_stream_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_all)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
@@ -81,7 +86,7 @@ typedef struct {
     void (*memory_read_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Stream Read Reply = Ok
+    // Optional functions to implement Address Space read replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the OK reply)
     void (*memory_read_stream_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
@@ -90,7 +95,7 @@ typedef struct {
     void (*memory_read_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Stream Read Reply = Failed
+    // Optional functions to implement Address Space read replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     void (*memory_read_stream_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
@@ -99,26 +104,26 @@ typedef struct {
     void (*memory_read_stream_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_read_stream_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Write
-    void (*memory_write_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_all)(openlcb_statemachine_info_t *statemachine_info);
+    // Optional functions to implement Address Space access to Write Address Spaces, these are general functions that call the request functions defined in interface_protocol_config_mem_write_handler_t
+    void (*memory_write_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);           // Typically NULL as this a a read only space
+    void (*memory_write_space_all)(openlcb_statemachine_info_t *statemachine_info);                               // Typically NULL as this a a read only space
     void (*memory_write_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);                 // Typically NULL as this a a read only space
     void (*memory_write_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info); // Typically NULL as this a a read only space
     void (*memory_write_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Write Reply = Ok
-    void (*memory_write_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    // Optional functions to implement Address Space write replies (Only required if the node is requesting a datagram from some other node and this is the OK reply)
+    void (*memory_write_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);  // Typically never called as this a a read only space
+    void (*memory_write_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);                      // Typically never called as this a a read only space
     void (*memory_write_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);        // Typically never called as this a a read only space
     void (*memory_write_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info); // Typically never called as this a a read only space
     void (*memory_write_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Write Reply = Fail
+    // Optional functions to implement Address Space write replies (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     void (*memory_write_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
@@ -127,36 +132,36 @@ typedef struct {
     void (*memory_write_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Write Under Mask
-    void (*memory_write_under_mask_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_all)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    // Optional functions to implement Address Space write under a mask 
+    void (*memory_write_under_mask_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);           // Typically NULL as this a a read only space
+    void (*memory_write_under_mask_space_all)(openlcb_statemachine_info_t *statemachine_info);                               // Typically NULL as this a a read only space
+    void (*memory_write_under_mask_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);     
+    void (*memory_write_under_mask_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);                 // Typically NULL as this a a read only space
     void (*memory_write_under_mask_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_under_mask_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info); // Typically NULL as this a a read only space
     void (*memory_write_under_mask_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_under_mask_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
     
-    // Config Memory Write Stream
-    void (*memory_write_stream_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_all)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);
+    // Optional functions to implement Address Space access to Write Address Spaces through a Stream
+    void (*memory_write_stream_space_config_description_info)(openlcb_statemachine_info_t *statemachine_info);              // Typically NULL as this a a read only space
+    void (*memory_write_stream_space_all)(openlcb_statemachine_info_t *statemachine_info);                                  // Typically NULL as this a a read only space
+    void (*memory_write_stream_space_configuration_memory)(openlcb_statemachine_info_t *statemachine_info);                 
+    void (*memory_write_stream_space_acdi_manufacturer)(openlcb_statemachine_info_t *statemachine_info);                    // Typically NULL as this a a read only space
     void (*memory_write_stream_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);    // Typically NULL as this a a read only space
     void (*memory_write_stream_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_stream_space_firmware_upgrade)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Write Stream Reply = Ok
-    void (*memory_write_stream_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    // Optional functions to implement Address Space write replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the OK reply)
+    void (*memory_write_stream_space_config_description_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);    // Typically never called as this a a read only space
+    void (*memory_write_stream_space_all_reply_ok)(openlcb_statemachine_info_t *statemachine_info);                        // Typically never called as this a a read only space
     void (*memory_write_stream_space_configuration_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_acdi_manufacturer_reply_ok)(openlcb_statemachine_info_t *statemachine_info);          // Typically never called as this a a read only space 
     void (*memory_write_stream_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
-    void (*memory_write_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info); // Typically never called as this a a read only space
     void (*memory_write_stream_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Memory Write Stream Reply = Fail
+    // Optional functions to implement Address Space write replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     void (*memory_write_stream_space_config_description_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_stream_space_all_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_stream_space_configuration_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
@@ -165,7 +170,7 @@ typedef struct {
     void (*memory_write_stream_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_write_stream_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
-    // Config Commands
+    // Optional functions to implement the commands in the Configuration Memory Operations, typically assigned the handlers in interface_protocol_config_mem_operations_handler_t.
     void (*memory_options_cmd)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_options_reply)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_get_address_space_info)(openlcb_statemachine_info_t *statemachine_info);
@@ -180,9 +185,6 @@ typedef struct {
     void (*memory_update_complete)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_reset_reboot)(openlcb_statemachine_info_t *statemachine_info);
     void (*memory_factory_reset)(openlcb_statemachine_info_t *statemachine_info);
-
-    void (*lock_shared_resources)(void);
-    void (*unlock_shared_resources)(void);
 
 } interface_protocol_datagram_handler_t;
 

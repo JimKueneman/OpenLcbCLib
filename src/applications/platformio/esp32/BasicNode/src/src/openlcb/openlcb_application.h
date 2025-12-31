@@ -44,6 +44,7 @@
 
 typedef struct {
     
+    // Required function assignments
     bool (*send_openlcb_msg)(openlcb_msg_t* openlcb_msg);
     uint16_t (*config_memory_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
     uint16_t (*config_memory_write) (openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);

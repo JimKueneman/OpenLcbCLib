@@ -42,11 +42,13 @@
 #include "openlcb_types.h"
 
 typedef struct {
+    
+    // Required function assignments
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
-    
     uint16_t(*config_memory_read)(openlcb_node_t* openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t* buffer);
-   
+    
+    // Optional function assignments (Required if Address Spaces 0xFB/0xFC ACDI Manufacturer/User Protocol is enabled)
     uint16_t(*snip_load_manufacturer_version_id)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
     uint16_t(*snip_load_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
     uint16_t(*snip_load_model)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
@@ -56,6 +58,7 @@ typedef struct {
     uint16_t(*snip_load_user_name)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
     uint16_t(*snip_load_user_description)(openlcb_node_t* openlcb_node, openlcb_msg_t* worker_msg, uint16_t payload_index, uint16_t requested_bytes);
 
+    // Optional request function assignments (Encapsulated functions to read specific address spaces)
     void (*read_request_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
     void (*read_request_all)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
     void (*read_request_config_mem)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
@@ -64,6 +67,7 @@ typedef struct {
     void (*read_request_traction_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
     void (*read_request_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
     
+    // Optional override to return the flag in the Datagram ACK to allow the client to say the reply will be coming 2^N seconds
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
 
 } interface_protocol_config_mem_read_handler_t;

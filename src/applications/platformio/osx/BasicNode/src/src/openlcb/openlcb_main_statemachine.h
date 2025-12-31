@@ -45,11 +45,16 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    // ************************************************************************
-    // Required message handlers
-    // ************************************************************************ 
     
-    // MESSAGE NETWORK
+    // Required function assignments
+    void (*lock_shared_resources)(void);
+    void (*unlock_shared_resources)(void);
+    bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
+    openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
+    openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
+    void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
+
+    // Required Message Network Protocol Handler function assignments
     void (*message_network_initialization_complete)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_initialization_complete_simple)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_verify_node_id_addressed)(openlcb_statemachine_info_t *statemachine_info);
@@ -58,19 +63,11 @@ typedef struct {
     void (*message_network_optional_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_terminate_due_to_error)(openlcb_statemachine_info_t *statemachine_info);
 
-    // PROTOCOL SUPPORT
+    // Required Protocol Support Protocol (PIP) Handler function assignments
     void (*message_network_protocol_support_inquiry)(openlcb_statemachine_info_t *statemachine_info);
     void (*message_network_protocol_support_reply)(openlcb_statemachine_info_t *statemachine_info);
 
-    // General
-    void (*lock_shared_resources)(void);
-    void (*unlock_shared_resources)(void);
-    bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
-    openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
-    openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
-    void (*load_interaction_rejected)(openlcb_statemachine_info_t *statemachine_info);
-
-    // Test injection
+    // Required internal function assignments (for testability)
     void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);
     bool (*does_node_process_msg)(openlcb_statemachine_info_t *_statemachine_info); 
     bool (*handle_outgoing_openlcb_message)(void);
@@ -79,15 +76,12 @@ typedef struct {
     bool (*handle_try_enumerate_first_node)(void);
     bool (*handle_try_enumerate_next_node)(void); 
     
-    // ************************************************************************
-    // Optional message handlers
-    // ************************************************************************
-    
-    // SNIP
+
+    // Optional SNIP Protocol Handler function assignments
     void (*snip_simple_node_info_request)(openlcb_statemachine_info_t *statemachine_info);
     void (*snip_simple_node_info_reply)(openlcb_statemachine_info_t *statemachine_info);
 
-    // EVENTS
+    // Optional Event Transport Protocol Handler function assignments
     void (*event_transport_consumer_identify)(openlcb_statemachine_info_t *statemachine_info);
     void (*event_transport_consumer_range_identified)(openlcb_statemachine_info_t *statemachine_info);
     void (*event_transport_consumer_identified_unknown)(openlcb_statemachine_info_t *statemachine_info);
@@ -106,20 +100,20 @@ typedef struct {
     void (*event_transport_pc_report)(openlcb_statemachine_info_t *statemachine_info);
     void (*event_transport_pc_report_with_payload)(openlcb_statemachine_info_t *statemachine_info);
 
-    // TRACTION
+    // Optional Traction Protocol Handler function assignments
     void (*traction_control_command)(openlcb_statemachine_info_t *statemachine_info);
     void (*traction_control_reply)(openlcb_statemachine_info_t *statemachine_info);
 
-    // TRACTION SNIP
+    // Optional Traction SNIP Protocol Handler function assignments
     void (*simple_train_node_ident_info_request)(openlcb_statemachine_info_t *statemachine_info);
     void (*simple_train_node_ident_info_reply)(openlcb_statemachine_info_t *statemachine_info);
 
-    // DATAGRAM
+    // Optional Datagram Protocol Handler function assignments
     void (*datagram)(openlcb_statemachine_info_t *statemachine_info);
     void (*datagram_ok_reply)(openlcb_statemachine_info_t *statemachine_info);
     void (*datagram_rejected_reply)(openlcb_statemachine_info_t *statemachine_info);
 
-    // STREAM
+    // Optional Stream Protocol Handler function assignments
     void (*stream_initiate_request)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_initiate_reply)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_send_data)(openlcb_statemachine_info_t *statemachine_info);

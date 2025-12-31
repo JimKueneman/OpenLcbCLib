@@ -39,16 +39,19 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    void (*load_initialization_complete)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
-    void (*load_producer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
-    void (*load_consumer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
-
+    
+    // Required function assignments
     bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
     openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
-    void (*process_login_statemachine)(openlcb_login_statemachine_info_t *statemachine_info);
     
-    // For test injection
+    // Required Handler function assignments
+    void (*load_initialization_complete)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+    void (*load_producer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+    void (*load_consumer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
+    
+    // Required internal function assignments (for testability)
+    void (*process_login_statemachine)(openlcb_login_statemachine_info_t *statemachine_info);
     bool (*handle_outgoing_openlcb_message)(void);
     bool (*handle_try_reenumerate)(void);
     bool (*handle_try_enumerate_first_node)(void);

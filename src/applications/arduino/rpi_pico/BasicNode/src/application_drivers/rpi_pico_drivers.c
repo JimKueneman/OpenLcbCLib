@@ -1,0 +1,102 @@
+
+/** \copyright
+ * Copyright (c) 2025, Jim Kueneman
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \odx_drivers.c
+ *
+ *
+ *
+ * @author Jim Kueneman
+ * @date 7 Nov 2025
+ */
+
+#define ARDUINO_COMPATIBLE
+
+#include "rpi_pico_drivers.h"
+#include "rpi_pico_can_drivers.h"
+
+#include "../../src/openlcb/openlcb_types.h"
+#include "../../src/utilities/mustangpeak_string_helper.h"
+#include "../../src/openlcb/openlcb_node.h"
+#include "../../src/openlcb/protocol_datagram_handler.h"
+
+#ifdef ARDUINO_COMPATIBLE
+#include "Arduino.h"
+// TODO:  include any header files the Raspberry Pi Pico need to compile under Arduino/PlatformIO
+#endif
+
+// Create a Timer interrupt or task and call the following
+void timer_task_or_interrupt(void *arg)
+{
+
+  // TODO: Create a Timer interrupt or task (if using RTOS) and call the following every 100ms or so (not critical)
+  OpenLcbNode_100ms_timer_tick();
+  ProtocolDatagramHandler_100ms_timer_tick();
+}
+
+void RPiPicoDriver_setup(void)
+{
+  // Initialize Raspberry Pi Pico interrupt and any features needed for config memory read/writes
+}
+
+void RPiPicoDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
+
+  // TODO: Reboot the Raspberry Pi here
+}
+
+uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
+
+  // TODO: Write to EEPROM/FLASH/FRAM/........
+
+  return count;
+}
+
+uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+{
+
+  // TODO: Write to EEPROM/FLASH/FRAM/........
+
+  return count;
+}
+
+void RPiPicoDrivers_lock_shared_resources(void)
+{
+
+  // TODO: Pause the 100ms Timer here
+
+  // Pause the CAN Rx thread
+  RPiPicoCanDriver_pause_can_rx();
+}
+
+void RPiPicoDrivers_unlock_shared_resources(void)
+{
+  // TODO: Resume the 100ms Timer here
+
+  // Resume the CAN Rx thread
+  RPiPicoCanDriver_resume_can_rx();
+}

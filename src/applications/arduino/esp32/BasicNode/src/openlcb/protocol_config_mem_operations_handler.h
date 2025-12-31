@@ -42,10 +42,12 @@
 #include "openlcb_types.h"
 
 typedef struct {
+    
+    // Required function assignments
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
 
-    // callbacks
+    // Optional request function assignments (Encapsulated functions to perform the particular Operations Task)
     void (*operations_request_options_cmd)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
     void (*operations_request_options_cmd_reply)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
     void (*operations_request_get_address_space_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
