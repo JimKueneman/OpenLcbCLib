@@ -1,0 +1,146 @@
+Core/Src/src/node_definition/dependency_injection.o: \
+ ../Core/Src/src/node_definition/dependency_injection.c \
+ ../Core/Src/src/node_definition/dependency_injection.h \
+ ../Core/Src/src/node_definition/../../function_injection_defines.h \
+ ../Core/Src/src/node_definition/../../callbacks.h \
+ ../Core/Src/src/node_definition/../../src/openlcb/openlcb_types.h \
+ ../Core/Src/src/node_definition/../../src/drivers/canbus/can_types.h \
+ ../Core/Src/src/node_definition/../../src/drivers/canbus/../../openlcb/openlcb_defines.h \
+ ../Core/Src/src/node_definition/../../src/drivers/canbus/../../openlcb/openlcb_types.h \
+ ../Core/Src/src/node_definition/../../src/openlcb/openlcb_gridconnect.h \
+ ../Core/Src/src/node_definition/../../src/openlcb/../drivers/canbus/can_types.h \
+ ../Core/Src/src/node_definition/../../src/application_drivers/stm32_driverlib_drivers.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../Core/Inc/stm32f4xx_hal_conf.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
+ ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h \
+ ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h \
+ ../Drivers/CMSIS/Include/core_cm4.h \
+ ../Drivers/CMSIS/Include/cmsis_version.h \
+ ../Drivers/CMSIS/Include/cmsis_compiler.h \
+ ../Drivers/CMSIS/Include/cmsis_gcc.h \
+ ../Drivers/CMSIS/Include/mpu_armv7.h \
+ ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
+ ../Core/Src/src/node_definition/../../src/application_drivers/../openlcb/openlcb_types.h \
+ ../Core/Src/src/node_definition/../../src/application_drivers/stm32_driverlib_can_driver.h \
+ ../Core/Src/src/node_definition/../../src/application_drivers/../drivers/canbus/can_types.h \
+ ../Core/Src/src/node_definition/../../src/openlcb/openlcb_buffer_store.h \
+ ../Core/Src/src/node_definition/../../src/openlcb/openlcb_types.h \
+ ../Core/Src/src/node_definition/../../src/drivers/canbus/can_tx_statemachine.h \
+ ../Core/Src/src/node_definition/../../src/drivers/canbus/can_types.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_application.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_types.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_defines.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_types.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_utilities.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_defines.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_buffer_store.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_buffer_list.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_buffer_fifo.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_node.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_message_network.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_event_transport.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_snip.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_main_statemachine.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_datagram_handler.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_login_statemachine.h \
+ ../Core/Src/src/node_definition/../openlcb/openlcb_login_statemachine_handler.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_config_mem_read_handler.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_config_mem_write_handler.h \
+ ../Core/Src/src/node_definition/../openlcb/protocol_config_mem_operations_handler.h
+../Core/Src/src/node_definition/dependency_injection.h:
+../Core/Src/src/node_definition/../../function_injection_defines.h:
+../Core/Src/src/node_definition/../../callbacks.h:
+../Core/Src/src/node_definition/../../src/openlcb/openlcb_types.h:
+../Core/Src/src/node_definition/../../src/drivers/canbus/can_types.h:
+../Core/Src/src/node_definition/../../src/drivers/canbus/../../openlcb/openlcb_defines.h:
+../Core/Src/src/node_definition/../../src/drivers/canbus/../../openlcb/openlcb_types.h:
+../Core/Src/src/node_definition/../../src/openlcb/openlcb_gridconnect.h:
+../Core/Src/src/node_definition/../../src/openlcb/../drivers/canbus/can_types.h:
+../Core/Src/src/node_definition/../../src/application_drivers/stm32_driverlib_drivers.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
+../Core/Inc/stm32f4xx_hal_conf.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
+../Drivers/CMSIS/Include/core_cm4.h:
+../Drivers/CMSIS/Include/cmsis_version.h:
+../Drivers/CMSIS/Include/cmsis_compiler.h:
+../Drivers/CMSIS/Include/cmsis_gcc.h:
+../Drivers/CMSIS/Include/mpu_armv7.h:
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_hcd.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
+../Core/Src/src/node_definition/../../src/application_drivers/../openlcb/openlcb_types.h:
+../Core/Src/src/node_definition/../../src/application_drivers/stm32_driverlib_can_driver.h:
+../Core/Src/src/node_definition/../../src/application_drivers/../drivers/canbus/can_types.h:
+../Core/Src/src/node_definition/../../src/openlcb/openlcb_buffer_store.h:
+../Core/Src/src/node_definition/../../src/openlcb/openlcb_types.h:
+../Core/Src/src/node_definition/../../src/drivers/canbus/can_tx_statemachine.h:
+../Core/Src/src/node_definition/../../src/drivers/canbus/can_types.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_application.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_types.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_defines.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_types.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_utilities.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_defines.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_buffer_store.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_buffer_list.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_buffer_fifo.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_node.h:
+../Core/Src/src/node_definition/../openlcb/protocol_message_network.h:
+../Core/Src/src/node_definition/../openlcb/protocol_event_transport.h:
+../Core/Src/src/node_definition/../openlcb/protocol_snip.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_main_statemachine.h:
+../Core/Src/src/node_definition/../openlcb/protocol_datagram_handler.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_login_statemachine.h:
+../Core/Src/src/node_definition/../openlcb/openlcb_login_statemachine_handler.h:
+../Core/Src/src/node_definition/../openlcb/protocol_config_mem_read_handler.h:
+../Core/Src/src/node_definition/../openlcb/protocol_config_mem_write_handler.h:
+../Core/Src/src/node_definition/../openlcb/protocol_config_mem_operations_handler.h:

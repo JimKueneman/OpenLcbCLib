@@ -25,21 +25,33 @@
 
 #include "stdio.h"
 
+#include "callbacks.h"
+#include "node_parameters.h"
+#include "src/application_drivers/stm32_driverlib_drivers.h"
+#include "src/application_drivers/stm32_driverlib_can_driver.h"
+#include "src/node_definition/dependency_injection.h"
+#include "src/node_definition/dependency_injection_canbus.h"
+
 #include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/drivers/canbus/can_rx_statemachine.h"
-#include "src/drivers/canbus/can_tx_statemachine.h"
-#include "src/drivers/canbus/can_types.h"
-#include "src/drivers/canbus/can_utilities.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
+#include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
 
-#include "stm32_driverlib_can_driver.h"
-#include "stm32_driverlib_drivers.h"
+
+
+//#include "src/drivers/canbus/can_main_statemachine.h"
+//#include "src/drivers/canbus/can_rx_statemachine.h"
+//#include "src/drivers/canbus/can_tx_statemachine.h"
+//#include "src/drivers/canbus/can_types.h"
+//#include "src/drivers/canbus/can_utilities.h"
+//#include "src/openlcb/openlcb_login_statemachine.h"
+//#include "src/openlcb/openlcb_main_statemachine.h"
+//#include "src/openlcb/openlcb_node.h"
+
+
 #include "debug_tools.h"
-#include "dependency_injection.h"
-#include "dependency_injectors.h"
-#include "node_parameters.h"
+
+
 
 /* USER CODE END Includes */
 
@@ -162,8 +174,11 @@ int main(void)
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 
+  DependencyInjectionCanBus_initialize();
   DependencyInjection_initialize();
-  DependencyInjectors_initialize();
+
+  Callbacks_initialize();
+
 
   STM32_DriverLibCanDriver_initialize(&hcan1);
   STM32_DriverLibDrivers_initialize(&htim7);

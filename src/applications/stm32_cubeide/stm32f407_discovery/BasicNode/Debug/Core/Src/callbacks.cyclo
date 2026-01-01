@@ -1,0 +1,6 @@
+../Core/Src/callbacks.c:42:6:Callbacks_initialize	1
+../Core/Src/callbacks.c:46:6:Callbacks_on_100ms_timer_callback	2
+../Core/Src/callbacks.c:64:6:Callbacks_on_can_rx_callback	1
+../Core/Src/callbacks.c:75:6:Callbacks_on_can_tx_callback	1
+../Core/Src/callbacks.c:87:6:Callbacks_alias_change_callback	1
+../Core/Src/callbacks.c:94:6:Callbacks_operations_request_factory_reset	1
