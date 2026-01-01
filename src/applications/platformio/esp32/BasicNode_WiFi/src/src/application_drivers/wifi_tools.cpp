@@ -31,8 +31,17 @@
  * @date 15 Nov 2025
  */
 
+#define ARDUINO_COMPATIBLE
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+
 #include "wifi_tools.h"
 
+#include "wifi_tools_debug.h"
+
+#ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"
 
 #include "freertos/FreeRTOS.h"
@@ -62,12 +71,7 @@
 #include "nvs_flash.h"
 #include "ping/ping_sock.h"
 #include "driver/gpio.h"
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
-
-#include "wifi_tools_debug.h"
+#endif //  ARDUINO_COMPATIBLE
 
 typedef struct
 {
@@ -104,7 +108,7 @@ static esp32_wifi_connection_info_t _esp32_wifi_connection_info = {
 	.port = 12021,
 	.is_connected_to_access_point = false,
 	.is_connected_to_server = false,
-    .sock = -1
+	.sock = -1
 
 };
 
@@ -195,22 +199,22 @@ bool WiFiTools_is_connected_to_server(void)
 	return _esp32_wifi_connection_info.is_connected_to_server;
 }
 
-void WiFiTools_close_server(void) {
+void WiFiTools_close_server(void)
+{
 
-	if (_esp32_wifi_connection_info.sock > 0) {
+	if (_esp32_wifi_connection_info.sock > 0)
+	{
 
 		closesocket(_esp32_wifi_connection_info.sock);
-
 	}
 
 	_esp32_wifi_connection_info.is_connected_to_server = false;
-
 }
 
-int WifiTools_get_socket(void) {
+int WifiTools_get_socket(void)
+{
 
 	return _esp32_wifi_connection_info.sock;
-
 }
 
 int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port)
@@ -233,7 +237,7 @@ int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port)
 		printf("Creating a Socket...\n");
 
 		_esp32_wifi_connection_info.sock = socket(addr_family, SOCK_STREAM, ip_protocol);
-		
+
 		if (_esp32_wifi_connection_info.sock < 0)
 		{
 
@@ -263,5 +267,4 @@ int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port)
 	}
 
 	return _esp32_wifi_connection_info.sock;
-
 }

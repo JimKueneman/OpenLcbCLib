@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2026, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,31 +24,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dependency_injectors.c
+ * \file callbacks.c
  *
  *
  * @author Jim Kueneman
- * @date 11 Nov 2024
+ * @date 1 Jan 2026
  */
 
+#include "callbacks.h"
 
-#include "dependency_injectors.h"
 #include "src/openlcb/openlcb_utilities.h"
+#include "src/drivers/canbus/can_types.h"
 
 #define LED_PIN 2
 
 static uint16_t _100ms_ticks = 0;
 
-void DependencyInjectors_initialize(void) {
+void Callbacks_initialize(void)
+{
 
     gpio_reset_pin(LED_PIN);
     gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
 }
 
-    void DependencyInjectors_on_100ms_timer_callback(void)
+void Callbacks_on_100ms_timer_callback(void)
 {
 
-    if (_100ms_ticks > 5) {
+    if (_100ms_ticks > 5)
+    {
 
         gpio_set_level(LED_PIN, 0); // turn off
 
@@ -58,17 +61,17 @@ void DependencyInjectors_initialize(void) {
     _100ms_ticks++;
 }
 
-void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
+void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
 {
     gridconnect_buffer_t gridconnect;
 
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char*)&gridconnect);
+    printf("[R] %s\n", (char *)&gridconnect);
 
     gpio_set_level(LED_PIN, 1); // turn on
 }
 
- void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg)
+void Callbacks_on_can_tx_callback(can_msg_t *can_msg)
 {
 
     gridconnect_buffer_t gridconnect;
@@ -79,14 +82,14 @@ void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
     gpio_set_level(LED_PIN, 1); // turn on
 }
 
- void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id)
+void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id)
 {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
     printf("NodeID: 0x%06llX\n\n", node_id);
 }
 
-void DependencyInjectors_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
 {
 
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));

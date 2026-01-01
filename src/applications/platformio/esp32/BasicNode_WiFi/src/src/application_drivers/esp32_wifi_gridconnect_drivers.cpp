@@ -35,8 +35,11 @@
  * @date 15 Nov 2025
  */
 
+#define ARDUINO_COMPATIBLE
+
 #include "esp32_wifi_gridconnect_drivers.h"
 
+#ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"
 
 #include "freertos/FreeRTOS.h"
@@ -67,18 +70,24 @@
 #include "ping/ping_sock.h"
 #include "driver/gpio.h"
 
+#endif // ARDUINO_COMPATIBLE
+
 #include "wifi_tools.h"
 #include "wifi_tools_debug.h"
 
-#include "src/drivers/canbus/can_rx_statemachine.h"
-#include "src/drivers/canbus/can_types.h"
-#include "src/openlcb/openlcb_gridconnect.h"
-#include "src/utilities/mustangpeak_string_helper.h"
-#include "src/openlcb/openlcb_gridconnect.h"
+#include "../drivers/canbus/can_rx_statemachine.h"
+#include "../drivers/canbus/can_types.h"
+#include "../openlcb/openlcb_gridconnect.h"
+#include "../utilities/mustangpeak_string_helper.h"
 
 #define INCLUDE_vTaskSuspend 1
 
 static TaskHandle_t _receive_task_handle = NULL;
+
+void Esp32WiFiGridconnectDriver_setup(void) {
+
+
+}
 
 static void _receive_task(void *arg)
 {

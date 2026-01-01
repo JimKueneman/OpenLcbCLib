@@ -4,21 +4,21 @@
 #include "stdio.h"
 #include "unistd.h"
 
-#include "esp32_drivers.h"
-#include "esp32_wifi_gridconnect_drivers.h"
-
-#include "wifi_tools.h"
-#include "wifi_tools_debug.h"
+#include "callbacks.h"
 #include "node_parameters.h"
-#include "dependency_injectors.h"
-#include "dependency_injection.h"
+#include "src/application_drivers/esp32_drivers.h"
+#include "src/application_drivers/esp32_wifi_gridconnect_drivers.h"
+#include "src/application_drivers/wifi_tools.h"
+#include "src/application_drivers/wifi_tools_debug.h"
+#include "src/node_definition/dependency_injection.h"
+#include "src/node_definition/dependency_injection_canbus.h"
 
 #include "src/drivers/canbus/alias_mappings.h"
-#include "src/drivers/canbus/can_main_statemachine.h"
 
-#include "src/openlcb/openlcb_node.h"
+#include "src/drivers/canbus/can_main_statemachine.h"
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
+#include "src/openlcb/openlcb_node.h"
 
 // put function declarations here:
 
@@ -37,10 +37,12 @@ void setup()
 
     Serial.begin(921600);
 
-    DependencyInjectors_initialize();
     DependencyInjection_initialize();
+    DependencyInjection_initialize();
+    Callbacks_initialize();
 
     Serial.println("Setting up Drivers.....");
+    Esp32WiFiGridconnectDriver_setup();
     Esp32Drivers_setup();
 
     Serial.println("Creating Node.....");
@@ -84,6 +86,4 @@ void loop()
             }
         }
     }
-
-    // WiFiToolsDebug_log_status();
 }

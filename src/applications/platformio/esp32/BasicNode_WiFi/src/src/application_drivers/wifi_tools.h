@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -24,7 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file wifi_tools_debug.h
+ * \file wifi_tools_.h
  *
  *
  * @author Jim Kueneman
@@ -33,29 +34,45 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __WIFI_TOOLS_DEBUG__
-#define __WIFI_TOOLS_DEBUG__
+#ifndef __WIFI_TOOLS___
+#define __WIFI_TOOLS___
 
-#include <Arduino.h>
-#include <WiFi.h>
+#define ARDUINO_COMPATIBLE
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "src/openlcb/openlcb_types.h"
-#include "src/drivers/canbus/can_types.h"
+#ifdef ARDUINO_COMPATIBLE
+#include <Arduino.h>
+#include <WiFi.h>
+#endif
+
+#include "../openlcb/openlcb_types.h"
+#include "../drivers/canbus/can_types.h"
+
+#define RECONNECT_INTERVAL 100
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-     extern void WifiToolsDebug_log_event(WiFiEvent_t event, WiFiEventInfo_t info);
+    extern void WiFiTools_connect_to_access_point(const char *ssid, const char *pass);
 
-     extern void WiFiToolsDebug_log_status(void);
+    extern void WiFiTools_log_events(bool do_enable);
+
+    extern bool WiFiTools_is_connected_to_access_point(void);
+
+    extern bool WiFiTools_is_connected_to_server(void);
+
+    extern int WiFiTools_connect_to_server(const char *ip_address, const uint16_t port); // return the socket handle or -1 if fails
+
+    extern void WiFiTools_close_server(void);
+
+    extern int WifiTools_get_socket(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __WIFI_TOOLS_DEBUG__ */
+#endif /* __WIFI_TOOLS__ */
