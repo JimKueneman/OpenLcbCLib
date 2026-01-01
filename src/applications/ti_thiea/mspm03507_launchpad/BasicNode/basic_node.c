@@ -70,6 +70,8 @@ int main(void)
   TI_DriverLibCanDriver_initialize();
   TI_DriverLibDrivers_initialize();
 
+  Callbacks_initialize();
+
   printf("Booted\n");
 
   OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);

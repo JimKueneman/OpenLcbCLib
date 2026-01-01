@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -24,58 +25,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file BasicNode.ino
+ * \file dsPIC33EPxxxGP50x_drivers.h
  *
- * This sketh will create a very basic OpenLcb Node.  It needs the Config Memory handlers and a reset impementation finished (esp32_drivers.c)
- * Connect the CAN transciever Tx pin to GPIO 21 adn the Rx pin to GPIO 22 on the ESP32 Dev Board.
  *
  * @author Jim Kueneman
- * @date 7 Jan 2025
+ * @date 3 Jan 2025
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
+#ifndef __OSX_DRIVERS__
+#define __OSX_DRIVERS__
 
-#include "callbacks.h"
-#include "node_parameters.h"
-#include "src/application_drivers/rpi_pico_drivers.h"
-#include "src/application_drivers/rpi_pico_can_drivers.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
+#include "src/openlcb/openlcb_types.h"
 
-#include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
+#include "pthread.h"
 
-//#include "esp_pm.h"
-//#include <Preferences.h>
+// Assign the function pointer to where the UART Rx should call back with the byte it received
+// WARNING: Is in the context of the interrupt, be careful
+// void func(rx_data);
+typedef void (*uart_rx_callback_t)(uint16_t);
 
-#define NODE_ID 0x050101010777
-
-void setup()
+#ifdef __cplusplus
+extern "C"
 {
-  // put your setup code here, to run once:
+#endif /* __cplusplus */
 
-  Serial.begin(9600);
+    extern void OSxDrivers_setup(void);
 
-  Serial.println("Can Statemachine init.....");
-  
-  RPiPicoCanDriver_setup();
-  RPiPicoDriver_setup();
+    extern void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-  DependencyInjectionCanBus_initialize();
-  DependencyInjection_initialize();
+    extern uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-  Callbacks_initialize();
+    extern uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-  Serial.println("Creating Node.....");
+    extern void OSxDrivers_pause_100ms_timer(void);
 
-  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+    extern void OSxDrivers_resume_100ms_timer(void);
+
+    extern uint8_t OSxDrivers_100ms_is_connected(void);
+
+    extern uint8_t OSxDrivers_input_is_connected(void);
+
+    extern pthread_mutex_t OSxDdrivers_input_mutex;
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
 
-void loop()
-{
-  // put your main code here, to run repeatedly
-  CanMainStateMachine_run();
-  OpenLcbLoginMainStatemachine_run();
-  OpenLcbMainStatemachine_run();
-}
+#endif /* __OSX_DRIVERS__ */

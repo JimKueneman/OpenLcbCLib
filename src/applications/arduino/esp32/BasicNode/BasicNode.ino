@@ -45,8 +45,6 @@
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
 
 #include "esp_pm.h"
 #include <Preferences.h>
@@ -67,6 +65,7 @@ void setup()
   DependencyInjectionCanBus_initialize();
   DependencyInjection_initialize();
 
+  Callbacks_initialize();
 
   Serial.println("Creating Node.....");
 

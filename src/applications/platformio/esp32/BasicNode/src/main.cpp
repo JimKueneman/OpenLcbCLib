@@ -25,12 +25,13 @@ void setup()
   Serial.begin(921600);
   Serial.println("Can Statemachine init.....");
 
-  //Esp32CanDriver_setup();
-   // Esp32Drivers_setup();
+  Esp32CanDriver_setup();
+  Esp32Drivers_setup();
 
-  // DependencyInjectionCanBus_initialize();
-  //  DependencyInjection_initialize();
-  //  DependencyInjection_initialize();
+  DependencyInjectionCanBus_initialize();
+  DependencyInjection_initialize();
+
+  Callbacks_initialize();
 
   Serial.println("Creating Node.....");
 

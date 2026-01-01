@@ -75,19 +75,18 @@ void *thread_function_input(void *arg)
 
         switch (key)
         {
-                
-            case 'r':
-                
-                printf("reboot\n");
-                
-                openlcb_node_t *node = OpenLcbNode_get_first(2);
-                
-                node->state.run_state = 0;
-                node->state.initialized = false;
-                node->state.permitted = false;
-                
-                break;
-                
+
+        case 'r':
+
+            printf("reboot\n");
+
+            openlcb_node_t *node = OpenLcbNode_get_first(2);
+
+            node->state.run_state = 0;
+            node->state.initialized = false;
+            node->state.permitted = false;
+
+            break;
         }
         pthread_mutex_unlock(&OSxDdrivers_input_mutex);
 
@@ -108,9 +107,8 @@ void *thread_function_timer(void *arg)
 
         if (_timer_pause == 0)
         {
-            
+
             OpenLcbNode_100ms_timer_tick();
-            
         }
 
         usleep(100000);
@@ -143,8 +141,10 @@ void OSxDrivers_setup(void)
     pthread_create(&thread3, NULL, thread_function_input, &thread_num3);
 }
 
-void OSxDrivers_reboot(void)
+void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
 {
+
+    // Virtual Reboot?
 }
 
 uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)

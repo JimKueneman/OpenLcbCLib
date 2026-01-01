@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -24,58 +25,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file BasicNode.ino
+ * \file callbacks.h
  *
- * This sketh will create a very basic OpenLcb Node.  It needs the Config Memory handlers and a reset impementation finished (esp32_drivers.c)
- * Connect the CAN transciever Tx pin to GPIO 21 adn the Rx pin to GPIO 22 on the ESP32 Dev Board.
  *
  * @author Jim Kueneman
- * @date 7 Jan 2025
+ * @date 31 Dec 2025
  */
 
+// This is a guard condition so that contents of this file are not included
+// more than once.
+#ifndef __CALLBACKS__
+#define __CALLBACKS__
 
-#include "callbacks.h"
-#include "node_parameters.h"
-#include "src/application_drivers/rpi_pico_drivers.h"
-#include "src/application_drivers/rpi_pico_can_drivers.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 
-#include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
+#include "src/openlcb/openlcb_types.h"
+#include "src/drivers/canbus/can_types.h"
+#include "src/openlcb/openlcb_gridconnect.h"
 
-//#include "esp_pm.h"
-//#include <Preferences.h>
-
-#define NODE_ID 0x050101010777
-
-void setup()
+#ifdef __cplusplus
+extern "C"
 {
-  // put your setup code here, to run once:
+#endif /* __cplusplus */
 
-  Serial.begin(9600);
+    extern void Callbacks_initialize(void);
 
-  Serial.println("Can Statemachine init.....");
-  
-  RPiPicoCanDriver_setup();
-  RPiPicoDriver_setup();
+    extern void Callbacks_on_100ms_timer_callback(void);
 
-  DependencyInjectionCanBus_initialize();
-  DependencyInjection_initialize();
+    extern void Callbacks_on_can_rx_callback(can_msg_t *can_msg);
 
-  Callbacks_initialize();
+    extern void Callbacks_on_can_tx_callback(can_msg_t *can_msg);
 
-  Serial.println("Creating Node.....");
+    extern void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id);
 
-  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+    extern void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
 
-void loop()
-{
-  // put your main code here, to run repeatedly
-  CanMainStateMachine_run();
-  OpenLcbLoginMainStatemachine_run();
-  OpenLcbMainStatemachine_run();
-}
+#endif /* __CALLBACKS__ */
