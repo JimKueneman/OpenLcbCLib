@@ -46,8 +46,6 @@
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
 
-#include "esp_pm.h"
-#include <Preferences.h>
 
 #define NODE_ID 0x050101010777
 

@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2026 Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,16 @@
  *
  *
  * @author Jim Kueneman
- * @date 4 Jan 2025
+ * @date 1 Jan 2026
  */
 
 #include "osx_drivers.h"
 
-#include "src/openlcb/openlcb_types.h"
-#include "src/utilities/mustangpeak_string_helper.h"
-#include "src/openlcb/openlcb_node.h"
+#include "osx_can_drivers.h"
+
+#include "../openlcb/openlcb_types.h"
+#include "../utilities/mustangpeak_string_helper.h"
+#include "../openlcb/openlcb_node.h"
 
 #include <stdio.h>
 #include <pthread.h>
@@ -143,7 +145,7 @@ void OSxDrivers_setup(void)
     pthread_create(&thread3, NULL, thread_function_input, &thread_num3);
 }
 
-void OSxDrivers_reboot(void)
+void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
 {
 }
 
@@ -257,12 +259,18 @@ uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t addr
 //    return 0;
 }
 
-void OSxDrivers_pause_100ms_timer(void)
+void OSxDrivers_lock_shared_resources(void)
 {
+
+    OSxCanDriver_pause_can_rx();
+
     _timer_pause = true;
 }
 
-void OSxDrivers_resume_100ms_timer(void)
+void OSxDrivers_unlock_shared_resources(void)
 {
+
+    OSxCanDriver_resume_can_rx();
+
     _timer_pause = false;
 }

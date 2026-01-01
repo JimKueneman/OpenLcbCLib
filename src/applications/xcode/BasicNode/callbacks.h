@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -24,43 +25,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file osx_can_drivers.h
+ * \file callbacks.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
- * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
- * @date 5 Jan 2025
+ * @date 16 Nov 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __OSX_CAN_DRIVERS__
-#define __OSX_CAN_DRIVERS__
+#ifndef __CALLBACKS__
+#define __CALLBACKS__
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #include "src/openlcb/openlcb_types.h"
 #include "src/drivers/canbus/can_types.h"
+#include "src/openlcb/openlcb_gridconnect.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void OSxCanDriver_setup(void);
+    extern void Callbacks_initialize(void);
 
-    extern bool OSxCanDriver_is_can_tx_buffer_clear(void);
+    extern void Callbacks_on_100ms_timer_callback(void);
 
-    extern void OSxCanDriver_pause_can_rx(void);
+    extern void Callbacks_on_can_rx_callback(can_msg_t *can_msg);
 
-    extern void OSxCanDriver_resume_can_rx(void);
+    extern void Callbacks_on_can_tx_callback(can_msg_t *can_msg);
 
-    extern bool OSxCanDriver_transmit_raw_can_frame(can_msg_t *can_msg);
+    extern void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id);
 
-    extern bool OSxCanDriver_is_connected(void);
+    extern void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __OSX_CAN_DRIVERS__ */
+#endif /* __CALLBACKS__ */

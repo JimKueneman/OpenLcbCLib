@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,51 +24,71 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dependency_injection.h
+ * \file callbacks.c
  *
  *
  * @author Jim Kueneman
- * @date 11 Nov 2025
+ * @date 11 Nov 2024
  */
 
-// This is a guard condition so that contents of this file are not included
-// more than once.
-#ifndef __DEPENDENCY_INJECTION__
-#define __DEPENDENCY_INJECTION__
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "callbacks.h"
 
-#include "osx_can_drivers.h"
-#include "osx_drivers.h"
-
-#include "src/openlcb/openlcb_types.h"
+#include "src/openlcb/openlcb_utilities.h"
+#include "src/openlcb/openlcb_gridconnect.h"
 #include "src/drivers/canbus/can_types.h"
 
-#define TRANSMIT_CAN_FRAME_FUNC &OSxCanDriver_transmit_raw_can_frame
-#define IS_TX_BUFFER_EMPTY_FUNC &OSxCanDriver_is_can_tx_buffer_clear
-#define LOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_pause_can_rx
-#define UNLOCK_SHARED_RESOURCES_FUNC &OSxCanDriver_resume_can_rx
-#define CONFIG_MEM_READ_FUNC &OSxDrivers_config_mem_read
-#define CONFIG_MEM_WRITE_FUNC &OSxDrivers_config_mem_write
-#define OPERATIONS_REBOOT_FUNC NULL
-#define OPERATIONS_FACTORY_RESET_FUNC NULL
 
-// Application defined injector functions, defined in dependency_injectors.h
-#define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
-#define ON_CAN_RX_CALLBACK &DependencyInjectors_on_can_rx_callback
-#define ON_CAN_TX_CALLBACK &DependencyInjectors_on_can_tx_callback
-#define ON_ALIAS_CHANGE_CALLBACK &DependencyInjectors_alias_change_callback
+#define LED_PIN 2
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif /* __cplusplus */
+static uint16_t _100ms_ticks = 0;
 
-    extern void DependencyInjection_initialize(void);
+void Callbacks_initialize(void) {
+    
 
-#ifdef __cplusplus
+
 }
-#endif /* __cplusplus */
 
-#endif /* __DEPENDENCY_INJECTION__ */
+void Callbacks_on_100ms_timer_callback(void)
+{
+
+    if (_100ms_ticks > 5) {
+
+
+        _100ms_ticks = 0;
+    }
+
+    _100ms_ticks++;
+}
+
+void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
+{
+    gridconnect_buffer_t gridconnect;
+
+    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
+    printf("[R] %s\n", (char*)&gridconnect);
+
+}
+
+ void Callbacks_on_can_tx_callback(can_msg_t *can_msg)
+{
+
+    gridconnect_buffer_t gridconnect;
+
+    OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
+    printf("[S] %s\n", (char *)&gridconnect);
+
+}
+
+ void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id)
+{
+
+    printf("Alias Allocation: 0x%02X  ", new_alias);
+    printf("NodeID: 0x%06llX\n\n", node_id);
+}
+
+void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
+
+    printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
+}

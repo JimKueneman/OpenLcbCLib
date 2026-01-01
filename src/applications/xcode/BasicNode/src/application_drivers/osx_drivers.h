@@ -1,6 +1,6 @@
 
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2026, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,45 +25,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file dependency_injectors.h
+ * \file dsPIC33EPxxxGP50x_drivers.h
  *
  *
  * @author Jim Kueneman
- * @date 16 Nov 2025
+ * @date 1 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __DEPENDENCY_INJECTORS__
-#define __DEPENDENCY_INJECTORS__
+#ifndef __OSX_DRIVERS__
+#define __OSX_DRIVERS__
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
+#include "../openlcb/openlcb_types.h"
 
-#include "../../../openlcb/openlcb_types.h"
-#include "../../../drivers/canbus/can_types.h"
-#include "../../../openlcb/openlcb_gridconnect.h"
+#include "pthread.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void DependencyInjectors_initialize(void);
+    extern void OSxDrivers_setup(void);
 
-    extern void DependencyInjectors_on_100ms_timer_callback(void);
+    extern void OSxDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg);
+    extern uint16_t OSxDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg);
+    extern uint16_t OSxDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id);
+    extern uint8_t OSxDrivers_100ms_is_connected(void);
 
-    extern void DependencyInjectors_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    extern uint8_t OSxDrivers_input_is_connected(void);
+
+    extern void OSxDrivers_lock_shared_resources(void);
+
+    extern void OSxDrivers_unlock_shared_resources(void);
+
+    extern pthread_mutex_t OSxDdrivers_input_mutex;
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __DEPENDENCY_INJECTORS__ */
+#endif /* __OSX_DRIVERS__ */

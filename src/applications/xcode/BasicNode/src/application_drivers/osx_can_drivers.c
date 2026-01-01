@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2026, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,13 @@
  * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
- * @date 5 Jan 2025
+ * @date 1 Jan 2026
  */
 
-#include "src/drivers/canbus/can_types.h"
-#include "src/openlcb/openlcb_gridconnect.h"
-#include "src/utilities/mustangpeak_string_helper.h"
-#include "src/drivers/canbus/can_rx_statemachine.h"
+#include "../drivers/canbus/can_types.h"
+#include "../openlcb/openlcb_gridconnect.h"
+#include "../utilities/mustangpeak_string_helper.h"
+#include "../drivers/canbus/can_rx_statemachine.h"
 
 #include <arpa/inet.h> // inet_addr()
 #include <netdb.h>

@@ -6,17 +6,19 @@
 #include "strings.h"
 #include "pthread.h"
 
+#include "callbacks.h"
 #include "node_parameters.h"
-#include "osx_can_drivers.h"
-#include "osx_drivers.h"
-#include "dependency_injection.h"
-#include "dependency_injectors.h"
+#include "src/application_drivers/osx_drivers.h"
+#include "src/application_drivers/osx_can_drivers.h"
+#include "src/node_definition/dependency_injection.h"
+#include "src/node_definition/dependency_injection_canbus.h"
 
 #include "src/drivers/canbus/can_main_statemachine.h"
-
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
+
+#include "function_injection_defines.h"
 
 #define NODE_ID 0x050701010033
 
@@ -24,9 +26,11 @@ int main(int argc, char *argv[])
 {
 
   printf("Initializing...\n");
-
+    
+  DependencyInjectionCanBus_initialize();
   DependencyInjection_initialize();
-  DependencyInjectors_initialize();
+
+  Callbacks_initialize();
 
   OSxDrivers_setup();
   OSxCanDriver_setup();
