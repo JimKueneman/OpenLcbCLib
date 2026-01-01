@@ -38,10 +38,10 @@
 #include "rpi_pico_drivers.h"
 #include "rpi_pico_can_drivers.h"
 
-#include "../../src/openlcb/openlcb_types.h"
-#include "../../src/utilities/mustangpeak_string_helper.h"
-#include "../../src/openlcb/openlcb_node.h"
-#include "../../src/openlcb/protocol_datagram_handler.h"
+#include "../openlcb/openlcb_types.h"
+#include "../utilities/mustangpeak_string_helper.h"
+#include "../openlcb/openlcb_node.h"
+#include "../openlcb/protocol_datagram_handler.h"
 
 #ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"

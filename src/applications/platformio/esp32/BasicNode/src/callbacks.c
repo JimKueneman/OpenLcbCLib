@@ -28,28 +28,33 @@
  *
  *
  * @author Jim Kueneman
- * @date 11 Nov 2025
+ * @date 31 Dec 2025
  */
 
-
-#include "dependency_injectors.h"
+#include "callbacks.h"
 
 #include "src/openlcb/openlcb_utilities.h"
 
+#include "driver/gpio.h"
+
+#define LED_PIN 2
+
 static uint16_t _100ms_ticks = 0;
 
-void DependencyInjectors_initialize(void) {
-
-   
-}
-
-    void DependencyInjectors_on_100ms_timer_callback(void)
+void Callbacks_initialize(void)
 {
 
-    if (_100ms_ticks > 5) {
+    gpio_reset_pin(LED_PIN);
+    gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
+}
 
-        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);  // turn off
-        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);
+void Callbacks_on_100ms_timer_callback(void)
+{
+
+    if (_100ms_ticks > 5)
+    {
+
+        gpio_set_level(LED_PIN, 0); // turn off
 
         _100ms_ticks = 0;
     }
@@ -57,17 +62,17 @@ void DependencyInjectors_initialize(void) {
     _100ms_ticks++;
 }
 
-void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
+void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
 {
     gridconnect_buffer_t gridconnect;
 
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char*)&gridconnect);
+    printf("[R] %s\n", (char *)&gridconnect);
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);  // turn on
+    gpio_set_level(LED_PIN, 1); // turn on
 }
 
- void DependencyInjectors_on_can_tx_callback(can_msg_t *can_msg)
+void Callbacks_on_can_tx_callback(can_msg_t *can_msg)
 {
 
     gridconnect_buffer_t gridconnect;
@@ -75,17 +80,17 @@ void DependencyInjectors_on_can_rx_callback(can_msg_t *can_msg)
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
     printf("[S] %s\n", (char *)&gridconnect);
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);  // turn on
+    gpio_set_level(LED_PIN, 1); // turn on
 }
 
- void DependencyInjectors_alias_change_callback(uint16_t new_alias, node_id_t node_id)
+void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id)
 {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
     printf("NodeID: 0x%06llX\n\n", node_id);
 }
 
-void DependencyInjectors_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
 {
 
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));

@@ -34,11 +34,12 @@
  */
 
 
-#include "node_parameters.h"
 #include "callbacks.h"
-
- #include "src/application_drivers/rpi_pico_drivers.h"
- #include "src/application_drivers/rpi_pico_can_drivers.h"
+#include "node_parameters.h"
+#include "src/application_drivers/rpi_pico_drivers.h"
+#include "src/application_drivers/rpi_pico_can_drivers.h"
+#include "src/node_definition/dependency_injection.h"
+#include "src/node_definition/dependency_injection_canbus.h"
 
 #include "src/drivers/canbus/can_main_statemachine.h"
 #include "src/openlcb/openlcb_main_statemachine.h"

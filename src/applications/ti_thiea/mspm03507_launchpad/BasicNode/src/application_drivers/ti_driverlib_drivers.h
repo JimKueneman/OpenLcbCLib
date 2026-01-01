@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file ti_driverlib_can_driver.h
+ * \file ti_driverlib_drivers.h
  *
  * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
  * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
@@ -36,8 +36,8 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __TI_DRIVERLIB_CAN_DRIVER__
-#define __TI_DRIVERLIB_CAN_DRIVER__
+#ifndef __TI_DRIVERLIB_DRIVERS__
+#define __TI_DRIVERLIB_DRIVERS__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -50,15 +50,19 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void TI_DriverLibCanDriver_initialize(void);
+    extern void TI_DriverLibDrivers_initialize(void);
 
-    extern bool TI_DriverLibCanDriver_is_can_tx_buffer_clear(void);
+    extern void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern void TI_DriverLibCanDriver_pause_can_rx(void);
+    extern uint16_t TI_DriverLibDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern void TI_DriverLibCanDriver_resume_can_rx(void);
+    extern uint16_t TI_DriverLibDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern bool TI_DriverLibCanDriver_transmit_can_frame(can_msg_t *msg);
+    extern void TI_DriverLibDrivers_config_mem_factory_reset(void);
+
+    extern void TI_DriverLibDrivers_lock_shared_resources(void);
+
+    extern void TI_DriverLibDrivers_unlock_shared_resources(void);
 
 #ifdef __cplusplus
 }

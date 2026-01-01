@@ -37,33 +37,32 @@
 #define	__DEPENDENCY_INJECTION_DEFINES__
 
 
-#include "drivers.h"
-#include "../dsPIC_Common/ecan1_helper.h"
+#include "callbacks.h"
+#include "src/application_drivers/ti_driverlib_drivers.h"
+#include "src/application_drivers/ti_driverlib_can_driver.h"
 
 
-#include "../../../openlcb/openlcb_buffer_store.h"
-#include "../../../drivers/canbus/can_tx_statemachine.h"
-
-#include "dependency_injectors.h"
+#include "src/openlcb/openlcb_buffer_store.h"
+#include "src/drivers/canbus/can_tx_statemachine.h"
 
 // ******************************************************************************
 // Application Defined Drivers to interface the chosen hardware with the Library
 // ******************************************************************************
 
 // Implement Application defined CAN Transmit of a CAN Frame
-#define TRANSMIT_CAN_FRAME_FUNC &Ecan1Helper_transmit_can_frame
+#define TRANSMIT_CAN_FRAME_FUNC &TI_DriverLibCanDriver_transmit_can_frame
 // Implement Application defined test if the CAN Transmit buffer can accept another frame to send
-#define IS_TX_BUFFER_EMPTY_FUNC &Ecan1Helper_is_can_tx_buffer_clear
+#define IS_TX_BUFFER_EMPTY_FUNC &TI_DriverLibCanDriver_is_can_tx_buffer_clear
 // Implement Application defined Lock access to the OpenLcb and CAN Buffers, Lists and FIFOs from interrupts/treads as well as stopping the 100ms timer
-#define LOCK_SHARED_RESOURCES_FUNC &BasicNodeDrivers_lock_shared_resources
+#define LOCK_SHARED_RESOURCES_FUNC &TI_DriverLibDrivers_lock_shared_resources
 // Implement Application defined Unlocking access to the OpenLcb and CAN Buffers, Lists and FIFOs as well as stopping the 100ms timer
-#define UNLOCK_SHARED_RESOURCES_FUNC &BasicNodeDrivers_unlock_shared_resources
+#define UNLOCK_SHARED_RESOURCES_FUNC &TI_DriverLibDrivers_unlock_shared_resources
 // Implement the Application defined Configuration Memory Read Access to the EEPROM/FLASH/File/etc.
-#define CONFIG_MEM_READ_FUNC &BasicNodeDrivers_config_mem_read
+#define CONFIG_MEM_READ_FUNC &TI_DriverLibDrivers_config_mem_read
 // Implement the Application defined Configuration Memory Write Access to the EEPROM/FLASH/File/etc.
-#define CONFIG_MEM_WRITE_FUNC &BasicNodeDrivers_config_mem_write
+#define CONFIG_MEM_WRITE_FUNC &TI_DriverLibDrivers_config_mem_write
 // Implement Application defined the processor reboot 
-#define OPERATIONS_REQUEST_REBOOT_FUNC &BasicNodeDrivers_reboot
+#define OPERATIONS_REQUEST_REBOOT_FUNC &TI_DriverLibDrivers_reboot
 // Implement Application defined for Freeze (used during boot-loading)
 #define OPERATIONS_REQUEST_FREEZE_FUNC NULL
 // Implement Application defined for UnFreeze (used during boot-loading)
@@ -76,10 +75,10 @@
 // Application defined callback functions in dependency_injectors.h
 // ******************************************************************************
 
-#define ON_100MS_TIMER_CALLBACK &DependencyInjectors_on_100ms_timer_callback
-#define ON_CAN_RX_CALLBACK &DependencyInjectors_on_can_rx_callback
-#define ON_CAN_TX_CALLBACK &DependencyInjectors_on_can_tx_callback
-#define ON_ALIAS_CHANGE_CALLBACK &DependencyInjectors_alias_change_callback
+#define ON_100MS_TIMER_CALLBACK &Callbacks_on_100ms_timer_callback
+#define ON_CAN_RX_CALLBACK &Callbacks_on_can_rx_callback
+#define ON_CAN_TX_CALLBACK &Callbacks_on_can_tx_callback
+#define ON_ALIAS_CHANGE_CALLBACK &Callbacks_alias_change_callback
 
 #define ON_CONSUMER_RANGE_IDENTIFIED_CALLBACK NULL
 #define ON_CONSUMER_IDENTIFIED_UNKNOWN_CALLBACK NULL
@@ -102,7 +101,7 @@
 // Application defined library extended feature functions in dependency_injectors.h
 // ******************************************************************************
 
-#define OPERATIONS_REQUEST_FACTORY_RESET_FUNC &DependencyInjectors_operations_request_factory_reset
+#define OPERATIONS_REQUEST_FACTORY_RESET_FUNC &Callbacks_operations_request_factory_reset
 #define CONFIG_MEM_READ_DELAYED_REPLY_TIME_FUNC NULL
 #define CONFIG_MEM_WRITE_DELAYED_REPLY_TIME_FUNC NULL
 

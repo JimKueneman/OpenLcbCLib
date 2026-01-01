@@ -39,10 +39,10 @@
 
 #include "rpi_pico_can_drivers.h"
 
-#include "../../src/drivers/canbus/can_rx_statemachine.h"
-#include "../../src/drivers/canbus/can_types.h"
-#include "../../src/openlcb/openlcb_gridconnect.h"
-#include "../../src/utilities/mustangpeak_string_helper.h"
+#include "../drivers/canbus/can_rx_statemachine.h"
+#include "../drivers/canbus/can_types.h"
+#include "../openlcb/openlcb_gridconnect.h"
+#include "../utilities/mustangpeak_string_helper.h"
 
 #ifdef ARDUINO_COMPATIBLE
 #include "Arduino.h"

@@ -37,11 +37,13 @@
 #include <ti/driverlib/m0p/dl_interrupt.h>
 
 #include "debug_tools.h"
-#include "dependency_injection.h"
-#include "dependency_injectors.h"
+
+#include "callbacks.h"
 #include "node_parameters.h"
-#include "ti_driverlib_can_driver.h"
-#include "ti_driverlib_drivers.h"
+#include "src/application_drivers/ti_driverlib_can_driver.h"
+#include "src/application_drivers/ti_driverlib_drivers.h"
+#include "src/node_definition/dependency_injection.h"
+#include "src/node_definition/dependency_injection_canbus.h"
 
 #include "src/drivers/canbus/can_main_statemachine.h"
 #include "src/drivers/canbus/can_rx_statemachine.h"
@@ -62,8 +64,8 @@ int main(void)
 
   SYSCFG_DL_init();
 
+  DependencyInjectionCanBus_initialize();
   DependencyInjection_initialize();
-  DependencyInjectors_initialize();
 
   TI_DriverLibCanDriver_initialize();
   TI_DriverLibDrivers_initialize();

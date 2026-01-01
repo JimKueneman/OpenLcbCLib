@@ -42,11 +42,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "debug_tools.h"
-
-#include "src/openlcb/openlcb_types.h"
-#include "src/drivers/canbus/can_types.h"
-#include "src/drivers/canbus/can_rx_statemachine.h"
+#include "../openlcb/openlcb_types.h"
+#include "../drivers/canbus/can_types.h"
+#include "../drivers/canbus/can_rx_statemachine.h"
 
 static bool _is_transmitting = false;
 

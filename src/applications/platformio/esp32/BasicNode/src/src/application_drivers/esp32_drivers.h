@@ -1,3 +1,4 @@
+
 /** \copyright
  * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
@@ -24,48 +25,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file ti_driverlib_drivers.h
+ * \file dsPIC33EPxxxGP50x_drivers.h
  *
- * This file in the interface between the OpenLcbCLib and the specific MCU/PC implementation
- * to read/write on the CAN bus.  A new supported MCU/PC will create a file that handles the
- * specifics then hook them into this file through #ifdefs
  *
  * @author Jim Kueneman
- * @date 11 Nov 2025
+ * @date 7 Nov 2025
  */
 
 // This is a guard condition so that contents of this file are not included
 // more than once.
-#ifndef __TI_DRIVERLIB_DRIVERS__
-#define __TI_DRIVERLIB_DRIVERS__
+#ifndef __ESP32_DRIVERS__
+#define __ESP32_DRIVERS__
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "src/openlcb/openlcb_types.h"
-#include "src/drivers/canbus/can_types.h"
+#include "../../src/openlcb/openlcb_types.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-    extern void TI_DriverLibDrivers_initialize(void);
+    extern void Esp32Drivers_setup(void);
 
-    extern void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    extern void Esp32Drivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
-    extern uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t Esp32Drivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern uint16_t TI_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
+    extern uint16_t Esp32Drivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
-    extern void TI_DriverLibDrivers_config_mem_factory_reset(void);
+    extern void Esp32Drivers_lock_shared_resources();
 
-    extern void TI_DriverLibDrivers_lock_shared_resources(void);
+    extern void Esp32Drivers_unlock_shared_resources();
 
-    extern void TI_DriverLibDrivers_unlock_shared_resources(void);
+    extern bool Esp32Drivers_100ms_running(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __TI_DRIVERLIB_CAN_DRIVER__ */
+#endif /* __ESP32_DRIVERS__ */

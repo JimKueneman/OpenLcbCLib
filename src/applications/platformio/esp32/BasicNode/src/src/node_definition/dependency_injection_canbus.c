@@ -40,20 +40,20 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "dependency_injection_defines.h"
+#include "../../function_injection_defines.h"
 
-#include "../../../drivers/canbus/can_types.h"
-#include "../../../drivers/canbus/can_utilities.h"
-#include "../../../drivers/canbus/can_buffer_store.h"
-#include "../../../drivers/canbus/can_buffer_fifo.h"
-#include "../../../drivers/canbus/can_login_message_handler.h"
-#include "../../../drivers/canbus/can_login_statemachine.h"
-#include "../../../drivers/canbus/can_rx_message_handler.h"
-#include "../../../drivers/canbus/can_rx_statemachine.h"
-#include "../../../drivers/canbus/can_tx_message_handler.h"
-#include "../../../drivers/canbus/can_tx_statemachine.h"
-#include "../../../drivers/canbus/can_main_statemachine.h"
-#include "../../../drivers/canbus/alias_mappings.h"
+#include "../drivers/canbus/can_types.h"
+#include "../drivers/canbus/can_utilities.h"
+#include "../drivers/canbus/can_buffer_store.h"
+#include "../drivers/canbus/can_buffer_fifo.h"
+#include "../drivers/canbus/can_login_message_handler.h"
+#include "../drivers/canbus/can_login_statemachine.h"
+#include "../drivers/canbus/can_rx_message_handler.h"
+#include "../drivers/canbus/can_rx_statemachine.h"
+#include "../drivers/canbus/can_tx_message_handler.h"
+#include "../drivers/canbus/can_tx_statemachine.h"
+#include "../drivers/canbus/can_main_statemachine.h"
+#include "../drivers/canbus/alias_mappings.h"
 
 const interface_can_login_message_handler_t interface_can_login_message_handler = {
 

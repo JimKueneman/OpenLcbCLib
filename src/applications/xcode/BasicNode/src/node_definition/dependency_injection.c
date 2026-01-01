@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2024, Jim Kueneman
+ * Copyright (c) 2025, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  *
  *
  * @author Jim Kueneman
- * @date 11 Nov 2024
+ * @date 27 Dec 2025
  */
 
 #include "dependency_injection.h"
@@ -37,137 +37,31 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "dependency_injectors.h"
+#include "../../function_injection_defines.h"
 
-#include "src/drivers/canbus/alias_mappings.h"
-#include "src/drivers/canbus/can_types.h"
-#include "src/drivers/canbus/can_utilities.h"
-#include "src/drivers/canbus/can_buffer_store.h"
-#include "src/drivers/canbus/can_buffer_fifo.h"
-#include "src/drivers/canbus/can_login_message_handler.h"
-#include "src/drivers/canbus/can_login_statemachine.h"
-#include "src/drivers/canbus/can_rx_message_handler.h"
-#include "src/drivers/canbus/can_rx_statemachine.h"
-#include "src/drivers/canbus/can_tx_message_handler.h"
-#include "src/drivers/canbus/can_tx_statemachine.h"
-#include "src/drivers/canbus/can_main_statemachine.h"
+#include "../openlcb/openlcb_application.h"
+#include "../openlcb/openlcb_defines.h"
+#include "../openlcb/openlcb_types.h"
+#include "../openlcb/openlcb_utilities.h"
+#include "../openlcb/openlcb_buffer_store.h"
+#include "../openlcb/openlcb_buffer_list.h"
+#include "../openlcb/openlcb_buffer_fifo.h"
+#include "../openlcb/openlcb_node.h"
+#include "../openlcb/protocol_message_network.h"
+#include "../openlcb/protocol_event_transport.h"
+#include "../openlcb/protocol_snip.h"
+#include "../openlcb/openlcb_main_statemachine.h"
+#include "../openlcb/protocol_datagram_handler.h"
+#include "../openlcb/openlcb_login_statemachine.h"
+#include "../openlcb/openlcb_login_statemachine_handler.h"
+#include "../openlcb/protocol_config_mem_read_handler.h"
+#include "../openlcb/protocol_config_mem_write_handler.h"
+#include "../openlcb/protocol_config_mem_operations_handler.h"
 
-#include "src/openlcb/openlcb_defines.h"
-#include "src/openlcb/openlcb_types.h"
-#include "src/openlcb/openlcb_utilities.h"
-#include "src/openlcb/openlcb_buffer_store.h"
-#include "src/openlcb/openlcb_buffer_list.h"
-#include "src/openlcb/openlcb_buffer_fifo.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/protocol_message_network.h"
-#include "src/openlcb/protocol_event_transport.h"
-#include "src/openlcb/protocol_snip.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/protocol_datagram_handler.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine_handler.h"
-#include "src/openlcb/protocol_config_mem_read_handler.h"
-#include "src/openlcb/protocol_config_mem_write_handler.h"
-#include "src/openlcb/protocol_config_mem_operations_handler.h"
-
-#include "src/openlcb/openlcb_application.h"
-
-const interface_can_login_message_handler_t interface_can_login_message_handler = {
-
-    .alias_mapping_register = &AliasMappings_register,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    // Callback events
-    .on_alias_change = ON_ALIAS_CHANGE_CALLBACK // application defined
-};
-
-const interface_can_login_state_machine_t interface_can_login_state_machine = {
-
-    .state_init = &CanLoginMessageHandler_state_init,
-    .state_generate_seed = &CanLoginMessageHandler_state_generate_seed,
-    .state_generate_alias = &CanLoginMessageHandler_state_generate_alias,
-    .state_load_cid07 = &CanLoginMessageHandler_state_load_cid07,
-    .state_load_cid06 = &CanLoginMessageHandler_state_load_cid06,
-    .state_load_cid05 = &CanLoginMessageHandler_state_load_cid05,
-    .state_load_cid04 = &CanLoginMessageHandler_state_load_cid04,
-    .state_wait_200ms = &CanLoginMessageHandler_state_wait_200ms,
-    .state_load_rid = &CanLoginMessageHandler_state_load_rid,
-    .state_load_amd = &CanLoginMessageHandler_state_load_amd
-
-};
-
-const interface_can_rx_message_handler_t interface_can_rx_message_handler = {
-
-    .can_buffer_store_allocate_buffer = &CanBufferStore_allocate_buffer,
-    .openlcb_buffer_store_allocate_buffer = &OpenLcbBufferStore_allocate_buffer,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    .alias_mapping_find_mapping_by_node_id = &AliasMappings_find_mapping_by_node_id,
-    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_set_has_duplicate_alias_flag = &AliasMappings_set_has_duplicate_alias_flag
-
-};
-
-const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
-
-    .handle_can_legacy_snip = &CanRxMessageHandler_can_legacy_snip,
-    .handle_single_frame = &CanRxMessageHandler_single_frame,
-    .handle_first_frame = &CanRxMessageHandler_first_frame,
-    .handle_middle_frame = &CanRxMessageHandler_middle_frame,
-    .handle_last_frame = &CanRxMessageHandler_last_frame,
-    .handle_stream_frame = &CanRxMessageHandler_stream_frame,
-    .handle_rid_frame = CanRxMessageHandler_rid_frame,
-    .handle_amd_frame = CanRxMessageHandler_amd_frame,
-    .handle_ame_frame = CanRxMessageHandler_ame_frame,
-    .handle_amr_frame = CanRxMessageHandler_amr_frame,
-    .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
-    .handle_cid_frame = CanRxMessageHandler_cid_frame,
-    .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    // Callback events
-    .on_receive = ON_CAN_RX_CALLBACK // application defined
-
-};
-
-const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
-
-    .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
-    // Callback events
-    .on_transmit = ON_CAN_TX_CALLBACK // application defined
-
-};
-
-const interface_can_tx_statemachine_t interface_can_tx_statemachine = {
-
-    .is_tx_buffer_empty = IS_TX_BUFFER_EMPTY_FUNC, //  HARDWARE INTERFACE
-    .handle_addressed_msg_frame = &CanTxMessageHandler_addressed_msg_frame,
-    .handle_unaddressed_msg_frame = &CanTxMessageHandler_unaddressed_msg_frame,
-    .handle_datagram_frame = &CanTxMessageHandler_datagram_frame,
-    .handle_stream_frame = &CanTxMessageHandler_stream_frame,
-    .handle_can_frame = &CanTxMessageHandler_can_frame
-
-};
-
-const interface_can_main_statemachine_t interface_can_main_statemachine = {
-
-    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,     //  HARDWARE INTERFACE
-    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
-    .send_can_message = &CanTxStatemachine_send_can_message,
-    .openlcb_node_get_first = &OpenLcbNode_get_first,
-    .openlcb_node_get_next = &OpenLcbNode_get_next,
-    .openlcb_node_find_by_alias = &OpenLcbNode_find_by_alias,
-    .login_statemachine_run = &CanLoginStateMachine_run,
-    .alias_mapping_get_alias_mapping_info = &AliasMappings_get_alias_mapping_info,
-    .alias_mapping_unregister = &AliasMappings_unregister,
-
-    .handle_duplicate_aliases = &CanMainStatemachine_handle_duplicate_aliases,
-    .handle_outgoing_can_message = &CanMainStatemachine_handle_outgoing_can_message,
-    .handle_login_outgoing_can_message = &CanMainStatemachine_handle_login_outgoing_can_message,
-    .handle_try_enumerate_first_node = &CanMainStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &CanMainStatemachine_handle_try_enumerate_next_node
-
-};
 
 const interface_openlcb_node_t interface_openlcb_node = {
 
-    // Callback events
+    // Optional Callback function assignments  
     .on_100ms_timer_tick = ON_100MS_TIMER_CALLBACK
 
 };
@@ -178,25 +72,26 @@ const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_me
 
 const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
 
-    // Callback events
-    .on_consumer_range_identified = NULL,
-    .on_consumer_identified_unknown = NULL,
-    .on_consumer_identified_set = NULL,
-    .on_consumer_identified_clear = NULL,
-    .on_consumer_identified_reserved = NULL,
-    .on_producer_range_identified = NULL,
-    .on_producer_identified_unknown = NULL,
-    .on_producer_identified_set = NULL,
-    .on_producer_identified_clear = NULL,
-    .on_producer_identified_reserved = NULL,
-    .on_event_learn = NULL,
-    .on_pc_event_report = NULL,
-    .on_pc_event_report_with_payload = NULL
+    // Optional Callback function assignments  
+    .on_consumer_range_identified = ON_CONSUMER_RANGE_IDENTIFIED_CALLBACK,
+    .on_consumer_identified_unknown = ON_CONSUMER_IDENTIFIED_UNKNOWN_CALLBACK,
+    .on_consumer_identified_set = ON_CONSUMER_IDENTIFIED_SET_CALLBACK,
+    .on_consumer_identified_clear = ON_CONSUMER_IDENTIFIED_CLEAR_CALLBACK,
+    .on_consumer_identified_reserved = ON_CONSUMER_IDENTIFIED_RESERVED_CALLBACK,
+    .on_producer_range_identified = ON_PRODUCER_RANGE_IDENTIFIED_CALLBACK,
+    .on_producer_identified_unknown = ON_PRODUCER_IDENTIFIED_UNKNOWN_CALLBACK,
+    .on_producer_identified_set = ON_PRODUCER_IDENTIFIED_SET_CALLBACK,
+    .on_producer_identified_clear = ON_PRODUCER_IDENTIFIED_CLEAR_CALLBACK,
+    .on_producer_identified_reserved = ON_PRODUCER_IDENTIFIED_RESERVED_CALLBACK,
+    .on_event_learn = ON_EVENT_LEARN_CALLBACK,
+    .on_pc_event_report = ON_PC_EVENT_REPORT_CALLBACK,
+    .on_pc_event_report_with_payload = ON_PC_EVENT_REPORT_WITH_PAYLOAD_CALLBACK
 
 };
 
 const interface_openlcb_login_message_handler_t interface_openlcb_login_message_handler = {
 
+    // Required function assignments 
     .extract_producer_event_state_mti = &ProtocolEventTransport_extract_producer_event_status_mti,
     .extract_consumer_event_state_mti = &ProtocolEventTransport_extract_consumer_event_status_mti
 
@@ -204,23 +99,35 @@ const interface_openlcb_login_message_handler_t interface_openlcb_login_message_
 
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
 
+    // Required function assignments
+    .send_openlcb_msg = SEND_OPENLCB_MESSAGE_FUNC,                                   // HARDWARE INTERFACE
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
+    
+    // Required Handler function assignments  
     .load_initialization_complete = &OpenLcbLoginMessageHandler_load_initialization_complete,
     .load_producer_events = &OpenLcbLoginMessageHandler_load_producer_event,
     .load_consumer_events = &OpenLcbLoginMessageHandler_load_consumer_event,
-
-    .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
-    .openlcb_node_get_first = &OpenLcbNode_get_first,
-    .openlcb_node_get_next = &OpenLcbNode_get_next,
-
+    
+    // Required internal function assignments (for testability)  
     .process_login_statemachine = &OpenLcbLoginStateMachine_process,
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
     .handle_try_reenumerate = &OpenLcbLoginStatemachine_handle_try_reenumerate,
     .handle_try_enumerate_first_node = &OpenLcbLoginStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node};
+    .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node
+};
 
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
+    
+     // Required function assignments
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,                        // HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC,                    // HARDWARE INTERFACE
+    .send_openlcb_msg = SEND_OPENLCB_MESSAGE_FUNC,                                   // HARDWARE INTERFACE
+    .openlcb_node_get_first = &OpenLcbNode_get_first,
+    .openlcb_node_get_next = &OpenLcbNode_get_next,
+    .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
 
-    // MESSAGE NETWORK
+    // Required Message Network Protocol Handler function assignments
     .message_network_initialization_complete = ProtocolMessageNetwork_handle_initialization_complete,
     .message_network_initialization_complete_simple = ProtocolMessageNetwork_handle_initialization_complete_simple,
     .message_network_verify_node_id_addressed = &ProtocolMessageNetwork_handle_verify_node_id_addressed,
@@ -229,15 +136,24 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .message_network_optional_interaction_rejected = &ProtocolMessageNetwork_handle_optional_interaction_rejected,
     .message_network_terminate_due_to_error = &ProtocolMessageNetwork_handle_terminate_due_to_error,
 
-    // PROTOCOL SUPPORT
+    // Required Protocol Support Protocol (PIP) Handler function assignments
     .message_network_protocol_support_inquiry = &ProtocolMessageNetwork_handle_protocol_support_inquiry,
     .message_network_protocol_support_reply = &ProtocolMessageNetwork_handle_protocol_support_reply,
 
-    // SNIP
+    // Required internal function assignments (for testability)
+    .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
+    .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
+    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
+    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
+    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node,
+            
+    // Optional SNIP Protocol Handler function assignments
     .snip_simple_node_info_request = &ProtocolSnip_handle_simple_node_info_request,
     .snip_simple_node_info_reply = &ProtocolSnip_handle_simple_node_info_reply,
 
-    // EVENTS
+    // Optional Event Transport Protocol Handler function assignments
     .event_transport_consumer_identify = &ProtocolEventTransport_handle_consumer_identify,
     .event_transport_consumer_range_identified = &ProtocolEventTransport_handle_consumer_range_identified,
     .event_transport_consumer_identified_unknown = &ProtocolEventTransport_handle_consumer_identified_unknown,
@@ -256,58 +172,43 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .event_transport_pc_report = &ProtocolEventTransport_handle_pc_event_report,
     .event_transport_pc_report_with_payload = &ProtocolEventTransport_handle_pc_event_report_with_payload,
 
-    // TRACTION
-    .traction_control_command = NULL,
-    .traction_control_reply = NULL,
+    // Optional Traction Protocol Handler function assignments
+    .traction_control_command = NULL,                                           
+    .traction_control_reply = NULL,                                             
 
-    // TRACTION SNIP
-    .simple_train_node_ident_info_request = NULL,
-    .simple_train_node_ident_info_reply = NULL,
+    // Optional Traction SNIP Protocol Handler function assignments
+    .simple_train_node_ident_info_request = NULL,                               
+    .simple_train_node_ident_info_reply = NULL,                                 
 
-    // DATAGRAM
+    // Optional Datagram Protocol Handler function assignments
     .datagram = ProtocolDatagramHandler_datagram,
     .datagram_ok_reply = ProtocolDatagramHandler_datagram_received_ok,
     .datagram_rejected_reply = ProtocolDatagramHandler_datagram_rejected,
 
-    // STREAM
-    .stream_initiate_request = NULL,
-    .stream_initiate_reply = NULL,
-    .stream_send_data = NULL,
-    .stream_data_proceed = NULL,
-    .stream_data_complete = NULL,
-
-    // required
-    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,     //  HARDWARE INTERFACE
-    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
-    .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
-    .openlcb_node_get_first = &OpenLcbNode_get_first,
-    .openlcb_node_get_next = &OpenLcbNode_get_next,
-    .load_interaction_rejected = &OpenLcbMainStatemachine_load_interaction_rejected,
-
-    // for test injection
-    .process_main_statemachine = OpenLcbMainStatemachine_process_main_statemachine,
-    .does_node_process_msg = &OpenLcbMainStatemachine_does_node_process_msg,
-    .handle_outgoing_openlcb_message = &OpenLcbMainStatemachine_handle_outgoing_openlcb_message,
-    .handle_try_reenumerate = &OpenLcbMainStatemachine_handle_try_reenumerate,
-    .handle_try_pop_next_incoming_openlcb_message = &OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message,
-    .handle_try_enumerate_first_node = &OpenLcbMainStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &OpenLcbMainStatemachine_handle_try_enumerate_next_node
+    // Optional Stream Protocol Handler function assignments
+    .stream_initiate_request = NULL,                                            
+    .stream_initiate_reply = NULL,                                              
+    .stream_send_data = NULL,                                                   
+    .stream_data_proceed = NULL,                                               
+    .stream_data_complete = NULL,                                              
 
 };
 
 const interface_openlcb_protocol_snip_t interface_openlcb_protocol_snip = {
 
-    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
-    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC
+   // Required function assignments
+   .config_memory_read = CONFIG_MEM_READ_FUNC,                                  // HARDWARE INTERFACE
 
 };
 
 const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem_read_handler = {
 
+    // Required function assignments
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .config_memory_read = CONFIG_MEM_READ_FUNC,
-
+    
+    // Optional function assignments (Required if Address Spaces 0xFB/0xFC ACDI Manufacturer/User Protocol is enabled)
     .snip_load_manufacturer_version_id = &ProtocolSnip_load_manufacturer_version_id,
     .snip_load_name = &ProtocolSnip_load_name,
     .snip_load_model = &ProtocolSnip_load_model,
@@ -317,43 +218,48 @@ const interface_protocol_config_mem_read_handler_t interface_protocol_config_mem
     .snip_load_user_name = &ProtocolSnip_load_user_name,
     .snip_load_user_description = &ProtocolSnip_load_user_description,
 
+    // Optional request function assignments (Encapsulated functions to read specific address spaces)
     .read_request_config_definition_info = &ProtocolConfigMemReadHandler_read_request_config_definition_info,
-    .read_request_all = NULL,
+    .read_request_all = NULL,                                                   // Unimplemented
     .read_request_config_mem = &ProtocolConfigMemReadHandler_read_request_config_mem,
     .read_request_acdi_manufacturer = &ProtocolConfigMemReadHandler_read_request_acdi_manufacturer,
     .read_request_acdi_user = &ProtocolConfigMemReadHandler_read_request_acdi_user,
-    .read_request_traction_function_config_definition_info = NULL,
-    .read_request_traction_function_config_memory = NULL,
+    .read_request_traction_function_config_definition_info = NULL,              // Unimplemented
+    .read_request_traction_function_config_memory = NULL,                       // Unimplemented
 
-    .delayed_reply_time = NULL
+    // Optional override to return the flag in the Datagram ACK to allow the client to say the reply will be coming 2^N seconds
+    .delayed_reply_time = CONFIG_MEM_READ_DELAYED_REPLY_TIME_FUNC
 
 };
 
 const interface_protocol_config_mem_write_handler_t interface_protocol_config_mem_write_handler = {
 
+    // Required function assignments
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
     .config_memory_write = CONFIG_MEM_WRITE_FUNC,
-    .snip_user_name_write = &ProtocolSnip_write_user_name,
-    .snip_user_description_write = ProtocolSnip_write_user_description,
 
-    .write_request_config_definition_info = NULL,
-    .write_request_all = NULL,
+    // Optional request function assignments (Encapsulated functions to write specific address spaces)
+    .write_request_config_definition_info = NULL,                               // Typically never implemented
+    .write_request_all = NULL,                                                  // Typically never implemented
     .write_request_config_mem = &ProtocolConfigMemWriteHandler_write_request_config_mem,
-    .write_request_acdi_manufacturer = NULL,
+    .write_request_acdi_manufacturer = NULL,                                    // Typically never implemented
     .write_request_acdi_user = &ProtocolConfigMemWriteHandler_write_request_acdi_user,
-    .write_request_traction_function_config_definition_info = NULL,
-    .write_request_traction_function_config_memory = NULL,
+    .write_request_traction_function_config_definition_info = NULL,             // Typically never implemented
+    .write_request_traction_function_config_memory = NULL,                      
 
-    .delayed_reply_time = NULL
+    // Optional override to return the flag in the Datagram ACK to allow the client to say the reply will be coming 2^N seconds
+    .delayed_reply_time = CONFIG_MEM_WRITE_DELAYED_REPLY_TIME_FUNC
 
 };
 
 const interface_protocol_config_mem_operations_handler_t interface_protocol_config_mem_operations_handler = {
 
+    // Required function assignments
     .load_datagram_received_ok_message = &ProtocolDatagramHandler_load_datagram_received_ok_message,
     .load_datagram_received_rejected_message = &ProtocolDatagramHandler_load_datagram_rejected_message,
 
+    // Optional request function assignments (Encapsulated functions to perform the particular Operations Task)
     .operations_request_options_cmd = &ProtocolConfigMemOperationsHandler_request_options_cmd,
     .operations_request_options_cmd_reply = NULL,
     .operations_request_get_address_space_info = ProtocolConfigMemOperationsHandler_request_get_address_space_info,
@@ -363,25 +269,29 @@ const interface_protocol_config_mem_operations_handler_t interface_protocol_conf
     .operations_request_reserve_lock_reply = NULL,
     .operations_request_get_unique_id = NULL,
     .operations_request_get_unique_id_reply = NULL,
-    .operations_request_freeze = NULL,
-    .operations_request_unfreeze = NULL,
+    .operations_request_freeze = OPERATIONS_REQUEST_FREEZE_FUNC,
+    .operations_request_unfreeze = OPERATIONS_REQUEST_UNFREEZE_FUNC,
     .operations_request_update_complete = NULL,
-    .operations_request_reset_reboot = OPERATIONS_REBOOT_FUNC,        // HARDWARE INTERFACE
-    .operations_request_factory_reset = OPERATIONS_FACTORY_RESET_FUNC // HARDWARE INTERFACE
+    .operations_request_reset_reboot = OPERATIONS_REQUEST_REBOOT_FUNC,        // HARDWARE INTERFACE
+    .operations_request_factory_reset = OPERATIONS_REQUEST_FACTORY_RESET_FUNC // HARDWARE INTERFACE
 
 };
 
 const interface_openlcb_application_t interface_openlcb_application = {
 
-    .send_openlcb_msg = &CanTxStatemachine_send_openlcb_message,
-    .configuration_memory_read = CONFIG_MEM_READ_FUNC,
-    .configuration_memory_write = CONFIG_MEM_WRITE_FUNC
+    // Required function assignments
+    .send_openlcb_msg = SEND_OPENLCB_MESSAGE_FUNC,
+    .config_memory_read = CONFIG_MEM_READ_FUNC,
+    .config_memory_write = CONFIG_MEM_WRITE_FUNC
 
 };
 
 const interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
+    
+    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,     //  HARDWARE INTERFACE
+    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
 
-    // Config Memory Read
+    // Optional functions to implement Address Space access to Read Address Spaces, these are general functions that call the request functions defined in interface_protocol_config_mem_read_handler_t
     .memory_read_space_config_description_info = &ProtocolConfigMemReadHandler_read_space_config_description_info,
     .memory_read_space_all = &ProtocolConfigMemReadHandler_read_space_all,
     .memory_read_space_configuration_memory = &ProtocolConfigMemReadHandler_read_space_config_memory,
@@ -390,7 +300,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_space_traction_function_definition_info = &ProtocolConfigMemReadHandler_read_space_traction_function_definition_info,
     .memory_read_space_traction_function_config_memory = &ProtocolConfigMemReadHandler_read_space_traction_function_config_memory,
 
-    // Config Memory Read Reply Ok
+    // Optional functions to implement Datagram replies (Only required if the node is requesting a datagram from some other node and this is the OK reply)
     .memory_read_space_config_description_info_reply_ok = NULL,
     .memory_read_space_all_reply_ok = NULL,
     .memory_read_space_configuration_memory_reply_ok = NULL,
@@ -399,7 +309,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_space_traction_function_definition_info_reply_ok = NULL,
     .memory_read_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Config Memory Read Reply Failed
+    // Optional functions to implement Address Space read replies (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     .memory_read_space_config_description_info_reply_fail = NULL,
     .memory_read_space_all_reply_fail = NULL,
     .memory_read_space_configuration_memory_reply_fail = NULL,
@@ -408,7 +318,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_space_traction_function_definition_info_reply_fail = NULL,
     .memory_read_space_traction_function_config_memory_reply_fail = NULL,
 
-    // Config Memory Stream Read
+    // Optional functions to implement Address Space access to Read Address Spaces through a Stream
     .memory_read_stream_space_config_description_info = NULL,
     .memory_read_stream_space_all = NULL,
     .memory_read_stream_space_configuration_memory = NULL,
@@ -417,7 +327,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_stream_space_traction_function_definition_info = NULL,
     .memory_read_stream_space_traction_function_config_memory = NULL,
 
-    // Config Memory Stream Read Reply = Ok
+    // Optional functions to implement Address Space read replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the OK reply)
     .memory_read_stream_space_config_description_info_reply_ok = NULL,
     .memory_read_stream_space_all_reply_ok = NULL,
     .memory_read_stream_space_configuration_memory_reply_ok = NULL,
@@ -426,7 +336,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_stream_space_traction_function_definition_info_reply_ok = NULL,
     .memory_read_stream_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Config Memory Stream Read Reply = Failed
+    // Optional functions to implement Address Space read replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     .memory_read_stream_space_config_description_info_reply_fail = NULL,
     .memory_read_stream_space_all_reply_fail = NULL,
     .memory_read_stream_space_configuration_memory_reply_fail = NULL,
@@ -435,26 +345,26 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_read_stream_space_traction_function_definition_info_reply_fail = NULL,
     .memory_read_stream_space_traction_function_config_memory_reply_fail = NULL,
 
-    // Config Memory Write
-    .memory_write_space_config_description_info = ProtocolConfigMemWriteHandler_write_space_config_description_info,
-    .memory_write_space_all = ProtocolConfigMemWriteHandler_write_space_all,
+    // Optional functions to implement Address Space access to Write Address Spaces, these are general functions that call the request functions defined in interface_protocol_config_mem_write_handler_t
+    .memory_write_space_config_description_info = NULL,                         // Typically NULL as this a a read only space
+    .memory_write_space_all = NULL,                                             // Typically NULL as this a a read only space
     .memory_write_space_configuration_memory = &ProtocolConfigMemWriteHandler_write_space_config_memory,
-    .memory_write_space_acdi_manufacturer = ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer,
+    .memory_write_space_acdi_manufacturer = NULL,                               // Typically NULL as this a a read only space
     .memory_write_space_acdi_user = &ProtocolConfigMemWriteHandler_write_space_acdi_user,
-    .memory_write_space_traction_function_definition_info = ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info,
-    .memory_write_space_traction_function_config_memory = ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory,
+    .memory_write_space_traction_function_definition_info = NULL,               // Typically NULL as this a a read only space
+    .memory_write_space_traction_function_config_memory = &ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory,
     .memory_write_space_firmware_upgrade = NULL,
 
-    // Config Memory Write Reply Ok
-    .memory_write_space_config_description_info_reply_ok = NULL,
-    .memory_write_space_all_reply_ok = NULL,
+    // Optional functions to implement Address Space write replies (Only required if the node is requesting a datagram from some other node and this is the OK reply)
+    .memory_write_space_config_description_info_reply_ok = NULL,                // Typically never called as this a a read only space
+    .memory_write_space_all_reply_ok = NULL,                                    // Typically never called as this a a read only space
     .memory_write_space_configuration_memory_reply_ok = NULL,
-    .memory_write_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_write_space_acdi_manufacturer_reply_ok = NULL,                      // Typically never called as this a a read only space
     .memory_write_space_acdi_user_reply_ok = NULL,
-    .memory_write_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_write_space_traction_function_definition_info_reply_ok = NULL,      // Typically never called as this a a read only space
     .memory_write_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Config Memory Write Reply Fail
+    // Optional functions to implement Address Space write replies (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     .memory_write_space_config_description_info_reply_fail = NULL,
     .memory_write_space_all_reply_fail = NULL,
     .memory_write_space_configuration_memory_reply_fail = NULL,
@@ -463,36 +373,36 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_space_traction_function_definition_info_reply_fail = NULL,
     .memory_write_space_traction_function_config_memory_reply_fail = NULL,
 
-    // Config Memory Write Under Mask
-    .memory_write_under_mask_space_config_description_info = NULL,
-    .memory_write_under_mask_space_all = NULL,
+    // Optional functions to implement Address Space write under a mask 
+    .memory_write_under_mask_space_config_description_info = NULL,              // Typically NULL as this a a read only space
+    .memory_write_under_mask_space_all = NULL,                                  // Typically NULL as this a a read only space
     .memory_write_under_mask_space_configuration_memory = NULL,
-    .memory_write_under_mask_space_acdi_manufacturer = NULL,
+    .memory_write_under_mask_space_acdi_manufacturer = NULL,                    // Typically NULL as this a a read only space
     .memory_write_under_mask_space_acdi_user = NULL,
-    .memory_write_under_mask_space_traction_function_definition_info = NULL,
+    .memory_write_under_mask_space_traction_function_definition_info = NULL,    // Typically NULL as this a a read only space
     .memory_write_under_mask_space_traction_function_config_memory = NULL,
     .memory_write_under_mask_space_firmware_upgrade = NULL,
 
-    // Config Memory Stream Write
-    .memory_write_stream_space_config_description_info = NULL,
-    .memory_write_stream_space_all = NULL,
+    // Optional functions to implement Address Space access to Write Address Spaces through a Stream
+    .memory_write_stream_space_config_description_info = NULL,                  // Typically NULL as this a a read only space
+    .memory_write_stream_space_all = NULL,                                      // Typically NULL as this a a read only space
     .memory_write_stream_space_configuration_memory = NULL,
-    .memory_write_stream_space_acdi_manufacturer = NULL,
+    .memory_write_stream_space_acdi_manufacturer = NULL,                        // Typically NULL as this a a read only space
     .memory_write_stream_space_acdi_user = NULL,
-    .memory_write_stream_space_traction_function_definition_info = NULL,
+    .memory_write_stream_space_traction_function_definition_info = NULL,        // Typically NULL as this a a read only space
     .memory_write_stream_space_traction_function_config_memory = NULL,
     .memory_write_stream_space_firmware_upgrade = NULL,
 
-    // Config Memory Stream Write Reply = Ok
-    .memory_write_stream_space_config_description_info_reply_ok = NULL,
-    .memory_write_stream_space_all_reply_ok = NULL,
+    // Optional functions to implement Address Space write replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the OK reply)
+    .memory_write_stream_space_config_description_info_reply_ok = NULL,         // Typically never called as this a a read only space       
+    .memory_write_stream_space_all_reply_ok = NULL,                             // Typically never called as this a a read only space               
     .memory_write_stream_space_configuration_memory_reply_ok = NULL,
-    .memory_write_stream_space_acdi_manufacturer_reply_ok = NULL,
+    .memory_write_stream_space_acdi_manufacturer_reply_ok = NULL,               // Typically never called as this a a read only space            
     .memory_write_stream_space_acdi_user_reply_ok = NULL,
-    .memory_write_stream_space_traction_function_definition_info_reply_ok = NULL,
+    .memory_write_stream_space_traction_function_definition_info_reply_ok = NULL, // Typically never called as this a a read only space
     .memory_write_stream_space_traction_function_config_memory_reply_ok = NULL,
 
-    // Config Memory Stream Write Reply = Failed
+    // Optional functions to implement Address Space write replies through a Stream (Only required if the node is requesting a datagram from some other node and this is the FAIL reply)
     .memory_write_stream_space_config_description_info_reply_fail = NULL,
     .memory_write_stream_space_all_reply_fail = NULL,
     .memory_write_stream_space_configuration_memory_reply_fail = NULL,
@@ -501,7 +411,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_stream_space_traction_function_definition_info_reply_fail = NULL,
     .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
 
-    // Config Memory Commands
+    // Optional functions to implement the commands in the Configuration Memory Operations, typically assigned the handlers in interface_protocol_config_mem_operations_handler_t.
     .memory_options_cmd = &ProtocolConfigMemOperationsHandler_options_cmd,
     .memory_options_reply = &ProtocolConfigMemOperationsHandler_options_reply,
     .memory_get_address_space_info = &ProtocolConfigMemOperationsHandler_get_address_space_info,
@@ -517,28 +427,10 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_reset_reboot = &ProtocolConfigMemOperationsHandler_reset_reboot,
     .memory_factory_reset = &ProtocolConfigMemOperationsHandler_factory_reset,
 
-    .lock_shared_resources = LOCK_SHARED_RESOURCES_FUNC,     //  HARDWARE INTERFACE
-    .unlock_shared_resources = UNLOCK_SHARED_RESOURCES_FUNC, //  HARDWARE INTERFACE
-
 };
 
 void DependencyInjection_initialize(void)
 {
-
-  CanBufferStore_initialize();
-  CanBufferFifo_initialize();
-
-  CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
-  CanRxStatemachine_initialize(&interface_can_rx_statemachine);
-
-  CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
-  CanTxStatemachine_initialize(&interface_can_tx_statemachine);
-
-  CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
-  CanLoginStateMachine_initialize(&interface_can_login_state_machine);
-  CanMainStatemachine_initialize(&interface_can_main_statemachine);
-
-  AliasMappings_initialize();
 
   OpenLcbBufferStore_initialize();
   OpenLcbBufferList_initialize();

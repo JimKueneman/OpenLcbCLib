@@ -36,7 +36,6 @@
 #define ARDUINO_COMPATIBLE
 
 #include "esp32_drivers.h"
-
 #include "esp32_can_drivers.h"
 
 #include "../openlcb/openlcb_types.h"

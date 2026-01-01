@@ -43,13 +43,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "debug_tools.h"
 #include "ti_driverlib_can_driver.h"
 
-#include "src/openlcb/openlcb_types.h"
-#include "src/drivers/canbus/can_types.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/protocol_datagram_handler.h"
+#include "../openlcb/openlcb_types.h"
+#include "../drivers/canbus/can_types.h"
+#include "../openlcb/openlcb_node.h"
+#include "../openlcb/protocol_datagram_handler.h"
 
 void TI_DriverLibDrivers_initialize(void)
 {
@@ -61,7 +60,7 @@ void TI_DriverLibDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, 
    DL_SYSCTL_resetDevice(0x03);
 }
 
-uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t TI_DriverLibDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
    char str[] = "MSPM03507 Launchpad";
@@ -93,7 +92,7 @@ uint16_t TI_DriverLibDrivers_config_mem_read(uint32_t address, uint16_t count, c
    return count;
 }
 
-uint16_t TI_DriverLibDrivers_config_mem_write(uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
+uint16_t TI_DriverLibDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
 {
 
    return count;
