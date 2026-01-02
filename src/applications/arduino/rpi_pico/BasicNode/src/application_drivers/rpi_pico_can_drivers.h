@@ -59,6 +59,8 @@ extern "C"
 
   extern bool RPiPicoCanDriver_transmit_raw_can_frame(can_msg_t *msg);
 
+  extern void RPiPicoCanDriver_process_receive(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

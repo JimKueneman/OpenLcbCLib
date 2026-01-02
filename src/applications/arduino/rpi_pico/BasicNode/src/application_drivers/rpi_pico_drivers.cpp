@@ -39,6 +39,7 @@
 #include "rpi_pico_can_drivers.h"
 
 #include "../openlcb/openlcb_types.h"
+#include "../openlcb/openlcb_defines.h"
 #include "../utilities/mustangpeak_string_helper.h"
 #include "../openlcb/openlcb_node.h"
 #include "../openlcb/protocol_datagram_handler.h"
@@ -93,18 +94,90 @@ void RPiPicoDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, confi
     ;  // Enter infinite loop, watchdog will trigger reset
 }
 
+
+static char str_name[] = "Raspberry Pi Pico";
+static char str_desc[] = "This is my RPi Pico Test Bed with OpenLcbCLib";
+
 uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
-  // TODO: Write to EEPROM/FLASH/FRAM/........
+  // TODO: Read to EEPROM/FLASH/FRAM/........
 
-  return count;
+  switch (address) {
+
+    case CONFIG_MEM_USER_MODEL_ADDRESS:
+      {
+        for (int i = 0; i < count; i++) {
+
+          *buffer[i] = str_name[i];
+
+          if (*buffer[i] = 0x00) {
+
+            return i;
+          }
+        }
+
+        break;
+      }
+
+    case CONFIG_MEM_USER_DESCRIPTION_ADDRESS:
+      {
+
+        for (int i = 0; i < count; i++) {
+
+          *buffer[i] = str_desc[i];
+
+          if (*buffer[i] = 0x00) {
+
+            return i;
+          }
+        }
+
+        break;
+      }
+  }
+
+  return 0;
 }
 
 uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
   // TODO: Write to EEPROM/FLASH/FRAM/........
 
-  return count;
+  switch (address) {
+
+    case CONFIG_MEM_USER_MODEL_ADDRESS:
+      {
+        for (int i = 0; i < count; i++) {
+
+          str_name[i] = *buffer[i];
+
+          if (*buffer[i] = 0x00) {
+
+            return i;
+          }
+        }
+
+        break;
+      }
+
+    case CONFIG_MEM_USER_DESCRIPTION_ADDRESS:
+      {
+
+        for (int i = 0; i < count; i++) {
+
+          str_desc[i] = *buffer[i];
+
+          if (*buffer[i] = 0x00) {
+
+            return i;
+          }
+        }
+
+        break;
+      }
+  }
+
+  return 0;
 }
 
 void RPiPicoDrivers_lock_shared_resources(void) {
@@ -123,6 +196,7 @@ void RPiPicoDrivers_unlock_shared_resources(void) {
 
   if (timer_unhandled_tick) {
 
+    timer_unhandled_tick = false;
     _handle_timer_tick();
   }
 }

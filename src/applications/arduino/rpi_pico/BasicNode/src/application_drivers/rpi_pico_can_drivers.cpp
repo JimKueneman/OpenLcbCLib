@@ -52,73 +52,89 @@
 #endif
 
 // Uncomment to enable logging
- //#define LOG_SETUP
- //#define LOG_SUCCESSFUL_SETUP_PARAMETERS
+//#define LOG_SETUP
+//#define LOG_SUCCESSFUL_SETUP_PARAMETERS
 
-static const byte MCP2517_CS  = 17 ; // CS input of MCP2517
-static const byte MCP2517_INT = 20 ; // INT output of MCP2517
+static const byte MCP2517_CS = 17;   // CS input of MCP2517
+static const byte MCP2517_INT = 20;  // INT output of MCP2517
 
 // Create a ACAN2517 Object
-static ACAN2517 can (MCP2517_CS, SPI, MCP2517_INT);
+static ACAN2517 can(MCP2517_CS, SPI, MCP2517_INT);
 
-void RPiPicoCanDriver_setup(void)
-{
+void RPiPicoCanDriver_setup(void) {
 
   // Initialize Raspberry Pi Pico CAN features
 
   SPI.begin(true);
   // Setup for 125kHz
-  ACAN2517Settings settings (ACAN2517Settings::OSC_40MHz, 125UL * 1000UL);
- 
-  const uint16_t errorCode = can.begin(settings, [] { can.isr () ; }) ;
-  #ifdef LOG_SETUP                                 // Uncomment the define above to enable
-  Serial.begin(115200); delay(2500);
+  ACAN2517Settings settings(ACAN2517Settings::OSC_40MHz, 125UL * 1000UL);
+
+  const uint16_t errorCode = can.begin(settings, [] {
+    can.isr();
+  });
+#ifdef LOG_SETUP  // Uncomment the define above to enable
   Serial.print("\nerrorCode=");
   Serial.println(errorCode);
   if (errorCode == 0) {
-    #ifdef LOG_SUCCESSFUL_SETUP_PARAMETERS          // Uncomment the define above to enable
-    Serial.print ("\nBit Rate prescaler: ") ;
-    Serial.println (settings.mBitRatePrescaler) ;
-    Serial.print ("Phase segment 1: ") ;
-    Serial.println (settings.mPhaseSegment1) ;
-    Serial.print ("Phase segment 2: ") ;
-    Serial.println (settings.mPhaseSegment2) ;
-    Serial.print ("SJW: ") ;
-    Serial.println (settings.mSJW) ;
-    Serial.print ("Actual bit rate: ") ;
-    Serial.print (settings.actualBitRate ()) ;
-    Serial.println (" bit/s") ;
-    Serial.print ("Exact bit rate ? ") ;
-    Serial.println (settings.exactBitRate () ? "yes" : "no") ;
-    Serial.print ("Sample point: ") ;
-    Serial.print (settings.samplePointFromBitStart ()) ;
-    Serial.println ("%") ;
-    #endif
-  }else{
-    Serial.print ("\n\nACAN ERROR: Configuration error 0x") ;
-    Serial.println (errorCode, HEX) ;
+#ifdef LOG_SUCCESSFUL_SETUP_PARAMETERS  // Uncomment the define above to enable
+    Serial.print("\nBit Rate prescaler: ");
+    Serial.println(settings.mBitRatePrescaler);
+    Serial.print("Phase segment 1: ");
+    Serial.println(settings.mPhaseSegment1);
+    Serial.print("Phase segment 2: ");
+    Serial.println(settings.mPhaseSegment2);
+    Serial.print("SJW: ");
+    Serial.println(settings.mSJW);
+    Serial.print("Actual bit rate: ");
+    Serial.print(settings.actualBitRate());
+    Serial.println(" bit/s");
+    Serial.print("Exact bit rate ? ");
+    Serial.println(settings.exactBitRate() ? "yes" : "no");
+    Serial.print("Sample point: ");
+    Serial.print(settings.samplePointFromBitStart());
+    Serial.println("%");
+#endif
+  } else {
+    Serial.print("\n\nACAN ERROR: Configuration error 0x");
+    Serial.println(errorCode, HEX);
   }
-  #endif
+#endif
 }
 
-void receive_task_or_interrupt(void *arg)
-{
+void RPiPicoCanDriver_process_receive(void) {
 
-  // TODO: Spin up a task (if using RTOS) or implement an interrupt to call this function./Users/jimkueneman/Documents/OpenLcbCLib/src/applications/Arduino/rpi_pico/BasicNode/src/application_drivers/rpi_pico_drivers.cpp
-  // Once a Frame is received call:
-  //      CanRxStatemachine_incoming_can_driver_callback(&can_msg);
-  // with the newly received frame, UNLESS RPiPicoCanDriver_pause_can_rx() has been called then hold the
-  // message until RPiPicoCanDriver_resume_can_rx() has been called
+  can_msg_t can_msg;
+  CANMessage can_message;
+
+  while (can.available()) {
+
+    if (can.receive(can_message)) {
+
+      if (can_message.ext) {  // Only Extended messages
+
+        can_msg.payload_count = can_message.len;
+        can_msg.identifier = can_message.id;
+
+        for (int i = 0; i < 7; i++) {
+
+          can_msg.payload[i] = can_message.data[i];
+        }
+
+        CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+      }
+    }
+  }
 }
 
-bool RPiPicoCanDriver_is_can_tx_buffer_clear(void)
-{
+bool RPiPicoCanDriver_is_can_tx_buffer_clear(void) {
 
-  return can.available(); 
+  // ACAN Library does not have a method to know if the buffer is full, I believe OpenLcbCLib will 
+  // function correctly if the Transmit fails as well.  This was just for a short cut if available.
+
+  return true;
 }
 
-bool RPiPicoCanDriver_transmit_raw_can_frame(can_msg_t *msg)
-{
+bool RPiPicoCanDriver_transmit_raw_can_frame(can_msg_t *msg) {
 
   CANMessage frame;
   frame.ext = true;
@@ -127,22 +143,17 @@ bool RPiPicoCanDriver_transmit_raw_can_frame(can_msg_t *msg)
   for (int i = 0; i < 7; i++) {
 
     frame.data[i] = msg->payload[i];
+  }
 
-    }
-  
-  return can.tryToSend(frame); 
+  return can.tryToSend(frame);
 }
 
-void RPiPicoCanDriver_pause_can_rx(void)
-{
+void RPiPicoCanDriver_pause_can_rx(void) {
 
-  // TODO: Resume sending incoming CAN frames to the OpenLcbCLib function in the task/thread/interrupt function above:
-  //          CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+  // Not required as the ACAN2517 library uses and interrupt to get the next message in the background and we access it from the mainloop
 }
 
-void RPiPicoCanDriver_resume_can_rx(void)
-{
+void RPiPicoCanDriver_resume_can_rx(void) {
 
-  // TODO: Pause sending incoming CAN frames to the OpenLcbCLib function in the task/thread/interrupt function above:
-  //          CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+  // Not required as the ACAN2517 library uses and interrupt to get the next message in the background and we access it from the mainloop
 }
