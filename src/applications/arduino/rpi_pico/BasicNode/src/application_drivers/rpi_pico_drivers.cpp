@@ -44,59 +44,85 @@
 #include "../openlcb/protocol_datagram_handler.h"
 
 #ifdef ARDUINO_COMPATIBLE
-#include "Arduino.h"
 // TODO:  include any header files the Raspberry Pi Pico need to compile under Arduino/PlatformIO
+#include "Arduino.h"
+#include "pico/stdlib.h"
+#include "pico/time.h"
+#include <stdio.h>
 #endif
 
 // Create a Timer interrupt or task and call the following
-void timer_task_or_interrupt(void *arg)
-{
+struct repeating_timer timer;
+static bool timer_enabled = false;
+static bool timer_unhandled_tick = false;
 
-  // TODO: Create a Timer interrupt or task (if using RTOS) and call the following every 100ms or so (not critical)
+void _handle_timer_tick(void) {
+
   OpenLcbNode_100ms_timer_tick();
   ProtocolDatagramHandler_100ms_timer_tick();
 }
 
-void RPiPicoDriver_setup(void)
-{
+bool timer_task_or_interrupt(__unused struct repeating_timer *timer) {
+  // You can access user data if needed:
+  // int* data = (int*) t->user_data;
+  // printf("Timer callback fired, data value: %d\n", *data);
+
+  // a Timer interrupt or task (if using RTOS) and call the following every 100ms or so (not critical)
+  if (timer_enabled) {
+
+    _handle_timer_tick();
+
+  } else {
+
+    timer_unhandled_tick = true;
+  }
+  // printf("Timer fired!\n");
+  return true;  // Keep the timer running
+}
+
+void RPiPicoDriver_setup(void) {
   // Initialize Raspberry Pi Pico interrupt and any features needed for config memory read/writes
+
+  timer_enabled = add_repeating_timer_ms(-100, timer_task_or_interrupt, NULL, &timer);
 }
 
-void RPiPicoDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
-{
+void RPiPicoDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-  // TODO: Reboot the Raspberry Pi here
+  watchdog_enable(1, 1);  // Enable watchdog with a 1ms timeout and pause on debug
+  while (1)
+    ;  // Enter infinite loop, watchdog will trigger reset
 }
 
-uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
-{
+uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
   // TODO: Write to EEPROM/FLASH/FRAM/........
 
   return count;
 }
 
-uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
-{
+uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
   // TODO: Write to EEPROM/FLASH/FRAM/........
 
   return count;
 }
 
-void RPiPicoDrivers_lock_shared_resources(void)
-{
+void RPiPicoDrivers_lock_shared_resources(void) {
 
-  // TODO: Pause the 100ms Timer here
-
+  // Pause the 100ms Timer here
+  timer_enabled = false;
   // Pause the CAN Rx thread
   RPiPicoCanDriver_pause_can_rx();
 }
 
-void RPiPicoDrivers_unlock_shared_resources(void)
-{
+void RPiPicoDrivers_unlock_shared_resources(void) {
   // TODO: Resume the 100ms Timer here
-
+  timer_enabled = true;
   // Resume the CAN Rx thread
   RPiPicoCanDriver_resume_can_rx();
+
+  if (timer_unhandled_tick) {
+
+    _handle_timer_tick();
+  }
 }

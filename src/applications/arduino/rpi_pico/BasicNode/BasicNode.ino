@@ -33,7 +33,6 @@
  * @date 7 Jan 2025
  */
 
-
 #include "callbacks.h"
 #include "node_parameters.h"
 #include "src/application_drivers/rpi_pico_drivers.h"
