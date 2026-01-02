@@ -1,23 +1,10 @@
-11:49:54 **** Incremental Build of configuration Debug for project BasicNode ****
-make -j7 all 
-arm-none-eabi-gcc "../Core/Src/src/application_drivers/stm32_driverlib_drivers.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../USB_HOST/App -I../USB_HOST/Target -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Middlewares/ST/STM32_USB_Host_Library/Core/Inc -I../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/src/application_drivers/stm32_driverlib_drivers.d" -MT"Core/Src/src/application_drivers/stm32_driverlib_drivers.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/src/application_drivers/stm32_driverlib_drivers.o"
-arm-none-eabi-gcc -o "BasicNode.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/stm32_cubeide/stm32f407_discovery/BasicNode/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="BasicNode.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: BasicNode.elf
- 
+15:28:14 **** Incremental Build of configuration Debug for project BasicNode ****
+make -j9 all 
 arm-none-eabi-size  BasicNode.elf 
-arm-none-eabi-objdump -h -S BasicNode.elf  > "BasicNode.list"
-arm-none-eabi-objcopy  -O ihex BasicNode.elf  "BasicNode.hex"
-arm-none-eabi-objcopy  -O binary BasicNode.elf  "BasicNode.bin"
    text	   data	    bss	    dec	    hex	filename
  103544	    136	  16200	 119880	  1d448	BasicNode.elf
 Finished building: default.size.stdout
  
-Finished building: BasicNode.bin
-Finished building: BasicNode.hex
- 
- 
-Finished building: BasicNode.list
- 
 
-11:49:55 Build Finished. 0 errors, 0 warnings. (took 995ms)
+15:28:14 Build Finished. 0 errors, 0 warnings. (took 153ms)
 

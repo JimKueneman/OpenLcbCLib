@@ -29,9 +29,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  12 .ARM.attributes 00000030  00000000  00000000  0001b088  2**0
                   CONTENTS, READONLY
- 13 .debug_info   00032443  00000000  00000000  0001b0b8  2**0
+ 13 .debug_info   00032442  00000000  00000000  0001b0b8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00008993  00000000  00000000  0004d4fb  2**0
+ 14 .debug_abbrev 00008993  00000000  00000000  0004d4fa  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_aranges 00002740  00000000  00000000  00055e90  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -41,13 +41,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  18 .debug_line   000334aa  00000000  00000000  00084e1e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000e3e5a  00000000  00000000  000b82c8  2**0
+ 19 .debug_str    000e3ec6  00000000  00000000  000b82c8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000043  00000000  00000000  0019c122  2**0
+ 20 .comment      00000043  00000000  00000000  0019c18e  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  0000a920  00000000  00000000  0019c168  2**2
+ 21 .debug_frame  0000a920  00000000  00000000  0019c1d4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 00000094  00000000  00000000  001a6a88  2**0
+ 22 .debug_line_str 00000094  00000000  00000000  001a6af4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -9413,53 +9413,52 @@ void DependencyInjection_initialize(void)
  80038f4:	b580      	push	{r7, lr}
  80038f6:	af00      	add	r7, sp, #0
 
-  OpenLcbBufferStore_initialize();
+    OpenLcbBufferStore_initialize();
  80038f8:	f000 f9a4 	bl	8003c44 <OpenLcbBufferStore_initialize>
-  OpenLcbBufferList_initialize();
+    OpenLcbBufferList_initialize();
  80038fc:	f000 f8fc 	bl	8003af8 <OpenLcbBufferList_initialize>
-  OpenLcbBufferFifo_initialize();
+    OpenLcbBufferFifo_initialize();
  8003900:	f000 f87c 	bl	80039fc <OpenLcbBufferFifo_initialize>
 
-  ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
  8003904:	4812      	ldr	r0, [pc, #72]	@ (8003950 <DependencyInjection_initialize+0x5c>)
  8003906:	f005 ff49 	bl	800979c <ProtocolSnip_initialize>
-  ProtocolDatagramHandler_initialize(&interface_protocol_datagram_handler);
+    ProtocolDatagramHandler_initialize(&interface_protocol_datagram_handler);
  800390a:	4812      	ldr	r0, [pc, #72]	@ (8003954 <DependencyInjection_initialize+0x60>)
  800390c:	f003 ff2c 	bl	8007768 <ProtocolDatagramHandler_initialize>
-  ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
+    ProtocolEventTransport_initialize(&interface_openlcb_protocol_event_transport);
  8003910:	4811      	ldr	r0, [pc, #68]	@ (8003958 <DependencyInjection_initialize+0x64>)
  8003912:	f005 f951 	bl	8008bb8 <ProtocolEventTransport_initialize>
-  ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
+    ProtocolMessageNetwork_initialize(&interface_openlcb_protocol_message_network);
  8003916:	4811      	ldr	r0, [pc, #68]	@ (800395c <DependencyInjection_initialize+0x68>)
  8003918:	f005 fd8a 	bl	8009430 <ProtocolMessageNetwork_initialize>
-  ProtocolConfigMemReadHandler_initialize(&interface_protocol_config_mem_read_handler);
+    ProtocolConfigMemReadHandler_initialize(&interface_protocol_config_mem_read_handler);
  800391c:	4810      	ldr	r0, [pc, #64]	@ (8003960 <DependencyInjection_initialize+0x6c>)
  800391e:	f003 f839 	bl	8006994 <ProtocolConfigMemReadHandler_initialize>
-  ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
+    ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
  8003922:	4810      	ldr	r0, [pc, #64]	@ (8003964 <DependencyInjection_initialize+0x70>)
  8003924:	f003 fc7c 	bl	8007220 <ProtocolConfigMemWriteHandler_initialize>
-  ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
+    ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
  8003928:	480f      	ldr	r0, [pc, #60]	@ (8003968 <DependencyInjection_initialize+0x74>)
  800392a:	f002 fbcb 	bl	80060c4 <ProtocolConfigMemOperationsHandler_initialize>
 
-  OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbNode_initialize(&interface_openlcb_node);
  800392e:	480f      	ldr	r0, [pc, #60]	@ (800396c <DependencyInjection_initialize+0x78>)
  8003930:	f001 fd2c 	bl	800538c <OpenLcbNode_initialize>
 
-  OpenLcbLoginMessageHandler_initialize(&interface_openlcb_login_message_handler);
+    OpenLcbLoginMessageHandler_initialize(&interface_openlcb_login_message_handler);
  8003934:	480e      	ldr	r0, [pc, #56]	@ (8003970 <DependencyInjection_initialize+0x7c>)
  8003936:	f000 fcb3 	bl	80042a0 <OpenLcbLoginMessageHandler_initialize>
-  OpenLcbLoginStateMachine_initialize(&interface_openlcb_login_state_machine);
+    OpenLcbLoginStateMachine_initialize(&interface_openlcb_login_state_machine);
  800393a:	480e      	ldr	r0, [pc, #56]	@ (8003974 <DependencyInjection_initialize+0x80>)
  800393c:	f000 fb9e 	bl	800407c <OpenLcbLoginStateMachine_initialize>
-  OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
+    OpenLcbMainStatemachine_initialize(&interface_openlcb_main_statemachine);
  8003940:	480d      	ldr	r0, [pc, #52]	@ (8003978 <DependencyInjection_initialize+0x84>)
  8003942:	f000 fe55 	bl	80045f0 <OpenLcbMainStatemachine_initialize>
 
-  OpenLcbApplication_initialize(&interface_openlcb_application);
+    OpenLcbApplication_initialize(&interface_openlcb_application);
  8003946:	480d      	ldr	r0, [pc, #52]	@ (800397c <DependencyInjection_initialize+0x88>)
  8003948:	f000 f848 	bl	80039dc <OpenLcbApplication_initialize>
-}
  800394c:	bf00      	nop
  800394e:	bd80      	pop	{r7, pc}
  8003950:	080190e0 	.word	0x080190e0
@@ -9485,38 +9484,37 @@ void DependencyInjectionCanBus_initialize(void)
  8003980:	b580      	push	{r7, lr}
  8003982:	af00      	add	r7, sp, #0
 
-  CanBufferStore_initialize();
+    CanBufferStore_initialize();
  8003984:	f7fd ff88 	bl	8001898 <CanBufferStore_initialize>
-  CanBufferFifo_initialize();
+    CanBufferFifo_initialize();
  8003988:	f7fd ff00 	bl	800178c <CanBufferFifo_initialize>
 
-  CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
+    CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
  800398c:	480c      	ldr	r0, [pc, #48]	@ (80039c0 <DependencyInjectionCanBus_initialize+0x40>)
  800398e:	f7fe fcb1 	bl	80022f4 <CanRxMessageHandler_initialize>
-  CanRxStatemachine_initialize(&interface_can_rx_statemachine);
+    CanRxStatemachine_initialize(&interface_can_rx_statemachine);
  8003992:	480c      	ldr	r0, [pc, #48]	@ (80039c4 <DependencyInjectionCanBus_initialize+0x44>)
  8003994:	f7fe ff78 	bl	8002888 <CanRxStatemachine_initialize>
 
-  CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
+    CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
  8003998:	480b      	ldr	r0, [pc, #44]	@ (80039c8 <DependencyInjectionCanBus_initialize+0x48>)
  800399a:	f7ff fa61 	bl	8002e60 <CanTxMessageHandler_initialize>
-  CanTxStatemachine_initialize(&interface_can_tx_statemachine);
+    CanTxStatemachine_initialize(&interface_can_tx_statemachine);
  800399e:	480b      	ldr	r0, [pc, #44]	@ (80039cc <DependencyInjectionCanBus_initialize+0x4c>)
  80039a0:	f7ff fca4 	bl	80032ec <CanTxStatemachine_initialize>
 
-  CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
+    CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
  80039a4:	480a      	ldr	r0, [pc, #40]	@ (80039d0 <DependencyInjectionCanBus_initialize+0x50>)
  80039a6:	f7fe f837 	bl	8001a18 <CanLoginMessageHandler_initialize>
-  CanLoginStateMachine_initialize(&interface_can_login_state_machine);
+    CanLoginStateMachine_initialize(&interface_can_login_state_machine);
  80039aa:	480a      	ldr	r0, [pc, #40]	@ (80039d4 <DependencyInjectionCanBus_initialize+0x54>)
  80039ac:	f7fe fa82 	bl	8001eb4 <CanLoginStateMachine_initialize>
-  CanMainStatemachine_initialize(&interface_can_main_statemachine);
+    CanMainStatemachine_initialize(&interface_can_main_statemachine);
  80039b0:	4809      	ldr	r0, [pc, #36]	@ (80039d8 <DependencyInjectionCanBus_initialize+0x58>)
  80039b2:	f7fe faf5 	bl	8001fa0 <CanMainStatemachine_initialize>
 
-  AliasMappings_initialize();
+    AliasMappings_initialize();
  80039b6:	f7fd fdf5 	bl	80015a4 <AliasMappings_initialize>
-
 }
  80039ba:	bf00      	nop
  80039bc:	bd80      	pop	{r7, pc}

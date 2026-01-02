@@ -10918,7 +10918,7 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
 LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.macos64_1.0.100.202509120712/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libm.a
 LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.macos64_1.0.100.202509120712/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v7e-m+fp/hard/libgcc.a
 
-.debug_info     0x00000000    0x32443
+.debug_info     0x00000000    0x32442
  .debug_info    0x00000000      0xb85 ./Core/Src/callbacks.o
  .debug_info    0x00000b85     0x2084 ./Core/Src/main.o
  .debug_info    0x00002c09      0x368 ./Core/Src/node_parameters.o
@@ -10940,47 +10940,47 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
  .debug_info    0x0000b907      0x875 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
  .debug_info    0x0000c17c      0x45c ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
  .debug_info    0x0000c5d8      0x6f4 ./Core/Src/src/drivers/canbus/can_utilities.o
- .debug_info    0x0000cccc     0x2367 ./Core/Src/src/node_definition/dependency_injection.o
- .debug_info    0x0000f033     0x12a2 ./Core/Src/src/node_definition/dependency_injection_canbus.o
- .debug_info    0x000102d5      0xa68 ./Core/Src/src/openlcb/openlcb_application.o
- .debug_info    0x00010d3d      0x314 ./Core/Src/src/openlcb/openlcb_buffer_fifo.o
- .debug_info    0x00011051      0x36a ./Core/Src/src/openlcb/openlcb_buffer_list.o
- .debug_info    0x000113bb      0x54d ./Core/Src/src/openlcb/openlcb_buffer_store.o
- .debug_info    0x00011908      0x9dd ./Core/Src/src/openlcb/openlcb_login_statemachine.o
- .debug_info    0x000122e5      0x97d ./Core/Src/src/openlcb/openlcb_login_statemachine_handler.o
- .debug_info    0x00012c62      0xd4d ./Core/Src/src/openlcb/openlcb_main_statemachine.o
- .debug_info    0x000139af      0xa53 ./Core/Src/src/openlcb/openlcb_node.o
- .debug_info    0x00014402      0xeea ./Core/Src/src/openlcb/openlcb_utilities.o
- .debug_info    0x000152ec      0xfe3 ./Core/Src/src/openlcb/protocol_config_mem_operations_handler.o
- .debug_info    0x000162cf      0xff0 ./Core/Src/src/openlcb/protocol_config_mem_read_handler.o
- .debug_info    0x000172bf      0xf0a ./Core/Src/src/openlcb/protocol_config_mem_write_handler.o
- .debug_info    0x000181c9     0x11dc ./Core/Src/src/openlcb/protocol_datagram_handler.o
- .debug_info    0x000193a5      0xed5 ./Core/Src/src/openlcb/protocol_event_transport.o
- .debug_info    0x0001a27a      0xa7d ./Core/Src/src/openlcb/protocol_message_network.o
- .debug_info    0x0001acf7      0xd90 ./Core/Src/src/openlcb/protocol_snip.o
- .debug_info    0x0001ba87       0x30 ./Core/Startup/startup_stm32f407vgtx.o
- .debug_info    0x0001bab7      0x944 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
- .debug_info    0x0001c3fb      0xf49 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.o
- .debug_info    0x0001d344      0xd8c ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
- .debug_info    0x0001e0d0      0x6c3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
- .debug_info    0x0001e793     0x114c ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.o
- .debug_info    0x0001f8df     0x2415 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
- .debug_info    0x00021cf4      0xe02 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.o
- .debug_info    0x00022af6      0xaae ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.o
- .debug_info    0x000235a4      0x8c3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
- .debug_info    0x00023e67      0x536 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o
- .debug_info    0x0002439d     0x1525 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o
- .debug_info    0x000258c2     0x299d ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
- .debug_info    0x0002825f     0x14db ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
- .debug_info    0x0002973a     0x1993 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o
- .debug_info    0x0002b0cd     0x1479 ./Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/usbh_cdc.o
- .debug_info    0x0002c546      0xfb5 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_core.o
- .debug_info    0x0002d4fb      0xfaf ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ctlreq.o
- .debug_info    0x0002e4aa      0xc2e ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ioreq.o
- .debug_info    0x0002f0d8      0xa91 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_pipes.o
- .debug_info    0x0002fb69      0xa13 ./USB_HOST/App/usb_host.o
- .debug_info    0x0003057c     0x1cef ./USB_HOST/Target/usbh_conf.o
- .debug_info    0x0003226b      0x1d8 ./USB_HOST/Target/usbh_platform.o
+ .debug_info    0x0000cccc     0x2366 ./Core/Src/src/node_definition/dependency_injection.o
+ .debug_info    0x0000f032     0x12a2 ./Core/Src/src/node_definition/dependency_injection_canbus.o
+ .debug_info    0x000102d4      0xa68 ./Core/Src/src/openlcb/openlcb_application.o
+ .debug_info    0x00010d3c      0x314 ./Core/Src/src/openlcb/openlcb_buffer_fifo.o
+ .debug_info    0x00011050      0x36a ./Core/Src/src/openlcb/openlcb_buffer_list.o
+ .debug_info    0x000113ba      0x54d ./Core/Src/src/openlcb/openlcb_buffer_store.o
+ .debug_info    0x00011907      0x9dd ./Core/Src/src/openlcb/openlcb_login_statemachine.o
+ .debug_info    0x000122e4      0x97d ./Core/Src/src/openlcb/openlcb_login_statemachine_handler.o
+ .debug_info    0x00012c61      0xd4d ./Core/Src/src/openlcb/openlcb_main_statemachine.o
+ .debug_info    0x000139ae      0xa53 ./Core/Src/src/openlcb/openlcb_node.o
+ .debug_info    0x00014401      0xeea ./Core/Src/src/openlcb/openlcb_utilities.o
+ .debug_info    0x000152eb      0xfe3 ./Core/Src/src/openlcb/protocol_config_mem_operations_handler.o
+ .debug_info    0x000162ce      0xff0 ./Core/Src/src/openlcb/protocol_config_mem_read_handler.o
+ .debug_info    0x000172be      0xf0a ./Core/Src/src/openlcb/protocol_config_mem_write_handler.o
+ .debug_info    0x000181c8     0x11dc ./Core/Src/src/openlcb/protocol_datagram_handler.o
+ .debug_info    0x000193a4      0xed5 ./Core/Src/src/openlcb/protocol_event_transport.o
+ .debug_info    0x0001a279      0xa7d ./Core/Src/src/openlcb/protocol_message_network.o
+ .debug_info    0x0001acf6      0xd90 ./Core/Src/src/openlcb/protocol_snip.o
+ .debug_info    0x0001ba86       0x30 ./Core/Startup/startup_stm32f407vgtx.o
+ .debug_info    0x0001bab6      0x944 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
+ .debug_info    0x0001c3fa      0xf49 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.o
+ .debug_info    0x0001d343      0xd8c ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
+ .debug_info    0x0001e0cf      0x6c3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
+ .debug_info    0x0001e792     0x114c ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.o
+ .debug_info    0x0001f8de     0x2415 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
+ .debug_info    0x00021cf3      0xe02 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.o
+ .debug_info    0x00022af5      0xaae ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.o
+ .debug_info    0x000235a3      0x8c3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
+ .debug_info    0x00023e66      0x536 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o
+ .debug_info    0x0002439c     0x1525 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o
+ .debug_info    0x000258c1     0x299d ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
+ .debug_info    0x0002825e     0x14db ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
+ .debug_info    0x00029739     0x1993 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o
+ .debug_info    0x0002b0cc     0x1479 ./Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/usbh_cdc.o
+ .debug_info    0x0002c545      0xfb5 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_core.o
+ .debug_info    0x0002d4fa      0xfaf ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ctlreq.o
+ .debug_info    0x0002e4a9      0xc2e ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ioreq.o
+ .debug_info    0x0002f0d7      0xa91 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_pipes.o
+ .debug_info    0x0002fb68      0xa13 ./USB_HOST/App/usb_host.o
+ .debug_info    0x0003057b     0x1cef ./USB_HOST/Target/usbh_conf.o
+ .debug_info    0x0003226a      0x1d8 ./USB_HOST/Target/usbh_platform.o
 
 .debug_abbrev   0x00000000     0x8993
  .debug_abbrev  0x00000000      0x244 ./Core/Src/callbacks.o
@@ -11541,130 +11541,130 @@ LOAD /Applications/STMicroelectronics/STM32CubeIDE.app/Contents/Eclipse/plugins/
  .debug_line    0x00031ed1      0xdd2 ./USB_HOST/Target/usbh_conf.o
  .debug_line    0x00032ca3      0x807 ./USB_HOST/Target/usbh_platform.o
 
-.debug_str      0x00000000    0xe3e5a
- .debug_str     0x00000000    0xe3e5a ./Core/Src/callbacks.o
+.debug_str      0x00000000    0xe3ec6
+ .debug_str     0x00000000    0xe3ec6 ./Core/Src/callbacks.o
                               0xd14c3 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/main.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/main.o
                               0xd2625 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/node_parameters.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/node_parameters.o
                                0x7245 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/stm32f4xx_hal_msp.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/stm32f4xx_hal_msp.o
                               0xcb4e5 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/stm32f4xx_it.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/stm32f4xx_it.o
                               0xcac5e (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/syscalls.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/syscalls.o
                                0x9a10 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/sysmem.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/sysmem.o
                                0x77ae (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/system_stm32f4xx.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/system_stm32f4xx.o
                               0xc9a33 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/application_drivers/stm32_driverlib_can_driver.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/application_drivers/stm32_driverlib_can_driver.o
                               0xd0add (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/application_drivers/stm32_driverlib_drivers.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/application_drivers/stm32_driverlib_drivers.o
                               0xd13d0 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/alias_mappings.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/alias_mappings.o
                                0xae23 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_buffer_fifo.o
                                0xadc1 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_buffer_store.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_buffer_store.o
                                0xaed8 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_login_message_handler.o
                                0xb6c8 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_login_statemachine.o
                                0xb4df (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_main_statemachine.o
                                0xb8cd (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_rx_message_handler.o
                                0xb4fc (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_rx_statemachine.o
                                0xb10c (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_tx_message_handler.o
                                0xb2d6 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_tx_statemachine.o
                                0xaf9f (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/drivers/canbus/can_utilities.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/drivers/canbus/can_utilities.o
                                0xb12b (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/node_definition/dependency_injection.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/node_definition/dependency_injection.o
                               0xd51de (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/node_definition/dependency_injection_canbus.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/node_definition/dependency_injection_canbus.o
                               0xd238e (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_application.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_application.o
                                0xb303 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_buffer_fifo.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_buffer_fifo.o
                                0x80b9 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_buffer_list.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_buffer_list.o
                                0x8070 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_buffer_store.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_buffer_store.o
                                0xafab (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_login_statemachine.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_login_statemachine.o
                                0xb483 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_login_statemachine_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_login_statemachine_handler.o
                                0xb33a (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_main_statemachine.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_main_statemachine.o
                                0xbbba (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_node.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_node.o
                                0xb1fc (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/openlcb_utilities.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/openlcb_utilities.o
                                0xb69c (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_config_mem_operations_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_config_mem_operations_handler.o
                                0xbbe8 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_config_mem_read_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_config_mem_read_handler.o
                                0xba78 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_config_mem_write_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_config_mem_write_handler.o
                                0xb9c0 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_datagram_handler.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_datagram_handler.o
                                0xcab2 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_event_transport.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_event_transport.o
                                0xb941 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_message_network.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_message_network.o
                                0xb516 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Src/src/openlcb/protocol_snip.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Src/src/openlcb/protocol_snip.o
                                0xb559 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Core/Startup/startup_stm32f407vgtx.o
+ .debug_str     0x000e3ec6        0x0 ./Core/Startup/startup_stm32f407vgtx.o
                                  0xb0 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
                               0xca5b7 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.o
                               0xca12d (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
                               0xca333 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
                               0xc9bae (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.o
                               0xca31b (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
                               0xcaa51 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.o
                               0xca024 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.o
                               0xc9f26 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
                               0xc9e67 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o
                               0xc9b85 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o
                               0xca2f1 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
                               0xcadbd (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
                               0xca5c9 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o
+ .debug_str     0x000e3ec6        0x0 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.o
                               0xca3ec (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/usbh_cdc.o
+ .debug_str     0x000e3ec6        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/usbh_cdc.o
                               0xd0022 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_core.o
+ .debug_str     0x000e3ec6        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_core.o
                               0xcf52f (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ctlreq.o
+ .debug_str     0x000e3ec6        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ctlreq.o
                               0xcf4d7 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ioreq.o
+ .debug_str     0x000e3ec6        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_ioreq.o
                               0xcf2ca (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_pipes.o
+ .debug_str     0x000e3ec6        0x0 ./Middlewares/ST/STM32_USB_Host_Library/Core/Src/usbh_pipes.o
                               0xcf260 (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./USB_HOST/App/usb_host.o
+ .debug_str     0x000e3ec6        0x0 ./USB_HOST/App/usb_host.o
                               0xcf96b (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./USB_HOST/Target/usbh_conf.o
+ .debug_str     0x000e3ec6        0x0 ./USB_HOST/Target/usbh_conf.o
                               0xd01dc (size before relaxing)
- .debug_str     0x000e3e5a        0x0 ./USB_HOST/Target/usbh_platform.o
+ .debug_str     0x000e3ec6        0x0 ./USB_HOST/Target/usbh_platform.o
                               0xc9942 (size before relaxing)
 
 .comment        0x00000000       0x43

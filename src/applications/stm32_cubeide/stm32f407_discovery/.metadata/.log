@@ -193,3 +193,16 @@ Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/jimku
 
 !ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-01-01 11:26:06.035
 !MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2026-01-02 15:25:40.905 -----------------------------------------------
+eclipse.buildId=Version 2.0.0
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
+Framework arguments:  -keyring /Users/jimkueneman/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -keyring /Users/jimkueneman/.eclipse_keyring
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-01-02 15:25:49.183
+!MESSAGE Log4j2 initialized with config file /Users/jimkueneman/Documents/OpenLcbCLib/src/applications/STM32_CubeIDE/stm32f407_discovery/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-01-02 15:25:55.914
+!MESSAGE Started RMI Server, listening on port 41337

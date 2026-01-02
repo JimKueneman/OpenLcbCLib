@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * \file dependency_injection.c
- * 
+ *
  * This dependency injection file can be reused as is and the Application level drivers can be assigned
  * in the dependency_injection_defines.h file.
  *
@@ -104,7 +104,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
     .handle_error_info_report_frame = CanRxMessageHandler_error_info_report_frame,
     .handle_cid_frame = CanRxMessageHandler_cid_frame,
     .alias_mapping_find_mapping_by_alias = &AliasMappings_find_mapping_by_alias,
-    
+
     // Callback events
     .on_receive = ON_CAN_RX_CALLBACK // application defined
 
@@ -113,7 +113,7 @@ const interface_can_rx_statemachine_t interface_can_rx_statemachine = {
 const interface_can_tx_message_handler_t interface_can_tx_message_handler = {
 
     .transmit_can_frame = TRANSMIT_CAN_FRAME_FUNC, //  HARDWARE INTERFACE
-    
+
     // Callback events
     .on_transmit = ON_CAN_TX_CALLBACK // application defined
 
@@ -153,19 +153,18 @@ const interface_can_main_statemachine_t interface_can_main_statemachine = {
 void DependencyInjectionCanBus_initialize(void)
 {
 
-  CanBufferStore_initialize();
-  CanBufferFifo_initialize();
+    CanBufferStore_initialize();
+    CanBufferFifo_initialize();
 
-  CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
-  CanRxStatemachine_initialize(&interface_can_rx_statemachine);
+    CanRxMessageHandler_initialize(&interface_can_rx_message_handler);
+    CanRxStatemachine_initialize(&interface_can_rx_statemachine);
 
-  CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
-  CanTxStatemachine_initialize(&interface_can_tx_statemachine);
+    CanTxMessageHandler_initialize(&interface_can_tx_message_handler);
+    CanTxStatemachine_initialize(&interface_can_tx_statemachine);
 
-  CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
-  CanLoginStateMachine_initialize(&interface_can_login_state_machine);
-  CanMainStatemachine_initialize(&interface_can_main_statemachine);
+    CanLoginMessageHandler_initialize(&interface_can_login_message_handler);
+    CanLoginStateMachine_initialize(&interface_can_login_state_machine);
+    CanMainStatemachine_initialize(&interface_can_main_statemachine);
 
-  AliasMappings_initialize();
-
+    AliasMappings_initialize();
 }
