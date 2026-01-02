@@ -110,7 +110,7 @@ uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t a
 
           *buffer[i] = str_name[i];
 
-          if (*buffer[i] = 0x00) {
+          if (*buffer[i] == 0x00) {
 
             return i;
           }
@@ -126,7 +126,7 @@ uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t a
 
           *buffer[i] = str_desc[i];
 
-          if (*buffer[i] = 0x00) {
+          if (*buffer[i] == 0x00) {
 
             return i;
           }
@@ -151,7 +151,7 @@ uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t 
 
           str_name[i] = *buffer[i];
 
-          if (*buffer[i] = 0x00) {
+          if (*buffer[i] == 0x00) {
 
             return i;
           }
@@ -167,7 +167,7 @@ uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t 
 
           str_desc[i] = *buffer[i];
 
-          if (*buffer[i] = 0x00) {
+          if (*buffer[i] == 0x00) {
 
             return i;
           }
