@@ -171,8 +171,6 @@ const node_parameters_t NodeParameters_main_node = {
         0x3C, 0x2F, 0x63, 0x64, 0x69, 0x3E, 0x00 // </cdi>
                 
     },
-    
-    .fdi {},
-
+  
 
 };

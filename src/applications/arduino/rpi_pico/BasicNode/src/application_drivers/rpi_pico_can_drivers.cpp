@@ -104,20 +104,27 @@ void RPiPicoCanDriver_setup(void) {
 void RPiPicoCanDriver_process_receive(void) {
 
   can_msg_t can_msg;
-  CANMessage can_message;
+  CANMessage frame;
 
-  while (can.available()) {
+  if (can.available()) {
 
-    if (can.receive(can_message)) {
+    printf("CAN Rx Availible\n");
 
-      if (can_message.ext) {  // Only Extended messages
+    if (can.receive(frame)) {
 
-        can_msg.payload_count = can_message.len;
-        can_msg.identifier = can_message.id;
+      printf("CAN Rx Received\n");
 
-        for (int i = 0; i < 7; i++) {
+      if (frame.ext) {  // Only Extended messages
 
-          can_msg.payload[i] = can_message.data[i];
+        printf("CAN Extended Frame\n");
+
+        can_msg.state.allocated = true;
+        can_msg.payload_count = frame.len;
+        can_msg.identifier = frame.id;
+
+        for (int i = 0; i < frame.len; i++) {
+
+          can_msg.payload[i] = frame.data[i];
         }
 
         CanRxStatemachine_incoming_can_driver_callback(&can_msg);
@@ -137,10 +144,11 @@ bool RPiPicoCanDriver_is_can_tx_buffer_clear(void) {
 bool RPiPicoCanDriver_transmit_raw_can_frame(can_msg_t *msg) {
 
   CANMessage frame;
+
   frame.ext = true;
   frame.id = msg->identifier;
   frame.len = msg->payload_count;
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < frame.len; i++) {
 
     frame.data[i] = msg->payload[i];
   }

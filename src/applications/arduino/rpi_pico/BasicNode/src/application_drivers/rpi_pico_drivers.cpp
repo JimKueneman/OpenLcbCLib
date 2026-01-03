@@ -189,12 +189,13 @@ void RPiPicoDrivers_lock_shared_resources(void) {
 }
 
 void RPiPicoDrivers_unlock_shared_resources(void) {
-  // TODO: Resume the 100ms Timer here
-  timer_enabled = true;
   // Resume the CAN Rx thread
   RPiPicoCanDriver_resume_can_rx();
 
   if (timer_unhandled_tick) {
+
+    // Resume the 100ms Timer here
+    timer_enabled = true;
 
     timer_unhandled_tick = false;
     _handle_timer_tick();
