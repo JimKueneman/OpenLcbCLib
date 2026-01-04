@@ -33,6 +33,8 @@
  * @date 7 Jan 2025
  */
 
+#include "Arduino.h"
+
 #include "callbacks.h"
 #include "node_parameters.h"
 #include "src/application_drivers/rpi_pico_drivers.h"
@@ -53,7 +55,8 @@ void setup()
   // put your setup code here, to run once:
 
   Serial.begin(9600);
-  delay(2500);
+  while (!Serial) {}
+  //delay(2500);
 
   Serial.println("Can Statemachine init.....");
   
@@ -72,7 +75,7 @@ void setup()
 
 void loop()
 {
-  // put your main code here, to run repeatedly
+  // // put your main code here, to run repeatedly
   RPiPicoCanDriver_process_receive();
 
   CanMainStateMachine_run();

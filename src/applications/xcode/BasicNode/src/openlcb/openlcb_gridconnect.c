@@ -205,9 +205,9 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
 
     unsigned long data_char_count = strlen((char *)gridconnect) - (12);
     can_msg->payload_count = (uint8_t)(data_char_count / 2);
-
+  
     int payload_index = 0;
-    int i = 11;
+    unsigned long i = 11;
     while (i < (data_char_count + 11))
     {
 

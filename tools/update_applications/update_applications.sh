@@ -15,6 +15,21 @@ cp ../../src/templates/dependency_injection/canbus/*.c ../../src/applications/ar
 cp ../../src/templates/dependency_injection/openlcb/standard/*.h ../../src/applications/arduino/esp32/BasicNode/src/node_definition/
 cp ../../src/templates/dependency_injection/openlcb/standard/*.c ../../src/applications/arduino/esp32/BasicNode/src/node_definition/
 
+cp ../../src/openlcb/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/openlcb/
+cp ../../src/openlcb/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/openlcb/
+#cp ../../src/drivers/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/drivers/
+#cp ../../src/drivers/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/drivers/
+cp ../../src/drivers/canbus/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/drivers/canbus/
+cp ../../src/drivers/canbus/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/drivers/canbus/
+cp ../../src/utilities/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/utilities/
+cp ../../src/utilities/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/utilities/
+#cp ../../src/templates/callbacks/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/node_definition/
+#cp ../../src/templates/callbacks/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/node_definition/
+cp ../../src/templates/dependency_injection/canbus/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/node_definition/
+cp ../../src/templates/dependency_injection/canbus/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/node_definition/
+cp ../../src/templates/dependency_injection/openlcb/standard/*.h ../../src/applications/arduino/rpi_pico/BasicNode/src/node_definition/
+cp ../../src/templates/dependency_injection/openlcb/standard/*.c ../../src/applications/arduino/rpi_pico/BasicNode/src/node_definition/
+
 
 
 

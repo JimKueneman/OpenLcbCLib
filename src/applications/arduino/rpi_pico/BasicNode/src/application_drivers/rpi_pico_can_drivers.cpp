@@ -69,10 +69,16 @@ void RPiPicoCanDriver_setup(void) {
   // Setup for 125kHz
   ACAN2517Settings settings(ACAN2517Settings::OSC_40MHz, 125UL * 1000UL);
 
+#ifndef LOG_SETUP
+  can.begin(settings, [] {
+    can.isr();
+  });
+#endif
+
+#ifdef LOG_SETUP  // Uncomment the define above to enable
   const uint16_t errorCode = can.begin(settings, [] {
     can.isr();
   });
-#ifdef LOG_SETUP  // Uncomment the define above to enable
   Serial.print("\nerrorCode=");
   Serial.println(errorCode);
   if (errorCode == 0) {
@@ -108,15 +114,9 @@ void RPiPicoCanDriver_process_receive(void) {
 
   if (can.available()) {
 
-    printf("CAN Rx Availible\n");
-
     if (can.receive(frame)) {
 
-      printf("CAN Rx Received\n");
-
       if (frame.ext) {  // Only Extended messages
-
-        printf("CAN Extended Frame\n");
 
         can_msg.state.allocated = true;
         can_msg.payload_count = frame.len;
@@ -127,7 +127,19 @@ void RPiPicoCanDriver_process_receive(void) {
           can_msg.payload[i] = frame.data[i];
         }
 
-        CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+        gridconnect_buffer_t gridconnect;
+
+        OpenLcbGridConnect_from_can_msg(&gridconnect, &can_msg);
+
+        unsigned int i = 0;
+        Serial.print("Rx: ");
+        while ((gridconnect[i] != 0x00) && (i < sizeof(gridconnect_buffer_t))) {
+          Serial.print((char)gridconnect[i]);
+          i++;
+        }
+        Serial.println();
+
+  //     CanRxStatemachine_incoming_can_driver_callback(&can_msg);
       }
     }
   }
@@ -135,7 +147,7 @@ void RPiPicoCanDriver_process_receive(void) {
 
 bool RPiPicoCanDriver_is_can_tx_buffer_clear(void) {
 
-  // ACAN Library does not have a method to know if the buffer is full, I believe OpenLcbCLib will 
+  // ACAN Library does not have a method to know if the buffer is full, I believe OpenLcbCLib will
   // function correctly if the Transmit fails as well.  This was just for a short cut if available.
 
   return true;
