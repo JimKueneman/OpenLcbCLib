@@ -94,20 +94,6 @@
                 return code >= 32 && code <= 126;
             }
 
-            // Destroy all textboxes (CDI + textbox2)
-            function destroyAllTextboxes() {
-                // Clear CDI container
-                CDIContainer.innerHTML = '';
-                // Clear output container (textbox2)
-                outputContainer.innerHTML = '';
-                // Clear character count
-                charCountEl.textContent = '';
-                // Disable buttons that depend on content
-                convertBtn.disabled = true;
-                copyBtn.disabled = false; // will be reset later as needed
-            }
-
-            // Create CDI textbox (syntax-highlighted <pre><code>)
             function createCDITextbox() {
                 const pre = document.createElement('pre');
                 const code = document.createElement('code');
@@ -118,7 +104,7 @@
                 return code;
             }
 
-            // Load file, destroy existing textboxes, show and syntax highlight
+            // Load file, destroy all textboxes, show and syntax highlight
             fileInput.addEventListener('change', () => {
                 const file = fileInput.files && fileInput.files[0];
                 if (!file) return;
@@ -127,16 +113,17 @@
                 reader.onload = e => {
                     xmlRawText = e.target.result || '';
 
-                    // Destroy all textboxes and recreate CDI
+                    // Destroy all textboxes and related output
                     CDIContainer.innerHTML = '';
                     outputContainer.innerHTML = '';
                     charCountEl.textContent = '';
                     copyBtn.disabled = true;
 
+                    // Create CDI textbox and load content
                     const CDI = createCDITextbox();
-
-                    // Load new XML and highlight
                     CDI.textContent = xmlRawText;
+
+                    // Syntax highlight
                     hljs.highlightElement(CDI);
 
                     convertBtn.disabled = false;
@@ -167,41 +154,60 @@
 
                 rawLines.forEach(originalLine => {
                     // Skip lines that, after removing non-printables and whitespace, are empty
-                    const cleanedForSkip = originalLine
-                        .replace(/[^\x20-\x7E]/g, '')  // keep only printable ASCII
+                    const forSkip = originalLine
+                        .replace(/[^\x20-\x7E]/g, '')  // remove non-printables
                         .replace(/\s+/g, '');         // remove all whitespace
-                    if (cleanedForSkip.length === 0) return;
+                    if (forSkip.length === 0) return;
+
+                    // Find first and last "printable, non-whitespace" characters
+                    let firstIdx = -1;
+                    let lastIdx = -1;
+
+                    for (let i = 0; i < originalLine.length; i++) {
+                        const ch = originalLine[i];
+                        if (isPrintable(ch) && !/\s/.test(ch)) {
+                            firstIdx = i;
+                            break;
+                        }
+                    }
+                    for (let i = originalLine.length - 1; i >= 0; i--) {
+                        const ch = originalLine[i];
+                        if (isPrintable(ch) && !/\s/.test(ch)) {
+                            lastIdx = i;
+                            break;
+                        }
+                    }
+                    if (firstIdx === -1 || lastIdx === -1 || firstIdx > lastIdx) return;
 
                     let converted = '';
 
-                    // Build hex values: skip non-printable and whitespace
-                    for (let i = 0; i < originalLine.length; i++) {
+                    // Process only from firstIdx to lastIdx inclusive
+                    for (let i = firstIdx; i <= lastIdx; i++) {
                         const ch = originalLine[i];
 
-                        // If a character is non printable skip it
+                        // Skip non-printable characters
                         if (!isPrintable(ch)) continue;
 
-                        // If a character is white space skip it
-                        if (/\s/.test(ch)) continue;
-
+                        // Keep whitespace inside this range; only ends were trimmed
                         const code = ch.charCodeAt(0);
                         const hex = '0x' + code.toString(16).toUpperCase().padStart(2, '0');
-                        converted += hex + ', ';   // C-style hex with ", " directly after
+                        converted += hex + ', ';
                         totalChars++;
                     }
 
-                    // Comment: stripped XML line (remove whitespace, keep printables)
-                    const stripped = originalLine
-                        .replace(/[^\x20-\x7E]/g, '') // drop non-printables
-                        .replace(/\s+/g, '');         // drop whitespace
-                    converted += '  // ' + stripped;
+                    // Comment: original segment with whitespace removed at both ends
+                    let commentSegment = originalLine.slice(firstIdx, lastIdx + 1);
+                    // Already sliced to first/last printable, but trim again to ensure no edge WS
+                    commentSegment = commentSegment.replace(/^\s+|\s+$/g, '');
+
+                    converted += '  // ' + commentSegment;
 
                     resultLines.push(converted);
                 });
 
                 // String terminating null line, no trailing ", "
                 resultLines.push('0x00    // String terminating null');
-                totalChars += 1; // include null terminator in count
+                totalChars += 1; // include null terminator
 
                 // Final closing line
                 resultLines.push('},');
