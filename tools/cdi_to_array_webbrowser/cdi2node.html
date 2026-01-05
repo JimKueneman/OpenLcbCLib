@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>XML CDI Converter</title>
+
+    <!-- Syntax highlighting via highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 1rem;
+        }
+
+        button,
+        input[type="file"] {
+            font-size: 14px;
+            margin: 0.3rem 0.5rem 0.3rem 0;
+        }
+
+        h2,
+        h3 {
+            font-size: 18px;
+            margin: 0.3rem 0;
+        }
+
+        pre,
+        code,
+        textarea {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            white-space: pre;
+        }
+
+        #CDIContainer {
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 0.5rem;
+            min-height: 300px;
+            max-height: 500px;
+            overflow: auto;
+            background: #1e1e1e;
+            margin-bottom: 1rem;
+        }
+
+        #textbox2 {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 1rem;
+            height: 250px;
+        }
+
+        #charCount {
+            margin-top: 0.5rem;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>XML CDI Converter</h2>
+
+    <input type="file" id="fileInput" accept=".xml,.txt">
+    <button id="convertBtn" disabled>Convert</button>
+    <button id="copyBtn" disabled>Copy Result to Clipboard</button>
+
+    <h3>XML (CDI textbox, syntax highlighted)</h3>
+    <div id="CDIContainer"></div>
+
+    <div id="outputContainer"></div>
+    <div id="charCount"></div>
+
+    <script>
+        (() => {
+            const fileInput = document.getElementById('fileInput');
+            const convertBtn = document.getElementById('convertBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const CDIContainer = document.getElementById('CDIContainer');
+            const outputContainer = document.getElementById('outputContainer');
+            const charCountEl = document.getElementById('charCount');
+
+            let xmlRawText = '';
+
+            // Printable ASCII: 0x20 - 0x7E
+            function isPrintable(ch) {
+                const code = ch.charCodeAt(0);
+                return code >= 32 && code <= 126;
+            }
+
+            // Destroy all textboxes (CDI + textbox2)
+            function destroyAllTextboxes() {
+                // Clear CDI container
+                CDIContainer.innerHTML = '';
+                // Clear output container (textbox2)
+                outputContainer.innerHTML = '';
+                // Clear character count
+                charCountEl.textContent = '';
+                // Disable buttons that depend on content
+                convertBtn.disabled = true;
+                copyBtn.disabled = false; // will be reset later as needed
+            }
+
+            // Create CDI textbox (syntax-highlighted <pre><code>)
+            function createCDITextbox() {
+                const pre = document.createElement('pre');
+                const code = document.createElement('code');
+                code.id = 'CDI';
+                code.className = 'language-xml';
+                pre.appendChild(code);
+                CDIContainer.appendChild(pre);
+                return code;
+            }
+
+            // Load file, destroy existing textboxes, show and syntax highlight
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files && fileInput.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                    xmlRawText = e.target.result || '';
+
+                    // Destroy all textboxes and recreate CDI
+                    CDIContainer.innerHTML = '';
+                    outputContainer.innerHTML = '';
+                    charCountEl.textContent = '';
+                    copyBtn.disabled = true;
+
+                    const CDI = createCDITextbox();
+
+                    // Load new XML and highlight
+                    CDI.textContent = xmlRawText;
+                    hljs.highlightElement(CDI);
+
+                    convertBtn.disabled = false;
+                };
+                reader.readAsText(file);
+            });
+
+            // Convert logic
+            convertBtn.addEventListener('click', () => {
+                if (!xmlRawText) return;
+
+                // Create textbox2 if not present
+                let textbox2 = document.getElementById('textbox2');
+                if (!textbox2) {
+                    textbox2 = document.createElement('textarea');
+                    textbox2.id = 'textbox2';
+                    textbox2.readOnly = true;
+                    outputContainer.innerHTML = '';
+                    outputContainer.appendChild(textbox2);
+                }
+
+                const rawLines = xmlRawText.split(/\r\n|\n|\r/);
+                let resultLines = [];
+                let totalChars = 0;
+
+                // First line
+                resultLines.push('.cdi = {');
+
+                rawLines.forEach(originalLine => {
+                    // Skip lines that, after removing non-printables and whitespace, are empty
+                    const cleanedForSkip = originalLine
+                        .replace(/[^\x20-\x7E]/g, '')  // keep only printable ASCII
+                        .replace(/\s+/g, '');         // remove all whitespace
+                    if (cleanedForSkip.length === 0) return;
+
+                    let converted = '';
+
+                    // Build hex values: skip non-printable and whitespace
+                    for (let i = 0; i < originalLine.length; i++) {
+                        const ch = originalLine[i];
+
+                        // If a character is non printable skip it
+                        if (!isPrintable(ch)) continue;
+
+                        // If a character is white space skip it
+                        if (/\s/.test(ch)) continue;
+
+                        const code = ch.charCodeAt(0);
+                        const hex = '0x' + code.toString(16).toUpperCase().padStart(2, '0');
+                        converted += hex + ', ';   // C-style hex with ", " directly after
+                        totalChars++;
+                    }
+
+                    // Comment: stripped XML line (remove whitespace, keep printables)
+                    const stripped = originalLine
+                        .replace(/[^\x20-\x7E]/g, '') // drop non-printables
+                        .replace(/\s+/g, '');         // drop whitespace
+                    converted += '  // ' + stripped;
+
+                    resultLines.push(converted);
+                });
+
+                // String terminating null line, no trailing ", "
+                resultLines.push('0x00    // String terminating null');
+                totalChars += 1; // include null terminator in count
+
+                // Final closing line
+                resultLines.push('},');
+
+                textbox2.value = resultLines.join('\n');
+                charCountEl.textContent = 'Total characters converted (including null): ' + totalChars;
+                copyBtn.disabled = false;
+            });
+
+            // Copy to clipboard
+            copyBtn.addEventListener('click', async () => {
+                const textbox2 = document.getElementById('textbox2');
+                if (!textbox2 || !textbox2.value) return;
+                try {
+                    await navigator.clipboard.writeText(textbox2.value);
+                } catch {
+                    textbox2.select();
+                    document.execCommand('copy');
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
