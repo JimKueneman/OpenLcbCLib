@@ -126,20 +126,9 @@ void RPiPicoCanDriver_process_receive(void) {
 
           can_msg.payload[i] = frame.data[i];
         }
-
-        gridconnect_buffer_t gridconnect;
-
-        OpenLcbGridConnect_from_can_msg(&gridconnect, &can_msg);
-
-        unsigned int i = 0;
-        Serial.print("Rx: ");
-        while ((gridconnect[i] != 0x00) && (i < sizeof(gridconnect_buffer_t))) {
-          Serial.print((char)gridconnect[i]);
-          i++;
-        }
-        Serial.println();
-
-  //     CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+  
+        CanRxStatemachine_incoming_can_driver_callback(&can_msg);
+     
       }
     }
   }

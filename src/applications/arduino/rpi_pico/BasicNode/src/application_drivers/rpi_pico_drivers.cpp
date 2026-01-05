@@ -89,17 +89,16 @@ void RPiPicoDriver_setup(void) {
 
 void RPiPicoDrivers_reboot(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
 
-  watchdog_enable(1, 1);  // Enable watchdog with a 1ms timeout and pause on debug
-  while (1)
-    ;  // Enter infinite loop, watchdog will trigger reset
+  rp2040.reboot();
+
 }
 
 
-static char str_name[] = "Raspberry Pi Pico";
-static char str_desc[] = "This is my RPi Pico Test Bed with OpenLcbCLib";
+static char str_name[64] = "Raspberry Pi Pico";
+static char str_desc[64] = "This is my RPi Pico Test Bed with OpenLcbCLib";
 
 uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
-
+  
   // TODO: Read to EEPROM/FLASH/FRAM/........
 
   switch (address) {
@@ -108,9 +107,9 @@ uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t a
       {
         for (int i = 0; i < count; i++) {
 
-          *buffer[i] = str_name[i];
+          (*buffer)[i] = str_name[i];
 
-          if (*buffer[i] == 0x00) {
+          if ((*buffer)[i] == 0x00) {
 
             return i;
           }
@@ -124,9 +123,9 @@ uint16_t RPiPicoDrivers_config_mem_read(openlcb_node_t *openlcb_node, uint32_t a
 
         for (int i = 0; i < count; i++) {
 
-          *buffer[i] = str_desc[i];
+          (*buffer)[i] = str_desc[i];
 
-          if (*buffer[i] == 0x00) {
+          if ((*buffer)[i] == 0x00) {
 
             return i;
           }
@@ -149,9 +148,9 @@ uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t 
       {
         for (int i = 0; i < count; i++) {
 
-          str_name[i] = *buffer[i];
+          str_name[i] = (*buffer)[i];
 
-          if (*buffer[i] == 0x00) {
+          if ((*buffer)[i] == 0x00) {
 
             return i;
           }
@@ -165,9 +164,9 @@ uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t 
 
         for (int i = 0; i < count; i++) {
 
-          str_desc[i] = *buffer[i];
+          str_desc[i] = (*buffer)[i];
 
-          if (*buffer[i] == 0x00) {
+          if ((*buffer)[i] == 0x00) {
 
             return i;
           }
@@ -182,10 +181,11 @@ uint16_t RPiPicoDrivers_config_mem_write(openlcb_node_t *openlcb_node, uint32_t 
 
 void RPiPicoDrivers_lock_shared_resources(void) {
 
+// Pause the CAN Rx thread
+  RPiPicoCanDriver_pause_can_rx();
+  
   // Pause the 100ms Timer here
   timer_enabled = false;
-  // Pause the CAN Rx thread
-  RPiPicoCanDriver_pause_can_rx();
 }
 
 void RPiPicoDrivers_unlock_shared_resources(void) {

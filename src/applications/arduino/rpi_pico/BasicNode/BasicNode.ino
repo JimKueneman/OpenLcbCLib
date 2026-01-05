@@ -54,9 +54,10 @@ void setup()
 {
   // put your setup code here, to run once:
 
+  pinMode(LED_BUILTIN, OUTPUT);
+
   Serial.begin(9600);
   while (!Serial) {}
-  //delay(2500);
 
   Serial.println("Can Statemachine init.....");
   
@@ -71,14 +72,31 @@ void setup()
   Serial.println("Creating Node.....");
 
   OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+
 }
+
+bool led_on = false;
+uint32_t led_rate = 0;
 
 void loop()
 {
-  // // put your main code here, to run repeatedly
-  RPiPicoCanDriver_process_receive();
 
-  CanMainStateMachine_run();
-  OpenLcbLoginMainStatemachine_run();
-  OpenLcbMainStatemachine_run();
+  led_rate++;
+  if (led_rate > 500000) {
+    if (led_on) {
+      led_on = false;
+      digitalWrite(LED_BUILTIN, LOW); 
+    } else {
+      led_on = true;
+      digitalWrite(LED_BUILTIN, HIGH); 
+    }
+    led_rate = 0; // Reset
+  }
+
+  // // put your main code here, to run repeatedly
+//RPiPicoCanDriver_process_receive();
+
+ //CanMainStateMachine_run();
+ //OpenLcbLoginMainStatemachine_run();
+ //OpenLcbMainStatemachine_run();
 }
