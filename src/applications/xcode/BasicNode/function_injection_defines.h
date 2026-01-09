@@ -65,9 +65,11 @@
 // Implement Application defined the processor reboot
 #define OPERATIONS_REQUEST_REBOOT_FUNC &OSxDrivers_reboot
 // Implement Application defined for Freeze (used during boot-loading)
-#define OPERATIONS_REQUEST_FREEZE_FUNC NULL
+#define OPERATIONS_REQUEST_FREEZE_FUNC &OSxDrivers_freeze
 // Implement Application defined for UnFreeze (used during boot-loading)
-#define OPERATIONS_REQUEST_UNFREEZE_FUNC NULL
+#define OPERATIONS_REQUEST_UNFREEZE_FUNC &OSxDrivers_unfreeze
+// Implement writing of firmware
+#define FIRMWARE_WRITE_FUNC &OSxDrivers_write_firemware
 
 // ******************************************************************************
 

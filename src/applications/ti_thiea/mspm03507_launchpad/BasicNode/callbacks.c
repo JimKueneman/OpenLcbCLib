@@ -31,29 +31,29 @@
  * @date 11 Nov 2025
  */
 
-
 #include "callbacks.h"
 
 #include "src/openlcb/openlcb_utilities.h"
 
 static uint16_t _100ms_ticks = 0;
 
-void Callbacks_initialize(void) {
-
-   
+void Callbacks_initialize(void)
+{
 }
 
-void Callbacks_on_100ms_timer_callback(void) {
+void Callbacks_on_100ms_timer_callback(void)
+{
 
-  if (_100ms_ticks > 5) {
+    if (_100ms_ticks > 5)
+    {
 
-    DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN); // turn off
-    DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);
+        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN); // turn off
+        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);
 
-    _100ms_ticks = 0;
-  }
+        _100ms_ticks = 0;
+    }
 
-  _100ms_ticks++;
+    _100ms_ticks++;
 }
 
 void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
@@ -61,12 +61,12 @@ void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
     gridconnect_buffer_t gridconnect;
 
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
-    printf("[R] %s\n", (char*)&gridconnect);
+    printf("[R] %s\n", (char *)&gridconnect);
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);  // turn on
+    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN); // turn on
 }
 
- void Callbacks_on_can_tx_callback(can_msg_t *can_msg)
+void Callbacks_on_can_tx_callback(can_msg_t *can_msg)
 {
 
     gridconnect_buffer_t gridconnect;
@@ -74,10 +74,10 @@ void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
     OpenLcbGridConnect_from_can_msg(&gridconnect, can_msg);
     printf("[S] %s\n", (char *)&gridconnect);
 
-    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN);  // turn on
+    DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_2_PIN); // turn on
 }
 
- void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id)
+void Callbacks_alias_change_callback(uint16_t new_alias, node_id_t node_id)
 {
 
     printf("Alias Allocation: 0x%02X  ", new_alias);
@@ -88,4 +88,30 @@ void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *sta
 {
 
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
+}
+
+void Callbacks_write_firemware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
+{
+
+    printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
+}
+
+void Callbacks_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
+
+    if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE)
+    {
+
+        printf("Requesting Firmware update");
+    }
+}
+
+void Callbacks_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info)
+{
+
+    if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE)
+    {
+
+        printf("Requesting Firmware firmware update complete, reboot");
+    }
 }

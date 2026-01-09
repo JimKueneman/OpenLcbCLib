@@ -119,9 +119,9 @@ const node_parameters_t NodeParameters_main_node = {
     // Space 0xEF
     .address_space_firmware.read_only = false,
     .address_space_firmware.present = true,
-    .address_space_firmware.low_address_valid = false,      // assume the low address starts at 0
-    .address_space_firmware.low_address = 0,                // Firmware ALWAYS assumes it starts at 0
-    .address_space_firmware.highest_address = (0x0100 - 1), // Predefined in the Configuration Description Definition Spec
+    .address_space_firmware.low_address_valid = false,    // assume the low address starts at 0
+    .address_space_firmware.low_address = 0,              // Firmware ALWAYS assumes it starts at 0
+    .address_space_firmware.highest_address = 0xFFFFFFFF, // Never know how big firmware is
     .address_space_firmware.address_space = CONFIG_MEM_SPACE_FIRMWARE,
     .address_space_firmware.description = "Firmware update address space",
 

@@ -128,6 +128,37 @@ bool OpenLcbApplication_send_teach_event(openlcb_node_t* openlcb_node, event_id_
 
 }
 
+bool OpenLcbApplication_send_initialization_event(openlcb_node_t* openlcb_node) {
+    
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *) & payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &msg,
+            openlcb_node->alias,
+            openlcb_node->id,
+            0,
+            NULL_NODE_ID,
+            MTI_INITIALIZATION_COMPLETE);
+
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(
+            &msg,
+            openlcb_node->id,
+            0);
+
+    if (_interface->send_openlcb_msg(&msg)) {
+
+        return true;
+
+    }
+
+    return false;
+    
+}
+
 uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer) {
 
     if (_interface->config_memory_read) {

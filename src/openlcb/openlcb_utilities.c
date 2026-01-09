@@ -439,4 +439,183 @@ event_id_t OpenLcbUtilities_copy_config_mem_buffer_to_event_id(configuration_mem
     return retval;
 }
 
+void OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            CONFIG_MEM_CONFIGURATION,
+            0);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            1);
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            config_mem_write_request_info->address,
+            2);
+
+    if (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], // generate an OK reply by default for Read/Write/Stream
+                6);
+
+    }
+
+
+    statemachine_info->outgoing_msg_info.valid = false; // Default is to not return a reply
+
+}
+
+void OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info, uint16_t error_code) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            CONFIG_MEM_CONFIGURATION,
+            0);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET, // generate an OK reply by default for Read/Write/Stream
+            1);
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            config_mem_write_request_info->address,
+            2);
+
+    if (config_mem_write_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], // generate an OK reply by default for Read/Write/Stream
+                6);
+
+        OpenLcbUtilities_copy_word_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                error_code,
+                7);
+
+    } else {
+
+        OpenLcbUtilities_copy_word_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                error_code,
+                6);
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = false; // Default is to not return a reply
+
+}
+
+void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+    
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            CONFIG_MEM_CONFIGURATION,
+            0);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_OK_OFFSET,
+            1);
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            config_mem_read_request_info->address,
+            2);
+
+    if (config_mem_read_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], 
+                6);
+
+    }
+
+
+    statemachine_info->outgoing_msg_info.valid = false; // Default is to not return a reply
+
+}
+
+void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info, uint16_t error_code) {
+
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
+    
+    OpenLcbUtilities_load_openlcb_message(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->alias,
+            statemachine_info->openlcb_node->id,
+            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+            statemachine_info->incoming_msg_info.msg_ptr->source_id,
+            MTI_DATAGRAM);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            CONFIG_MEM_CONFIGURATION,
+            0);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            *statemachine_info->incoming_msg_info.msg_ptr->payload[1] + CONFIG_MEM_REPLY_FAIL_OFFSET,
+            1);
+
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            config_mem_read_request_info->address,
+            2);
+
+    if (config_mem_read_request_info->encoding == ADDRESS_SPACE_IN_BYTE_6) {
+
+        OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], 
+                6);
+
+    }
+
+    OpenLcbUtilities_copy_word_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            error_code,
+            config_mem_read_request_info->data_start);
+    
+}
+
+
+
 

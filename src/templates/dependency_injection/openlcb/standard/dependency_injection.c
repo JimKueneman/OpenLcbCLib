@@ -246,6 +246,7 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_acdi_user = &ProtocolConfigMemWriteHandler_write_request_acdi_user,
     .write_request_traction_function_config_definition_info = NULL, // Typically never implemented
     .write_request_traction_function_config_memory = NULL,
+    .write_request_firmware = FIRMWARE_WRITE_FUNC,
 
     // Optional override to return the flag in the Datagram ACK to allow the client to say the reply will be coming 2^N seconds
     .delayed_reply_time = CONFIG_MEM_WRITE_DELAYED_REPLY_TIME_FUNC
@@ -352,7 +353,7 @@ const interface_protocol_datagram_handler_t interface_protocol_datagram_handler 
     .memory_write_space_acdi_user = &ProtocolConfigMemWriteHandler_write_space_acdi_user,
     .memory_write_space_traction_function_definition_info = NULL, // Typically NULL as this a a read only space
     .memory_write_space_traction_function_config_memory = &ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory,
-    .memory_write_space_firmware_upgrade = NULL,
+    .memory_write_space_firmware_upgrade = &ProtocolConfigMemWriteHandler_write_space_firmware,
 
     // Optional functions to implement Address Space write replies (Only required if the node is requesting a datagram from some other node and this is the OK reply)
     .memory_write_space_config_description_info_reply_ok = NULL, // Typically never called as this a a read only space

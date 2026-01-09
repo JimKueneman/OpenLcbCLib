@@ -94,9 +94,9 @@ void loop()
   }
 
   // // put your main code here, to run repeatedly
-//RPiPicoCanDriver_process_receive();
+  RPiPicoCanDriver_process_receive();
 
- //CanMainStateMachine_run();
- //OpenLcbLoginMainStatemachine_run();
- //OpenLcbMainStatemachine_run();
+  CanMainStateMachine_run();
+  OpenLcbLoginMainStatemachine_run();
+  OpenLcbMainStatemachine_run();
 }

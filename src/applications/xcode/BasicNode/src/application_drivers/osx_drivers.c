@@ -39,6 +39,8 @@
 #include "../openlcb/openlcb_types.h"
 #include "../utilities/mustangpeak_string_helper.h"
 #include "../openlcb/openlcb_node.h"
+#include "../openlcb/openlcb_application.h"
+#include "../openlcb/openlcb_utilities.h"
 
 #include <stdio.h>
 #include <pthread.h>
@@ -273,4 +275,44 @@ void OSxDrivers_unlock_shared_resources(void)
     OSxCanDriver_resume_can_rx();
 
     _timer_pause = false;
+}
+
+void OSxDrivers_write_firemware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+    
+    printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");
+    
+    
+    // Assume success.....
+    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
+    
+    // Send it
+    statemachine_info->outgoing_msg_info.valid = true;
+}
+
+void OSxDrivers_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+  
+    if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
+
+        printf("Requesting Firmware update");
+        
+        // Allows the node to reply that it is in Firmware Updgrade Mode if asked
+             statemachine_info->openlcb_node->state.firmware_upgrade_active = true;
+
+             // Per the spec tell the configuration tool  we are ready to receive the data
+             OpenLcbApplication_send_initialization_event(statemachine_info->openlcb_node);
+      
+    }
+    
+}
+
+void OSxDrivers_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info) {
+  
+    if (config_mem_operations_request_info->space_info->address_space == CONFIG_MEM_SPACE_FIRMWARE) {
+
+      printf("Requesting Firmware firmware update complete, reboot");
+        
+        statemachine_info->openlcb_node->state.firmware_upgrade_active = false;
+      
+    }
+    
 }

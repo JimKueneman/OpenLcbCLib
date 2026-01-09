@@ -69,6 +69,8 @@ extern "C" {
     extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t* openlcb_node, event_id_t event_id);
     
     extern bool OpenLcbApplication_send_teach_event(openlcb_node_t* openlcb_node, event_id_t event_id);
+    
+    extern bool OpenLcbApplication_send_initialization_event(openlcb_node_t* openlcb_node);
 
 
     // Configuration Memory helpers

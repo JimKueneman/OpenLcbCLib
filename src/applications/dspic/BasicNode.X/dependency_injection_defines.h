@@ -65,9 +65,11 @@
 // Implement Application defined the processor reboot 
 #define OPERATIONS_REQUEST_REBOOT_FUNC &BasicNodeDrivers_reboot
 // Implement Application defined for Freeze (used during boot-loading)
-#define OPERATIONS_REQUEST_FREEZE_FUNC NULL
+#define OPERATIONS_REQUEST_FREEZE_FUNC &DependencyInjectors_freeze
 // Implement Application defined for UnFreeze (used during boot-loading)
-#define OPERATIONS_REQUEST_UNFREEZE_FUNC NULL
+#define OPERATIONS_REQUEST_UNFREEZE_FUNC &DependencyInjectors_unfreeze
+// Implement writing of firmware
+#define FIRMWARE_WRITE_FUNC &DependencyInjectors_write_firemware
 
 // ******************************************************************************
 

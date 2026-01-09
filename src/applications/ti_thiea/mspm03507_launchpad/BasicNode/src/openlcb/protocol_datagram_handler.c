@@ -449,6 +449,12 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory);
 
             break;
+            
+        case CONFIG_MEM_SPACE_FIRMWARE:
+            
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_firmware_upgrade);
+            
+            break;
 
         default:
 

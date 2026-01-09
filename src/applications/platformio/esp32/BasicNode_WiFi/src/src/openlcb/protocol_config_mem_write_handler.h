@@ -55,6 +55,7 @@ typedef struct {
     void (*write_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     void (*write_request_traction_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     void (*write_request_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_firmware)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     
     // Optional override to return the flag in the Datagram ACK to allow the client to say the reply will be coming 2^N seconds
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
@@ -83,6 +84,8 @@ extern "C" {
     
     extern void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
     
+    extern void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_info_t *statemachine_info);
+    
     extern void ProtocolConfigMemWriteHandler_write_space_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
     
 
@@ -92,7 +95,7 @@ extern "C" {
     
     extern void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
     
-    
+
     extern void ProtocolConfigMemWriteHandler_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
     
     extern void ProtocolConfigMemWriteHandler_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);

@@ -32,19 +32,16 @@
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __DEPENDENCY_INJECTION_DEFINES__
-#define	__DEPENDENCY_INJECTION_DEFINES__
-
+#define __DEPENDENCY_INJECTION_DEFINES__
 
 #include "callbacks.h"
 #include "src/application_drivers/stm32_driverlib_drivers.h"
 #include "src/application_drivers/stm32_driverlib_can_driver.h"
 
-
 #include "src/openlcb/openlcb_buffer_store.h"
 #include "src/drivers/canbus/can_tx_statemachine.h"
-
 
 // ******************************************************************************
 // Application Defined Drivers to interface the chosen hardware with the Library
@@ -62,15 +59,16 @@
 #define CONFIG_MEM_READ_FUNC &STM32_DriverLibDrivers_config_mem_read
 // Implement the Application defined Configuration Memory Write Access to the EEPROM/FLASH/File/etc.
 #define CONFIG_MEM_WRITE_FUNC &STM32_DriverLibDrivers_config_mem_write
-// Implement Application defined the processor reboot 
+// Implement Application defined the processor reboot
 #define OPERATIONS_REQUEST_REBOOT_FUNC &STM32_DriverLibDrivers_reboot
 // Implement Application defined for Freeze (used during boot-loading)
-#define OPERATIONS_REQUEST_FREEZE_FUNC NULL
+#define OPERATIONS_REQUEST_FREEZE_FUNC &Callbacks_freeze
 // Implement Application defined for UnFreeze (used during boot-loading)
-#define OPERATIONS_REQUEST_UNFREEZE_FUNC NULL
+#define OPERATIONS_REQUEST_UNFREEZE_FUNC &Callbacks_unfreeze
+// Implement writing of firmware
+#define FIRMWARE_WRITE_FUNC &Callbacks_write_firemware
 
 // ******************************************************************************
-
 
 // ******************************************************************************
 // Application defined callback functions in dependency_injectors.h
@@ -97,7 +95,6 @@
 
 // ******************************************************************************
 
-
 // ******************************************************************************
 // Application defined library extended feature functions in dependency_injectors.h
 // ******************************************************************************
@@ -105,7 +102,6 @@
 #define OPERATIONS_REQUEST_FACTORY_RESET_FUNC &STM32_DriverLibDrivers_config_mem_factory_reset
 #define CONFIG_MEM_READ_DELAYED_REPLY_TIME_FUNC NULL
 #define CONFIG_MEM_WRITE_DELAYED_REPLY_TIME_FUNC NULL
-
 
 // ******************************************************************************
 // Required cross connections between the CANBUS drivers and the OpenLcb drivers
@@ -117,15 +113,13 @@
 // The Openlcb library needs to send messages to the CANBUS driver through this cross coupling
 #define SEND_OPENLCB_MESSAGE_FUNC &CanTxStatemachine_send_openlcb_message
 
-
-#ifdef	__cplusplus
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
 #endif /* __cplusplus */
 
-
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __DEPENDENCY_INJECTION_DEFINES__ */
-
+#endif /* __DEPENDENCY_INJECTION_DEFINES__ */

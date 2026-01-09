@@ -62,6 +62,12 @@ extern "C"
 
     extern void OSxDrivers_unlock_shared_resources(void);
 
+    extern void OSxDrivers_write_firemware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
+    
+    extern void OSxDrivers_freeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+    
+    extern void OSxDrivers_unfreeze(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
     extern pthread_mutex_t OSxDdrivers_input_mutex;
 
 #ifdef __cplusplus
