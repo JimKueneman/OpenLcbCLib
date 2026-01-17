@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -25,14 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_tx_statemachine.c
- *
- * Takes an OpenLcb message structure and splits it into CAN frames to transmit if 
- * necessary, else it packs up the CAN frame from the message structure and send it
- * to the CAN Driver to transmit on the physical layer.
- *
+ * @file can_tx_statemachine.c
+ * @brief Implementation of the CAN transmit state machine
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "can_tx_statemachine.h"
@@ -95,7 +90,7 @@ bool _transmit_openlcb_message(openlcb_msg_t* openlcb_msg, can_msg_t *worker_can
 }
 
 bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
-    
+
     can_msg_t worker_can_msg;
     uint16_t payload_index = 0;
 
@@ -112,13 +107,13 @@ bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t* openlcb_msg) {
     }
 
     if (_transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index)) {
-        
+
         while (payload_index < openlcb_msg->payload_count) {                    // stall until everything is sent
- 
+
             _transmit_openlcb_message(openlcb_msg, &worker_can_msg, &payload_index);
 
         }
-        
+
         return true;
 
     }

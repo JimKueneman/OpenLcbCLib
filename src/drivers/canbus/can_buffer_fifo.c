@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -25,15 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_buffer_fifo.c
- *
- * Implements a FIFO of core buffers for CAN messages that hold CAN only frame messages
- * that need to be passed on to the nodes.  This buffer is accessed in the CAN Rx
- * statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms
- * timer when accessing it is critical.
- *
+ * @file can_buffer_fifo.c
+ * @brief Implementation of the FIFO buffer for CAN messages
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "can_buffer_fifo.h"
@@ -48,7 +42,7 @@
 #include "can_buffer_store.h"
 
 // add one slot to the fifo so it can be full without head == tail
-#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1 
+#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1
 
 typedef struct {
     can_msg_t *list[LEN_CAN_FIFO_BUFFER];

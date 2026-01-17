@@ -24,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_utilities.c
- *
- * Utilities to help deal with the CAN buffers
- *
+ * @file can_utilities.c
+ * @brief Implementation of utility functions for CAN frame buffers
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "can_utilities.h"
@@ -275,7 +273,7 @@ uint8_t CanUtilities_copy_64_bit_to_can_message(can_msg_t *can_msg, uint64_t dat
     }
 
     can_msg->payload_count = 8;
-    
+
     return can_msg->payload_count;
 
 }
@@ -291,7 +289,7 @@ uint8_t CanUtilities_copy_can_message(can_msg_t *can_msg_source, can_msg_t *can_
     }
 
     can_msg_target->payload_count = can_msg_source->payload_count;
-    
+
     return can_msg_target->payload_count;
 
 }

@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_config_mem_write_handler.c
- *
- *
+ * @file protocol_config_mem_write_handler.c
+ * @brief Implementation of configuration memory write protocol handler
  * @author Jim Kueneman
- * @date 23 Oct 2025
+ * @date 17 Jan 2026
  */
 
 #include "protocol_config_mem_write_handler.h"
@@ -267,14 +266,14 @@ static uint16_t _write_data(openlcb_statemachine_info_t *statemachine_info, conf
         statemachine_info->outgoing_msg_info.msg_ptr->payload_count += write_count;
 
         if (write_count < config_mem_write_request_info->bytes) {
-            
+
             OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_TEMPORARY_TRANSFER_ERROR);
 
         }
 
     } else {
-        
-        
+
+
         OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_INVALID_ARGUMENTS);
 
     }
@@ -300,7 +299,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
     switch (config_mem_write_request_info->address) {
 
         case CONFIG_MEM_ACDI_USER_NAME_ADDRESS:
-            
+
             // TODO MAPPING TO ACDI ADDRESSES....
 
             _write_data(statemachine_info, config_mem_write_request_info);
@@ -310,7 +309,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
         case CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS:
 
             // TODO MAPPING TO ACDI ADDRESSES....
-            
+
             _write_data(statemachine_info, config_mem_write_request_info);
 
             break;
@@ -318,7 +317,7 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
         default:
 
             OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(statemachine_info, config_mem_write_request_info, ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS);
-  
+
             break;
     }
 

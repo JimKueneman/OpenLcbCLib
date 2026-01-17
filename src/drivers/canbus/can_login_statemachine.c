@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_statemachine.c
- *
- *
+ * @file can_login_statemachine.c
+ * @brief Implementation of the CAN login state machine
  * @author Jim Kueneman
- * @date 12 Aug 2025
+ * @date 17 Jan 2026
  */
 
 #include "can_login_statemachine.h"
@@ -53,7 +52,7 @@ void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *
 }
 
 void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info) {
-    
+
     switch (can_statemachine_info->openlcb_node->state.run_state) {
 
         case RUNSTATE_INIT:

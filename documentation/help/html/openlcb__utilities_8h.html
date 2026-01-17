@@ -96,81 +96,121 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Common utility functions for working with buffers and node structures.  
+<a href="#details">More...</a></p>
+
 <p><a href="openlcb__utilities_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6b320eb92f3b9990fb78b35e4a93b8c0" id="r_a6b320eb92f3b9990fb78b35e4a93b8c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b320eb92f3b9990fb78b35e4a93b8c0">OpenLcbUtilities_load_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t source_alias, uint64_t source_id, uint16_t dest_alias, uint64_t dest_id, uint16_t mti)</td></tr>
-<tr class="separator:a6b320eb92f3b9990fb78b35e4a93b8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6704a9f9021133590f93580745822ceb" id="r_a6704a9f9021133590f93580745822ceb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6704a9f9021133590f93580745822ceb">OpenLcbUtilities_load_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t source_alias, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> source_id, uint16_t dest_alias, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> dest_id, uint16_t mti)</td></tr>
+<tr class="memdesc:a6704a9f9021133590f93580745822ceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an OpenLcb message structure with source, destination, and MTI information.  <br /></td></tr>
+<tr class="separator:a6704a9f9021133590f93580745822ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e94dfb13e33b2d191f446a38364b7e5" id="r_a5e94dfb13e33b2d191f446a38364b7e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e94dfb13e33b2d191f446a38364b7e5">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a5e94dfb13e33b2d191f446a38364b7e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies an event ID into the OpenLcb message payload.  <br /></td></tr>
 <tr class="separator:a5e94dfb13e33b2d191f446a38364b7e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a742803a983082b92f5c84fefbe3e7c76" id="r_a742803a983082b92f5c84fefbe3e7c76"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a742803a983082b92f5c84fefbe3e7c76">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint16_t index)</td></tr>
+<tr class="memdesc:a742803a983082b92f5c84fefbe3e7c76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a node ID into the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:a742803a983082b92f5c84fefbe3e7c76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cef78b21287a901f256be421c689e0d" id="r_a8cef78b21287a901f256be421c689e0d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cef78b21287a901f256be421c689e0d">OpenLcbUtilities_copy_byte_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint8_t byte, uint16_t offset)</td></tr>
+<tr class="memdesc:a8cef78b21287a901f256be421c689e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a single byte into the OpenLcb message payload at the specified offset.  <br /></td></tr>
 <tr class="separator:a8cef78b21287a901f256be421c689e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae33d2002dddf51667cf4d2f626195f1d" id="r_ae33d2002dddf51667cf4d2f626195f1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae33d2002dddf51667cf4d2f626195f1d">OpenLcbUtilities_copy_word_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t word, uint16_t index)</td></tr>
+<tr class="memdesc:ae33d2002dddf51667cf4d2f626195f1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 16-bit word into the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:ae33d2002dddf51667cf4d2f626195f1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a858369c2a5cccf95ad400244330af176" id="r_a858369c2a5cccf95ad400244330af176"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a858369c2a5cccf95ad400244330af176">OpenLcbUtilities_copy_dword_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint32_t doubleword, uint16_t index)</td></tr>
+<tr class="memdesc:a858369c2a5cccf95ad400244330af176"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 32-bit double-word into the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:a858369c2a5cccf95ad400244330af176"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c39f38242b282e011bfe93d14334822" id="r_a3c39f38242b282e011bfe93d14334822"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c39f38242b282e011bfe93d14334822">OpenLcbUtilities_copy_string_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, const char string[], uint16_t index)</td></tr>
+<tr class="memdesc:a3c39f38242b282e011bfe93d14334822"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a null-terminated string into the OpenLcb message payload.  <br /></td></tr>
 <tr class="separator:a3c39f38242b282e011bfe93d14334822"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3441776fb6a40d339d480f0795210e38" id="r_a3441776fb6a40d339d480f0795210e38"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3441776fb6a40d339d480f0795210e38">OpenLcbUtilities_copy_byte_array_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, const uint8_t byte_array[], uint16_t payload_index, uint16_t requested_bytes)</td></tr>
+<tr class="memdesc:a3441776fb6a40d339d480f0795210e38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a byte array into the OpenLcb message payload.  <br /></td></tr>
 <tr class="separator:a3441776fb6a40d339d480f0795210e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20a0aa6ddbb623d5cab4308765c47477" id="r_a20a0aa6ddbb623d5cab4308765c47477"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20a0aa6ddbb623d5cab4308765c47477">OpenLcbUtilities_clear_openlcb_message_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:a20a0aa6ddbb623d5cab4308765c47477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the payload section of an OpenLcb message.  <br /></td></tr>
 <tr class="separator:a20a0aa6ddbb623d5cab4308765c47477"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae9c2b155851377c1ce5eadca6a64a17" id="r_aae9c2b155851377c1ce5eadca6a64a17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae9c2b155851377c1ce5eadca6a64a17">OpenLcbUtilities_clear_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:aae9c2b155851377c1ce5eadca6a64a17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all fields of an OpenLcb message structure.  <br /></td></tr>
 <tr class="separator:aae9c2b155851377c1ce5eadca6a64a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ee22d8b74d163c76c7cc4caa2f68cc5" id="r_a5ee22d8b74d163c76c7cc4caa2f68cc5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ee22d8b74d163c76c7cc4caa2f68cc5">OpenLcbUtilities_extract_node_id_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t index)</td></tr>
+<tr class="memdesc:a5ee22d8b74d163c76c7cc4caa2f68cc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a node ID from the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:a5ee22d8b74d163c76c7cc4caa2f68cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac06eeb0060f209fa2a094e252473eb3e" id="r_ac06eeb0060f209fa2a094e252473eb3e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac06eeb0060f209fa2a094e252473eb3e">OpenLcbUtilities_extract_event_id_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:ac06eeb0060f209fa2a094e252473eb3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts an event ID from the OpenLcb message payload.  <br /></td></tr>
 <tr class="separator:ac06eeb0060f209fa2a094e252473eb3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cf4facfe022dc7184dc2586f1e2815b" id="r_a6cf4facfe022dc7184dc2586f1e2815b"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cf4facfe022dc7184dc2586f1e2815b">OpenLcbUtilities_extract_byte_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t index)</td></tr>
+<tr class="memdesc:a6cf4facfe022dc7184dc2586f1e2815b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a single byte from the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:a6cf4facfe022dc7184dc2586f1e2815b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10bb7e92d9537f986ce80e62676a5da0" id="r_a10bb7e92d9537f986ce80e62676a5da0"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10bb7e92d9537f986ce80e62676a5da0">OpenLcbUtilities_extract_word_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t index)</td></tr>
+<tr class="memdesc:a10bb7e92d9537f986ce80e62676a5da0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 16-bit word from the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:a10bb7e92d9537f986ce80e62676a5da0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa74d8dff29a90c92ccf90c05c2b39986" id="r_aa74d8dff29a90c92ccf90c05c2b39986"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa74d8dff29a90c92ccf90c05c2b39986">OpenLcbUtilities_extract_dword_from_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, uint16_t index)</td></tr>
+<tr class="memdesc:aa74d8dff29a90c92ccf90c05c2b39986"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 32-bit double-word from the OpenLcb message payload at the specified index.  <br /></td></tr>
 <tr class="separator:aa74d8dff29a90c92ccf90c05c2b39986"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a763ed68f05ad99a4902de3826c2e005f" id="r_a763ed68f05ad99a4902de3826c2e005f"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a763ed68f05ad99a4902de3826c2e005f">OpenLcbUtilities_count_nulls_in_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:a763ed68f05ad99a4902de3826c2e005f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts the number of null bytes in the OpenLcb message payload.  <br /></td></tr>
 <tr class="separator:a763ed68f05ad99a4902de3826c2e005f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa13f6427e7abf03d5253dc0b95312da" id="r_aaa13f6427e7abf03d5253dc0b95312da"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa13f6427e7abf03d5253dc0b95312da">OpenLcbUtilities_is_addressed_openlcb_message</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:aaa13f6427e7abf03d5253dc0b95312da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the OpenLcb message is an addressed message.  <br /></td></tr>
 <tr class="separator:aaa13f6427e7abf03d5253dc0b95312da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ce2d7da1a094193ee6b5bc327911910" id="r_a8ce2d7da1a094193ee6b5bc327911910"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ce2d7da1a094193ee6b5bc327911910">OpenLcbUtilities_set_multi_frame_flag</a> (uint8_t *target, uint8_t flag)</td></tr>
+<tr class="memdesc:a8ce2d7da1a094193ee6b5bc327911910"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the multi-frame flag in the target byte.  <br /></td></tr>
 <tr class="separator:a8ce2d7da1a094193ee6b5bc327911910"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9204bcb0afbada951297d5be1d719b33" id="r_a9204bcb0afbada951297d5be1d719b33"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9204bcb0afbada951297d5be1d719b33">OpenLcbUtilities_is_addressed_message_for_node</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
-<tr class="separator:a9204bcb0afbada951297d5be1d719b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed21415edc11d38433021fca34e0d60d" id="r_aed21415edc11d38433021fca34e0d60d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed21415edc11d38433021fca34e0d60d">OpenLcbUtilities_is_producer_event_assigned_to_node</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *event_index)</td></tr>
+<tr class="memdesc:aed21415edc11d38433021fca34e0d60d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a producer event ID is assigned to the specified node.  <br /></td></tr>
 <tr class="separator:aed21415edc11d38433021fca34e0d60d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cf19f4c15949979c691d4141278ee22" id="r_a6cf19f4c15949979c691d4141278ee22"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cf19f4c15949979c691d4141278ee22">OpenLcbUtilities_is_consumer_event_assigned_to_node</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *event_index)</td></tr>
+<tr class="memdesc:a6cf19f4c15949979c691d4141278ee22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a consumer event ID is assigned to the specified node.  <br /></td></tr>
 <tr class="separator:a6cf19f4c15949979c691d4141278ee22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a539043042b27fa7a28f82ff4f20278cd" id="r_a539043042b27fa7a28f82ff4f20278cd"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a539043042b27fa7a28f82ff4f20278cd">OpenLcbUtilities_calculate_memory_offset_into_node_space</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a539043042b27fa7a28f82ff4f20278cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the memory offset into the node address space.  <br /></td></tr>
 <tr class="separator:a539043042b27fa7a28f82ff4f20278cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57d58211f6431a39ab1f505e650e87be" id="r_a57d58211f6431a39ab1f505e650e87be"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57d58211f6431a39ab1f505e650e87be">OpenLcbUtilities_payload_type_to_len</a> (<a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> payload_type)</td></tr>
+<tr class="memdesc:a57d58211f6431a39ab1f505e650e87be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts payload type enumeration to payload length in bytes.  <br /></td></tr>
 <tr class="separator:a57d58211f6431a39ab1f505e650e87be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8adb3fe5dc4d64da02e252d5bfea2922" id="r_a8adb3fe5dc4d64da02e252d5bfea2922"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8adb3fe5dc4d64da02e252d5bfea2922">OpenLcbUtilities_extract_node_id_from_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, uint8_t index)</td></tr>
+<tr class="memdesc:a8adb3fe5dc4d64da02e252d5bfea2922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a node ID from the configuration memory buffer at the specified index.  <br /></td></tr>
 <tr class="separator:a8adb3fe5dc4d64da02e252d5bfea2922"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43ad8d02f8415a5ae8563b5f01dd26ad" id="r_a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43ad8d02f8415a5ae8563b5f01dd26ad">OpenLcbUtilities_extract_word_from_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, uint8_t index)</td></tr>
+<tr class="memdesc:a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 16-bit word from the configuration memory buffer at the specified index.  <br /></td></tr>
 <tr class="separator:a43ad8d02f8415a5ae8563b5f01dd26ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af892a2ef64dfd26cb36667a62ae0f8dc" id="r_af892a2ef64dfd26cb36667a62ae0f8dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af892a2ef64dfd26cb36667a62ae0f8dc">OpenLcbUtilities_copy_node_id_to_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id, uint8_t index)</td></tr>
+<tr class="memdesc:af892a2ef64dfd26cb36667a62ae0f8dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a node ID to the configuration memory buffer at the specified index.  <br /></td></tr>
 <tr class="separator:af892a2ef64dfd26cb36667a62ae0f8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad0305cbd41a639ad54ff12bd599cce9" id="r_aad0305cbd41a639ad54ff12bd599cce9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad0305cbd41a639ad54ff12bd599cce9">OpenLcbUtilities_copy_event_id_to_config_mem_buffer</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t index)</td></tr>
+<tr class="memdesc:aad0305cbd41a639ad54ff12bd599cce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies an event ID to the configuration memory buffer at the specified index.  <br /></td></tr>
 <tr class="separator:aad0305cbd41a639ad54ff12bd599cce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28f602cb5ef7385e117f152614bd613b" id="r_a28f602cb5ef7385e117f152614bd613b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28f602cb5ef7385e117f152614bd613b">OpenLcbUtilities_copy_config_mem_buffer_to_event_id</a> (<a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer, uint8_t index)</td></tr>
+<tr class="memdesc:a28f602cb5ef7385e117f152614bd613b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies data from the configuration memory buffer to an event ID.  <br /></td></tr>
 <tr class="separator:a28f602cb5ef7385e117f152614bd613b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06296be3f07fd80febe7dec58eaa5028" id="r_a06296be3f07fd80febe7dec58eaa5028"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06296be3f07fd80febe7dec58eaa5028">OpenLcbUtilities_load_config_mem_reply_write_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info, uint16_t error_code)</td></tr>
+<tr class="memdesc:a06296be3f07fd80febe7dec58eaa5028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the configuration memory write failure reply message header.  <br /></td></tr>
+<tr class="separator:a06296be3f07fd80febe7dec58eaa5028"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2c25886675aad1efa582cf2fc318833" id="r_aa2c25886675aad1efa582cf2fc318833"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2c25886675aad1efa582cf2fc318833">OpenLcbUtilities_load_config_mem_reply_write_ok_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:aa2c25886675aad1efa582cf2fc318833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the configuration memory write success reply message header.  <br /></td></tr>
+<tr class="separator:aa2c25886675aad1efa582cf2fc318833"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0acbbfd410c33c725f1be639783dbf7" id="r_ad0acbbfd410c33c725f1be639783dbf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0acbbfd410c33c725f1be639783dbf7">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info, uint16_t error_code)</td></tr>
+<tr class="memdesc:ad0acbbfd410c33c725f1be639783dbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the configuration memory read failure reply message header.  <br /></td></tr>
+<tr class="separator:ad0acbbfd410c33c725f1be639783dbf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add25f972525f3d14f22f4657a74e0c9c" id="r_add25f972525f3d14f22f4657a74e0c9c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add25f972525f3d14f22f4657a74e0c9c">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:add25f972525f3d14f22f4657a74e0c9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the configuration memory read success reply message header.  <br /></td></tr>
+<tr class="separator:add25f972525f3d14f22f4657a74e0c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<div class="textblock"><p>Common utility functions for working with buffers and node structures. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Common utility functions that are useful to work on buffers and node structures</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a6b320eb92f3b9990fb78b35e4a93b8c0" name="a6b320eb92f3b9990fb78b35e4a93b8c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b320eb92f3b9990fb78b35e4a93b8c0">&#9670;&#160;</a></span>OpenLcbUtilities_load_openlcb_message()</h2>
+<a id="a6704a9f9021133590f93580745822ceb" name="a6704a9f9021133590f93580745822ceb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6704a9f9021133590f93580745822ceb">&#9670;&#160;</a></span>OpenLcbUtilities_load_openlcb_message()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +231,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>source_id</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>source_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -201,7 +241,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>dest_id</em></span>, </td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td>          <td class="paramname"><span class="paramname"><em>dest_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -215,6 +255,20 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Loads an OpenLcb message structure with source, destination, and MTI information. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">source_alias</td><td>CAN alias of the source node </td></tr>
+    <tr><td class="paramname">source_id</td><td>64-bit node ID of the source node </td></tr>
+    <tr><td class="paramname">dest_alias</td><td>CAN alias of the destination node </td></tr>
+    <tr><td class="paramname">dest_id</td><td>64-bit node ID of the destination node </td></tr>
+    <tr><td class="paramname">mti</td><td>Message Type Indicator </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -244,6 +298,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Copies an event ID into the OpenLcb message payload. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to copy or check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -279,6 +343,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies a node ID into the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">node_id</td><td>Node ID to copy or extract </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a8cef78b21287a901f256be421c689e0d" name="a8cef78b21287a901f256be421c689e0d"></a>
@@ -312,6 +387,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Copies a single byte into the OpenLcb message payload at the specified offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">byte</td><td>Byte value to copy </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset position in the payload </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -347,6 +433,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies a 16-bit word into the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">word</td><td>16-bit word value to copy </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a858369c2a5cccf95ad400244330af176" name="a858369c2a5cccf95ad400244330af176"></a>
@@ -381,6 +478,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies a 32-bit double-word into the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">doubleword</td><td>32-bit double-word value to copy </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a3c39f38242b282e011bfe93d14334822" name="a3c39f38242b282e011bfe93d14334822"></a>
@@ -414,6 +522,17 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Copies a null-terminated string into the OpenLcb message payload. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">string</td><td>Null-terminated string to copy </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
 
 </div>
 </div>
@@ -454,6 +573,18 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies a byte array into the OpenLcb message payload. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">byte_array</td><td>Array of bytes to copy </td></tr>
+    <tr><td class="paramname">payload_index</td><td>Index position in the payload </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Number of bytes requested </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+
 </div>
 </div>
 <a id="a20a0aa6ddbb623d5cab4308765c47477" name="a20a0aa6ddbb623d5cab4308765c47477"></a>
@@ -479,6 +610,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Clears the payload section of an OpenLcb message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="aae9c2b155851377c1ce5eadca6a64a17" name="aae9c2b155851377c1ce5eadca6a64a17"></a>
@@ -503,6 +643,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Clears all fields of an OpenLcb message structure. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -533,6 +682,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Extracts a node ID from the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted node ID value </dd></dl>
+
 </div>
 </div>
 <a id="ac06eeb0060f209fa2a094e252473eb3e" name="ac06eeb0060f209fa2a094e252473eb3e"></a>
@@ -557,6 +716,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Extracts an event ID from the OpenLcb message payload. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted event ID value </dd></dl>
 
 </div>
 </div>
@@ -587,6 +755,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Extracts a single byte from the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted byte value or count </dd></dl>
+
 </div>
 </div>
 <a id="a10bb7e92d9537f986ce80e62676a5da0" name="a10bb7e92d9537f986ce80e62676a5da0"></a>
@@ -615,6 +793,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Extracts a 16-bit word from the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted word value </dd></dl>
 
 </div>
 </div>
@@ -645,6 +833,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Extracts a 32-bit double-word from the OpenLcb message payload at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted double-word value or calculated offset </dd></dl>
+
 </div>
 </div>
 <a id="a763ed68f05ad99a4902de3826c2e005f" name="a763ed68f05ad99a4902de3826c2e005f"></a>
@@ -670,6 +868,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Counts the number of null bytes in the OpenLcb message payload. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted byte value or count </dd></dl>
+
 </div>
 </div>
 <a id="aaa13f6427e7abf03d5253dc0b95312da" name="aaa13f6427e7abf03d5253dc0b95312da"></a>
@@ -694,6 +901,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Checks if the OpenLcb message is an addressed message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb message structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if condition is met, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -724,34 +940,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a9204bcb0afbada951297d5be1d719b33" name="a9204bcb0afbada951297d5be1d719b33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9204bcb0afbada951297d5be1d719b33">&#9670;&#160;</a></span>OpenLcbUtilities_is_addressed_message_for_node()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenLcbUtilities_is_addressed_message_for_node </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_msg</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Sets the multi-frame flag in the target byte. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">target</td><td>Pointer to target byte to set flag </td></tr>
+    <tr><td class="paramname">flag</td><td>Multi-frame flag value to set </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -787,6 +984,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Checks if a producer event ID is assigned to the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node structure </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to copy or check </td></tr>
+    <tr><td class="paramname">event_index</td><td>Pointer to store the event index if found </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if condition is met, false otherwise </dd></dl>
+
 </div>
 </div>
 <a id="a6cf19f4c15949979c691d4141278ee22" name="a6cf19f4c15949979c691d4141278ee22"></a>
@@ -821,6 +1029,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Checks if a consumer event ID is assigned to the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node structure </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to copy or check </td></tr>
+    <tr><td class="paramname">event_index</td><td>Pointer to store the event index if found </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if condition is met, false otherwise </dd></dl>
+
 </div>
 </div>
 <a id="a539043042b27fa7a28f82ff4f20278cd" name="a539043042b27fa7a28f82ff4f20278cd"></a>
@@ -846,6 +1065,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Calculates the memory offset into the node address space. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted double-word value or calculated offset </dd></dl>
+
 </div>
 </div>
 <a id="a57d58211f6431a39ab1f505e650e87be" name="a57d58211f6431a39ab1f505e650e87be"></a>
@@ -870,6 +1098,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Converts payload type enumeration to payload length in bytes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">payload_type</td><td>Payload type enumeration </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Payload length in bytes </dd></dl>
 
 </div>
 </div>
@@ -900,6 +1137,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Extracts a node ID from the configuration memory buffer at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to configuration memory buffer </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted node ID value </dd></dl>
+
 </div>
 </div>
 <a id="a43ad8d02f8415a5ae8563b5f01dd26ad" name="a43ad8d02f8415a5ae8563b5f01dd26ad"></a>
@@ -928,6 +1175,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Extracts a 16-bit word from the configuration memory buffer at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to configuration memory buffer </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted word value </dd></dl>
 
 </div>
 </div>
@@ -963,6 +1220,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies a node ID to the configuration memory buffer at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to configuration memory buffer </td></tr>
+    <tr><td class="paramname">node_id</td><td>Node ID to copy or extract </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="aad0305cbd41a639ad54ff12bd599cce9" name="aad0305cbd41a639ad54ff12bd599cce9"></a>
@@ -997,6 +1265,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Copies an event ID to the configuration memory buffer at the specified index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to configuration memory buffer </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to copy or check </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a28f602cb5ef7385e117f152614bd613b" name="a28f602cb5ef7385e117f152614bd613b"></a>
@@ -1025,6 +1304,184 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Copies data from the configuration memory buffer to an event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Pointer to configuration memory buffer </td></tr>
+    <tr><td class="paramname">index</td><td>Index position in the payload or buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Extracted event ID value </dd></dl>
+
+</div>
+</div>
+<a id="a06296be3f07fd80febe7dec58eaa5028" name="a06296be3f07fd80febe7dec58eaa5028"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06296be3f07fd80febe7dec58eaa5028">&#9670;&#160;</a></span>OpenLcbUtilities_load_config_mem_reply_write_fail_message_header()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_load_config_mem_reply_write_fail_message_header </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_write_request_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>error_code</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Loads the configuration memory write failure reply message header. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine information structure </td></tr>
+    <tr><td class="paramname">config_mem_write_request_info</td><td>Pointer to write request information </td></tr>
+    <tr><td class="paramname">error_code</td><td>Error code to include in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
+</div>
+</div>
+<a id="aa2c25886675aad1efa582cf2fc318833" name="aa2c25886675aad1efa582cf2fc318833"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2c25886675aad1efa582cf2fc318833">&#9670;&#160;</a></span>OpenLcbUtilities_load_config_mem_reply_write_ok_message_header()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_load_config_mem_reply_write_ok_message_header </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_write_request_info</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Loads the configuration memory write success reply message header. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine information structure </td></tr>
+    <tr><td class="paramname">config_mem_write_request_info</td><td>Pointer to write request information </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
+</div>
+</div>
+<a id="ad0acbbfd410c33c725f1be639783dbf7" name="ad0acbbfd410c33c725f1be639783dbf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0acbbfd410c33c725f1be639783dbf7">&#9670;&#160;</a></span>OpenLcbUtilities_load_config_mem_reply_read_fail_message_header()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>error_code</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Loads the configuration memory read failure reply message header. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine information structure </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to read request information </td></tr>
+    <tr><td class="paramname">error_code</td><td>Error code to include in the message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
+</div>
+</div>
+<a id="add25f972525f3d14f22f4657a74e0c9c" name="add25f972525f3d14f22f4657a74e0c9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add25f972525f3d14f22f4657a74e0c9c">&#9670;&#160;</a></span>OpenLcbUtilities_load_config_mem_reply_read_ok_message_header()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>config_mem_read_request_info</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Loads the configuration memory read success reply message header. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine information structure </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Pointer to read request information </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

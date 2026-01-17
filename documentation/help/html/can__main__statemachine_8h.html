@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implements the main state machine that dispatches incoming CAN messages to the target nodes and calls any handlers assigned for those messages.  
+<p>Main state machine for dispatching CAN messages to nodes.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__main__statemachine_8h_source.html">Go to the source code of this file.</a></p>
@@ -136,11 +136,14 @@ Functions</h2></td></tr>
 <tr class="separator:a326e8a6b5051c0b6821a460fab2ba410"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements the main state machine that dispatches incoming CAN messages to the target nodes and calls any handlers assigned for those messages. </p>
-<p>This is the main state machine to process nodes as CAN messages are received from the network. An applications message loop should call <a class="el" href="#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run()</a> as fast as possible. The dependency injection interface must be passed as a parameter to the initialization call <a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize()</a>.</p>
-<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize and Run functions in this module.</dd>
-<dd>
-Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> field during initialization of the application. see: <a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize()</a>. </dd></dl>
+<div class="textblock"><p>Main state machine for dispatching CAN messages to nodes. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
+</ul>
+</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a360ebdb7ef110fdd62097a5fc56310f1" name="a360ebdb7ef110fdd62097a5fc56310f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a360ebdb7ef110fdd62097a5fc56310f1">&#9670;&#160;</a></span>CanMainStatemachine_initialize()</h2>
@@ -168,12 +171,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Initializes the CAN Main Statemachine. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__main__statemachine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_main_statemachine...">interface_can_main_statemachine_t</a> *interface_can_main_statemachine - Pointer to a <a class="el" href="structinterface__can__main__statemachine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_main_statemachine...">interface_can_main_statemachine_t</a> struct containing the functions that this module requires.</td></tr>
+    <tr><td class="paramname">interface_can_main_statemachine</td><td>Pointer to a <a class="el" href="structinterface__can__main__statemachine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_main_statemachine...">interface_can_main_statemachine_t</a> struct containing the functions that this module requires. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -203,12 +206,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Runs the main statemachine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible </dd></dl>
 
 </div>
 </div>
@@ -238,12 +241,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Accesses the internal structure that the CAN Main State machine uses to maintain the Node that is currently being targeted, incoming CAN message and a buffer for sending a reply CAN message if necessary. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an internal structure that hold the current state of the CAN State machine.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an internal structure that hold the current state of the CAN State machine </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
 
 </div>
 </div>
@@ -273,12 +276,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Checks for and handles any duplicate Alias that were detected on the incoming CAN receive state machine. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
 
 </div>
 </div>
@@ -308,12 +311,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Checks for and handles any login messages that need to be sent for a Node login. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
 
 </div>
 </div>
@@ -343,12 +346,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Checks for and handles any out going messages that were a result of replying to an incoming message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
 
 </div>
 </div>
@@ -378,12 +381,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Enumerator to get the first Node to run the state machine on. OpenLcbCLib is capable of running virtual Nodes limited only by memory of the device used and how many Node buffer slots where defined in the <a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a> constant. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
 
 </div>
 </div>
@@ -413,12 +416,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Enumerator to get the next Node to run the state machine on. OpenLcbCLib is capable of running virtual Nodes limited only by memory of the device used and how many Node buffer slots where defined in the <a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a> constant. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
 
 </div>
 </div>

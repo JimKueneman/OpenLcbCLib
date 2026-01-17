@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="Implements a FIFO buffer for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply.  
+<p>Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -113,7 +113,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:ad862e0d64d0b66257c1046a48ef92cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="Implements a FIFO buffer for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply. </p>
+<div class="textblock"><p>Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ac122774ef5c3b5d237061918e3af6125" name="ac122774ef5c3b5d237061918e3af6125"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac122774ef5c3b5d237061918e3af6125">&#9670;&#160;</a></span>openlcb_node</h2>
@@ -129,7 +129,7 @@ Data Fields</h2></td></tr>
 
 <p>Pointer to the OpenLcb/LCC node that is being operated on. </p>
 <p>&lt;</p>
-<p>Pointer to the CAN message that the Login Statemachine has loaded and needs to be transmitted. </p><dl class="section note"><dt>Note</dt><dd>This buffer is allocated on the stack from the CAN state machine and is always available. The /ref login_outgoing_can_msg_valid flag marks if the current value of this struture needs to be transmitted </dd></dl>
+<p>Pointer to the CAN message that the Login Statemachine has loaded and needs to be transmitted </p><dl class="section note"><dt>Note</dt><dd>This buffer is allocated on the stack from the CAN state machine and is always available. The /ref login_outgoing_can_msg_valid flag marks if the current value of this struture needs to be transmitted </dd></dl>
 
 </div>
 </div>
@@ -162,7 +162,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Pointer to the CAN message that needs to be sent. </p>
-<dl class="section note"><dt>Note</dt><dd>This buffer is a buffer allocated from <a class="el" href="can__buffer__store_8h.html" title="Implements the core buffers for CAN frames.">can_buffer_store.h</a> and will be freed and set to NULL after it is successfull transmitted </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This buffer is a buffer allocated from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> and will be freed and set to NULL after it is successfull transmitted </dd></dl>
 
 </div>
 </div>

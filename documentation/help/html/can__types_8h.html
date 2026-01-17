@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Typedef and constants that define CAN specific data types.  
+<p>Type definitions and constants for CAN operations.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__types_8h_source.html">Go to the source code of this file.</a></p>
@@ -114,25 +114,25 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__main__statemachine__struct.html">can_main_statemachine_struct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcan__statemachine__info__struct.html">can_statemachine_info_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="Implements a FIFO buffer for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply.  <a href="structcan__statemachine__info__struct.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply.  <a href="structcan__statemachine__info__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structalias__mapping__struct.html">alias_mapping_struct</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold a shadow buffer of Node ID/Alias pairs for Nodes that have been allocated and logged into the network. If during a message/frame reception it is found that some other node is using an Alias that is associated with one of our nodes the <a class="el" href="structalias__mapping__struct.html#a70cebb5663459ea9444b61f00f1e3998">is_duplicate</a> flag is set. Likewise once the node has become Permitted on the network the <a class="el" href="structalias__mapping__struct.html#a1c19fd4ba1ee0bc1f0d7def30ede49a2">is_permitted</a> flag is set. This allows the interrupt or thread on receiving the frame can use this structure to make these checks/flags and the main loop can access this structure (using the lock/unlock calls) to safely peek in and see if something needs to be handled in the main loops context.  <a href="structalias__mapping__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structalias__mapping__info__struct.html">alias_mapping_info_struct</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold an array of <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID.  <a href="structalias__mapping__info__struct.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure to hold an array of <a class="el" href="#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID If during a message/frame reception it is found that some other node is using an Alias that is associated with one of our nodes the the <a class="el" href="structalias__mapping__info__struct.html#a0fa6b7c5feb944f957c07ee2e25c49fd">has_duplicate_alias</a> flag is set. This mean at least one mapping in the array is a duplicate.  <a href="structalias__mapping__info__struct.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a66e224442df976c1bb15398aa0a681ab" id="r_a66e224442df976c1bb15398aa0a681ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a>&#160;&#160;&#160;10</td></tr>
-<tr class="memdesc:a66e224442df976c1bb15398aa0a681ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of CAN messages buffers that are available to allocate through the <a class="el" href="can__buffer__store_8h.html" title="Implements the core buffers for CAN frames.">can_buffer_store.h</a>.  <br /></td></tr>
+<tr class="memdesc:a66e224442df976c1bb15398aa0a681ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of CAN messages buffers that are available to allocate through the <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value for the buffer depth is 10 (typically more than enough) but can be overridden by using a global define for the compiler such as USER_DEFINED_CAN_MSG_BUFFER_DEPTH=20.  <br /></td></tr>
 <tr class="separator:a66e224442df976c1bb15398aa0a681ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63b1d35b3f9523dc6d9ba2a5f9260af3" id="r_a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63b1d35b3f9523dc6d9ba2a5f9260af3">ALIAS_MAPPING_BUFFER_DEPTH</a>&#160;&#160;&#160;<a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a></td></tr>
-<tr class="memdesc:a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Alias Mapping slots available for <a class="el" href="alias__mappings_8h.html" title="Implements a buffer that stores Alias/NodeID pairs.">alias_mappings.h</a>.  <br /></td></tr>
+<tr class="memdesc:a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Alias Mapping slots available for <a class="el" href="alias__mappings_8h.html" title="Alias/NodeID mapping buffer for tracking internal node aliases.">alias_mappings.h</a> The default value for the buffer is equal to the value used for /ref USER_DEFINED_NODE_BUFFER_DEPTH as there must be the same number mapping slot as there are allocated nodes.  <br /></td></tr>
 <tr class="separator:a63b1d35b3f9523dc6d9ba2a5f9260af3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50ba6934b926753e5fc4f7419c9e28c9" id="r_a50ba6934b926753e5fc4f7419c9e28c9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50ba6934b926753e5fc4f7419c9e28c9">LEN_CAN_FIFO_BUFFER</a>&#160;&#160;&#160;<a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> + 1</td></tr>
-<tr class="memdesc:a50ba6934b926753e5fc4f7419c9e28c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Pointer slots in the FIFO to hold CAN Buffers from <a class="el" href="can__buffer__store_8h.html" title="Implements the core buffers for CAN frames.">can_buffer_store.h</a>.  <br /></td></tr>
+<tr class="memdesc:a50ba6934b926753e5fc4f7419c9e28c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Pointer slots in the FIFO to hold CAN Buffers from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value is size of the buffer depth plus one <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> so all buffers can be held in the FIFO implementation. The buffer can then be checked for full without the head == tail.  <br /></td></tr>
 <tr class="separator:a50ba6934b926753e5fc4f7419c9e28c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5557aaecf7420e7ec1beccd6c614e8ba" id="r_a5557aaecf7420e7ec1beccd6c614e8ba"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5557aaecf7420e7ec1beccd6c614e8ba">LEN_CAN_BYTE_ARRAY</a>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:a5557aaecf7420e7ec1beccd6c614e8ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of data bytes in a CAN frame.  <br /></td></tr>
@@ -175,7 +175,14 @@ Typedefs</h2></td></tr>
 <tr class="separator:a6f5fe2a96f016592936919dc52552b60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Typedef and constants that define CAN specific data types. </p>
+<div class="textblock"><p>Type definitions and constants for CAN operations. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
+</ul>
+</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a66e224442df976c1bb15398aa0a681ab" name="a66e224442df976c1bb15398aa0a681ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a66e224442df976c1bb15398aa0a681ab">&#9670;&#160;</a></span>USER_DEFINED_CAN_MSG_BUFFER_DEPTH</h2>
@@ -189,8 +196,8 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of CAN messages buffers that are available to allocate through the <a class="el" href="can__buffer__store_8h.html" title="Implements the core buffers for CAN frames.">can_buffer_store.h</a>. </p>
-<p>The default value for the buffer depth is 10 (typically more than enough) but can be overridden by using a global define for the compiler such as USER_DEFINED_CAN_MSG_BUFFER_DEPTH=20 </p><dl class="section warning"><dt>Warning</dt><dd>the maximum size for the buffer depth is 254 (0xFE) </dd></dl>
+<p>The number of CAN messages buffers that are available to allocate through the <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value for the buffer depth is 10 (typically more than enough) but can be overridden by using a global define for the compiler such as USER_DEFINED_CAN_MSG_BUFFER_DEPTH=20. </p>
+<dl class="section warning"><dt>Warning</dt><dd>the maximum size for the buffer depth is 254 (0xFE) </dd></dl>
 
 </div>
 </div>
@@ -206,8 +213,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of Alias Mapping slots available for <a class="el" href="alias__mappings_8h.html" title="Implements a buffer that stores Alias/NodeID pairs.">alias_mappings.h</a>. </p>
-<p>The default value for the buffer is equal to the value used for /ref USER_DEFINED_NODE_BUFFER_DEPTH as there must be the same number mapping slot as there are allocated nodes. </p>
+<p>The number of Alias Mapping slots available for <a class="el" href="alias__mappings_8h.html" title="Alias/NodeID mapping buffer for tracking internal node aliases.">alias_mappings.h</a> The default value for the buffer is equal to the value used for /ref USER_DEFINED_NODE_BUFFER_DEPTH as there must be the same number mapping slot as there are allocated nodes. </p>
 
 </div>
 </div>
@@ -223,8 +229,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The number of Pointer slots in the FIFO to hold CAN Buffers from <a class="el" href="can__buffer__store_8h.html" title="Implements the core buffers for CAN frames.">can_buffer_store.h</a>. </p>
-<p>The default value is size of the buffer depth plus one <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> so all buffers can be held in the FIFO implementation. The buffer can then be checked for full without the head == tail. </p>
+<p>The number of Pointer slots in the FIFO to hold CAN Buffers from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> The default value is size of the buffer depth plus one <a class="el" href="#a66e224442df976c1bb15398aa0a681ab">USER_DEFINED_CAN_MSG_BUFFER_DEPTH</a> so all buffers can be held in the FIFO implementation. The buffer can then be checked for full without the head == tail. </p>
 
 </div>
 </div>

@@ -98,6 +98,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>GridConnect protocol implementation for CAN message conversion.  
+<a href="#details">More...</a></p>
+
 <p><a href="openlcb__gridconnect_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -119,23 +122,26 @@ Typedefs</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a6b1e8e9ef9099915cdbde65af9575a69" id="r_a6b1e8e9ef9099915cdbde65af9575a69"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b1e8e9ef9099915cdbde65af9575a69">OpenLcbGridConnect_copy_out_gridconnect_when_done</a> (uint8_t next_byte, <a class="el" href="#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a6b1e8e9ef9099915cdbde65af9575a69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes incoming GridConnect byte stream and extracts complete message when done.  <br /></td></tr>
 <tr class="separator:a6b1e8e9ef9099915cdbde65af9575a69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2547fcc3361d51af5d4475561cac70d7" id="r_a2547fcc3361d51af5d4475561cac70d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2547fcc3361d51af5d4475561cac70d7">OpenLcbGridConnect_to_can_msg</a> (<a class="el" href="#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:a2547fcc3361d51af5d4475561cac70d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GridConnect message to a CAN message structure.  <br /></td></tr>
 <tr class="separator:a2547fcc3361d51af5d4475561cac70d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14e741fd6f5c76890f047d7ec180832a" id="r_a14e741fd6f5c76890f047d7ec180832a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14e741fd6f5c76890f047d7ec180832a">OpenLcbGridConnect_from_can_msg</a> (<a class="el" href="#a4c98183f234e8c8860bc48872c2c01b8">gridconnect_buffer_t</a> *gridconnect, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
+<tr class="memdesc:a14e741fd6f5c76890f047d7ec180832a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a CAN message structure to GridConnect format.  <br /></td></tr>
 <tr class="separator:a14e741fd6f5c76890f047d7ec180832a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<div class="textblock"><p>GridConnect protocol implementation for CAN message conversion. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implements the core buffers for normal, snip, datagram, and stream length buffers. The FIFO and List buffers are arrays of pointers to these core buffers that are allocated and freed through access. The CAN Rx and 100ms timer access these buffers so care must be taken to Pause and Resume those calls if the main loop needs to access the buffers.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ab27ebc3b11ce279634207f5e87802baa" name="ab27ebc3b11ce279634207f5e87802baa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab27ebc3b11ce279634207f5e87802baa">&#9670;&#160;</a></span>GRIDCONNECT_STATE_SYNC_START</h2>
@@ -236,6 +242,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Processes incoming GridConnect byte stream and extracts complete message when done. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">next_byte</td><td>Next byte from the GridConnect stream </td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to buffer to store the extracted GridConnect message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when a complete GridConnect message has been extracted, false otherwise </dd></dl>
+
 </div>
 </div>
 <a id="a2547fcc3361d51af5d4475561cac70d7" name="a2547fcc3361d51af5d4475561cac70d7"></a>
@@ -265,6 +281,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Converts a GridConnect message to a CAN message structure. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">gridconnect</td><td>Pointer to GridConnect message buffer </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message structure to fill </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a14e741fd6f5c76890f047d7ec180832a" name="a14e741fd6f5c76890f047d7ec180832a"></a>
@@ -293,6 +319,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Converts a CAN message structure to GridConnect format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">gridconnect</td><td>Pointer to buffer to store the GridConnect message </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to source CAN message structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

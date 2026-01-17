@@ -1,4 +1,3 @@
-
 /** \copyright
  * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
@@ -25,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_utilities.c
- *
- * Common utility functions that are useful to work on buffers and node structures
- *
+ * @file openlcb_utilities.c
+ * @brief Implementation of utility functions for OpenLcb
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_utilities.h"
@@ -304,7 +301,7 @@ uint32_t OpenLcbUtilities_extract_dword_from_openlcb_payload(openlcb_msg_t* open
 
 void OpenLcbUtilities_set_multi_frame_flag(uint8_t* target, uint8_t flag) {
 
-    // Clear the upper nibble 
+    // Clear the upper nibble
     *target = *target & 0x0F;
 
     // Set the flag in the upper nibble
@@ -535,7 +532,7 @@ void OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(openlcb_st
 void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
-    
+
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -563,7 +560,7 @@ void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(openlcb_state
 
         OpenLcbUtilities_copy_byte_to_openlcb_payload(
                 statemachine_info->outgoing_msg_info.msg_ptr,
-                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], 
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6],
                 6);
 
     }
@@ -576,7 +573,7 @@ void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(openlcb_state
 void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info, uint16_t error_code) {
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 0;
-    
+
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -604,7 +601,7 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
 
         OpenLcbUtilities_copy_byte_to_openlcb_payload(
                 statemachine_info->outgoing_msg_info.msg_ptr,
-                *statemachine_info->incoming_msg_info.msg_ptr->payload[6], 
+                *statemachine_info->incoming_msg_info.msg_ptr->payload[6],
                 6);
 
     }
@@ -613,7 +610,7 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
             statemachine_info->outgoing_msg_info.msg_ptr,
             error_code,
             config_mem_read_request_info->data_start);
-    
+
 }
 
 

@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>OpenLcb node structures and management functions.  
+<a href="#details">More...</a></p>
+
 <p><a href="openlcb__node_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -107,33 +110,41 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a7beb45af246c8e2bf112bfca6c11375b" id="r_a7beb45af246c8e2bf112bfca6c11375b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7beb45af246c8e2bf112bfca6c11375b">OpenLcbNode_initialize</a> (const <a class="el" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *interface)</td></tr>
+<tr class="memdesc:a7beb45af246c8e2bf112bfca6c11375b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Node module.  <br /></td></tr>
 <tr class="separator:a7beb45af246c8e2bf112bfca6c11375b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81f9d75e152065693c1a38cb03827360" id="r_a81f9d75e152065693c1a38cb03827360"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81f9d75e152065693c1a38cb03827360">OpenLcbNode_allocate</a> (uint64_t nodeid, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters)</td></tr>
+<tr class="memdesc:a81f9d75e152065693c1a38cb03827360"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new OpenLcb node with the specified node ID and parameters.  <br /></td></tr>
 <tr class="separator:a81f9d75e152065693c1a38cb03827360"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebb273e90eb5491704a9a42c830e5324" id="r_aebb273e90eb5491704a9a42c830e5324"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first</a> (uint8_t key)</td></tr>
+<tr class="memdesc:aebb273e90eb5491704a9a42c830e5324"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the first node in the node list for enumeration.  <br /></td></tr>
 <tr class="separator:aebb273e90eb5491704a9a42c830e5324"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67d1e4736a41064ac7c649831848b4ca" id="r_a67d1e4736a41064ac7c649831848b4ca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next</a> (uint8_t key)</td></tr>
+<tr class="memdesc:a67d1e4736a41064ac7c649831848b4ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the next node in the node list for enumeration.  <br /></td></tr>
 <tr class="separator:a67d1e4736a41064ac7c649831848b4ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02012a27bb89bffc68816a980279949e" id="r_a02012a27bb89bffc68816a980279949e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias</a> (uint16_t alias)</td></tr>
+<tr class="memdesc:a02012a27bb89bffc68816a980279949e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its CAN alias.  <br /></td></tr>
 <tr class="separator:a02012a27bb89bffc68816a980279949e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2720f6597cb2133ef99f37b8d05868dc" id="r_a2720f6597cb2133ef99f37b8d05868dc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2720f6597cb2133ef99f37b8d05868dc">OpenLcbNode_find_by_node_id</a> (uint64_t nodeid)</td></tr>
+<tr class="memdesc:a2720f6597cb2133ef99f37b8d05868dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its 64-bit node ID.  <br /></td></tr>
 <tr class="separator:a2720f6597cb2133ef99f37b8d05868dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68c1a3c6196e96d3f17b68023607d163" id="r_a68c1a3c6196e96d3f17b68023607d163"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68c1a3c6196e96d3f17b68023607d163">OpenLcbNode_reset_state</a> (void)</td></tr>
+<tr class="memdesc:a68c1a3c6196e96d3f17b68023607d163"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the state of all nodes to initial conditions.  <br /></td></tr>
 <tr class="separator:a68c1a3c6196e96d3f17b68023607d163"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad69a221293d91383b8f8214ca9a38b40" id="r_ad69a221293d91383b8f8214ca9a38b40"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad69a221293d91383b8f8214ca9a38b40">OpenLcbNode_100ms_timer_tick</a> (void)</td></tr>
+<tr class="memdesc:ad69a221293d91383b8f8214ca9a38b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms timer tick handler for all nodes  <br /></td></tr>
 <tr class="separator:ad69a221293d91383b8f8214ca9a38b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<div class="textblock"><p>OpenLcb node structures and management functions. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-<p>Implementation of the OpenLcb node structures and buffers with functions to manipulate them</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>5 Dec 2024 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a7beb45af246c8e2bf112bfca6c11375b" name="a7beb45af246c8e2bf112bfca6c11375b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7beb45af246c8e2bf112bfca6c11375b">&#9670;&#160;</a></span>OpenLcbNode_initialize()</h2>
@@ -157,6 +168,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the OpenLcb Node module. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td>Pointer to the interface structure containing required callbacks </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -187,6 +207,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Allocates a new OpenLcb node with the specified node ID and parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeid</td><td>64-bit unique node ID </td></tr>
+    <tr><td class="paramname">node_parameters</td><td>Pointer to node configuration parameters </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the allocated node or NULL if allocation fails </dd></dl>
+
 </div>
 </div>
 <a id="aebb273e90eb5491704a9a42c830e5324" name="aebb273e90eb5491704a9a42c830e5324"></a>
@@ -211,6 +241,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Gets the first node in the node list for enumeration. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Enumeration key to identify which enumerator is requesting </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the first node or NULL if no nodes exist </dd></dl>
 
 </div>
 </div>
@@ -237,6 +276,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the next node in the node list for enumeration. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Enumeration key to identify which enumerator is requesting </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the next node or NULL if at end of list </dd></dl>
+
 </div>
 </div>
 <a id="a02012a27bb89bffc68816a980279949e" name="a02012a27bb89bffc68816a980279949e"></a>
@@ -261,6 +309,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Finds a node by its CAN alias. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">alias</td><td>CAN alias to search for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the node with matching alias or NULL if not found </dd></dl>
 
 </div>
 </div>
@@ -287,6 +344,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Finds a node by its 64-bit node ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nodeid</td><td>Node ID to search for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the node with matching node ID or NULL if not found </dd></dl>
+
 </div>
 </div>
 <a id="a68c1a3c6196e96d3f17b68023607d163" name="a68c1a3c6196e96d3f17b68023607d163"></a>
@@ -312,6 +378,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Resets the state of all nodes to initial conditions. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">None</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="ad69a221293d91383b8f8214ca9a38b40" name="ad69a221293d91383b8f8214ca9a38b40"></a>
@@ -336,6 +411,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>100ms timer tick handler for all nodes </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">None</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

@@ -24,14 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_datagram.c
- *
- * Implementation of the Openlcb Datagram Protocol.  Handlers are call from the 
- * openlcb_main_statemachine.c processing when a datagram message is being processed
- * from the FIFO buffer.
- *
+ * @file protocol_datagram_handler.c
+ * @brief Implementation of datagram protocol handler
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "protocol_datagram_handler.h"
@@ -449,11 +445,11 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory);
 
             break;
-            
+
         case CONFIG_MEM_SPACE_FIRMWARE:
-            
+
             _handle_subcommand(statemachine_info, _interface->memory_write_space_firmware_upgrade);
-            
+
             break;
 
         default:
@@ -1311,7 +1307,7 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
 
             } else {
 
-                exponent = 0x0F;  
+                exponent = 0x0F;
 
             }
 

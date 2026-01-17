@@ -96,7 +96,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implements a buffer that stores Alias/NodeID pairs.  
+<p>Alias/NodeID mapping buffer for tracking internal node aliases.  
 <a href="#details">More...</a></p>
 
 <p><a href="alias__mappings_8h_source.html">Go to the source code of this file.</a></p>
@@ -129,10 +129,14 @@ Functions</h2></td></tr>
 <tr class="separator:a689def4649f0c550f4105dac8846bd93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements a buffer that stores Alias/NodeID pairs. </p>
-<p>This does not track external nodes it only tracks internal nodes. It's main purpose is to allow the CAN Rx Handler to search through allocated Alias and NodeIDs when processing incoming messages and not need to access the raw Node data structures in <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a>. This is because the Rx Handler is typically running in an interrupt or thread so this keeps a secondary list that have clear insert/remove points that can be protected through resource locking (pausing interrupts, threads, etc).</p>
-<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
+<div class="textblock"><p>Alias/NodeID mapping buffer for tracking internal node aliases. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
+</ul>
+</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a999c2dabeacd5ed0c21c9dbbdd263297" name="a999c2dabeacd5ed0c21c9dbbdd263297"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a999c2dabeacd5ed0c21c9dbbdd263297">&#9670;&#160;</a></span>AliasMappings_initialize()</h2>
@@ -160,12 +164,12 @@ Functions</h2></td></tr>
 <p>Initializes the Alias Mapping buffers. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -195,11 +199,11 @@ Functions</h2></td></tr>
 <p>Allows access to the Alias Mapping Buffer itself. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the alias message buffer or NULL if it fails. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the alias message buffer or NULL if it fails </dd></dl>
 
 </div>
 </div>
@@ -229,11 +233,11 @@ Functions</h2></td></tr>
 <p>Sets a flag that tells the main loop that a received message has been found to be using an Alias we have reserved. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -267,12 +271,12 @@ Functions</h2></td></tr>
 <p>Registers a new Alias/NodeID pair. If the NodeID exists then the old Alias is replaced by the passed one. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">uint16_t</td><td>alias - The Alias to store. </td></tr>
-    <tr><td class="paramname">node_id_t</td><td>node_id - The NodeID to store.</td></tr>
+    <tr><td class="paramname">alias</td><td>The Alias to store </td></tr>
+    <tr><td class="paramname">node_id</td><td>The NodeID to store </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly registered AliasMapping or NULL if fails. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly registered AliasMapping or NULL if fails </dd></dl>
 
 </div>
 </div>
@@ -302,11 +306,11 @@ Functions</h2></td></tr>
 <p>Deregisters an existing Alias/NodeID pair. If the pair does not exist it does nothing. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">uint16_t</td><td>alias - The Alias to unregister.</td></tr>
+    <tr><td class="paramname">alias</td><td>The Alias to unregister </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -336,11 +340,11 @@ Functions</h2></td></tr>
 <p>Finds a Alias/NodeID pair that matches the Alias passed. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">uint16_t</td><td>alias - The Alias to search for.</td></tr>
+    <tr><td class="paramname">alias</td><td>The Alias to search for </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL </dd></dl>
 
 </div>
 </div>
@@ -370,11 +374,11 @@ Functions</h2></td></tr>
 <p>Finds a Alias/NodeID pair that matches the NodeID passed. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">uint16_t</td><td>alias - The NodeID to search for.</td></tr>
+    <tr><td class="paramname">alias</td><td>The NodeID to search for </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL </dd></dl>
 
 </div>
 </div>
@@ -404,11 +408,11 @@ Functions</h2></td></tr>
 <p>Released all stored Alias Mapping pairs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

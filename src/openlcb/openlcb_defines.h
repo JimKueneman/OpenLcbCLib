@@ -24,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_defines.h
- *
- * Constants and values defined in the OpenLcb protocols.
- *
+ * @file openlcb_defines.h
+ * @brief Constants and values defined in the OpenLcb protocols
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include <stdbool.h>

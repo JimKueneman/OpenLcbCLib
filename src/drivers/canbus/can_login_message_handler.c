@@ -24,15 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_message_handler.c
- *
- * When a node is logging into the network on a CAN bus it must follow a specific
- * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
- * that is called from the CAN main statemachine to accomplish that when a new node
- * is created.
- *
+ * @file can_login_message_handler.c
+ * @brief Implementation of message handlers for CAN login sequence
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "can_login_message_handler.h"
@@ -87,7 +82,7 @@ void CanLoginMessageHandler_state_init(can_statemachine_info_t *can_statemachine
 
     can_statemachine_info->openlcb_node->seed = can_statemachine_info->openlcb_node->id;
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_GENERATE_ALIAS; // Jump over Generate Seed that only is if we have an Alias conflict and have to jump back
-    
+
 }
 
 void CanLoginMessageHandler_state_generate_seed(can_statemachine_info_t *can_statemachine_info) {
@@ -100,7 +95,7 @@ void CanLoginMessageHandler_state_generate_seed(can_statemachine_info_t *can_sta
 void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_statemachine_info) {
 
     can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
-    
+
     _interface->alias_mapping_register(can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id);
 
     if (_interface->on_alias_change) {
@@ -180,12 +175,12 @@ void CanLoginMessageHandler_state_load_amd(can_statemachine_info_t *can_statemac
     CanUtilities_copy_node_id_to_payload(can_statemachine_info->login_outgoing_can_msg, can_statemachine_info->openlcb_node->id, 0);
     can_statemachine_info->login_outgoing_can_msg_valid = true;
     can_statemachine_info->openlcb_node->state.permitted = true;
-    
+
     alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(can_statemachine_info->openlcb_node->alias);
     alias_mapping->is_permitted = true;
-    
+
     can_statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_INITIALIZATION_COMPLETE;
-    
+
 }
 
 

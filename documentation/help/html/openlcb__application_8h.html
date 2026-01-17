@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Application layer interface where most application code interfaces with the library.  
+<a href="#details">More...</a></p>
+
 <p><a href="openlcb__application_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -107,25 +110,48 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a78c4dd26cc000fae9e2af5b6453ad511" id="r_a78c4dd26cc000fae9e2af5b6453ad511"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511">OpenLcbApplication_initialize</a> (const <a class="el" href="structinterface__openlcb__application__t.html">interface_openlcb_application_t</a> *interface_openlcb_application)</td></tr>
+<tr class="memdesc:a78c4dd26cc000fae9e2af5b6453ad511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Application interface.  <br /></td></tr>
 <tr class="separator:a78c4dd26cc000fae9e2af5b6453ad511"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d8d8805e7ddd4c67084bd273d6f95bb" id="r_a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d8d8805e7ddd4c67084bd273d6f95bb">OpenLcbApplication_clear_consumer_eventids</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all consumer event IDs registered for the specified node.  <br /></td></tr>
 <tr class="separator:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a357ca2ca5479e96f908713026e3957f6" id="r_a357ca2ca5479e96f908713026e3957f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a357ca2ca5479e96f908713026e3957f6">OpenLcbApplication_clear_producer_eventids</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a357ca2ca5479e96f908713026e3957f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all producer event IDs registered for the specified node.  <br /></td></tr>
 <tr class="separator:a357ca2ca5479e96f908713026e3957f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1623ce9844facbe8b68f216e0392efa" id="r_aa1623ce9844facbe8b68f216e0392efa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1623ce9844facbe8b68f216e0392efa">OpenLcbApplication_register_consumer_eventid</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
+<tr class="memdesc:aa1623ce9844facbe8b68f216e0392efa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a consumer event ID with the specified node.  <br /></td></tr>
 <tr class="separator:aa1623ce9844facbe8b68f216e0392efa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89b413f9021c179fab80ce4ec132cc2c" id="r_a89b413f9021c179fab80ce4ec132cc2c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c">OpenLcbApplication_register_producer_eventid</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
+<tr class="memdesc:a89b413f9021c179fab80ce4ec132cc2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a producer event ID with the specified node.  <br /></td></tr>
 <tr class="separator:a89b413f9021c179fab80ce4ec132cc2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56e3f060f9a65d5d4b35588ffd4a0028" id="r_a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028">OpenLcbApplication_send_event_pc_report</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Producer/Consumer event report message.  <br /></td></tr>
 <tr class="separator:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693d55cbf56d18656dfe24189126167d" id="r_a693d55cbf56d18656dfe24189126167d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a693d55cbf56d18656dfe24189126167d">OpenLcbApplication_send_teach_event</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a693d55cbf56d18656dfe24189126167d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a teach event message.  <br /></td></tr>
 <tr class="separator:a693d55cbf56d18656dfe24189126167d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2da804fe3dce3a9035ce6d4579bb4d6f" id="r_a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2da804fe3dce3a9035ce6d4579bb4d6f">OpenLcbApplication_send_initialization_event</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an initialization complete event for the specified node.  <br /></td></tr>
+<tr class="separator:a2da804fe3dce3a9035ce6d4579bb4d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9255f494607f8447f499ca2d833e0d32" id="r_a9255f494607f8447f499ca2d833e0d32"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9255f494607f8447f499ca2d833e0d32">OpenLcbApplication_read_configuration_memory</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a9255f494607f8447f499ca2d833e0d32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from the node's configuration memory.  <br /></td></tr>
 <tr class="separator:a9255f494607f8447f499ca2d833e0d32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0082cc94a4a076abd9b0c95697c544cf" id="r_a0082cc94a4a076abd9b0c95697c544cf"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0082cc94a4a076abd9b0c95697c544cf">OpenLcbApplication_write_configuration_memory</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a0082cc94a4a076abd9b0c95697c544cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes data to the node's configuration memory.  <br /></td></tr>
 <tr class="separator:a0082cc94a4a076abd9b0c95697c544cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Application layer interface where most application code interfaces with the library. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a78c4dd26cc000fae9e2af5b6453ad511" name="a78c4dd26cc000fae9e2af5b6453ad511"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a78c4dd26cc000fae9e2af5b6453ad511">&#9670;&#160;</a></span>OpenLcbApplication_initialize()</h2>
 
@@ -148,6 +174,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Initializes the OpenLcb Application interface. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface_openlcb_application</td><td>Pointer to the interface structure containing required callbacks </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -174,6 +209,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Clears all consumer event IDs registered for the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a357ca2ca5479e96f908713026e3957f6" name="a357ca2ca5479e96f908713026e3957f6"></a>
@@ -198,6 +242,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Clears all producer event IDs registered for the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -233,6 +286,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Registers a consumer event ID with the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to register </td></tr>
+    <tr><td class="paramname">event_status</td><td>Initial status of the event (unknown, set, or clear) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Index of the registered event, or error code if registration fails </dd></dl>
+
 </div>
 </div>
 <a id="a89b413f9021c179fab80ce4ec132cc2c" name="a89b413f9021c179fab80ce4ec132cc2c"></a>
@@ -267,6 +331,17 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Registers a producer event ID with the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to register </td></tr>
+    <tr><td class="paramname">event_status</td><td>Initial status of the event (unknown, set, or clear) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Index of the registered event, or error code if registration fails </dd></dl>
+
 </div>
 </div>
 <a id="a56e3f060f9a65d5d4b35588ffd4a0028" name="a56e3f060f9a65d5d4b35588ffd4a0028"></a>
@@ -296,6 +371,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sends a Producer/Consumer event report message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node sending the report </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to report </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the message was successfully queued, false otherwise </dd></dl>
+
 </div>
 </div>
 <a id="a693d55cbf56d18656dfe24189126167d" name="a693d55cbf56d18656dfe24189126167d"></a>
@@ -324,6 +409,50 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Sends a teach event message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node sending the teach event </td></tr>
+    <tr><td class="paramname">event_id</td><td>Event ID to teach </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the message was successfully queued, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a2da804fe3dce3a9035ce6d4579bb4d6f" name="a2da804fe3dce3a9035ce6d4579bb4d6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2da804fe3dce3a9035ce6d4579bb4d6f">&#9670;&#160;</a></span>OpenLcbApplication_send_initialization_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplication_send_initialization_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sends an initialization complete event for the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node sending the initialization event </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if the message was successfully queued, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -364,6 +493,18 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Reads data from the node's configuration memory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+    <tr><td class="paramname">address</td><td>Starting address to read from </td></tr>
+    <tr><td class="paramname">count</td><td>Number of bytes to read </td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to buffer to store the read data </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes successfully read </dd></dl>
+
 </div>
 </div>
 <a id="a0082cc94a4a076abd9b0c95697c544cf" name="a0082cc94a4a076abd9b0c95697c544cf"></a>
@@ -402,6 +543,18 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Writes data to the node's configuration memory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+    <tr><td class="paramname">address</td><td>Starting address to write to </td></tr>
+    <tr><td class="paramname">count</td><td>Number of bytes to write </td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to buffer containing data to write </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes successfully written </dd></dl>
 
 </div>
 </div>

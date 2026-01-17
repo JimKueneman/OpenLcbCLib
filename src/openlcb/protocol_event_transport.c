@@ -24,14 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_event_transport.c
- *
- * Implementation of the Openlcb event protocol. Handlers are call from the 
- * openlcb_main_statemachine.c processing when a datagram message is being processed
- * from the FIFO buffer.
- *
+ * @file protocol_event_transport.c
+ * @brief Implementation of event transport protocol
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "protocol_event_transport.h"
@@ -444,7 +440,7 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemac
         uint16_t payload_count = (statemachine_info->incoming_msg_info.msg_ptr->payload_count - sizeof (event_id_t));
 
         _interface->on_pc_event_report_with_payload(statemachine_info->openlcb_node, &eventid, payload_count, (event_payload_t*) statemachine_info->incoming_msg_info.msg_ptr->payload[sizeof (event_id_t)]);
-    
+
     }
 
     statemachine_info->outgoing_msg_info.valid = false;

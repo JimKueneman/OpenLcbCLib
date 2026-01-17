@@ -24,15 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_login_message_handler.c
- *
- * When a node is logging into the network on a CAN bus it must follow a specific
- * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
- * that is called from the CAN main statemachine to accomplish that when a new node
- * is created.
- *
+ * @file openlcb_login_statemachine_handler.c
+ * @brief Implementation of the login state machine message handler
  * @author Jim Kueneman
- * @date 11 Oct 2025
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_login_statemachine_handler.h"
@@ -59,13 +54,13 @@ void OpenLcbLoginMessageHandler_initialize(const interface_openlcb_login_message
 void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_statemachine_info_t *statemachine_info) {
 
     uint16_t mti = MTI_INITIALIZATION_COMPLETE;
-    
+
     if (statemachine_info->openlcb_node->parameters->protocol_support & PSI_SIMPLE) {
 
         mti = MTI_INITIALIZATION_COMPLETE_SIMPLE;
 
     }
-     
+
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
@@ -73,10 +68,10 @@ void OpenLcbLoginMessageHandler_load_initialization_complete(openlcb_login_state
             0,
             0,
             mti);
-    
+
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
-            statemachine_info->openlcb_node->id, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->openlcb_node->id,
             0);
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 6;
@@ -97,7 +92,7 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
     if (statemachine_info->openlcb_node->producers.count == 0) {
 
         statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
-        
+
         statemachine_info->outgoing_msg_info.valid = false;
 
         return;
@@ -116,7 +111,7 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
             event_mti);
 
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
             event_id);
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;
@@ -146,7 +141,7 @@ void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_i
     if (statemachine_info->openlcb_node->consumers.count == 0) {
 
         statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
-        
+
         statemachine_info->outgoing_msg_info.valid = false;
 
         return;
@@ -163,9 +158,9 @@ void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_i
             0,
             0,
             event_mti);
-    
+
     OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
             event_id);
 
     statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8;

@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implements handlers for use by the CAN Receive (Rx) statemachine <a class="el" href="can__rx__statemachine_8h.html">can_rx_statemachine.h</a>.  
+<p>Message handlers for CAN receive operations.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__rx__message__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -126,7 +126,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:afa5ab07059b228d93331a4871c64f0aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a frame of an OpenLcb/LCC message that is a complete message.  <br /></td></tr>
 <tr class="separator:afa5ab07059b228d93331a4871c64f0aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb044ac13496dded9928edbdd6fa8927" id="r_acb044ac13496dded9928edbdd6fa8927"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb044ac13496dded9928edbdd6fa8927">CanRxMessageHandler_can_legacy_snip</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint8_t offset, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td></tr>
-<tr class="memdesc:acb044ac13496dded9928edbdd6fa8927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a frame of a multiple CAN frame OpenLcb/LCC SNIP message that is being sent in the original Protocol format.  <br /></td></tr>
+<tr class="memdesc:acb044ac13496dded9928edbdd6fa8927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a frame of a multiple CAN frame OpenLcb/LCC SNIP message that is being sent in the original Protocol format. The original SNIP format used the number of NULLs in the string to find the end of the message, later the protocol was updated when a mechanism for encoding a bits in the upper nibble of the 2 Byte target Alias passed in the first 2 bytes of the CAN data. This encoding allowed this message to be handled using the first/middle/last handlers above.  <br /></td></tr>
 <tr class="separator:acb044ac13496dded9928edbdd6fa8927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a914e07fbe6d07d1c715d86d9045b66d5" id="r_a914e07fbe6d07d1c715d86d9045b66d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a914e07fbe6d07d1c715d86d9045b66d5">CanRxMessageHandler_stream_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint8_t can_buffer_start_index, <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> data_type)</td></tr>
 <tr class="memdesc:a914e07fbe6d07d1c715d86d9045b66d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles a stream frame of an OpenLcb/LCC message.  <br /></td></tr>
@@ -151,11 +151,14 @@ Functions</h2></td></tr>
 <tr class="separator:aa958ec2e603dabb8eed0c6c0e0bacc94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements handlers for use by the CAN Receive (Rx) statemachine <a class="el" href="can__rx__statemachine_8h.html">can_rx_statemachine.h</a>. </p>
-<p>As CAN only frame messages come in they need to be processed by the node(s) to see if there is a response required. These are the handlers called by the CAN receive (Rx) state machine to accomplish that.</p>
-<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd>
-<dd>
-Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__rx__message__handler__t.html">interface_can_rx_message_handler_t</a> field during initialization of the application. see: <a class="el" href="#aaa035b3a9b3535b413f441c4cb6d741f">CanRxMessageHandler_initialize()</a>. </dd></dl>
+<div class="textblock"><p>Message handlers for CAN receive operations. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
+</ul>
+</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="aaa035b3a9b3535b413f441c4cb6d741f" name="aaa035b3a9b3535b413f441c4cb6d741f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa035b3a9b3535b413f441c4cb6d741f">&#9670;&#160;</a></span>CanRxMessageHandler_initialize()</h2>
@@ -183,12 +186,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Initializes the CAN Receive (Rx) Message Handlers. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__rx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_rx_message_handl...">interface_can_rx_message_handler_t</a> *interface_can_frame_message_handler - Pointer to a <a class="el" href="structinterface__can__rx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_rx_message_handl...">interface_can_rx_message_handler_t</a> struct containing the functions that this module requires.</td></tr>
+    <tr><td class="paramname">interface_can_frame_message_handler</td><td>Pointer to a <a class="el" href="structinterface__can__rx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_rx_message_handl...">interface_can_rx_message_handler_t</a> struct containing the functions that this module requires. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -227,14 +230,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles a first frame of an OpenLcb/LCC message that is sent multiple CAN frames. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received. </td></tr>
-    <tr><td class="paramname">uint8_t</td><td>offset - Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
-    <tr><td class="paramname">payload_type_enum</td><td>data_type - Defines what data type will be required for this OpenLcb/LCC message. <br  />
- Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
+    <tr><td class="paramname">data_type</td><td>Defines what data type will be required for this OpenLcb/LCC message Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -268,12 +270,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles a middle frame of an OpenLcb/LCC message that is sent multiple CAN frames. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received. </td></tr>
-    <tr><td class="paramname">uint8_t</td><td>offset - Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -307,12 +309,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the last frame of an OpenLcb/LCC message that is sent multiple CAN frames. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received. </td></tr>
-    <tr><td class="paramname">uint8_t</td><td>offset - Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -351,14 +353,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles a frame of an OpenLcb/LCC message that is a complete message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received. </td></tr>
-    <tr><td class="paramname">uint8_t</td><td>offset - Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
-    <tr><td class="paramname">payload_type_enum</td><td>data_type - Defines what data type will be required for this OpenLcb/LCC message. <br  />
- Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
+    <tr><td class="paramname">data_type</td><td>Defines what data type will be required for this OpenLcb/LCC message Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -394,18 +395,16 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 </table>
 </div><div class="memdoc">
 
-<p>Handles a frame of a multiple CAN frame OpenLcb/LCC SNIP message that is being sent in the original Protocol format. </p>
-<p>The original SNIP format used the number of NULLs in the string to find the end of the message, later the protocol was updated when a mechanism for encoding a bits in the upper nibble of the 2 Byte target Alias passed in the first 2 bytes of the CAN data. This encoding allowed this message to be handled using the first/middle/last handlers above.</p>
+<p>Handles a frame of a multiple CAN frame OpenLcb/LCC SNIP message that is being sent in the original Protocol format. The original SNIP format used the number of NULLs in the string to find the end of the message, later the protocol was updated when a mechanism for encoding a bits in the upper nibble of the 2 Byte target Alias passed in the first 2 bytes of the CAN data. This encoding allowed this message to be handled using the first/middle/last handlers above. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received. </td></tr>
-    <tr><td class="paramname">uint8_t</td><td>offset - Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
-    <tr><td class="paramname">payload_type_enum</td><td>data_type - Defines what data type will be required for this OpenLcb/LCC message. <br  />
- Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
+    <tr><td class="paramname">data_type</td><td>Defines what data type will be required for this OpenLcb/LCC message Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -444,14 +443,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles a stream frame of an OpenLcb/LCC message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received. </td></tr>
-    <tr><td class="paramname">uint8_t</td><td>offset - Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
-    <tr><td class="paramname">payload_type_enum</td><td>data_type - Defines what data type will be required for this OpenLcb/LCC message. <br  />
- Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames. </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in the Data array where the actual data begins. Some messages place a target Alias in the first 2 bytes and some do not. </td></tr>
+    <tr><td class="paramname">data_type</td><td>Defines what data type will be required for this OpenLcb/LCC message Required to allow the handler to allocate an OpenLcb/LCC buffer to start assembling the message on subsequent received frames. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -481,11 +479,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the reply if the received message is a RID CAN message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -515,11 +513,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the reply if the received message is an AMD CAN message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -549,11 +547,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the reply if the received message is an AME CAN message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -583,11 +581,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the reply if the received message is an AMR CAN message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -617,11 +615,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the reply if the received message is an Error Info Report CAN message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -651,11 +649,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Handles the reply if the received message is a CID CAN message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg - Pointer to the CAN frame buffer that was received.</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to the CAN frame buffer that was received </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

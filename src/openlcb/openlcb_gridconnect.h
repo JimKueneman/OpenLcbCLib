@@ -25,15 +25,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @file openlcb_gridconnect.h
- *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are
- * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to
- * access the buffers.
- *
+ * @brief GridConnect protocol implementation for CAN message conversion
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -63,10 +57,28 @@ extern "C"
 {
 #endif /* __cplusplus */
 
+    /**
+     * @brief Processes incoming GridConnect byte stream and extracts complete message when done
+     * @param next_byte Next byte from the GridConnect stream
+     * @param buffer Pointer to buffer to store the extracted GridConnect message
+     * @return True when a complete GridConnect message has been extracted, false otherwise
+     */
     extern bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridconnect_buffer_t *buffer);
 
+    /**
+     * @brief Converts a GridConnect message to a CAN message structure
+     * @param gridconnect Pointer to GridConnect message buffer
+     * @param can_msg Pointer to CAN message structure to fill
+     * @return None
+     */
     extern void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
 
+    /**
+     * @brief Converts a CAN message structure to GridConnect format
+     * @param gridconnect Pointer to buffer to store the GridConnect message
+     * @param can_msg Pointer to source CAN message structure
+     * @return None
+     */
     extern void OpenLcbGridConnect_from_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t *can_msg);
 
 #ifdef __cplusplus

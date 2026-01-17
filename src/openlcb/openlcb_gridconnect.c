@@ -24,16 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @file openlcb_gridconnect.h
- *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are
- * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to
- * access the buffers.
- *
+ * @file openlcb_gridconnect.c
+ * @brief Implementation of GridConnect protocol conversion
  * @author Jim Kueneman
- * @date 11 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include <assert.h>
@@ -205,7 +199,7 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect, can_msg_t 
 
     unsigned long data_char_count = strlen((char *)gridconnect) - (12);
     can_msg->payload_count = (uint8_t)(data_char_count / 2);
-  
+
     int payload_index = 0;
     unsigned long i = 11;
     while (i < (data_char_count + 11))

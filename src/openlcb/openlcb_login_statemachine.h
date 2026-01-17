@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,32 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_login_statemachine.h
- *
- *
+ * @file openlcb_login_statemachine.h
+ * @brief Login state machine implementation for node initialization
  * @author Jim Kueneman
- * @date 11 Oct 2025
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
-#define	__OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
+#define    __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__
 
 #include "openlcb_types.h"
 
 typedef struct {
-    
+
     // Required function assignments
     bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
     openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
-    
+
     // Required Handler function assignments
     void (*load_initialization_complete)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
     void (*load_producer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
     void (*load_consumer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
-    
+
     // Required internal function assignments (for testability)
     void (*process_login_statemachine)(openlcb_login_statemachine_info_t *statemachine_info);
     bool (*handle_outgoing_openlcb_message)(void);
@@ -59,30 +58,30 @@ typedef struct {
 
 } interface_openlcb_login_state_machine_t;
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     extern void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine);
 
     extern void OpenLcbLoginMainStatemachine_run(void);
-    
+
     // For test coverage
 
     extern void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
-    
+
     extern bool OpenLcbLoginStatemachine_handle_outgoing_openlcb_message(void);
- 
+
     extern bool OpenLcbLoginStatemachine_handle_try_reenumerate(void);
 
     extern bool OpenLcbLoginStatemachine_handle_try_enumerate_first_node(void);
 
     extern bool OpenLcbLoginStatemachine_handle_try_enumerate_next_node(void);
-    
+
     extern openlcb_login_statemachine_info_t *OpenLcbLoginStatemachine_get_statemachine_info(void);
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__ */
+#endif    /* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE__ */

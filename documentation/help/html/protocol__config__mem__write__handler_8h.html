@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Configuration memory write protocol handler.  
+<a href="#details">More...</a></p>
+
 <p><a href="protocol__config__mem__write__handler_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -122,6 +125,8 @@ Functions</h2></td></tr>
 <tr class="separator:a7bdb7f15bdd9995c5e22c95ef0fe56d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade8e4be895fe740043d2d0cbeb3b6dc9" id="r_ade8e4be895fe740043d2d0cbeb3b6dc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade8e4be895fe740043d2d0cbeb3b6dc9">ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="separator:ade8e4be895fe740043d2d0cbeb3b6dc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9715d1dfcab9d73fe90edbf27c026ce6" id="r_a9715d1dfcab9d73fe90edbf27c026ce6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9715d1dfcab9d73fe90edbf27c026ce6">ProtocolConfigMemWriteHandler_write_space_firmware</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="separator:a9715d1dfcab9d73fe90edbf27c026ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50e6bfec7458fac25d7adbd77368af28" id="r_a50e6bfec7458fac25d7adbd77368af28"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50e6bfec7458fac25d7adbd77368af28">ProtocolConfigMemWriteHandler_write_space_under_mask_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail)</td></tr>
 <tr class="separator:a50e6bfec7458fac25d7adbd77368af28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c1ec325ab08b36cabf99d77bab61814" id="r_a6c1ec325ab08b36cabf99d77bab61814"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c1ec325ab08b36cabf99d77bab61814">ProtocolConfigMemWriteHandler_write_request_config_mem</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a> *config_mem_write_request_info)</td></tr>
@@ -136,7 +141,8 @@ Functions</h2></td></tr>
 <tr class="separator:a200fcc9dc0362a182b47ba3f8687878e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<div class="textblock"><p>Configuration memory write protocol handler. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
@@ -144,7 +150,7 @@ Functions</h2></td></tr>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>22 Oct 2025 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a456f44446ea0be1a304531ca365c41bf" name="a456f44446ea0be1a304531ca365c41bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a456f44446ea0be1a304531ca365c41bf">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_initialize()</h2>
@@ -332,6 +338,31 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9715d1dfcab9d73fe90edbf27c026ce6" name="a9715d1dfcab9d73fe90edbf27c026ce6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9715d1dfcab9d73fe90edbf27c026ce6">&#9670;&#160;</a></span>ProtocolConfigMemWriteHandler_write_space_firmware()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProtocolConfigMemWriteHandler_write_space_firmware </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
           <td></td>

@@ -98,6 +98,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Datagram protocol handler implementation.  
+<a href="#details">More...</a></p>
+
 <p><a href="protocol__datagram__handler_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -113,23 +116,42 @@ Typedefs</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a87c419434a44020752f0fd815f1a0832" id="r_a87c419434a44020752f0fd815f1a0832"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87c419434a44020752f0fd815f1a0832">ProtocolDatagramHandler_initialize</a> (const <a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a> *interface_protocol_datagram_handler)</td></tr>
+<tr class="memdesc:a87c419434a44020752f0fd815f1a0832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Protocol Datagram Handler module.  <br /></td></tr>
 <tr class="separator:a87c419434a44020752f0fd815f1a0832"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe5f21fda782ce61534588d89163ccff" id="r_abe5f21fda782ce61534588d89163ccff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe5f21fda782ce61534588d89163ccff">ProtocolDatagramHandler_load_datagram_received_ok_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:abe5f21fda782ce61534588d89163ccff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a datagram received OK acknowledgment message.  <br /></td></tr>
 <tr class="separator:abe5f21fda782ce61534588d89163ccff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74c7ab99bff8408f9a00f77ed79da9f4" id="r_a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74c7ab99bff8408f9a00f77ed79da9f4">ProtocolDatagramHandler_load_datagram_rejected_message</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t return_code)</td></tr>
+<tr class="memdesc:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a datagram rejected message with error code.  <br /></td></tr>
 <tr class="separator:a74c7ab99bff8408f9a00f77ed79da9f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d034624deb9c413c4977afa8987a6df" id="r_a4d034624deb9c413c4977afa8987a6df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d034624deb9c413c4977afa8987a6df">ProtocolDatagramHandler_datagram</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4d034624deb9c413c4977afa8987a6df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes an incoming datagram message.  <br /></td></tr>
 <tr class="separator:a4d034624deb9c413c4977afa8987a6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4d3a37a821acbbf357b6fd09281e851" id="r_ad4d3a37a821acbbf357b6fd09281e851"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4d3a37a821acbbf357b6fd09281e851">ProtocolDatagramHandler_datagram_received_ok</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ad4d3a37a821acbbf357b6fd09281e851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles datagram received OK acknowledgment.  <br /></td></tr>
 <tr class="separator:ad4d3a37a821acbbf357b6fd09281e851"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15cc3c7547fd0963f2ce553de92911bd" id="r_a15cc3c7547fd0963f2ce553de92911bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15cc3c7547fd0963f2ce553de92911bd">ProtocolDatagramHandler_datagram_rejected</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a15cc3c7547fd0963f2ce553de92911bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles datagram rejected response.  <br /></td></tr>
 <tr class="separator:a15cc3c7547fd0963f2ce553de92911bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7b23593b33a3a3c66f3afcd6886ebce" id="r_af7b23593b33a3a3c66f3afcd6886ebce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7b23593b33a3a3c66f3afcd6886ebce">ProtocolDatagramHandler_clear_resend_datagram_message</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:af7b23593b33a3a3c66f3afcd6886ebce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the resend datagram message flag for the specified node.  <br /></td></tr>
 <tr class="separator:af7b23593b33a3a3c66f3afcd6886ebce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bab92fd769c43b46c7254b8a8ed4e79" id="r_a6bab92fd769c43b46c7254b8a8ed4e79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bab92fd769c43b46c7254b8a8ed4e79">ProtocolDatagramHandler_100ms_timer_tick</a> (void)</td></tr>
+<tr class="memdesc:a6bab92fd769c43b46c7254b8a8ed4e79"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms timer tick handler for datagram protocol timeouts  <br /></td></tr>
 <tr class="separator:a6bab92fd769c43b46c7254b8a8ed4e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Typedef Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Datagram protocol handler implementation. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+</div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a34207c47984e37a0c4ecc774fcc1ca32" name="a34207c47984e37a0c4ecc774fcc1ca32"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34207c47984e37a0c4ecc774fcc1ca32">&#9670;&#160;</a></span>memory_handler_t</h2>
 
@@ -168,6 +190,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initializes the Protocol Datagram Handler module. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface_protocol_datagram_handler</td><td>Pointer to the interface structure containing required callbacks </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="abe5f21fda782ce61534588d89163ccff" name="abe5f21fda782ce61534588d89163ccff"></a>
@@ -196,6 +227,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Loads a datagram received OK acknowledgment message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Time in seconds (as 2^N) until reply will be sent </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -226,6 +267,16 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads a datagram rejected message with error code. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+    <tr><td class="paramname">return_code</td><td>Error code indicating reason for rejection </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a4d034624deb9c413c4977afa8987a6df" name="a4d034624deb9c413c4977afa8987a6df"></a>
@@ -250,6 +301,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Processes an incoming datagram message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -276,6 +336,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Handles datagram received OK acknowledgment. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a15cc3c7547fd0963f2ce553de92911bd" name="a15cc3c7547fd0963f2ce553de92911bd"></a>
@@ -300,6 +369,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Handles datagram rejected response. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -326,6 +404,15 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Clears the resend datagram message flag for the specified node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
 </div>
 </div>
 <a id="a6bab92fd769c43b46c7254b8a8ed4e79" name="a6bab92fd769c43b46c7254b8a8ed4e79"></a>
@@ -350,6 +437,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>100ms timer tick handler for datagram protocol timeouts </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">None</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

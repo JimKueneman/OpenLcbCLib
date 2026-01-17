@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implements handlers for use by the CAN Transmit (Tx) statemachine <a class="el" href="can__tx__statemachine_8h.html">can_tx_statemachine.h</a>.  
+<p>Message handlers for CAN transmit operations.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__tx__message__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -130,12 +130,14 @@ Functions</h2></td></tr>
 <tr class="separator:aa99ced3d0e3dc246de366c88031b6596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements handlers for use by the CAN Transmit (Tx) statemachine <a class="el" href="can__tx__statemachine_8h.html">can_tx_statemachine.h</a>. </p>
-<p>As CAN and OpenLcb/LCC messages are transmitted these handlers transmit different types of messages. <br  />
-</p>
-<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd>
-<dd>
-Any handler may be overridden by assigning a custom function pointer to the <a class="el" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a> field during initialization of the application. see: <a class="el" href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize()</a>. </dd></dl>
+<div class="textblock"><p>Message handlers for CAN transmit operations. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
+</ul>
+</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a4bde37fc36f08ccbbb7dd4a9a17b2713" name="a4bde37fc36f08ccbbb7dd4a9a17b2713"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">&#9670;&#160;</a></span>CanTxMessageHandler_initialize()</h2>
@@ -163,12 +165,12 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Initializes the CAN Transmit (Tx) state machine handlers. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">const</td><td><a class="el" href="structinterface__can__tx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...">interface_can_tx_message_handler_t</a> *interface_can_tx_message_handler - Pointer to a <a class="el" href="structinterface__can__tx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...">interface_can_tx_message_handler_t</a> struct containing the functions that this module requires.</td></tr>
+    <tr><td class="paramname">interface_can_tx_message_handler</td><td>Pointer to a <a class="el" href="structinterface__can__tx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...">interface_can_tx_message_handler_t</a> struct containing the functions that this module requires. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
 </div>
@@ -207,13 +209,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Sends an addressed OpenLcb/LCC message on the CAN physical layer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -252,13 +254,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Sends an unaddressed OpenLcb/LCC message on the CAN physical layer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -297,13 +299,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Sends a datagram OpenLcb/LCC message on the CAN physical layer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -342,13 +344,13 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Sends a stream OpenLcb/LCC message on the CAN physical layer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td><td>*openlcb_msg - Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg_worker - Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>*openlcb_start_index - Were in the OpenLcb Payload does the data start</td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -378,11 +380,11 @@ Any handler may be overridden by assigning a custom function pointer to the <a c
 <p>Sends an CAN message on the CAN physical layer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*can_msg_worker - Pointer to a CAN buffer message to transmit</td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN buffer message to transmit </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

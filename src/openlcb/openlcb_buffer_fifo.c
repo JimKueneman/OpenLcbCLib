@@ -24,17 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_buffer_fifo.c
- *
- * Implementation of the FIFO where the OpenLcb messages are placed by the receive
- * module.  The main loop pulls them out one at a time and dispatched them to the handlers.
- * Caution is required as the receive module may be putting new messages in within the 
- * context of an interrupt or thread so when the main loop access this buffer it must 
- * use the lock the Can Rx and 100ms timer modules with the Pause and Resume functions 
- * exported by them respectively.
- *
+ * @file openlcb_buffer_fifo.c
+ * @brief Implementation of the FIFO buffer for OpenLcb messages
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_buffer_fifo.h"

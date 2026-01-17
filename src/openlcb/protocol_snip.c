@@ -24,14 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_snip.c
- *
- * Implementation of the Openlcb Simple Node Identification Protocol (SNIP).
- * Handlers are call from the openlcb_main_statemachine.c processing when a 
- * datagram message is being processed from the FIFO buffer.
- *
+ * @file protocol_snip.c
+ * @brief Implementation of Simple Node Information Protocol (SNIP)
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "protocol_snip.h"
@@ -98,7 +94,7 @@ static uint16_t _process_snip_version(openlcb_msg_t* outgoing_msg, uint16_t *pay
     (*payload_data_offset)++;
 
     return *payload_data_offset;
-   
+
 }
 
 uint16_t ProtocolSnip_load_manufacturer_version_id(openlcb_node_t* openlcb_node, openlcb_msg_t* outgoing_msg, uint16_t payload_data_offset, uint16_t byte_count) {

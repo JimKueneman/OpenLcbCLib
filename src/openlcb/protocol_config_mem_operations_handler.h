@@ -24,17 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_config_mem_operation_handler.h
- *
- *
+ * @file protocol_config_mem_operations_handler.h
+ * @brief Configuration memory operations protocol handler
  * @author Jim Kueneman
- * @date 22 Oct 2025
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__
-#define	__OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__
+#define    __OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -42,7 +41,7 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    
+
     // Required function assignments
     void (*load_datagram_received_ok_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
     void (*load_datagram_received_rejected_message)(openlcb_statemachine_info_t *statemachine_info, uint16_t error_code);
@@ -66,52 +65,52 @@ typedef struct {
 
 } interface_protocol_config_mem_operations_handler_t;
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     extern void ProtocolConfigMemOperationsHandler_initialize(const interface_protocol_config_mem_operations_handler_t *interface_protocol_config_mem_operations_handler);
-    
+
     extern void ProtocolConfigMemOperationsHandler_options_cmd(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_options_reply(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_get_address_space_info(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_not_present(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_get_address_space_info_reply_present(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_reserve_lock(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_reserve_lock_reply(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_get_unique_id(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_get_unique_id_reply(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_unfreeze(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_freeze(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t * statemachine_info);
-    
+
     extern void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t * statemachine_info);
-    
-    
+
+
 
     extern void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-    
-    extern void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-    
-    extern void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
-   
 
-#ifdef	__cplusplus
+    extern void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
+    extern void ProtocolConfigMemOperationsHandler_request_reserve_lock(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
+
+
+#ifdef    __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__ */
+#endif    /* __OPENLCB_PROTOCOL_CONFIG_MEM_OPERATIONS_HANDLER__ */
 

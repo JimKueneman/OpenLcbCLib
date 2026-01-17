@@ -24,14 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_main_statemachine.c
- *
- * Implementation of the Openlcb main statemachine.  You typically do not call this
- * statemachine directly it will depend on what the physical transport is and if that 
- * needs to deal with CAN Adaptations of the protocol.  
- *
+ * @file openlcb_main_statemachine.c
+ * @brief Implementation of the main OpenLcb protocol state machine
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_main_statemachine.h"
@@ -57,7 +53,7 @@ static openlcb_statemachine_info_t _statemachine_info;
 void OpenLcbMainStatemachine_initialize(const interface_openlcb_main_statemachine_t *interface_openlcb_main_statemachine) {
 
     _interface = (interface_openlcb_main_statemachine_t*) interface_openlcb_main_statemachine;
-    
+
     _statemachine_info.outgoing_msg_info.msg_ptr = &_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload = (openlcb_payload_t*) _statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = STREAM;
@@ -106,15 +102,15 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
             MTI_OPTIONAL_INTERACTION_REJECTED);
-    
+
     OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
-            ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL,
             0);
-    
+
     OpenLcbUtilities_copy_word_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr, 
-            statemachine_info->incoming_msg_info.msg_ptr->mti, 
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            statemachine_info->incoming_msg_info.msg_ptr->mti,
             2);
 
     statemachine_info->outgoing_msg_info.valid = true;
@@ -130,24 +126,24 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
     }
 
-    
+
     if (!_interface->does_node_process_msg(statemachine_info)) {
-     
+
         return;
-        
+
     }
 
- 
+
     switch (statemachine_info->incoming_msg_info.msg_ptr->mti) {
 
         case MTI_SIMPLE_NODE_INFO_REQUEST:
-           
-            if (_interface->snip_simple_node_info_request) {     
+
+            if (_interface->snip_simple_node_info_request) {
 
                 _interface->snip_simple_node_info_request(statemachine_info);
 
             } else {
-                   
+
                 _interface->load_interaction_rejected(statemachine_info);
 
             }
@@ -165,7 +161,7 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             break;
 
         case MTI_INITIALIZATION_COMPLETE:
- 
+
             if (_interface->message_network_initialization_complete) {
 
                 _interface->message_network_initialization_complete(statemachine_info);
@@ -680,7 +676,7 @@ void OpenLcbMainStatemachine_run(void) {
 
     }
 
-    // If the message handler needs to send multiple messages then enumerate the same incoming/login outgoing message again   
+    // If the message handler needs to send multiple messages then enumerate the same incoming/login outgoing message again
     if (_interface->handle_try_reenumerate()) {
 
         return;
@@ -701,7 +697,7 @@ void OpenLcbMainStatemachine_run(void) {
 
     }
 
-    // Enumerate all the OpenLcb Nodes  
+    // Enumerate all the OpenLcb Nodes
     if (_interface->handle_try_enumerate_next_node()) {
 
         return;

@@ -24,14 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_main_statemachine.h
- *
- * Implementation of the Openlcb main statemachine.  You typically do not call this
- * statemachine directly it will depend on what the physical transport is and if that
- * needs to deal with CAN Adaptations of the protocol.
- *
+ * @file openlcb_main_statemachine.h
+ * @brief Main OpenLcb protocol state machine implementation
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -45,7 +41,7 @@
 #include "openlcb_types.h"
 
 typedef struct {
-    
+
     // Required function assignments
     void (*lock_shared_resources)(void);
     void (*unlock_shared_resources)(void);
@@ -69,13 +65,13 @@ typedef struct {
 
     // Required internal function assignments (for testability)
     void (*process_main_statemachine)(openlcb_statemachine_info_t *statemachine_info);
-    bool (*does_node_process_msg)(openlcb_statemachine_info_t *_statemachine_info); 
+    bool (*does_node_process_msg)(openlcb_statemachine_info_t *_statemachine_info);
     bool (*handle_outgoing_openlcb_message)(void);
     bool (*handle_try_reenumerate)(void);
     bool (*handle_try_pop_next_incoming_openlcb_message)(void);
     bool (*handle_try_enumerate_first_node)(void);
-    bool (*handle_try_enumerate_next_node)(void); 
-    
+    bool (*handle_try_enumerate_next_node)(void);
+
 
     // Optional SNIP Protocol Handler function assignments
     void (*snip_simple_node_info_request)(openlcb_statemachine_info_t *statemachine_info);
@@ -119,7 +115,7 @@ typedef struct {
     void (*stream_send_data)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_data_proceed)(openlcb_statemachine_info_t *statemachine_info);
     void (*stream_data_complete)(openlcb_statemachine_info_t *statemachine_info);
-    
+
 
 } interface_openlcb_main_statemachine_t;
 

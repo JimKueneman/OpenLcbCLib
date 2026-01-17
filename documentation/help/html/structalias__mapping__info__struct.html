@@ -92,7 +92,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Structure to hold an array of <a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID.  
+<p>Structure to hold an array of <a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID If during a message/frame reception it is found that some other node is using an Alias that is associated with one of our nodes the the <a class="el" href="#a0fa6b7c5feb944f957c07ee2e25c49fd">has_duplicate_alias</a> flag is set. This mean at least one mapping in the array is a duplicate.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -103,8 +103,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a0fa6b7c5feb944f957c07ee2e25c49fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Structure to hold an array of <a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID. </p>
-<p>If during a message/frame reception it is found that some other node is using an Alias that is associated with one of our nodes the the <a class="el" href="#a0fa6b7c5feb944f957c07ee2e25c49fd">has_duplicate_alias</a> flag is set. This mean at least one mapping in the array is a duplicate. </p>
+<div class="textblock"><p>Structure to hold an array of <a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> structures and a flag to flag the main loop that at least one of the containing mappings has detected a duplicate Alias ID If during a message/frame reception it is found that some other node is using an Alias that is associated with one of our nodes the the <a class="el" href="#a0fa6b7c5feb944f957c07ee2e25c49fd">has_duplicate_alias</a> flag is set. This mean at least one mapping in the array is a duplicate. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="aa44366f8302ed674cc8a4d17ef3ac018" name="aa44366f8302ed674cc8a4d17ef3ac018"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa44366f8302ed674cc8a4d17ef3ac018">&#9670;&#160;</a></span>list</h2>

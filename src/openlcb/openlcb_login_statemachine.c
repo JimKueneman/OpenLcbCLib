@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_login_statemachine.c
- *
- *
+ * @file openlcb_login_statemachine.c
+ * @brief Implementation of the login state machine
  * @author Jim Kueneman
- * @date 12 Aug 2025
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_login_statemachine.h"
@@ -52,7 +51,7 @@ static openlcb_login_statemachine_info_t _statemachine_info;
 void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_machine_t *interface_openlcb_login_state_machine) {
 
     _interface = (interface_openlcb_login_state_machine_t*) interface_openlcb_login_state_machine;
-    
+
     _statemachine_info.outgoing_msg_info.msg_ptr = &_statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_msg;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload = (openlcb_payload_t*) _statemachine_info.outgoing_msg_info.openlcb_msg.openlcb_payload;
     _statemachine_info.outgoing_msg_info.msg_ptr->payload_type = BASIC;
@@ -71,7 +70,7 @@ void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb
         case RUNSTATE_LOAD_INITIALIZATION_COMPLETE:
 
             _interface->load_initialization_complete(openlcb_statemachine_info);
-     
+
             return;
 
         case RUNSTATE_LOAD_PRODUCER_EVENTS:
@@ -85,9 +84,9 @@ void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb
             _interface->load_consumer_events(openlcb_statemachine_info);
 
             return;
-            
+
         default:
-            
+
             return;
 
     }
@@ -186,7 +185,7 @@ void OpenLcbLoginMainStatemachine_run(void) {
 
     }
 
-    // If the message handler needs to send multiple messages then enumerate the same incoming/login outgoing message again   
+    // If the message handler needs to send multiple messages then enumerate the same incoming/login outgoing message again
     if (_interface->handle_try_reenumerate()) {
 
         return;
@@ -200,7 +199,7 @@ void OpenLcbLoginMainStatemachine_run(void) {
 
     }
 
-    // Enumerate all the OpenLcb Nodes  
+    // Enumerate all the OpenLcb Nodes
     if (_interface->handle_try_enumerate_next_node()) {
 
         return;
@@ -210,8 +209,8 @@ void OpenLcbLoginMainStatemachine_run(void) {
 }
 
 openlcb_login_statemachine_info_t *OpenLcbLoginStatemachine_get_statemachine_info(void) {
-    
+
     return &_statemachine_info;
-    
+
 }
 

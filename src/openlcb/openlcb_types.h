@@ -24,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_types.h
- *
- * Typedefs and various constants for the library.
- *
+ * @file openlcb_types.h
+ * @brief Type definitions and constants for the OpenLcb library
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
@@ -49,7 +47,7 @@ extern "C" {
     // Total number of message buffers available for use
     // Note you can override these with Define Macros in your compiler
 
-    // The SUM of the previous 4 buffer defines must be no greater than 126 for an 8 bit processor (8 bit signed integer) 
+    // The SUM of the previous 4 buffer defines must be no greater than 126 for an 8 bit processor (8 bit signed integer)
     //  Should never really need more than 10-20
 
 #ifndef USER_DEFINED_BASIC_BUFFER_DEPTH
@@ -71,7 +69,7 @@ extern "C" {
     // The SUM of the previous 4 buffer defines must be no greater than 126 for an 8 bit processor (8 bit signed integer)
 
 #ifndef USER_DEFINED_NODE_BUFFER_DEPTH
-#define USER_DEFINED_NODE_BUFFER_DEPTH 4 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work 
+#define USER_DEFINED_NODE_BUFFER_DEPTH 4 // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #endif
 
 #ifndef USER_DEFINED_CDI_LENGTH
@@ -82,7 +80,7 @@ extern "C" {
 #define USER_DEFINED_FDI_LENGTH 1000 // USER DEFINED
 #endif
 
-#ifndef USER_DEFINED_PRODUCER_COUNT    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work 
+#ifndef USER_DEFINED_PRODUCER_COUNT    // USER DEFINED through overriding in the compiler macros, leave these alone so the Google Tests work
 #define USER_DEFINED_PRODUCER_COUNT 64 // USER DEFINED Max of 126 for an 8 bit processor (8 bit signed integer)
 #endif
 

@@ -97,6 +97,9 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
+<p>Simple Node Information Protocol (SNIP) implementation.  
+<a href="#details">More...</a></p>
+
 <p><a href="protocol__snip_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -139,7 +142,18 @@ Functions</h2></td></tr>
 <tr class="memitem:ad9dd288bc1780719e4078408eef25b03" id="r_ad9dd288bc1780719e4078408eef25b03"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9dd288bc1780719e4078408eef25b03">ProtocolSnip_validate_snip_reply</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *snip_reply_msg)</td></tr>
 <tr class="separator:ad9dd288bc1780719e4078408eef25b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Simple Node Information Protocol (SNIP) implementation. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a299e55a84322665954521e5e913372d8" name="a299e55a84322665954521e5e913372d8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a299e55a84322665954521e5e913372d8">&#9670;&#160;</a></span>ProtocolSnip_initialize()</h2>
 
@@ -255,15 +269,15 @@ Functions</h2></td></tr>
 <p>Copies the Manufacturer Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -307,15 +321,15 @@ Functions</h2></td></tr>
 <p>Copies the Manufacturer Name string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -359,15 +373,15 @@ Functions</h2></td></tr>
 <p>Copies the Manufacturer Model string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -411,15 +425,15 @@ Functions</h2></td></tr>
 <p>Copies the Manufacturer Hardware Version string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -463,15 +477,15 @@ Functions</h2></td></tr>
 <p>Copies the Manufacturer Software Version string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -515,15 +529,15 @@ Functions</h2></td></tr>
 <p>Copies the User Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -567,15 +581,15 @@ Functions</h2></td></tr>
 <p>Copies the User Name string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>
@@ -619,15 +633,15 @@ Functions</h2></td></tr>
 <p>Copies the User Description string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node_t*</td><td>openlcb_node - Node begin requested for the information. </td></tr>
-    <tr><td class="paramname">openlcb_msg_t*</td><td>outgoing_msg - Message to load the information into its payload. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>payload_index - The Payload index to copy the information to. </td></tr>
-    <tr><td class="paramname">uint16_t</td><td>requested_bytes - The max number of bytes to copy</td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
+    <tr><td class="paramname">payload_index</td><td>The Payload index to copy the information to </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated </dd></dl>
 
 </div>
 </div>

@@ -24,17 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_config_mem_write_handler.h
- *
- *
+ * @file protocol_config_mem_write_handler.h
+ * @brief Configuration memory write protocol handler
  * @author Jim Kueneman
- * @date 22 Oct 2025
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__
-#define	__OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__
+#define    __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -56,55 +55,55 @@ typedef struct {
     void (*write_request_traction_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     void (*write_request_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
     void (*write_request_firmware)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
-    
+
     // Optional override to return the flag in the Datagram ACK to allow the client to say the reply will be coming 2^N seconds
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
 
 } interface_protocol_config_mem_write_handler_t;
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
     // Handlers
-    
+
     extern void ProtocolConfigMemWriteHandler_initialize(const interface_protocol_config_mem_write_handler_t *interface_protocol_config_mem_write_handler);
 
     extern void ProtocolConfigMemWriteHandler_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_all(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_config_memory(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_acdi_manufacturer(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_firmware(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_space_under_mask_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
-    
+
 
     // Write Request Functions for Handlers
-    
+
     extern void ProtocolConfigMemWriteHandler_write_request_config_mem(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
-    
+
 
     extern void ProtocolConfigMemWriteHandler_write_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space, uint8_t return_msg_ok, uint8_t return_msg_fail);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_reply_ok_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
-    
+
     extern void ProtocolConfigMemWriteHandler_write_reply_fail_message(openlcb_statemachine_info_t *statemachine_info, uint8_t space);
 
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__ */
+#endif    /* __OPENLCB_PROTOCOL_CONFIG_MEM_WRITE_HANDLER__ */

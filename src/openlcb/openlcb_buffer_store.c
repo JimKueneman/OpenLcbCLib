@@ -24,16 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_buffer_store.c
- *
- * Implements the core buffers for normal, snip, datagram, and stream length buffers.
- * The FIFO and List buffers are arrays of pointers to these core buffers that are
- * allocated and freed through access.  The CAN Rx and 100ms timer access these buffers
- * so care must be taken to Pause and Resume those calls if the main loop needs to
- * access the buffers.
- *
+ * @file openlcb_buffer_store.c
+ * @brief Implementation of the core buffer store
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_buffer_store.h"
@@ -94,7 +88,7 @@ void OpenLcbBufferStore_initialize(void) {
     _buffer_store_datagram_max_messages_allocated = 0;
     _buffer_store_snip_max_messages_allocated = 0;
     _buffer_store_stream_max_messages_allocated = 0;
-    
+
 }
 
 static void _update_buffer_telemetry(payload_type_enum payload_type) {
@@ -107,52 +101,52 @@ static void _update_buffer_telemetry(payload_type_enum payload_type) {
             if (_buffer_store_basic_messages_allocated > _buffer_store_basic_max_messages_allocated) {
 
                 _buffer_store_basic_max_messages_allocated++;
-                
+
                 break;
             }
 
             break;
-            
+
         case DATAGRAM:
 
             _buffer_store_datagram_messages_allocated++;
             if (_buffer_store_datagram_messages_allocated > _buffer_store_datagram_max_messages_allocated) {
 
                 _buffer_store_datagram_max_messages_allocated++;
-                
+
                 break;
             }
 
             break;
-            
+
         case SNIP:
 
             _buffer_store_snip_messages_allocated++;
             if (_buffer_store_snip_messages_allocated > _buffer_store_snip_max_messages_allocated) {
 
                 _buffer_store_snip_max_messages_allocated++;
-                
+
                 break;
             }
 
             break;
-            
+
         case STREAM:
 
             _buffer_store_stream_messages_allocated++;
             if (_buffer_store_stream_messages_allocated > _buffer_store_stream_max_messages_allocated) {
 
                 _buffer_store_stream_max_messages_allocated++;
-                
+
                 break;
             }
 
             break;
-            
+
         default:
-            
+
             break;
-            
+
     }
 }
 
@@ -164,37 +158,37 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
     switch (payload_type) {
 
         case BASIC:
-            
+
             offset_start = 0;
             offset_end = USER_DEFINED_BASIC_BUFFER_DEPTH;
 
             break;
-            
+
         case DATAGRAM:
-            
+
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
 
             break;
-            
+
         case SNIP:
-            
+
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_SNIP_BUFFER_DEPTH;
 
             break;
-            
+
         case STREAM:
-            
+
             offset_start = USER_DEFINED_BASIC_BUFFER_DEPTH + USER_DEFINED_DATAGRAM_BUFFER_DEPTH + USER_DEFINED_SNIP_BUFFER_DEPTH;
             offset_end = offset_start + USER_DEFINED_STREAM_BUFFER_DEPTH;
 
             break;
 
         default:
-            
+
             return NULL;
-            
+
     }
 
     for (int i = offset_start; i < offset_end; i++) {
@@ -211,111 +205,111 @@ openlcb_msg_t *OpenLcbBufferStore_allocate_buffer(payload_type_enum payload_type
     }
 
     return NULL;
-    
+
 }
 
 void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg) {
 
     if (!msg) {
-        
+
         return;
-        
+
     }
 
     msg->reference_count = msg->reference_count - 1;
 
     if (msg->reference_count > 0) {
-        
+
         return;
-        
+
     }
 
     switch (msg->payload_type) {
 
         case BASIC:
-            
+
             _buffer_store_basic_messages_allocated = _buffer_store_basic_messages_allocated - 1;
 
             break;
-            
+
         case DATAGRAM:
-            
+
             _buffer_store_datagram_messages_allocated = _buffer_store_datagram_messages_allocated - 1;
 
             break;
-            
+
         case SNIP:
-            
+
             _buffer_store_snip_messages_allocated = _buffer_store_snip_messages_allocated - 1;
 
             break;
-            
+
         case STREAM:
-            
+
             _buffer_store_stream_messages_allocated = _buffer_store_stream_messages_allocated - 1;
 
             break;
-            
+
     }
 
     msg->reference_count = 0;
 
     msg->state.allocated = false;
-    
+
 }
 
 uint16_t OpenLcbBufferStore_basic_messages_allocated(void) {
 
     return (_buffer_store_basic_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void) {
 
     return (_buffer_store_basic_max_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_datagram_messages_allocated(void) {
 
     return (_buffer_store_datagram_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_datagram_messages_max_allocated(void) {
 
     return (_buffer_store_datagram_max_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_snip_messages_allocated(void) {
 
     return (_buffer_store_snip_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_snip_messages_max_allocated(void) {
 
     return (_buffer_store_snip_max_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_stream_messages_allocated(void) {
 
     return (_buffer_store_stream_messages_allocated);
-    
+
 }
 
 uint16_t OpenLcbBufferStore_stream_messages_max_allocated(void) {
 
     return (_buffer_store_stream_max_messages_allocated);
-    
+
 }
 
 void OpenLcbBufferStore_inc_reference_count(openlcb_msg_t *msg) {
 
     msg->reference_count = msg->reference_count + 1;
-    
+
 }
 
 void OpenLcbBufferStore_clear_max_allocated(void) {
@@ -324,5 +318,5 @@ void OpenLcbBufferStore_clear_max_allocated(void) {
     _buffer_store_datagram_max_messages_allocated = 0;
     _buffer_store_snip_max_messages_allocated = 0;
     _buffer_store_stream_max_messages_allocated = 0;
-    
+
 }

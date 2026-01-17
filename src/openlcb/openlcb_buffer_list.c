@@ -24,13 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_buffer_list.c
- *
- * A linear search list that the incoming CAN Rx module uses to hold messages that
- * are being collected into a single OpenLcb message on the CAN bus.
- *
+ * @file openlcb_buffer_list.c
+ * @brief Implementation of the linear search buffer list
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "openlcb_buffer_list.h"
@@ -97,9 +94,9 @@ openlcb_msg_t *OpenLcbBufferList_find(uint16_t source_alias, uint16_t dest_alias
 openlcb_msg_t *OpenLcbBufferList_release(openlcb_msg_t *msg) {
 
     if (!msg) {
-        
+
         return NULL;
-        
+
     }
 
     for (int i = 0; i < LEN_MESSAGE_BUFFER; i++) {

@@ -96,7 +96,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Implements the core buffers for CAN frames.  
+<p>Core buffer store for CAN frame allocation and management.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__buffer__store_8h_source.html">Go to the source code of this file.</a></p>
@@ -116,17 +116,21 @@ Functions</h2></td></tr>
 <tr class="memdesc:a114ce74d1c445b6df687c6148d62d6c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of CAN messages currently allocated in the buffer store.  <br /></td></tr>
 <tr class="separator:a114ce74d1c445b6df687c6148d62d6c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94cdc3572a78f32c7a31b632b741ff31" id="r_a94cdc3572a78f32c7a31b632b741ff31"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94cdc3572a78f32c7a31b632b741ff31">CanBufferStore_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a94cdc3572a78f32c7a31b632b741ff31"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of CAN messages that have been allocated in the buffer store. Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
+<tr class="memdesc:a94cdc3572a78f32c7a31b632b741ff31"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of CAN messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
 <tr class="separator:a94cdc3572a78f32c7a31b632b741ff31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6eded9ea67c83dfe9fff89a79f36ad6" id="r_ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6eded9ea67c83dfe9fff89a79f36ad6">CanBufferStore_clear_max_allocated</a> (void)</td></tr>
 <tr class="memdesc:ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the running count of the Maximum number of CAN buffer that have been allocated at one time.  <br /></td></tr>
 <tr class="separator:ab6eded9ea67c83dfe9fff89a79f36ad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements the core buffers for CAN frames. </p>
-<p>The CAN buffer store is an array of pointers to CAN frame buffer ( <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a>) The are allocated and freed through function calls <a class="el" href="#afd3358d37ab07ff0f8ec918c00fffe99">CanBufferStore_allocate_buffer()</a> and <a class="el" href="#ad95fb1127ec823f0cc9117848b78e5a7">CanBufferStore_free_buffer()</a>.</p>
-<dl class="section note"><dt>Note</dt><dd>Applications typically only need to access the Initialize function in this module.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>The CAN Receive Statemachine and 100ms timer access these buffers and typically run within interrupts and/or threads. Care must be taken to Pause and Resume the interrupts or threads if the main loop needs to access the buffers for any reason. </dd></dl>
+<div class="textblock"><p>Core buffer store for CAN frame allocation and management. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
+</ul>
+</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a49fcb6055f37edb9e56977295cd0eaf2" name="a49fcb6055f37edb9e56977295cd0eaf2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a49fcb6055f37edb9e56977295cd0eaf2">&#9670;&#160;</a></span>CanBufferStore_initialize()</h2>
@@ -154,11 +158,11 @@ Functions</h2></td></tr>
 <p>Initializes the CAN Buffer Store. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
 
 </div>
@@ -189,7 +193,7 @@ Functions</h2></td></tr>
 <p>Allocates a new CAN buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -223,11 +227,11 @@ Functions</h2></td></tr>
 <p>Frees the buffer so it can be reused. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_t</td><td>*msg [in] - Pointer to a message to be freed</td></tr>
+    <tr><td class="paramname">can_msg_t</td><td>*msg [in] - Pointer to a message to be freed </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -257,7 +261,7 @@ Functions</h2></td></tr>
 <p>The number of CAN messages currently allocated in the buffer store. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -288,10 +292,10 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The maximum number of CAN messages that have been allocated in the buffer store. Useful for understanding how deep the buffer store needs to be during stress testing. </p>
+<p>The maximum number of CAN messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -325,11 +329,11 @@ Functions</h2></td></tr>
 <p>Resets the running count of the Maximum number of CAN buffer that have been allocated at one time. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">none</td><td></td></tr>
+    <tr><td class="paramname">None</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
 </div>
 </div>

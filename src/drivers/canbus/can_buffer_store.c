@@ -24,17 +24,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_buffer_store.c
- *
- * Implements a core buffers for CAN messages that hold CAN only frame messages 
- * that need to be passed on to the nodes.  This buffer is accessed in the CAN Rx
- * statemachine and the main loop so using Pause and Resume to stop the Rx and 100ms
- * timer when accessing it is critical.
- *
+ * @file can_buffer_store.c
+ * @brief Implementation of the core buffer store for CAN frames
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
-
 
 #include "can_buffer_store.h"
 
@@ -55,7 +49,7 @@ static uint16_t _can_buffer_store_message_allocated;
 static uint16_t _can_buffer_store_message_max_allocated;
 
 void CanBufferStore_initialize(void) {
-    
+
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
         _can_buffer_store[i].state.allocated = false;
@@ -69,7 +63,7 @@ void CanBufferStore_initialize(void) {
         }
 
     }
-    
+
     _can_buffer_store_message_allocated = 0;
     _can_buffer_store_message_max_allocated = 0;
 
@@ -90,7 +84,7 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
             }
 
             CanUtilities_clear_can_message(&_can_buffer_store[i]);
-            
+
              _can_buffer_store[i].state.allocated = true;
 
             return &_can_buffer_store[i];
@@ -104,11 +98,11 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 }
 
 void CanBufferStore_free_buffer(can_msg_t* msg) {
-    
+
     if (!msg) {
-        
+
         return;
-        
+
     }
 
     _can_buffer_store_message_allocated = _can_buffer_store_message_allocated - 1;

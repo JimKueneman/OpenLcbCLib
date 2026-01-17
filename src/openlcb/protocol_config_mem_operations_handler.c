@@ -1,5 +1,5 @@
 /** \copyright
- * Copyright (c) 2025, Jim Kueneman
+ * Copyright (c) 2024, Jim Kueneman
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_config_mem_operations_handler.c
- *
- *
+ * @file protocol_config_mem_operations_handler.c
+ * @brief Implementation of configuration memory operations protocol handler
  * @author Jim Kueneman
- * @date 23 Oct 2025
+ * @date 17 Jan 2026
  */
 
 #include "protocol_config_mem_operations_handler.h"
@@ -230,7 +229,7 @@ static void _handle_operations_request(openlcb_statemachine_info_t *statemachine
 
     // Complete Command Request, if it was null the first pass with the datagram ACK check would have return NACK and with won't get called with a null
     config_mem_operations_request_info->operations_func(statemachine_info, config_mem_operations_request_info);
-    
+
     statemachine_info->openlcb_node->state.openlcb_datagram_ack_sent = false; // reset
     statemachine_info->incoming_msg_info.enumerate = false; // done
 }
@@ -274,7 +273,7 @@ void ProtocolConfigMemOperationsHandler_request_options_cmd(openlcb_statemachine
                 statemachine_info->outgoing_msg_info.msg_ptr->payload_count);
 
     }
-  
+
     statemachine_info->outgoing_msg_info.valid = true;
 
 }
@@ -349,7 +348,7 @@ void ProtocolConfigMemOperationsHandler_request_get_address_space_info(openlcb_s
             *statemachine_info->incoming_msg_info.msg_ptr->payload[2],
             2);
 
-    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8; // OpenLcbChecker needs 8 
+    statemachine_info->outgoing_msg_info.msg_ptr->payload_count = 8; // OpenLcbChecker needs 8
 
     statemachine_info->outgoing_msg_info.valid = true;
 

@@ -24,13 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file can_main_statemachine.c
- *
- * Where the real work in dispatching the incoming OpenLcb messages to the various
- * handlers to process.  It will call the OpenLcb main statemachine when needed.  
- *
+ * @file can_main_statemachine.c
+ * @brief Implementation of the main CAN state machine
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 #include "can_main_statemachine.h"
@@ -65,7 +62,7 @@ void CanMainStatemachine_initialize(const interface_can_main_statemachine_t *int
     _interface = (interface_can_main_statemachine_t*) interface_can_main_statemachine;
 
     CanUtilities_clear_can_message(&_can_msg);
-  
+
     _can_statemachine_info.login_outgoing_can_msg = &_can_msg;
     _can_statemachine_info.openlcb_node = NULL;
     _can_statemachine_info.login_outgoing_can_msg_valid = false;
@@ -96,7 +93,7 @@ static void _reset_node(openlcb_node_t *openlcb_node) {
 
     }
 
-    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias  
+    openlcb_node->state.run_state = RUNSTATE_GENERATE_SEED; // Re-log in with a new generated Alias
 
 }
 

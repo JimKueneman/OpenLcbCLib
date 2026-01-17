@@ -24,20 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file protocol_message_network.h
- *
- * Implementation of the Openlcb core Messages that must be handled by all nodes.
- * Handlers are call from the openlcb_main_statemachine.c processing when a 
- * datagram message is being processed from the FIFO buffer.
- *
+ * @file protocol_message_network.h
+ * @brief Core message network protocol implementation required by all nodes
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
+// more than once.
 #ifndef __OPENLCB_PROTOCOL_MESSAGE_NETWORK__
-#define	__OPENLCB_PROTOCOL_MESSAGE_NETWORK__
+#define    __OPENLCB_PROTOCOL_MESSAGE_NETWORK__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -45,11 +41,11 @@
 #include "openlcb_types.h"
 
 typedef struct {
-  
+
 
 } interface_openlcb_protocol_message_network_t;
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -60,7 +56,7 @@ extern "C" {
     extern void ProtocolMessageNetwork_handle_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info);
 
     extern void ProtocolMessageNetwork_handle_protocol_support_inquiry(openlcb_statemachine_info_t *statemachine_info);
-    
+
     extern void ProtocolMessageNetwork_handle_protocol_support_reply(openlcb_statemachine_info_t *statemachine_info);
 
     extern void ProtocolMessageNetwork_handle_verify_node_id_global(openlcb_statemachine_info_t *statemachine_info);
@@ -73,10 +69,10 @@ extern "C" {
 
     extern void ProtocolMessageNetwork_handle_terminate_due_to_error(openlcb_statemachine_info_t *statemachine_info);
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 }
 #endif /* __cplusplus */
 
 
-#endif	/* __OPENLCB_PROTOCOL_MESSAGE_NETWORK__ */
+#endif    /* __OPENLCB_PROTOCOL_MESSAGE_NETWORK__ */
 

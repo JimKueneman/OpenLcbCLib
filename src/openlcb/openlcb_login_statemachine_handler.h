@@ -24,21 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * \file openlcb_login_statemachine_handler.h
- *
- * When a node is logging into the network on a CAN bus it must follow a specific
- * flow to allocate a unique alias ID and broadcast its events.  This is the handler 
- * that is called from the CAN main statemachine to accomplish that when a new node
- * is created.
- *
+ * @file openlcb_login_statemachine_handler.h
+ * @brief Login state machine message handler for CAN alias allocation and event broadcasting
  * @author Jim Kueneman
- * @date 5 Dec 2024
+ * @date 17 Jan 2026
  */
 
 // This is a guard condition so that contents of this file are not included
-// more than once.  
-#ifndef __OPENLCB_OPENLCB_LOGIN_MESSAGE_HANDLER__
-#define	__OPENLCB_OPENLCB_LOGIN_MESSAGE_HANDLER__
+// more than once.
+#ifndef __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__
+#define    __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -46,14 +41,14 @@
 #include "openlcb_types.h"
 
 typedef struct {
-        
+
         uint16_t(*extract_producer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
         uint16_t(*extract_consumer_event_state_mti)(openlcb_node_t* openlcb_node, uint16_t event_index);
 
     } interface_openlcb_login_message_handler_t;
 
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -66,9 +61,9 @@ extern "C" {
     extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
 
-#ifdef	__cplusplus
+#ifdef    __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif	/* __OPENLCB_OPENLCB_LOGIN_MESSAGE_HANDLER__ */
+#endif    /* __OPENLCB_OPENLCB_LOGIN_STATEMACHINE_HANDLER__ */
 
