@@ -91,33 +91,56 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_openlcb_login_state_machine_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for login state machine callback functions.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a216efd7bdc468e6395aa0e5ba04f1060" id="r_a216efd7bdc468e6395aa0e5ba04f1060"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a216efd7bdc468e6395aa0e5ba04f1060">send_openlcb_msg</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg)</td></tr>
+<tr class="memdesc:a216efd7bdc468e6395aa0e5ba04f1060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to send an OpenLCB message to the network.  <br /></td></tr>
 <tr class="separator:a216efd7bdc468e6395aa0e5ba04f1060"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to get the first OpenLCB node for enumeration.  <br /></td></tr>
 <tr class="separator:a642f075eed427764e99bda659f1fd22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to get the next OpenLCB node for enumeration.  <br /></td></tr>
 <tr class="separator:ae198d49b6505cbba8429aeb49fa3879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1423a4675d09949c3d5c0fa2416a0410" id="r_a1423a4675d09949c3d5c0fa2416a0410"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1423a4675d09949c3d5c0fa2416a0410">load_initialization_complete</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
+<tr class="memdesc:a1423a4675d09949c3d5c0fa2416a0410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load an Initialization Complete message.  <br /></td></tr>
 <tr class="separator:a1423a4675d09949c3d5c0fa2416a0410"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3a77556d4cfa484a8541292be3000c2" id="r_ad3a77556d4cfa484a8541292be3000c2"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3a77556d4cfa484a8541292be3000c2">load_producer_events</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
+<tr class="memdesc:ad3a77556d4cfa484a8541292be3000c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load Producer Event Identified messages.  <br /></td></tr>
 <tr class="separator:ad3a77556d4cfa484a8541292be3000c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a580f2ad00e2adbd8091236f015cd1f3c" id="r_a580f2ad00e2adbd8091236f015cd1f3c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a580f2ad00e2adbd8091236f015cd1f3c">load_consumer_events</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
+<tr class="memdesc:a580f2ad00e2adbd8091236f015cd1f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load Consumer Event Identified messages.  <br /></td></tr>
 <tr class="separator:a580f2ad00e2adbd8091236f015cd1f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13334393662839a3c993f198ad5bce8e" id="r_a13334393662839a3c993f198ad5bce8e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13334393662839a3c993f198ad5bce8e">process_login_statemachine</a> )(<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a13334393662839a3c993f198ad5bce8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for state machine processing.  <br /></td></tr>
 <tr class="separator:a13334393662839a3c993f198ad5bce8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21e0289f2a6d968d59d8f2392e7238d9" id="r_a21e0289f2a6d968d59d8f2392e7238d9"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21e0289f2a6d968d59d8f2392e7238d9">handle_outgoing_openlcb_message</a> )(void)</td></tr>
+<tr class="memdesc:a21e0289f2a6d968d59d8f2392e7238d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for message transmission handling.  <br /></td></tr>
 <tr class="separator:a21e0289f2a6d968d59d8f2392e7238d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87d0bb10ab97a4dfb5cc19819656c7db" id="r_a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87d0bb10ab97a4dfb5cc19819656c7db">handle_try_reenumerate</a> )(void)</td></tr>
+<tr class="memdesc:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for re-enumeration handling.  <br /></td></tr>
 <tr class="separator:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace54b5c03eafd093615c3de2f76587b1" id="r_ace54b5c03eafd093615c3de2f76587b1"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace54b5c03eafd093615c3de2f76587b1">handle_try_enumerate_first_node</a> )(void)</td></tr>
+<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for first node enumeration.  <br /></td></tr>
 <tr class="separator:ace54b5c03eafd093615c3de2f76587b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
+<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for next node enumeration.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for login state machine callback functions. </p>
+<p>This structure defines all function pointers that must be provided during initialization. The interface pattern allows the state machine to be decoupled from specific implementations, making the code more testable and flexible.</p>
+<p>Required callback categories:</p><ul>
+<li>Message transmission</li>
+<li>Node enumeration</li>
+<li>Message handlers</li>
+<li>Internal state machine functions (for testability) </li>
+</ul>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a216efd7bdc468e6395aa0e5ba04f1060" name="a216efd7bdc468e6395aa0e5ba04f1060"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a216efd7bdc468e6395aa0e5ba04f1060">&#9670;&#160;</a></span>send_openlcb_msg</h2>
 
@@ -129,6 +152,18 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to send an OpenLCB message to the network. </p>
+<p>Called when a message is ready to transmit. The implementation should attempt to send the message and return true if successful.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to the message to transmit </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if message was queued for transmission, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>outgoing_msg must NOT be NULL</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returning false will cause the state machine to retry on the next iteration </dd></dl>
 
 </div>
 </div>
@@ -144,6 +179,18 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Callback to get the first OpenLCB node for enumeration. </p>
+<p>Returns the first node in the enumeration list for the given context key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Enumeration context key </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to first node, or NULL if no nodes exist</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returning NULL indicates no nodes need processing</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e" title="Callback to get the next OpenLCB node for enumeration.">openlcb_node_get_next</a> - Gets subsequent nodes </dd></dl>
+
 </div>
 </div>
 <a id="ae198d49b6505cbba8429aeb49fa3879e" name="ae198d49b6505cbba8429aeb49fa3879e"></a>
@@ -157,6 +204,18 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to get the next OpenLCB node for enumeration. </p>
+<p>Returns the next node in the enumeration list for the given context key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Enumeration context key </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to next node, or NULL if no more nodes exist</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returning NULL indicates enumeration is complete</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Callback to get the first OpenLCB node for enumeration.">openlcb_node_get_first</a> - Gets first node </dd></dl>
 
 </div>
 </div>
@@ -172,6 +231,16 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Callback to load an Initialization Complete message. </p>
+<p>Constructs an Initialization Complete message for the node. This is the first message sent during the login sequence.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#a63d4945cfcd4930d8b3bc780f59687eb" title="Loads an Initialization Complete message into the outgoing message buffer.">OpenLcbLoginMessageHandler_load_initialization_complete</a> </dd></dl>
+
 </div>
 </div>
 <a id="ad3a77556d4cfa484a8541292be3000c2" name="ad3a77556d4cfa484a8541292be3000c2"></a>
@@ -185,6 +254,16 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to load Producer Event Identified messages. </p>
+<p>Constructs Producer Identified messages for the node's produced events. May be called multiple times via re-enumeration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> </dd></dl>
 
 </div>
 </div>
@@ -200,6 +279,16 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Callback to load Consumer Event Identified messages. </p>
+<p>Constructs Consumer Identified messages for the node's consumed events. May be called multiple times via re-enumeration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> </dd></dl>
+
 </div>
 </div>
 <a id="a13334393662839a3c993f198ad5bce8e" name="a13334393662839a3c993f198ad5bce8e"></a>
@@ -213,6 +302,16 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Internal function pointer for state machine processing. </p>
+<p>Dispatches to the appropriate handler based on node run_state. Exposed through interface for unit testing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a0f3330b4f3d1fab79ca865ccca2ca9ef" title="Dispatches to appropriate handler based on node&#39;s run_state.">OpenLcbLoginStateMachine_process</a> </dd></dl>
 
 </div>
 </div>
@@ -228,6 +327,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Internal function pointer for message transmission handling. </p>
+<p>Attempts to send pending outgoing message. Exposed for unit testing.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if message transmission was handled, false if no message pending</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a15755455ac11fbb6b09b4eabf9979353" title="Handles transmission of pending outgoing message.">OpenLcbLoginStatemachine_handle_outgoing_openlcb_message</a> </dd></dl>
+
 </div>
 </div>
 <a id="a87d0bb10ab97a4dfb5cc19819656c7db" name="a87d0bb10ab97a4dfb5cc19819656c7db"></a>
@@ -241,6 +345,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Internal function pointer for re-enumeration handling. </p>
+<p>Handles re-entry into handler for multi-message sequences. Exposed for unit testing.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if re-enumeration occurred, false if enumeration complete</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a4519cd137afe8fd412fa900b8278ec10" title="Handles re-enumeration for multi-message sequences.">OpenLcbLoginStatemachine_handle_try_reenumerate</a> </dd></dl>
 
 </div>
 </div>
@@ -256,6 +365,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Internal function pointer for first node enumeration. </p>
+<p>Gets first node and processes it if not yet initialized. Exposed for unit testing.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if first node was handled, false if no action taken</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a948366df2bf6d0e785d4f8fe5c7810c7" title="Attempts to get and process the first node in enumeration.">OpenLcbLoginStatemachine_handle_try_enumerate_first_node</a> </dd></dl>
+
 </div>
 </div>
 <a id="a41dbaa73eb2229932ffc76416db879e7" name="a41dbaa73eb2229932ffc76416db879e7"></a>
@@ -269,6 +383,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Internal function pointer for next node enumeration. </p>
+<p>Gets next node and processes it if not yet initialized. Exposed for unit testing.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if next node was handled, false if no action taken</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a161b0d98a87850fd49c8f2b564a33b77" title="Attempts to get and process the next node in enumeration.">OpenLcbLoginStatemachine_handle_try_enumerate_next_node</a> </dd></dl>
 
 </div>
 </div>

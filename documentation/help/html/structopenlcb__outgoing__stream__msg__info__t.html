@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">openlcb_outgoing_stream_msg_info_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Outgoing stream message information.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -103,7 +106,15 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ad022eeb15fb69058f06cfa982b9cb817" id="r_ad022eeb15fb69058f06cfa982b9cb817"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__stream__message__t.html">openlcb_stream_message_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad022eeb15fb69058f06cfa982b9cb817">openlcb_msg</a></td></tr>
 <tr class="separator:ad022eeb15fb69058f06cfa982b9cb817"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Outgoing stream message information. </p>
+<p>Context for outgoing stream message in state machine.</p>
+<p><b>Control Flags:</b></p><ul>
+<li>valid: Message is valid and ready</li>
+<li>enumerate: Continue enumeration after sending</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structopenlcb__statemachine__info__t.html#a22d2a3dceeb96d5dfa7f535c25e10e11">openlcb_statemachine_info_t.outgoing_msg_info</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a8ad6ee9f7d005f9a92fcbf602df7ce37" name="a8ad6ee9f7d005f9a92fcbf602df7ce37"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ad6ee9f7d005f9a92fcbf602df7ce37">&#9670;&#160;</a></span>msg_ptr</h2>
 
@@ -115,6 +126,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to message (NULL or valid buffer) </p>
 
 </div>
 </div>
@@ -129,6 +141,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Message is valid </p>
 
 </div>
 </div>
@@ -143,6 +156,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Continue enumeration </p>
 
 </div>
 </div>
@@ -157,6 +171,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Message with inline payload </p>
 
 </div>
 </div>

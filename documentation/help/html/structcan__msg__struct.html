@@ -112,6 +112,22 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Structure to hold information needed by a CAN message/frame. </p>
+<p>This structure represents a complete CAN 2.0B extended frame with 29-bit identifier and up to 8 data bytes. It includes state tracking for buffer management and is the fundamental unit for CAN communication throughout the library.</p>
+<p>Use cases:</p><ul>
+<li>Storing received CAN frames from hardware</li>
+<li>Building outgoing CAN frames for transmission</li>
+<li>Queuing frames in the CAN buffer FIFO</li>
+<li>Converting between OpenLCB messages and CAN frames</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Maximum payload is 8 bytes per CAN 2.0 specification </dd>
+<dd>
+NOT thread-safe - caller must handle synchronization</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The identifier field holds the full 29-bit extended CAN ID </dd>
+<dd>
+payload_count indicates valid bytes (0-8)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> - Manages allocation of these structures </dd>
+<dd>
+<a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> - Queues pointers to these structures </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a28efd41a3e318718f0f5153d8d65988f" name="a28efd41a3e318718f0f5153d8d65988f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a28efd41a3e318718f0f5153d8d65988f">&#9670;&#160;</a></span>state</h2>

@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">event_id_struct_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Event ID with status information.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -99,7 +102,13 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ae57d623eec5b3e48de6f50d62b1ee853" id="r_ae57d623eec5b3e48de6f50d62b1ee853"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae57d623eec5b3e48de6f50d62b1ee853">status</a></td></tr>
 <tr class="separator:ae57d623eec5b3e48de6f50d62b1ee853"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Event ID with status information. </p>
+<p>Pairs an Event ID with its current status (SET, CLEAR, UNKNOWN). Used in producer/consumer event lists to track event states.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structevent__id__consumer__list__t.html" title="List of events consumed by a node.">event_id_consumer_list_t</a> </dd>
+<dd>
+<a class="el" href="structevent__id__producer__list__t.html" title="List of events produced by a node.">event_id_producer_list_t</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a4712ca8f6b3fe6d1dfa6b8b9d09993b0" name="a4712ca8f6b3fe6d1dfa6b8b9d09993b0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4712ca8f6b3fe6d1dfa6b8b9d09993b0">&#9670;&#160;</a></span>event</h2>
 
@@ -111,6 +120,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>64-bit Event ID </p>
 
 </div>
 </div>
@@ -125,6 +135,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Current event status </p>
 
 </div>
 </div>

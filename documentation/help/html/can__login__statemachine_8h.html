@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>State machine for logging nodes into the OpenLcb/LCC network.  
+<p>State machine for logging nodes into the OpenLCB/LCC network.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__login__statemachine_8h_source.html">Go to the source code of this file.</a></p>
@@ -111,19 +111,20 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a2837c06613e89097db3602bf773332a8" id="r_a2837c06613e89097db3602bf773332a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2837c06613e89097db3602bf773332a8">CanLoginStateMachine_initialize</a> (const <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a> *interface_can_login_state_machine)</td></tr>
-<tr class="memdesc:a2837c06613e89097db3602bf773332a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Main State Machine.  <br /></td></tr>
+<tr class="memdesc:a2837c06613e89097db3602bf773332a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Login State Machine.  <br /></td></tr>
 <tr class="separator:a2837c06613e89097db3602bf773332a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19d57826974209f27f8883a2fa443aae" id="r_a19d57826974209f27f8883a2fa443aae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run</a> (<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a19d57826974209f27f8883a2fa443aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the main state machine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>.  <br /></td></tr>
+<tr class="memdesc:a19d57826974209f27f8883a2fa443aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the CAN login state machine.  <br /></td></tr>
 <tr class="separator:a19d57826974209f27f8883a2fa443aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>State machine for logging nodes into the OpenLcb/LCC network. </p>
+<div class="textblock"><p>State machine for logging nodes into the OpenLCB/LCC network. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
 </ul>
 </dd></dl>
+<p>Orchestrates the 10-state CAN login sequence required for a node to obtain a valid 12-bit alias for its 48-bit Node ID. The sequence follows the OpenLCB CAN Frame Transfer Standard: INIT → GENERATE_SEED → GENERATE_ALIAS → CID7 → CID6 → CID5 → CID4 → WAIT_200ms → RID → AMD. State handlers are provided via dependency injection.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -150,15 +151,46 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Main State Machine. </p>
+<p>Initializes the CAN Login State Machine. </p>
+<p>Stores the interface pointer containing the state handler functions. This interface must include pointers to all 10 state handler functions for the login sequence.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Must be called before CanLoginStateMachine_run</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_can_login_state_machine</td><td>Pointer to a <a class="el" href="structinterface__can__login__state__machine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_statemachin...">interface_can_login_state_machine_t</a> struct containing the functions that this module requires. </td></tr>
+    <tr><td class="paramname">interface_can_login_state_machine</td><td>Pointer to a <a class="el" href="structinterface__can__login__state__machine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_login_statemachin...">interface_can_login_state_machine_t</a> struct containing the functions that this module requires</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Interface pointer must remain valid for lifetime of application </dd>
+<dd>
+All state handler function pointers must be non-NULL </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a5c515891dde09e1d2376e0d0ecc392ec" title="Initializes the CAN Login Message Handler module.">CanLoginMessageHandler_initialize</a> - Initialize the message handlers </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> - Main state machine execution function</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Cast away const qualifier from interface pointer</li>
+<li>Store interface pointer in static variable</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Must be called before CanLoginStateMachine_run</li>
+</ul>
+<pre class="fragment">* @param interface_can_login_state_machine Pointer to a
+* interface_can_login_state_machine_t struct containing the functions that this module requires
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Interface pointer must remain valid for lifetime of application </dd>
+<dd>
+All state handler function pointers must be non-NULL </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a5c515891dde09e1d2376e0d0ecc392ec" title="Initializes the CAN Login Message Handler module.">CanLoginMessageHandler_initialize</a> - Initialize the message handlers </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> - Main state machine execution function </dd></dl>
 
 </div>
 </div>
@@ -185,15 +217,66 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Runs the main state machine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>. </p>
+<p>Runs the CAN login state machine. </p>
+<p>Dispatches to the appropriate state handler based on the node's current run_state. Progresses through the 10-state login sequence to allocate a CAN alias for the node.</p>
+<p>Use cases:</p><ul>
+<li>Called from main application loop for nodes in login sequence</li>
+<li>Called repeatedly until node reaches permitted state</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a structure that contains the incoming CAN message for the passed Node. If a handler is found it will process the message else it the appropriate error code will be returned. </td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a structure that contains the node and output message buffer for the login sequence</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dd>
+Node pointer within structure must not be NULL </dd>
+<dd>
+Outgoing message buffer must be valid </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Modifies node run_state as it progresses through sequence </dd>
+<dd>
+May set login_outgoing_can_msg_valid flag</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible </dd>
+<dd>
+State machine returns immediately after dispatching to handler</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a15578ce7b04e385b036135db0fe04248" title="Handles the first state in the CAN login sequence.">CanLoginMessageHandler_state_init</a> - First state handler </dd>
+<dd>
+<a class="el" href="can__login__message__handler_8c.html#a86ceb4c89ce3880a1a34fcd8805b4064" title="Handles the tenth and final state in the CAN login sequence.">CanLoginMessageHandler_state_load_amd</a> - Final state handler</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Read node's current run_state</li>
+<li>Switch on run_state value</li>
+<li>For each state case:<ul>
+<li>Call appropriate state handler via interface</li>
+<li>Return immediately after handler completes</li>
+</ul>
+</li>
+<li>Default case returns without action</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called from main application loop for nodes in login sequence</li>
+<li>Called repeatedly until node reaches permitted state</li>
+</ul>
+<pre class="fragment">* @param can_statemachine_info Pointer to a structure that contains the node
+* and output message buffer for the login sequence
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dd>
+Node pointer within structure must not be NULL </dd>
+<dd>
+Outgoing message buffer must be valid </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Modifies node run_state as it progresses through sequence </dd>
+<dd>
+May set login_outgoing_can_msg_valid flag</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible </dd>
+<dd>
+State machine returns immediately after dispatching to handler</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a15578ce7b04e385b036135db0fe04248" title="Handles the first state in the CAN login sequence.">CanLoginMessageHandler_state_init</a> - First state handler </dd>
+<dd>
+<a class="el" href="can__login__message__handler_8c.html#a86ceb4c89ce3880a1a34fcd8805b4064" title="Handles the tenth and final state in the CAN login sequence.">CanLoginMessageHandler_state_load_amd</a> - Final state handler </dd></dl>
 
 </div>
 </div>

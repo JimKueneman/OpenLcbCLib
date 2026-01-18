@@ -19,8 +19,16 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
  * @file can_login_statemachine.h
- * @brief State machine for logging nodes into the OpenLcb/LCC network
+ * @brief State machine for logging nodes into the OpenLCB/LCC network
+ *
+ * @details Orchestrates the 10-state CAN login sequence required for a node to
+ * obtain a valid 12-bit alias for its 48-bit Node ID. The sequence follows the
+ * OpenLCB CAN Frame Transfer Standard: INIT → GENERATE_SEED → GENERATE_ALIAS →
+ * CID7 → CID6 → CID5 → CID4 → WAIT_200ms → RID → AMD. State handlers are
+ * provided via dependency injection.
+ *
  * @author Jim Kueneman
  * @date 17 Jan 2026
  */
@@ -35,6 +43,7 @@
 
 /**
  * @brief A structure to hold pointers to functions for dependencies this module requires \ref can_login_statemachine.h
+ *
  * @details OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the
  * functions that are used can be modeled in the test and return valid OR invalid results to fully
  * test all program flows in the module.  It also allows for reducing the program size. If a particular
@@ -100,22 +109,58 @@ extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief Initializes the CAN Main State Machine
+     * @brief Initializes the CAN Login State Machine
+     *
+     * @details Stores the interface pointer containing the state handler functions.
+     * This interface must include pointers to all 10 state handler functions for
+     * the login sequence.
+     *
+     * Use cases:
+     * - Called once during application initialization
+     * - Must be called before CanLoginStateMachine_run
+     *
      * @param interface_can_login_state_machine Pointer to a
-     * interface_can_login_state_machine_t struct containing the functions that this module requires.
-     * @return None
+     * interface_can_login_state_machine_t struct containing the functions that this module requires
+     *
+     * @warning Interface pointer must remain valid for lifetime of application
+     * @warning All state handler function pointers must be non-NULL
+     * @warning NOT thread-safe
+     *
      * @attention This must always be called during application initialization
+     *
+     * @see CanLoginMessageHandler_initialize - Initialize the message handlers
+     * @see CanLoginStateMachine_run - Main state machine execution function
      */
     extern void CanLoginStateMachine_initialize(const interface_can_login_state_machine_t *interface_can_login_state_machine);
 
 
     /**
-     * @brief Runs the main state machine to handle incoming CAN messages and correctly respond to them through the
-     * handlers in the interface \ref interface_can_login_state_machine_t.
-     * @param can_statemachine_info Pointer to a structure that contains the incoming CAN message for the
-     * passed Node.  If a handler is found it will process the message else it the appropriate error code will be returned.
-     * @return None
+     * @brief Runs the CAN login state machine
+     *
+     * @details Dispatches to the appropriate state handler based on the node's
+     * current run_state. Progresses through the 10-state login sequence to allocate
+     * a CAN alias for the node.
+     *
+     * Use cases:
+     * - Called from main application loop for nodes in login sequence
+     * - Called repeatedly until node reaches permitted state
+     *
+     * @param can_statemachine_info Pointer to a structure that contains the node
+     * and output message buffer for the login sequence
+     *
+     * @warning Structure pointer must not be NULL
+     * @warning Node pointer within structure must not be NULL
+     * @warning Outgoing message buffer must be valid
+     * @warning NOT thread-safe
+     *
+     * @attention Modifies node run_state as it progresses through sequence
+     * @attention May set login_outgoing_can_msg_valid flag
+     *
      * @note Call from the main application loop as fast as possible
+     * @note State machine returns immediately after dispatching to handler
+     *
+     * @see CanLoginMessageHandler_state_init - First state handler
+     * @see CanLoginMessageHandler_state_load_amd - Final state handler
      */
     extern void CanLoginStateMachine_run(can_statemachine_info_t *can_statemachine_info);
 

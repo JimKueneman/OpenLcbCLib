@@ -91,17 +91,35 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_openlcb_application_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for application layer callbacks.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a552e03ff9ca4d801cb74d04c100946e0" id="r_a552e03ff9ca4d801cb74d04c100946e0"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a552e03ff9ca4d801cb74d04c100946e0">send_openlcb_msg</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg)</td></tr>
+<tr class="memdesc:a552e03ff9ca4d801cb74d04c100946e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to send an OpenLCB message to the network.  <br /></td></tr>
 <tr class="separator:a552e03ff9ca4d801cb74d04c100946e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4ad220ab7a2676bb10369163fcb0ba2" id="r_ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ad220ab7a2676bb10369163fcb0ba2">config_memory_read</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to read from configuration memory.  <br /></td></tr>
 <tr class="separator:ab4ad220ab7a2676bb10369163fcb0ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a72d0c9e692e2bdefb9cbaa347f1514" id="r_a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a72d0c9e692e2bdefb9cbaa347f1514">config_memory_write</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint32_t address, uint16_t count, <a class="el" href="openlcb__types_8h.html#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a> *buffer)</td></tr>
+<tr class="memdesc:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to write to configuration memory.  <br /></td></tr>
 <tr class="separator:a7a72d0c9e692e2bdefb9cbaa347f1514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for application layer callbacks. </p>
+<p>This structure contains function pointers that the application must provide to the OpenLCB library. These callbacks allow the library to:</p><ul>
+<li>Send OpenLCB messages to the network</li>
+<li>Read from configuration memory</li>
+<li>Write to configuration memory</li>
+</ul>
+<p>All function pointers MUST be assigned valid function addresses before calling <a class="el" href="openlcb__application_8c.html#a78c4dd26cc000fae9e2af5b6453ad511" title="Initializes the OpenLCB Application interface.">OpenLcbApplication_initialize()</a>. NULL function pointers will cause crashes when the library attempts to use them.</p>
+<dl class="section warning"><dt>Warning</dt><dd>All function pointers must be non-NULL before initialization </dd>
+<dd>
+The structure must remain valid for the lifetime of the program</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__application_8c.html#a78c4dd26cc000fae9e2af5b6453ad511" title="Initializes the OpenLCB Application interface.">OpenLcbApplication_initialize</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a552e03ff9ca4d801cb74d04c100946e0" name="a552e03ff9ca4d801cb74d04c100946e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a552e03ff9ca4d801cb74d04c100946e0">&#9670;&#160;</a></span>send_openlcb_msg</h2>
 
@@ -113,6 +131,19 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to send an OpenLCB message to the network. </p>
+<p>This callback is invoked by the OpenLCB library whenever it needs to transmit a message to the network. The application must implement this function to queue the message for transmission via the appropriate transport layer (CAN, TCP/IP, etc.). The callback should return immediately after queueing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the message to send (contains MTI, source/dest, payload)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if message was successfully queued for transmission, false if message buffer is full (library will retry or report error)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Must be non-NULL. Library will crash if this callback is not provided.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Callback should be non-blocking. Do not perform lengthy operations.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Called from library context, not interrupt context. </dd></dl>
 
 </div>
 </div>
@@ -128,6 +159,24 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Callback to read from configuration memory. </p>
+<p>This callback is invoked when the OpenLCB library needs to read data from the node's configuration memory. Configuration memory contains persistent settings, CDI (Configuration Description Information), ACDI (Abbreviated CDI), SNIP (Simple Node Information Protocol) data, and user-configurable parameters.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the node requesting the read operation </td></tr>
+    <tr><td class="paramname">address</td><td>Starting address to read from (address space defined by CDI) </td></tr>
+    <tr><td class="paramname">count</td><td>Number of bytes to read (typically ≤64 for network operations) </td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to buffer to store the read data (must have space for count bytes)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes successfully read (may be less than count if near end of space), or 0xFFFF on error (invalid address, hardware error)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Must be non-NULL. Library will crash if this callback is not provided. </dd>
+<dd>
+Buffer must have sufficient space for the requested byte count.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Some memory spaces are read-only (CDI, ACDI). Attempting to write to these spaces should return error.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Callback is synchronous and should complete quickly. </dd></dl>
+
 </div>
 </div>
 <a id="a7a72d0c9e692e2bdefb9cbaa347f1514" name="a7a72d0c9e692e2bdefb9cbaa347f1514"></a>
@@ -141,6 +190,26 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to write to configuration memory. </p>
+<p>This callback is invoked when the OpenLCB library needs to write data to the node's configuration memory. Configuration memory contains persistent settings and user-configurable parameters. Some memory spaces (CDI, ACDI, manufacturer data) are read-only and should reject write attempts.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the node requesting the write operation </td></tr>
+    <tr><td class="paramname">address</td><td>Starting address to write to (address space defined by CDI) </td></tr>
+    <tr><td class="paramname">count</td><td>Number of bytes to write (typically ≤64 for network operations) </td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to buffer containing data to write</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes successfully written (may be less than count if near end of space), or 0xFFFF on error (invalid address, read-only space, hardware error)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Must be non-NULL. Library will crash if this callback is not provided. </dd>
+<dd>
+Buffer must contain sufficient valid data for the requested operation.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Read-only memory spaces (CDI, ACDI, etc.) should return 0 or 0xFFFF error.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Callback is synchronous and should complete quickly. </dd>
+<dd>
+Application is responsible for persistence mechanism (EEPROM, Flash, etc.) </dd></dl>
 
 </div>
 </div>

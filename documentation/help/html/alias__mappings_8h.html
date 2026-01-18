@@ -112,20 +112,23 @@ Functions</h2></td></tr>
 <tr class="memitem:a1e2639729c40c4ba017fa2529493c2d7" id="r_a1e2639729c40c4ba017fa2529493c2d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e2639729c40c4ba017fa2529493c2d7">AliasMappings_set_has_duplicate_alias_flag</a> (void)</td></tr>
 <tr class="memdesc:a1e2639729c40c4ba017fa2529493c2d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a flag that tells the main loop that a received message has been found to be using an Alias we have reserved.  <br /></td></tr>
 <tr class="separator:a1e2639729c40c4ba017fa2529493c2d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adba7b7768a180583be9daffac933c350" id="r_adba7b7768a180583be9daffac933c350"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adba7b7768a180583be9daffac933c350">AliasMappings_clear_has_duplicate_alias_flag</a> (void)</td></tr>
+<tr class="memdesc:adba7b7768a180583be9daffac933c350"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the duplicate alias flag.  <br /></td></tr>
+<tr class="separator:adba7b7768a180583be9daffac933c350"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe1490dc1fc7c2f410abc31cad6f6447" id="r_afe1490dc1fc7c2f410abc31cad6f6447"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe1490dc1fc7c2f410abc31cad6f6447">AliasMappings_register</a> (uint16_t alias, <a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="memdesc:afe1490dc1fc7c2f410abc31cad6f6447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new Alias/NodeID pair. If the NodeID exists then the old Alias is replaced by the passed one.  <br /></td></tr>
+<tr class="memdesc:afe1490dc1fc7c2f410abc31cad6f6447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new Alias/NodeID pair.  <br /></td></tr>
 <tr class="separator:afe1490dc1fc7c2f410abc31cad6f6447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f08c60c95f97546d47c8386270cc8b4" id="r_a9f08c60c95f97546d47c8386270cc8b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f08c60c95f97546d47c8386270cc8b4">AliasMappings_unregister</a> (uint16_t alias)</td></tr>
-<tr class="memdesc:a9f08c60c95f97546d47c8386270cc8b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deregisters an existing Alias/NodeID pair. If the pair does not exist it does nothing.  <br /></td></tr>
+<tr class="memdesc:a9f08c60c95f97546d47c8386270cc8b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deregisters an existing Alias/NodeID pair.  <br /></td></tr>
 <tr class="separator:a9f08c60c95f97546d47c8386270cc8b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30c9579dd57feb9bb1ebe5f07f60bb42" id="r_a30c9579dd57feb9bb1ebe5f07f60bb42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30c9579dd57feb9bb1ebe5f07f60bb42">AliasMappings_find_mapping_by_alias</a> (uint16_t alias)</td></tr>
-<tr class="memdesc:a30c9579dd57feb9bb1ebe5f07f60bb42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a Alias/NodeID pair that matches the Alias passed.  <br /></td></tr>
+<tr class="memdesc:a30c9579dd57feb9bb1ebe5f07f60bb42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an Alias/NodeID pair that matches the Alias passed.  <br /></td></tr>
 <tr class="separator:a30c9579dd57feb9bb1ebe5f07f60bb42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a084208e2d690494fb75159a2251b41e8" id="r_a084208e2d690494fb75159a2251b41e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6742a625d665303b409391926b8a65b1">alias_mapping_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a084208e2d690494fb75159a2251b41e8">AliasMappings_find_mapping_by_node_id</a> (<a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a> node_id)</td></tr>
-<tr class="memdesc:a084208e2d690494fb75159a2251b41e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a Alias/NodeID pair that matches the NodeID passed.  <br /></td></tr>
+<tr class="memdesc:a084208e2d690494fb75159a2251b41e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an Alias/NodeID pair that matches the NodeID passed.  <br /></td></tr>
 <tr class="separator:a084208e2d690494fb75159a2251b41e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a689def4649f0c550f4105dac8846bd93" id="r_a689def4649f0c550f4105dac8846bd93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a689def4649f0c550f4105dac8846bd93">AliasMappings_flush</a> (void)</td></tr>
-<tr class="memdesc:a689def4649f0c550f4105dac8846bd93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Released all stored Alias Mapping pairs.  <br /></td></tr>
+<tr class="memdesc:a689def4649f0c550f4105dac8846bd93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Releases all stored Alias Mapping pairs.  <br /></td></tr>
 <tr class="separator:a689def4649f0c550f4105dac8846bd93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -135,6 +138,22 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
 </ul>
 </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
+<p>This module provides a buffer for storing and managing the mapping between OpenLCB 48-bit Node IDs and their corresponding 12-bit CAN aliases. The buffer is used to track which aliases are currently in use and which Node IDs they represent, enabling bidirectional lookup during message processing.</p>
+<p>Key features:</p><ul>
+<li>Fixed-size buffer (ALIAS_MAPPING_BUFFER_DEPTH entries)</li>
+<li>Bidirectional lookup (find by alias or by Node ID)</li>
+<li>Duplicate alias detection support</li>
+<li>Alias permission tracking</li>
+<li>Buffer flush capability</li>
+</ul>
+<p>The buffer is typically used during:</p><ul>
+<li>Node login and alias allocation</li>
+<li>Incoming message processing (alias to Node ID resolution)</li>
+<li>Outgoing message preparation (Node ID to alias resolution)</li>
+<li>Duplicate alias conflict detection and recovery</li>
+</ul>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -162,14 +181,37 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the Alias Mapping buffers. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<p>Clears all entries in the alias mapping buffer and resets all flags to their initial state. This must be called during application startup before any nodes attempt to log in or register aliases.</p>
+<p>Use cases:</p><ul>
+<li>Application initialization sequence</li>
+<li>System reset or reinitialization</li>
+<li>Test harness setup</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during application startup before any node operations. Calling during active operations will lose all existing alias mappings and cause communication failures.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call this function before <a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register()</a> or any other alias mapping operations.</dd>
+<dd>
+This function is NOT thread-safe. Call only during single-threaded initialization phase.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush</a> - Clears mappings after initialization</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call internal _reset_mappings() function</li>
+<li>This clears all buffer entries to default state</li>
+<li>Clears the duplicate alias flag</li>
+<li>Buffer is ready for node registration</li>
+</ol>
+<p>This function must be called during application initialization before any CAN communication begins. It prepares the buffer for storing alias mappings as nodes log in to the network.</p>
+<p>Use cases:</p><ul>
+<li>Application initialization sequence</li>
+<li>System reset or reinitialization</li>
+<li>Test harness setup</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during application startup before any node operations. Calling during active operations will lose all existing alias mappings and cause communication failures.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call this function before <a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register()</a> or any other alias mapping operations.</dd>
+<dd>
+This function is NOT thread-safe. Call only during single-threaded initialization phase.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Iterates through all ALIAS_MAPPING_BUFFER_DEPTH entries.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>_reset_mappings - Internal reset implementation </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush</a> - Runtime clear operation </dd></dl>
 
 </div>
 </div>
@@ -197,13 +239,43 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Allows access to the Alias Mapping Buffer itself. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the alias message buffer or NULL if it fails </dd></dl>
+<p>Provides direct read-only access to the internal alias mapping info structure, which contains the array of all alias/Node ID pairs and the duplicate alias flag. This is primarily used for debugging, diagnostics, or advanced operations that need to inspect the entire buffer state.</p>
+<p>Use cases:</p><ul>
+<li>Debugging alias allocation issues</li>
+<li>Diagnostic logging of buffer state</li>
+<li>Advanced buffer inspection for testing</li>
+<li>Checking duplicate alias flag status</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the alias mapping info structure (never returns NULL)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The returned pointer points to static internal data. Modifications should only be done through the provided API functions to maintain consistency.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>The structure remains valid for the lifetime of the program. Do not cache individual mapping pointers as they may be invalidated by unregister or flush operations.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function always succeeds and never returns NULL.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a> - Structure definition </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets a flag that tells the main loop that a received message has been found to be using an Alias we h...">AliasMappings_set_has_duplicate_alias_flag</a> - Sets the duplicate flag </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#adba7b7768a180583be9daffac933c350" title="Clears the duplicate alias flag.">AliasMappings_clear_has_duplicate_alias_flag</a> - Clears the duplicate flag</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return pointer to static _alias_mapping_info structure</li>
+<li>No validation or error checking needed (pointer always valid)</li>
+</ol>
+<p>This provides direct access to the internal buffer structure for debugging, diagnostics, or advanced inspection operations. The structure contains the array of all alias/Node ID mappings plus the duplicate alias flag. While direct modification is possible, callers should use the provided API functions to maintain data consistency.</p>
+<p>Use cases:</p><ul>
+<li>Debugging alias allocation issues</li>
+<li>Diagnostic logging of buffer state</li>
+<li>Advanced buffer inspection for testing</li>
+<li>Checking duplicate alias flag status</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the alias mapping info structure (never returns NULL)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The returned pointer points to static internal data. Modifications should only be done through the provided API functions to maintain consistency.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>The structure remains valid for the lifetime of the program. Do not cache individual mapping pointers as they may be invalidated by unregister or flush operations.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function always succeeds and never returns NULL.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Returns immediately - pointer to static data.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a> - Structure definition </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets a flag that tells the main loop that a received message has been found to be using an Alias we h...">AliasMappings_set_has_duplicate_alias_flag</a> - Sets the duplicate flag </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#adba7b7768a180583be9daffac933c350" title="Clears the duplicate alias flag.">AliasMappings_clear_has_duplicate_alias_flag</a> - Clears the duplicate flag </dd></dl>
 
 </div>
 </div>
@@ -231,13 +303,95 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Sets a flag that tells the main loop that a received message has been found to be using an Alias we have reserved. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<p>Sets the has_duplicate_alias flag in the mapping info structure to true. This flag signals the main state machine loop that an alias conflict has been detected and the node needs to select a new alias and restart the login process.</p>
+<p>Use cases:</p><ul>
+<li>During CAN message reception when incoming CID/RID frames match our alias</li>
+<li>When processing AMD frames that conflict with locally reserved aliases</li>
+<li>During alias conflict resolution in the login state machine</li>
+</ul>
+<dl class="section attention"><dt>Attention</dt><dd>This flag must be checked and cleared by the main loop after taking appropriate action (typically restarting alias allocation).</dd>
+<dd>
+Setting this flag does NOT automatically trigger alias reallocation. The main state machine must detect and handle the flag.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The flag is cleared by <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> and <a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush()</a>.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#adba7b7768a180583be9daffac933c350" title="Clears the duplicate alias flag.">AliasMappings_clear_has_duplicate_alias_flag</a> - Clears the flag </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a2ea6e19b9de3e4be35e2340ee9dc4af2" title="Allows access to the Alias Mapping Buffer itself.">AliasMappings_get_alias_mapping_info</a> - Access the flag for reading </dd>
+<dd>
+<a class="el" href="structalias__mapping__info__struct.html#a0fa6b7c5feb944f957c07ee2e25c49fd">alias_mapping_info_t::has_duplicate_alias</a> - The flag field</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Set the has_duplicate_alias flag in _alias_mapping_info to true</li>
+<li>No validation or error checking needed</li>
+</ol>
+<p>This function is called when the CAN message reception code detects that an incoming CID, RID, or AMD frame is using an alias that matches one we have locally reserved. The flag signals the main state machine to initiate alias conflict resolution (selecting a new alias and restarting login).</p>
+<p>Use cases:</p><ul>
+<li>During CAN message reception when incoming CID/RID frames match our alias</li>
+<li>When processing AMD frames that conflict with locally reserved aliases</li>
+<li>During alias conflict resolution in the login state machine</li>
+</ul>
+<dl class="section attention"><dt>Attention</dt><dd>This flag must be checked and cleared by the main loop after taking appropriate action (typically restarting alias allocation).</dd>
+<dd>
+Setting this flag does NOT automatically trigger alias reallocation. The main state machine must detect and handle the flag.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The flag is cleared by <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> and <a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush()</a>.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Single flag assignment operation.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a2ea6e19b9de3e4be35e2340ee9dc4af2" title="Allows access to the Alias Mapping Buffer itself.">AliasMappings_get_alias_mapping_info</a> - Access the flag for reading </dd>
+<dd>
+<a class="el" href="structalias__mapping__info__struct.html#a0fa6b7c5feb944f957c07ee2e25c49fd">alias_mapping_info_t::has_duplicate_alias</a> - The flag field </dd></dl>
+
+</div>
+</div>
+<a id="adba7b7768a180583be9daffac933c350" name="adba7b7768a180583be9daffac933c350"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adba7b7768a180583be9daffac933c350">&#9670;&#160;</a></span>AliasMappings_clear_has_duplicate_alias_flag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void AliasMappings_clear_has_duplicate_alias_flag </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clears the duplicate alias flag. </p>
+<p>Clears the has_duplicate_alias flag in the mapping info structure to false. This should be called by the main loop after handling an alias conflict and successfully reallocating a new alias. Provides proper encapsulation instead of requiring direct structure access.</p>
+<p>Use cases:</p><ul>
+<li>After successfully handling alias conflict and selecting new alias</li>
+<li>After restarting login sequence with new alias</li>
+<li>In test cleanup to reset state</li>
+</ul>
+<dl class="section attention"><dt>Attention</dt><dd>Call this only after the alias conflict has been fully resolved. Clearing prematurely could cause the conflict to be ignored.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The flag is also cleared by <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> and <a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush()</a>.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets a flag that tells the main loop that a received message has been found to be using an Alias we h...">AliasMappings_set_has_duplicate_alias_flag</a> - Sets the flag </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a2ea6e19b9de3e4be35e2340ee9dc4af2" title="Allows access to the Alias Mapping Buffer itself.">AliasMappings_get_alias_mapping_info</a> - Access the flag for reading</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Set the has_duplicate_alias flag in _alias_mapping_info to false</li>
+<li>No validation or error checking needed</li>
+</ol>
+<p>This function provides proper encapsulation for clearing the duplicate alias flag after the main loop has handled an alias conflict. This is cleaner than requiring direct access to the internal structure fields.</p>
+<p>Use cases:</p><ul>
+<li>After successfully handling alias conflict and selecting new alias</li>
+<li>After restarting login sequence with new alias</li>
+<li>In test cleanup to reset state</li>
+</ul>
+<dl class="section attention"><dt>Attention</dt><dd>Call this only after the alias conflict has been fully resolved. Clearing prematurely could cause the conflict to be ignored.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The flag is also cleared by <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> and <a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush()</a>.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Single flag assignment operation.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a1e2639729c40c4ba017fa2529493c2d7" title="Sets a flag that tells the main loop that a received message has been found to be using an Alias we h...">AliasMappings_set_has_duplicate_alias_flag</a> - Sets the flag </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a2ea6e19b9de3e4be35e2340ee9dc4af2" title="Allows access to the Alias Mapping Buffer itself.">AliasMappings_get_alias_mapping_info</a> - Access the flag for reading </dd>
+<dd>
+<a class="el" href="structalias__mapping__info__struct.html#a0fa6b7c5feb944f957c07ee2e25c49fd">alias_mapping_info_t::has_duplicate_alias</a> - The flag field </dd></dl>
 
 </div>
 </div>
@@ -268,15 +422,79 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Registers a new Alias/NodeID pair. If the NodeID exists then the old Alias is replaced by the passed one. </p>
+<p>Registers a new Alias/NodeID pair. </p>
+<p>Stores an alias and Node ID mapping in the buffer. The function searches for an available slot or an existing entry with the same Node ID. If the Node ID already exists, the old alias is replaced with the new one (alias update). If an empty slot is found, the new pair is stored there. Returns NULL if buffer is full.</p>
+<p>Use cases:</p><ul>
+<li>Registering a newly allocated alias during node login</li>
+<li>Updating an alias after conflict resolution</li>
+<li>Storing remote node alias/Node ID pairs learned from AMD frames</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alias</td><td>The Alias to store </td></tr>
-    <tr><td class="paramname">node_id</td><td>The NodeID to store </td></tr>
+    <tr><td class="paramname">alias</td><td>The 12-bit CAN alias to store (valid range: 0x001-0xFFF, 0x000 reserved for empty) </td></tr>
+    <tr><td class="paramname">node_id</td><td>The 48-bit OpenLCB Node ID to associate with the alias</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly registered AliasMapping or NULL if fails </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly registered alias_mapping_t entry, or NULL if buffer is full</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when buffer is completely full. Caller MUST check return value before dereferencing. Dereferencing NULL will cause immediate crash.</dd>
+<dd>
+Returns NULL if CAN Alias is outside valid 12-bit range (0 or &gt; 0xFFF). OpenLCB CAN protocol requires aliases in range 0x001-0xFFF. Zero is reserved to mark empty buffer slots.</dd>
+<dd>
+Returns NULL if OpenLCB Node ID exceeds 48-bit range (0 or &gt; 0xFFFFFFFFFFFF). Valid OpenLCB Node IDs are 48-bit values from 0x000000000001-0xFFFFFFFFFFFF. Zero is reserved as "no valid Node ID assigned".</dd>
+<dd>
+If an OpenLCB Node ID already exists in the buffer, its previously registered CAN Alias is silently replaced with the new one. This is correct behavior for alias updates after conflict resolution but could mask programming errors.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Buffer capacity is ALIAS_MAPPING_BUFFER_DEPTH entries. Plan node count accordingly or handle registration failures gracefully.</dd>
+<dd>
+The returned pointer remains valid until the entry is unregistered or the buffer is flushed. Do not cache pointers across these operations.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Registering with CAN Alias = 0 will create an entry but it won't be findable by <a class="el" href="alias__mappings_8c.html#a30c9579dd57feb9bb1ebe5f07f60bb42" title="Finds an Alias/NodeID pair that matches the Alias passed.">AliasMappings_find_mapping_by_alias()</a> since 0 is reserved to mark empty slots. Per OpenLCB spec, aliases must be in range 0x001-0xFFF.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> - Removes a mapping </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a30c9579dd57feb9bb1ebe5f07f60bb42" title="Finds an Alias/NodeID pair that matches the Alias passed.">AliasMappings_find_mapping_by_alias</a> - Finds existing mapping by alias </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a084208e2d690494fb75159a2251b41e8" title="Finds an Alias/NodeID pair that matches the NodeID passed.">AliasMappings_find_mapping_by_node_id</a> - Finds existing mapping by Node ID</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Validate alias is within valid OpenLCB range (0x001-0xFFF), return NULL if invalid</li>
+<li>Validate node_id is within valid OpenLCB range (0x000000000001-0xFFFFFFFFFFFF), return NULL if invalid</li>
+<li>Iterate through all ALIAS_MAPPING_BUFFER_DEPTH entries in the buffer</li>
+<li>For each entry, check if it's empty (alias == 0) OR Node ID matches</li>
+<li>If condition met:<ul>
+<li>Store the new alias value</li>
+<li>Store the new node_id value</li>
+<li>Return pointer to this entry</li>
+</ul>
+</li>
+<li>If loop completes without finding slot, return NULL (buffer full)</li>
+</ol>
+<p>The function implements two behaviors:</p><ol type="1">
+<li>If Node ID already exists: Update its alias (alias change/recovery)</li>
+<li>If empty slot found: Register new alias/Node ID pair</li>
+</ol>
+<p>This design ensures that each Node ID can only have one alias in the buffer, which is critical for correct OpenLCB operation.</p>
+<p>Use cases:</p><ul>
+<li>Registering a newly allocated alias during node login</li>
+<li>Updating an alias after conflict resolution</li>
+<li>Storing remote node alias/Node ID pairs learned from AMD frames</li>
+</ul>
+<pre class="fragment">* @param alias The 12-bit CAN alias to store (valid range: 0x001-0xFFF, 0x000 reserved for empty)
+* @param node_id The 48-bit OpenLCB Node ID to associate with the alias
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the newly registered alias_mapping_t entry, or NULL if buffer is full</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when buffer is completely full. Caller MUST check return value before dereferencing. Dereferencing NULL will cause immediate crash.</dd>
+<dd>
+Returns NULL if CAN Alias is outside valid 12-bit range (0 or &gt; 0xFFF). OpenLCB CAN protocol requires aliases in range 0x001-0xFFF. Zero is reserved to mark empty buffer slots.</dd>
+<dd>
+Returns NULL if OpenLCB Node ID exceeds 48-bit range (0 or &gt; 0xFFFFFFFFFFFF). Valid OpenLCB Node IDs are 48-bit values from 0x000000000001-0xFFFFFFFFFFFF. Zero is reserved as "no valid Node ID assigned".</dd>
+<dd>
+If an OpenLCB Node ID already exists in the buffer, its previously registered CAN Alias is silently replaced with the new one. This is correct behavior for alias updates after conflict resolution but could mask programming errors.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Buffer capacity is ALIAS_MAPPING_BUFFER_DEPTH entries. Plan node count accordingly or handle registration failures gracefully.</dd>
+<dd>
+The returned pointer remains valid until the entry is unregistered or the buffer is flushed. Do not cache pointers across these operations.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Linear search through buffer in worst case. Best case finds first slot immediately if available.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> - Removes a mapping </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a30c9579dd57feb9bb1ebe5f07f60bb42" title="Finds an Alias/NodeID pair that matches the Alias passed.">AliasMappings_find_mapping_by_alias</a> - Finds existing mapping by alias </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a084208e2d690494fb75159a2251b41e8" title="Finds an Alias/NodeID pair that matches the NodeID passed.">AliasMappings_find_mapping_by_node_id</a> - Finds existing mapping by Node ID </dd></dl>
 
 </div>
 </div>
@@ -303,14 +521,54 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Deregisters an existing Alias/NodeID pair. If the pair does not exist it does nothing. </p>
+<p>Deregisters an existing Alias/NodeID pair. </p>
+<p>Removes an alias mapping from the buffer by searching for the specified alias and clearing its entry. All fields (alias, node_id, is_duplicate, is_permitted) are reset to their default values. If the alias is not found, the function does nothing (safe to call with non-existent aliases).</p>
+<p>Use cases:</p><ul>
+<li>Cleaning up after node logout (AMR frame received)</li>
+<li>Removing mappings when nodes disconnect</li>
+<li>Test cleanup between test cases</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alias</td><td>The Alias to unregister </td></tr>
+    <tr><td class="paramname">alias</td><td>The 12-bit CAN alias to unregister</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function is safe to call with aliases that don't exist in the buffer. No error is generated in this case.</dd>
+<dd>
+After unregistering, any pointers previously obtained from <a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register()</a> or find functions for this entry become invalid.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The function stops searching after finding the first match, so if duplicate aliases exist in the buffer (should never happen), only the first is removed.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Adds a mapping </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush</a> - Removes all mappings</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all ALIAS_MAPPING_BUFFER_DEPTH entries in the buffer</li>
+<li>For each entry, check if alias matches the search value</li>
+<li>If match found:<ul>
+<li>Set alias to 0 (empty marker)</li>
+<li>Set node_id to 0 (empty marker)</li>
+<li>Set is_duplicate flag to false</li>
+<li>Set is_permitted flag to false</li>
+<li>Break out of loop (stop searching)</li>
+</ul>
+</li>
+<li>If no match found, function returns without action</li>
+</ol>
+<p>The function uses early termination (break) after finding the first match, which is correct since aliases should be unique in the buffer. Clearing all fields ensures the slot can be reused by future register operations.</p>
+<p>Use cases:</p><ul>
+<li>Cleaning up after node logout (AMR frame received)</li>
+<li>Removing mappings when nodes disconnect</li>
+<li>Test cleanup between test cases</li>
+</ul>
+<pre class="fragment">* @param alias The 12-bit CAN alias to unregister
+* </pre><dl class="section attention"><dt>Attention</dt><dd>This function is safe to call with aliases that don't exist in the buffer. No error is generated in this case.</dd>
+<dd>
+After unregistering, any pointers previously obtained from <a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register()</a> or find functions for this entry become invalid.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The function stops searching after finding the first match, so if duplicate aliases exist in the buffer (should never happen), only the first is removed.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Linear search in worst case. Best case finds match in first slot immediately. Average case finds match halfway through buffer.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Adds a mapping </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a689def4649f0c550f4105dac8846bd93" title="Releases all stored Alias Mapping pairs.">AliasMappings_flush</a> - Removes all mappings </dd></dl>
 
 </div>
 </div>
@@ -337,14 +595,47 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Finds a Alias/NodeID pair that matches the Alias passed. </p>
+<p>Finds an Alias/NodeID pair that matches the Alias passed. </p>
+<p>Performs a linear search through the buffer looking for an entry where the alias field matches the provided value. Returns a pointer to the matching entry or NULL if not found. This is used to resolve an alias to its corresponding Node ID during message processing.</p>
+<p>Use cases:</p><ul>
+<li>Resolving source alias to Node ID in received messages</li>
+<li>Validating alias uniqueness before allocation</li>
+<li>Looking up node information during message routing</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alias</td><td>The Alias to search for </td></tr>
+    <tr><td class="paramname">alias</td><td>The 12-bit CAN alias to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the matching alias_mapping_t entry, or NULL if not found</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if alias not found. Caller MUST check return value before dereferencing. Dereferencing NULL will cause immediate crash.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>CAN Alias 0 is reserved to mark empty buffer slots and will never match. Per OpenLCB CAN protocol, valid aliases are 0x001-0xFFF. Entries with CAN Alias = 0 are skipped during search.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all entries. For typical buffer sizes (8-16 entries), this is acceptably fast.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a084208e2d690494fb75159a2251b41e8" title="Finds an Alias/NodeID pair that matches the NodeID passed.">AliasMappings_find_mapping_by_node_id</a> - Reverse lookup by Node ID </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Adds a mapping</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all ALIAS_MAPPING_BUFFER_DEPTH entries in the buffer</li>
+<li>For each entry, check if alias field matches the search value</li>
+<li>If match found, immediately return pointer to that entry</li>
+<li>If loop completes without match, return NULL</li>
+</ol>
+<p>The function performs a simple linear search. Empty slots (alias = 0) will not match unless searching for alias 0 (which would be a programming error). This is the primary mechanism for resolving CAN aliases to Node IDs during message reception.</p>
+<p>Use cases:</p><ul>
+<li>Resolving source alias to Node ID in received messages</li>
+<li>Validating alias uniqueness before allocation</li>
+<li>Looking up node information during message routing</li>
+</ul>
+<pre class="fragment">* @param alias The 12-bit CAN alias to search for
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the matching alias_mapping_t entry, or NULL if not found</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if alias not found. Caller MUST check return value before dereferencing. Dereferencing NULL will cause immediate crash.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>CAN Alias 0 is reserved to mark empty buffer slots and will never match. Per OpenLCB CAN protocol, valid aliases are 0x001-0xFFF. Entries with CAN Alias = 0 are skipped during search.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all entries. For typical buffer sizes (8-16 entries), this is acceptably fast.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Searches entire buffer in worst case. Best case finds match in first slot immediately. Average case finds match halfway through buffer.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a084208e2d690494fb75159a2251b41e8" title="Finds an Alias/NodeID pair that matches the NodeID passed.">AliasMappings_find_mapping_by_node_id</a> - Reverse lookup by Node ID </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Adds a mapping </dd></dl>
 
 </div>
 </div>
@@ -371,14 +662,47 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Finds a Alias/NodeID pair that matches the NodeID passed. </p>
+<p>Finds an Alias/NodeID pair that matches the NodeID passed. </p>
+<p>Performs a linear search through the buffer looking for an entry where the node_id field matches the provided value. Returns a pointer to the matching entry or NULL if not found. This is used to find what alias is currently assigned to a specific Node ID.</p>
+<p>Use cases:</p><ul>
+<li>Looking up the current alias for a local node before sending messages</li>
+<li>Checking if a Node ID is already registered before login</li>
+<li>Finding node entries for updates during alias reallocation</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alias</td><td>The NodeID to search for </td></tr>
+    <tr><td class="paramname">node_id</td><td>The 48-bit OpenLCB Node ID to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the Alias Mapping pair if found, else NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the matching alias_mapping_t entry, or NULL if not found</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if Node ID not found. Caller MUST check return value before dereferencing. Dereferencing NULL will cause immediate crash.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>OpenLCB Node ID 0 is reserved as "no valid Node ID assigned" and will never match. Entries with Node ID = 0 are considered empty buffer slots and are skipped during search.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all entries. For typical buffer sizes (8-16 entries), this is acceptably fast.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a30c9579dd57feb9bb1ebe5f07f60bb42" title="Finds an Alias/NodeID pair that matches the Alias passed.">AliasMappings_find_mapping_by_alias</a> - Reverse lookup by alias </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Adds a mapping</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all ALIAS_MAPPING_BUFFER_DEPTH entries in the buffer</li>
+<li>For each entry, check if node_id field matches the search value</li>
+<li>If match found, immediately return pointer to that entry</li>
+<li>If loop completes without match, return NULL</li>
+</ol>
+<p>The function performs a simple linear search. Empty slots (node_id = 0) will not match unless searching for node_id 0 (which would be a programming error). This is used to find what alias is currently assigned to a local or remote node.</p>
+<p>Use cases:</p><ul>
+<li>Looking up the current alias for a local node before sending messages</li>
+<li>Checking if a Node ID is already registered before login</li>
+<li>Finding node entries for updates during alias reallocation</li>
+</ul>
+<pre class="fragment">* @param node_id The 48-bit OpenLCB Node ID to search for
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the matching alias_mapping_t entry, or NULL if not found</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if Node ID not found. Caller MUST check return value before dereferencing. Dereferencing NULL will cause immediate crash.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>OpenLCB Node ID 0 is reserved as "no valid Node ID assigned" and will never match. Entries with Node ID = 0 are considered empty buffer slots and are skipped during search.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all entries. For typical buffer sizes (8-16 entries), this is acceptably fast.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Searches entire buffer in worst case. Best case finds match in first slot immediately. Average case finds match halfway through buffer.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a30c9579dd57feb9bb1ebe5f07f60bb42" title="Finds an Alias/NodeID pair that matches the Alias passed.">AliasMappings_find_mapping_by_alias</a> - Reverse lookup by alias </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Adds a mapping </dd></dl>
 
 </div>
 </div>
@@ -405,14 +729,46 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Released all stored Alias Mapping pairs. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<p>Releases all stored Alias Mapping pairs. </p>
+<p>Clears all entries in the alias mapping buffer by calling the internal reset function. All aliases, Node IDs, and flags are reset to their default values. The duplicate alias flag is also cleared. This is typically used during system reset or when all nodes need to be logged out.</p>
+<p>Use cases:</p><ul>
+<li>System-wide reset or reinitialization</li>
+<li>Clearing state between test cases</li>
+<li>Emergency recovery from corrupted buffer state</li>
+<li>Batch logout of all nodes</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>This invalidates ALL pointers previously returned by register or find functions. Dereferencing these pointers after flush causes undefined behavior.</dd>
+<dd>
+Any nodes that were using these aliases will lose their CAN bus identity and must re-login with new aliases to communicate.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function is NOT thread-safe. Ensure no other code is accessing the buffer during flush operation.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Functionally identical to <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> but semantically different. Use initialize() at startup, use flush() to clear at runtime.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize</a> - Initial setup </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> - Removes a single mapping</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call internal _reset_mappings() function</li>
+<li>This clears all buffer entries to default state</li>
+<li>Clears the duplicate alias flag</li>
+<li>Buffer is ready for new registrations</li>
+</ol>
+<p>This function is identical in implementation to <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> but serves a different semantic purpose. Initialize is for startup, flush is for runtime clearing of the buffer. Calling this during active communication will break all existing alias mappings.</p>
+<p>Use cases:</p><ul>
+<li>System-wide reset or reinitialization</li>
+<li>Clearing state between test cases</li>
+<li>Emergency recovery from corrupted buffer state</li>
+<li>Batch logout of all nodes</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>This invalidates ALL pointers previously returned by register or find functions. Dereferencing these pointers after flush causes undefined behavior.</dd>
+<dd>
+Any nodes that were using these aliases will lose their CAN bus identity and must re-login with new aliases to communicate.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function is NOT thread-safe. Ensure no other code is accessing the buffer during flush operation.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Functionally identical to <a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize()</a> but semantically different. Use initialize() at startup, use flush() to clear at runtime.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Iterates through all ALIAS_MAPPING_BUFFER_DEPTH entries.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a999c2dabeacd5ed0c21c9dbbdd263297" title="Initializes the Alias Mapping buffers.">AliasMappings_initialize</a> - Initial setup </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> - Removes a single mapping </dd>
+<dd>
+_reset_mappings - Internal reset implementation </dd></dl>
 
 </div>
 </div>

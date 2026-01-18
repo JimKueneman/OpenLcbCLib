@@ -27,6 +27,9 @@
  * @file alias_mappings.c
  * @brief Implementation of the Alias/NodeID mapping buffer
  *
+ * @author Jim Kueneman
+ * @date 17 Jan 2026
+ *
  * @details This module implements a fixed-size buffer that maintains the bidirectional
  * mapping between OpenLCB 48-bit Node IDs and their corresponding 12-bit CAN aliases.
  * The implementation uses a simple linear search strategy suitable for small to medium
@@ -41,11 +44,11 @@
  * - Duplicate alias detection flag support
  *
  * Performance characteristics:
- * - Register: O(n) search for empty slot or existing Node ID
- * - Find by alias: O(n) linear search
- * - Find by Node ID: O(n) linear search
- * - Unregister: O(n) search with early termination
- * - Initialize/Flush: O(n) iteration
+ * - Register: Linear search for empty slot or existing Node ID
+ * - Find by alias: Linear search through buffer
+ * - Find by Node ID: Linear search through buffer
+ * - Unregister: Linear search with early termination
+ * - Initialize/Flush: Iterates through all entries
  *
  * Thread safety:
  * - NOT thread-safe. All functions assume single-threaded access.
@@ -87,7 +90,7 @@ static alias_mapping_info_t _alias_mapping_info;
  * @note This is an internal static function and cannot be called from outside
  *       this compilation unit.
  *
- * @remark Time complexity is O(n) where n = ALIAS_MAPPING_BUFFER_DEPTH.
+ * @remark Iterates through all ALIAS_MAPPING_BUFFER_DEPTH entries.
  *         For typical values (8-16), this executes in microseconds.
  *
  * @see AliasMappings_initialize - Public initialization function
@@ -136,7 +139,7 @@ static void _reset_mappings(void) {
  * @attention This function is NOT thread-safe. Call only during single-threaded
  *            initialization phase.
  *
- * @remark Execution time is O(n) where n = ALIAS_MAPPING_BUFFER_DEPTH.
+ * @remark Iterates through all ALIAS_MAPPING_BUFFER_DEPTH entries.
  *
  * @see _reset_mappings - Internal reset implementation
  * @see AliasMappings_flush - Runtime clear operation
@@ -177,7 +180,7 @@ void AliasMappings_initialize(void) {
  *
  * @note This function always succeeds and never returns NULL.
  *
- * @remark Execution time is O(1) - immediate return of pointer.
+ * @remark Returns immediately - pointer to static data.
  *
  * @see alias_mapping_info_t - Structure definition
  * @see AliasMappings_set_has_duplicate_alias_flag - Sets the duplicate flag
@@ -215,7 +218,7 @@ alias_mapping_info_t *AliasMappings_get_alias_mapping_info(void) {
  *
  * @note The flag is cleared by AliasMappings_initialize() and AliasMappings_flush().
  *
- * @remark Execution time is O(1) - single flag assignment.
+ * @remark Single flag assignment operation.
  *
  * @see AliasMappings_get_alias_mapping_info - Access the flag for reading
  * @see alias_mapping_info_t::has_duplicate_alias - The flag field
@@ -247,7 +250,7 @@ void AliasMappings_set_has_duplicate_alias_flag(void) {
  *
  * @note The flag is also cleared by AliasMappings_initialize() and AliasMappings_flush().
  *
- * @remark Execution time is O(1) - single flag assignment.
+ * @remark Single flag assignment operation.
  *
  * @see AliasMappings_set_has_duplicate_alias_flag - Sets the flag
  * @see AliasMappings_get_alias_mapping_info - Access the flag for reading
@@ -285,22 +288,27 @@ void AliasMappings_clear_has_duplicate_alias_flag(void) {
  * - Updating an alias after conflict resolution
  * - Storing remote node alias/Node ID pairs learned from AMD frames
  *
+ * @verbatim
  * @param alias The 12-bit CAN alias to store (valid range: 0x001-0xFFF, 0x000 reserved for empty)
  * @param node_id The 48-bit OpenLCB Node ID to associate with the alias
+ * @endverbatim
  *
  * @return Pointer to the newly registered alias_mapping_t entry, or NULL if buffer is full
  *
  * @warning Returns NULL when buffer is completely full. Caller MUST check return
  *          value before dereferencing. Dereferencing NULL will cause immediate crash.
  *
- * @warning Returns NULL if alias is invalid (0 or > 0xFFF). OpenLCB requires 12-bit
- *          aliases in range 0x001-0xFFF. Alias 0 is reserved for empty slots.
+ * @warning Returns NULL if CAN Alias is outside valid 12-bit range (0 or > 0xFFF).
+ *          OpenLCB CAN protocol requires aliases in range 0x001-0xFFF. Zero is
+ *          reserved to mark empty buffer slots.
  *
- * @warning Returns NULL if node_id is invalid (0 or > 0xFFFFFFFFFFFF). OpenLCB Node IDs
- *          must be 48-bit values in range 0x000000000001-0xFFFFFFFFFFFF. Node ID 0 is reserved.
+ * @warning Returns NULL if OpenLCB Node ID exceeds 48-bit range (0 or > 0xFFFFFFFFFFFF).
+ *          Valid OpenLCB Node IDs are 48-bit values from 0x000000000001-0xFFFFFFFFFFFF.
+ *          Zero is reserved as "no valid Node ID assigned".
  *
- * @warning If the Node ID already exists, the OLD alias is silently replaced. This
- *          is correct behavior for alias updates but could mask programming errors.
+ * @warning If an OpenLCB Node ID already exists in the buffer, its previously registered
+ *          CAN Alias is silently replaced with the new one. This is correct behavior for
+ *          alias updates after conflict resolution but could mask programming errors.
  *
  * @attention Buffer capacity is ALIAS_MAPPING_BUFFER_DEPTH entries. Plan node count
  *            accordingly or handle registration failures gracefully.
@@ -308,8 +316,8 @@ void AliasMappings_clear_has_duplicate_alias_flag(void) {
  * @attention The returned pointer remains valid until the entry is unregistered or
  *            the buffer is flushed. Do not cache pointers across these operations.
  *
- * @remark Time complexity is O(n) worst case where n = ALIAS_MAPPING_BUFFER_DEPTH.
- *         Best case is O(1) if first slot is available.
+ * @remark Linear search through buffer in worst case. Best case finds first slot
+ *         immediately if available.
  *
  * @see AliasMappings_unregister - Removes a mapping
  * @see AliasMappings_find_mapping_by_alias - Finds existing mapping by alias
@@ -371,7 +379,9 @@ alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id) {
  * - Removing mappings when nodes disconnect
  * - Test cleanup between test cases
  *
+ * @verbatim
  * @param alias The 12-bit CAN alias to unregister
+ * @endverbatim
  *
  * @attention This function is safe to call with aliases that don't exist in the buffer.
  *            No error is generated in this case.
@@ -382,8 +392,8 @@ alias_mapping_t *AliasMappings_register(uint16_t alias, node_id_t node_id) {
  * @note The function stops searching after finding the first match, so if duplicate
  *       aliases exist in the buffer (should never happen), only the first is removed.
  *
- * @remark Time complexity is O(n) worst case where n = ALIAS_MAPPING_BUFFER_DEPTH.
- *         Best case is O(1) if alias is in first slot. Average case is O(n/2).
+ * @remark Linear search in worst case. Best case finds match in first slot immediately.
+ *         Average case finds match halfway through buffer.
  *
  * @see AliasMappings_register - Adds a mapping
  * @see AliasMappings_flush - Removes all mappings
@@ -426,21 +436,24 @@ void AliasMappings_unregister(uint16_t alias) {
  * - Validating alias uniqueness before allocation
  * - Looking up node information during message routing
  *
+ * @verbatim
  * @param alias The 12-bit CAN alias to search for
+ * @endverbatim
  *
  * @return Pointer to the matching alias_mapping_t entry, or NULL if not found
  *
  * @warning Returns NULL if alias not found. Caller MUST check return value before
  *          dereferencing. Dereferencing NULL will cause immediate crash.
  *
- * @attention Alias 0 is reserved for "empty slot" and will never be found by this
- *            function (entries with alias = 0 are skipped).
+ * @attention CAN Alias 0 is reserved to mark empty buffer slots and will never match.
+ *            Per OpenLCB CAN protocol, valid aliases are 0x001-0xFFF. Entries with
+ *            CAN Alias = 0 are skipped during search.
  *
- * @note This is a linear search with O(n) time complexity where n = ALIAS_MAPPING_BUFFER_DEPTH.
- *       For typical buffer sizes (8-16 entries), this is acceptably fast.
+ * @note Linear search through all entries. For typical buffer sizes (8-16 entries),
+ *       this is acceptably fast.
  *
- * @remark Time complexity is O(n) worst case. Best case is O(1) if alias is in
- *         first slot. Average case is O(n/2).
+ * @remark Searches entire buffer in worst case. Best case finds match in first slot
+ *         immediately. Average case finds match halfway through buffer.
  *
  * @see AliasMappings_find_mapping_by_node_id - Reverse lookup by Node ID
  * @see AliasMappings_register - Adds a mapping
@@ -479,21 +492,24 @@ alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
  * - Checking if a Node ID is already registered before login
  * - Finding node entries for updates during alias reallocation
  *
+ * @verbatim
  * @param node_id The 48-bit OpenLCB Node ID to search for
+ * @endverbatim
  *
  * @return Pointer to the matching alias_mapping_t entry, or NULL if not found
  *
  * @warning Returns NULL if Node ID not found. Caller MUST check return value before
  *          dereferencing. Dereferencing NULL will cause immediate crash.
  *
- * @attention Node ID 0 is reserved and will never be found by this function
- *            (entries with node_id = 0 are considered empty).
+ * @attention OpenLCB Node ID 0 is reserved as "no valid Node ID assigned" and will
+ *            never match. Entries with Node ID = 0 are considered empty buffer slots
+ *            and are skipped during search.
  *
- * @note This is a linear search with O(n) time complexity where n = ALIAS_MAPPING_BUFFER_DEPTH.
- *       For typical buffer sizes (8-16 entries), this is acceptably fast.
+ * @note Linear search through all entries. For typical buffer sizes (8-16 entries),
+ *       this is acceptably fast.
  *
- * @remark Time complexity is O(n) worst case. Best case is O(1) if Node ID is in
- *         first slot. Average case is O(n/2).
+ * @remark Searches entire buffer in worst case. Best case finds match in first slot
+ *         immediately. Average case finds match halfway through buffer.
  *
  * @see AliasMappings_find_mapping_by_alias - Reverse lookup by alias
  * @see AliasMappings_register - Adds a mapping
@@ -546,7 +562,7 @@ alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id) {
  * @note Functionally identical to AliasMappings_initialize() but semantically different.
  *       Use initialize() at startup, use flush() to clear at runtime.
  *
- * @remark Execution time is O(n) where n = ALIAS_MAPPING_BUFFER_DEPTH.
+ * @remark Iterates through all ALIAS_MAPPING_BUFFER_DEPTH entries.
  *
  * @see AliasMappings_initialize - Initial setup
  * @see AliasMappings_unregister - Removes a single mapping

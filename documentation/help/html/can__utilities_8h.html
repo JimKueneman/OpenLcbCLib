@@ -104,43 +104,43 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:abfe5743512ca91b1c44460250e347949" id="r_abfe5743512ca91b1c44460250e347949"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfe5743512ca91b1c44460250e347949">CanUtilities_clear_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:abfe5743512ca91b1c44460250e347949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the fields of the pointer to a can_msg_t structure to zero/NULL.  <br /></td></tr>
+<tr class="memdesc:abfe5743512ca91b1c44460250e347949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all fields of a CAN message structure to zero.  <br /></td></tr>
 <tr class="separator:abfe5743512ca91b1c44460250e347949"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a569505bc24481994b70112a655190be2" id="r_a569505bc24481994b70112a655190be2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a569505bc24481994b70112a655190be2">CanUtilities_load_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint32_t identifier, uint8_t payload_size, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)</td></tr>
-<tr class="memdesc:a569505bc24481994b70112a655190be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initalizes the fields of the pointer to the passed parameters.  <br /></td></tr>
+<tr class="memdesc:a569505bc24481994b70112a655190be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a CAN message with identifier, payload size, and data bytes.  <br /></td></tr>
 <tr class="separator:a569505bc24481994b70112a655190be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c8cdd807ea3471409c6ae74a8472bfb" id="r_a1c8cdd807ea3471409c6ae74a8472bfb"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c8cdd807ea3471409c6ae74a8472bfb">CanUtilities_copy_node_id_to_payload</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint64_t node_id, uint8_t start_offset)</td></tr>
-<tr class="memdesc:a1c8cdd807ea3471409c6ae74a8472bfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and payload size fields of the passed CAN frame buffer with the passed Node ID starting at the passed offset in the array.  <br /></td></tr>
+<tr class="memdesc:a1c8cdd807ea3471409c6ae74a8472bfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 48-bit Node ID into CAN message payload.  <br /></td></tr>
 <tr class="separator:a1c8cdd807ea3471409c6ae74a8472bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55b499e2a3270be5902c392ca29d1ce5" id="r_a55b499e2a3270be5902c392ca29d1ce5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55b499e2a3270be5902c392ca29d1ce5">CanUtilities_copy_openlcb_payload_to_can_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint16_t openlcb_start_index, uint8_t can_start_index)</td></tr>
-<tr class="memdesc:a55b499e2a3270be5902c392ca29d1ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and payload size fields of the passed OpenLcb/LCC message buffer to the payload fields in the passed CAN frame buffer at the offsets.  <br /></td></tr>
+<tr class="memdesc:a55b499e2a3270be5902c392ca29d1ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies payload data from OpenLCB message to CAN message.  <br /></td></tr>
 <tr class="separator:a55b499e2a3270be5902c392ca29d1ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2591481bd835aa02f5616b6d67e5fdaa" id="r_a2591481bd835aa02f5616b6d67e5fdaa"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2591481bd835aa02f5616b6d67e5fdaa">CanUtilities_append_can_payload_to_openlcb_payload</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint8_t can_start_index)</td></tr>
-<tr class="memdesc:a2591481bd835aa02f5616b6d67e5fdaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and payload size fields of the passed CAN frame buffer with the payload fields in the passed OpenLcb/LCC message buffer at the offsets.  <br /></td></tr>
+<tr class="memdesc:a2591481bd835aa02f5616b6d67e5fdaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appends CAN payload data to OpenLCB message payload.  <br /></td></tr>
 <tr class="separator:a2591481bd835aa02f5616b6d67e5fdaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9403121e6675ba910b3686f03e74cf3" id="r_ad9403121e6675ba910b3686f03e74cf3"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9403121e6675ba910b3686f03e74cf3">CanUtilities_copy_64_bit_to_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg, uint64_t data)</td></tr>
-<tr class="memdesc:ad9403121e6675ba910b3686f03e74cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the payload and updates the payload size field of the passed CAN frame buffer with the passed 64 bit value.  <br /></td></tr>
+<tr class="memdesc:ad9403121e6675ba910b3686f03e74cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies a 64-bit value into CAN message payload.  <br /></td></tr>
 <tr class="separator:ad9403121e6675ba910b3686f03e74cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99553bad6926e671e82b1c212d0960a9" id="r_a99553bad6926e671e82b1c212d0960a9"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99553bad6926e671e82b1c212d0960a9">CanUtilities_copy_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_source, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_target)</td></tr>
-<tr class="memdesc:a99553bad6926e671e82b1c212d0960a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the payload and the payload size fields from the source passed CAN frame buffer to the target payload and the payload size fields.  <br /></td></tr>
+<tr class="memdesc:a99553bad6926e671e82b1c212d0960a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies identifier and payload from one CAN message to another.  <br /></td></tr>
 <tr class="separator:a99553bad6926e671e82b1c212d0960a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86921db394b08564e4c4dc437b81e255" id="r_a86921db394b08564e4c4dc437b81e255"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86921db394b08564e4c4dc437b81e255">CanUtilities_extract_can_payload_as_node_id</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:a86921db394b08564e4c4dc437b81e255"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the first 6 bytes in the passed CAN frame buffer's payload as a Node ID.  <br /></td></tr>
+<tr class="memdesc:a86921db394b08564e4c4dc437b81e255"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts a 48-bit Node ID from CAN message payload.  <br /></td></tr>
 <tr class="separator:a86921db394b08564e4c4dc437b81e255"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff3ed91a41bacfc9882e497c5caa330d" id="r_aff3ed91a41bacfc9882e497c5caa330d"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff3ed91a41bacfc9882e497c5caa330d">CanUtilities_extract_source_alias_from_can_identifier</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:aff3ed91a41bacfc9882e497c5caa330d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the last 3 nibbles from the identifier field in the passed CAN frame buffer.  <br /></td></tr>
+<tr class="memdesc:aff3ed91a41bacfc9882e497c5caa330d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the 12-bit source alias from CAN identifier.  <br /></td></tr>
 <tr class="separator:aff3ed91a41bacfc9882e497c5caa330d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ec782c47b8a21c25996367620278267" id="r_a8ec782c47b8a21c25996367620278267"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ec782c47b8a21c25996367620278267">CanUtilities_extract_dest_alias_from_can_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:a8ec782c47b8a21c25996367620278267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts any destination Alias ID from the CAN frame buffer.  <br /></td></tr>
+<tr class="memdesc:a8ec782c47b8a21c25996367620278267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the destination alias from CAN message.  <br /></td></tr>
 <tr class="separator:a8ec782c47b8a21c25996367620278267"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7966bc5a6bdae46b3fe8f04f42975d3" id="r_af7966bc5a6bdae46b3fe8f04f42975d3"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7966bc5a6bdae46b3fe8f04f42975d3">CanUtilities_convert_can_mti_to_openlcb_mti</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:af7966bc5a6bdae46b3fe8f04f42975d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a CAN MTI to an OpenLcb/LCC MTI from the passed CAN frame identifier.  <br /></td></tr>
+<tr class="memdesc:af7966bc5a6bdae46b3fe8f04f42975d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts CAN MTI to standard OpenLCB MTI.  <br /></td></tr>
 <tr class="separator:af7966bc5a6bdae46b3fe8f04f42975d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab35d2bca8422d132b04b62719e77de25" id="r_ab35d2bca8422d132b04b62719e77de25"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab35d2bca8422d132b04b62719e77de25">CanUtilities_count_nulls_in_payloads</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:ab35d2bca8422d132b04b62719e77de25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs through the payloads of the passed buffers to count how many NULLs are in both combined.  <br /></td></tr>
+<tr class="memdesc:ab35d2bca8422d132b04b62719e77de25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts NULL bytes in both CAN and OpenLCB message payloads.  <br /></td></tr>
 <tr class="separator:ab35d2bca8422d132b04b62719e77de25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6cf0e5812d45a55473653d2b99d6718" id="r_ac6cf0e5812d45a55473653d2b99d6718"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6cf0e5812d45a55473653d2b99d6718">CanUtilities_is_openlcb_message</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:ac6cf0e5812d45a55473653d2b99d6718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if the passed CAN frame buffer is either a complete or partial OpenLcb/LCC message (as opposed to a CAN only message frame).  <br /></td></tr>
+<tr class="memdesc:ac6cf0e5812d45a55473653d2b99d6718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if CAN frame contains an OpenLCB message.  <br /></td></tr>
 <tr class="separator:ac6cf0e5812d45a55473653d2b99d6718"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -176,14 +176,41 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sets the fields of the pointer to a can_msg_t structure to zero/NULL. </p>
+<p>Clears all fields of a CAN message structure to zero. </p>
+<p>Sets the identifier, payload count, and all payload bytes to zero, effectively resetting the CAN message structure to a clean state.</p>
+<p>Use cases:</p><ul>
+<li>Initializing a new CAN message structure</li>
+<li>Resetting a CAN message before reuse</li>
+<li>Clearing message data before filling with new content</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to a CAN frame buffer to clear </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer to clear</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Does not check if buffer is currently in use</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Ensure pointer is valid before calling</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a569505bc24481994b70112a655190be2" title="Loads a CAN message with identifier, payload size, and data bytes.">CanUtilities_load_can_message</a> - Loads message with data</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Set identifier field to 0</li>
+<li>Set payload_count field to 0</li>
+<li>Iterate through all 8 payload bytes</li>
+<li>Set each payload byte to 0x00</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Initializing a new CAN message structure</li>
+<li>Resetting a CAN message before reuse</li>
+<li>Clearing message data before filling with new content</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer to clear
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Does not check if buffer is currently in use</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Ensure pointer is valid before calling</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a569505bc24481994b70112a655190be2" title="Loads a CAN message with identifier, payload size, and data bytes.">CanUtilities_load_can_message</a> - Loads message with data </dd></dl>
 
 </div>
 </div>
@@ -259,24 +286,64 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initalizes the fields of the pointer to the passed parameters. </p>
+<p>Loads a CAN message with identifier, payload size, and data bytes. </p>
+<p>Initializes all fields of a CAN message structure with the provided values. Sets the 29-bit CAN identifier, payload byte count, and up to 8 data bytes.</p>
+<p>Use cases:</p><ul>
+<li>Creating CAN control frames (CID, RID, AMD)</li>
+<li>Building CAN message frames from OpenLCB messages</li>
+<li>Preparing CAN frames for transmission</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to a CAN frame buffer to fill in </td></tr>
-    <tr><td class="paramname">identifier</td><td>CAN MTI to load </td></tr>
-    <tr><td class="paramname">payload_size</td><td>How many bytes are valid in the payload </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 1 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 2 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 3 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 4 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 5 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 6 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 7 </td></tr>
-    <tr><td class="paramname">byte</td><td>Payload Byte 8 </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer to initialize </td></tr>
+    <tr><td class="paramname">identifier</td><td>29-bit CAN extended identifier value </td></tr>
+    <tr><td class="paramname">payload_size</td><td>Number of valid payload bytes (0-8) </td></tr>
+    <tr><td class="paramname">byte1</td><td>First payload byte </td></tr>
+    <tr><td class="paramname">byte2</td><td>Second payload byte </td></tr>
+    <tr><td class="paramname">byte3</td><td>Third payload byte </td></tr>
+    <tr><td class="paramname">byte4</td><td>Fourth payload byte </td></tr>
+    <tr><td class="paramname">byte5</td><td>Fifth payload byte </td></tr>
+    <tr><td class="paramname">byte6</td><td>Sixth payload byte </td></tr>
+    <tr><td class="paramname">byte7</td><td>Seventh payload byte </td></tr>
+    <tr><td class="paramname">byte8</td><td>Eighth payload byte</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Payload size values greater than 8 may cause issues</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>All 8 byte parameters must be provided even if payload_size is less than 8</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#abfe5743512ca91b1c44460250e347949" title="Clears all fields of a CAN message structure to zero.">CanUtilities_clear_can_message</a> - Clears message structure </dd>
+<dd>
+<a class="el" href="can__utilities_8c.html#ad9403121e6675ba910b3686f03e74cf3" title="Copies a 64-bit value into CAN message payload.">CanUtilities_copy_64_bit_to_can_message</a> - Alternative for 8-byte payloads</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Store identifier value in identifier field</li>
+<li>Store payload size in payload_count field</li>
+<li>Store byte1 through byte8 in payload array indices 0-7</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Creating CAN control frames (CID, RID, AMD)</li>
+<li>Building CAN message frames from OpenLCB messages</li>
+<li>Preparing CAN frames for transmission</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer to initialize
+* @param identifier 29-bit CAN extended identifier value
+* @param payload_size Number of valid payload bytes (0-8)
+* @param byte1 First payload byte
+* @param byte2 Second payload byte
+* @param byte3 Third payload byte
+* @param byte4 Fourth payload byte
+* @param byte5 Fifth payload byte
+* @param byte6 Sixth payload byte
+* @param byte7 Seventh payload byte
+* @param byte8 Eighth payload byte
+* </pre><dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Payload size values greater than 8 may cause issues</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>All 8 byte parameters must be provided even if payload_size is less than 8</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#abfe5743512ca91b1c44460250e347949" title="Clears all fields of a CAN message structure to zero.">CanUtilities_clear_can_message</a> - Clears message structure </dd>
+<dd>
+<a class="el" href="can__utilities_8c.html#ad9403121e6675ba910b3686f03e74cf3" title="Copies a 64-bit value into CAN message payload.">CanUtilities_copy_64_bit_to_can_message</a> - Alternative for 8-byte payloads </dd></dl>
 
 </div>
 </div>
@@ -312,16 +379,58 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Loads the payload and payload size fields of the passed CAN frame buffer with the passed Node ID starting at the passed offset in the array. </p>
+<p>Copies a 48-bit Node ID into CAN message payload. </p>
+<p>Converts a 48-bit OpenLCB Node ID into 6 bytes and stores them in the CAN message payload starting at the specified offset. Updates the payload count to reflect the total number of bytes used.</p>
+<p>Use cases:</p><ul>
+<li>Building AMD (Alias Map Definition) frames</li>
+<li>Building Verified Node ID messages</li>
+<li>Sending Node ID in CAN control frames</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to a CAN frame buffer to load the payload </td></tr>
-    <tr><td class="paramname">node_id</td><td>Node ID to load into the CAN buffers payload array </td></tr>
-    <tr><td class="paramname">start_offset</td><td>Where the Node ID starts in the 8 byte array </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer to receive Node ID </td></tr>
+    <tr><td class="paramname">node_id</td><td>48-bit OpenLCB Node ID to copy </td></tr>
+    <tr><td class="paramname">start_offset</td><td>Starting position in payload array (0-2)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied (always 6 + start_offset), or 0 if offset invalid</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns 0 if start_offset is greater than 2 </dd>
+<dd>
+NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Valid start_offset range is 0-2 to ensure 6-byte Node ID fits in 8-byte payload </dd>
+<dd>
+Updates payload_count to start_offset + 6</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a86921db394b08564e4c4dc437b81e255" title="Extracts a 48-bit Node ID from CAN message payload.">CanUtilities_extract_can_payload_as_node_id</a> - Extracts Node ID from payload</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Validate start_offset is not greater than 2</li>
+<li>If invalid offset, return 0</li>
+<li>Calculate payload_count as 6 + start_offset</li>
+<li>Iterate backward through 6 byte positions (from start_offset+5 down to start_offset)</li>
+<li>For each position:<ul>
+<li>Extract lowest byte from node_id using mask 0xFF</li>
+<li>Store byte in current payload position</li>
+<li>Right-shift node_id by 8 bits for next byte</li>
+</ul>
+</li>
+<li>Return payload_count</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Building AMD (Alias Map Definition) frames</li>
+<li>Building Verified Node ID messages</li>
+<li>Sending Node ID in CAN control frames</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer to receive Node ID
+* @param node_id 48-bit OpenLCB Node ID to copy
+* @param start_offset Starting position in payload array (0-2)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of bytes copied (always 6 + start_offset), or 0 if offset invalid</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns 0 if start_offset is greater than 2 </dd>
+<dd>
+NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Valid start_offset range is 0-2 to ensure 6-byte Node ID fits in 8-byte payload </dd>
+<dd>
+Updates payload_count to start_offset + 6</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a86921db394b08564e4c4dc437b81e255" title="Extracts a 48-bit Node ID from CAN message payload.">CanUtilities_extract_can_payload_as_node_id</a> - Extracts Node ID from payload </dd></dl>
 
 </div>
 </div>
@@ -362,17 +471,62 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Loads the payload and payload size fields of the passed OpenLcb/LCC message buffer to the payload fields in the passed CAN frame buffer at the offsets. </p>
+<p>Copies payload data from OpenLCB message to CAN message. </p>
+<p>Transfers bytes from an OpenLCB message payload to a CAN message payload, starting at specified offsets in each buffer. Copies up to the remaining space in the 8-byte CAN payload.</p>
+<p>Use cases:</p><ul>
+<li>Fragmenting large OpenLCB messages into CAN frames</li>
+<li>Creating multi-frame CAN messages</li>
+<li>Building first, middle, or last CAN frames from OpenLCB datagram</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to an OpenLcb/LCC buffer as the source payload </td></tr>
-    <tr><td class="paramname">can_msg</td><td>Pointer to a CAN frame buffer with the target payload </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Where in the OpenLcb/LCC buffer payload to start copying from </td></tr>
-    <tr><td class="paramname">can_start_index</td><td>Where the CAN frame buffer to start copying to </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB message buffer (source) </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer (destination) </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Starting index in OpenLCB payload </td></tr>
+    <tr><td class="paramname">can_start_index</td><td>Starting index in CAN payload (typically 0 or 2)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied from OpenLCB to CAN payload</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior </dd>
+<dd>
+Does not validate index values are within bounds</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Caller must ensure indices are valid </dd>
+<dd>
+Updates CAN payload_count to reflect total bytes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a2591481bd835aa02f5616b6d67e5fdaa" title="Appends CAN payload data to OpenLCB message payload.">CanUtilities_append_can_payload_to_openlcb_payload</a> - Reverse operation</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Set CAN payload_count to 0</li>
+<li>Initialize copy counter to 0</li>
+<li>If OpenLCB payload_count is 0, return 0</li>
+<li>Iterate from can_start_index to end of CAN payload (8 bytes)</li>
+<li>For each CAN payload position:<ul>
+<li>Copy byte from OpenLCB payload at openlcb_start_index</li>
+<li>Increment openlcb_start_index</li>
+<li>Increment copy counter</li>
+<li>If reached end of OpenLCB payload, break</li>
+</ul>
+</li>
+<li>Set CAN payload_count to can_start_index + copy counter</li>
+<li>Return copy counter</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Fragmenting large OpenLCB messages into CAN frames</li>
+<li>Creating multi-frame CAN messages</li>
+<li>Building first, middle, or last CAN frames from OpenLCB datagram</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB message buffer (source)
+* @param can_msg Pointer to CAN message buffer (destination)
+* @param openlcb_start_index Starting index in OpenLCB payload
+* @param can_start_index Starting index in CAN payload (typically 0 or 2)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of bytes copied from OpenLCB to CAN payload</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior </dd>
+<dd>
+Does not validate index values are within bounds</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Caller must ensure indices are valid </dd>
+<dd>
+Updates CAN payload_count to reflect total bytes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a2591481bd835aa02f5616b6d67e5fdaa" title="Appends CAN payload data to OpenLCB message payload.">CanUtilities_append_can_payload_to_openlcb_payload</a> - Reverse operation </dd></dl>
 
 </div>
 </div>
@@ -408,17 +562,62 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Loads the payload and payload size fields of the passed CAN frame buffer with the payload fields in the passed OpenLcb/LCC message buffer at the offsets. </p>
+<p>Appends CAN payload data to OpenLCB message payload. </p>
+<p>Transfers bytes from a CAN message payload to an OpenLCB message payload, starting at a specified offset in the CAN payload and appending to the end of the OpenLCB payload. Used for reassembling multi-frame CAN messages.</p>
+<p>Use cases:</p><ul>
+<li>Assembling multi-frame CAN messages into OpenLCB message</li>
+<li>Processing datagram frames (first, middle, last)</li>
+<li>Reconstructing fragmented OpenLCB messages</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to an OpenLcb/LCC buffer as the target payload </td></tr>
-    <tr><td class="paramname">can_msg</td><td>Pointer to a CAN frame buffer with the source payload </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Where in the OpenLcb/LCC buffer payload to start copying to </td></tr>
-    <tr><td class="paramname">can_start_index</td><td>Where the CAN frame buffer to start copying from </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB message buffer (destination) </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer (source) </td></tr>
+    <tr><td class="paramname">can_start_index</td><td>Starting index in CAN payload to copy from</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied from CAN to OpenLCB payload</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior </dd>
+<dd>
+Buffer overflow possible if OpenLCB payload exceeds capacity</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Stops copying when OpenLCB buffer capacity reached </dd>
+<dd>
+Updates OpenLCB payload_count as bytes are added</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a55b499e2a3270be5902c392ca29d1ce5" title="Copies payload data from OpenLCB message to CAN message.">CanUtilities_copy_openlcb_payload_to_can_payload</a> - Reverse operation</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Initialize result counter to 0</li>
+<li>Get OpenLCB buffer length based on payload type</li>
+<li>Iterate from can_start_index to end of CAN payload_count</li>
+<li>For each CAN payload byte:<ul>
+<li>Check if OpenLCB payload_count is less than buffer capacity</li>
+<li>If space available:<ul>
+<li>Copy byte from CAN payload to OpenLCB payload at current count</li>
+<li>Increment OpenLCB payload_count</li>
+<li>Increment result counter</li>
+</ul>
+</li>
+<li>If no space, break loop</li>
+</ul>
+</li>
+<li>Return result counter</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Assembling multi-frame CAN messages into OpenLCB message</li>
+<li>Processing datagram frames (first, middle, last)</li>
+<li>Reconstructing fragmented OpenLCB messages</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB message buffer (destination)
+* @param can_msg Pointer to CAN message buffer (source)
+* @param can_start_index Starting index in CAN payload to copy from
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of bytes copied from CAN to OpenLCB payload</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior </dd>
+<dd>
+Buffer overflow possible if OpenLCB payload exceeds capacity</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Stops copying when OpenLCB buffer capacity reached </dd>
+<dd>
+Updates OpenLCB payload_count as bytes are added</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a55b499e2a3270be5902c392ca29d1ce5" title="Copies payload data from OpenLCB message to CAN message.">CanUtilities_copy_openlcb_payload_to_can_payload</a> - Reverse operation </dd></dl>
 
 </div>
 </div>
@@ -449,15 +648,50 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Loads the payload and updates the payload size field of the passed CAN frame buffer with the passed 64 bit value. </p>
+<p>Copies a 64-bit value into CAN message payload. </p>
+<p>Converts a 64-bit value into 8 bytes (big-endian) and stores them in the CAN message payload. Useful for loading Event IDs or other 64-bit values.</p>
+<p>Use cases:</p><ul>
+<li>Loading Event IDs into CAN message payloads</li>
+<li>Sending 64-bit timestamps or identifiers</li>
+<li>Building messages with 8-byte data fields</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to a CAN frame buffer to load the payload </td></tr>
-    <tr><td class="paramname">node_id</td><td>64 bit value to load into the CAN buffers payload array </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer to receive data </td></tr>
+    <tr><td class="paramname">data</td><td>64-bit value to copy into payload</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied (always 8)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always sets payload_count to 8 </dd>
+<dd>
+Data is stored in big-endian format (MSB first)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a1c8cdd807ea3471409c6ae74a8472bfb" title="Copies a 48-bit Node ID into CAN message payload.">CanUtilities_copy_node_id_to_payload</a> - Similar for Node IDs (6 bytes)</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate backward through 8 byte positions (index 7 down to 0)</li>
+<li>For each position:<ul>
+<li>Extract lowest byte from data using mask 0xFF</li>
+<li>Store byte in current payload position</li>
+<li>Right-shift data by 8 bits for next byte</li>
+</ul>
+</li>
+<li>Set payload_count to 8</li>
+<li>Return payload_count (8)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Loading Event IDs into CAN message payloads</li>
+<li>Sending 64-bit timestamps or identifiers</li>
+<li>Building messages with 8-byte data fields</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer to receive data
+* @param data 64-bit value to copy into payload
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of bytes copied (always 8)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always sets payload_count to 8 </dd>
+<dd>
+Data is stored in big-endian format (MSB first)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a1c8cdd807ea3471409c6ae74a8472bfb" title="Copies a 48-bit Node ID into CAN message payload.">CanUtilities_copy_node_id_to_payload</a> - Similar for Node IDs (6 bytes) </dd></dl>
 
 </div>
 </div>
@@ -488,15 +722,50 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the payload and the payload size fields from the source passed CAN frame buffer to the target payload and the payload size fields. </p>
+<p>Copies identifier and payload from one CAN message to another. </p>
+<p>Performs a complete copy of the CAN identifier and all valid payload bytes from the source message to the target message. Does not copy state flags.</p>
+<p>Use cases:</p><ul>
+<li>Duplicating CAN messages for logging</li>
+<li>Creating retry copies of messages</li>
+<li>Forwarding messages through gateways</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer with the source payload fields </td></tr>
-    <tr><td class="paramname">can_msg_target</td><td>Pointer to a CAN frame buffer with the target payload fields </td></tr>
+    <tr><td class="paramname">can_msg_source</td><td>Pointer to source CAN message buffer </td></tr>
+    <tr><td class="paramname">can_msg_target</td><td>Pointer to destination CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes copied </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of payload bytes copied</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior </dd>
+<dd>
+Does not copy allocation state or other metadata</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Only copies identifier and payload fields </dd>
+<dd>
+Target payload_count is set to match source</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#abfe5743512ca91b1c44460250e347949" title="Clears all fields of a CAN message structure to zero.">CanUtilities_clear_can_message</a> - For initializing target first</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Copy source identifier to target identifier</li>
+<li>Iterate through payload bytes from 0 to source payload_count</li>
+<li>For each byte, copy from source payload to target payload</li>
+<li>Copy source payload_count to target payload_count</li>
+<li>Return target payload_count</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Duplicating CAN messages for logging</li>
+<li>Creating retry copies of messages</li>
+<li>Forwarding messages through gateways</li>
+</ul>
+<pre class="fragment">* @param can_msg_source Pointer to source CAN message buffer
+* @param can_msg_target Pointer to destination CAN message buffer
+* </pre><dl class="section return"><dt>Returns</dt><dd>Number of payload bytes copied</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior </dd>
+<dd>
+Does not copy allocation state or other metadata</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Only copies identifier and payload fields </dd>
+<dd>
+Target payload_count is set to match source</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#abfe5743512ca91b1c44460250e347949" title="Clears all fields of a CAN message structure to zero.">CanUtilities_clear_can_message</a> - For initializing target first </dd></dl>
 
 </div>
 </div>
@@ -523,14 +792,50 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Extracts the first 6 bytes in the passed CAN frame buffer's payload as a Node ID. </p>
+<p>Extracts a 48-bit Node ID from CAN message payload. </p>
+<p>Reads the first 6 bytes from the CAN message payload and converts them into a 48-bit Node ID value. Assumes big-endian byte order (MSB first).</p>
+<p>Use cases:</p><ul>
+<li>Processing AMD (Alias Map Definition) frames</li>
+<li>Extracting Node ID from Verified Node ID messages</li>
+<li>Reading Node ID from CAN control frames</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer with the source payload fields </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer containing Node ID</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The Node ID extracted </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>48-bit Node ID extracted from payload bytes 0-5</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Does not validate payload contains at least 6 bytes</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Assumes payload bytes 0-5 contain valid Node ID </dd>
+<dd>
+Returns Node ID in big-endian format</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a1c8cdd807ea3471409c6ae74a8472bfb" title="Copies a 48-bit Node ID into CAN message payload.">CanUtilities_copy_node_id_to_payload</a> - Reverse operation</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract byte at payload[0], shift left 40 bits</li>
+<li>Extract byte at payload[1], shift left 32 bits, OR with result</li>
+<li>Extract byte at payload[2], shift left 24 bits, OR with result</li>
+<li>Extract byte at payload[3], shift left 16 bits, OR with result</li>
+<li>Extract byte at payload[4], shift left 8 bits, OR with result</li>
+<li>Extract byte at payload[5], OR with result</li>
+<li>Return combined 48-bit Node ID value</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Processing AMD (Alias Map Definition) frames</li>
+<li>Extracting Node ID from Verified Node ID messages</li>
+<li>Reading Node ID from CAN control frames</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer containing Node ID
+* </pre><dl class="section return"><dt>Returns</dt><dd>48-bit Node ID extracted from payload bytes 0-5</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Does not validate payload contains at least 6 bytes</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Assumes payload bytes 0-5 contain valid Node ID </dd>
+<dd>
+Returns Node ID in big-endian format</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a1c8cdd807ea3471409c6ae74a8472bfb" title="Copies a 48-bit Node ID into CAN message payload.">CanUtilities_copy_node_id_to_payload</a> - Reverse operation </dd></dl>
 
 </div>
 </div>
@@ -557,14 +862,37 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Extracts the last 3 nibbles from the identifier field in the passed CAN frame buffer. </p>
+<p>Extracts the 12-bit source alias from CAN identifier. </p>
+<p>Masks and extracts the lowest 12 bits (bits 0-11) from the CAN identifier field, which contains the source node's alias.</p>
+<p>Use cases:</p><ul>
+<li>Identifying the source node of received CAN frames</li>
+<li>Routing messages to correct node handlers</li>
+<li>Alias conflict detection during login</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer with the identifier </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer containing identifier</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The source Alias extracted from the CAN identifier </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>12-bit source alias (0x000-0xFFF)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Valid alias range is 0x001-0xFFF (0x000 is invalid)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a8ec782c47b8a21c25996367620278267" title="Extracts the destination alias from CAN message.">CanUtilities_extract_dest_alias_from_can_message</a> - Gets destination alias</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Apply mask 0x00000FFF to identifier field</li>
+<li>Return masked result containing bits 0-11 (source alias)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Identifying the source node of received CAN frames</li>
+<li>Routing messages to correct node handlers</li>
+<li>Alias conflict detection during login</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer containing identifier
+* </pre><dl class="section return"><dt>Returns</dt><dd>12-bit source alias (0x000-0xFFF)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Valid alias range is 0x001-0xFFF (0x000 is invalid)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a8ec782c47b8a21c25996367620278267" title="Extracts the destination alias from CAN message.">CanUtilities_extract_dest_alias_from_can_message</a> - Gets destination alias </dd></dl>
 
 </div>
 </div>
@@ -591,15 +919,67 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Extracts any destination Alias ID from the CAN frame buffer. </p>
-<dl class="section note"><dt>Note</dt><dd>This function examines the frame and pulls out the destination Alias based on what type of message it is. If the message does not carry a destination Alias it return 0 </dd></dl>
+<p>Extracts the destination alias from CAN message. </p>
+<p>Examines the CAN frame type and extracts the destination alias from the appropriate location. For addressed messages, reads from payload bytes 0-1. For datagrams, reads from identifier bits. Returns 0 if message has no destination.</p>
+<p>Use cases:</p><ul>
+<li>Determining if message is addressed to a specific node</li>
+<li>Routing addressed messages to correct node</li>
+<li>Processing datagram frames</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer with the identifier </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer to examine</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The destination Alias extracted from the CAN identifier or 0 if there is no destination carried in this frame </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>12-bit destination alias (0x000-0xFFF), or 0 if no destination present</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Returns 0 for both "no destination" and "destination = 0"</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Broadcast messages return 0 (no specific destination) </dd>
+<dd>
+Different frame types store destination in different locations</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Handles multiple CAN frame formats (standard, datagram, stream)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#aff3ed91a41bacfc9882e497c5caa330d" title="Extracts the 12-bit source alias from CAN identifier.">CanUtilities_extract_source_alias_from_can_identifier</a> - Gets source alias</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Check identifier against MASK_CAN_FRAME_TYPE to determine frame type</li>
+<li>If OPENLCB_MESSAGE_STANDARD_FRAME_TYPE or CAN_FRAME_TYPE_STREAM:<ul>
+<li>Check if MASK_CAN_DEST_ADDRESS_PRESENT bit is set</li>
+<li>If set:<ul>
+<li>Extract low nibble of payload[0], shift left 8 bits</li>
+<li>OR with payload[1]</li>
+<li>Return 12-bit destination alias</li>
+</ul>
+</li>
+<li>If not set, break to return 0</li>
+</ul>
+</li>
+<li>If CAN_FRAME_TYPE_DATAGRAM_* (any datagram type):<ul>
+<li>Extract bits 12-23 from identifier</li>
+<li>Apply mask 0x00000FFF</li>
+<li>Return 12-bit destination alias</li>
+</ul>
+</li>
+<li>Default (no destination present):<ul>
+<li>Return 0</li>
+</ul>
+</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Determining if message is addressed to a specific node</li>
+<li>Routing addressed messages to correct node</li>
+<li>Processing datagram frames</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer to examine
+* </pre><dl class="section return"><dt>Returns</dt><dd>12-bit destination alias (0x000-0xFFF), or 0 if no destination present</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Returns 0 for both "no destination" and "destination = 0"</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Broadcast messages return 0 (no specific destination) </dd>
+<dd>
+Different frame types store destination in different locations</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Handles multiple CAN frame formats (standard, datagram, stream)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#aff3ed91a41bacfc9882e497c5caa330d" title="Extracts the 12-bit source alias from CAN identifier.">CanUtilities_extract_source_alias_from_can_identifier</a> - Gets source alias </dd></dl>
 
 </div>
 </div>
@@ -626,14 +1006,62 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Converts a CAN MTI to an OpenLcb/LCC MTI from the passed CAN frame identifier. </p>
+<p>Converts CAN MTI to standard OpenLCB MTI. </p>
+<p>Extracts and converts the 12-bit CAN MTI from the identifier field into the standard 16-bit OpenLCB MTI format. Handles special cases like multi-frame PCER (Producer/Consumer Event Report) messages.</p>
+<p>Use cases:</p><ul>
+<li>Processing received CAN frames</li>
+<li>Dispatching messages to protocol handlers</li>
+<li>Converting between CAN and OpenLCB message formats</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer with the identifier </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer containing identifier</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OpenLcb MTI that was mapped to by the CAN MTI in the identifier </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>16-bit OpenLCB MTI value, or 0 if frame type is unknown</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Returns 0 for unrecognized frame types</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>PCER first/middle/last frames are converted to common PCER MTI </dd>
+<dd>
+Datagram frames (all types) return MTI_DATAGRAM</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>CAN control frames (CID, RID, AMD) return 0 as they have no OpenLCB MTI</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#ac6cf0e5812d45a55473653d2b99d6718" title="Tests if CAN frame contains an OpenLCB message.">CanUtilities_is_openlcb_message</a> - Checks if frame contains OpenLCB message</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Initialize mti variable to 0</li>
+<li>Check identifier against MASK_CAN_FRAME_TYPE to determine frame type</li>
+<li>If OPENLCB_MESSAGE_STANDARD_FRAME_TYPE or CAN_FRAME_TYPE_STREAM:<ul>
+<li>Extract bits 12-23 from identifier (shift right 12, mask 0x0FFF)</li>
+<li>Check if mti is PCER first/middle/last frame</li>
+<li>If so, convert to common MTI_PC_EVENT_REPORT_WITH_PAYLOAD</li>
+<li>Return converted mti</li>
+</ul>
+</li>
+<li>If CAN_FRAME_TYPE_DATAGRAM_* (any datagram type):<ul>
+<li>Return MTI_DATAGRAM</li>
+</ul>
+</li>
+<li>Default (unrecognized frame type):<ul>
+<li>Return 0</li>
+</ul>
+</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Processing received CAN frames</li>
+<li>Dispatching messages to protocol handlers</li>
+<li>Converting between CAN and OpenLCB message formats</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer containing identifier
+* </pre><dl class="section return"><dt>Returns</dt><dd>16-bit OpenLCB MTI value, or 0 if frame type is unknown</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior </dd>
+<dd>
+Returns 0 for unrecognized frame types</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>PCER first/middle/last frames are converted to common PCER MTI </dd>
+<dd>
+Datagram frames (all types) return MTI_DATAGRAM</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>CAN control frames (CID, RID, AMD) return 0 as they have no OpenLCB MTI</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#ac6cf0e5812d45a55473653d2b99d6718" title="Tests if CAN frame contains an OpenLCB message.">CanUtilities_is_openlcb_message</a> - Checks if frame contains OpenLCB message </dd></dl>
 
 </div>
 </div>
@@ -664,15 +1092,46 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Runs through the payloads of the passed buffers to count how many NULLs are in both combined. </p>
+<p>Counts NULL bytes in both CAN and OpenLCB message payloads. </p>
+<p>Scans the valid payload bytes in both the CAN message and OpenLCB message, counting the total number of NULL (0x00) bytes found. Used for SNIP validation.</p>
+<p>Use cases:</p><ul>
+<li>Validating SNIP (Simple Node Information Protocol) messages</li>
+<li>Checking for proper null-terminated strings</li>
+<li>Verifying message format compliance</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to a OpenLcb/LCC buffer with a payload </td></tr>
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer with a payload </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB message buffer with payload </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer with payload</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of NULL bytes in both buffer payloads within the valid space defined by the payload sizes </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Total count of NULL bytes found in both payloads</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Only counts bytes within valid payload_count of each message </dd>
+<dd>
+SNIP messages should have exactly 6 NULL terminators</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Used primarily for SNIP message validation</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__snip_8c.html#ad9dd288bc1780719e4078408eef25b03" title="Validates a SNIP reply message structure.">ProtocolSnip_validate_snip_reply</a> - Uses this for validation</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call _count_nulls_in_can_payload() to count CAN payload NULLs</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#a763ed68f05ad99a4902de3826c2e005f" title="Counts the number of null bytes (0x00) in the message payload.">OpenLcbUtilities_count_nulls_in_openlcb_payload()</a> for OpenLCB payload NULLs</li>
+<li>Return sum of both counts</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Validating SNIP (Simple Node Information Protocol) messages</li>
+<li>Checking for proper null-terminated strings</li>
+<li>Verifying message format compliance</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB message buffer with payload
+* @param can_msg Pointer to CAN message buffer with payload
+* </pre><dl class="section return"><dt>Returns</dt><dd>Total count of NULL bytes found in both payloads</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointers will cause undefined behavior</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Only counts bytes within valid payload_count of each message </dd>
+<dd>
+SNIP messages should have exactly 6 NULL terminators</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Used primarily for SNIP message validation</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__snip_8c.html#ad9dd288bc1780719e4078408eef25b03" title="Validates a SNIP reply message structure.">ProtocolSnip_validate_snip_reply</a> - Uses this for validation </dd></dl>
 
 </div>
 </div>
@@ -699,14 +1158,45 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Tests if the passed CAN frame buffer is either a complete or partial OpenLcb/LCC message (as opposed to a CAN only message frame). </p>
+<p>Tests if CAN frame contains an OpenLCB message. </p>
+<p>Checks the CAN identifier to determine if the frame type bit indicates this is an OpenLCB message frame (as opposed to a CAN-only control frame).</p>
+<p>Use cases:</p><ul>
+<li>Filtering received CAN frames</li>
+<li>Separating OpenLCB messages from CAN control frames</li>
+<li>Routing frames to appropriate handlers</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_source</td><td>Pointer to a CAN frame buffer to test </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer to test</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the message is either a complete or partial OpenLcb/LCC message, else False </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if frame contains OpenLCB message, false if CAN-only frame</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>CAN control frames (CID, RID, AMD, AME, AMR) return false </dd>
+<dd>
+All OpenLCB message types (events, datagrams, streams) return true</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Does not validate message contents, only checks frame type bit</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#af7966bc5a6bdae46b3fe8f04f42975d3" title="Converts CAN MTI to standard OpenLCB MTI.">CanUtilities_convert_can_mti_to_openlcb_mti</a> - Converts MTI for OpenLCB messages</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Apply CAN_OPENLCB_MSG mask to identifier</li>
+<li>Compare masked result with CAN_OPENLCB_MSG value</li>
+<li>Return true if equal (frame type bit indicates OpenLCB message)</li>
+<li>Return false otherwise (CAN-only control frame)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Filtering received CAN frames</li>
+<li>Separating OpenLCB messages from CAN control frames</li>
+<li>Routing frames to appropriate handlers</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer to test
+* </pre><dl class="section return"><dt>Returns</dt><dd>True if frame contains OpenLCB message, false if CAN-only frame</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NULL pointer will cause undefined behavior</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>CAN control frames (CID, RID, AMD, AME, AMR) return false </dd>
+<dd>
+All OpenLCB message types (events, datagrams, streams) return true</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Does not validate message contents, only checks frame type bit</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#af7966bc5a6bdae46b3fe8f04f42975d3" title="Converts CAN MTI to standard OpenLCB MTI.">CanUtilities_convert_can_mti_to_openlcb_mti</a> - Converts MTI for OpenLCB messages </dd></dl>
 
 </div>
 </div>

@@ -91,17 +91,29 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">openlcb_statemachine_worker_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>State machine working buffers.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:ade62c61bc2384b1df26ae69f90a41310" id="r_ade62c61bc2384b1df26ae69f90a41310"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade62c61bc2384b1df26ae69f90a41310">worker</a></td></tr>
 <tr class="separator:ade62c61bc2384b1df26ae69f90a41310"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3fcb05e99ee7af22d06571d0e45f67b" id="r_ae3fcb05e99ee7af22d06571d0e45f67b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3fcb05e99ee7af22d06571d0e45f67b">worker_buffer</a></td></tr>
+<tr class="memitem:ae3fcb05e99ee7af22d06571d0e45f67b" id="r_ae3fcb05e99ee7af22d06571d0e45f67b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3fcb05e99ee7af22d06571d0e45f67b">worker_buffer</a></td></tr>
 <tr class="separator:ae3fcb05e99ee7af22d06571d0e45f67b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95d26ffd194e7902f36a9ca2c9ca9600" id="r_a95d26ffd194e7902f36a9ca2c9ca9600"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95d26ffd194e7902f36a9ca2c9ca9600">active_msg</a></td></tr>
 <tr class="separator:a95d26ffd194e7902f36a9ca2c9ca9600"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>State machine working buffers. </p>
+<p>Provides working space for state machine message processing.</p>
+<p><b>Worker Buffers:</b></p><ul>
+<li>worker: Temporary message structure</li>
+<li>worker_buffer: Temporary payload buffer (STREAM size)</li>
+<li>active_msg: Pointer to message currently being processed</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="ade62c61bc2384b1df26ae69f90a41310" name="ade62c61bc2384b1df26ae69f90a41310"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ade62c61bc2384b1df26ae69f90a41310">&#9670;&#160;</a></span>worker</h2>
 
@@ -113,6 +125,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Worker message structure </p>
 
 </div>
 </div>
@@ -123,10 +136,11 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="openlcb__types_8h.html#a701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a> worker_buffer</td>
+          <td class="memname"><a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a> worker_buffer</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Worker payload buffer </p>
 
 </div>
 </div>
@@ -141,6 +155,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Currently active message </p>
 
 </div>
 </div>

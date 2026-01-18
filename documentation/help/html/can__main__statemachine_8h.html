@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Main state machine for dispatching CAN messages to nodes.  
+<p>Main CAN layer state machine for orchestrating message dispatch and node management.  
 <a href="#details">More...</a></p>
 
 <p><a href="can__main__statemachine_8h_source.html">Go to the source code of this file.</a></p>
@@ -105,43 +105,44 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>.  <a href="structinterface__can__main__statemachine__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for CAN Main State Machine operations.  <a href="structinterface__can__main__statemachine__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a360ebdb7ef110fdd62097a5fc56310f1" id="r_a360ebdb7ef110fdd62097a5fc56310f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a360ebdb7ef110fdd62097a5fc56310f1">CanMainStatemachine_initialize</a> (const <a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a> *interface_can_main_statemachine)</td></tr>
-<tr class="memdesc:a360ebdb7ef110fdd62097a5fc56310f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Main Statemachine.  <br /></td></tr>
+<tr class="memdesc:a360ebdb7ef110fdd62097a5fc56310f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Main State Machine.  <br /></td></tr>
 <tr class="separator:a360ebdb7ef110fdd62097a5fc56310f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bdef5a88eff72849f2506381fe1742f" id="r_a9bdef5a88eff72849f2506381fe1742f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bdef5a88eff72849f2506381fe1742f">CanMainStateMachine_run</a> (void)</td></tr>
-<tr class="memdesc:a9bdef5a88eff72849f2506381fe1742f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the main statemachine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>.  <br /></td></tr>
+<tr class="memdesc:a9bdef5a88eff72849f2506381fe1742f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes one iteration of the main CAN state machine.  <br /></td></tr>
 <tr class="separator:a9bdef5a88eff72849f2506381fe1742f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a514df581e108e12f527d4de248458357" id="r_a514df581e108e12f527d4de248458357"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514df581e108e12f527d4de248458357">CanMainStateMachine_get_can_statemachine_info</a> (void)</td></tr>
-<tr class="memdesc:a514df581e108e12f527d4de248458357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the internal structure that the CAN Main State machine uses to maintain the Node that is currently being targeted, incoming CAN message and a buffer for sending a reply CAN message if necessary.  <br /></td></tr>
+<tr class="memdesc:a514df581e108e12f527d4de248458357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides read access to internal state machine context.  <br /></td></tr>
 <tr class="separator:a514df581e108e12f527d4de248458357"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c7be0999c73da181407f0ce473b4574" id="r_a4c7be0999c73da181407f0ce473b4574"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases</a> (void)</td></tr>
-<tr class="memdesc:a4c7be0999c73da181407f0ce473b4574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for and handles any duplicate Alias that were detected on the incoming CAN receive state machine.  <br /></td></tr>
+<tr class="memdesc:a4c7be0999c73da181407f0ce473b4574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles all detected duplicate alias conflicts.  <br /></td></tr>
 <tr class="separator:a4c7be0999c73da181407f0ce473b4574"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acefbd0fe819bfc0be958202dca4bbab8" id="r_acefbd0fe819bfc0be958202dca4bbab8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acefbd0fe819bfc0be958202dca4bbab8">CanMainStatemachine_handle_login_outgoing_can_message</a> (void)</td></tr>
-<tr class="memdesc:acefbd0fe819bfc0be958202dca4bbab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for and handles any login messages that need to be sent for a Node login.  <br /></td></tr>
+<tr class="memdesc:acefbd0fe819bfc0be958202dca4bbab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits pending login-related CAN messages.  <br /></td></tr>
 <tr class="separator:acefbd0fe819bfc0be958202dca4bbab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a619bfa722d577c1295ae862500aef386" id="r_a619bfa722d577c1295ae862500aef386"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a619bfa722d577c1295ae862500aef386">CanMainStatemachine_handle_outgoing_can_message</a> (void)</td></tr>
-<tr class="memdesc:a619bfa722d577c1295ae862500aef386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for and handles any out going messages that were a result of replying to an incoming message.  <br /></td></tr>
+<tr class="memdesc:a619bfa722d577c1295ae862500aef386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits pending outgoing CAN messages from FIFO.  <br /></td></tr>
 <tr class="separator:a619bfa722d577c1295ae862500aef386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfaf91c98c9fd3469d6f2fa9b5a3eaf0" id="r_acfaf91c98c9fd3469d6f2fa9b5a3eaf0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">CanMainStatemachine_handle_try_enumerate_first_node</a> (void)</td></tr>
-<tr class="memdesc:acfaf91c98c9fd3469d6f2fa9b5a3eaf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerator to get the first Node to run the state machine on. OpenLcbCLib is capable of running virtual Nodes limited only by memory of the device used and how many Node buffer slots where defined in the <a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a> constant.  <br /></td></tr>
+<tr class="memdesc:acfaf91c98c9fd3469d6f2fa9b5a3eaf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins node enumeration and processes first node.  <br /></td></tr>
 <tr class="separator:acfaf91c98c9fd3469d6f2fa9b5a3eaf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a326e8a6b5051c0b6821a460fab2ba410" id="r_a326e8a6b5051c0b6821a460fab2ba410"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node</a> (void)</td></tr>
-<tr class="memdesc:a326e8a6b5051c0b6821a460fab2ba410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerator to get the next Node to run the state machine on. OpenLcbCLib is capable of running virtual Nodes limited only by memory of the device used and how many Node buffer slots where defined in the <a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a> constant.  <br /></td></tr>
+<tr class="memdesc:a326e8a6b5051c0b6821a460fab2ba410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Continues node enumeration to next node.  <br /></td></tr>
 <tr class="separator:a326e8a6b5051c0b6821a460fab2ba410"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Main state machine for dispatching CAN messages to nodes. </p>
+<div class="textblock"><p>Main CAN layer state machine for orchestrating message dispatch and node management. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<ul>
 <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
 </ul>
 </dd></dl>
+<p>This module implements the primary CAN layer dispatcher that coordinates alias management, login processing, and message routing across all virtual nodes. It handles duplicate alias detection, manages outgoing message queues, and orchestrates the login state machine for node initialization.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -168,15 +169,58 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Main Statemachine. </p>
+<p>Initializes the CAN Main State Machine. </p>
+<p>Sets up the state machine with required dependencies and prepares internal buffers for operation. Must be called once during application initialization before calling <a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run()</a>.</p>
+<p>The interface structure provides all required function pointers for state machine operation including resource locking, CAN transmission, node management, and alias handling. All function pointers must be valid (non-NULL).</p>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Required before any CAN communication can occur</li>
+<li>Must be called after buffer stores are initialized</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_can_main_statemachine</td><td>Pointer to a <a class="el" href="structinterface__can__main__statemachine__t.html" title="A structure to hold pointers to functions for dependencies this module requires can_main_statemachine...">interface_can_main_statemachine_t</a> struct containing the functions that this module requires. </td></tr>
+    <tr><td class="paramname">interface_can_main_statemachine</td><td>Pointer to populated dependency interface structure containing all required function implementations</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe - call before starting interrupts/threads</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after <a class="el" href="can__buffer__store_8c.html#a49fcb6055f37edb9e56977295cd0eaf2" title="Initializes the CAN Buffer Store.">CanBufferStore_initialize()</a> and <a class="el" href="can__buffer__fifo_8c.html#ab0652f39f104350007ad642b955ddbad" title="Initializes the CAN Message Buffer FIFO.">CanBufferFifo_initialize()</a> </dd>
+<dd>
+All function pointers in interface must be non-NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run</a> </dd>
+<dd>
+<a class="el" href="structinterface__can__main__statemachine__t.html" title="Dependency injection interface for CAN Main State Machine operations.">interface_can_main_statemachine_t</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Store pointer to dependency interface for later use</li>
+<li>Clear login outgoing message buffer to zero</li>
+<li>Link login message buffer to state machine info structure</li>
+<li>Clear all state machine info fields:<ul>
+<li>Set openlcb_node to NULL (no active node)</li>
+<li>Set login_outgoing_can_msg_valid to false</li>
+<li>Set enumerating to false</li>
+<li>Set outgoing_can_msg to NULL</li>
+</ul>
+</li>
+</ol>
+<p>The login message buffer is statically allocated to avoid runtime allocation overhead during login processing.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Required before any CAN communication can occur</li>
+<li>Must be called after buffer stores are initialized</li>
+</ul>
+<pre class="fragment">* @param interface_can_main_statemachine Pointer to populated dependency interface
+* structure containing all required function implementations
+* </pre><dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe - call before starting interrupts/threads</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after <a class="el" href="can__buffer__store_8c.html#a49fcb6055f37edb9e56977295cd0eaf2" title="Initializes the CAN Buffer Store.">CanBufferStore_initialize()</a> and <a class="el" href="can__buffer__fifo_8c.html#ab0652f39f104350007ad642b955ddbad" title="Initializes the CAN Message Buffer FIFO.">CanBufferFifo_initialize()</a> </dd>
+<dd>
+All function pointers in interface must be non-NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run</a> </dd>
+<dd>
+<a class="el" href="structinterface__can__main__statemachine__t.html" title="Dependency injection interface for CAN Main State Machine operations.">interface_can_main_statemachine_t</a> </dd></dl>
 
 </div>
 </div>
@@ -203,15 +247,75 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Runs the main statemachine to handle incoming CAN messages and correctly respond to them through the handlers in the interface <a class="el" href="structinterface__can__login__state__machine__t.html">interface_can_login_state_machine_t</a>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Call from the main application loop as fast as possible </dd></dl>
+<p>Executes one iteration of the main CAN state machine. </p>
+<p>Performs cooperative multitasking by processing one operation per call and returning. Handles duplicate alias detection, outgoing message transmission, login message processing, and node enumeration in priority order.</p>
+<p>Processing order per iteration:</p><ul>
+<li>Check for and handle duplicate aliases</li>
+<li>Transmit pending outgoing CAN messages <br  />
+</li>
+<li>Transmit pending login messages</li>
+<li>Enumerate and process first node</li>
+<li>Enumerate and process next node</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Called continuously from main application loop</li>
+<li>Cooperative multitasking with other application code</li>
+<li>Non-blocking state machine advancement</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Must be called frequently (as fast as possible in main loop) </dd>
+<dd>
+Assumes <a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize()</a> was already called</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returns after processing one operation for cooperative multitasking </dd>
+<dd>
+Each operation may lock shared resources briefly</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call handle_duplicate_aliases():<ul>
+<li>If returns true (duplicates processed), return</li>
+</ul>
+</li>
+<li>Call handle_outgoing_can_message():<ul>
+<li>If returns true (message transmitted or pending), return</li>
+</ul>
+</li>
+<li>Call handle_login_outgoing_can_message():<ul>
+<li>If returns true (login message transmitted or pending), return</li>
+</ul>
+</li>
+<li>Call handle_try_enumerate_first_node():<ul>
+<li>If returns true (first node processed or none exist), return</li>
+</ul>
+</li>
+<li>Call handle_try_enumerate_next_node():<ul>
+<li>If returns true (no more nodes), return</li>
+<li>If returns false (more nodes exist), will continue on next iteration</li>
+</ul>
+</li>
+</ol>
+<p>Each function processes one discrete operation and returns. This cooperative multitasking pattern allows other application code to execute between operations.</p>
+<p>Priority order ensures critical operations (duplicate alias handling, message transmission) complete before lower-priority operations (node enumeration).</p>
+<p>Use cases:</p><ul>
+<li>Called continuously from main application loop</li>
+<li>Cooperative multitasking with other application code</li>
+<li>Non-blocking state machine advancement</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Must be called frequently (as fast as possible in main loop) </dd>
+<dd>
+Assumes <a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize()</a> was already called</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returns after processing one operation for cooperative multitasking </dd>
+<dd>
+Each operation may lock shared resources briefly</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#a4c7be0999c73da181407f0ce473b4574" title="Handles all detected duplicate alias conflicts.">CanMainStatemachine_handle_duplicate_aliases</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#a619bfa722d577c1295ae862500aef386" title="Transmits pending outgoing CAN messages from FIFO.">CanMainStatemachine_handle_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#acefbd0fe819bfc0be958202dca4bbab8" title="Transmits pending login-related CAN messages.">CanMainStatemachine_handle_login_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> </dd></dl>
 
 </div>
 </div>
@@ -238,15 +342,41 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Accesses the internal structure that the CAN Main State machine uses to maintain the Node that is currently being targeted, incoming CAN message and a buffer for sending a reply CAN message if necessary. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an internal structure that hold the current state of the CAN State machine </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
+<p>Provides read access to internal state machine context. </p>
+<p>Returns pointer to the internal state structure containing current node being processed, login message buffer, and outgoing message pointer. Primarily used for debugging and unit testing.</p>
+<p>The returned structure includes:</p><ul>
+<li>Pointer to current node being processed</li>
+<li>Login outgoing message buffer</li>
+<li>Login message valid flag</li>
+<li>Outgoing CAN message pointer</li>
+<li>Enumeration flag</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Unit test verification of state machine behavior</li>
+<li>Debugging state machine operation</li>
+<li>Test coverage of edge cases</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to internal can_statemachine_info_t structure</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>For debugging and testing only - do not modify returned structure </dd>
+<dd>
+NOT thread-safe - lock resources before accessing</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Provides read-only access to live state machine context</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return pointer to static _can_statemachine_info structure</li>
+</ol>
+<p>The returned structure contains live state machine context including current node being processed, login message buffer, and outgoing message pointer.</p>
+<p>Use cases:</p><ul>
+<li>Unit test verification of state machine behavior</li>
+<li>Debugging state machine operation</li>
+<li>Test coverage of edge cases</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to internal can_statemachine_info_t structure</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>For debugging and testing only - do not modify returned structure </dd>
+<dd>
+NOT thread-safe - lock resources before accessing</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Provides read-only access to live state machine context</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> </dd></dl>
 
 </div>
 </div>
@@ -273,15 +403,58 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Checks for and handles any duplicate Alias that were detected on the incoming CAN receive state machine. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
+<p>Handles all detected duplicate alias conflicts. </p>
+<p>Scans alias mapping table for duplicate flags, unregisters conflicting aliases, and resets affected nodes to force alias reallocation. Returns true if any duplicates were found and processed.</p>
+<p>When duplicate detected:</p><ul>
+<li>Alias is unregistered from mapping table</li>
+<li>Affected node is reset to inhibited state</li>
+<li>Node must reallocate new alias through login sequence</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of duplicate alias handling</li>
+<li>Debugging alias conflicts</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if duplicate aliases were found and processed, false if none detected</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during operation </dd>
+<dd>
+Affected nodes will temporarily go offline during realias</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Clears has_duplicate_alias flag after processing</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf" title="Processes detected duplicate aliases.">interface_can_main_statemachine_t.handle_duplicate_aliases</a> </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Initialize result to false</li>
+<li>Lock shared resources to prevent concurrent access</li>
+<li>Get alias mapping info structure from interface</li>
+<li>Check if has_duplicate_alias flag is set:<ul>
+<li>If set, call _process_duplicate_aliases() to handle them</li>
+<li>Set result to true</li>
+</ul>
+</li>
+<li>Unlock shared resources</li>
+<li>Return result flag</li>
+</ol>
+<p>Locking is required because alias mapping table is shared between CAN receive interrupt (which sets duplicate flags) and main loop (which processes them).</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of duplicate alias handling</li>
+<li>Debugging alias conflicts</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if duplicate aliases were found and processed, false if none detected</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during operation </dd>
+<dd>
+Affected nodes will temporarily go offline during realias</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Clears has_duplicate_alias flag after processing</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf" title="Processes detected duplicate aliases.">interface_can_main_statemachine_t.handle_duplicate_aliases</a> </dd>
+<dd>
+<a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> </dd>
+<dd>
+_process_duplicate_aliases </dd></dl>
 
 </div>
 </div>
@@ -308,15 +481,50 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Checks for and handles any login messages that need to be sent for a Node login. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
+<p>Transmits pending login-related CAN messages. </p>
+<p>Attempts to transmit login message (CID, RID, AMD) if one is pending. Returns true if a message was pending regardless of transmission success. Message remains pending until successfully transmitted.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of login message transmission</li>
+<li>Debugging alias allocation sequence</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if login message was pending (whether sent or not), false if no message pending</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Clears valid flag only after successful transmission </dd>
+<dd>
+May be called multiple times until transmission succeeds</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c" title="Transmits pending login-related CAN messages.">interface_can_main_statemachine_t.handle_login_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Check if login_outgoing_can_msg_valid flag is set:<ul>
+<li>If set, message is pending transmission</li>
+<li>Call interface send_can_message() with login message buffer</li>
+<li>If transmission successful:<ul>
+<li>Clear login_outgoing_can_msg_valid flag</li>
+</ul>
+</li>
+<li>Return true (message was pending)</li>
+</ul>
+</li>
+<li>Return false (no message pending)</li>
+</ol>
+<p>The login message buffer is statically allocated and reused for each login frame (CID7, CID6, CID5, CID4, RID, AMD). Valid flag indicates message is ready to send.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of login message transmission</li>
+<li>Debugging alias allocation sequence</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if login message was pending (whether sent or not), false if no message pending</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Clears valid flag only after successful transmission </dd>
+<dd>
+May be called multiple times until transmission succeeds</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c" title="Transmits pending login-related CAN messages.">interface_can_main_statemachine_t.handle_login_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> </dd></dl>
 
 </div>
 </div>
@@ -343,15 +551,66 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Checks for and handles any out going messages that were a result of replying to an incoming message. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
+<p>Transmits pending outgoing CAN messages from FIFO. </p>
+<p>Pops one message from outgoing FIFO and attempts transmission. If transmission succeeds, message is freed back to buffer pool. If transmission fails, message remains in working buffer for retry on next call.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of message transmission</li>
+<li>Debugging message flow</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if message was in FIFO (whether sent or not), false if FIFO empty</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during FIFO access</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Frees buffer only after successful transmission </dd>
+<dd>
+May be called multiple times until transmission succeeds</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f" title="Transmits pending outgoing CAN messages.">interface_can_main_statemachine_t.handle_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__buffer__fifo_8c.html#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> </dd>
+<dd>
+<a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Check if working buffer already has a message:<ul>
+<li>If NULL, need to pop from FIFO</li>
+<li>Lock shared resources</li>
+<li>Pop message from CAN buffer FIFO</li>
+<li>Unlock shared resources</li>
+<li>Store popped message in working buffer</li>
+</ul>
+</li>
+<li>Check if working buffer has message:<ul>
+<li>Call interface send_can_message() with message</li>
+<li>If transmission successful:<ul>
+<li>Lock shared resources</li>
+<li>Free buffer back to CAN buffer store</li>
+<li>Unlock shared resources</li>
+<li>Clear working buffer pointer to NULL</li>
+</ul>
+</li>
+<li>Return true (message was pending)</li>
+</ul>
+</li>
+<li>Return false (no message pending)</li>
+</ol>
+<p>The working buffer prevents message loss if transmission fails due to full hardware buffer. Message remains in working buffer for retry on next call.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of message transmission</li>
+<li>Debugging message flow</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if message was in FIFO (whether sent or not), false if FIFO empty</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during FIFO access</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Frees buffer only after successful transmission </dd>
+<dd>
+May be called multiple times until transmission succeeds</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f" title="Transmits pending outgoing CAN messages.">interface_can_main_statemachine_t.handle_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__buffer__fifo_8c.html#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> </dd>
+<dd>
+<a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a> </dd></dl>
 
 </div>
 </div>
@@ -378,15 +637,62 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Enumerator to get the first Node to run the state machine on. OpenLcbCLib is capable of running virtual Nodes limited only by memory of the device used and how many Node buffer slots where defined in the <a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a> constant. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
+<p>Begins node enumeration and processes first node. </p>
+<p>Gets first node from node pool and processes it through appropriate state machine based on login status. If node has not completed login (run_state &lt; RUNSTATE_LOAD_INITIALIZATION_COMPLETE), runs login state machine. Returns true indicating enumeration started.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of node enumeration</li>
+<li>Debugging multi-node operation</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if first node was found and processed (or none exist), false if enumeration already active</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Only processes node if not already enumerating </dd>
+<dd>
+Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1" title="Begins node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_first_node</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Check if currently enumerating a node:<ul>
+<li>If openlcb_node is NULL, no active enumeration</li>
+<li>Get first node using interface-&gt;openlcb_node_get_first()</li>
+<li>Store node pointer in state machine info</li>
+<li>If no nodes exist (NULL returned):<ul>
+<li>Return true (done, nothing to process)</li>
+</ul>
+</li>
+<li>Check if node is still in login sequence:<ul>
+<li>If run_state &lt; RUNSTATE_LOAD_INITIALIZATION_COMPLETE</li>
+<li>Call login state machine via interface</li>
+</ul>
+</li>
+<li>Return true (first node processed)</li>
+</ul>
+</li>
+<li>Return false (already enumerating)</li>
+</ol>
+<p>Node enumeration allows processing multiple virtual nodes. Each node may be in different states (logging in, initialized, running).</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of node enumeration</li>
+<li>Debugging multi-node operation</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if first node was found and processed (or none exist), false if enumeration already active</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Only processes node if not already enumerating </dd>
+<dd>
+Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1" title="Begins node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_first_node</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a> </dd>
+<dd>
+<a class="el" href="group__node__enum__keys.html#gacbaa33daf2692ac9f60b92a5a3a0c916" title="Enumeration key used by CAN state machine.">CAN_STATEMACHINE_NODE_ENUMRATOR_KEY</a> </dd></dl>
 
 </div>
 </div>
@@ -413,15 +719,57 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Enumerator to get the next Node to run the state machine on. OpenLcbCLib is capable of running virtual Nodes limited only by memory of the device used and how many Node buffer slots where defined in the <a class="el" href="openlcb__types_8h.html#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a> constant. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This access is for debugging and Google Test access, there should be no reason to access it from an Application </dd></dl>
+<p>Continues node enumeration to next node. </p>
+<p>Gets next node from node pool and processes it through appropriate state machine based on login status. If node has not completed login (run_state &lt; RUNSTATE_LOAD_INITIALIZATION_COMPLETE), runs login state machine. Returns true if no more nodes remain, false to continue enumeration.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of node enumeration</li>
+<li>Debugging multi-node operation</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if no more nodes available (enumeration complete), false if more nodes to process</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Works in conjunction with handle_try_enumerate_first_node() </dd>
+<dd>
+Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7" title="Continues node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_next_node</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a></dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Get next node using interface-&gt;openlcb_node_get_next()</li>
+<li>Store node pointer in state machine info</li>
+<li>If no more nodes (NULL returned):<ul>
+<li>Return true (enumeration complete)</li>
+</ul>
+</li>
+<li>Check if node is still in login sequence:<ul>
+<li>If run_state &lt; RUNSTATE_LOAD_INITIALIZATION_COMPLETE</li>
+<li>Call login state machine via interface</li>
+</ul>
+</li>
+<li>Return false (more nodes to process)</li>
+</ol>
+<p>Called after handle_try_enumerate_first_node() to process remaining nodes in the node pool. Continues until all nodes have been processed.</p>
+<p>Use cases:</p><ul>
+<li>Called by main state machine run loop</li>
+<li>Unit testing of node enumeration</li>
+<li>Debugging multi-node operation</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>true if no more nodes available (enumeration complete), false if more nodes to process</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dd>
+Works in conjunction with handle_try_enumerate_first_node() </dd>
+<dd>
+Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7" title="Continues node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_next_node</a> </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a> </dd>
+<dd>
+<a class="el" href="group__node__enum__keys.html#gacbaa33daf2692ac9f60b92a5a3a0c916" title="Enumeration key used by CAN state machine.">CAN_STATEMACHINE_NODE_ENUMRATOR_KEY</a> </dd></dl>
 
 </div>
 </div>

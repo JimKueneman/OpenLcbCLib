@@ -104,49 +104,49 @@
  * @{
  */
 
-/** @brief General boot initialization - sets Node ID as initial seed */
+    /** @brief General boot initialization - sets Node ID as initial seed */
 #define RUNSTATE_INIT 0
 
-/** @brief Generate new 48-bit seed from previous seed (used after alias collision) */
+    /** @brief Generate new 48-bit seed from previous seed (used after alias collision) */
 #define RUNSTATE_GENERATE_SEED 1
 
-/** @brief Generate 12-bit alias from current seed using LFSR algorithm */
+    /** @brief Generate 12-bit alias from current seed using LFSR algorithm */
 #define RUNSTATE_GENERATE_ALIAS 2
 
-/** @brief Send CID frame 7 with first 12 bits of 48-bit Node ID */
+    /** @brief Send CID frame 7 with first 12 bits of 48-bit Node ID */
 #define RUNSTATE_LOAD_CHECK_ID_07 3
 
-/** @brief Send CID frame 6 with 2nd 12 bits of 48-bit Node ID */
+    /** @brief Send CID frame 6 with 2nd 12 bits of 48-bit Node ID */
 #define RUNSTATE_LOAD_CHECK_ID_06 4
 
-/** @brief Send CID frame 5 with 3rd 12 bits of 48-bit Node ID */
+    /** @brief Send CID frame 5 with 3rd 12 bits of 48-bit Node ID */
 #define RUNSTATE_LOAD_CHECK_ID_05 5
 
-/** @brief Send CID frame 4 with last 12 bits of 48-bit Node ID */
+    /** @brief Send CID frame 4 with last 12 bits of 48-bit Node ID */
 #define RUNSTATE_LOAD_CHECK_ID_04 6
 
-/** @brief Wait 200ms for alias collision detection. An objection from another node could occur in this or the previous state, if they do then jump back to RUNSTATE_GENERATE_SEED to try again */
+    /** @brief Wait 200ms for alias collision detection. An objection from another node could occur in this or the previous state, if they do then jump back to RUNSTATE_GENERATE_SEED to try again */
 #define RUNSTATE_WAIT_200ms 7
 
-/** @brief Send Reserve ID (RID) frame to claim the alias */
+    /** @brief Send Reserve ID (RID) frame to claim the alias */
 #define RUNSTATE_LOAD_RESERVE_ID 8
 
-/** @brief Send Alias Map Definition (AMD) frame, node becomes "Permitted" */
+    /** @brief Send Alias Map Definition (AMD) frame, node becomes "Permitted" */
 #define RUNSTATE_LOAD_ALIAS_MAP_DEFINITION 9
 
-/** @brief Send Initialization Complete message, node becomes "Initialized" */
+    /** @brief Send Initialization Complete message, node becomes "Initialized" */
 #define RUNSTATE_LOAD_INITIALIZATION_COMPLETE 10
 
-/** @brief Broadcast all consumer event IDs that this node handles */
+    /** @brief Broadcast all consumer event IDs that this node handles */
 #define RUNSTATE_LOAD_CONSUMER_EVENTS 11
 
-/** @brief Broadcast all producer event IDs that this node generates */
+    /** @brief Broadcast all producer event IDs that this node generates */
 #define RUNSTATE_LOAD_PRODUCER_EVENTS 12
 
-/** @brief Normal operation mode - process messages from FIFO */
+    /** @brief Normal operation mode - process messages from FIFO */
 #define RUNSTATE_RUN 13
 
-/** @} */ // end of node_login_states
+    /** @} */ // end of node_login_states
 
 /**
  * @defgroup can_frame_format CAN Frame Format and Masks
@@ -175,43 +175,43 @@
  * @{
  */
 
-/** @brief Reserved bit in CAN identifier - must always be 0 */
+    /** @brief Reserved bit in CAN identifier - must always be 0 */
 #define RESERVED_TOP_BIT 0x10000000
 
-/** @brief OpenLCB message indicator - bit 27 set means this is an OpenLCB message, clear means CAN control frame */
+    /** @brief OpenLCB message indicator - bit 27 set means this is an OpenLCB message, clear means CAN control frame */
 #define CAN_OPENLCB_MSG 0x08000000
 
-/** @brief Mask for frame sequence number bits (26-24) in CAN control frames */
+    /** @brief Mask for frame sequence number bits (26-24) in CAN control frames */
 #define MASK_CAN_FRAME_SEQUENCE_NUMBER 0x07000000
 
-/** @brief Mask for frame type bits (26-24) in OpenLCB messages - same bits as sequence number */
+    /** @brief Mask for frame type bits (26-24) in OpenLCB messages - same bits as sequence number */
 #define MASK_CAN_FRAME_TYPE MASK_CAN_FRAME_SEQUENCE_NUMBER
 
-/** @brief Mask for variable field (bits 23-12) containing MTI in OpenLCB messages */
+    /** @brief Mask for variable field (bits 23-12) containing MTI in OpenLCB messages */
 #define MASK_CAN_VARIABLE_FIELD 0x00FFF000
 
-/** @brief Frame type: Global or addressed OpenLCB message */
-#define CAN_FRAME_TYPE_GLOBAL_ADDRESSED 0x01000000
+    /** @brief Frame type: Global or addressed OpenLCB message */
+#define OPENLCB_MESSAGE_STANDARD_FRAME_TYPE 0x01000000
 
 /** @brief Frame type: Datagram complete in single frame */
 #define CAN_FRAME_TYPE_DATAGRAM_ONLY 0x02000000
 
-/** @brief Frame type: First frame of multi-frame datagram */
+    /** @brief Frame type: First frame of multi-frame datagram */
 #define CAN_FRAME_TYPE_DATAGRAM_FIRST 0x03000000
 
-/** @brief Frame type: Middle frame of multi-frame datagram */
+    /** @brief Frame type: Middle frame of multi-frame datagram */
 #define CAN_FRAME_TYPE_DATAGRAM_MIDDLE 0x04000000
 
-/** @brief Frame type: Final frame of multi-frame datagram */
+    /** @brief Frame type: Final frame of multi-frame datagram */
 #define CAN_FRAME_TYPE_DATAGRAM_FINAL 0x05000000
 
-/** @brief Frame type: Reserved for future use */
+    /** @brief Frame type: Reserved for future use */
 #define CAN_FRAME_TYPE_RESERVED 0x06000000
 
-/** @brief Frame type: Stream data frame */
+    /** @brief Frame type: Stream data frame */
 #define CAN_FRAME_TYPE_STREAM 0x07000000
 
-/** @} */ // end of can_frame_format
+    /** @} */ // end of can_frame_format
 
 /**
  * @defgroup mti_message_network Message Network MTI Codes
@@ -226,37 +226,37 @@
  * @{
  */
 
-/** @brief Node initialization complete with full protocol support */
+    /** @brief Node initialization complete with full protocol support */
 #define MTI_INITIALIZATION_COMPLETE 0x0100
 
-/** @brief Node initialization complete - Simple Node Protocol only */
+    /** @brief Node initialization complete - Simple Node Protocol only */
 #define MTI_INITIALIZATION_COMPLETE_SIMPLE 0x0101
 
-/** @brief Request specific node to identify itself (addressed) */
+    /** @brief Request specific node to identify itself (addressed) */
 #define MTI_VERIFY_NODE_ID_ADDRESSED 0x0488
 
-/** @brief Request all nodes to identify themselves (global) */
+    /** @brief Request all nodes to identify themselves (global) */
 #define MTI_VERIFY_NODE_ID_GLOBAL 0x0490
 
-/** @brief Node ID verification response with full protocol support */
+    /** @brief Node ID verification response with full protocol support */
 #define MTI_VERIFIED_NODE_ID 0x0170
 
-/** @brief Node ID verification response - Simple Node Protocol only */
+    /** @brief Node ID verification response - Simple Node Protocol only */
 #define MTI_VERIFIED_NODE_ID_SIMPLE 0x0171
 
-/** @brief Node cannot or will not process the received message */
+    /** @brief Node cannot or will not process the received message */
 #define MTI_OPTIONAL_INTERACTION_REJECTED 0x0068
 
-/** @brief Fatal error detected, node is terminating operation */
+    /** @brief Fatal error detected, node is terminating operation */
 #define MTI_TERMINATE_DO_TO_ERROR 0x00A8
 
-/** @brief Query what protocols a node supports */
+    /** @brief Query what protocols a node supports */
 #define MTI_PROTOCOL_SUPPORT_INQUIRY 0x0828
 
-/** @brief Response indicating supported protocols (6-byte bit field) */
+    /** @brief Response indicating supported protocols (6-byte bit field) */
 #define MTI_PROTOCOL_SUPPORT_REPLY 0x0668
 
-/** @} */ // end of mti_message_network
+    /** @} */ // end of mti_message_network
 
 /**
  * @defgroup mti_event_transport Event Transport Protocol MTI Codes
@@ -279,67 +279,67 @@
  * @{
  */
 
-/** @brief Request: Identify all consumers of specified Event ID */
+    /** @brief Request: Identify all consumers of specified Event ID */
 #define MTI_CONSUMER_IDENTIFY 0x08F4
 
-/** @brief Response: Consumer identifies range of events with mask */
+    /** @brief Response: Consumer identifies range of events with mask */
 #define MTI_CONSUMER_RANGE_IDENTIFIED 0x04A4
 
-/** @brief Response: Node consumes event but current state unknown */
+    /** @brief Response: Node consumes event but current state unknown */
 #define MTI_CONSUMER_IDENTIFIED_UNKNOWN 0x04C7
 
-/** @brief Response: Node consumes event and it is currently SET */
+    /** @brief Response: Node consumes event and it is currently SET */
 #define MTI_CONSUMER_IDENTIFIED_SET 0x04C4
 
-/** @brief Response: Node consumes event and it is currently CLEAR */
+    /** @brief Response: Node consumes event and it is currently CLEAR */
 #define MTI_CONSUMER_IDENTIFIED_CLEAR 0x04C5
 
-/** @brief Response: Node consumes event in RESERVED state */
+    /** @brief Response: Node consumes event in RESERVED state */
 #define MTI_CONSUMER_IDENTIFIED_RESERVED 0x04C6
 
-/** @brief Request: Identify all producers of specified Event ID */
+    /** @brief Request: Identify all producers of specified Event ID */
 #define MTI_PRODUCER_IDENTIFY 0x0914
 
-/** @brief Response: Producer identifies range of events with mask */
+    /** @brief Response: Producer identifies range of events with mask */
 #define MTI_PRODUCER_RANGE_IDENTIFIED 0x0524
 
-/** @brief Response: Node produces event but current state unknown */
+    /** @brief Response: Node produces event but current state unknown */
 #define MTI_PRODUCER_IDENTIFIED_UNKNOWN 0x0547
 
-/** @brief Response: Node produces event and it is currently SET */
+    /** @brief Response: Node produces event and it is currently SET */
 #define MTI_PRODUCER_IDENTIFIED_SET 0x0544
 
-/** @brief Response: Node produces event and it is currently CLEAR */
+    /** @brief Response: Node produces event and it is currently CLEAR */
 #define MTI_PRODUCER_IDENTIFIED_CLEAR 0x0545
 
-/** @brief Response: Node produces event in RESERVED state */
+    /** @brief Response: Node produces event in RESERVED state */
 #define MTI_PRODUCER_IDENTIFIED_RESERVED 0x0546
 
-/** @brief Request specific node to identify all consumed/produced events */
+    /** @brief Request specific node to identify all consumed/produced events */
 #define MTI_EVENTS_IDENTIFY_DEST 0x0968
 
-/** @brief Request all nodes to identify all consumed/produced events */
+    /** @brief Request all nodes to identify all consumed/produced events */
 #define MTI_EVENTS_IDENTIFY 0x0970
 
-/** @brief Teaching/learning message for event configuration */
+    /** @brief Teaching/learning message for event configuration */
 #define MTI_EVENT_LEARN 0x0594
 
-/** @brief Producer/Consumer Event Report - event has occurred */
+    /** @brief Producer/Consumer Event Report - event has occurred */
 #define MTI_PC_EVENT_REPORT 0x05B4
 
-/** @brief Event report with payload data (single frame, up to 8 bytes payload) */
+    /** @brief Event report with payload data (single frame, up to 8 bytes payload) */
 #define MTI_PC_EVENT_REPORT_WITH_PAYLOAD 0x0F14
 
-/** @brief Event report with payload - first frame of segmented message */
+    /** @brief Event report with payload - first frame of segmented message */
 #define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST 0x0F16
 
-/** @brief Event report with payload - middle frame of segmented message */
+    /** @brief Event report with payload - middle frame of segmented message */
 #define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE 0x0F15
 
-/** @brief Event report with payload - last frame of segmented message */
+    /** @brief Event report with payload - last frame of segmented message */
 #define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST 0x0F14
 
-/** @} */ // end of mti_event_transport
+    /** @} */ // end of mti_event_transport
 
 /**
  * @defgroup mti_snip Simple Node Information Protocol MTI Codes
@@ -357,13 +357,13 @@
  * @{
  */
 
-/** @brief Request simple node information from specific node */
+    /** @brief Request simple node information from specific node */
 #define MTI_SIMPLE_NODE_INFO_REQUEST 0x0DE8
 
-/** @brief Response with SNIP data (manufacturer and user info) */
+    /** @brief Response with SNIP data (manufacturer and user info) */
 #define MTI_SIMPLE_NODE_INFO_REPLY 0x0A08
 
-/** @} */ // end of mti_snip
+    /** @} */ // end of mti_snip
 
 /**
  * @defgroup mti_traction Traction Protocol MTI Codes
@@ -379,19 +379,19 @@
  * @{
  */
 
-/** @brief Train control command (speed, direction, functions) */
+    /** @brief Train control command (speed, direction, functions) */
 #define MTI_TRACTION_PROTOCOL 0x05EB
 
-/** @brief Train control command reply/acknowledgment */
+    /** @brief Train control command reply/acknowledgment */
 #define MTI_TRACTION_REPLY 0x01E9
 
-/** @brief Request train node information */
+    /** @brief Request train node information */
 #define MTI_SIMPLE_TRAIN_INFO_REQUEST 0x0DA8
 
-/** @brief Train node information response */
+    /** @brief Train node information response */
 #define MTI_SIMPLE_TRAIN_INFO_REPLY 0x09C8
 
-/** @} */ // end of mti_traction
+    /** @} */ // end of mti_traction
 
 /**
  * @defgroup mti_stream Stream Protocol MTI Codes
@@ -406,25 +406,25 @@
  * @{
  */
 
-/** @brief Request to initiate a stream connection */
+    /** @brief Request to initiate a stream connection */
 #define MTI_STREAM_INIT_REQUEST 0x0CC8
 
-/** @brief Response accepting or rejecting stream connection */
+    /** @brief Response accepting or rejecting stream connection */
 #define MTI_STREAM_INIT_REPLY 0x0868
 
-/** @brief Frame type identifier for stream data in CAN frame */
+    /** @brief Frame type identifier for stream data in CAN frame */
 #define MTI_FRAME_TYPE_CAN_STREAM_SEND 0xF000
 
-/** @brief Stream data transmission message */
+    /** @brief Stream data transmission message */
 #define MTI_STREAM_SEND 0x1F88
 
-/** @brief Stream flow control - proceed with next window of data */
+    /** @brief Stream flow control - proceed with next window of data */
 #define MTI_STREAM_PROCEED 0x0888
 
-/** @brief Stream completed successfully */
+    /** @brief Stream completed successfully */
 #define MTI_STREAM_COMPLETE 0x08A8
 
-/** @} */ // end of mti_stream
+    /** @} */ // end of mti_stream
 
 /**
  * @defgroup mti_datagram Datagram Protocol MTI Codes
@@ -439,16 +439,16 @@
  * @{
  */
 
-/** @brief Datagram message (may be single or multi-frame) */
+    /** @brief Datagram message (may be single or multi-frame) */
 #define MTI_DATAGRAM 0x1C48
 
-/** @brief Datagram received successfully (positive acknowledgment) */
+    /** @brief Datagram received successfully (positive acknowledgment) */
 #define MTI_DATAGRAM_OK_REPLY 0x0A28
 
-/** @brief Datagram rejected (negative acknowledgment with error code) */
+    /** @brief Datagram rejected (negative acknowledgment with error code) */
 #define MTI_DATAGRAM_REJECTED_REPLY 0x0A48
 
-/** @} */ // end of mti_datagram
+    /** @} */ // end of mti_datagram
 
 /**
  * @defgroup data_field_masks Data Field Bit Masks and Values
@@ -460,22 +460,22 @@
  * @{
  */
 
-/** @brief Mask for multi-frame indicator bits in first data byte */
+    /** @brief Mask for multi-frame indicator bits in first data byte */
 #define MASK_MULTIFRAME_BITS 0xF0
 
-/** @brief Single frame only (complete message in one frame) */
+    /** @brief Single frame only (complete message in one frame) */
 #define MULTIFRAME_ONLY 0x00
 
-/** @brief First frame of multi-frame sequence */
+    /** @brief First frame of multi-frame sequence */
 #define MULTIFRAME_FIRST 0x40
 
-/** @brief Middle frame of multi-frame sequence */
+    /** @brief Middle frame of multi-frame sequence */
 #define MULTIFRAME_MIDDLE 0xC0
 
-/** @brief Final frame of multi-frame sequence */
+    /** @brief Final frame of multi-frame sequence */
 #define MULTIFRAME_FINAL 0x80
 
-/** @} */ // end of data_field_masks
+    /** @} */ // end of data_field_masks
 
 /**
  * @defgroup mti_field_masks MTI Bit Field Masks
@@ -491,25 +491,25 @@
  * @{
  */
 
-/** @brief Bit indicating stream or datagram message type */
+    /** @brief Bit indicating stream or datagram message type */
 #define MASK_STREAM_OR_DATAGRAM 0x01000
 
-/** @brief Priority bits (2 bits) */
+    /** @brief Priority bits (2 bits) */
 #define MASK_PRIORITY 0x00C00
 
-/** @brief Simple protocol indicator bit */
+    /** @brief Simple protocol indicator bit */
 #define MASK_SIMPLE_PROTOCOL 0x00010
 
-/** @brief Destination address present indicator */
+    /** @brief Destination address present indicator */
 #define MASK_DEST_ADDRESS_PRESENT 0x00008
 
-/** @brief Event ID present indicator */
+    /** @brief Event ID present indicator */
 #define MASK_EVENT_PRESENT 0x00004
 
-/** @brief Priority modifier bits */
+    /** @brief Priority modifier bits */
 #define MASK_PRIORITY_MODIFIER 0x00003
 
-/** @} */ // end of mti_field_masks
+    /** @} */ // end of mti_field_masks
 
 /**
  * @defgroup can_control_frames CAN Control Frame Identifiers
@@ -532,52 +532,52 @@
  * @{
  */
 
-/** @brief Check ID frame 7 - carries first 12 bits of 48-bit Node ID */
+    /** @brief Check ID frame 7 - carries first 12 bits of 48-bit Node ID */
 #define CAN_CONTROL_FRAME_CID7 0x07000000
 
-/** @brief Check ID frame 6 - carries 2nd 12 bits of 48-bit Node ID */
+    /** @brief Check ID frame 6 - carries 2nd 12 bits of 48-bit Node ID */
 #define CAN_CONTROL_FRAME_CID6 0x06000000
 
-/** @brief Check ID frame 5 - carries 3rd 12 bits of 48-bit Node ID */
+    /** @brief Check ID frame 5 - carries 3rd 12 bits of 48-bit Node ID */
 #define CAN_CONTROL_FRAME_CID5 0x05000000
 
-/** @brief Check ID frame 4 - carries last 12 bits of 48-bit Node ID */
+    /** @brief Check ID frame 4 - carries last 12 bits of 48-bit Node ID */
 #define CAN_CONTROL_FRAME_CID4 0x04000000
 
-/** @brief Check ID frame 3 - non-OpenLCB protocol use */
+    /** @brief Check ID frame 3 - non-OpenLCB protocol use */
 #define CAN_CONTROL_FRAME_CID3 0x03000000
 
-/** @brief Check ID frame 2 - non-OpenLCB protocol use */
+    /** @brief Check ID frame 2 - non-OpenLCB protocol use */
 #define CAN_CONTROL_FRAME_CID2 0x02000000
 
-/** @brief Check ID frame 1 - non-OpenLCB protocol use */
+    /** @brief Check ID frame 1 - non-OpenLCB protocol use */
 #define CAN_CONTROL_FRAME_CID1 0x01000000
 
-/** @brief Reserve ID frame - claims alias */
+    /** @brief Reserve ID frame - claims alias */
 #define CAN_CONTROL_FRAME_RID 0x00700000
 
-/** @brief Alias Map Definition frame - maps alias to Node ID */
+    /** @brief Alias Map Definition frame - maps alias to Node ID */
 #define CAN_CONTROL_FRAME_AMD 0x00701000
 
-/** @brief Alias Mapping Enquiry frame - query alias ownership */
+    /** @brief Alias Mapping Enquiry frame - query alias ownership */
 #define CAN_CONTROL_FRAME_AME 0x00702000
 
-/** @brief Alias Map Reset frame - node releasing alias */
+    /** @brief Alias Map Reset frame - node releasing alias */
 #define CAN_CONTROL_FRAME_AMR 0x00703000
 
-/** @brief Error Information Report frame type 0 */
+    /** @brief Error Information Report frame type 0 */
 #define CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0 0x00710000
 
-/** @brief Error Information Report frame type 1 */
+    /** @brief Error Information Report frame type 1 */
 #define CAN_CONTROL_FRAME_ERROR_INFO_REPORT_1 0x00711000
 
-/** @brief Error Information Report frame type 2 */
+    /** @brief Error Information Report frame type 2 */
 #define CAN_CONTROL_FRAME_ERROR_INFO_REPORT_2 0x00712000
 
-/** @brief Error Information Report frame type 3 */
+    /** @brief Error Information Report frame type 3 */
 #define CAN_CONTROL_FRAME_ERROR_INFO_REPORT_3 0x00713000
 
-/** @} */ // end of can_control_frames
+    /** @} */ // end of can_control_frames
 
 /**
  * @defgroup can_identifier_masks CAN Identifier Field Masks
@@ -589,28 +589,28 @@
  * @{
  */
 
-/** @brief Stream or datagram indicator in CAN identifier */
+    /** @brief Stream or datagram indicator in CAN identifier */
 #define MASK_CAN_STREAM_OR_DATAGRAM 0x01000000
 
-/** @brief Priority field in CAN identifier */
+    /** @brief Priority field in CAN identifier */
 #define MASK_CAN_PRIORITY 0x00C00000
 
-/** @brief Simple protocol indicator in CAN identifier */
+    /** @brief Simple protocol indicator in CAN identifier */
 #define MASK_CAN_SIMPLE_PROTOCOL 0x00010000
 
-/** @brief Destination address present indicator in CAN identifier */
+    /** @brief Destination address present indicator in CAN identifier */
 #define MASK_CAN_DEST_ADDRESS_PRESENT 0x00008000
 
-/** @brief Event ID present indicator in CAN identifier */
+    /** @brief Event ID present indicator in CAN identifier */
 #define MASK_CAN_EVENT_PRESENT 0x00004000
 
-/** @brief Priority modifier field in CAN identifier */
+    /** @brief Priority modifier field in CAN identifier */
 #define MASK_CAN_PRIORITY_MODIFIER 0x00003000
 
-/** @brief Source alias field (12 bits) in CAN identifier */
+    /** @brief Source alias field (12 bits) in CAN identifier */
 #define MASK_CAN_SOURCE_ALIAS 0x00000FFF
 
-/** @} */ // end of can_identifier_masks
+    /** @} */ // end of can_identifier_masks
 
 /**
  * @defgroup protocol_support_bits Protocol Support Indicator Bits
@@ -629,67 +629,67 @@
  * @{
  */
 
-/** @brief Simple Node Protocol support (required for all nodes) */
+    /** @brief Simple Node Protocol support (required for all nodes) */
 #define PSI_SIMPLE 0x800000
 
-/** @brief Datagram Protocol support */
+    /** @brief Datagram Protocol support */
 #define PSI_DATAGRAM 0x400000
 
-/** @brief Stream Protocol support */
+    /** @brief Stream Protocol support */
 #define PSI_STREAM 0x200000
 
-/** @brief Memory Configuration Protocol support */
+    /** @brief Memory Configuration Protocol support */
 #define PSI_MEMORY_CONFIGURATION 0x100000
 
-/** @brief Reservation Protocol support */
+    /** @brief Reservation Protocol support */
 #define PSI_RESERVATION 0x080000
 
-/** @brief Event Exchange (Producer/Consumer) Protocol support */
+    /** @brief Event Exchange (Producer/Consumer) Protocol support */
 #define PSI_EVENT_EXCHANGE 0x040000
 
-/** @brief Identification Protocol support */
+    /** @brief Identification Protocol support */
 #define PSI_IDENTIFICATION 0x020000
 
-/** @brief Teaching/Learning Configuration Protocol support */
+    /** @brief Teaching/Learning Configuration Protocol support */
 #define PSI_TEACHING_LEARNING 0x010000
 
-/** @brief Remote Button Protocol support */
+    /** @brief Remote Button Protocol support */
 #define PSI_REMOTE_BUTTON 0x008000
 
-/** @brief Abbreviated Default CDI Protocol support */
+    /** @brief Abbreviated Default CDI Protocol support */
 #define PSI_ABBREVIATED_DEFAULT_CDI 0x004000
 
-/** @brief Display Protocol support */
+    /** @brief Display Protocol support */
 #define PSI_DISPLAY 0x002000
 
-/** @brief Simple Node Information Protocol support (required) */
+    /** @brief Simple Node Information Protocol support (required) */
 #define PSI_SIMPLE_NODE_INFORMATION 0x001000
 
-/** @brief Configuration Description Information (CDI) Protocol support */
+    /** @brief Configuration Description Information (CDI) Protocol support */
 #define PSI_CONFIGURATION_DESCRIPTION_INFO 0x000800
 
-/** @brief Traction Control Protocol support */
+    /** @brief Traction Control Protocol support */
 #define PSI_TRAIN_CONTROL 0x000400
 
-/** @brief Function Description Information (FDI) Protocol support */
+    /** @brief Function Description Information (FDI) Protocol support */
 #define PSI_FUNCTION_DESCRIPTION 0x000200
 
-/** @brief Reserved bit 0 */
+    /** @brief Reserved bit 0 */
 #define PSI_RESERVED_0 0x000100
 
-/** @brief Reserved bit 1 */
+    /** @brief Reserved bit 1 */
 #define PSI_RESERVED_1 0x000080
 
-/** @brief Function Configuration Protocol support */
+    /** @brief Function Configuration Protocol support */
 #define PSI_FUNCTION_CONFIGURATION 0x000040
 
-/** @brief Firmware Upgrade Protocol support */
+    /** @brief Firmware Upgrade Protocol support */
 #define PSI_FIRMWARE_UPGRADE 0x000020
 
-/** @brief Firmware Upgrade Active indicator (node currently in upgrade mode) */
+    /** @brief Firmware Upgrade Active indicator (node currently in upgrade mode) */
 #define PSI_FIRMWARE_UPGRADE_ACTIVE 0x000010
 
-/** @} */ // end of protocol_support_bits
+    /** @} */ // end of protocol_support_bits
 
 /**
  * @defgroup well_known_events Well-Known Event IDs
@@ -725,43 +725,43 @@
  * @{
  */
 
-/** @brief Emergency Off - immediately stop all layout activity */
+    /** @brief Emergency Off - immediately stop all layout activity */
 #define EVENT_ID_EMERGENCY_OFF 0x010000000000FFFF
 
-/** @brief Clear Emergency Off - resume normal operation */
+    /** @brief Clear Emergency Off - resume normal operation */
 #define EVENT_ID_CLEAR_EMERGENCY_OFF 0x010000000000FFFE
 
-/** @brief Emergency Stop - stop all moving trains but maintain power */
+    /** @brief Emergency Stop - stop all moving trains but maintain power */
 #define EVENT_ID_EMERGENCY_STOP 0x010000000000FFFD
 
-/** @brief Clear Emergency Stop - trains may resume operation */
+    /** @brief Clear Emergency Stop - trains may resume operation */
 #define EVENT_ID_CLEAR_EMERGENCY_STOP 0x010000000000FFFC
 
-/** @brief Node has recorded a new log entry */
+    /** @brief Node has recorded a new log entry */
 #define EVENT_ID_NODE_RECORDED_NEW_LOG 0x010000000000FFF8
 
-/** @brief Power supply brown-out detected on specific node */
+    /** @brief Power supply brown-out detected on specific node */
 #define EVENT_ID_POWER_SUPPLY_BROWN_OUT_NODE 0x010000000000FFF1
 
-/** @brief Power supply brown-out detected on standard power bus */
+    /** @brief Power supply brown-out detected on standard power bus */
 #define EVENT_ID_POWER_SUPPLY_BROWN_OUT_STANDARD 0x010000000000FFF0
 
-/** @brief Identification button combination pressed on node */
+    /** @brief Identification button combination pressed on node */
 #define EVENT_ID_IDENT_BUTTON_COMBO_PRESSED 0x010000000000FF00
 
-/** @brief Link layer error code 1 detected */
+    /** @brief Link layer error code 1 detected */
 #define EVENT_ID_LINK_ERROR_CODE_1 0x010000000000FF01
 
-/** @brief Link layer error code 2 detected */
+    /** @brief Link layer error code 2 detected */
 #define EVENT_ID_LINK_ERROR_CODE_2 0x010000000000FF02
 
-/** @brief Link layer error code 3 detected */
+    /** @brief Link layer error code 3 detected */
 #define EVENT_ID_LINK_ERROR_CODE_3 0x010000000000FF03
 
-/** @brief Link layer error code 4 detected */
+    /** @brief Link layer error code 4 detected */
 #define EVENT_ID_LINK_ERROR_CODE_4 0x010000000000FF04
 
-/** @} */ // end of well_known_events_auto
+    /** @} */ // end of well_known_events_auto
 
 /**
  * @defgroup well_known_events_local Non-Auto-Routed Well-Known Events
@@ -773,53 +773,53 @@
  * @{
  */
 
-/** @brief Duplicate Node ID detected on network (sent via PCER) */
+    /** @brief Duplicate Node ID detected on network (sent via PCER) */
 #define EVENT_ID_DUPLICATE_NODE_DETECTED 0x0101000000000201
 
-/** @brief Train node identification event */
+    /** @brief Train node identification event */
 #define EVENT_ID_TRAIN 0x0101000000000303
 
-/** @brief Train proxy node identification (deprecated) */
+    /** @brief Train proxy node identification (deprecated) */
 #define EVENT_ID_TRAIN_PROXY 0x0101000000000304
 
-/** @brief Node firmware is corrupted */
+    /** @brief Node firmware is corrupted */
 #define EVENT_ID_FIRMWARE_CORRUPTED 0x0101000000000601
 
-/** @brief Firmware upgrade initiated by hardware switch */
+    /** @brief Firmware upgrade initiated by hardware switch */
 #define EVENT_ID_FIRMWARE_UPGRADE_BY_HARDWARE_SWITCH 0x0101000000000602
 
-/** @brief CBUS (MERG) Off event space base */
+    /** @brief CBUS (MERG) Off event space base */
 #define EVENT_ID_CBUS_OFF_SPACE 0x0101010000000000
 
-/** @brief CBUS (MERG) On event space base */
+    /** @brief CBUS (MERG) On event space base */
 #define EVENT_ID_CBUS_ON_SPACE 0x0101010100000000
 
-/** @brief DCC accessory decoder activate command space */
+    /** @brief DCC accessory decoder activate command space */
 #define EVENT_ID_DCC_ACCESSORY_ACTIVATE 0x0101020000FF0000
 
-/** @brief DCC accessory decoder deactivate command space */
+    /** @brief DCC accessory decoder deactivate command space */
 #define EVENT_ID_DCC_ACCESSORY_DEACTIVATE 0x0101020000FE0000
 
-/** @brief DCC turnout feedback high (thrown) space */
+    /** @brief DCC turnout feedback high (thrown) space */
 #define EVENT_ID_DCC_TURNOUT_FEEDBACK_HIGH 0x0101020000FD0000
 
-/** @brief DCC turnout feedback low (closed) space */
+    /** @brief DCC turnout feedback low (closed) space */
 #define EVENT_ID_DCC_TURNOUT_FEEDBACK_LOW 0x0101020000FC0000
 
-/** @brief DCC sensor feedback high (occupied) space */
+    /** @brief DCC sensor feedback high (occupied) space */
 #define EVENT_ID_DCC_SENSOR_FEEDBACK_HIGH 0x0101020000FB0000
 
-/** @brief DCC sensor feedback low (clear) space */
+    /** @brief DCC sensor feedback low (clear) space */
 #define EVENT_ID_DCC_SENSOR_FEEDBACK_LO 0x0101020000FA0000
 
-/** @brief DCC extended accessory command space */
+    /** @brief DCC extended accessory command space */
 #define EVENT_ID_DCC_EXTENDED_ACCESSORY_CMD_SPACE 0x01010200010000FF
 
-/** @brief Train search event space base */
+    /** @brief Train search event space base */
 #define EVENT_TRAIN_SEARCH_SPACE 0x090099FF00000000
 
-/** @} */ // end of well_known_events_local
-/** @} */ // end of well_known_events
+    /** @} */ // end of well_known_events_local
+    /** @} */ // end of well_known_events
 
 /**
  * @defgroup error_codes OpenLCB Error Codes
@@ -837,67 +837,67 @@
  * @{
  */
 
-/** @brief Success code - no error */
+    /** @brief Success code - no error */
 #define S_OK 0x00
 
-/** @brief Permanent error base code */
+    /** @brief Permanent error base code */
 #define ERROR_PERMANENT 0x1000
 
-/** @brief Permanent: Unknown or unsupported address space */
+    /** @brief Permanent: Unknown or unsupported address space */
 #define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN 0x1001
 
-/** @brief Permanent: Address is out of bounds for the address space */
+    /** @brief Permanent: Address is out of bounds for the address space */
 #define ERROR_PERMANENT_CONFIG_MEM_OUT_OF_BOUNDS_INVALID_ADDRESS 0x1002
 
-/** @brief Permanent: Attempted write to read-only memory */
+    /** @brief Permanent: Attempted write to read-only memory */
 #define ERROR_PERMANENT_CONFIG_MEM_ADDRESS_WRITE_TO_READ_ONLY 0x1003
 
-/** @brief Permanent: Source node not permitted to access this resource */
+    /** @brief Permanent: Source node not permitted to access this resource */
 #define ERROR_PERMANENT_SOURCE_NOT_PERMITTED 0x1020
 
-/** @brief Permanent: Command or protocol not implemented */
+    /** @brief Permanent: Command or protocol not implemented */
 #define ERROR_PERMANENT_NOT_IMPLEMENTED 0x1040
 
-/** @brief Permanent: Subcommand not recognized */
+    /** @brief Permanent: Subcommand not recognized */
 #define ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN 0x1041
 
-/** @brief Permanent: Command not recognized */
+    /** @brief Permanent: Command not recognized */
 #define ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN 0x1042
 
-/** @brief Permanent: MTI or transport protocol not supported */
+    /** @brief Permanent: MTI or transport protocol not supported */
 #define ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI_OR_TRANPORT_PROTOCOL 0x1043
 
-/** @brief Permanent: Count or length parameter out of valid range */
+    /** @brief Permanent: Count or length parameter out of valid range */
 #define ERROR_CODE_PERMANENT_COUNT_OUT_OF_RANGE 0x1044
 
-/** @brief Permanent: Invalid arguments in command */
+    /** @brief Permanent: Invalid arguments in command */
 #define ERROR_PERMANENT_INVALID_ARGUMENTS 0x1080
 
-/** @brief Temporary error base code */
+    /** @brief Temporary error base code */
 #define ERROR_TEMPORARY 0x2000
 
-/** @brief Temporary: Operation timed out */
+    /** @brief Temporary: Operation timed out */
 #define ERROR_TEMPORARY_TIMEOUT 0x2010
 
-/** @brief Temporary: Buffer or resource currently unavailable */
+    /** @brief Temporary: Buffer or resource currently unavailable */
 #define ERROR_TEMPORARY_BUFFER_UNAVAILABLE 0x2020
 
-/** @brief Temporary: Message received out of expected sequence */
+    /** @brief Temporary: Message received out of expected sequence */
 #define ERROR_TEMPORARY_NOT_EXPECTED_OUT_OF_ORDER 0x2040
 
-/** @brief Temporary: Transfer error occurred */
+    /** @brief Temporary: Transfer error occurred */
 #define ERROR_TEMPORARY_TRANSFER_ERROR 0x2080
 
-/** @brief Temporary: Timeout waiting for response */
+    /** @brief Temporary: Timeout waiting for response */
 #define ERROR_TEMPORARY_TIME_OUT 0x2011
 
-/** @brief Temporary: Received middle/end frame without start frame */
+    /** @brief Temporary: Received middle/end frame without start frame */
 #define ERROR_TEMPORARY_OUT_OF_ORDER_MIDDLE_END_WITH_NO_START 0x2041
 
-/** @brief Temporary: Received start frame before previous sequence completed */
+    /** @brief Temporary: Received start frame before previous sequence completed */
 #define ERROR_TEMPORARY_OUT_OF_ORDER_START_BEFORE_LAST_END 0x2042
 
-/** @} */ // end of error_codes
+    /** @} */ // end of error_codes
 
 /**
  * @defgroup datagram_flags Datagram Protocol Flags
@@ -906,10 +906,10 @@
  * @{
  */
 
-/** @brief Datagram OK Reply flag: Response is pending, will send actual reply later */
+    /** @brief Datagram OK Reply flag: Response is pending, will send actual reply later */
 #define DATAGRAM_OK_REPLY_PENDING 0x80
 
-/** @} */ // end of datagram_flags
+    /** @} */ // end of datagram_flags
 
 /**
  * @defgroup config_mem_protocol Configuration Memory Protocol Commands
@@ -929,10 +929,10 @@
  * @{
  */
 
-/** @brief Configuration Memory Protocol identifier (first byte of datagram) */
+    /** @brief Configuration Memory Protocol identifier (first byte of datagram) */
 #define CONFIG_MEM_CONFIGURATION 0x20
 
-/** @} */ // end of config_mem_protocol
+    /** @} */ // end of config_mem_protocol
 
 /**
  * @defgroup config_mem_read Configuration Memory Read Commands
@@ -944,43 +944,43 @@
  * @{
  */
 
-/** @brief Read command: Address space in byte 6 */
+    /** @brief Read command: Address space in byte 6 */
 #define CONFIG_MEM_READ_SPACE_IN_BYTE_6 0x40
 
-/** @brief Read command: Address space 0xFD */
+    /** @brief Read command: Address space 0xFD */
 #define CONFIG_MEM_READ_SPACE_FD 0x41
 
-/** @brief Read command: Address space 0xFE */
+    /** @brief Read command: Address space 0xFE */
 #define CONFIG_MEM_READ_SPACE_FE 0x42
 
-/** @brief Read command: Address space 0xFF */
+    /** @brief Read command: Address space 0xFF */
 #define CONFIG_MEM_READ_SPACE_FF 0x43
 
-/** @brief Read reply OK: Address space in byte 6 */
+    /** @brief Read reply OK: Address space in byte 6 */
 #define CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6 0x50
 
-/** @brief Read reply OK: Address space 0xFD */
+    /** @brief Read reply OK: Address space 0xFD */
 #define CONFIG_MEM_READ_REPLY_OK_SPACE_FD 0x51
 
-/** @brief Read reply OK: Address space 0xFE */
+    /** @brief Read reply OK: Address space 0xFE */
 #define CONFIG_MEM_READ_REPLY_OK_SPACE_FE 0x52
 
-/** @brief Read reply OK: Address space 0xFF */
+    /** @brief Read reply OK: Address space 0xFF */
 #define CONFIG_MEM_READ_REPLY_OK_SPACE_FF 0x53
 
-/** @brief Read reply FAIL: Address space in byte 6 */
+    /** @brief Read reply FAIL: Address space in byte 6 */
 #define CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6 0x58
 
-/** @brief Read reply FAIL: Address space 0xFD */
+    /** @brief Read reply FAIL: Address space 0xFD */
 #define CONFIG_MEM_READ_REPLY_FAIL_SPACE_FD 0x59
 
-/** @brief Read reply FAIL: Address space 0xFE */
+    /** @brief Read reply FAIL: Address space 0xFE */
 #define CONFIG_MEM_READ_REPLY_FAIL_SPACE_FE 0x5A
 
-/** @brief Read reply FAIL: Address space 0xFF */
+    /** @brief Read reply FAIL: Address space 0xFF */
 #define CONFIG_MEM_READ_REPLY_FAIL_SPACE_FF 0x5B
 
-/** @} */ // end of config_mem_read
+    /** @} */ // end of config_mem_read
 
 /**
  * @defgroup config_mem_read_stream Configuration Memory Read Stream Commands
@@ -989,43 +989,43 @@
  * @{
  */
 
-/** @brief Read stream command: Address space in byte 6 */
+    /** @brief Read stream command: Address space in byte 6 */
 #define CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6 0x60
 
-/** @brief Read stream command: Address space 0xFD */
+    /** @brief Read stream command: Address space 0xFD */
 #define CONFIG_MEM_READ_STREAM_SPACE_FD 0x61
 
-/** @brief Read stream command: Address space 0xFE */
+    /** @brief Read stream command: Address space 0xFE */
 #define CONFIG_MEM_READ_STREAM_SPACE_FE 0x62
 
-/** @brief Read stream command: Address space 0xFF */
+    /** @brief Read stream command: Address space 0xFF */
 #define CONFIG_MEM_READ_STREAM_SPACE_FF 0x63
 
-/** @brief Read stream reply OK: Address space in byte 6 */
+    /** @brief Read stream reply OK: Address space in byte 6 */
 #define CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6 0x70
 
-/** @brief Read stream reply OK: Address space 0xFD */
+    /** @brief Read stream reply OK: Address space 0xFD */
 #define CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD 0x71
 
-/** @brief Read stream reply OK: Address space 0xFE */
+    /** @brief Read stream reply OK: Address space 0xFE */
 #define CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FE 0x72
 
-/** @brief Read stream reply OK: Address space 0xFF */
+    /** @brief Read stream reply OK: Address space 0xFF */
 #define CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FF 0x73
 
-/** @brief Read stream reply FAIL: Address space in byte 6 */
+    /** @brief Read stream reply FAIL: Address space in byte 6 */
 #define CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6 0x78
 
-/** @brief Read stream reply FAIL: Address space 0xFD */
+    /** @brief Read stream reply FAIL: Address space 0xFD */
 #define CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FD 0x79
 
-/** @brief Read stream reply FAIL: Address space 0xFE */
+    /** @brief Read stream reply FAIL: Address space 0xFE */
 #define CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FE 0x7A
 
-/** @brief Read stream reply FAIL: Address space 0xFF */
+    /** @brief Read stream reply FAIL: Address space 0xFF */
 #define CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF 0x7B
 
-/** @} */ // end of config_mem_read_stream
+    /** @} */ // end of config_mem_read_stream
 
 /**
  * @defgroup config_mem_write Configuration Memory Write Commands
@@ -1034,43 +1034,43 @@
  * @{
  */
 
-/** @brief Write command: Address space in byte 6 */
+    /** @brief Write command: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_SPACE_IN_BYTE_6 0x00
 
-/** @brief Write command: Address space 0xFD */
+    /** @brief Write command: Address space 0xFD */
 #define CONFIG_MEM_WRITE_SPACE_FD 0x01
 
-/** @brief Write command: Address space 0xFE */
+    /** @brief Write command: Address space 0xFE */
 #define CONFIG_MEM_WRITE_SPACE_FE 0x02
 
-/** @brief Write command: Address space 0xFF */
+    /** @brief Write command: Address space 0xFF */
 #define CONFIG_MEM_WRITE_SPACE_FF 0x03
 
-/** @brief Write reply OK: Address space in byte 6 */
+    /** @brief Write reply OK: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6 0x10
 
-/** @brief Write reply OK: Address space 0xFD */
+    /** @brief Write reply OK: Address space 0xFD */
 #define CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD 0x11
 
-/** @brief Write reply OK: Address space 0xFE */
+    /** @brief Write reply OK: Address space 0xFE */
 #define CONFIG_MEM_WRITE_REPLY_OK_SPACE_FE 0x12
 
-/** @brief Write reply OK: Address space 0xFF */
+    /** @brief Write reply OK: Address space 0xFF */
 #define CONFIG_MEM_WRITE_REPLY_OK_SPACE_FF 0x13
 
-/** @brief Write reply FAIL: Address space in byte 6 */
+    /** @brief Write reply FAIL: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6 0x18
 
-/** @brief Write reply FAIL: Address space 0xFD */
+    /** @brief Write reply FAIL: Address space 0xFD */
 #define CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FD 0x19
 
-/** @brief Write reply FAIL: Address space 0xFE */
+    /** @brief Write reply FAIL: Address space 0xFE */
 #define CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FE 0x1A
 
-/** @brief Write reply FAIL: Address space 0xFF */
+    /** @brief Write reply FAIL: Address space 0xFF */
 #define CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FF 0x1B
 
-/** @} */ // end of config_mem_write
+    /** @} */ // end of config_mem_write
 
 /**
  * @defgroup config_mem_write_mask Configuration Memory Write Under Mask Commands
@@ -1079,19 +1079,19 @@
  * @{
  */
 
-/** @brief Write under mask command: Address space in byte 6 */
+    /** @brief Write under mask command: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6 0x08
 
-/** @brief Write under mask command: Address space 0xFD */
+    /** @brief Write under mask command: Address space 0xFD */
 #define CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD 0x09
 
-/** @brief Write under mask command: Address space 0xFE */
+    /** @brief Write under mask command: Address space 0xFE */
 #define CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FE 0x0A
 
-/** @brief Write under mask command: Address space 0xFF */
+    /** @brief Write under mask command: Address space 0xFF */
 #define CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FF 0x0B
 
-/** @} */ // end of config_mem_write_mask
+    /** @} */ // end of config_mem_write_mask
 
 /**
  * @defgroup config_mem_write_stream Configuration Memory Write Stream Commands
@@ -1100,43 +1100,43 @@
  * @{
  */
 
-/** @brief Write stream command: Address space in byte 6 */
+    /** @brief Write stream command: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6 0x20
 
-/** @brief Write stream command: Address space 0xFD */
+    /** @brief Write stream command: Address space 0xFD */
 #define CONFIG_MEM_WRITE_STREAM_SPACE_FD 0x21
 
-/** @brief Write stream command: Address space 0xFE */
+    /** @brief Write stream command: Address space 0xFE */
 #define CONFIG_MEM_WRITE_STREAM_SPACE_FE 0x22
 
-/** @brief Write stream command: Address space 0xFF */
+    /** @brief Write stream command: Address space 0xFF */
 #define CONFIG_MEM_WRITE_STREAM_SPACE_FF 0x23
 
-/** @brief Write stream reply OK: Address space in byte 6 */
+    /** @brief Write stream reply OK: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6 0x30
 
-/** @brief Write stream reply OK: Address space 0xFD */
+    /** @brief Write stream reply OK: Address space 0xFD */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FD 0x31
 
-/** @brief Write stream reply OK: Address space 0xFE */
+    /** @brief Write stream reply OK: Address space 0xFE */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FE 0x32
 
-/** @brief Write stream reply OK: Address space 0xFF */
+    /** @brief Write stream reply OK: Address space 0xFF */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FF 0x33
 
-/** @brief Write stream reply FAIL: Address space in byte 6 */
+    /** @brief Write stream reply FAIL: Address space in byte 6 */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6 0x38
 
-/** @brief Write stream reply FAIL: Address space 0xFD */
+    /** @brief Write stream reply FAIL: Address space 0xFD */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FD 0x39
 
-/** @brief Write stream reply FAIL: Address space 0xFE */
+    /** @brief Write stream reply FAIL: Address space 0xFE */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FE 0x3A
 
-/** @brief Write stream reply FAIL: Address space 0xFF */
+    /** @brief Write stream reply FAIL: Address space 0xFF */
 #define CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FF 0x3B
 
-/** @} */ // end of config_mem_write_stream
+    /** @} */ // end of config_mem_write_stream
 
 /**
  * @defgroup config_mem_operations Configuration Memory Operation Commands
@@ -1145,49 +1145,49 @@
  * @{
  */
 
-/** @brief Get Configuration Options command */
+    /** @brief Get Configuration Options command */
 #define CONFIG_MEM_OPTIONS_CMD 0x80
 
-/** @brief Get Configuration Options reply */
+    /** @brief Get Configuration Options reply */
 #define CONFIG_MEM_OPTIONS_REPLY 0x82
 
-/** @brief Get Address Space Information command */
+    /** @brief Get Address Space Information command */
 #define CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD 0x84
 
-/** @brief Get Address Space Information reply: Space not present */
+    /** @brief Get Address Space Information reply: Space not present */
 #define CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT 0x86
 
-/** @brief Get Address Space Information reply: Space present */
+    /** @brief Get Address Space Information reply: Space present */
 #define CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT 0x87
 
-/** @brief Lock/Reserve command */
+    /** @brief Lock/Reserve command */
 #define CONFIG_MEM_RESERVE_LOCK 0x88
 
-/** @brief Lock/Reserve reply */
+    /** @brief Lock/Reserve reply */
 #define CONFIG_MEM_RESERVE_LOCK_REPLY 0x8A
 
-/** @brief Get Unique ID command (request node's unique identifier) */
+    /** @brief Get Unique ID command (request node's unique identifier) */
 #define CONFIG_MEM_GET_UNIQUE_ID 0x8C
 
-/** @brief Get Unique ID reply */
+    /** @brief Get Unique ID reply */
 #define CONFIG_MEM_GET_UNIQUE_ID_REPLY 0x8D
 
-/** @brief Unfreeze command (resume normal operation) */
+    /** @brief Unfreeze command (resume normal operation) */
 #define CONFIG_MEM_UNFREEZE 0xA0
 
-/** @brief Freeze command (suspend operation for configuration) */
+    /** @brief Freeze command (suspend operation for configuration) */
 #define CONFIG_MEM_FREEZE 0xA1
 
-/** @brief Indicate update complete command */
+    /** @brief Indicate update complete command */
 #define CONFIG_MEM_UPDATE_COMPLETE 0xA8
 
-/** @brief Reset/Reboot command */
+    /** @brief Reset/Reboot command */
 #define CONFIG_MEM_RESET_REBOOT 0xA9
 
-/** @brief Factory Reset command (restore defaults) */
+    /** @brief Factory Reset command (restore defaults) */
 #define CONFIG_MEM_FACTORY_RESET 0xAA
 
-/** @} */ // end of config_mem_operations
+    /** @} */ // end of config_mem_operations
 
 /**
  * @defgroup address_spaces Configuration Memory Address Spaces
@@ -1206,31 +1206,31 @@
  * @{
  */
 
-/** @brief CDI (Configuration Description Information) space - XML config description */
+    /** @brief CDI (Configuration Description Information) space - XML config description */
 #define CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO 0xFF
 
-/** @brief All memory combined - virtual space containing all other spaces */
+    /** @brief All memory combined - virtual space containing all other spaces */
 #define CONFIG_MEM_SPACE_ALL 0xFE
 
-/** @brief Configuration Memory space - user-configurable data */
+    /** @brief Configuration Memory space - user-configurable data */
 #define CONFIG_MEM_SPACE_CONFIGURATION_MEMORY 0xFD
 
-/** @brief ACDI Manufacturer space - read-only manufacturer info */
+    /** @brief ACDI Manufacturer space - read-only manufacturer info */
 #define CONFIG_MEM_SPACE_ACDI_MANUFACTURER_ACCESS 0xFC
 
-/** @brief ACDI User space - user-assignable node name and description */
+    /** @brief ACDI User space - user-assignable node name and description */
 #define CONFIG_MEM_SPACE_ACDI_USER_ACCESS 0xFB
 
-/** @brief FDI (Function Description Information) space - traction function descriptions */
+    /** @brief FDI (Function Description Information) space - traction function descriptions */
 #define CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO 0xFA
 
-/** @brief Traction Function Configuration Memory space */
+    /** @brief Traction Function Configuration Memory space */
 #define CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY 0xF9
 
-/** @brief Firmware upgrade space */
+    /** @brief Firmware upgrade space */
 #define CONFIG_MEM_SPACE_FIRMWARE 0xEF
 
-/** @} */ // end of address_spaces
+    /** @} */ // end of address_spaces
 
 /**
  * @defgroup acdi_manufacturer_layout ACDI Manufacturer Space Memory Layout
@@ -1247,37 +1247,37 @@
  * @{
  */
 
-/** @brief Address of version byte in ACDI manufacturer space */
+    /** @brief Address of version byte in ACDI manufacturer space */
 #define CONFIG_MEM_ACDI_MANUFACTURER_VERSION_ADDRESS 0x00
 
-/** @brief Address of manufacturer name string */
+    /** @brief Address of manufacturer name string */
 #define CONFIG_MEM_ACDI_MANUFACTURER_ADDRESS 0x01
 
-/** @brief Address of model name string */
+    /** @brief Address of model name string */
 #define CONFIG_MEM_ACDI_MODEL_ADDRESS 0x2A
 
-/** @brief Address of hardware version string */
+    /** @brief Address of hardware version string */
 #define CONFIG_MEM_ACDI_HARDWARE_VERSION_ADDRESS 0x53
 
-/** @brief Address of software version string */
+    /** @brief Address of software version string */
 #define CONFIG_MEM_ACDI_SOFTWARE_VERSION_ADDRESS 0x68
 
-/** @brief Length of version field (1 byte) */
+    /** @brief Length of version field (1 byte) */
 #define CONFIG_MEM_ACDI_VERSION_LEN 1
 
-/** @brief Maximum length of manufacturer name (41 bytes including null) */
+    /** @brief Maximum length of manufacturer name (41 bytes including null) */
 #define CONFIG_MEM_ACDI_MANUFACTURER_LEN 41
 
-/** @brief Maximum length of model name (41 bytes including null) */
+    /** @brief Maximum length of model name (41 bytes including null) */
 #define CONFIG_MEM_ACDI_MODEL_LEN 41
 
-/** @brief Maximum length of hardware version (21 bytes including null) */
+    /** @brief Maximum length of hardware version (21 bytes including null) */
 #define CONFIG_MEM_ACDI_HARDWARE_VERSION_LEN 21
 
-/** @brief Maximum length of software version (21 bytes including null) */
+    /** @brief Maximum length of software version (21 bytes including null) */
 #define CONFIG_MEM_ACDI_SOFTWARE_VERSION_LEN 21
 
-/** @} */ // end of acdi_manufacturer_layout
+    /** @} */ // end of acdi_manufacturer_layout
 
 /**
  * @defgroup acdi_user_layout ACDI User Space Memory Layout
@@ -1292,31 +1292,31 @@
  * @{
  */
 
-/** @brief Address of user-assigned model name (deprecated, use USER_NAME) */
+    /** @brief Address of user-assigned model name (deprecated, use USER_NAME) */
 #define CONFIG_MEM_USER_MODEL_ADDRESS 0x00
 
-/** @brief Address of user description (deprecated, use proper offset) */
+    /** @brief Address of user description (deprecated, use proper offset) */
 #define CONFIG_MEM_USER_DESCRIPTION_ADDRESS 0x3F
 
-/** @brief Address of version byte in ACDI user space */
+    /** @brief Address of version byte in ACDI user space */
 #define CONFIG_MEM_ACDI_USER_VERSION_ADDRESS 0x00
 
-/** @brief Address of user-assigned name string */
+    /** @brief Address of user-assigned name string */
 #define CONFIG_MEM_ACDI_USER_NAME_ADDRESS 0x01
 
-/** @brief Address of user description string */
+    /** @brief Address of user description string */
 #define CONFIG_MEM_ACDI_USER_DESCRIPTION_ADDRESS 0x40
 
-/** @brief Length of version field (1 byte) */
+    /** @brief Length of version field (1 byte) */
 #define CONFIG_MEM_ACDI_USER_VERSION_LEN 1
 
-/** @brief Maximum length of user name (63 bytes including null) */
+    /** @brief Maximum length of user name (63 bytes including null) */
 #define CONFIG_MEM_ACDI_USER_NAME_LEN 63
 
-/** @brief Maximum length of user description (64 bytes including null) */
+    /** @brief Maximum length of user description (64 bytes including null) */
 #define CONFIG_MEM_ACDI_USER_DESCRIPTION_LEN 64
 
-/** @} */ // end of acdi_user_layout
+    /** @} */ // end of acdi_user_layout
 
 /**
  * @defgroup config_mem_reply_offsets Configuration Memory Reply Code Offsets
@@ -1329,13 +1329,13 @@
  * @{
  */
 
-/** @brief Offset to add to command code to get OK reply code */
+    /** @brief Offset to add to command code to get OK reply code */
 #define CONFIG_MEM_REPLY_OK_OFFSET 0x10
 
-/** @brief Offset to add to command code to get FAIL reply code */
+    /** @brief Offset to add to command code to get FAIL reply code */
 #define CONFIG_MEM_REPLY_FAIL_OFFSET 0x18
 
-/** @} */ // end of config_mem_reply_offsets
+    /** @} */ // end of config_mem_reply_offsets
 
 /**
  * @defgroup config_options_bits Configuration Options Bit Flags
@@ -1347,25 +1347,25 @@
  * @{
  */
 
-/** @brief Write Under Mask command supported */
+    /** @brief Write Under Mask command supported */
 #define CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK 0x8000
 
-/** @brief Unaligned read operations supported */
+    /** @brief Unaligned read operations supported */
 #define CONFIG_OPTIONS_COMMANDS_UNALIGNED_READS 0x4000
 
-/** @brief Unaligned write operations supported */
+    /** @brief Unaligned write operations supported */
 #define CONFIG_OPTIONS_COMMANDS_UNALIGNED_WRITES 0x2000
 
-/** @brief ACDI Manufacturer space (0xFC) readable */
+    /** @brief ACDI Manufacturer space (0xFC) readable */
 #define CONFIG_OPTIONS_COMMANDS_ACDI_MANUFACTURER_READ 0x0800
 
-/** @brief ACDI User space (0xFB) readable */
+    /** @brief ACDI User space (0xFB) readable */
 #define CONFIG_OPTIONS_COMMANDS_ACDI_USER_READ 0x0400
 
-/** @brief ACDI User space (0xFB) writable */
+    /** @brief ACDI User space (0xFB) writable */
 #define CONFIG_OPTIONS_COMMANDS_ACDI_USER_WRITE 0x0200
 
-/** @} */ // end of config_options_bits
+    /** @} */ // end of config_options_bits
 
 /**
  * @defgroup config_write_length_flags Configuration Write Length Flags
@@ -1374,13 +1374,13 @@
  * @{
  */
 
-/** @brief Reserved bits in write length field */
+    /** @brief Reserved bits in write length field */
 #define CONFIG_OPTIONS_WRITE_LENGTH_RESERVED (0x80 | 0x40 | 0x20 | 0x02)
 
-/** @brief Stream read/write supported */
+    /** @brief Stream read/write supported */
 #define CONFIG_OPTIONS_WRITE_LENGTH_STREAM_READ_WRITE 0x01
 
-/** @} */ // end of config_write_length_flags
+    /** @} */ // end of config_write_length_flags
 
 /**
  * @defgroup address_space_info_flags Address Space Information Flags
@@ -1389,13 +1389,13 @@
  * @{
  */
 
-/** @brief Address space is read-only */
+    /** @brief Address space is read-only */
 #define CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY 0x01
 
-/** @brief Low address field is valid and should be used */
+    /** @brief Low address field is valid and should be used */
 #define CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS 0x02
 
-/** @} */ // end of address_space_info_flags
+    /** @} */ // end of address_space_info_flags
 
 /**
  * @defgroup node_enum_keys Node Enumeration Key Management
@@ -1414,37 +1414,37 @@
  * @{
  */
 
-/** @brief Maximum number of enumeration keys available for user/application */
+    /** @brief Maximum number of enumeration keys available for user/application */
 #define MAX_INTERNAL_ENUM_KEYS_VALUES 4
 
-/** @brief Maximum number of internal system enumeration keys */
+    /** @brief Maximum number of internal system enumeration keys */
 #define MAX_USER_ENUM_KEYS_VALUES 4
 
-/** @brief User enumeration key 1 */
+    /** @brief User enumeration key 1 */
 #define USER_ENUM_KEYS_VALUES_1 0
 
-/** @brief User enumeration key 2 */
+    /** @brief User enumeration key 2 */
 #define USER_ENUM_KEYS_VALUES_2 1
 
-/** @brief User enumeration key 3 */
+    /** @brief User enumeration key 3 */
 #define USER_ENUM_KEYS_VALUES_3 2
 
-/** @brief User enumeration key 4 */
+    /** @brief User enumeration key 4 */
 #define USER_ENUM_KEYS_VALUES_4 3
 
-/** @brief Total number of enumeration keys (user + internal) */
+    /** @brief Total number of enumeration keys (user + internal) */
 #define MAX_NODE_ENUM_KEY_VALUES (MAX_USER_ENUM_KEYS_VALUES + MAX_INTERNAL_ENUM_KEYS_VALUES)
 
-/** @brief Enumeration key used by main OpenLCB state machine */
+    /** @brief Enumeration key used by main OpenLCB state machine */
 #define OPENLCB_MAIN_STATMACHINE_NODE_ENUMERATOR_INDEX MAX_USER_ENUM_KEYS_VALUES
 
-/** @brief Enumeration key used by login state machine */
+    /** @brief Enumeration key used by login state machine */
 #define OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX (MAX_USER_ENUM_KEYS_VALUES + 1)
 
-/** @brief Enumeration key used by CAN state machine */
+    /** @brief Enumeration key used by CAN state machine */
 #define CAN_STATEMACHINE_NODE_ENUMRATOR_KEY (MAX_USER_ENUM_KEYS_VALUES + 2)
 
-/** @} */ // end of node_enum_keys
+    /** @} */ // end of node_enum_keys
 
 #ifdef __cplusplus
 extern "C" {

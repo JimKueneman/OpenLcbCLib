@@ -86,11 +86,9 @@ extern "C" {
      * - Required before any buffer allocation operations
      * - Must be called before OpenLcbBufferFifo_initialize() and OpenLcbBufferList_initialize()
      *
-     *
      * @warning MUST be called exactly once during application initialization before
      *          any buffer allocation operations. Calling multiple times will reset all
      *          allocation state and invalidate any outstanding buffer pointers.
-     *
      * @warning This function is NOT thread-safe. Must be called during single-threaded
      *          initialization phase only.
      *
@@ -98,7 +96,6 @@ extern "C" {
      *            - OpenLcbBufferFifo_initialize()
      *            - OpenLcbBufferList_initialize()
      *            - Any call to OpenLcbBufferStore_allocate_buffer()
-     *
      * @attention The buffer pool size is determined by compile-time constants:
      *            USER_DEFINED_BASIC_BUFFER_DEPTH, USER_DEFINED_DATAGRAM_BUFFER_DEPTH,
      *            USER_DEFINED_SNIP_BUFFER_DEPTH, USER_DEFINED_STREAM_BUFFER_DEPTH
@@ -134,10 +131,8 @@ extern "C" {
      *
      * @warning Returns NULL when buffer pool is exhausted. Caller MUST check for NULL
      *          before dereferencing. Dereferencing NULL will cause immediate crash.
-     *
      * @warning Buffer pool is fixed size. System will stop allocating when pool is full.
      *          Design your application to handle allocation failures gracefully.
-     *
      * @warning This function is NOT thread-safe. Concurrent calls may return the same
      *          buffer to multiple callers.
      *
@@ -165,97 +160,80 @@ extern "C" {
      * Use cases:
      * - Releasing a buffer after message transmission
      * - Removing a buffer from FIFO or list
-     * - Cleaning up after message processing completes
+     * - Cleaning up after message processing
+     * - Each holder releasing their shared reference
      *
-     * @param msg Pointer to message buffer to be freed
+     * @param msg Pointer to message buffer to be freed (NULL safe)
      *
-     * @warning Passing NULL is safe (function checks and returns immediately)
+     * @warning Do NOT access buffer after calling free unless you know reference count was > 1
+     * @warning Reference count underflow (calling free too many times) will cause undefined behavior
+     * @warning This function is NOT thread-safe
      *
-     * @warning Do NOT access buffer after calling free, unless you have incremented
-     *          the reference count beforehand. The buffer may be immediately reallocated
-     *          to another caller.
+     * @attention Safe to call with NULL pointer (function will return immediately)
+     * @attention Buffer is only marked as free when reference_count reaches exactly 0
+     * @attention Always ensure each inc_reference_count() is paired with a free_buffer() call
      *
-     * @warning Reference count is NOT protected. Calling free() more times than the
-     *          buffer was allocated/incremented will cause reference count underflow
-     *          and undefined behavior.
-     *
-     * @attention This function is NOT thread-safe
-     * @attention Only frees when reference_count reaches exactly 0
-     * @attention Buffer may not actually be freed if reference count is still > 0
-     *
-     * @note Safe to call with NULL pointer (no-op)
      * @note Telemetry counters are updated when buffer is actually freed
+     * @note Common pattern: allocate (count=1), increment for sharing (count=2), free twice to release
      *
-     * @see OpenLcbBufferStore_allocate_buffer - Allocates buffer with reference_count = 1
-     * @see OpenLcbBufferStore_inc_reference_count - Increments reference count when sharing
+     * @see OpenLcbBufferStore_allocate_buffer - Creates buffer with reference_count = 1
+     * @see OpenLcbBufferStore_inc_reference_count - Increments count when sharing buffer
      */
     extern void OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg);
 
     /**
      * @brief Returns the number of BASIC messages currently allocated
      *
-     * @details Provides real-time count of how many BASIC-type message buffers are
-     * currently allocated. Useful for monitoring system load and detecting buffer leaks.
+     * @details Provides real-time count of allocated BASIC-type message buffers.
+     * Useful for monitoring system load and detecting buffer leaks.
      *
      * Use cases:
      * - Runtime monitoring of buffer usage
-     * - Detecting buffer leaks (count never decreases)
+     * - Detecting buffer leaks
      * - Load balancing decisions
-     * - Debug diagnostics
      *
      * @return Number of BASIC sized messages currently allocated (0 to USER_DEFINED_BASIC_BUFFER_DEPTH)
      *
      * @note This is a live count that changes as buffers are allocated and freed
-     * @note Compare with OpenLcbBufferStore_basic_messages_max_allocated() to see peak usage
      *
      * @see OpenLcbBufferStore_basic_messages_max_allocated - Peak usage counter
-     * @see OpenLcbBufferStore_allocate_buffer - Increments this counter
-     * @see OpenLcbBufferStore_free_buffer - Decrements this counter
      */
     extern uint16_t OpenLcbBufferStore_basic_messages_allocated(void);
 
     /**
      * @brief Returns the maximum number of BASIC messages allocated simultaneously
      *
-     * @details Tracks the peak number of BASIC buffers allocated at any one time since
-     * initialization or since the last call to OpenLcbBufferStore_clear_max_allocated().
-     * Essential for stress testing and right-sizing buffer pools.
+     * @details Tracks peak BASIC buffer usage for capacity planning and stress testing.
+     * This counter only increases, never decreases (until cleared).
      *
      * Use cases:
      * - Stress testing to determine minimum buffer pool size
-     * - Capacity planning for production deployment
+     * - Capacity planning for production systems
      * - Verifying buffer pool configuration is adequate
-     * - Performance analysis
      *
      * @return Maximum number of BASIC sized messages that have been allocated simultaneously
      *
-     * @attention This counter only increases, never decreases (until cleared)
-     * @attention Use OpenLcbBufferStore_clear_max_allocated() to reset this counter
+     * @note If this value equals USER_DEFINED_BASIC_BUFFER_DEPTH during testing, consider increasing pool size
      *
-     * @note Useful for determining if USER_DEFINED_BASIC_BUFFER_DEPTH is too small or too large
-     * @note If this equals pool depth, you may have hit buffer exhaustion
-     *
-     * @see OpenLcbBufferStore_basic_messages_allocated - Current allocation count
-     * @see OpenLcbBufferStore_clear_max_allocated - Resets this counter
+     * @see OpenLcbBufferStore_basic_messages_allocated - Current count
+     * @see OpenLcbBufferStore_clear_max_allocated - Resets all peak counters
      */
     extern uint16_t OpenLcbBufferStore_basic_messages_max_allocated(void);
 
     /**
      * @brief Returns the number of DATAGRAM messages currently allocated
      *
-     * @details Provides real-time count of how many DATAGRAM-type message buffers are
-     * currently allocated. Datagrams are larger than BASIC messages and used for
-     * configuration memory operations and other multi-byte data transfers.
+     * @details Provides real-time count of datagram message buffers. Datagram messages
+     * are used for configuration memory access and other protocol operations.
      *
      * Use cases:
      * - Monitoring datagram protocol activity
      * - Detecting datagram buffer leaks
-     * - Load analysis for datagram-heavy operations
+     * - Analyzing configuration memory operations
      *
      * @return Number of DATAGRAM sized messages currently allocated (0 to USER_DEFINED_DATAGRAM_BUFFER_DEPTH)
      *
-     * @note Datagram buffers are typically used for configuration memory read/write operations
-     * @note Compare with max_allocated to understand peak datagram load
+     * @note Datagram messages are larger than basic messages
      *
      * @see OpenLcbBufferStore_datagram_messages_max_allocated - Peak usage counter
      * @see OpenLcbBufferStore_allocate_buffer - Allocates datagram buffers
@@ -369,12 +347,9 @@ extern "C" {
      *
      * @param msg Pointer to message buffer to increment reference count
      *
-     * @warning msg must NOT be NULL. No NULL check is performed. Passing NULL will
-     *          cause immediate crash on reference count access.
-     *
+     * @warning Passing NULL will cause immediate crash on reference count access - no NULL check performed
      * @warning Reference count is NOT bounds-checked. Incrementing indefinitely may
      *          cause overflow and prevent buffer from ever being freed.
-     *
      * @warning This function is NOT thread-safe
      *
      * @attention Always pair with corresponding OpenLcbBufferStore_free_buffer() call
@@ -401,7 +376,6 @@ extern "C" {
      * - Measuring peak usage for specific operational scenarios
      * - Resetting after configuration changes to remeasure
      * - Periodic monitoring with fresh baselines
-     *
      *
      * @attention This does NOT affect current allocation counts, only the peak counters
      * @attention Current allocations remain valid and tracked

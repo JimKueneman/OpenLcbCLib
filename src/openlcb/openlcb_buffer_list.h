@@ -86,10 +86,8 @@ extern "C"
      * - Required before any list add/find/release operations
      * - Must be called after OpenLcbBufferStore_initialize()
      *
-     *
      * @warning MUST be called exactly once during application initialization before
      *          any list operations. Calling multiple times will discard all stored messages.
-     *
      * @warning NOT thread-safe - must be called during single-threaded initialization
      *
      * @attention Call this function after OpenLcbBufferStore_initialize()
@@ -107,7 +105,7 @@ extern "C"
      * @details Performs a linear search through the list to find the first NULL slot
      * and stores the message pointer there. This allows the message to be later
      * retrieved by its attributes (source/dest/MTI) or by its index.
-     *     *
+     *
      * Use cases:
      * - Storing first frame of multi-frame message for assembly
      * - Holding messages that need attribute-based lookup
@@ -117,7 +115,7 @@ extern "C"
      * @param new_msg Pointer to a message allocated from OpenLcbBufferStore (must NOT be NULL)
      * @return Pointer to the message on success, or NULL if list is full
      *
-     * @warning new_msg should NOT be NULL (though function will store it if passed)
+     * @warning Passing NULL will store NULL in list (though function will store it if passed)
      * @warning Returns NULL when list is full - caller MUST check return value
      * @warning List full means all LEN_MESSAGE_BUFFER slots occupied
      * @warning NOT thread-safe
@@ -125,7 +123,6 @@ extern "C"
      * @attention Always check return value for NULL before assuming success
      * @attention Caller retains ownership - must call release() and free() later
      * @attention List stores pointers only - does not copy message data
-     *
      *
      * @remark For frequently-full lists, consider increasing LEN_MESSAGE_BUFFER
      *
@@ -142,7 +139,7 @@ extern "C"
      * @details Performs a linear search through the list looking for a message
      * that matches all three criteria: source_alias, dest_alias, and mti. This is
      * typically used to find the partial message for a specific multi-frame transfer.
-     *     *
+     *
      * Use cases:
      * - Finding partial multi-frame message to append additional frames
      * - Looking up message by source/destination/type combination
@@ -177,7 +174,7 @@ extern "C"
      * @details Searches the list for the specified message pointer and sets that
      * slot to NULL, effectively removing it from the list. The message itself is NOT
      * freed - the caller must call OpenLcbBufferStore_free_buffer() separately.
-     *     *
+     *
      * Use cases:
      * - Removing completed multi-frame message from assembly tracking
      * - Cleaning up after message processing
@@ -208,7 +205,7 @@ extern "C"
      *
      * @details Provides direct array access to the list by index. The returned pointer
      * may be NULL if that slot is empty, or a valid message pointer if occupied.
-     *     *
+     *
      * Use cases:
      * - Iterating through all list entries
      * - Direct access when index is known
@@ -242,7 +239,7 @@ extern "C"
      *
      * @details Scans the entire list to determine if all slots are NULL (empty)
      * or if at least one message pointer exists.
-     *     *
+     *
      * Use cases:
      * - Checking if any multi-frame messages are in progress
      * - Idle detection

@@ -122,7 +122,9 @@ static gridconnect_buffer_t _receive_buffer;
  * - Validating data byte characters during payload parsing
  * - Detecting transmission errors or protocol violations
  *
+ * @verbatim
  * @param next_byte Character to validate
+ * @endverbatim
  *
  * @return true if next_byte is a valid hexadecimal character (0-9, A-F, a-f)
  * @return false if next_byte is not a hexadecimal character
@@ -182,14 +184,16 @@ static bool _is_valid_hex_char(uint8_t next_byte)
  * - File parsing of GridConnect log files
  * - Real-time monitoring applications
  *
+ * @verbatim
  * @param next_byte Next byte from the incoming GridConnect stream
  * @param gridconnect_buffer Pointer to buffer where complete message will be stored
+ * @endverbatim
  *
  * @return true when a complete and valid GridConnect message has been extracted and
  *         copied to gridconnect_buffer
  * @return false while still collecting data or after recovering from errors
  *
- * @warning gridconnect_buffer must point to a valid gridconnect_buffer_t array.
+ * @warning Buffer pointer must point to a valid gridconnect_buffer_t array.
  *          NULL pointer will cause undefined behavior on message completion.
  *
  * @warning This function uses static variables (_current_state, _receive_buffer_index,
@@ -200,7 +204,7 @@ static bool _is_valid_hex_char(uint8_t next_byte)
  *            call, as the internal state will be reset for the next message and
  *            _receive_buffer may be overwritten.
  *
- * @attention The function modifies gridconnect_buffer only when returning true.
+ * @attention The function modifies output buffer only when returning true.
  *            The buffer contents are undefined when the function returns false.
  *
  * @note The parser is designed for continuous streaming operation. Feed bytes
@@ -383,17 +387,19 @@ bool OpenLcbGridConnect_copy_out_gridconnect_when_done(uint8_t next_byte, gridco
  * - Bridging GridConnect protocol to native CAN bus
  * - Testing and simulation environments
  *
+ * @verbatim
  * @param gridconnect_buffer Pointer to GridConnect message buffer (null-terminated string)
  * @param can_msg Pointer to CAN message structure to populate with converted data
+ * @endverbatim
  *
- * @warning gridconnect_buffer must contain a valid, complete GridConnect message as
+ * @warning Input buffer must contain a valid, complete GridConnect message as
  *          produced by OpenLcbGridConnect_copy_out_gridconnect_when_done(). Passing
  *          malformed data may produce incorrect CAN messages or undefined behavior.
  *
- * @warning gridconnect_buffer must be at least GRIDCONNECT_HEADER_LEN characters long.
+ * @warning Input buffer must be at least GRIDCONNECT_HEADER_LEN characters long.
  *          Shorter buffers will cause strlen() underflow when calculating data length.
  *
- * @warning can_msg must not be NULL. No NULL check is performed, dereferencing
+ * @warning Output CAN message pointer must not be NULL. No NULL check is performed, dereferencing
  *          NULL will cause immediate crash.
  *
  * @attention This function does not validate the GridConnect format. It assumes
@@ -517,17 +523,19 @@ void OpenLcbGridConnect_to_can_msg(gridconnect_buffer_t *gridconnect_buffer, can
  * - Gateway applications forwarding CAN to GridConnect clients
  * - Recording CAN data for later analysis
  *
+ * @verbatim
  * @param gridconnect_buffer Pointer to buffer where GridConnect message will be stored
  * @param can_msg Pointer to source CAN message structure to convert
+ * @endverbatim
  *
- * @warning gridconnect_buffer must point to a valid gridconnect_buffer_t array
+ * @warning Output buffer must point to a valid gridconnect_buffer_t array
  *          (minimum MAX_GRID_CONNECT_LEN = 29 bytes). Buffer overflow will occur
  *          if a smaller buffer is provided.
  *
- * @warning can_msg must not be NULL. No NULL check is performed, dereferencing
+ * @warning Source CAN message pointer must not be NULL. No NULL check is performed, dereferencing
  *          NULL will cause immediate crash.
  *
- * @warning can_msg->payload_count must be accurate and not exceed 8. Values > 8
+ * @warning Payload count must be accurate and not exceed 8. Values > 8
  *          will cause buffer overflow when writing data bytes. The function does
  *          not validate this constraint.
  *

@@ -70,7 +70,7 @@ extern "C" {
      * so all buffers can be held in the FIFO implementation.  The buffer can then be checked for full
      * without the head == tail.
      */
-#define LEN_CAN_FIFO_BUFFER USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1
+#define LEN_CAN_FIFO_BUFFER (USER_DEFINED_CAN_MSG_BUFFER_DEPTH + 1)
 
 
     /**
@@ -114,7 +114,19 @@ extern "C" {
 
     /**
      * @typedef payload_bytes_can_t
-     * @brief Creates a type this is an array of 8 bytes to carry the CAN frame data
+     * @brief Creates a type that is an array of 8 bytes to carry the CAN frame data
+     *
+     * @details Defines the standard CAN payload buffer size according to the CAN 2.0
+     * specification which allows up to 8 data bytes per frame. This type is used
+     * throughout the CAN layer to ensure consistent payload sizing.
+     *
+     * Use cases:
+     * - Allocating CAN frame payload buffers
+     * - Passing CAN data between functions
+     * - Ensuring compile-time type safety for CAN payloads
+     *
+     * @see LEN_CAN_BYTE_ARRAY - Defines the array size
+     * @see can_msg_t - Uses this type for payload storage
      */
     typedef uint8_t payload_bytes_can_t[LEN_CAN_BYTE_ARRAY];
 
@@ -122,6 +134,21 @@ extern "C" {
      * @typedef can_msg_state_t
      * @struct can_msg_state_struct
      * @brief Structure to hold information needed to track the state of a CAN message/frame
+     *
+     * @details This structure uses bit fields to efficiently track the allocation status
+     * of CAN message buffers. The allocated flag indicates whether a buffer is currently
+     * in use by the system.
+     *
+     * Use cases:
+     * - Tracking buffer allocation in the CAN buffer store
+     * - Determining if a CAN message buffer is available for reuse
+     * - Managing buffer lifecycle during message processing
+     *
+     * @note Uses bit fields to minimize memory footprint
+     *
+     * @see can_msg_t - Contains this state structure
+     * @see CanBufferStore_allocate_buffer - Sets the allocated flag
+     * @see CanBufferStore_free_buffer - Clears the allocated flag
      */
     typedef struct can_msg_state_struct {
         uint8_t allocated : 1; /**< @brief Flag to define if the can message buffer is allocated or not. */
@@ -132,6 +159,26 @@ extern "C" {
      * @typedef can_msg_t
      * @struct can_msg_struct
      * @brief Structure to hold information needed by a CAN message/frame
+     *
+     * @details This structure represents a complete CAN 2.0B extended frame with
+     * 29-bit identifier and up to 8 data bytes. It includes state tracking for
+     * buffer management and is the fundamental unit for CAN communication throughout
+     * the library.
+     *
+     * Use cases:
+     * - Storing received CAN frames from hardware
+     * - Building outgoing CAN frames for transmission
+     * - Queuing frames in the CAN buffer FIFO
+     * - Converting between OpenLCB messages and CAN frames
+     *
+     * @warning Maximum payload is 8 bytes per CAN 2.0 specification
+     * @warning NOT thread-safe - caller must handle synchronization
+     *
+     * @note The identifier field holds the full 29-bit extended CAN ID
+     * @note payload_count indicates valid bytes (0-8)
+     *
+     * @see can_buffer_store.h - Manages allocation of these structures
+     * @see can_buffer_fifo.h - Queues pointers to these structures
      */
     typedef struct can_msg_struct {
         can_msg_state_t state; /**< @brief Flags for the current state of this buffer. */
@@ -144,10 +191,42 @@ extern "C" {
     /**
      * @typedef can_msg_array_t
      * @brief Structure to hold the CAN message/frame buffers in an array up to \ref USER_DEFINED_CAN_MSG_BUFFER_DEPTH in count
+     *
+     * @details Defines a fixed-size array of CAN message buffers that forms the
+     * pre-allocated memory pool for CAN frame storage. The size is configurable
+     * at compile time but defaults to 10 buffers.
+     *
+     * Use cases:
+     * - Pre-allocating CAN message buffer pool at initialization
+     * - Providing static memory allocation for embedded systems
+     * - Avoiding dynamic memory allocation during runtime
+     *
+     * @note Array size determined by USER_DEFINED_CAN_MSG_BUFFER_DEPTH
+     * @note Maximum array size is 254 buffers (0xFE)
+     *
+     * @see USER_DEFINED_CAN_MSG_BUFFER_DEPTH - Defines array size
+     * @see can_buffer_store.c - Manages this array
      */
     typedef can_msg_t can_msg_array_t[USER_DEFINED_CAN_MSG_BUFFER_DEPTH];
 
+    /**
+     * @typedef can_main_statemachine_t
+     * @struct can_main_statemachine_struct
+     * @brief Structure to hold state information for the CAN main state machine
+     *
+     * @details This structure maintains the working context for the CAN layer's
+     * main state machine, providing access to the OpenLCB worker thread that
+     * handles message processing and node management.
+     *
+     * Use cases:
+     * - Managing CAN state machine execution context
+     * - Providing access to OpenLCB layer worker thread
+     * - Coordinating between CAN and OpenLCB protocol layers
+     */
     typedef struct can_main_statemachine_struct {
+        /**<
+         * @brief Pointer to the OpenLCB state machine worker thread context
+         */
         openlcb_statemachine_worker_t *openlcb_worker;
     } can_main_statemachine_t;
 
@@ -157,6 +236,37 @@ extern "C" {
      * @brief Structure to hold information needed by the CAN Statemachine as it is
      * pulling messages from can_buffer_fifo.h and then dispatching them to handlers that
      * may require a reply
+     *
+     * @details This structure serves as the working context for the CAN main state machine,
+     * maintaining pointers to the current node being processed and managing outgoing message
+     * buffers. It supports both stack-allocated login messages and heap-allocated general
+     * messages, with flags to control enumeration behavior for multi-message responses.
+     *
+     * The state machine uses this structure to:
+     * - Track which OpenLCB node is currently being processed
+     * - Hold outgoing CAN messages waiting for transmission
+     * - Coordinate between login sequence and normal message handling
+     * - Support multi-message response sequences through enumeration flag
+     *
+     * Use cases:
+     * - Processing incoming CAN frames and generating responses
+     * - Managing login sequence message transmission
+     * - Handling multi-message responses (e.g., event enumeration)
+     * - Coordinating between CAN layer and OpenLCB layer state machines
+     *
+     * @warning Stack-allocated login buffer must not be freed
+     * @warning Heap-allocated outgoing buffer must be freed after transmission
+     * @warning NOT thread-safe - caller must handle synchronization
+     *
+     * @attention The enumerating flag prevents premature message cleanup
+     * @attention Login messages use stack allocation for efficiency
+     *
+     * @note login_outgoing_can_msg is always available (stack-allocated)
+     * @note outgoing_can_msg is NULL when no message pending
+     *
+     * @see can_main_statemachine.h - Uses this structure
+     * @see can_login_statemachine.h - Loads login_outgoing_can_msg
+     * @see can_buffer_store.h - Allocates outgoing_can_msg buffers
      */
     typedef struct can_statemachine_info_struct {
         /**<
@@ -176,13 +286,13 @@ extern "C" {
         /**<
          * @brief Pointer to the CAN message that needs to be sent
          * @note This buffer is a buffer allocated from can_buffer_store.h and will be freed and set to NULL after it
-         * is successfull transmitted
+         * is successfully transmitted
          */
         can_msg_t *outgoing_can_msg;
         /**<
          * @brief Flag to tell the state machine that the current outgoing message is the first of N messages that this response
          * needs to transmit.
-         * @note A good example of this is if a message to enumumerate all Consumers is recieved then N message will need to be sent
+         * @note A good example of this is if a message to enumerate all Consumers is received then N message will need to be sent
          * as a response.  If the handler sets this flag then the state machine knows that is should not free the current message is its
          * handling and should continue to call the hander for that incoming message until this flag is clear.
          */
@@ -195,11 +305,38 @@ extern "C" {
      * @struct alias_mapping_struct
      * @brief Structure to hold a shadow buffer of Node ID/Alias pairs for Nodes that have been
      * allocated and logged into the network.
-     * If during a message/frame reception it is found that some other node is using an Alias that is
-     * associated with one of our nodes the \ref is_duplicate flag is set.  Likewise once the node
-     * has become Permitted on the network the \ref is_permitted flag is set.  This allows the interrupt or
-     * thread on receiving the frame can use this structure to make these checks/flags and the main loop can access this
-     * structure (using the lock/unlock calls) to safely peek in and see if something needs to be handled in the main loops context.
+     *
+     * @details This structure maintains the mapping between a node's permanent 48-bit Node ID
+     * and its temporary 12-bit CAN alias. The mapping is critical for CAN bus communication
+     * where the compact alias is used in frame headers instead of the full Node ID.
+     *
+     * The structure tracks two important states:
+     * - Duplicate detection: Set when another node claims the same alias
+     * - Permission status: Set when node successfully completes login sequence
+     *
+     * This design allows interrupt/thread contexts to safely set flags while the main loop
+     * handles the actual response processing using lock/unlock mechanisms.
+     *
+     * Use cases:
+     * - Tracking alias allocation during node login
+     * - Detecting alias conflicts on the CAN bus
+     * - Translating between Node IDs and aliases during message processing
+     * - Managing node permission state transitions
+     *
+     * @warning Duplicate detection requires immediate handling to prevent bus conflicts
+     * @warning NOT thread-safe - use lock/unlock when accessing from multiple contexts
+     *
+     * @attention Flags are set in interrupt context, processed in main loop
+     * @attention Valid aliases range from 0x001 to 0xFFF (0x000 is invalid)
+     *
+     * @note Node ID is the permanent 48-bit identifier
+     * @note Alias is temporary and may change between power cycles
+     * @note is_duplicate flag triggers alias conflict resolution
+     * @note is_permitted indicates successful network login
+     *
+     * @see alias_mappings.h - Manages array of these structures
+     * @see can_login_statemachine.h - Sets is_permitted flag
+     * @see AliasMappings_register - Registers new mappings
      */
     typedef struct alias_mapping_struct {
         /**<
@@ -211,7 +348,7 @@ extern "C" {
          */
         uint16_t alias;
         /**<
-         * @brief The CAN frame receiveing interrupt or thread has detected a duplicate Alias being used and sets this flag
+         * @brief The CAN frame receiving interrupt or thread has detected a duplicate Alias being used and sets this flag
          * so the main loop can handle it
          */
         uint8_t is_duplicate : 1;
@@ -228,9 +365,34 @@ extern "C" {
      * @struct alias_mapping_info_struct
      * @brief Structure to hold an array of \ref alias_mapping_t structures and a flag to flag the main loop
      * that at least one of the containing mappings has detected a duplicate Alias ID
-     * If during a message/frame reception it is found that some other node is using an Alias that is
-     * associated with one of our nodes the the \ref has_duplicate_alias flag is set.  This mean at least
-     * one mapping in the array is a duplicate.
+     *
+     * @details This structure serves as the master container for all Node ID/Alias mappings
+     * in the system. It maintains an array sized to match the maximum number of nodes and
+     * includes a global duplicate detection flag for efficient conflict checking.
+     *
+     * The has_duplicate_alias flag provides a fast check mechanism: when set, at least one
+     * entry in the list has detected an alias conflict, allowing the main loop to efficiently
+     * scan for and handle duplicates without checking every entry on every iteration.
+     *
+     * Use cases:
+     * - Managing all active Node ID/Alias mappings for the system
+     * - Providing fast duplicate alias detection across all nodes
+     * - Supporting efficient main loop processing of alias conflicts
+     * - Coordinating between interrupt context (flag setting) and main loop (handling)
+     *
+     * @warning Array size must match USER_DEFINED_NODE_BUFFER_DEPTH
+     * @warning NOT thread-safe - use lock/unlock when accessing
+     *
+     * @attention has_duplicate_alias is a global flag for ANY duplicate in the array
+     * @attention Must scan array when has_duplicate_alias is true to find specific entry
+     *
+     * @note Array size defined by ALIAS_MAPPING_BUFFER_DEPTH
+     * @note has_duplicate_alias does not identify WHICH mapping has duplicate
+     * @note Cleared only after all duplicates are resolved
+     *
+     * @see alias_mappings.h - Manages this structure
+     * @see ALIAS_MAPPING_BUFFER_DEPTH - Defines array size
+     * @see AliasMappings_set_has_duplicate_alias_flag - Sets the global flag
      */
     typedef struct alias_mapping_info_struct {
         alias_mapping_t list[ALIAS_MAPPING_BUFFER_DEPTH];

@@ -19,8 +19,14 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
  * @file can_tx_statemachine.h
  * @brief State machine for transmitting CAN frames
+ *
+ * @details Orchestrates the transmission of OpenLCB messages and CAN frames to the physical
+ * CAN bus. Manages hardware buffer availability checking and delegates to appropriate message
+ * type handlers for frame conversion and multi-frame sequencing.
+ *
  * @author Jim Kueneman
  * @date 17 Jan 2026
  */
@@ -41,10 +47,11 @@ extern "C" {
 #endif /* __cplusplus */
 
     /**
-     * @brief A structure to hold pointers to functions for dependencies this module requires, \ref can_tx_statemachine.h
+     * @brief Dependency injection interface for CAN transmit state machine
+     *
      * @details OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the
      * functions that are used can be modeled in the test and return valid OR invalid results to fully
-     * test all program flows in the module.  It also allows for reducing the program size. If a particular
+     * test all program flows in the module. It also allows for reducing the program size. If a particular
      * protocol does not need to be implemented simply filling in the dependency for that handler with a NULL
      * will strip out code for that protocols handlers and minimize the application size (bootloader is an example).
      * The library will automatically reply with the correct error/reply codes if the handler is defined as NULL.
@@ -54,29 +61,65 @@ extern "C" {
 
         // REQUIRED FUNCTIONS
 
-        /** @brief Pointer to an Application defined function to ask if the hardware driver to send a CAN frame is empty and can take another frame to send
-         * @warning <b>Required</b> assignment. Application defined function */
+        /**
+         * @brief Pointer to Application-defined function that checks if CAN transmit buffer is available
+         *
+         * @details Called before attempting to transmit each CAN frame to ensure the hardware
+         * transmit buffer can accept another frame. Prevents buffer overflow and lost frames.
+         *
+         * @warning <b>Required</b> assignment - application MUST provide this function
+         */
         bool (*is_tx_buffer_empty)(void);
 
 
-        /** @brief Pointer to a function to handle an addressed OpenLcb/Lcc message to transmit
-         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_addressed_msg_frame() */
+        /**
+         * @brief Pointer to handler function for addressed OpenLCB messages
+         *
+         * @details Converts addressed OpenLCB messages to CAN frame format with destination
+         * alias in payload. Handles multi-frame fragmentation as needed.
+         *
+         * @warning <b>Required</b> assignment - defaults to CanTxMessageHandler_addressed_msg_frame()
+         */
         bool (*handle_addressed_msg_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
-        /** @brief Pointer to a function to handle an unaddressed OpenLcb/Lcc message to transmit
-         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_unaddressed_msg_frame() */
+        /**
+         * @brief Pointer to handler function for unaddressed OpenLCB messages
+         *
+         * @details Converts broadcast OpenLCB messages to CAN frame format. No destination
+         * alias required in payload.
+         *
+         * @warning <b>Required</b> assignment - defaults to CanTxMessageHandler_unaddressed_msg_frame()
+         */
         bool (*handle_unaddressed_msg_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
-        /** @brief Pointer to a function to handle a datagram frame OpenLcb/Lcc message to transmit
-         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_datagram_frame() */
+        /**
+         * @brief Pointer to handler function for datagram OpenLCB messages
+         *
+         * @details Converts datagram messages to CAN datagram frame format. Handles
+         * fragmentation of datagrams up to 72 bytes across multiple frames.
+         *
+         * @warning <b>Required</b> assignment - defaults to CanTxMessageHandler_datagram_frame()
+         */
         bool (*handle_datagram_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
-        /** @brief Pointer to a function to handle a stream frame OpenLcb/Lcc message to transmit
-         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_stream_frame() */
+        /**
+         * @brief Pointer to handler function for stream OpenLCB messages
+         *
+         * @details Converts stream messages to CAN stream frame format for high-throughput
+         * data transfer applications.
+         *
+         * @warning <b>Required</b> assignment - defaults to CanTxMessageHandler_stream_frame()
+         */
         bool (*handle_stream_frame)(openlcb_msg_t *openlcb_msg, can_msg_t *can_msg_worker, uint16_t *openlcb_start_index);
 
-        /** @brief Pointer to a function to handle a CAN message frame to transmit
-         * @warning <b>Required</b> assignment.  Defaults to CanTxMessageHandler_can_frame() */
+        /**
+         * @brief Pointer to handler function for raw CAN frames
+         *
+         * @details Transmits pre-constructed CAN frames without OpenLCB message processing.
+         * Used for CAN control frames and low-level bus operations.
+         *
+         * @warning <b>Required</b> assignment - defaults to CanTxMessageHandler_can_frame()
+         */
         bool (*handle_can_frame)(can_msg_t *can_msg);
 
         // OPTIONAL FUNCTION
@@ -89,27 +132,80 @@ extern "C" {
 
 
     /**
-     * @brief Initializes the CAN Receive (Rx) state machine
-     * @param interface_can_tx_statemachine Pointer to a
-     * interface_can_tx_statemachine_t struct containing the functions that this module requires.
-     * @return None
-     * @attention This must always be called during application initialization
+     * @brief Initializes the CAN transmit state machine
+     *
+     * @details Stores the dependency injection interface pointer for use by the state machine.
+     * Must be called during application startup before any CAN transmission operations.
+     *
+     * Use cases:
+     * - Called once during application initialization
+     * - Required before any OpenLCB message or CAN frame transmission
+     *
+     * @param interface_can_tx_statemachine Pointer to interface structure containing required function pointers
+     *
+     * @warning MUST be called during application initialization before transmission begins
+     * @warning NOT thread-safe - call only from main initialization context
+     *
+     * @attention Call after handler modules initialized but before network traffic starts
+     *
+     * @see CanTxMessageHandler_initialize - Initialize message handlers first
      */
     extern void CanTxStatemachine_initialize(const interface_can_tx_statemachine_t *interface_can_tx_statemachine);
 
 
     /**
-     * @brief Sends an OpenLcb/LCC message on the CAN physical layer
-     * @param openlcb_msg Pointer to the OpenLcb/LCC message to transmit
-     * @return None
+     * @brief Transmits an OpenLCB message on the CAN physical layer
+     *
+     * @details Converts an OpenLCB message to one or more CAN frames and transmits them sequentially.
+     * Checks hardware buffer availability before transmission. Handles multi-frame messages by
+     * iterating until entire payload transmitted. Dispatches to appropriate handler based on
+     * message type (addressed, unaddressed, datagram, stream).
+     *
+     * Use cases:
+     * - Sending any OpenLCB protocol message
+     * - Transmitting events, datagrams, configuration data
+     * - Broadcasting node status information
+     *
+     * @param openlcb_msg Pointer to OpenLCB message to transmit
+     *
+     * @return True if message fully transmitted, false if hardware buffer full or transmission failed
+     *
+     * @warning Returns false immediately if transmit buffer not empty - caller must retry
+     * @warning Blocks until entire multi-frame message transmitted or failure occurs
+     * @warning NOT thread-safe - serialize calls from multiple contexts
+     *
+     * @attention Multi-frame messages sent as atomic sequence - no interruption by same/lower priority
+     * @attention Message must have valid MTI and addressing information
+     *
+     * @see CanTxStatemachine_send_can_message - For raw CAN frames
+     * @see CanTxMessageHandler_addressed_msg_frame - Addressed message handler
      */
     extern bool CanTxStatemachine_send_openlcb_message(openlcb_msg_t *openlcb_msg);
 
 
     /**
-     * @brief Sends an OpenLcb/LCC message on the CAN physical layer
-     * @param can_msg Pointer to the CAN message buffer transmit
-     * @return None
+     * @brief Transmits a raw CAN frame on the physical layer
+     *
+     * @details Sends a pre-constructed CAN frame directly to the physical CAN bus without
+     * OpenLCB message processing. Used for CAN control frames (CID, RID, AMD) and other
+     * low-level CAN operations.
+     *
+     * Use cases:
+     * - Transmitting alias allocation frames during node login
+     * - Sending CAN control messages
+     * - Direct hardware-level CAN operations
+     *
+     * @param can_msg Pointer to CAN message buffer containing frame to transmit
+     *
+     * @return True if frame transmitted successfully, false if transmission failed
+     *
+     * @warning Frame must be fully constructed before calling
+     * @warning No buffer availability check performed - caller responsible
+     * @warning NOT thread-safe - serialize calls from multiple contexts
+     *
+     * @attention No OpenLCB processing - raw CAN transmission only
+     *
+     * @see CanTxStatemachine_send_openlcb_message - For OpenLCB messages
      */
     extern bool CanTxStatemachine_send_can_message(can_msg_t *can_msg);
 

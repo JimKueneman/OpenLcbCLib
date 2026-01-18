@@ -99,7 +99,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Type definitions and constants for the OpenLcb library.  
+<p>Core type definitions, structures, and configuration constants for OpenLCB library.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__types_8h_source.html">Go to the source code of this file.</a></p>
@@ -107,48 +107,70 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__struct__t.html">event_id_struct_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID with status information.  <a href="structevent__id__struct__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__msg__state__t.html">openlcb_msg_state_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message state flags.  <a href="structopenlcb__msg__state__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB message structure.  <a href="structopenlcb__msg__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmessage__buffer__t.html">message_buffer_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete message buffer storage.  <a href="structmessage__buffer__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__snip__struct__t.html">user_snip_struct_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP (Simple Node Information Protocol) data structure.  <a href="structuser__snip__struct__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__configuration__options.html">user_configuration_options</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory capabilities and options.  <a href="structuser__configuration__options.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structuser__address__space__info__t.html">user_address_space_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address space information and properties.  <a href="structuser__address__space__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnode__parameters__t.html">node_parameters_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Complete node configuration and parameters.  <a href="structnode__parameters__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__enum__t.html">event_id_enum_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID enumeration state.  <a href="structevent__id__enum__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__consumer__list__t.html">event_id_consumer_list_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events consumed by a node.  <a href="structevent__id__consumer__list__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structevent__id__producer__list__t.html">event_id_producer_list_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events produced by a node.  <a href="structevent__id__producer__list__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__node__state__t.html">openlcb_node_state_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node state flags.  <a href="structopenlcb__node__state__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenLCB virtual node structure.  <a href="structopenlcb__node__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__nodes__t.html">openlcb_nodes_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collection of all virtual nodes.  <a href="structopenlcb__nodes__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__statemachine__worker__t.html">openlcb_statemachine_worker_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">State machine working buffers.  <a href="structopenlcb__statemachine__worker__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__stream__message__t.html">openlcb_stream_message_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream message with embedded payload.  <a href="structopenlcb__stream__message__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__outgoing__stream__msg__info__t.html">openlcb_outgoing_stream_msg_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing stream message information.  <a href="structopenlcb__outgoing__stream__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__incoming__msg__info__t.html">openlcb_incoming_msg_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incoming message information.  <a href="structopenlcb__incoming__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">State machine context information.  <a href="structopenlcb__statemachine__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__basic__message__t.html">openlcb_basic_message_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic message with embedded payload.  <a href="structopenlcb__basic__message__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__outgoing__basic__msg__info__t.html">openlcb_outgoing_basic_msg_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outgoing basic message information.  <a href="structopenlcb__outgoing__basic__msg__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Login state machine context.  <a href="structopenlcb__login__statemachine__info__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,114 +181,165 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a9ba9ea43549d9794a5099bcc53a506cc" id="r_a9ba9ea43549d9794a5099bcc53a506cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>&#160;&#160;&#160;32</td></tr>
-<tr class="separator:a9ba9ea43549d9794a5099bcc53a506cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf0c70d4563d008ddbdd2e28cbef8eb4" id="r_adf0c70d4563d008ddbdd2e28cbef8eb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
-<tr class="separator:adf0c70d4563d008ddbdd2e28cbef8eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a615ccc6d3d43ea0e949b1ead288474c5" id="r_a615ccc6d3d43ea0e949b1ead288474c5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
-<tr class="separator:a615ccc6d3d43ea0e949b1ead288474c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca6ba168c85438dde2a2e8d5903e1d79" id="r_aca6ba168c85438dde2a2e8d5903e1d79"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>&#160;&#160;&#160;1</td></tr>
-<tr class="separator:aca6ba168c85438dde2a2e8d5903e1d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02b00dd66a6ba4b9d405bdff61cc5171" id="r_a02b00dd66a6ba4b9d405bdff61cc5171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
-<tr class="separator:a02b00dd66a6ba4b9d405bdff61cc5171"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa41bfc2a48a167d019ddd088211b8d18" id="r_aa41bfc2a48a167d019ddd088211b8d18"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa41bfc2a48a167d019ddd088211b8d18">USER_DEFINED_CDI_LENGTH</a>&#160;&#160;&#160;20000</td></tr>
-<tr class="separator:aa41bfc2a48a167d019ddd088211b8d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d663b83bcdf006041e64b5a981dc597" id="r_a0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1000</td></tr>
-<tr class="separator:a0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a7a353f22f07963259ad19be53a5b35" id="r_a2a7a353f22f07963259ad19be53a5b35"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a7a353f22f07963259ad19be53a5b35">USER_DEFINED_PRODUCER_COUNT</a>&#160;&#160;&#160;64</td></tr>
-<tr class="separator:a2a7a353f22f07963259ad19be53a5b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f808bc3e97eec5e6a726f2b9b4698bd" id="r_a7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f808bc3e97eec5e6a726f2b9b4698bd">USER_DEFINED_CONSUMER_COUNT</a>&#160;&#160;&#160;32</td></tr>
-<tr class="separator:a7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ac77ac899b0afb5faeba64e61eda7b9" id="r_a5ac77ac899b0afb5faeba64e61eda7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ac77ac899b0afb5faeba64e61eda7b9">USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</a>&#160;&#160;&#160;0x00000000</td></tr>
-<tr class="separator:a5ac77ac899b0afb5faeba64e61eda7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88abaa583b85af01cfe62c2e34fd0437" id="r_a88abaa583b85af01cfe62c2e34fd0437"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88abaa583b85af01cfe62c2e34fd0437">USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</a>&#160;&#160;&#160;<a class="el" href="#a242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a></td></tr>
-<tr class="separator:a88abaa583b85af01cfe62c2e34fd0437"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37cd38742a23b040e5cd7f3483bef546" id="r_a37cd38742a23b040e5cd7f3483bef546"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>&#160;&#160;&#160;64 - 1</td></tr>
-<tr class="separator:a37cd38742a23b040e5cd7f3483bef546"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a920178b7bdc956012a19908b5a9fa171" id="r_a920178b7bdc956012a19908b5a9fa171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a920178b7bdc956012a19908b5a9fa171">LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</a>&#160;&#160;&#160;60 - 1</td></tr>
-<tr class="separator:a920178b7bdc956012a19908b5a9fa171"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a295e0f7856c5d61377cfadfc26c0c12d" id="r_a295e0f7856c5d61377cfadfc26c0c12d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a295e0f7856c5d61377cfadfc26c0c12d">NULL_NODE_ID</a>&#160;&#160;&#160;0x000000000000</td></tr>
-<tr class="separator:a295e0f7856c5d61377cfadfc26c0c12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af63a7a752ba5898e5a4b59eef8e6d951" id="r_af63a7a752ba5898e5a4b59eef8e6d951"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af63a7a752ba5898e5a4b59eef8e6d951">NULL_EVENT_ID</a>&#160;&#160;&#160;0x0000000000000000</td></tr>
-<tr class="separator:af63a7a752ba5898e5a4b59eef8e6d951"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77cd82810167389f642c4030544031dc" id="r_a77cd82810167389f642c4030544031dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77cd82810167389f642c4030544031dc">LEN_SNIP_NAME_BUFFER</a>&#160;&#160;&#160;41</td></tr>
-<tr class="separator:a77cd82810167389f642c4030544031dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bd54aaddbf4feda12720cc8385415eb" id="r_a3bd54aaddbf4feda12720cc8385415eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bd54aaddbf4feda12720cc8385415eb">LEN_SNIP_MODEL_BUFFER</a>&#160;&#160;&#160;41</td></tr>
-<tr class="separator:a3bd54aaddbf4feda12720cc8385415eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e745356596632b27544ab341b95576e" id="r_a4e745356596632b27544ab341b95576e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e745356596632b27544ab341b95576e">LEN_SNIP_HARDWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
-<tr class="separator:a4e745356596632b27544ab341b95576e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99e88f7c4205c5961dcf0ed0c9234fe9" id="r_a99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99e88f7c4205c5961dcf0ed0c9234fe9">LEN_SNIP_SOFTWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
-<tr class="separator:a99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a242f93351655c7e25ea4ad9610a5e725" id="r_a242f93351655c7e25ea4ad9610a5e725"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a>&#160;&#160;&#160;63</td></tr>
-<tr class="separator:a242f93351655c7e25ea4ad9610a5e725"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47bd085b568f0923f5c136ef54d891dc" id="r_a47bd085b568f0923f5c136ef54d891dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>&#160;&#160;&#160;64</td></tr>
-<tr class="separator:a47bd085b568f0923f5c136ef54d891dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ff44f2af02b36fd0bab26613ec89a4e" id="r_a3ff44f2af02b36fd0bab26613ec89a4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ff44f2af02b36fd0bab26613ec89a4e">LEN_SNIP_USER_DATA</a>&#160;&#160;&#160;(<a class="el" href="#a242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> + <a class="el" href="#a47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>)</td></tr>
-<tr class="separator:a3ff44f2af02b36fd0bab26613ec89a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa47df3c1f5a06a7a93a926456f9f1581" id="r_aa47df3c1f5a06a7a93a926456f9f1581"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa47df3c1f5a06a7a93a926456f9f1581">LEN_SNIP_VERSION</a>&#160;&#160;&#160;1</td></tr>
-<tr class="separator:aa47df3c1f5a06a7a93a926456f9f1581"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6d8748df026e898855dd0c267044883" id="r_ac6d8748df026e898855dd0c267044883"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6d8748df026e898855dd0c267044883">LEN_SNIP_USER_VERSION</a>&#160;&#160;&#160;1</td></tr>
-<tr class="separator:ac6d8748df026e898855dd0c267044883"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99690385a9084bfc460c7c1e84a1d064" id="r_a99690385a9084bfc460c7c1e84a1d064"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99690385a9084bfc460c7c1e84a1d064">LEN_SNIP_STRUCTURE</a>&#160;&#160;&#160;264</td></tr>
-<tr class="separator:a99690385a9084bfc460c7c1e84a1d064"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9aea12772addc152d586bbaf6e10056" id="r_aa9aea12772addc152d586bbaf6e10056"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>&#160;&#160;&#160;16</td></tr>
-<tr class="separator:aa9aea12772addc152d586bbaf6e10056"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd6144764073997710bc0bb846c261fc" id="r_acd6144764073997710bc0bb846c261fc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>&#160;&#160;&#160;72</td></tr>
-<tr class="separator:acd6144764073997710bc0bb846c261fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac622153763bbbd4970a00d7ec2f7f737" id="r_ac622153763bbbd4970a00d7ec2f7f737"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>&#160;&#160;&#160;256</td></tr>
-<tr class="separator:ac622153763bbbd4970a00d7ec2f7f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_ad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;512</td></tr>
-<tr class="separator:ad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12eb42fe9afe213aa8690aff0c9e4ee6" id="r_a12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
-<tr class="separator:a12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a871c59e021446d9f2fd97f1e81bfa76a" id="r_a871c59e021446d9f2fd97f1e81bfa76a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>&#160;&#160;&#160;(<a class="el" href="#a9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a> + <a class="el" href="#adf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a> + <a class="el" href="#a615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a> + <a class="el" href="#aca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>)</td></tr>
-<tr class="separator:a871c59e021446d9f2fd97f1e81bfa76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a618f018d15b1ec2975b19e67383bb7e6" id="r_a618f018d15b1ec2975b19e67383bb7e6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>&#160;&#160;&#160;64</td></tr>
-<tr class="separator:a618f018d15b1ec2975b19e67383bb7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f1dc0e13c22505bd0cdbcbcd1257aaf" id="r_a7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>&#160;&#160;&#160;<a class="el" href="#ac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
-<tr class="separator:a7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9ba9ea43549d9794a5099bcc53a506cc" id="r_ga9ba9ea43549d9794a5099bcc53a506cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>&#160;&#160;&#160;32</td></tr>
+<tr class="memdesc:ga9ba9ea43549d9794a5099bcc53a506cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of BASIC message buffers (16 bytes each) in the pool.  <br /></td></tr>
+<tr class="separator:ga9ba9ea43549d9794a5099bcc53a506cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadf0c70d4563d008ddbdd2e28cbef8eb4" id="r_gadf0c70d4563d008ddbdd2e28cbef8eb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:gadf0c70d4563d008ddbdd2e28cbef8eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of DATAGRAM message buffers (72 bytes each) in the pool.  <br /></td></tr>
+<tr class="separator:gadf0c70d4563d008ddbdd2e28cbef8eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga615ccc6d3d43ea0e949b1ead288474c5" id="r_ga615ccc6d3d43ea0e949b1ead288474c5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ga615ccc6d3d43ea0e949b1ead288474c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of SNIP message buffers (256 bytes each) in the pool.  <br /></td></tr>
+<tr class="separator:ga615ccc6d3d43ea0e949b1ead288474c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaca6ba168c85438dde2a2e8d5903e1d79" id="r_gaca6ba168c85438dde2a2e8d5903e1d79"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gaca6ba168c85438dde2a2e8d5903e1d79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of STREAM message buffers (512 bytes each) in the pool.  <br /></td></tr>
+<tr class="separator:gaca6ba168c85438dde2a2e8d5903e1d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02b00dd66a6ba4b9d405bdff61cc5171" id="r_ga02b00dd66a6ba4b9d405bdff61cc5171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ga02b00dd66a6ba4b9d405bdff61cc5171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of virtual nodes that can be allocated.  <br /></td></tr>
+<tr class="separator:ga02b00dd66a6ba4b9d405bdff61cc5171"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa41bfc2a48a167d019ddd088211b8d18" id="r_gaa41bfc2a48a167d019ddd088211b8d18"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#gaa41bfc2a48a167d019ddd088211b8d18">USER_DEFINED_CDI_LENGTH</a>&#160;&#160;&#160;20000</td></tr>
+<tr class="memdesc:gaa41bfc2a48a167d019ddd088211b8d18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of CDI (Configuration Description Information) buffer in bytes.  <br /></td></tr>
+<tr class="separator:gaa41bfc2a48a167d019ddd088211b8d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d663b83bcdf006041e64b5a981dc597" id="r_ga0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1000</td></tr>
+<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of FDI (Function Description Information) buffer in bytes for traction nodes.  <br /></td></tr>
+<tr class="separator:ga0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2a7a353f22f07963259ad19be53a5b35" id="r_ga2a7a353f22f07963259ad19be53a5b35"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga2a7a353f22f07963259ad19be53a5b35">USER_DEFINED_PRODUCER_COUNT</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga2a7a353f22f07963259ad19be53a5b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of events a node can produce.  <br /></td></tr>
+<tr class="separator:ga2a7a353f22f07963259ad19be53a5b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f808bc3e97eec5e6a726f2b9b4698bd" id="r_ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga7f808bc3e97eec5e6a726f2b9b4698bd">USER_DEFINED_CONSUMER_COUNT</a>&#160;&#160;&#160;32</td></tr>
+<tr class="memdesc:ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of events a node can consume.  <br /></td></tr>
+<tr class="separator:ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5ac77ac899b0afb5faeba64e61eda7b9" id="r_ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga5ac77ac899b0afb5faeba64e61eda7b9">USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</a>&#160;&#160;&#160;0x00000000</td></tr>
+<tr class="memdesc:ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in Configuration Memory for user-defined node name.  <br /></td></tr>
+<tr class="separator:ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga88abaa583b85af01cfe62c2e34fd0437" id="r_ga88abaa583b85af01cfe62c2e34fd0437"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__user__config__constants.html#ga88abaa583b85af01cfe62c2e34fd0437">USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a></td></tr>
+<tr class="memdesc:ga88abaa583b85af01cfe62c2e34fd0437"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in Configuration Memory for user description.  <br /></td></tr>
+<tr class="separator:ga88abaa583b85af01cfe62c2e34fd0437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga37cd38742a23b040e5cd7f3483bef546" id="r_ga37cd38742a23b040e5cd7f3483bef546"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>&#160;&#160;&#160;(64 - 1)</td></tr>
+<tr class="memdesc:ga37cd38742a23b040e5cd7f3483bef546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum description length for Configuration Options reply.  <br /></td></tr>
+<tr class="separator:ga37cd38742a23b040e5cd7f3483bef546"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga920178b7bdc956012a19908b5a9fa171" id="r_ga920178b7bdc956012a19908b5a9fa171"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga920178b7bdc956012a19908b5a9fa171">LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</a>&#160;&#160;&#160;(60 - 1)</td></tr>
+<tr class="memdesc:ga920178b7bdc956012a19908b5a9fa171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum description length for Address Space Info reply.  <br /></td></tr>
+<tr class="separator:ga920178b7bdc956012a19908b5a9fa171"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga295e0f7856c5d61377cfadfc26c0c12d" id="r_ga295e0f7856c5d61377cfadfc26c0c12d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga295e0f7856c5d61377cfadfc26c0c12d">NULL_NODE_ID</a>&#160;&#160;&#160;0x000000000000</td></tr>
+<tr class="memdesc:ga295e0f7856c5d61377cfadfc26c0c12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">NULL/unassigned Node ID value.  <br /></td></tr>
+<tr class="separator:ga295e0f7856c5d61377cfadfc26c0c12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf63a7a752ba5898e5a4b59eef8e6d951" id="r_gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gaf63a7a752ba5898e5a4b59eef8e6d951">NULL_EVENT_ID</a>&#160;&#160;&#160;0x0000000000000000</td></tr>
+<tr class="memdesc:gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="mdescLeft">&#160;</td><td class="mdescRight">NULL/unassigned Event ID value.  <br /></td></tr>
+<tr class="separator:gaf63a7a752ba5898e5a4b59eef8e6d951"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga77cd82810167389f642c4030544031dc" id="r_ga77cd82810167389f642c4030544031dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga77cd82810167389f642c4030544031dc">LEN_SNIP_NAME_BUFFER</a>&#160;&#160;&#160;41</td></tr>
+<tr class="memdesc:ga77cd82810167389f642c4030544031dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP manufacturer name field length (including null terminator)  <br /></td></tr>
+<tr class="separator:ga77cd82810167389f642c4030544031dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3bd54aaddbf4feda12720cc8385415eb" id="r_ga3bd54aaddbf4feda12720cc8385415eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga3bd54aaddbf4feda12720cc8385415eb">LEN_SNIP_MODEL_BUFFER</a>&#160;&#160;&#160;41</td></tr>
+<tr class="memdesc:ga3bd54aaddbf4feda12720cc8385415eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP model name field length (including null terminator)  <br /></td></tr>
+<tr class="separator:ga3bd54aaddbf4feda12720cc8385415eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4e745356596632b27544ab341b95576e" id="r_ga4e745356596632b27544ab341b95576e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga4e745356596632b27544ab341b95576e">LEN_SNIP_HARDWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
+<tr class="memdesc:ga4e745356596632b27544ab341b95576e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP hardware version field length (including null terminator)  <br /></td></tr>
+<tr class="separator:ga4e745356596632b27544ab341b95576e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga99e88f7c4205c5961dcf0ed0c9234fe9" id="r_ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga99e88f7c4205c5961dcf0ed0c9234fe9">LEN_SNIP_SOFTWARE_VERSION_BUFFER</a>&#160;&#160;&#160;21</td></tr>
+<tr class="memdesc:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP software version field length (including null terminator)  <br /></td></tr>
+<tr class="separator:ga99e88f7c4205c5961dcf0ed0c9234fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga242f93351655c7e25ea4ad9610a5e725" id="r_ga242f93351655c7e25ea4ad9610a5e725"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a>&#160;&#160;&#160;63</td></tr>
+<tr class="memdesc:ga242f93351655c7e25ea4ad9610a5e725"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user-assigned name field length (including null terminator)  <br /></td></tr>
+<tr class="separator:ga242f93351655c7e25ea4ad9610a5e725"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga47bd085b568f0923f5c136ef54d891dc" id="r_ga47bd085b568f0923f5c136ef54d891dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga47bd085b568f0923f5c136ef54d891dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user description field length (including null terminator)  <br /></td></tr>
+<tr class="separator:ga47bd085b568f0923f5c136ef54d891dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3ff44f2af02b36fd0bab26613ec89a4e" id="r_ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga3ff44f2af02b36fd0bab26613ec89a4e">LEN_SNIP_USER_DATA</a>&#160;&#160;&#160;(<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> + <a class="el" href="group__buffer__size__constants.html#ga47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>)</td></tr>
+<tr class="memdesc:ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total SNIP user data size (name + description)  <br /></td></tr>
+<tr class="separator:ga3ff44f2af02b36fd0bab26613ec89a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa47df3c1f5a06a7a93a926456f9f1581" id="r_gaa47df3c1f5a06a7a93a926456f9f1581"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gaa47df3c1f5a06a7a93a926456f9f1581">LEN_SNIP_VERSION</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gaa47df3c1f5a06a7a93a926456f9f1581"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP manufacturer version field length (1 byte)  <br /></td></tr>
+<tr class="separator:gaa47df3c1f5a06a7a93a926456f9f1581"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac6d8748df026e898855dd0c267044883" id="r_gac6d8748df026e898855dd0c267044883"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gac6d8748df026e898855dd0c267044883">LEN_SNIP_USER_VERSION</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gac6d8748df026e898855dd0c267044883"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP user version field length (1 byte)  <br /></td></tr>
+<tr class="separator:gac6d8748df026e898855dd0c267044883"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga99690385a9084bfc460c7c1e84a1d064" id="r_ga99690385a9084bfc460c7c1e84a1d064"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga99690385a9084bfc460c7c1e84a1d064">LEN_SNIP_STRUCTURE</a>&#160;&#160;&#160;264</td></tr>
+<tr class="memdesc:ga99690385a9084bfc460c7c1e84a1d064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum SNIP structure size (Event with Payload: 256 payload + 8 Event ID)  <br /></td></tr>
+<tr class="separator:ga99690385a9084bfc460c7c1e84a1d064"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa9aea12772addc152d586bbaf6e10056" id="r_gaa9aea12772addc152d586bbaf6e10056"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gaa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:gaa9aea12772addc152d586bbaf6e10056"><td class="mdescLeft">&#160;</td><td class="mdescRight">BASIC message payload size (most messages fit in 8 bytes, some use 2 frames)  <br /></td></tr>
+<tr class="separator:gaa9aea12772addc152d586bbaf6e10056"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacd6144764073997710bc0bb846c261fc" id="r_gacd6144764073997710bc0bb846c261fc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gacd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>&#160;&#160;&#160;72</td></tr>
+<tr class="memdesc:gacd6144764073997710bc0bb846c261fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">DATAGRAM message maximum payload size.  <br /></td></tr>
+<tr class="separator:gacd6144764073997710bc0bb846c261fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac622153763bbbd4970a00d7ec2f7f737" id="r_gac622153763bbbd4970a00d7ec2f7f737"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>&#160;&#160;&#160;256</td></tr>
+<tr class="memdesc:gac622153763bbbd4970a00d7ec2f7f737"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload size (also covers Events with Payload)  <br /></td></tr>
+<tr class="separator:gac622153763bbbd4970a00d7ec2f7f737"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad7e3d2c90a3bbfd68b51f5068f5692ff" id="r_gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>&#160;&#160;&#160;512</td></tr>
+<tr class="memdesc:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload size.  <br /></td></tr>
+<tr class="separator:gad7e3d2c90a3bbfd68b51f5068f5692ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga12eb42fe9afe213aa8690aff0c9e4ee6" id="r_ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga12eb42fe9afe213aa8690aff0c9e4ee6">LEN_EVENT_ID</a>&#160;&#160;&#160;8</td></tr>
+<tr class="memdesc:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID size in bytes.  <br /></td></tr>
+<tr class="separator:ga12eb42fe9afe213aa8690aff0c9e4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga871c59e021446d9f2fd97f1e81bfa76a" id="r_ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>&#160;&#160;&#160;(<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a> + <a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>)</td></tr>
+<tr class="memdesc:ga871c59e021446d9f2fd97f1e81bfa76a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of message buffers (sum of all buffer types)  <br /></td></tr>
+<tr class="separator:ga871c59e021446d9f2fd97f1e81bfa76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga618f018d15b1ec2975b19e67383bb7e6" id="r_ga618f018d15b1ec2975b19e67383bb7e6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga618f018d15b1ec2975b19e67383bb7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum datagram payload after subtracting protocol overhead.  <br /></td></tr>
+<tr class="separator:ga618f018d15b1ec2975b19e67383bb7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f1dc0e13c22505bd0cdbcbcd1257aaf" id="r_ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__buffer__size__constants.html#ga7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td></tr>
+<tr class="memdesc:ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event payload maximum size (uses SNIP buffer)  <br /></td></tr>
+<tr class="separator:ga7f1dc0e13c22505bd0cdbcbcd1257aaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a4f5ee4215d19784c8633b7ef379b4fff" id="r_a4f5ee4215d19784c8633b7ef379b4fff"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>[<a class="el" href="#aa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>]</td></tr>
-<tr class="separator:a4f5ee4215d19784c8633b7ef379b4fff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00bdf9aea15c06b5862cdf7da8c0f5ee" id="r_a00bdf9aea15c06b5862cdf7da8c0f5ee"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>[<a class="el" href="#acd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>]</td></tr>
-<tr class="separator:a00bdf9aea15c06b5862cdf7da8c0f5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b8d853ede60e54b34961cda0d85b39f" id="r_a5b8d853ede60e54b34961cda0d85b39f"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>[<a class="el" href="#ac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>]</td></tr>
-<tr class="separator:a5b8d853ede60e54b34961cda0d85b39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a701be94703c1d4fceb9c32cdef0048f0" id="r_a701be94703c1d4fceb9c32cdef0048f0"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>[<a class="el" href="#ad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>]</td></tr>
-<tr class="separator:a701be94703c1d4fceb9c32cdef0048f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab60ba075676efb9e9f7c7014a46573f9" id="r_ab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[<a class="el" href="#a9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>]</td></tr>
-<tr class="separator:ab60ba075676efb9e9f7c7014a46573f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81508fbbcf9058f925fa1e296086a07e" id="r_a81508fbbcf9058f925fa1e296086a07e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81508fbbcf9058f925fa1e296086a07e">openlcb_datagram_data_buffer_t</a>[<a class="el" href="#adf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>]</td></tr>
-<tr class="separator:a81508fbbcf9058f925fa1e296086a07e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc05dc719ff51bbc87035a82035c3cdc" id="r_afc05dc719ff51bbc87035a82035c3cdc"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc05dc719ff51bbc87035a82035c3cdc">openlcb_snip_data_buffer_t</a>[<a class="el" href="#a615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>]</td></tr>
-<tr class="separator:afc05dc719ff51bbc87035a82035c3cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add0b8e081d6a21de7bc3f2781dd7aaa0" id="r_add0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add0b8e081d6a21de7bc3f2781dd7aaa0">openlcb_stream_data_buffer_t</a>[<a class="el" href="#aca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>]</td></tr>
-<tr class="separator:add0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4f5ee4215d19784c8633b7ef379b4fff" id="r_ga4f5ee4215d19784c8633b7ef379b4fff"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>[<a class="el" href="group__buffer__size__constants.html#gaa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>]</td></tr>
+<tr class="memdesc:ga4f5ee4215d19784c8633b7ef379b4fff"><td class="mdescLeft">&#160;</td><td class="mdescRight">BASIC message payload buffer (16 bytes)  <br /></td></tr>
+<tr class="separator:ga4f5ee4215d19784c8633b7ef379b4fff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga00bdf9aea15c06b5862cdf7da8c0f5ee" id="r_ga00bdf9aea15c06b5862cdf7da8c0f5ee"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>[<a class="el" href="group__buffer__size__constants.html#gacd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>]</td></tr>
+<tr class="memdesc:ga00bdf9aea15c06b5862cdf7da8c0f5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">DATAGRAM message payload buffer (72 bytes)  <br /></td></tr>
+<tr class="separator:ga00bdf9aea15c06b5862cdf7da8c0f5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5b8d853ede60e54b34961cda0d85b39f" id="r_ga5b8d853ede60e54b34961cda0d85b39f"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>[<a class="el" href="group__buffer__size__constants.html#gac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>]</td></tr>
+<tr class="memdesc:ga5b8d853ede60e54b34961cda0d85b39f"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNIP message payload buffer (256 bytes)  <br /></td></tr>
+<tr class="separator:ga5b8d853ede60e54b34961cda0d85b39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga701be94703c1d4fceb9c32cdef0048f0" id="r_ga701be94703c1d4fceb9c32cdef0048f0"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>[<a class="el" href="group__buffer__size__constants.html#gad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>]</td></tr>
+<tr class="memdesc:ga701be94703c1d4fceb9c32cdef0048f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STREAM message payload buffer (512 bytes)  <br /></td></tr>
+<tr class="separator:ga701be94703c1d4fceb9c32cdef0048f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab60ba075676efb9e9f7c7014a46573f9" id="r_gab60ba075676efb9e9f7c7014a46573f9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gab60ba075676efb9e9f7c7014a46573f9">openlcb_basic_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#ga9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memdesc:gab60ba075676efb9e9f7c7014a46573f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of BASIC payload buffers.  <br /></td></tr>
+<tr class="separator:gab60ba075676efb9e9f7c7014a46573f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga81508fbbcf9058f925fa1e296086a07e" id="r_ga81508fbbcf9058f925fa1e296086a07e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#ga81508fbbcf9058f925fa1e296086a07e">openlcb_datagram_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#gadf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memdesc:ga81508fbbcf9058f925fa1e296086a07e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of DATAGRAM payload buffers.  <br /></td></tr>
+<tr class="separator:ga81508fbbcf9058f925fa1e296086a07e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafc05dc719ff51bbc87035a82035c3cdc" id="r_gafc05dc719ff51bbc87035a82035c3cdc"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gafc05dc719ff51bbc87035a82035c3cdc">openlcb_snip_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#ga615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memdesc:gafc05dc719ff51bbc87035a82035c3cdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of SNIP payload buffers.  <br /></td></tr>
+<tr class="separator:gafc05dc719ff51bbc87035a82035c3cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadd0b8e081d6a21de7bc3f2781dd7aaa0" id="r_gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="group__payload__buffer__types.html#ga701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__payload__pool__types.html#gadd0b8e081d6a21de7bc3f2781dd7aaa0">openlcb_stream_data_buffer_t</a>[<a class="el" href="group__user__config__constants.html#gaca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>]</td></tr>
+<tr class="memdesc:gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of STREAM payload buffers.  <br /></td></tr>
+<tr class="separator:gadd0b8e081d6a21de7bc3f2781dd7aaa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4925a4e7a5380d3c40cfceadbbed1c78" id="r_a4925a4e7a5380d3c40cfceadbbed1c78"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4925a4e7a5380d3c40cfceadbbed1c78">openlcb_payload_t</a>[1]</td></tr>
+<tr class="memdesc:a4925a4e7a5380d3c40cfceadbbed1c78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic payload pointer type.  <br /></td></tr>
 <tr class="separator:a4925a4e7a5380d3c40cfceadbbed1c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a124e6ffe91515b7b9f36f42c3517e70c" id="r_a124e6ffe91515b7b9f36f42c3517e70c"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td></tr>
+<tr class="memdesc:a124e6ffe91515b7b9f36f42c3517e70c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ID type (64-bit unsigned integer)  <br /></td></tr>
 <tr class="separator:a124e6ffe91515b7b9f36f42c3517e70c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab63b0eaf893badf557397c77fb74fe3c" id="r_ab63b0eaf893badf557397c77fb74fe3c"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab63b0eaf893badf557397c77fb74fe3c">node_id_t</a></td></tr>
+<tr class="memdesc:ab63b0eaf893badf557397c77fb74fe3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node ID type (64-bit unsigned integer)  <br /></td></tr>
 <tr class="separator:ab63b0eaf893badf557397c77fb74fe3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d55dc9181adc6764d1e8f94bde6dbb8" id="r_a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a>[<a class="el" href="#a7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>]</td></tr>
+<tr class="memitem:a4d55dc9181adc6764d1e8f94bde6dbb8" id="r_a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a>[<a class="el" href="group__buffer__size__constants.html#ga7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>]</td></tr>
+<tr class="memdesc:a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event payload data buffer.  <br /></td></tr>
 <tr class="separator:a4d55dc9181adc6764d1e8f94bde6dbb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a249892a089c0d512eac257da1ec5b6be" id="r_a249892a089c0d512eac257da1ec5b6be"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a>[<a class="el" href="#a618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>]</td></tr>
+<tr class="memitem:a249892a089c0d512eac257da1ec5b6be" id="r_a249892a089c0d512eac257da1ec5b6be"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a249892a089c0d512eac257da1ec5b6be">configuration_memory_buffer_t</a>[<a class="el" href="group__buffer__size__constants.html#ga618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>]</td></tr>
+<tr class="memdesc:a249892a089c0d512eac257da1ec5b6be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory operation buffer.  <br /></td></tr>
 <tr class="separator:a249892a089c0d512eac257da1ec5b6be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cc5550a13db98f7bd586e9bfac4651e" id="r_a5cc5550a13db98f7bd586e9bfac4651e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cc5550a13db98f7bd586e9bfac4651e">openlcb_msg_array_t</a>[<a class="el" href="#a871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>]</td></tr>
+<tr class="memitem:a5cc5550a13db98f7bd586e9bfac4651e" id="r_a5cc5550a13db98f7bd586e9bfac4651e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cc5550a13db98f7bd586e9bfac4651e">openlcb_msg_array_t</a>[<a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>]</td></tr>
+<tr class="memdesc:a5cc5550a13db98f7bd586e9bfac4651e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of OpenLCB message structures.  <br /></td></tr>
 <tr class="separator:a5cc5550a13db98f7bd586e9bfac4651e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b685f77fce4aaf049c71975bedf47a8" id="r_a1b685f77fce4aaf049c71975bedf47a8"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b685f77fce4aaf049c71975bedf47a8">parameterless_callback_t</a>) (void)</td></tr>
+<tr class="memdesc:a1b685f77fce4aaf049c71975bedf47a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function type with no parameters.  <br /></td></tr>
 <tr class="separator:a1b685f77fce4aaf049c71975bedf47a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8c67f936a9cfb7fc2d9702f0ef217af" id="r_ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8c67f936a9cfb7fc2d9702f0ef217af">operations_config_mem_space_func_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory operations callback function type.  <br /></td></tr>
 <tr class="separator:ae8c67f936a9cfb7fc2d9702f0ef217af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a117d2b090562ba06244209f946bd26c8" id="r_a117d2b090562ba06244209f946bd26c8"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a></td></tr>
 <tr class="separator:a117d2b090562ba06244209f946bd26c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c0c44d2ca651aaca32761e9a2519843" id="r_a7c0c44d2ca651aaca32761e9a2519843"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c0c44d2ca651aaca32761e9a2519843">read_config_mem_space_func_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a> *config_mem_read_request_info)</td></tr>
+<tr class="memdesc:a7c0c44d2ca651aaca32761e9a2519843"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory read callback function type.  <br /></td></tr>
 <tr class="separator:a7c0c44d2ca651aaca32761e9a2519843"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01793aca5575602b9e56d547297106a4" id="r_a01793aca5575602b9e56d547297106a4"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a></td></tr>
 <tr class="separator:a01793aca5575602b9e56d547297106a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20b38f8882ef79b433f7461000ac1d12" id="r_a20b38f8882ef79b433f7461000ac1d12"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20b38f8882ef79b433f7461000ac1d12">write_config_mem_space_func_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a> *config_mem_write_request_info)</td></tr>
+<tr class="memdesc:a20b38f8882ef79b433f7461000ac1d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory write callback function type.  <br /></td></tr>
 <tr class="separator:a20b38f8882ef79b433f7461000ac1d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a193afa69c1ca562e8b89db07771a9c0c" id="r_a193afa69c1ca562e8b89db07771a9c0c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a></td></tr>
 <tr class="separator:a193afa69c1ca562e8b89db07771a9c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -278,19 +351,22 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c">SNIP</a>
 , <a class="el" href="#aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5">STREAM</a>
  }</td></tr>
+<tr class="memdesc:aececf1be5c268eb2c680b4a0cc778467"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message buffer payload type enumeration.  <a href="#aececf1be5c268eb2c680b4a0cc778467">More...</a><br /></td></tr>
 <tr class="separator:aececf1be5c268eb2c680b4a0cc778467"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a236635602f03daeea70a4cabb135c8ce" id="r_a236635602f03daeea70a4cabb135c8ce"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> { <a class="el" href="#a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5">EVENT_STATUS_UNKNOWN</a>
 , <a class="el" href="#a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8">EVENT_STATUS_SET</a>
 , <a class="el" href="#a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6">EVENT_STATUS_CLEAR</a>
  }</td></tr>
+<tr class="memdesc:a236635602f03daeea70a4cabb135c8ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event status indicator for Producer/Consumer events.  <a href="#a236635602f03daeea70a4cabb135c8ce">More...</a><br /></td></tr>
 <tr class="separator:a236635602f03daeea70a4cabb135c8ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab08faa6c2f49792c273f5267068d549" id="r_aab08faa6c2f49792c273f5267068d549"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab08faa6c2f49792c273f5267068d549">space_encoding_enum</a> { <a class="el" href="#aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9">ADDRESS_SPACE_IN_BYTE_1</a> = 0
 , <a class="el" href="#aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9">ADDRESS_SPACE_IN_BYTE_6</a> = 1
  }</td></tr>
+<tr class="memdesc:aab08faa6c2f49792c273f5267068d549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration memory address space encoding method.  <a href="#aab08faa6c2f49792c273f5267068d549">More...</a><br /></td></tr>
 <tr class="separator:aab08faa6c2f49792c273f5267068d549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Type definitions and constants for the OpenLcb library. </p>
+<div class="textblock"><p>Core type definitions, structures, and configuration constants for OpenLCB library. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -298,584 +374,71 @@ Enumerations</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>This header file defines all fundamental types and data structures used throughout the OpenLCB protocol implementation. It provides:</p>
+<p><b>User-Configurable Constants:</b></p><ul>
+<li>Buffer pool depths for different message types (BASIC, DATAGRAM, SNIP, STREAM)</li>
+<li>Maximum node count</li>
+<li>Event producer/consumer array sizes</li>
+<li>CDI and FDI buffer lengths</li>
+<li>Configuration memory addresses</li>
+</ul>
+<p><b>Core Type Definitions:</b></p><ul>
+<li>Node identifiers (48-bit Node IDs)</li>
+<li>Event identifiers (64-bit Event IDs)</li>
+<li>Message structures with variable-size payloads</li>
+<li>Node state and configuration structures</li>
+<li>Event producer/consumer lists</li>
+<li>Configuration memory structures</li>
+</ul>
+<p><b>Message Buffer Architecture:</b> The library uses segregated buffer pools organized by payload size:</p><ul>
+<li>BASIC: 16 bytes - For simple messages (most MTIs)</li>
+<li>DATAGRAM: 72 bytes - For datagram protocol</li>
+<li>SNIP: 256 bytes - For SNIP and Events with Payload</li>
+<li>STREAM: 512 bytes - For stream protocol</li>
+</ul>
+<p><b>Node Architecture:</b> Each node maintains:</p><ul>
+<li>Unique 48-bit Node ID and 12-bit CAN alias</li>
+<li>State flags (allocated, permitted, initialized)</li>
+<li>Lists of produced and consumed Event IDs</li>
+<li>Pointer to configuration parameters</li>
+<li>Reference to last received datagram (for replies)</li>
+</ul>
+<p><b>Configuration Memory:</b> Supports multiple address spaces per OpenLCB Memory Configuration Protocol:</p><ul>
+<li>0xFF: CDI (Configuration Description Information)</li>
+<li>0xFE: All memory combined</li>
+<li>0xFD: Configuration Memory (user settings)</li>
+<li>0xFC: ACDI Manufacturer (read-only)</li>
+<li>0xFB: ACDI User (user name/description)</li>
+<li>0xFA/0xF9: Traction FDI and configuration</li>
+<li>0xEF: Firmware upgrade</li>
+</ul>
+<p><b>Design Philosophy:</b></p><ul>
+<li>Static allocation: All buffers pre-allocated at compile time</li>
+<li>Reference counting: Messages can be shared between queues</li>
+<li>Type safety: Extensive use of typedef for better type checking</li>
+<li>Segregated pools: Different message types have different buffer sizes</li>
+<li>Enumeration support: Multiple subsystems can enumerate nodes independently</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>All buffer depths can be overridden via compiler macros </dd>
+<dd>
+Total buffer count must not exceed 126 for 8-bit processors </dd>
+<dd>
+Node IDs and Event IDs use 64-bit types for consistency</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Changing buffer depths requires recompilation </dd>
+<dd>
+Node structures cannot be deallocated once allocated</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> - Protocol constants and MTI definitions </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8h.html" title="Core buffer store for OpenLcb/LCC message buffers with allocation and management.">openlcb_buffer_store.h</a> - Buffer allocation functions </dd>
+<dd>
+<a class="el" href="openlcb__node_8h.html" title="OpenLCB node allocation, enumeration, and lifecycle management.">openlcb_node.h</a> - Node management functions </dd>
+<dd>
+OpenLCB Memory Configuration Protocol Standard </dd>
+<dd>
+OpenLCB Message Network Standard S-9.7.1.1</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a9ba9ea43549d9794a5099bcc53a506cc" name="a9ba9ea43549d9794a5099bcc53a506cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ba9ea43549d9794a5099bcc53a506cc">&#9670;&#160;</a></span>USER_DEFINED_BASIC_BUFFER_DEPTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_BASIC_BUFFER_DEPTH&#160;&#160;&#160;32</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adf0c70d4563d008ddbdd2e28cbef8eb4" name="adf0c70d4563d008ddbdd2e28cbef8eb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf0c70d4563d008ddbdd2e28cbef8eb4">&#9670;&#160;</a></span>USER_DEFINED_DATAGRAM_BUFFER_DEPTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_DATAGRAM_BUFFER_DEPTH&#160;&#160;&#160;4</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a615ccc6d3d43ea0e949b1ead288474c5" name="a615ccc6d3d43ea0e949b1ead288474c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a615ccc6d3d43ea0e949b1ead288474c5">&#9670;&#160;</a></span>USER_DEFINED_SNIP_BUFFER_DEPTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_SNIP_BUFFER_DEPTH&#160;&#160;&#160;4</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aca6ba168c85438dde2a2e8d5903e1d79" name="aca6ba168c85438dde2a2e8d5903e1d79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca6ba168c85438dde2a2e8d5903e1d79">&#9670;&#160;</a></span>USER_DEFINED_STREAM_BUFFER_DEPTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_STREAM_BUFFER_DEPTH&#160;&#160;&#160;1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a02b00dd66a6ba4b9d405bdff61cc5171" name="a02b00dd66a6ba4b9d405bdff61cc5171"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02b00dd66a6ba4b9d405bdff61cc5171">&#9670;&#160;</a></span>USER_DEFINED_NODE_BUFFER_DEPTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_NODE_BUFFER_DEPTH&#160;&#160;&#160;4</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa41bfc2a48a167d019ddd088211b8d18" name="aa41bfc2a48a167d019ddd088211b8d18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa41bfc2a48a167d019ddd088211b8d18">&#9670;&#160;</a></span>USER_DEFINED_CDI_LENGTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_CDI_LENGTH&#160;&#160;&#160;20000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a0d663b83bcdf006041e64b5a981dc597" name="a0d663b83bcdf006041e64b5a981dc597"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d663b83bcdf006041e64b5a981dc597">&#9670;&#160;</a></span>USER_DEFINED_FDI_LENGTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_FDI_LENGTH&#160;&#160;&#160;1000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a2a7a353f22f07963259ad19be53a5b35" name="a2a7a353f22f07963259ad19be53a5b35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a7a353f22f07963259ad19be53a5b35">&#9670;&#160;</a></span>USER_DEFINED_PRODUCER_COUNT</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_PRODUCER_COUNT&#160;&#160;&#160;64</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7f808bc3e97eec5e6a726f2b9b4698bd" name="a7f808bc3e97eec5e6a726f2b9b4698bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f808bc3e97eec5e6a726f2b9b4698bd">&#9670;&#160;</a></span>USER_DEFINED_CONSUMER_COUNT</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_CONSUMER_COUNT&#160;&#160;&#160;32</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5ac77ac899b0afb5faeba64e61eda7b9" name="a5ac77ac899b0afb5faeba64e61eda7b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ac77ac899b0afb5faeba64e61eda7b9">&#9670;&#160;</a></span>USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS&#160;&#160;&#160;0x00000000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a88abaa583b85af01cfe62c2e34fd0437" name="a88abaa583b85af01cfe62c2e34fd0437"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88abaa583b85af01cfe62c2e34fd0437">&#9670;&#160;</a></span>USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS&#160;&#160;&#160;<a class="el" href="#a242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a37cd38742a23b040e5cd7f3483bef546" name="a37cd38742a23b040e5cd7f3483bef546"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37cd38742a23b040e5cd7f3483bef546">&#9670;&#160;</a></span>LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_CONFIG_MEM_OPTIONS_DESCRIPTION&#160;&#160;&#160;64 - 1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a920178b7bdc956012a19908b5a9fa171" name="a920178b7bdc956012a19908b5a9fa171"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a920178b7bdc956012a19908b5a9fa171">&#9670;&#160;</a></span>LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION&#160;&#160;&#160;60 - 1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a295e0f7856c5d61377cfadfc26c0c12d" name="a295e0f7856c5d61377cfadfc26c0c12d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a295e0f7856c5d61377cfadfc26c0c12d">&#9670;&#160;</a></span>NULL_NODE_ID</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define NULL_NODE_ID&#160;&#160;&#160;0x000000000000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="af63a7a752ba5898e5a4b59eef8e6d951" name="af63a7a752ba5898e5a4b59eef8e6d951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af63a7a752ba5898e5a4b59eef8e6d951">&#9670;&#160;</a></span>NULL_EVENT_ID</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define NULL_EVENT_ID&#160;&#160;&#160;0x0000000000000000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a77cd82810167389f642c4030544031dc" name="a77cd82810167389f642c4030544031dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77cd82810167389f642c4030544031dc">&#9670;&#160;</a></span>LEN_SNIP_NAME_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_NAME_BUFFER&#160;&#160;&#160;41</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3bd54aaddbf4feda12720cc8385415eb" name="a3bd54aaddbf4feda12720cc8385415eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3bd54aaddbf4feda12720cc8385415eb">&#9670;&#160;</a></span>LEN_SNIP_MODEL_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_MODEL_BUFFER&#160;&#160;&#160;41</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a4e745356596632b27544ab341b95576e" name="a4e745356596632b27544ab341b95576e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e745356596632b27544ab341b95576e">&#9670;&#160;</a></span>LEN_SNIP_HARDWARE_VERSION_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_HARDWARE_VERSION_BUFFER&#160;&#160;&#160;21</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a99e88f7c4205c5961dcf0ed0c9234fe9" name="a99e88f7c4205c5961dcf0ed0c9234fe9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99e88f7c4205c5961dcf0ed0c9234fe9">&#9670;&#160;</a></span>LEN_SNIP_SOFTWARE_VERSION_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_SOFTWARE_VERSION_BUFFER&#160;&#160;&#160;21</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a242f93351655c7e25ea4ad9610a5e725" name="a242f93351655c7e25ea4ad9610a5e725"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a242f93351655c7e25ea4ad9610a5e725">&#9670;&#160;</a></span>LEN_SNIP_USER_NAME_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_USER_NAME_BUFFER&#160;&#160;&#160;63</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a47bd085b568f0923f5c136ef54d891dc" name="a47bd085b568f0923f5c136ef54d891dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47bd085b568f0923f5c136ef54d891dc">&#9670;&#160;</a></span>LEN_SNIP_USER_DESCRIPTION_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_USER_DESCRIPTION_BUFFER&#160;&#160;&#160;64</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3ff44f2af02b36fd0bab26613ec89a4e" name="a3ff44f2af02b36fd0bab26613ec89a4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ff44f2af02b36fd0bab26613ec89a4e">&#9670;&#160;</a></span>LEN_SNIP_USER_DATA</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_USER_DATA&#160;&#160;&#160;(<a class="el" href="#a242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> + <a class="el" href="#a47bd085b568f0923f5c136ef54d891dc">LEN_SNIP_USER_DESCRIPTION_BUFFER</a>)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa47df3c1f5a06a7a93a926456f9f1581" name="aa47df3c1f5a06a7a93a926456f9f1581"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa47df3c1f5a06a7a93a926456f9f1581">&#9670;&#160;</a></span>LEN_SNIP_VERSION</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_VERSION&#160;&#160;&#160;1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac6d8748df026e898855dd0c267044883" name="ac6d8748df026e898855dd0c267044883"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6d8748df026e898855dd0c267044883">&#9670;&#160;</a></span>LEN_SNIP_USER_VERSION</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_USER_VERSION&#160;&#160;&#160;1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a99690385a9084bfc460c7c1e84a1d064" name="a99690385a9084bfc460c7c1e84a1d064"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99690385a9084bfc460c7c1e84a1d064">&#9670;&#160;</a></span>LEN_SNIP_STRUCTURE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_SNIP_STRUCTURE&#160;&#160;&#160;264</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa9aea12772addc152d586bbaf6e10056" name="aa9aea12772addc152d586bbaf6e10056"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9aea12772addc152d586bbaf6e10056">&#9670;&#160;</a></span>LEN_MESSAGE_BYTES_BASIC</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_BASIC&#160;&#160;&#160;16</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acd6144764073997710bc0bb846c261fc" name="acd6144764073997710bc0bb846c261fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd6144764073997710bc0bb846c261fc">&#9670;&#160;</a></span>LEN_MESSAGE_BYTES_DATAGRAM</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_DATAGRAM&#160;&#160;&#160;72</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac622153763bbbd4970a00d7ec2f7f737" name="ac622153763bbbd4970a00d7ec2f7f737"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac622153763bbbd4970a00d7ec2f7f737">&#9670;&#160;</a></span>LEN_MESSAGE_BYTES_SNIP</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_SNIP&#160;&#160;&#160;256</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad7e3d2c90a3bbfd68b51f5068f5692ff" name="ad7e3d2c90a3bbfd68b51f5068f5692ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7e3d2c90a3bbfd68b51f5068f5692ff">&#9670;&#160;</a></span>LEN_MESSAGE_BYTES_STREAM</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_MESSAGE_BYTES_STREAM&#160;&#160;&#160;512</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a12eb42fe9afe213aa8690aff0c9e4ee6" name="a12eb42fe9afe213aa8690aff0c9e4ee6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12eb42fe9afe213aa8690aff0c9e4ee6">&#9670;&#160;</a></span>LEN_EVENT_ID</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_EVENT_ID&#160;&#160;&#160;8</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a871c59e021446d9f2fd97f1e81bfa76a" name="a871c59e021446d9f2fd97f1e81bfa76a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a871c59e021446d9f2fd97f1e81bfa76a">&#9670;&#160;</a></span>LEN_MESSAGE_BUFFER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_MESSAGE_BUFFER&#160;&#160;&#160;(<a class="el" href="#a9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a> + <a class="el" href="#adf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a> + <a class="el" href="#a615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a> + <a class="el" href="#aca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a618f018d15b1ec2975b19e67383bb7e6" name="a618f018d15b1ec2975b19e67383bb7e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a618f018d15b1ec2975b19e67383bb7e6">&#9670;&#160;</a></span>LEN_DATAGRAM_MAX_PAYLOAD</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_DATAGRAM_MAX_PAYLOAD&#160;&#160;&#160;64</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7f1dc0e13c22505bd0cdbcbcd1257aaf" name="a7f1dc0e13c22505bd0cdbcbcd1257aaf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f1dc0e13c22505bd0cdbcbcd1257aaf">&#9670;&#160;</a></span>LEN_EVENT_PAYLOAD</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LEN_EVENT_PAYLOAD&#160;&#160;&#160;<a class="el" href="#ac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="a4f5ee4215d19784c8633b7ef379b4fff" name="a4f5ee4215d19784c8633b7ef379b4fff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f5ee4215d19784c8633b7ef379b4fff">&#9670;&#160;</a></span>payload_basic_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint8_t payload_basic_t[<a class="el" href="#aa9aea12772addc152d586bbaf6e10056">LEN_MESSAGE_BYTES_BASIC</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a00bdf9aea15c06b5862cdf7da8c0f5ee" name="a00bdf9aea15c06b5862cdf7da8c0f5ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00bdf9aea15c06b5862cdf7da8c0f5ee">&#9670;&#160;</a></span>payload_datagram_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint8_t payload_datagram_t[<a class="el" href="#acd6144764073997710bc0bb846c261fc">LEN_MESSAGE_BYTES_DATAGRAM</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5b8d853ede60e54b34961cda0d85b39f" name="a5b8d853ede60e54b34961cda0d85b39f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b8d853ede60e54b34961cda0d85b39f">&#9670;&#160;</a></span>payload_snip_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint8_t payload_snip_t[<a class="el" href="#ac622153763bbbd4970a00d7ec2f7f737">LEN_MESSAGE_BYTES_SNIP</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a701be94703c1d4fceb9c32cdef0048f0" name="a701be94703c1d4fceb9c32cdef0048f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a701be94703c1d4fceb9c32cdef0048f0">&#9670;&#160;</a></span>payload_stream_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint8_t payload_stream_t[<a class="el" href="#ad7e3d2c90a3bbfd68b51f5068f5692ff">LEN_MESSAGE_BYTES_STREAM</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab60ba075676efb9e9f7c7014a46573f9" name="ab60ba075676efb9e9f7c7014a46573f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab60ba075676efb9e9f7c7014a46573f9">&#9670;&#160;</a></span>openlcb_basic_data_buffer_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="#a4f5ee4215d19784c8633b7ef379b4fff">payload_basic_t</a> openlcb_basic_data_buffer_t[<a class="el" href="#a9ba9ea43549d9794a5099bcc53a506cc">USER_DEFINED_BASIC_BUFFER_DEPTH</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a81508fbbcf9058f925fa1e296086a07e" name="a81508fbbcf9058f925fa1e296086a07e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81508fbbcf9058f925fa1e296086a07e">&#9670;&#160;</a></span>openlcb_datagram_data_buffer_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="#a00bdf9aea15c06b5862cdf7da8c0f5ee">payload_datagram_t</a> openlcb_datagram_data_buffer_t[<a class="el" href="#adf0c70d4563d008ddbdd2e28cbef8eb4">USER_DEFINED_DATAGRAM_BUFFER_DEPTH</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afc05dc719ff51bbc87035a82035c3cdc" name="afc05dc719ff51bbc87035a82035c3cdc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc05dc719ff51bbc87035a82035c3cdc">&#9670;&#160;</a></span>openlcb_snip_data_buffer_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="#a5b8d853ede60e54b34961cda0d85b39f">payload_snip_t</a> openlcb_snip_data_buffer_t[<a class="el" href="#a615ccc6d3d43ea0e949b1ead288474c5">USER_DEFINED_SNIP_BUFFER_DEPTH</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="add0b8e081d6a21de7bc3f2781dd7aaa0" name="add0b8e081d6a21de7bc3f2781dd7aaa0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add0b8e081d6a21de7bc3f2781dd7aaa0">&#9670;&#160;</a></span>openlcb_stream_data_buffer_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="#a701be94703c1d4fceb9c32cdef0048f0">payload_stream_t</a> openlcb_stream_data_buffer_t[<a class="el" href="#aca6ba168c85438dde2a2e8d5903e1d79">USER_DEFINED_STREAM_BUFFER_DEPTH</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
+</div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a4925a4e7a5380d3c40cfceadbbed1c78" name="a4925a4e7a5380d3c40cfceadbbed1c78"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4925a4e7a5380d3c40cfceadbbed1c78">&#9670;&#160;</a></span>openlcb_payload_t</h2>
 
@@ -887,6 +450,9 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Generic payload pointer type. </p>
+<p>Minimum 1-byte array type for generic payload pointer. Actual payload is accessed through payload_type and proper casting. </p>
 
 </div>
 </div>
@@ -902,6 +468,14 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Event ID type (64-bit unsigned integer) </p>
+<p>Event IDs uniquely identify events in the Producer/Consumer model. Format: 8 bytes, most significant byte first.</p>
+<p>Event ID structure (recommendation, not enforced):</p><ul>
+<li>Bytes 0-5: Derived from Node ID of defining node</li>
+<li>Bytes 6-7: Event-specific identifier within node</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Identifiers Standard </dd></dl>
+
 </div>
 </div>
 <a id="ab63b0eaf893badf557397c77fb74fe3c" name="ab63b0eaf893badf557397c77fb74fe3c"></a>
@@ -916,6 +490,13 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Node ID type (64-bit unsigned integer) </p>
+<p>Uniquely identifies a node on the OpenLCB network. Format: 48-bit value stored in 64-bit type (upper 16 bits unused).</p>
+<p>Transmission order: Most significant byte first Valid range: Must contain at least one '1' bit</p>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Unique Identifiers Standard </dd>
+<dd>
+<a class="el" href="group__buffer__size__constants.html#ga295e0f7856c5d61377cfadfc26c0c12d" title="NULL/unassigned Node ID value.">NULL_NODE_ID</a> </dd></dl>
+
 </div>
 </div>
 <a id="a4d55dc9181adc6764d1e8f94bde6dbb8" name="a4d55dc9181adc6764d1e8f94bde6dbb8"></a>
@@ -925,10 +506,14 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef uint8_t event_payload_t[<a class="el" href="#a7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>]</td>
+          <td class="memname">typedef uint8_t event_payload_t[<a class="el" href="group__buffer__size__constants.html#ga7f1dc0e13c22505bd0cdbcbcd1257aaf">LEN_EVENT_PAYLOAD</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Event payload data buffer. </p>
+<p>Buffer for event payload data in Events with Payload messages. Maximum size is LEN_MESSAGE_BYTES_SNIP (256 bytes).</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__event__transport.html#gadca02bd7909f23abf295f4e966821fcb" title="Event report with payload data (single frame, up to 8 bytes payload)">MTI_PC_EVENT_REPORT_WITH_PAYLOAD</a> </dd></dl>
 
 </div>
 </div>
@@ -939,10 +524,16 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef uint8_t configuration_memory_buffer_t[<a class="el" href="#a618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>]</td>
+          <td class="memname">typedef uint8_t configuration_memory_buffer_t[<a class="el" href="group__buffer__size__constants.html#ga618f018d15b1ec2975b19e67383bb7e6">LEN_DATAGRAM_MAX_PAYLOAD</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Configuration memory operation buffer. </p>
+<p>Buffer for read/write operations in Configuration Memory Protocol. Size matches maximum datagram payload (64 bytes).</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__config__mem__read.html#ga93d56126bc4f3e5dba6e414b954005cf" title="Read command: Address space 0xFD.">CONFIG_MEM_READ_SPACE_FD</a> </dd>
+<dd>
+<a class="el" href="group__config__mem__write.html#ga7f974350b24b3e5f8700588cd795be48" title="Write command: Address space 0xFD.">CONFIG_MEM_WRITE_SPACE_FD</a> </dd></dl>
 
 </div>
 </div>
@@ -953,10 +544,13 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> openlcb_msg_array_t[<a class="el" href="#a871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>]</td>
+          <td class="memname">typedef <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> openlcb_msg_array_t[<a class="el" href="group__buffer__size__constants.html#ga871c59e021446d9f2fd97f1e81bfa76a">LEN_MESSAGE_BUFFER</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Array of OpenLCB message structures. </p>
+<p>The message buffer store contains one array with all message structures (BASIC + DATAGRAM + SNIP + STREAM count). </p>
 
 </div>
 </div>
@@ -972,6 +566,10 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Callback function type with no parameters. </p>
+<p>Used for simple callbacks like timer ticks.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__node__t.html#aea0579c23d8e07b8762d20d1d7e0290d" title="Callback invoked every 100ms timer tick.">interface_openlcb_node_t.on_100ms_timer_tick</a> </dd></dl>
+
 </div>
 </div>
 <a id="ae8c67f936a9cfb7fc2d9702f0ef217af" name="ae8c67f936a9cfb7fc2d9702f0ef217af"></a>
@@ -986,6 +584,16 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Configuration memory operations callback function type. </p>
+<p>Callback for handling configuration memory operations. Application implements this to process Get Options and Get Address Space Info.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
+    <tr><td class="paramname">config_mem_operations_request_info</td><td>Operation request details </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a117d2b090562ba06244209f946bd26c8" name="a117d2b090562ba06244209f946bd26c8"></a>
@@ -995,7 +603,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a> <a class="el" href="#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a></td>
+          <td class="memname">typedef struct <a class="el" href="structconfig__mem__operations__request__info___t_a_g.html">config_mem_operations_request_info_TAG</a> config_mem_operations_request_info_t</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1014,6 +622,16 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Configuration memory read callback function type. </p>
+<p>Callback for handling configuration memory read requests. Application implements this to provide data from address spaces.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
+    <tr><td class="paramname">config_mem_read_request_info</td><td>Read request details </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a01793aca5575602b9e56d547297106a4" name="a01793aca5575602b9e56d547297106a4"></a>
@@ -1023,7 +641,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a> <a class="el" href="#a01793aca5575602b9e56d547297106a4">config_mem_read_request_info_t</a></td>
+          <td class="memname">typedef struct <a class="el" href="structconfig__mem__read__request__info___t_a_g.html">config_mem_read_request_info_TAG</a> config_mem_read_request_info_t</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1042,6 +660,16 @@ Enumerations</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Configuration memory write callback function type. </p>
+<p>Callback for handling configuration memory write requests. Application implements this to store data to address spaces.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
+    <tr><td class="paramname">config_mem_write_request_info</td><td>Write request details </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a193afa69c1ca562e8b89db07771a9c0c" name="a193afa69c1ca562e8b89db07771a9c0c"></a>
@@ -1051,7 +679,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a> <a class="el" href="#a193afa69c1ca562e8b89db07771a9c0c">config_mem_write_request_info_t</a></td>
+          <td class="memname">typedef struct <a class="el" href="structconfig__mem__write__request__info___t_a_g.html">config_mem_write_request_info_TAG</a> config_mem_write_request_info_t</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1070,11 +698,22 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Message buffer payload type enumeration. </p>
+<p>Identifies which size category a message buffer belongs to. Used for buffer allocation and payload pointer management.</p>
+<p>The buffer store maintains separate pools for each type, allowing efficient memory usage by matching buffer size to message requirements.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> </dd>
+<dd>
+<a class="el" href="structopenlcb__msg__t.html#a9e12c939ca9b6d8140f1a9fc8bf72af7">openlcb_msg_t.payload_type</a> </dd></dl>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4" name="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4"></a>BASIC&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015" name="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015"></a>DATAGRAM&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c" name="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c"></a>SNIP&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5" name="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5"></a>STREAM&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4" name="aececf1be5c268eb2c680b4a0cc778467a13c45196813cb44e6e81e9c48a5ec1b4"></a>BASIC&#160;</td><td class="fielddoc"><p>16-byte payload buffer for simple messages </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015" name="aececf1be5c268eb2c680b4a0cc778467a802640598d6a1d0135cb7f5510ae9015"></a>DATAGRAM&#160;</td><td class="fielddoc"><p>72-byte payload buffer for datagrams </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c" name="aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c"></a>SNIP&#160;</td><td class="fielddoc"><p>256-byte payload buffer for SNIP and Events with Payload </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5" name="aececf1be5c268eb2c680b4a0cc778467a5fbbb70faa90e614c7cd5a487e85ced5"></a>STREAM&#160;</td><td class="fielddoc"><p>512-byte payload buffer for stream data </p>
+</td></tr>
 </table>
 
 </div>
@@ -1090,10 +729,31 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Event status indicator for Producer/Consumer events. </p>
+<p>Indicates the current state of an event from a producer's or consumer's perspective. Used in Event Transport Protocol messages.</p>
+<p><b>Producer perspective:</b></p><ul>
+<li>UNKNOWN: Producer hasn't determined current state</li>
+<li>SET: Event is currently active/true</li>
+<li>CLEAR: Event is currently inactive/false</li>
+</ul>
+<p><b>Consumer perspective:</b></p><ul>
+<li>UNKNOWN: Consumer doesn't know if it would react to event</li>
+<li>SET: Consumer would act if event occurs</li>
+<li>CLEAR: Consumer would not act if event occurs</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__mti__event__transport.html#ga6fb8538bdceb28f0fa515900cb4dd3ba" title="Response: Node produces event and it is currently SET.">MTI_PRODUCER_IDENTIFIED_SET</a> </dd>
+<dd>
+<a class="el" href="group__mti__event__transport.html#ga3e8c3611d1c3398e1857b27334fa6d41" title="Response: Node consumes event and it is currently CLEAR.">MTI_CONSUMER_IDENTIFIED_CLEAR</a> </dd>
+<dd>
+<a class="el" href="structevent__id__struct__t.html" title="Event ID with status information.">event_id_struct_t</a> </dd></dl>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5" name="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5"></a>EVENT_STATUS_UNKNOWN&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8" name="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8"></a>EVENT_STATUS_SET&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6" name="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6"></a>EVENT_STATUS_CLEAR&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5" name="a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5"></a>EVENT_STATUS_UNKNOWN&#160;</td><td class="fielddoc"><p>Event state is unknown </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8" name="a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8"></a>EVENT_STATUS_SET&#160;</td><td class="fielddoc"><p>Event is in SET state </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6" name="a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6"></a>EVENT_STATUS_CLEAR&#160;</td><td class="fielddoc"><p>Event is in CLEAR state </p>
+</td></tr>
 </table>
 
 </div>
@@ -1109,9 +769,23 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Configuration memory address space encoding method. </p>
+<p>Specifies where the address space identifier is located in a Configuration Memory Protocol command message.</p>
+<ul>
+<li>ADDRESS_SPACE_IN_BYTE_1: Space ID is in byte 1 of command (for spaces &lt; 0xFD)</li>
+<li>ADDRESS_SPACE_IN_BYTE_6: Space ID is in byte 6 (for well-known spaces 0xFD-0xFF)</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__config__mem__read.html#ga3ccebcb26944dc7c657dd2023977e875" title="Read command: Address space in byte 6.">CONFIG_MEM_READ_SPACE_IN_BYTE_6</a> </dd>
+<dd>
+<a class="el" href="group__config__mem__read.html#ga93d56126bc4f3e5dba6e414b954005cf" title="Read command: Address space 0xFD.">CONFIG_MEM_READ_SPACE_FD</a> </dd>
+<dd>
+<a class="el" href="structconfig__mem__read__request__info___t_a_g.html#ad85ba467c219a6f999e386cd454f1d02">config_mem_read_request_info_t.encoding</a> </dd></dl>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9" name="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9"></a>ADDRESS_SPACE_IN_BYTE_1&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9" name="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9"></a>ADDRESS_SPACE_IN_BYTE_6&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9" name="aab08faa6c2f49792c273f5267068d549a1ee43889b7408a03b6f79515150165c9"></a>ADDRESS_SPACE_IN_BYTE_1&#160;</td><td class="fielddoc"><p>Address space ID in command byte 1 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9" name="aab08faa6c2f49792c273f5267068d549a27446cd300dcf0a510a5788ecb87efd9"></a>ADDRESS_SPACE_IN_BYTE_6&#160;</td><td class="fielddoc"><p>Address space ID in command byte 6 </p>
+</td></tr>
 </table>
 
 </div>

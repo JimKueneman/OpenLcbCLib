@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">openlcb_node_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>OpenLCB virtual node structure.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -117,7 +120,37 @@ Data Fields</h2></td></tr>
 <tr class="memitem:aae5a12e607d0f782506d9e6ec6179c64" id="r_aae5a12e607d0f782506d9e6ec6179c64"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae5a12e607d0f782506d9e6ec6179c64">index</a></td></tr>
 <tr class="separator:aae5a12e607d0f782506d9e6ec6179c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>OpenLCB virtual node structure. </p>
+<p>Represents a single virtual node on the OpenLCB network.</p>
+<p><b>Node Identity:</b></p><ul>
+<li>id: 48-bit globally unique Node ID</li>
+<li>alias: 12-bit CAN bus alias for this session</li>
+<li>seed: 48-bit seed for alias generation</li>
+</ul>
+<p><b>Node State:</b></p><ul>
+<li>state: State flags (allocated, permitted, initialized, etc.)</li>
+<li>timerticks: 100ms timer for CAN login timing</li>
+</ul>
+<p><b>Events:</b></p><ul>
+<li>consumers: List of consumed Event IDs</li>
+<li>producers: List of produced Event IDs</li>
+</ul>
+<p><b>Configuration:</b></p><ul>
+<li>parameters: Pointer to const configuration (SNIP, CDI, etc.)</li>
+<li>index: Position in node array (for config memory offsets)</li>
+</ul>
+<p><b>Protocol State:</b></p><ul>
+<li>owner_node: Node ID that currently has this node locked</li>
+<li>last_received_datagram: Saved for reply processing</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Node structures cannot be deallocated once allocated </dd>
+<dd>
+parameters pointer must remain valid for node lifetime</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate</a> </dd>
+<dd>
+<a class="el" href="structopenlcb__nodes__t.html" title="Collection of all virtual nodes.">openlcb_nodes_t</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="aa60d5d8aea0a8827fabcf551363fcbd1" name="aa60d5d8aea0a8827fabcf551363fcbd1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa60d5d8aea0a8827fabcf551363fcbd1">&#9670;&#160;</a></span>state</h2>
 
@@ -129,6 +162,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Node state flags </p>
 
 </div>
 </div>
@@ -143,6 +177,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>48-bit Node ID </p>
 
 </div>
 </div>
@@ -157,6 +192,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>12-bit CAN alias </p>
 
 </div>
 </div>
@@ -171,6 +207,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Seed for alias generation </p>
 
 </div>
 </div>
@@ -185,6 +222,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Consumed Event ID list </p>
 
 </div>
 </div>
@@ -199,6 +237,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Produced Event ID list </p>
 
 </div>
 </div>
@@ -213,6 +252,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pointer to configuration parameters </p>
 
 </div>
 </div>
@@ -227,6 +267,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>100ms timer tick counter </p>
 
 </div>
 </div>
@@ -241,6 +282,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Node ID that has locked this node </p>
 
 </div>
 </div>
@@ -255,6 +297,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Last datagram received (for replies) </p>
 
 </div>
 </div>
@@ -269,6 +312,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Index in node array </p>
 
 </div>
 </div>

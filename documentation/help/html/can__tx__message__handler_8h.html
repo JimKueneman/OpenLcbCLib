@@ -105,28 +105,28 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure to hold pointers to functions for dependencies this module requires, <a class="el" href="can__tx__message__handler_8h.html">can_tx_message_handler.h</a>.  <a href="structinterface__can__tx__message__handler__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for CAN transmit message handlers.  <a href="structinterface__can__tx__message__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a4bde37fc36f08ccbbb7dd4a9a17b2713" id="r_a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bde37fc36f08ccbbb7dd4a9a17b2713">CanTxMessageHandler_initialize</a> (const <a class="el" href="structinterface__can__tx__message__handler__t.html">interface_can_tx_message_handler_t</a> *interface_can_tx_message_handler)</td></tr>
-<tr class="memdesc:a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN Transmit (Tx) state machine handlers.  <br /></td></tr>
+<tr class="memdesc:a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the CAN transmit message handler module.  <br /></td></tr>
 <tr class="separator:a4bde37fc36f08ccbbb7dd4a9a17b2713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79d6a3b6fd0db4921dc8630934e68bba" id="r_a79d6a3b6fd0db4921dc8630934e68bba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79d6a3b6fd0db4921dc8630934e68bba">CanTxMessageHandler_addressed_msg_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a79d6a3b6fd0db4921dc8630934e68bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an addressed OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
+<tr class="memdesc:a79d6a3b6fd0db4921dc8630934e68bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts and transmits an addressed OpenLCB message as CAN frame(s)  <br /></td></tr>
 <tr class="separator:a79d6a3b6fd0db4921dc8630934e68bba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0281e625469a52aec7f1e85a464c6222" id="r_a0281e625469a52aec7f1e85a464c6222"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0281e625469a52aec7f1e85a464c6222">CanTxMessageHandler_unaddressed_msg_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a0281e625469a52aec7f1e85a464c6222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an unaddressed OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
+<tr class="memdesc:a0281e625469a52aec7f1e85a464c6222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts and transmits an unaddressed OpenLCB message as CAN frame(s)  <br /></td></tr>
 <tr class="separator:a0281e625469a52aec7f1e85a464c6222"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9223150ff58342659336a51f75caf5a" id="r_aa9223150ff58342659336a51f75caf5a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9223150ff58342659336a51f75caf5a">CanTxMessageHandler_datagram_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:aa9223150ff58342659336a51f75caf5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a datagram OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
+<tr class="memdesc:aa9223150ff58342659336a51f75caf5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts and transmits a datagram OpenLCB message as CAN frame(s)  <br /></td></tr>
 <tr class="separator:aa9223150ff58342659336a51f75caf5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a156df311b2fa14eea4912334cda0ca78" id="r_a156df311b2fa14eea4912334cda0ca78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a156df311b2fa14eea4912334cda0ca78">CanTxMessageHandler_stream_frame</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a156df311b2fa14eea4912334cda0ca78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a stream OpenLcb/LCC message on the CAN physical layer.  <br /></td></tr>
+<tr class="memdesc:a156df311b2fa14eea4912334cda0ca78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts and transmits a stream OpenLCB message as CAN frame(s)  <br /></td></tr>
 <tr class="separator:a156df311b2fa14eea4912334cda0ca78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa99ced3d0e3dc246de366c88031b6596" id="r_aa99ced3d0e3dc246de366c88031b6596"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa99ced3d0e3dc246de366c88031b6596">CanTxMessageHandler_can_frame</a> (<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:aa99ced3d0e3dc246de366c88031b6596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an CAN message on the CAN physical layer.  <br /></td></tr>
+<tr class="memdesc:aa99ced3d0e3dc246de366c88031b6596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits a pre-built CAN frame to the physical bus.  <br /></td></tr>
 <tr class="separator:aa99ced3d0e3dc246de366c88031b6596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -136,6 +136,7 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</li>
 </ul>
 </dd></dl>
+<p>Provides handlers for converting OpenLCB messages to CAN frames and transmitting them on the physical CAN bus. Handles multi-frame message fragmentation for addressed messages, unaddressed messages, datagrams, and streams.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -162,15 +163,37 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the CAN Transmit (Tx) state machine handlers. </p>
+<p>Initializes the CAN transmit message handler module. </p>
+<p>Stores the dependency injection interface pointer for use by all handler functions. Must be called during application startup before any CAN transmission occurs.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Required before any CAN message transmission</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_can_tx_message_handler</td><td>Pointer to a <a class="el" href="structinterface__can__tx__message__handler__t.html" title="A structure to hold pointers to functions for dependencies this module requires, can_tx_message_handl...">interface_can_tx_message_handler_t</a> struct containing the functions that this module requires. </td></tr>
+    <tr><td class="paramname">interface_can_tx_message_handler</td><td>Pointer to interface structure containing required function pointers</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called during application initialization before any transmit operations </dd>
+<dd>
+NOT thread-safe - call only from main initialization context</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after CAN hardware initialization but before CAN traffic begins</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__statemachine_8c.html#acbe458eae799fff061319448b1855b3d" title="Initializes the CAN transmit state machine.">CanTxStatemachine_initialize</a> - Initialize transmit state machine</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Cast away const qualifier from interface pointer</li>
+<li>Store interface pointer in static module variable</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Required before any CAN message transmission</li>
+</ul>
+<pre class="fragment">* @param interface_can_tx_message_handler Pointer to interface structure containing required function pointers
+* </pre><dl class="section warning"><dt>Warning</dt><dd>MUST be called during application initialization before any transmit operations </dd>
+<dd>
+NOT thread-safe - call only from main initialization context</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after CAN hardware initialization but before CAN traffic begins</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__statemachine_8c.html#acbe458eae799fff061319448b1855b3d" title="Initializes the CAN transmit state machine.">CanTxStatemachine_initialize</a> - Initialize transmit state machine </dd></dl>
 
 </div>
 </div>
@@ -206,16 +229,67 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sends an addressed OpenLcb/LCC message on the CAN physical layer. </p>
+<p>Converts and transmits an addressed OpenLCB message as CAN frame(s) </p>
+<p>Handles fragmentation of addressed OpenLCB messages into one or more CAN frames. Addressed messages include a 12-bit destination alias in the first two payload bytes. For messages exceeding 6 bytes, fragments across multiple frames with proper framing flags.</p>
+<p>Use cases:</p><ul>
+<li>Sending Protocol Support Inquiry to specific node</li>
+<li>Sending Verify Node ID to specific node</li>
+<li>Sending any message requiring destination address</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB message to transmit (must have dest_alias set) </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to working CAN frame buffer for building frames </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Pointer to current position in OpenLCB payload (updated after transmission)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Transmission failure leaves payload index unchanged - caller must retry </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>First two payload bytes reserved for destination alias in all frames </dd>
+<dd>
+Multi-frame messages use framing flags: only/first/middle/last</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0281e625469a52aec7f1e85a464c6222" title="Converts and transmits an unaddressed OpenLCB message as CAN frame(s)">CanTxMessageHandler_unaddressed_msg_frame</a> - For broadcast messages </dd>
+<dd>
+<a class="el" href="can__utilities_8c.html#a55b499e2a3270be5902c392ca29d1ce5" title="Copies payload data from OpenLCB message to CAN message.">CanUtilities_copy_openlcb_payload_to_can_payload</a> - Payload copying helper</dd></dl>
+<p>Converts and transmits an addressed OpenLCB message as CAN frame(s)</p>
+<p>Algorithm:</p><ol type="1">
+<li>Load destination alias into first 2 payload bytes</li>
+<li>Construct addressed message identifier with MTI</li>
+<li>Copy OpenLCB payload to CAN payload starting at byte 2</li>
+<li>Determine frame type based on total payload size:<ul>
+<li>If ≤ 6 bytes: send as only frame</li>
+<li>Else if at start (index &lt; 6): send as first frame</li>
+<li>Else if more data remains: send as middle frame</li>
+<li>Else: send as last frame</li>
+</ul>
+</li>
+<li>If transmission successful:<ul>
+<li>Increment payload index by bytes copied</li>
+</ul>
+</li>
+<li>Return transmission result</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Sending Protocol Support Inquiry to specific node</li>
+<li>Sending Verify Node ID to specific node</li>
+<li>Sending any message requiring destination address</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB message to transmit (must have dest_alias set)
+* @param can_msg_worker Pointer to working CAN frame buffer for building frames
+* @param openlcb_start_index Pointer to current position in OpenLCB payload (updated after transmission)
+* </pre><dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Transmission failure leaves payload index unchanged - caller must retry </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>First two payload bytes reserved for destination alias in all frames </dd>
+<dd>
+Multi-frame messages use framing flags: only/first/middle/last</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0281e625469a52aec7f1e85a464c6222" title="Converts and transmits an unaddressed OpenLCB message as CAN frame(s)">CanTxMessageHandler_unaddressed_msg_frame</a> - For broadcast messages </dd>
+<dd>
+<a class="el" href="can__utilities_8c.html#a55b499e2a3270be5902c392ca29d1ce5" title="Copies payload data from OpenLCB message to CAN message.">CanUtilities_copy_openlcb_payload_to_can_payload</a> - Payload copying helper </dd></dl>
 
 </div>
 </div>
@@ -251,16 +325,56 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sends an unaddressed OpenLcb/LCC message on the CAN physical layer. </p>
+<p>Converts and transmits an unaddressed OpenLCB message as CAN frame(s) </p>
+<p>Handles transmission of broadcast (unaddressed) OpenLCB messages. These messages do not include a destination alias and are received by all nodes on the network. Currently supports single-frame messages only.</p>
+<p>Use cases:</p><ul>
+<li>Broadcasting Initialization Complete</li>
+<li>Broadcasting Producer/Consumer Event Reports</li>
+<li>Broadcasting Verified Node ID</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB message to transmit (no dest_alias required) </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to working CAN frame buffer for building frames </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Pointer to current position in OpenLCB payload (updated after transmission)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Multi-frame unaddressed messages not currently implemented </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>All 8 payload bytes available (no destination alias overhead)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a79d6a3b6fd0db4921dc8630934e68bba" title="Converts and transmits an addressed OpenLCB message as CAN frame(s)">CanTxMessageHandler_addressed_msg_frame</a> - For targeted messages</dd></dl>
+<p>Converts and transmits an unaddressed OpenLCB message as CAN frame(s)</p>
+<p>Algorithm:</p><ol type="1">
+<li>Check if message fits in single frame (≤ 8 bytes):<ul>
+<li>Copy OpenLCB payload to CAN payload</li>
+<li>Construct unaddressed message identifier</li>
+<li>Transmit frame</li>
+<li>If successful: update payload index</li>
+</ul>
+</li>
+<li>If multi-frame required:<ul>
+<li>Currently not implemented (see TODO)</li>
+</ul>
+</li>
+<li>Return transmission result</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Broadcasting Initialization Complete</li>
+<li>Broadcasting Producer/Consumer Event Reports</li>
+<li>Broadcasting Verified Node ID</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB message to transmit (no dest_alias required)
+* @param can_msg_worker Pointer to working CAN frame buffer for building frames
+* @param openlcb_start_index Pointer to current position in OpenLCB payload (updated after transmission)
+* </pre><dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Multi-frame unaddressed messages not currently implemented </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>All 8 payload bytes available (no destination alias overhead)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a79d6a3b6fd0db4921dc8630934e68bba" title="Converts and transmits an addressed OpenLCB message as CAN frame(s)">CanTxMessageHandler_addressed_msg_frame</a> - For targeted messages </dd></dl>
 
 </div>
 </div>
@@ -296,16 +410,65 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sends a datagram OpenLcb/LCC message on the CAN physical layer. </p>
+<p>Converts and transmits a datagram OpenLCB message as CAN frame(s) </p>
+<p>Handles fragmentation of datagram messages (up to 72 bytes) into CAN frames using datagram frame format. Uses frame type indicators: only/first/middle/last. Each frame carries up to 8 bytes of datagram payload.</p>
+<p>Use cases:</p><ul>
+<li>Sending Memory Configuration Protocol requests</li>
+<li>Sending Remote Button Protocol commands</li>
+<li>Transmitting any datagram-based protocol data</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB datagram message to transmit </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to working CAN frame buffer for building frames </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Pointer to current position in datagram payload (updated after transmission)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Maximum datagram size is 72 bytes on CAN transport </dd>
+<dd>
+Transmission failure leaves payload index unchanged </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Frame sequence: only OR first→middle(s)→last </dd>
+<dd>
+All frames carry maximum 8 bytes except possibly last frame</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a156df311b2fa14eea4912334cda0ca78" title="Converts and transmits a stream OpenLCB message as CAN frame(s)">CanTxMessageHandler_stream_frame</a> - For streaming data</dd></dl>
+<p>Converts and transmits a datagram OpenLCB message as CAN frame(s)</p>
+<p>Algorithm:</p><ol type="1">
+<li>Copy OpenLCB payload to CAN payload starting at current index</li>
+<li>Determine frame type based on payload size and current position:<ul>
+<li>If total payload ≤ 8 bytes: send as only frame</li>
+<li>Else if at start (index &lt; 8): send as first frame</li>
+<li>Else if more data remains: send as middle frame</li>
+<li>Else: send as last frame</li>
+</ul>
+</li>
+<li>If transmission successful:<ul>
+<li>Increment payload index by bytes copied</li>
+</ul>
+</li>
+<li>Return transmission result</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Sending Memory Configuration Protocol requests</li>
+<li>Sending Remote Button Protocol commands</li>
+<li>Transmitting any datagram-based protocol data</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB datagram message to transmit
+* @param can_msg_worker Pointer to working CAN frame buffer for building frames
+* @param openlcb_start_index Pointer to current position in datagram payload (updated after transmission)
+* </pre><dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Maximum datagram size is 72 bytes on CAN transport </dd>
+<dd>
+Transmission failure leaves payload index unchanged </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Frame sequence: only OR first→middle(s)→last </dd>
+<dd>
+All frames carry maximum 8 bytes except possibly last frame</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a156df311b2fa14eea4912334cda0ca78" title="Converts and transmits a stream OpenLCB message as CAN frame(s)">CanTxMessageHandler_stream_frame</a> - For streaming data </dd></dl>
 
 </div>
 </div>
@@ -341,16 +504,45 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sends a stream OpenLcb/LCC message on the CAN physical layer. </p>
+<p>Converts and transmits a stream OpenLCB message as CAN frame(s) </p>
+<p>Handles transmission of streaming data messages. Stream protocol allows high-throughput data transfer for applications like firmware updates. Implementation is currently incomplete.</p>
+<p>Use cases:</p><ul>
+<li>Firmware upgrade data transfer</li>
+<li>Large file transfers</li>
+<li>Continuous data streaming</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_msg</td><td>Pointer to the OpenLcb/LCC message to transmit </td></tr>
-    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN frame buffer to use to complete the transmit (could need to be multiple frames) </td></tr>
-    <tr><td class="paramname">openlcb_start_index</td><td>Were in the OpenLcb Payload does the data start </td></tr>
+    <tr><td class="paramname">openlcb_msg</td><td>Pointer to OpenLCB stream message to transmit </td></tr>
+    <tr><td class="paramname">can_msg_worker</td><td>Pointer to working CAN frame buffer for building frames </td></tr>
+    <tr><td class="paramname">openlcb_start_index</td><td>Pointer to current position in stream payload (updated after transmission)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Currently always returns true (placeholder implementation)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Stream protocol NOT fully implemented - placeholder only </dd>
+<dd>
+Do not rely on this function for production stream transfers</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Function requires full implementation before use</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa9223150ff58342659336a51f75caf5a" title="Converts and transmits a datagram OpenLCB message as CAN frame(s)">CanTxMessageHandler_datagram_frame</a> - For datagram transfers</dd></dl>
+<p>Converts and transmits a stream OpenLCB message as CAN frame(s)</p>
+<p>Algorithm:</p><ol type="1">
+<li>Return true immediately (placeholder implementation)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Firmware upgrade data transfer (when implemented)</li>
+<li>Large file transfers (when implemented)</li>
+<li>Continuous data streaming (when implemented)</li>
+</ul>
+<pre class="fragment">* @param openlcb_msg Pointer to OpenLCB stream message to transmit
+* @param can_msg_worker Pointer to working CAN frame buffer for building frames
+* @param openlcb_start_index Pointer to current position in stream payload (updated after transmission)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Currently always returns true (placeholder implementation)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Stream protocol NOT fully implemented - placeholder only </dd>
+<dd>
+Do not rely on this function for production stream transfers</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Function requires full implementation before use</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa9223150ff58342659336a51f75caf5a" title="Converts and transmits a datagram OpenLCB message as CAN frame(s)">CanTxMessageHandler_datagram_frame</a> - For datagram transfers </dd></dl>
 
 </div>
 </div>
@@ -377,14 +569,45 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sends an CAN message on the CAN physical layer. </p>
+<p>Transmits a pre-built CAN frame to the physical bus. </p>
+<p>Transmits a fully constructed CAN frame without any OpenLCB message processing. Used for CAN control frames (CID, RID, AMD) and other low-level CAN operations.</p>
+<p>Use cases:</p><ul>
+<li>Transmitting alias allocation frames during node login</li>
+<li>Sending CAN control messages</li>
+<li>Direct CAN bus operations</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg_worker</td><td>Pointer to a CAN buffer message to transmit </td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to CAN message buffer containing frame to transmit</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Frame must be fully constructed before calling </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>No OpenLCB processing performed - raw CAN transmission</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__message__handler_8c.html#a79d6a3b6fd0db4921dc8630934e68bba" title="Converts and transmits addressed message as CAN frame(s)">CanTxMessageHandler_addressed_msg_frame</a> - For OpenLCB messages</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Call internal transmit function which:<ul>
+<li>Calls hardware transmit function</li>
+<li>Invokes callback if transmission successful</li>
+</ul>
+</li>
+<li>Return transmission result</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Transmitting alias allocation frames during node login</li>
+<li>Sending CAN control messages</li>
+<li>Direct CAN bus operations</li>
+</ul>
+<pre class="fragment">* @param can_msg Pointer to CAN message buffer containing frame to transmit
+* </pre><dl class="section return"><dt>Returns</dt><dd>True if frame transmitted successfully, false if transmission failed</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Frame must be fully constructed before calling </dd>
+<dd>
+NOT thread-safe - serialize calls from multiple contexts</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>No OpenLCB processing performed - raw CAN transmission</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__message__handler_8c.html#a79d6a3b6fd0db4921dc8630934e68bba" title="Converts and transmits addressed message as CAN frame(s)">CanTxMessageHandler_addressed_msg_frame</a> - For OpenLCB messages </dd></dl>
 
 </div>
 </div>

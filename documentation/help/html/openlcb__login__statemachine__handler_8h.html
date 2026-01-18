@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Login state machine message handler for CAN alias allocation and event broadcasting.  
+<p>Login state machine message handler for OpenLCB initialization and event broadcasting.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__login__statemachine__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -105,21 +105,26 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__openlcb__login__message__handler__t.html">interface_openlcb_login_message_handler_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for login message handler callback functions.  <a href="structinterface__openlcb__login__message__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a0240f7d8fb35fff420fcf60de82cb4ba" id="r_a0240f7d8fb35fff420fcf60de82cb4ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0240f7d8fb35fff420fcf60de82cb4ba">OpenLcbLoginMessageHandler_initialize</a> (const <a class="el" href="structinterface__openlcb__login__message__handler__t.html">interface_openlcb_login_message_handler_t</a> *interface)</td></tr>
+<tr class="memdesc:a0240f7d8fb35fff420fcf60de82cb4ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the login message handler with callback interface.  <br /></td></tr>
 <tr class="separator:a0240f7d8fb35fff420fcf60de82cb4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7763c696eafe428c70f3f7dcafe292c0" id="r_a7763c696eafe428c70f3f7dcafe292c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7763c696eafe428c70f3f7dcafe292c0">OpenLcbLoginMessageHandler_load_initialization_complete</a> (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
-<tr class="separator:a7763c696eafe428c70f3f7dcafe292c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a956215177a0bbfd83a811cbf8af8a647" id="r_a956215177a0bbfd83a811cbf8af8a647"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a956215177a0bbfd83a811cbf8af8a647">OpenLcbLoginMessageHandler_load_producer_event</a> (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
-<tr class="separator:a956215177a0bbfd83a811cbf8af8a647"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff5e49672a5a0f76423c721f606e4632" id="r_aff5e49672a5a0f76423c721f606e4632"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff5e49672a5a0f76423c721f606e4632">OpenLcbLoginMessageHandler_load_consumer_event</a> (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *openlcb_statemachine_info)</td></tr>
-<tr class="separator:aff5e49672a5a0f76423c721f606e4632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63d4945cfcd4930d8b3bc780f59687eb" id="r_a63d4945cfcd4930d8b3bc780f59687eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63d4945cfcd4930d8b3bc780f59687eb">OpenLcbLoginMessageHandler_load_initialization_complete</a> (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a63d4945cfcd4930d8b3bc780f59687eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads an Initialization Complete message into the outgoing message buffer.  <br /></td></tr>
+<tr class="separator:a63d4945cfcd4930d8b3bc780f59687eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86d1ac7c901b8980d26547ef4b1b6f48" id="r_a86d1ac7c901b8980d26547ef4b1b6f48"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86d1ac7c901b8980d26547ef4b1b6f48">OpenLcbLoginMessageHandler_load_producer_event</a> (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a86d1ac7c901b8980d26547ef4b1b6f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a Producer Event Identified message for the current producer event.  <br /></td></tr>
+<tr class="separator:a86d1ac7c901b8980d26547ef4b1b6f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6977ee9bd7b697ad431ddadd14779a9" id="r_ac6977ee9bd7b697ad431ddadd14779a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6977ee9bd7b697ad431ddadd14779a9">OpenLcbLoginMessageHandler_load_consumer_event</a> (<a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ac6977ee9bd7b697ad431ddadd14779a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a Consumer Event Identified message for the current consumer event.  <br /></td></tr>
+<tr class="separator:ac6977ee9bd7b697ad431ddadd14779a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Login state machine message handler for CAN alias allocation and event broadcasting. </p>
+<div class="textblock"><p>Login state machine message handler for OpenLCB initialization and event broadcasting. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -127,8 +132,15 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>This module provides message construction handlers for the OpenLCB login sequence. It handles Initialization Complete message generation, Producer Event Identified messages, and Consumer Event Identified messages with appropriate state indicators.</p>
+<p>The handlers work in conjunction with openlcb_login_statemachine to orchestrate the complete login sequence per OpenLCB Message Network Standard.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8h.html" title="Login state machine dispatcher for OpenLCB node initialization sequence.">openlcb_login_statemachine.h</a> - Main state machine dispatcher </dd>
+<dd>
+OpenLCB Message Network Standard S-9.7.3.1 - Initialization Complete </dd>
+<dd>
+OpenLCB Event Transport Standard S-9.7.4 - Event Transport Protocol </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a0240f7d8fb35fff420fcf60de82cb4ba" name="a0240f7d8fb35fff420fcf60de82cb4ba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0240f7d8fb35fff420fcf60de82cb4ba">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_initialize()</h2>
@@ -153,10 +165,59 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initializes the login message handler with callback interface. </p>
+<p>Stores the interface function pointers for event state extraction. This allows the handler to query application-specific event states when generating Producer and Consumer Identified messages.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Must be called before openlcb_login_statemachine begins processing nodes</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td>Pointer to interface structure containing callback functions</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+The interface pointer is stored in static memory - the pointed-to structure must remain valid for the lifetime of the program </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call during single-threaded initialization phase </dd>
+<dd>
+Both callback functions in the interface must be valid (non-NULL)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__message__handler__t.html" title="Interface structure for login message handler callback functions.">interface_openlcb_login_message_handler_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> - Uses extract_producer callback </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> - Uses extract_consumer callback</dd></dl>
+<p>Algorithm: Stores the interface function pointers in static memory for use by the message construction handlers. The interface provides callbacks to:</p><ul>
+<li>Extract producer event state MTI (Valid/Invalid/Unknown)</li>
+<li>Extract consumer event state MTI (Valid/Invalid/Unknown)</li>
+</ul>
+<p>These callbacks allow the handler to be decoupled from application-specific event state logic while still generating correct Producer/Consumer Identified messages during the login sequence.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Must be called before nodes begin login sequence</li>
+</ul>
+<pre class="fragment">* @param interface Pointer to interface structure containing callback functions
+* </pre><dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+The interface pointer is stored in static memory - the pointed-to structure must remain valid for the lifetime of the program </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call during single-threaded initialization phase </dd>
+<dd>
+Both callback functions in the interface must be valid (non-NULL)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__message__handler__t.html" title="Interface structure for login message handler callback functions.">interface_openlcb_login_message_handler_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> - Uses extract_producer callback </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> - Uses extract_consumer callback </dd></dl>
+
 </div>
 </div>
-<a id="a7763c696eafe428c70f3f7dcafe292c0" name="a7763c696eafe428c70f3f7dcafe292c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7763c696eafe428c70f3f7dcafe292c0">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_load_initialization_complete()</h2>
+<a id="a63d4945cfcd4930d8b3bc780f59687eb" name="a63d4945cfcd4930d8b3bc780f59687eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63d4945cfcd4930d8b3bc780f59687eb">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_load_initialization_complete()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,7 +228,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbLoginMessageHandler_load_initialization_complete </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_statemachine_info</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -178,10 +239,90 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads an Initialization Complete message into the outgoing message buffer. </p>
+<p>Constructs an Initialization Complete message per OpenLCB Message Network Standard. The message contains the node's 48-bit Node ID and uses either Simple or Full protocol MTI based on the node's configuration. After loading the message, marks the node as initialized and transitions state to begin producer event enumeration.</p>
+<p>Use cases:</p><ul>
+<li>Called during node login sequence after alias reservation</li>
+<li>Announces node's presence on the network</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine info containing node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
+<dd>
+statemachine_info-&gt;openlcb_node must be valid </dd>
+<dd>
+statemachine_info-&gt;outgoing_msg_info.msg_ptr must be allocated</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This message must be sent before any event messages </dd>
+<dd>
+The node's alias must already be allocated and validated</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Sets outgoing_msg_info.valid to true to trigger transmission </dd>
+<dd>
+Protocol type (Simple vs Full) determined by node's PSI_SIMPLE flag</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Message Network Standard S-9.7.3.1 - Initialization Complete </dd>
+<dd>
+<a class="el" href="group__mti__message__network.html#gab458193765a6763acdee47aac5cd3ab4" title="Node initialization complete with full protocol support.">MTI_INITIALIZATION_COMPLETE</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> - Next step in sequence</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Determines protocol type (Simple vs Full) from node's PSI_SIMPLE flag</li>
+<li>Selects appropriate MTI (0x0100 for Full, 0x0101 for Simple)</li>
+<li>Calls <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with node alias, ID, and MTI</li>
+<li>Calls <a class="el" href="openlcb__utilities_8c.html#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload()</a> to add Node ID to payload</li>
+<li>Sets payload_count to 6 (48-bit Node ID)</li>
+<li>Marks node as initialized</li>
+<li>Initializes producer event enumeration (running=true, index=0)</li>
+<li>Clears consumer event enumeration (running=false, index=0)</li>
+<li>Sets outgoing_msg_info.valid to trigger message transmission</li>
+<li>Transitions state to RUNSTATE_LOAD_PRODUCER_EVENTS</li>
+</ol>
+<p>Message Structure:</p><ul>
+<li>MTI: 0x0100 (MTI_INITIALIZATION_COMPLETE) or 0x0101 (MTI_INITIALIZATION_COMPLETE_SIMPLE)</li>
+<li>Source Alias: Node's allocated alias</li>
+<li>Payload: 6 bytes containing the 48-bit Node ID</li>
+<li>Destination: None (broadcast message)</li>
+</ul>
+<p>State Changes:</p><ul>
+<li>node-&gt;state.initialized: false -&gt; true</li>
+<li>node-&gt;producers.enumerator.running: -&gt; true</li>
+<li>node-&gt;producers.enumerator.enum_index: -&gt; 0</li>
+<li>node-&gt;consumers.enumerator.running: -&gt; false</li>
+<li>node-&gt;consumers.enumerator.enum_index: -&gt; 0</li>
+<li>node-&gt;state.run_state: RUNSTATE_LOAD_INITIALIZATION_COMPLETE -&gt; RUNSTATE_LOAD_PRODUCER_EVENTS</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Called during node login sequence after alias reservation</li>
+<li>Announces node's presence and protocol support on the network</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine info containing node and message buffer
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL </dd>
+<dd>
+Node pointer within info structure must be valid </dd>
+<dd>
+Message buffer pointer must be allocated</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This message must be sent before any event messages </dd>
+<dd>
+The node's alias must already be allocated and validated</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Sets outgoing_msg_info.valid to true to trigger transmission </dd>
+<dd>
+Protocol type (Simple vs Full) determined by PSI_SIMPLE flag in node parameters</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Message Network Standard S-9.7.3.1 - Initialization Complete </dd>
+<dd>
+<a class="el" href="group__mti__message__network.html#gab458193765a6763acdee47aac5cd3ab4" title="Node initialization complete with full protocol support.">MTI_INITIALIZATION_COMPLETE</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="group__protocol__support__bits.html#gab06d4b86811617a9b268efcb391249bf" title="Simple Node Protocol support (required for all nodes)">PSI_SIMPLE</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> - Message header construction </dd>
+<dd>
+<a class="el" href="openlcb__utilities_8c.html#aebdc740485642f016371b4604b93aa7f" title="Copies a 6-byte node ID into the message payload at a specified offset.">OpenLcbUtilities_copy_node_id_to_openlcb_payload</a> - Payload construction </dd></dl>
+
 </div>
 </div>
-<a id="a956215177a0bbfd83a811cbf8af8a647" name="a956215177a0bbfd83a811cbf8af8a647"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a956215177a0bbfd83a811cbf8af8a647">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_load_producer_event()</h2>
+<a id="a86d1ac7c901b8980d26547ef4b1b6f48" name="a86d1ac7c901b8980d26547ef4b1b6f48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86d1ac7c901b8980d26547ef4b1b6f48">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_load_producer_event()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -192,7 +333,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbLoginMessageHandler_load_producer_event </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_statemachine_info</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -203,10 +344,97 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Loads a Producer Event Identified message for the current producer event. </p>
+<p>Constructs a Producer Identified message for one event in the node's producer list. The message indicates whether the producer event is currently valid, invalid, or in an unknown state. May be called multiple times via re-enumeration to send messages for each produced event.</p>
+<p>Use cases:</p><ul>
+<li>Called repeatedly during login to announce each produced event</li>
+<li>May be called later in response to Identify Producer messages</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine info containing node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
+<dd>
+statemachine_info-&gt;openlcb_node must be valid </dd>
+<dd>
+enum_index must be less than producers.count when enumerate flag is set</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function may be called multiple times (once per producer event) </dd>
+<dd>
+The enumerate flag controls re-entry until all events are sent</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If producers.count is 0, no messages are generated </dd>
+<dd>
+Sets outgoing_msg_info.valid to false if no producers exist </dd>
+<dd>
+Sets outgoing_msg_info.enumerate to true to process next event</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Transport Standard S-9.7.4.1 - Producer Identified </dd>
+<dd>
+MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> - Next step after all producers</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Checks if node has any producer events (producers.count == 0)</li>
+<li>If no producers: Sets valid=false, transitions to RUNSTATE_LOAD_CONSUMER_EVENTS, returns</li>
+<li>Calls interface-&gt;extract_producer_event_state_mti() to get event state MTI</li>
+<li>Retrieves event ID from producers.list[enum_index]</li>
+<li>Calls <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with node alias, ID, and event MTI</li>
+<li>Calls <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to add Event ID to payload</li>
+<li>Sets payload_count to 8 (64-bit Event ID)</li>
+<li>Increments enum_index</li>
+<li>Sets enumerate=true and valid=true to trigger transmission and re-entry</li>
+<li>If enum_index &gt;= producers.count: Resets enumeration, transitions to RUNSTATE_LOAD_CONSUMER_EVENTS</li>
+</ol>
+<p>Message Structure:</p><ul>
+<li>MTI: 0x0914 (Valid), 0x0915 (Invalid), or 0x0917 (Unknown)</li>
+<li>Source Alias: Node's allocated alias</li>
+<li>Payload: 8 bytes containing the 64-bit Event ID</li>
+<li>Destination: None (broadcast message)</li>
+</ul>
+<p>Enumeration Control: The enumerate flag causes the state machine to re-enter this function for the next producer event without advancing to the next state. This continues until all producer events have been announced.</p>
+<p>State Changes (when all producers enumerated):</p><ul>
+<li>node-&gt;producers.enumerator.enum_index: -&gt; 0</li>
+<li>node-&gt;producers.enumerator.running: true -&gt; false</li>
+<li>node-&gt;consumers.enumerator.enum_index: -&gt; 0</li>
+<li>node-&gt;consumers.enumerator.running: -&gt; true</li>
+<li>outgoing_msg_info.enumerate: true -&gt; false</li>
+<li>node-&gt;state.run_state: RUNSTATE_LOAD_PRODUCER_EVENTS -&gt; RUNSTATE_LOAD_CONSUMER_EVENTS</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Called repeatedly during login to announce each produced event</li>
+<li>May be called later in response to Identify Producer messages</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine info containing node and message buffer
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL </dd>
+<dd>
+Node pointer within info structure must be valid </dd>
+<dd>
+Enumeration index must be less than producers.count when enumerate flag is set</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function may be called multiple times (once per producer event) </dd>
+<dd>
+The enumerate flag controls re-entry until all events are sent</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If producers.count is 0, no messages are generated </dd>
+<dd>
+Sets outgoing_msg_info.valid to false if no producers exist </dd>
+<dd>
+Sets outgoing_msg_info.enumerate to true to process next event </dd>
+<dd>
+Line length managed per StyleGuide 3x indentation for long function calls</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Transport Standard S-9.7.4.1 - Producer Identified </dd>
+<dd>
+MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="structinterface__openlcb__login__message__handler__t.html" title="Interface structure for login message handler callback functions.">interface_openlcb_login_message_handler_t</a> - Interface for state extraction </dd>
+<dd>
+<a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> - Message header construction </dd>
+<dd>
+<a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> - Payload construction </dd></dl>
+
 </div>
 </div>
-<a id="aff5e49672a5a0f76423c721f606e4632" name="aff5e49672a5a0f76423c721f606e4632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff5e49672a5a0f76423c721f606e4632">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_load_consumer_event()</h2>
+<a id="ac6977ee9bd7b697ad431ddadd14779a9" name="ac6977ee9bd7b697ad431ddadd14779a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6977ee9bd7b697ad431ddadd14779a9">&#9670;&#160;</a></span>OpenLcbLoginMessageHandler_load_consumer_event()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -217,7 +445,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void OpenLcbLoginMessageHandler_load_consumer_event </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_statemachine_info</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__login__statemachine__info__t.html">openlcb_login_statemachine_info_t</a> *</td>          <td class="paramname"><span class="paramname"><em>statemachine_info</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -227,6 +455,102 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Loads a Consumer Event Identified message for the current consumer event. </p>
+<p>Constructs a Consumer Identified message for one event in the node's consumer list. The message indicates whether the consumer event is currently valid, invalid, or in an unknown state. May be called multiple times via re-enumeration to send messages for each consumed event. This is the final step of the login sequence.</p>
+<p>Use cases:</p><ul>
+<li>Called repeatedly during login to announce each consumed event</li>
+<li>May be called later in response to Identify Consumer messages</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine info containing node and message buffer</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
+<dd>
+statemachine_info-&gt;openlcb_node must be valid </dd>
+<dd>
+enum_index must be less than consumers.count when enumerate flag is set</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function may be called multiple times (once per consumer event) </dd>
+<dd>
+The enumerate flag controls re-entry until all events are sent </dd>
+<dd>
+This is the final step of the login sequence</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If consumers.count is 0, no messages are generated </dd>
+<dd>
+Sets outgoing_msg_info.valid to false if no consumers exist </dd>
+<dd>
+Sets outgoing_msg_info.enumerate to true to process next event </dd>
+<dd>
+Transitions to RUNSTATE_RUN when complete (node fully initialized)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Transport Standard S-9.7.4.2 - Consumer Identified </dd>
+<dd>
+MTI_CONSUMER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="group__node__login__states.html#gaf6eaeb155cdfde837a166bac521293a8" title="Normal operation mode - process messages from FIFO.">RUNSTATE_RUN</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> - Final operational state</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Checks if node has any consumer events (consumers.count == 0)</li>
+<li>If no consumers: Sets valid=false, transitions to RUNSTATE_RUN, returns</li>
+<li>Calls interface-&gt;extract_consumer_event_state_mti() to get event state MTI</li>
+<li>Retrieves event ID from consumers.list[enum_index]</li>
+<li>Calls <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with node alias, ID, and event MTI</li>
+<li>Calls <a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload()</a> to add Event ID to payload</li>
+<li>Sets payload_count to 8 (64-bit Event ID)</li>
+<li>Increments enum_index</li>
+<li>Sets enumerate=true and valid=true to trigger transmission and re-entry</li>
+<li>If enum_index &gt;= consumers.count: Resets enumeration, transitions to RUNSTATE_RUN</li>
+</ol>
+<p>Message Structure:</p><ul>
+<li>MTI: 0x04C4 (Valid), 0x04C5 (Invalid), or 0x04C7 (Unknown)</li>
+<li>Source Alias: Node's allocated alias</li>
+<li>Payload: 8 bytes containing the 64-bit Event ID</li>
+<li>Destination: None (broadcast message)</li>
+</ul>
+<p>Enumeration Control: The enumerate flag causes the state machine to re-enter this function for the next consumer event without advancing to the next state. This continues until all consumer events have been announced.</p>
+<p>State Changes (when all consumers enumerated):</p><ul>
+<li>node-&gt;consumers.enumerator.running: true -&gt; false</li>
+<li>node-&gt;consumers.enumerator.enum_index: -&gt; 0</li>
+<li>outgoing_msg_info.enumerate: true -&gt; false</li>
+<li>node-&gt;state.run_state: RUNSTATE_LOAD_CONSUMER_EVENTS -&gt; RUNSTATE_RUN</li>
+</ul>
+<p>Login Completion: When this function transitions to RUNSTATE_RUN, the login sequence is complete and the node is fully operational on the network.</p>
+<p>Use cases:</p><ul>
+<li>Called repeatedly during login to announce each consumed event</li>
+<li>May be called later in response to Identify Consumer messages</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine info containing node and message buffer
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must NOT be NULL </dd>
+<dd>
+Node pointer within info structure must be valid </dd>
+<dd>
+Enumeration index must be less than consumers.count when enumerate flag is set</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>This function may be called multiple times (once per consumer event) </dd>
+<dd>
+The enumerate flag controls re-entry until all events are sent </dd>
+<dd>
+This is the final step of the login sequence</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If consumers.count is 0, no messages are generated </dd>
+<dd>
+Sets outgoing_msg_info.valid to false if no consumers exist </dd>
+<dd>
+Sets outgoing_msg_info.enumerate to true to process next event </dd>
+<dd>
+Transitions to RUNSTATE_RUN when complete (node fully initialized) </dd>
+<dd>
+Line length managed per StyleGuide 3x indentation for long function calls</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Event Transport Standard S-9.7.4.2 - Consumer Identified </dd>
+<dd>
+MTI_CONSUMER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd>
+<dd>
+<a class="el" href="group__node__login__states.html#gaf6eaeb155cdfde837a166bac521293a8" title="Normal operation mode - process messages from FIFO.">RUNSTATE_RUN</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> - Final operational state </dd>
+<dd>
+<a class="el" href="structinterface__openlcb__login__message__handler__t.html" title="Interface structure for login message handler callback functions.">interface_openlcb_login_message_handler_t</a> - Interface for state extraction </dd>
+<dd>
+<a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message</a> - Message header construction </dd>
+<dd>
+<a class="el" href="openlcb__utilities_8c.html#a5e94dfb13e33b2d191f446a38364b7e5" title="Copies an 8-byte event ID into the message payload.">OpenLcbUtilities_copy_event_id_to_openlcb_payload</a> - Payload construction </dd></dl>
 
 </div>
 </div>

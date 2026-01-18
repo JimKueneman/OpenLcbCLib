@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_openlcb_main_statemachine_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for main state machine dependencies.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -126,8 +129,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:aa3d62851e98dee2ae00a9b507382ad77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a1564a5e0fded2d1c325cd111eb7759" id="r_a6a1564a5e0fded2d1c325cd111eb7759"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a1564a5e0fded2d1c325cd111eb7759">process_main_statemachine</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="separator:a6a1564a5e0fded2d1c325cd111eb7759"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e2ae71d21dda06d4e4089752168d5fc" id="r_a1e2ae71d21dda06d4e4089752168d5fc"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e2ae71d21dda06d4e4089752168d5fc">does_node_process_msg</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *_statemachine_info)</td></tr>
-<tr class="separator:a1e2ae71d21dda06d4e4089752168d5fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af94b252854c4de7a33ee7ec6deb93f6c" id="r_af94b252854c4de7a33ee7ec6deb93f6c"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af94b252854c4de7a33ee7ec6deb93f6c">does_node_process_msg</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="separator:af94b252854c4de7a33ee7ec6deb93f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21e0289f2a6d968d59d8f2392e7238d9" id="r_a21e0289f2a6d968d59d8f2392e7238d9"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21e0289f2a6d968d59d8f2392e7238d9">handle_outgoing_openlcb_message</a> )(void)</td></tr>
 <tr class="separator:a21e0289f2a6d968d59d8f2392e7238d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87d0bb10ab97a4dfb5cc19819656c7db" id="r_a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87d0bb10ab97a4dfb5cc19819656c7db">handle_try_reenumerate</a> )(void)</td></tr>
@@ -201,7 +204,34 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ac7e86830e537ac54f7579f3d163184de" id="r_ac7e86830e537ac54f7579f3d163184de"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7e86830e537ac54f7579f3d163184de">stream_data_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="separator:ac7e86830e537ac54f7579f3d163184de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for main state machine dependencies. </p>
+<p>This structure defines all function pointers required and optional for the main state machine operation. The application must populate this structure with appropriate callbacks before calling the initialize function.</p>
+<p>Function pointers are organized into categories:</p><ul>
+<li>Resource management (lock/unlock, send)</li>
+<li>Node enumeration (get_first, get_next)</li>
+<li>Required protocol handlers (Message Network, PIP)</li>
+<li>Internal handlers (exposed for testing)</li>
+<li>Optional protocol handlers (SNIP, Events, Traction, Datagram, Stream)</li>
+</ul>
+<p>Required vs Optional handlers:</p><ul>
+<li>Required handlers must be provided (non-NULL)</li>
+<li>Optional handlers can be NULL if protocol not implemented</li>
+<li>When optional handler is NULL, MTI generates Interaction Rejected</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Application initialization and configuration</li>
+<li>Dependency injection for testability</li>
+<li>Protocol selection and customization</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>ALL required function pointers MUST be non-NULL </dd>
+<dd>
+Optional pointers can be NULL to disable protocols</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Populate all required fields before calling initialize</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8c.html#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize</a> - Uses this interface </dd>
+<dd>
+<a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> - State information passed to handlers </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
 
@@ -213,6 +243,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Acquire exclusive access to shared resources </p>
 
 </div>
 </div>
@@ -227,6 +258,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Release exclusive access to shared resources </p>
 
 </div>
 </div>
@@ -241,6 +273,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Transmit outgoing OpenLCB message </p>
 
 </div>
 </div>
@@ -255,6 +288,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Get first node in enumeration </p>
 
 </div>
 </div>
@@ -269,6 +303,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Get next node in enumeration </p>
 
 </div>
 </div>
@@ -283,6 +318,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Load Interaction Rejected response </p>
 
 </div>
 </div>
@@ -297,6 +333,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Initialization Complete message </p>
 
 </div>
 </div>
@@ -311,6 +348,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Initialization Complete Simple message </p>
 
 </div>
 </div>
@@ -325,6 +363,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Verify Node ID Addressed message </p>
 
 </div>
 </div>
@@ -339,6 +378,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Verify Node ID Global message </p>
 
 </div>
 </div>
@@ -353,6 +393,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Verified Node ID message </p>
 
 </div>
 </div>
@@ -367,6 +408,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Optional Interaction Rejected message </p>
 
 </div>
 </div>
@@ -381,6 +423,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Terminate Due to Error message </p>
 
 </div>
 </div>
@@ -395,6 +438,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Protocol Support Inquiry message </p>
 
 </div>
 </div>
@@ -409,6 +453,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Protocol Support Reply message </p>
 
 </div>
 </div>
@@ -423,20 +468,22 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Process message through state machine </p>
 
 </div>
 </div>
-<a id="a1e2ae71d21dda06d4e4089752168d5fc" name="a1e2ae71d21dda06d4e4089752168d5fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e2ae71d21dda06d4e4089752168d5fc">&#9670;&#160;</a></span>does_node_process_msg</h2>
+<a id="af94b252854c4de7a33ee7ec6deb93f6c" name="af94b252854c4de7a33ee7ec6deb93f6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af94b252854c4de7a33ee7ec6deb93f6c">&#9670;&#160;</a></span>does_node_process_msg</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool(* does_node_process_msg) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *_statemachine_info)</td>
+          <td class="memname">bool(* does_node_process_msg) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Check if node should process message </p>
 
 </div>
 </div>
@@ -451,6 +498,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle outgoing message transmission </p>
 
 </div>
 </div>
@@ -465,6 +513,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle re-enumeration of current node </p>
 
 </div>
 </div>
@@ -479,6 +528,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Pop next incoming message from queue </p>
 
 </div>
 </div>
@@ -493,6 +543,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Enumerate first node for message processing </p>
 
 </div>
 </div>
@@ -507,6 +558,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Enumerate next node for message processing </p>
 
 </div>
 </div>
@@ -521,6 +573,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle SNIP request (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -535,6 +588,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle SNIP reply (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -549,6 +603,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Consumer Identify (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -563,6 +618,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Consumer Range Identified (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -577,6 +633,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Consumer Identified Unknown (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -591,6 +648,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Consumer Identified Set (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -605,6 +663,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Consumer Identified Clear (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -619,6 +678,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Consumer Identified Reserved (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -633,6 +693,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer Identify (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -647,6 +708,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer Range Identified (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -661,6 +723,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer Identified Unknown (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -675,6 +738,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer Identified Set (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -689,6 +753,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer Identified Clear (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -703,6 +768,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer Identified Reserved (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -717,6 +783,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Identify Destination (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -731,6 +798,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Identify Events (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -745,6 +813,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Learn Event (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -759,6 +828,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Producer/Consumer Event Report (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -773,6 +843,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle P/C Event Report with Payload (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -787,6 +858,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Traction Control Command (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -801,6 +873,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Traction Control Reply (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -815,6 +888,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Simple Train Info Request (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -829,6 +903,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Simple Train Info Reply (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -843,6 +918,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Datagram (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -857,6 +933,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Datagram OK Reply (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -871,6 +948,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Datagram Rejected Reply (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -885,6 +963,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Stream Initiate Request (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -899,6 +978,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Stream Initiate Reply (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -913,6 +993,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Stream Send Data (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -927,6 +1008,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Stream Data Proceed (NULL if not implemented) </p>
 
 </div>
 </div>
@@ -941,6 +1023,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Handle Stream Data Complete (NULL if not implemented) </p>
 
 </div>
 </div>

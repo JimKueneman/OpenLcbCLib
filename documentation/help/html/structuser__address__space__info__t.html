@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">user_address_space_info_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Address space information and properties.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -106,10 +109,25 @@ Data Fields</h2></td></tr>
 <tr class="separator:adb178df9ed04db445f6dc329f3db915e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68a786c2510a3830e853685c8a25034e" id="r_a68a786c2510a3830e853685c8a25034e"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68a786c2510a3830e853685c8a25034e">low_address</a></td></tr>
 <tr class="separator:a68a786c2510a3830e853685c8a25034e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87f1fc05a7d011eaafd300bbd65914cc" id="r_a87f1fc05a7d011eaafd300bbd65914cc"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87f1fc05a7d011eaafd300bbd65914cc">description</a> [<a class="el" href="openlcb__types_8h.html#a920178b7bdc956012a19908b5a9fa171">LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</a>]</td></tr>
+<tr class="memitem:a87f1fc05a7d011eaafd300bbd65914cc" id="r_a87f1fc05a7d011eaafd300bbd65914cc"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87f1fc05a7d011eaafd300bbd65914cc">description</a> [<a class="el" href="group__buffer__size__constants.html#ga920178b7bdc956012a19908b5a9fa171">LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</a>]</td></tr>
 <tr class="separator:a87f1fc05a7d011eaafd300bbd65914cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Address space information and properties. </p>
+<p>Describes characteristics of a configuration memory address space. Returned by Get Address Space Information command.</p>
+<p><b>Space Properties:</b></p><ul>
+<li>present: Space exists and is accessible</li>
+<li>read_only: Space cannot be written</li>
+<li>low_address_valid: Non-zero starting address (space doesn't start at 0)</li>
+</ul>
+<p><b>Address Range:</b></p><ul>
+<li>highest_address: Last valid address in space</li>
+<li>low_address: Starting address (if low_address_valid set)</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__config__mem__operations.html#gae047103d64f76df52d1c440a747c7079" title="Get Address Space Information command.">CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD</a> </dd>
+<dd>
+<a class="el" href="group__address__space__info__flags.html#gadfbd3b207c44aa9c682e77d10a372cf8" title="Address space is read-only.">CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="aa84cc4dc60e16481b79b15b815aaea31" name="aa84cc4dc60e16481b79b15b815aaea31"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa84cc4dc60e16481b79b15b815aaea31">&#9670;&#160;</a></span>present</h2>
 
@@ -121,6 +139,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Address space exists </p>
 
 </div>
 </div>
@@ -135,6 +154,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Space is read-only </p>
 
 </div>
 </div>
@@ -149,6 +169,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>low_address field is valid </p>
 
 </div>
 </div>
@@ -163,6 +184,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Address space identifier (0x00-0xFF) </p>
 
 </div>
 </div>
@@ -177,6 +199,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Highest address in space </p>
 
 </div>
 </div>
@@ -191,6 +214,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Starting address (if low_address_valid) </p>
 
 </div>
 </div>
@@ -201,10 +225,11 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char description[<a class="el" href="openlcb__types_8h.html#a920178b7bdc956012a19908b5a9fa171">LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</a>]</td>
+          <td class="memname">char description[<a class="el" href="group__buffer__size__constants.html#ga920178b7bdc956012a19908b5a9fa171">LEN_CONFIG_MEM_ADDRESS_SPACE_DESCRIPTION</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Space description </p>
 
 </div>
 </div>

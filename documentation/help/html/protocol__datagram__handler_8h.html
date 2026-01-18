@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Datagram protocol handler implementation.  
+<p>OpenLCB datagram protocol handler interface.  
 <a href="#details">More...</a></p>
 
 <p><a href="protocol__datagram__handler_8h_source.html">Go to the source code of this file.</a></p>
@@ -106,11 +106,13 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__protocol__datagram__handler__t.html">interface_protocol_datagram_handler_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for datagram protocol handler callbacks.  <a href="structinterface__protocol__datagram__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a34207c47984e37a0c4ecc774fcc1ca32" id="r_a34207c47984e37a0c4ecc774fcc1ca32"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34207c47984e37a0c4ecc774fcc1ca32">memory_handler_t</a>) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a34207c47984e37a0c4ecc774fcc1ca32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type definition for memory operation handler function pointer.  <br /></td></tr>
 <tr class="separator:a34207c47984e37a0c4ecc774fcc1ca32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -141,7 +143,7 @@ Functions</h2></td></tr>
 <tr class="separator:a6bab92fd769c43b46c7254b8a8ed4e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Datagram protocol handler implementation. </p>
+<div class="textblock"><p>OpenLCB datagram protocol handler interface. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -149,8 +151,19 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>This module provides the implementation for the OpenLCB datagram transport protocol, which enables reliable transfer of 0-72 bytes of data between two nodes. It handles datagram reception, acknowledgment, rejection, and timeout management according to the OpenLCB specification.</p>
+<p>The datagram handler supports:</p><ul>
+<li>Configuration memory operations (read/write)</li>
+<li>Address space access for various memory regions</li>
+<li>Stream-based memory operations</li>
+<li>Write-under-mask operations</li>
+<li>Firmware upgrade operations</li>
+</ul>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>OpenLCB Datagram Transport Specification </dd>
+<dd>
+OpenLCB Configuration Memory Operations Specification </dd></dl>
 </div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a34207c47984e37a0c4ecc774fcc1ca32" name="a34207c47984e37a0c4ecc774fcc1ca32"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34207c47984e37a0c4ecc774fcc1ca32">&#9670;&#160;</a></span>memory_handler_t</h2>
@@ -163,6 +176,11 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Type definition for memory operation handler function pointer. </p>
+<p>Defines a function pointer type for callbacks that handle specific memory operations within datagram processing. All memory operation handlers use this signature.</p>
+<dl class="section note"><dt>Note</dt><dd>Used throughout the datagram handler interface structure</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__protocol__datagram__handler__t.html" title="Interface structure for datagram protocol handler callbacks.">interface_protocol_datagram_handler_t</a> - Structure using this type </dd></dl>
 
 </div>
 </div>
@@ -191,13 +209,50 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the Protocol Datagram Handler module. </p>
+<p>Registers the callback interface that the datagram handler will use to process incoming datagrams and generate responses. This function must be called once during system startup before any datagram processing can occur.</p>
+<p>The interface structure pointer is stored internally and used for all subsequent datagram operations. The structure must remain valid for the lifetime of the application.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Must be called before processing any datagrams</li>
+<li>Typically called after node initialization</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_protocol_datagram_handler</td><td>Pointer to the interface structure containing required callbacks </td></tr>
+    <tr><td class="paramname">interface_protocol_datagram_handler</td><td>Pointer to initialized interface structure containing all required and optional callback functions</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The interface structure must remain valid after this call </dd>
+<dd>
+lock_shared_resources and unlock_shared_resources callbacks are required</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call before any datagram processing begins </dd>
+<dd>
+Interface pointer is stored but structure is not copied</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__protocol__datagram__handler__t.html" title="Interface structure for datagram protocol handler callbacks.">interface_protocol_datagram_handler_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a4d034624deb9c413c4977afa8987a6df" title="Processes an incoming datagram message.">ProtocolDatagramHandler_datagram</a> - Main datagram processor</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Store the interface pointer in module-level static variable</li>
+<li>Cast away const qualifier for internal storage</li>
+<li>Interface structure must remain valid for application lifetime</li>
+</ol>
+<p>The stored interface pointer is used by all subsequent datagram operations to invoke appropriate callback handlers.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Must be called before processing any datagrams</li>
+<li>Typically called after node initialization</li>
+</ul>
+<pre class="fragment">* @param interface_protocol_datagram_handler Pointer to initialized interface
+* </pre><p> structure containing all required and optional callback functions</p>
+<dl class="section warning"><dt>Warning</dt><dd>The interface structure must remain valid after this call </dd>
+<dd>
+The locking callbacks are required</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call before any datagram processing begins </dd>
+<dd>
+Interface pointer is stored but structure is not copied</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__protocol__datagram__handler__t.html" title="Interface structure for datagram protocol handler callbacks.">interface_protocol_datagram_handler_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a4d034624deb9c413c4977afa8987a6df" title="Processes an incoming datagram message.">ProtocolDatagramHandler_datagram</a> - Main datagram processor </dd></dl>
 
 </div>
 </div>
@@ -229,14 +284,66 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Loads a datagram received OK acknowledgment message. </p>
+<p>Constructs an OpenLCB Datagram Received OK reply message (MTI 0x0A28) and places it in the outgoing message buffer. The reply indicates successful datagram reception and optionally specifies a reply-pending timeout value.</p>
+<p>The timeout value is encoded as an exponent (2^N seconds) according to the OpenLCB datagram specification. A value of 0 indicates no timeout (immediate response expected).</p>
+<p>Use cases:</p><ul>
+<li>Acknowledging successful datagram reception</li>
+<li>Indicating deferred processing with reply-pending timeout</li>
+<li>Normal datagram protocol flow completion</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
-    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Time in seconds (as 2^N) until reply will be sent </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message details and outgoing message buffer </td></tr>
+    <tr><td class="paramname">reply_pending_time_in_seconds</td><td>Time in seconds until reply will be sent, encoded as 2^N (range: 0 to 16384 seconds). Value of 0 means no reply pending.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Outgoing message valid flag is set automatically </dd>
+<dd>
+Reply is addressed to the source of the incoming datagram </dd>
+<dd>
+Timeout values are rounded up to nearest power of 2</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>statemachine_info must contain valid incoming message</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#a74c7ab99bff8408f9a00f77ed79da9f4" title="Loads a datagram rejected message with error code.">ProtocolDatagramHandler_load_datagram_rejected_message</a> - For rejecting datagrams </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#ad4d3a37a821acbbf357b6fd09281e851" title="Handles datagram received OK acknowledgment.">ProtocolDatagramHandler_datagram_received_ok</a> - Handles received OK replies</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Initialize exponent to 0 (no timeout)</li>
+<li>If reply_pending_time_in_seconds &gt; 0:<ul>
+<li>Calculate power-of-2 exponent for timeout value</li>
+<li>Test against threshold values (2, 4, 8, 16, 32, ...)</li>
+<li>Select appropriate exponent (1-15)</li>
+</ul>
+</li>
+<li>Build Datagram Received OK message (MTI 0x0A28)</li>
+<li>Set source/destination from incoming message</li>
+<li>Add flags byte with reply-pending bit and timeout exponent</li>
+<li>Mark outgoing message as valid</li>
+</ol>
+<p>The timeout encoding uses 4 bits (0-15) representing 2^N seconds:</p><ul>
+<li>0 = no reply pending</li>
+<li>1 = 2^1 = 2 seconds</li>
+<li>2 = 2^2 = 4 seconds</li>
+<li>...</li>
+<li>15 = 2^15 = 32768 seconds</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Acknowledging successful datagram reception</li>
+<li>Indicating deferred processing with reply-pending timeout</li>
+<li>Normal datagram protocol flow completion</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine context containing
+* </pre><p> incoming message details and outgoing message buffer </p><pre class="fragment">* @param reply_pending_time_in_seconds Time in seconds until reply will
+* </pre><p> be sent, encoded as 2^N (range: 0 to 16384 seconds). Value of 0 means no reply pending.</p>
+<dl class="section note"><dt>Note</dt><dd>Outgoing message valid flag is set automatically </dd>
+<dd>
+Reply is addressed to the source of the incoming datagram </dd>
+<dd>
+Timeout values are rounded up to nearest power of 2</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>statemachine_info must contain valid incoming message</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#a74c7ab99bff8408f9a00f77ed79da9f4" title="Loads a datagram rejected message with error code.">ProtocolDatagramHandler_load_datagram_rejected_message</a> - For rejecting datagrams </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#ad4d3a37a821acbbf357b6fd09281e851" title="Handles datagram received OK acknowledgment.">ProtocolDatagramHandler_datagram_received_ok</a> - Handles received OK replies </dd></dl>
 
 </div>
 </div>
@@ -268,14 +375,61 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Loads a datagram rejected message with error code. </p>
+<p>Constructs an OpenLCB Datagram Rejected reply message (MTI 0x0A48) and places it in the outgoing message buffer. The rejection includes a 16-bit error code indicating the reason for rejection, which may be either temporary or permanent.</p>
+<p>Temporary errors (bit 0x8000 set) may allow retry, while permanent errors require the sender to abandon the transmission.</p>
+<p>Use cases:</p><ul>
+<li>Rejecting unsupported datagram commands</li>
+<li>Rejecting datagrams when resources unavailable</li>
+<li>Indicating protocol violations or errors</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
-    <tr><td class="paramname">return_code</td><td>Error code indicating reason for rejection </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message details and outgoing message buffer </td></tr>
+    <tr><td class="paramname">return_code</td><td>16-bit OpenLCB error code indicating rejection reason (see OpenLCB Error Codes specification)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Outgoing message valid flag is set automatically </dd>
+<dd>
+Reply is addressed to the source of the incoming datagram </dd>
+<dd>
+Common error codes defined in <a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for OpenLCB library.">openlcb_types.h</a></dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>statemachine_info must contain valid incoming message</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#abe5f21fda782ce61534588d89163ccff" title="Loads a datagram received OK acknowledgment message.">ProtocolDatagramHandler_load_datagram_received_ok_message</a> - For accepting datagrams </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a15cc3c7547fd0963f2ce553de92911bd" title="Handles datagram rejected response.">ProtocolDatagramHandler_datagram_rejected</a> - Handles received rejected replies</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Build Datagram Rejected message (MTI 0x0A48)</li>
+<li>Set source/destination from incoming message</li>
+<li>Add 16-bit error code to payload</li>
+<li>Mark outgoing message as valid</li>
+</ol>
+<p>The error code indicates why the datagram was rejected. The high bit (0x8000) indicates temporary vs permanent error:</p><ul>
+<li>Temporary (0x8xxx): Sender may retry</li>
+<li>Permanent (0x0xxx): Sender must abort</li>
+</ul>
+<p>Common error codes:</p><ul>
+<li>ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN</li>
+<li>ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN</li>
+<li>ERROR_TEMPORARY_BUFFER_UNAVAILABLE</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Rejecting unsupported datagram commands</li>
+<li>Rejecting datagrams when resources unavailable</li>
+<li>Indicating protocol violations or errors</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine context containing
+* </pre><p> incoming message details and outgoing message buffer </p><pre class="fragment">* @param return_code 16-bit OpenLCB error code indicating rejection
+* </pre><p> reason (see OpenLCB Error Codes specification)</p>
+<dl class="section note"><dt>Note</dt><dd>Outgoing message valid flag is set automatically </dd>
+<dd>
+Reply is addressed to the source of the incoming datagram </dd>
+<dd>
+Common error codes defined in <a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for OpenLCB library.">openlcb_types.h</a></dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>statemachine_info must contain valid incoming message</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#abe5f21fda782ce61534588d89163ccff" title="Loads a datagram received OK acknowledgment message.">ProtocolDatagramHandler_load_datagram_received_ok_message</a> - For accepting datagrams </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a15cc3c7547fd0963f2ce553de92911bd" title="Handles datagram rejected response.">ProtocolDatagramHandler_datagram_rejected</a> - Handles received rejected replies </dd></dl>
 
 </div>
 </div>
@@ -303,13 +457,59 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Processes an incoming datagram message. </p>
+<p>Main entry point for datagram processing. Examines the datagram content type (first payload byte) and dispatches to the appropriate handler based on the command code.</p>
+<p>Currently supports configuration memory operations (command 0x20). Unsupported commands result in automatic datagram rejection with ERROR_PERMANENT_NOT_IMPLEMENTED_COMMAND_UNKNOWN.</p>
+<p>Use cases:</p><ul>
+<li>Called when MTI_DATAGRAM (0x1C48) message received</li>
+<li>Processing configuration memory requests</li>
+<li>Routing to appropriate protocol handlers</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing the received datagram message and node information</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Sets outgoing_msg_info.valid if response generated </dd>
+<dd>
+Automatically rejects unsupported command types</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Must be called from main message processing loop </dd>
+<dd>
+statemachine_info must contain valid incoming datagram</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#abe5f21fda782ce61534588d89163ccff" title="Loads a datagram received OK acknowledgment message.">ProtocolDatagramHandler_load_datagram_received_ok_message</a> - Response generator </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a74c7ab99bff8408f9a00f77ed79da9f4" title="Loads a datagram rejected message with error code.">ProtocolDatagramHandler_load_datagram_rejected_message</a> - Rejection generator</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract command type from payload byte 0</li>
+<li>Match against supported command constants</li>
+<li>For CONFIG_MEM_CONFIGURATION (0x20):<ul>
+<li>Dispatch to memory configuration handler</li>
+</ul>
+</li>
+<li>For unrecognized commands:<ul>
+<li>Generate "unknown command" rejection</li>
+</ul>
+</li>
+</ol>
+<p>This is the main entry point for all datagram processing. It examines the datagram content type and routes to the appropriate protocol handler.</p>
+<p>Use cases:</p><ul>
+<li>Called when MTI_DATAGRAM (0x1C48) message received</li>
+<li>Processing configuration memory requests</li>
+<li>Routing to appropriate protocol handlers</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine context containing
+* </pre><p> the received datagram message and node information</p>
+<dl class="section note"><dt>Note</dt><dd>Sets outgoing_msg_info.valid if response generated </dd>
+<dd>
+Automatically rejects unsupported command types</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Must be called from main message processing loop </dd>
+<dd>
+statemachine_info must contain valid incoming datagram</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#abe5f21fda782ce61534588d89163ccff" title="Loads a datagram received OK acknowledgment message.">ProtocolDatagramHandler_load_datagram_received_ok_message</a> - Response generator </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a74c7ab99bff8408f9a00f77ed79da9f4" title="Loads a datagram rejected message with error code.">ProtocolDatagramHandler_load_datagram_rejected_message</a> - Rejection generator </dd>
+<dd>
+_handle_datagram_memory_configuration_command - Memory config dispatcher </dd></dl>
 
 </div>
 </div>
@@ -337,13 +537,49 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Handles datagram received OK acknowledgment. </p>
+<p>Processes an incoming Datagram Received OK reply (MTI 0x0A28), which confirms that a previously sent datagram was successfully received by the destination node.</p>
+<p>This function clears the resend flag and frees any stored datagram awaiting acknowledgment. The outgoing message valid flag is cleared to prevent retransmission.</p>
+<p>Use cases:</p><ul>
+<li>Completing successful datagram transmission</li>
+<li>Freeing resources after acknowledged send</li>
+<li>Normal datagram protocol completion</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing the received OK reply and node information</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Clears outgoing_msg_info.valid flag </dd>
+<dd>
+Frees last_received_datagram buffer if present </dd>
+<dd>
+Uses locking for thread-safe buffer management</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Called only when node is datagram sender</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#af7b23593b33a3a3c66f3afcd6886ebce" title="Clears the resend datagram message flag for the specified node.">ProtocolDatagramHandler_clear_resend_datagram_message</a> - Cleanup function </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a15cc3c7547fd0963f2ce553de92911bd" title="Handles datagram rejected response.">ProtocolDatagramHandler_datagram_rejected</a> - Handles rejection replies</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Clear resend datagram message flag and free buffer</li>
+<li>Set outgoing_msg_info.valid to false (no transmission needed)</li>
+</ol>
+<p>This function processes an incoming Datagram Received OK reply (MTI 0x0A28), which confirms that a previously sent datagram was successfully received by the destination node.</p>
+<p>Use cases:</p><ul>
+<li>Completing successful datagram transmission</li>
+<li>Freeing resources after acknowledged send</li>
+<li>Normal datagram protocol completion</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine context containing
+* </pre><p> the received OK reply and node information</p>
+<dl class="section note"><dt>Note</dt><dd>Clears outgoing_msg_info.valid flag </dd>
+<dd>
+Frees last_received_datagram buffer if present </dd>
+<dd>
+Uses locking for thread-safe buffer management</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Called only when node is datagram sender</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#af7b23593b33a3a3c66f3afcd6886ebce" title="Clears the resend datagram message flag for the specified node.">ProtocolDatagramHandler_clear_resend_datagram_message</a> - Cleanup function </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a15cc3c7547fd0963f2ce553de92911bd" title="Handles datagram rejected response.">ProtocolDatagramHandler_datagram_rejected</a> - Handles rejection replies </dd></dl>
 
 </div>
 </div>
@@ -371,13 +607,62 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Handles datagram rejected response. </p>
+<p>Processes an incoming Datagram Rejected reply (MTI 0x0A48), examining the error code to determine if retry is possible. Temporary errors (ERROR_TEMPORARY bit set) allow retry by setting the resend flag; permanent errors clear all retry state.</p>
+<p>Use cases:</p><ul>
+<li>Handling temporary resource unavailability</li>
+<li>Detecting permanent protocol failures</li>
+<li>Managing datagram retry logic</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to the statemachine information structure </td></tr>
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing the received rejection reply and node information</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Sets resend_datagram flag for temporary errors </dd>
+<dd>
+Clears resend state for permanent errors </dd>
+<dd>
+Preserves last datagram buffer for potential retry</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Error code examination determines retry behavior </dd>
+<dd>
+Permanent errors free datagram buffer</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#af7b23593b33a3a3c66f3afcd6886ebce" title="Clears the resend datagram message flag for the specified node.">ProtocolDatagramHandler_clear_resend_datagram_message</a> - Cleanup for permanent errors </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#ad4d3a37a821acbbf357b6fd09281e851" title="Handles datagram received OK acknowledgment.">ProtocolDatagramHandler_datagram_received_ok</a> - Handles success replies</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Extract error code from payload</li>
+<li>Test for ERROR_TEMPORARY bit (0x8000)</li>
+<li>If temporary error:<ul>
+<li>Check if last_received_datagram exists</li>
+<li>Set resend_datagram flag if buffer exists</li>
+</ul>
+</li>
+<li>If permanent error:<ul>
+<li>Clear resend flag and free buffer</li>
+</ul>
+</li>
+<li>Set outgoing_msg_info.valid to false (no transmission needed)</li>
+</ol>
+<p>This function processes an incoming Datagram Rejected reply (MTI 0x0A48), examining the error code to determine if retry is possible. Temporary errors (ERROR_TEMPORARY bit set) allow retry by setting the resend flag; permanent errors clear all retry state.</p>
+<p>Use cases:</p><ul>
+<li>Handling temporary resource unavailability</li>
+<li>Detecting permanent protocol failures</li>
+<li>Managing datagram retry logic</li>
+</ul>
+<pre class="fragment">* @param statemachine_info Pointer to state machine context containing
+* </pre><p> the received rejection reply and node information</p>
+<dl class="section note"><dt>Note</dt><dd>Sets resend_datagram flag for temporary errors </dd>
+<dd>
+Clears resend state for permanent errors </dd>
+<dd>
+Preserves last datagram buffer for potential retry</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Error code examination determines retry behavior </dd>
+<dd>
+Permanent errors free datagram buffer</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#af7b23593b33a3a3c66f3afcd6886ebce" title="Clears the resend datagram message flag for the specified node.">ProtocolDatagramHandler_clear_resend_datagram_message</a> - Cleanup for permanent errors </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#ad4d3a37a821acbbf357b6fd09281e851" title="Handles datagram received OK acknowledgment.">ProtocolDatagramHandler_datagram_received_ok</a> - Handles success replies </dd></dl>
 
 </div>
 </div>
@@ -405,13 +690,56 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Clears the resend datagram message flag for the specified node. </p>
+<p>Frees the stored datagram buffer and clears the resend flag for a node, preventing further retry attempts. This function uses resource locking to ensure thread-safe buffer management.</p>
+<p>Use cases:</p><ul>
+<li>Completing datagram transmission (success or permanent failure)</li>
+<li>Aborting retry attempts</li>
+<li>Cleaning up node state</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLcb node </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to the OpenLCB node structure to clear</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Uses lock_shared_resources/unlock_shared_resources for safety </dd>
+<dd>
+Safe to call even if no datagram is stored </dd>
+<dd>
+Sets last_received_datagram to NULL after freeing</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires valid openlcb_node pointer</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Clears both buffer and retry flag</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#ad4d3a37a821acbbf357b6fd09281e851" title="Handles datagram received OK acknowledgment.">ProtocolDatagramHandler_datagram_received_ok</a> - Uses this for cleanup </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a15cc3c7547fd0963f2ce553de92911bd" title="Handles datagram rejected response.">ProtocolDatagramHandler_datagram_rejected</a> - Uses this for permanent errors</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Check if last_received_datagram buffer exists</li>
+<li>If buffer exists:<ul>
+<li>Acquire shared resource lock</li>
+<li>Free the buffer via OpenLcbBufferStore_free_buffer</li>
+<li>Release shared resource lock</li>
+<li>Set last_received_datagram pointer to NULL</li>
+</ul>
+</li>
+<li>Clear resend_datagram flag</li>
+</ol>
+<p>This function frees the stored datagram buffer and clears the resend flag for a node, preventing further retry attempts. Thread-safe buffer management is ensured through resource locking callbacks.</p>
+<p>Use cases:</p><ul>
+<li>Completing datagram transmission (success or permanent failure)</li>
+<li>Aborting retry attempts</li>
+<li>Cleaning up node state</li>
+</ul>
+<pre class="fragment">* @param openlcb_node Pointer to the OpenLCB node structure to clear
+* </pre><dl class="section note"><dt>Note</dt><dd>Uses lock_shared_resources/unlock_shared_resources for safety </dd>
+<dd>
+Safe to call even if no datagram is stored </dd>
+<dd>
+Sets last_received_datagram to NULL after freeing</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires valid openlcb_node pointer</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Clears both buffer and retry flag</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#ad4d3a37a821acbbf357b6fd09281e851" title="Handles datagram received OK acknowledgment.">ProtocolDatagramHandler_datagram_received_ok</a> - Uses this for cleanup </dd>
+<dd>
+<a class="el" href="protocol__datagram__handler_8c.html#a15cc3c7547fd0963f2ce553de92911bd" title="Handles datagram rejected response.">ProtocolDatagramHandler_datagram_rejected</a> - Uses this for permanent errors </dd></dl>
 
 </div>
 </div>
@@ -439,13 +767,31 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>100ms timer tick handler for datagram protocol timeouts </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<p>Periodic timer callback for managing datagram protocol timeouts and retry logic. Currently a placeholder for future timeout management features.</p>
+<p>Use cases:</p><ul>
+<li>Called every 100ms from system timer</li>
+<li>Managing datagram acknowledgment timeouts</li>
+<li>Implementing retry delays</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Currently not implemented (placeholder) </dd>
+<dd>
+Should be called from 100ms periodic timer interrupt or task</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Reserved for future timeout implementation</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Placeholder for future implementation</li>
+<li>Will handle datagram acknowledgment timeouts</li>
+<li>Will manage retry timing</li>
+</ol>
+<p>This function is a periodic timer callback for managing datagram protocol timeouts and retry logic. Currently a placeholder for future timeout management features.</p>
+<p>Use cases:</p><ul>
+<li>Called every 100ms from system timer</li>
+<li>Managing datagram acknowledgment timeouts</li>
+<li>Implementing retry delays</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Currently not implemented (placeholder) </dd>
+<dd>
+Should be called from 100ms periodic timer interrupt or task</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Reserved for future timeout implementation </dd></dl>
 
 </div>
 </div>

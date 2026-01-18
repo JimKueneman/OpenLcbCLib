@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_openlcb_protocol_event_transport_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for Event Transport protocol callbacks.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -118,10 +121,18 @@ Data Fields</h2></td></tr>
 <tr class="separator:ab5ef996419107f53ab1dff5960b64c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1294ea6e55ac8a116b94b2dffd0d4eaf" id="r_a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1294ea6e55ac8a116b94b2dffd0d4eaf">on_pc_event_report</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
 <tr class="separator:a1294ea6e55ac8a116b94b2dffd0d4eaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f1ef5dcea60f1a578f2327cf0e5a4a5" id="r_a5f1ef5dcea60f1a578f2327cf0e5a4a5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f1ef5dcea60f1a578f2327cf0e5a4a5">on_pc_event_report_with_payload</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
-<tr class="separator:a5f1ef5dcea60f1a578f2327cf0e5a4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a050ed71050b1f4872476c5f0a636607b" id="r_a050ed71050b1f4872476c5f0a636607b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a050ed71050b1f4872476c5f0a636607b">on_pc_event_report_with_payload</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="separator:a050ed71050b1f4872476c5f0a636607b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for Event Transport protocol callbacks. </p>
+<p>This structure contains function pointers for all event-related callbacks that the application can register to receive notifications about producer and consumer events on the OpenLCB network.</p>
+<p>All callback functions are optional (can be NULL). The protocol layer will check for NULL before invoking any callback.</p>
+<dl class="section note"><dt>Note</dt><dd>All callbacks receive the node context and event ID that triggered the callback </dd>
+<dd>
+Callbacks are invoked from within the protocol handler - keep processing brief</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a13504f9f3de03215c9717b8dcaf363d8" title="Initializes the Event Transport protocol layer.">ProtocolEventTransport_initialize</a> - Registers this interface with the protocol </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="aa4893226a2fd15405ef5d823b4cbbd97" name="aa4893226a2fd15405ef5d823b4cbbd97"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa4893226a2fd15405ef5d823b4cbbd97">&#9670;&#160;</a></span>on_consumer_range_identified</h2>
 
@@ -290,14 +301,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a5f1ef5dcea60f1a578f2327cf0e5a4a5" name="a5f1ef5dcea60f1a578f2327cf0e5a4a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f1ef5dcea60f1a578f2327cf0e5a4a5">&#9670;&#160;</a></span>on_pc_event_report_with_payload</h2>
+<a id="a050ed71050b1f4872476c5f0a636607b" name="a050ed71050b1f4872476c5f0a636607b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a050ed71050b1f4872476c5f0a636607b">&#9670;&#160;</a></span>on_pc_event_report_with_payload</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* on_pc_event_report_with_payload) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
+          <td class="memname">void(* on_pc_event_report_with_payload) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, uint16_t count, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
         </tr>
       </table>
 </div><div class="memdoc">

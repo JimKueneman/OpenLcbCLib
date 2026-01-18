@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">user_configuration_options Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Configuration memory capabilities and options.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -112,10 +115,26 @@ Data Fields</h2></td></tr>
 <tr class="separator:a0e54d692a173be72009d55754ecfa014"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8463b3de4214ee657e0ed46aa1b1cb07" id="r_a8463b3de4214ee657e0ed46aa1b1cb07"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8463b3de4214ee657e0ed46aa1b1cb07">low_address_space</a></td></tr>
 <tr class="separator:a8463b3de4214ee657e0ed46aa1b1cb07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ea2ee712eca413ca3fb86f74681b42f" id="r_a7ea2ee712eca413ca3fb86f74681b42f"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ea2ee712eca413ca3fb86f74681b42f">description</a> [<a class="el" href="openlcb__types_8h.html#a37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>]</td></tr>
+<tr class="memitem:a7ea2ee712eca413ca3fb86f74681b42f" id="r_a7ea2ee712eca413ca3fb86f74681b42f"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ea2ee712eca413ca3fb86f74681b42f">description</a> [<a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>]</td></tr>
 <tr class="separator:a7ea2ee712eca413ca3fb86f74681b42f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Configuration memory capabilities and options. </p>
+<p>Returned by Get Configuration Options command to indicate which optional memory configuration features are supported.</p>
+<p><b>Capability Flags:</b></p><ul>
+<li>Write under mask: Selective bit modification</li>
+<li>Unaligned reads/writes: Non-word-boundary access</li>
+<li>ACDI access: Manufacturer and user spaces readable/writable</li>
+<li>Stream support: Bulk read/write via streams</li>
+</ul>
+<p><b>Address Space Range:</b></p><ul>
+<li>high_address_space: Highest numbered supported space</li>
+<li>low_address_space: Lowest numbered supported space</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__config__mem__operations.html#ga3794ee3abe9eb7e50611af14f8a856a7" title="Get Configuration Options command.">CONFIG_MEM_OPTIONS_CMD</a> </dd>
+<dd>
+<a class="el" href="group__config__options__bits.html#ga82541cca998dde6475c32819e1c380da" title="Write Under Mask command supported.">CONFIG_OPTIONS_COMMANDS_WRITE_UNDER_MASK</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a53440ea397e3f0e70d6d73a3b96211f8" name="a53440ea397e3f0e70d6d73a3b96211f8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a53440ea397e3f0e70d6d73a3b96211f8">&#9670;&#160;</a></span>write_under_mask_supported</h2>
 
@@ -127,6 +146,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Write Under Mask command supported </p>
 
 </div>
 </div>
@@ -141,6 +161,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Unaligned read operations supported </p>
 
 </div>
 </div>
@@ -155,6 +176,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Unaligned write operations supported </p>
 
 </div>
 </div>
@@ -169,6 +191,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Can read ACDI Manufacturer space </p>
 
 </div>
 </div>
@@ -183,6 +206,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Can read ACDI User space </p>
 
 </div>
 </div>
@@ -197,6 +221,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Can write ACDI User space </p>
 
 </div>
 </div>
@@ -211,6 +236,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Stream read/write operations supported </p>
 
 </div>
 </div>
@@ -225,6 +251,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Highest supported address space number </p>
 
 </div>
 </div>
@@ -239,6 +266,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Lowest supported address space number </p>
 
 </div>
 </div>
@@ -249,10 +277,11 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char description[<a class="el" href="openlcb__types_8h.html#a37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>]</td>
+          <td class="memname">char description[<a class="el" href="group__buffer__size__constants.html#ga37cd38742a23b040e5cd7f3483bef546">LEN_CONFIG_MEM_OPTIONS_DESCRIPTION</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Human-readable description </p>
 
 </div>
 </div>

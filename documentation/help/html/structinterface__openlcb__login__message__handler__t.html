@@ -91,15 +91,24 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_openlcb_login_message_handler_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for login message handler callback functions.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a07b2621b1cfa411657f6f8b68b56b187" id="r_a07b2621b1cfa411657f6f8b68b56b187"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07b2621b1cfa411657f6f8b68b56b187">extract_producer_event_state_mti</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t event_index)</td></tr>
+<tr class="memdesc:a07b2621b1cfa411657f6f8b68b56b187"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to extract Producer Event Identified MTI for a given event.  <br /></td></tr>
 <tr class="separator:a07b2621b1cfa411657f6f8b68b56b187"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10bb57ecbcd59ce495360fdfaed4e382" id="r_a10bb57ecbcd59ce495360fdfaed4e382"><td class="memItemLeft" align="right" valign="top">uint16_t(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10bb57ecbcd59ce495360fdfaed4e382">extract_consumer_event_state_mti</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t event_index)</td></tr>
+<tr class="memdesc:a10bb57ecbcd59ce495360fdfaed4e382"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to extract Consumer Event Identified MTI for a given event.  <br /></td></tr>
 <tr class="separator:a10bb57ecbcd59ce495360fdfaed4e382"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for login message handler callback functions. </p>
+<p>This structure defines the function pointers that must be provided during initialization to extract event state information from nodes.</p>
+<p>Required callbacks allow the handler to query application-specific event states and generate appropriate Producer/Consumer Identified messages with Valid, Invalid, or Unknown states. </p>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a07b2621b1cfa411657f6f8b68b56b187" name="a07b2621b1cfa411657f6f8b68b56b187"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a07b2621b1cfa411657f6f8b68b56b187">&#9670;&#160;</a></span>extract_producer_event_state_mti</h2>
 
@@ -111,6 +120,21 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to extract Producer Event Identified MTI for a given event. </p>
+<p>Returns the appropriate MTI based on the current state of the producer event. The returned MTI indicates whether the event is Valid, Invalid, or Unknown.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing the producer event </td></tr>
+    <tr><td class="paramname">event_index</td><td>Index into the node's producers.list array </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>MTI value for Producer Identified message (0x0914, 0x0915, or 0x0917)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must NOT be NULL </dd>
+<dd>
+event_index must be less than openlcb_node-&gt;producers.count</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd></dl>
 
 </div>
 </div>
@@ -125,6 +149,21 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to extract Consumer Event Identified MTI for a given event. </p>
+<p>Returns the appropriate MTI based on the current state of the consumer event. The returned MTI indicates whether the event is Valid, Invalid, or Unknown.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing the consumer event </td></tr>
+    <tr><td class="paramname">event_index</td><td>Index into the node's consumers.list array </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>MTI value for Consumer Identified message (0x04C4, 0x04C5, or 0x04C7)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must NOT be NULL </dd>
+<dd>
+event_index must be less than openlcb_node-&gt;consumers.count</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>MTI_CONSUMER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd></dl>
 
 </div>
 </div>

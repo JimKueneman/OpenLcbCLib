@@ -91,6 +91,9 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_protocol_datagram_handler_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for datagram protocol handler callbacks.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -315,7 +318,26 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a74055caf9d2702f2344bd1a5a98336a3" id="r_a74055caf9d2702f2344bd1a5a98336a3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74055caf9d2702f2344bd1a5a98336a3">memory_factory_reset</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="separator:a74055caf9d2702f2344bd1a5a98336a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for datagram protocol handler callbacks. </p>
+<p>This structure contains function pointers for all supported datagram operations. Required callbacks must be implemented; optional callbacks may be set to NULL if the functionality is not needed.</p>
+<p>The structure organizes callbacks into functional groups:</p><ul>
+<li>Resource locking (required)</li>
+<li>Memory read operations (datagram-based)</li>
+<li>Memory read operations (stream-based)</li>
+<li>Memory write operations (datagram-based)</li>
+<li>Memory write operations (stream-based)</li>
+<li>Write-under-mask operations</li>
+<li>Configuration memory commands</li>
+<li>Reply handlers (for client operations)</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Setting a callback to NULL will result in datagram rejection with ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>lock_shared_resources and unlock_shared_resources are REQUIRED</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Callbacks are invoked from datagram receive context</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__datagram__handler_8c.html#a87c419434a44020752f0fd815f1a0832" title="Initializes the Protocol Datagram Handler module.">ProtocolDatagramHandler_initialize</a> - Registers this interface </dd>
+<dd>
+<a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> - Context passed to all callbacks </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
 

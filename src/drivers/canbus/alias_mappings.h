@@ -23,6 +23,9 @@
  * @file alias_mappings.h
  * @brief Alias/NodeID mapping buffer for tracking internal node aliases
  *
+ * @author Jim Kueneman
+ * @date 17 Jan 2026
+ *
  * @details This module provides a buffer for storing and managing the mapping between
  * OpenLCB 48-bit Node IDs and their corresponding 12-bit CAN aliases. The buffer is used
  * to track which aliases are currently in use and which Node IDs they represent, enabling
@@ -189,14 +192,17 @@ extern "C"
      * @warning Returns NULL when buffer is completely full. Caller MUST check return
      *          value before dereferencing. Dereferencing NULL will cause immediate crash.
      *
-     * @warning Returns NULL if alias is invalid (0 or > 0xFFF). OpenLCB requires 12-bit
-     *          aliases in range 0x001-0xFFF. Alias 0 is reserved for empty slots.
+     * @warning Returns NULL if CAN Alias is outside valid 12-bit range (0 or > 0xFFF).
+     *          OpenLCB CAN protocol requires aliases in range 0x001-0xFFF. Zero is
+     *          reserved to mark empty buffer slots.
      *
-     * @warning Returns NULL if node_id is invalid (0 or > 0xFFFFFFFFFFFF). OpenLCB Node IDs
-     *          must be 48-bit values in range 0x000000000001-0xFFFFFFFFFFFF. Node ID 0 is reserved.
+     * @warning Returns NULL if OpenLCB Node ID exceeds 48-bit range (0 or > 0xFFFFFFFFFFFF).
+     *          Valid OpenLCB Node IDs are 48-bit values from 0x000000000001-0xFFFFFFFFFFFF.
+     *          Zero is reserved as "no valid Node ID assigned".
      *
-     * @warning If the Node ID already exists, the OLD alias is silently replaced. This
-     *          is correct behavior for alias updates but could mask programming errors.
+     * @warning If an OpenLCB Node ID already exists in the buffer, its previously registered
+     *          CAN Alias is silently replaced with the new one. This is correct behavior for
+     *          alias updates after conflict resolution but could mask programming errors.
      *
      * @attention Buffer capacity is ALIAS_MAPPING_BUFFER_DEPTH entries. Plan node count
      *            accordingly or handle registration failures gracefully.
@@ -204,8 +210,9 @@ extern "C"
      * @attention The returned pointer remains valid until the entry is unregistered or
      *            the buffer is flushed. Do not cache pointers across these operations.
      *
-     * @note Registering with alias = 0 will create an entry but it won't be findable
-     *       by AliasMappings_find_mapping_by_alias() since 0 means "empty slot".
+     * @note Registering with CAN Alias = 0 will create an entry but it won't be findable by
+     *       AliasMappings_find_mapping_by_alias() since 0 is reserved to mark empty slots.
+     *       Per OpenLCB spec, aliases must be in range 0x001-0xFFF.
      *
      * @see AliasMappings_unregister - Removes a mapping
      * @see AliasMappings_find_mapping_by_alias - Finds existing mapping by alias
@@ -262,11 +269,12 @@ extern "C"
      * @warning Returns NULL if alias not found. Caller MUST check return value before
      *          dereferencing. Dereferencing NULL will cause immediate crash.
      *
-     * @attention Alias 0 is reserved for "empty slot" and will never be found by this
-     *            function (entries with alias = 0 are skipped).
+     * @attention CAN Alias 0 is reserved to mark empty buffer slots and will never match.
+     *            Per OpenLCB CAN protocol, valid aliases are 0x001-0xFFF. Entries with
+     *            CAN Alias = 0 are skipped during search.
      *
-     * @note This is a linear search with O(n) time complexity where n = ALIAS_MAPPING_BUFFER_DEPTH.
-     *       For typical buffer sizes (8-16 entries), this is acceptably fast.
+     * @note Linear search through all entries. For typical buffer sizes (8-16 entries),
+     *       this is acceptably fast.
      *
      * @see AliasMappings_find_mapping_by_node_id - Reverse lookup by Node ID
      * @see AliasMappings_register - Adds a mapping
@@ -293,11 +301,12 @@ extern "C"
      * @warning Returns NULL if Node ID not found. Caller MUST check return value before
      *          dereferencing. Dereferencing NULL will cause immediate crash.
      *
-     * @attention Node ID 0 is reserved and will never be found by this function
-     *            (entries with node_id = 0 are considered empty).
+     * @attention OpenLCB Node ID 0 is reserved as "no valid Node ID assigned" and will
+     *            never match. Entries with Node ID = 0 are considered empty buffer slots
+     *            and are skipped during search.
      *
-     * @note This is a linear search with O(n) time complexity where n = ALIAS_MAPPING_BUFFER_DEPTH.
-     *       For typical buffer sizes (8-16 entries), this is acceptably fast.
+     * @note Linear search through all entries. For typical buffer sizes (8-16 entries),
+     *       this is acceptably fast.
      *
      * @see AliasMappings_find_mapping_by_alias - Reverse lookup by alias
      * @see AliasMappings_register - Adds a mapping

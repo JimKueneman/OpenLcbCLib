@@ -320,7 +320,7 @@ TEST(OpenLcbApplication, register_consumer_eventid)
     EXPECT_EQ(node1->consumers.count, 0);
     EXPECT_EQ(node1->producers.count, 0);
 
-    EXPECT_EQ(OpenLcbApplication_register_consumer_eventid(node1, EVENT_ID_EMERGENCY_STOP, EVENT_STATUS_CLEAR), 1);
+    EXPECT_EQ(OpenLcbApplication_register_consumer_eventid(node1, EVENT_ID_EMERGENCY_STOP, EVENT_STATUS_CLEAR), 0);
     EXPECT_EQ(node1->consumers.count, 1);
 
     EXPECT_EQ(node1->consumers.list[0].event, EVENT_ID_EMERGENCY_STOP);

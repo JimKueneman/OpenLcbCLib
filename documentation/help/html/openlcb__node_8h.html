@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>OpenLcb node structures and management functions.  
+<p>OpenLCB node allocation, enumeration, and lifecycle management.  
 <a href="#details">More...</a></p>
 
 <p><a href="openlcb__node_8h_source.html">Go to the source code of this file.</a></p>
@@ -105,37 +105,38 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for OpenLCB Node module.  <a href="structinterface__openlcb__node__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a7beb45af246c8e2bf112bfca6c11375b" id="r_a7beb45af246c8e2bf112bfca6c11375b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7beb45af246c8e2bf112bfca6c11375b">OpenLcbNode_initialize</a> (const <a class="el" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *interface)</td></tr>
-<tr class="memdesc:a7beb45af246c8e2bf112bfca6c11375b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Node module.  <br /></td></tr>
+<tr class="memdesc:a7beb45af246c8e2bf112bfca6c11375b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLCB Node management module.  <br /></td></tr>
 <tr class="separator:a7beb45af246c8e2bf112bfca6c11375b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81f9d75e152065693c1a38cb03827360" id="r_a81f9d75e152065693c1a38cb03827360"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81f9d75e152065693c1a38cb03827360">OpenLcbNode_allocate</a> (uint64_t nodeid, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters)</td></tr>
-<tr class="memdesc:a81f9d75e152065693c1a38cb03827360"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new OpenLcb node with the specified node ID and parameters.  <br /></td></tr>
-<tr class="separator:a81f9d75e152065693c1a38cb03827360"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0864e7f15b95e49cd2320217de99d403" id="r_a0864e7f15b95e49cd2320217de99d403"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a> (uint64_t node_id, const <a class="el" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters)</td></tr>
+<tr class="memdesc:a0864e7f15b95e49cd2320217de99d403"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new OpenLCB node with specified configuration.  <br /></td></tr>
+<tr class="separator:a0864e7f15b95e49cd2320217de99d403"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebb273e90eb5491704a9a42c830e5324" id="r_aebb273e90eb5491704a9a42c830e5324"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first</a> (uint8_t key)</td></tr>
-<tr class="memdesc:aebb273e90eb5491704a9a42c830e5324"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the first node in the node list for enumeration.  <br /></td></tr>
+<tr class="memdesc:aebb273e90eb5491704a9a42c830e5324"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the first node in the pool for enumeration.  <br /></td></tr>
 <tr class="separator:aebb273e90eb5491704a9a42c830e5324"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67d1e4736a41064ac7c649831848b4ca" id="r_a67d1e4736a41064ac7c649831848b4ca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next</a> (uint8_t key)</td></tr>
-<tr class="memdesc:a67d1e4736a41064ac7c649831848b4ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the next node in the node list for enumeration.  <br /></td></tr>
+<tr class="memdesc:a67d1e4736a41064ac7c649831848b4ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the next node in the enumeration sequence.  <br /></td></tr>
 <tr class="separator:a67d1e4736a41064ac7c649831848b4ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02012a27bb89bffc68816a980279949e" id="r_a02012a27bb89bffc68816a980279949e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias</a> (uint16_t alias)</td></tr>
 <tr class="memdesc:a02012a27bb89bffc68816a980279949e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its CAN alias.  <br /></td></tr>
 <tr class="separator:a02012a27bb89bffc68816a980279949e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2720f6597cb2133ef99f37b8d05868dc" id="r_a2720f6597cb2133ef99f37b8d05868dc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2720f6597cb2133ef99f37b8d05868dc">OpenLcbNode_find_by_node_id</a> (uint64_t nodeid)</td></tr>
-<tr class="memdesc:a2720f6597cb2133ef99f37b8d05868dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its 64-bit node ID.  <br /></td></tr>
-<tr class="separator:a2720f6597cb2133ef99f37b8d05868dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45f1132ffd48a15bbae0f0be95a7aa71" id="r_a45f1132ffd48a15bbae0f0be95a7aa71"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45f1132ffd48a15bbae0f0be95a7aa71">OpenLcbNode_find_by_node_id</a> (uint64_t node_id)</td></tr>
+<tr class="memdesc:a45f1132ffd48a15bbae0f0be95a7aa71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its 64-bit OpenLCB node ID.  <br /></td></tr>
+<tr class="separator:a45f1132ffd48a15bbae0f0be95a7aa71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68c1a3c6196e96d3f17b68023607d163" id="r_a68c1a3c6196e96d3f17b68023607d163"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68c1a3c6196e96d3f17b68023607d163">OpenLcbNode_reset_state</a> (void)</td></tr>
-<tr class="memdesc:a68c1a3c6196e96d3f17b68023607d163"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the state of all nodes to initial conditions.  <br /></td></tr>
+<tr class="memdesc:a68c1a3c6196e96d3f17b68023607d163"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets all nodes to initial uninitialized state.  <br /></td></tr>
 <tr class="separator:a68c1a3c6196e96d3f17b68023607d163"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad69a221293d91383b8f8214ca9a38b40" id="r_ad69a221293d91383b8f8214ca9a38b40"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad69a221293d91383b8f8214ca9a38b40">OpenLcbNode_100ms_timer_tick</a> (void)</td></tr>
 <tr class="memdesc:ad69a221293d91383b8f8214ca9a38b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">100ms timer tick handler for all nodes  <br /></td></tr>
 <tr class="separator:ad69a221293d91383b8f8214ca9a38b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>OpenLcb node structures and management functions. </p>
+<div class="textblock"><p>OpenLCB node allocation, enumeration, and lifecycle management. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2024, Jim Kueneman All rights reserved.</dd></dl>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
 <ul>
@@ -169,19 +170,51 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the OpenLcb Node module. </p>
+<p>Initializes the OpenLCB Node management module. </p>
+<p>Sets up the node pool and enumeration system for use. This function clears all node structures and prepares the system for node allocation. Must be called once during application startup before any node operations.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Required before <a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate()</a> can be used</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface</td><td>Pointer to the interface structure containing required callbacks </td></tr>
+    <tr><td class="paramname">interface</td><td>Pointer to interface structure containing optional callbacks, or NULL if no callbacks needed</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call before any other OpenLcbNode functions</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate</a> - Allocates nodes after initialization </dd>
+<dd>
+<a class="el" href="structinterface__openlcb__node__t.html" title="Dependency injection interface for OpenLCB Node module.">interface_openlcb_node_t</a> - Structure definition for callbacks</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Store interface pointer (may be NULL if no callbacks needed)</li>
+<li>Clear all node structures in the pool by calling _clear_node()</li>
+<li>Reset node count to zero</li>
+<li>Initialize enumeration index array to zero for all keys</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called once during application initialization</li>
+<li>Required before <a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate()</a> can be used</li>
+</ul>
+<pre class="fragment">* @param interface Pointer to interface structure containing optional callbacks,
+*                  or NULL if no callbacks needed
+* </pre><dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call before any other OpenLcbNode functions</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate</a> - Allocates nodes after initialization </dd>
+<dd>
+<a class="el" href="structinterface__openlcb__node__t.html" title="Dependency injection interface for OpenLCB Node module.">interface_openlcb_node_t</a> - Structure definition for callbacks </dd>
+<dd>
+_clear_node - Internal function used to clear each node </dd></dl>
 
 </div>
 </div>
-<a id="a81f9d75e152065693c1a38cb03827360" name="a81f9d75e152065693c1a38cb03827360"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81f9d75e152065693c1a38cb03827360">&#9670;&#160;</a></span>OpenLcbNode_allocate()</h2>
+<a id="a0864e7f15b95e49cd2320217de99d403" name="a0864e7f15b95e49cd2320217de99d403"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0864e7f15b95e49cd2320217de99d403">&#9670;&#160;</a></span>OpenLcbNode_allocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -192,7 +225,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> * OpenLcbNode_allocate </td>
           <td>(</td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>nodeid</em></span>, </td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>node_id</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -207,15 +240,73 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Allocates a new OpenLcb node with the specified node ID and parameters. </p>
+<p>Allocates a new OpenLCB node with specified configuration. </p>
+<p>Searches the node pool for an available slot and initializes a new node with the given 64-bit node ID and configuration parameters. The node is returned ready for use with auto-generated event IDs based on the node ID. Returns NULL if the node pool is exhausted.</p>
+<p>Use cases:</p><ul>
+<li>Creating virtual nodes for the application</li>
+<li>Setting up nodes with specific event producer/consumer configurations</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nodeid</td><td>64-bit unique node ID </td></tr>
-    <tr><td class="paramname">node_parameters</td><td>Pointer to node configuration parameters </td></tr>
+    <tr><td class="paramname">node_id</td><td>64-bit unique OpenLCB node identifier for this node </td></tr>
+    <tr><td class="paramname">node_parameters</td><td>Pointer to configuration structure defining node capabilities (producer count, consumer count, etc.)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the allocated node or NULL if allocation fails </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to allocated and initialized node structure, or NULL if pool is full</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when node pool exhausted - caller MUST check for NULL </dd>
+<dd>
+node_parameters pointer is stored, not copied - must remain valid </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before use </dd>
+<dd>
+Each node must have a unique node_id</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a7beb45af246c8e2bf112bfca6c11375b" title="Initializes the OpenLCB Node management module.">OpenLcbNode_initialize</a> - Must be called first </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#a45f1132ffd48a15bbae0f0be95a7aa71" title="Finds a node by its 64-bit OpenLCB node ID.">OpenLcbNode_find_by_node_id</a> - Finds previously allocated nodes </dd>
+<dd>
+<a class="el" href="structnode__parameters__t.html" title="Complete node configuration and parameters.">node_parameters_t</a> - Configuration structure definition</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Search through node pool for first unallocated slot</li>
+<li>When unallocated slot found:<ul>
+<li>Clear node structure via _clear_node()</li>
+<li>Store node_parameters pointer (not copied)</li>
+<li>Store node_id</li>
+<li>Store array index in node structure</li>
+<li>Generate auto-created event IDs via _generate_event_ids()</li>
+<li>Increment global node count</li>
+<li>Mark node as allocated (last step for thread safety)</li>
+<li>Return pointer to allocated node</li>
+</ul>
+</li>
+<li>If no free slots found, return NULL</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Creating virtual nodes for the application</li>
+<li>Setting up nodes with specific event producer/consumer configurations</li>
+</ul>
+<pre class="fragment">* @param node_id 64-bit unique OpenLCB node identifier for this node
+* @param node_parameters Pointer to configuration structure defining node capabilities
+*                        (producer count, consumer count, etc.)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to allocated and initialized node structure, or NULL if pool is full</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when node pool exhausted - caller MUST check for NULL </dd>
+<dd>
+Pointer to node_parameters is stored, not copied - must remain valid </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before use </dd>
+<dd>
+Each node must have a unique node_id</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a7beb45af246c8e2bf112bfca6c11375b" title="Initializes the OpenLCB Node management module.">OpenLcbNode_initialize</a> - Must be called first </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#a45f1132ffd48a15bbae0f0be95a7aa71" title="Finds a node by its 64-bit OpenLCB node ID.">OpenLcbNode_find_by_node_id</a> - Finds previously allocated nodes </dd>
+<dd>
+<a class="el" href="structnode__parameters__t.html" title="Complete node configuration and parameters.">node_parameters_t</a> - Configuration structure definition </dd>
+<dd>
+_clear_node - Internal function to clear node structure </dd>
+<dd>
+_generate_event_ids - Internal function to generate event IDs </dd></dl>
 
 </div>
 </div>
@@ -242,14 +333,49 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets the first node in the node list for enumeration. </p>
+<p>Gets the first node in the pool for enumeration. </p>
+<p>Returns the first allocated node and initializes the enumeration state for the specified key. Supports multiple simultaneous enumerators by using different key values (0 to MAX_NODE_ENUM_KEY_VALUES-1). Each enumerator maintains independent state, allowing different parts of the system to enumerate nodes without interfering.</p>
+<p>Use cases:</p><ul>
+<li>Beginning iteration through all allocated nodes</li>
+<li>Main state machine enumeration (typically key=0)</li>
+<li>Login state machine enumeration (typically key=1)</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">key</td><td>Enumeration key to identify which enumerator is requesting </td></tr>
+    <tr><td class="paramname">key</td><td>Enumeration key identifying which enumerator is requesting (0 to MAX_NODE_ENUM_KEY_VALUES-1)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the first node or NULL if no nodes exist </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the first allocated node, or NULL if no nodes exist or key invalid</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if key &gt;= MAX_NODE_ENUM_KEY_VALUES</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Use unique key values for independent simultaneous enumerations </dd>
+<dd>
+Must use same key value for get_first and subsequent get_next calls</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a67d1e4736a41064ac7c649831848b4ca" title="Gets the next node in the enumeration sequence.">OpenLcbNode_get_next</a> - Gets subsequent nodes in enumeration </dd>
+<dd>
+<a class="el" href="group__node__enum__keys.html#ga0d1bc491fc184c518796b2cd5ccfd532" title="Total number of enumeration keys (user + internal)">MAX_NODE_ENUM_KEY_VALUES</a> - Maximum number of simultaneous enumerators</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Validate that key is within valid range (0 to MAX_NODE_ENUM_KEY_VALUES-1)</li>
+<li>If key invalid, return NULL</li>
+<li>Reset enumeration index for this key to 0</li>
+<li>Check if any nodes are allocated (count &gt; 0)</li>
+<li>If no nodes, return NULL</li>
+<li>Return pointer to first node in pool</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Beginning iteration through all allocated nodes</li>
+<li>Main state machine enumeration (typically key=0)</li>
+<li>Login state machine enumeration (typically key=1)</li>
+</ul>
+<pre class="fragment">* @param key Enumeration key identifying which enumerator is requesting (0 to MAX_NODE_ENUM_KEY_VALUES-1)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the first allocated node, or NULL if no nodes exist or key invalid</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if key &gt;= MAX_NODE_ENUM_KEY_VALUES</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Use unique key values for independent simultaneous enumerations </dd>
+<dd>
+Must use same key value for get_first and subsequent get_next calls</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a67d1e4736a41064ac7c649831848b4ca" title="Gets the next node in the enumeration sequence.">OpenLcbNode_get_next</a> - Gets subsequent nodes in enumeration </dd>
+<dd>
+<a class="el" href="group__node__enum__keys.html#ga0d1bc491fc184c518796b2cd5ccfd532" title="Total number of enumeration keys (user + internal)">MAX_NODE_ENUM_KEY_VALUES</a> - Maximum number of simultaneous enumerators </dd></dl>
 
 </div>
 </div>
@@ -276,14 +402,39 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets the next node in the node list for enumeration. </p>
+<p>Gets the next node in the enumeration sequence. </p>
+<p>Advances the enumeration state for the specified key and returns the next allocated node. Returns NULL when the end of the node list is reached. Must be called with the same key value used in the corresponding get_first call.</p>
+<p>Use cases:</p><ul>
+<li>Continuing iteration through allocated nodes</li>
+<li>Processing all nodes in the pool</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">key</td><td>Enumeration key to identify which enumerator is requesting </td></tr>
+    <tr><td class="paramname">key</td><td>Enumeration key identifying which enumerator is requesting (same as get_first)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the next node or NULL if at end of list </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the next allocated node, or NULL if at end of list or key invalid</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if key &gt;= MAX_NODE_ENUM_KEY_VALUES</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Use same key value as the corresponding get_first call</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#aebb273e90eb5491704a9a42c830e5324" title="Gets the first node in the pool for enumeration.">OpenLcbNode_get_first</a> - Initializes enumeration</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Validate that key is within valid range (0 to MAX_NODE_ENUM_KEY_VALUES-1)</li>
+<li>If key invalid, return NULL</li>
+<li>Increment enumeration index for this key by 1</li>
+<li>Check if index has reached or exceeded node count</li>
+<li>If at end of list, return NULL</li>
+<li>Return pointer to node at current index position</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Continuing iteration through allocated nodes</li>
+<li>Processing all nodes in the pool</li>
+</ul>
+<pre class="fragment">* @param key Enumeration key identifying which enumerator is requesting (same as get_first)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to the next allocated node, or NULL if at end of list or key invalid</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if key &gt;= MAX_NODE_ENUM_KEY_VALUES</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Use same key value as the corresponding get_first call</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#aebb273e90eb5491704a9a42c830e5324" title="Gets the first node in the pool for enumeration.">OpenLcbNode_get_first</a> - Initializes enumeration </dd></dl>
 
 </div>
 </div>
@@ -311,18 +462,46 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Finds a node by its CAN alias. </p>
+<p>Searches the allocated node pool for a node with the specified CAN alias. Uses linear search through all allocated nodes. Returns the first matching node or NULL if no node with that alias exists.</p>
+<p>Use cases:</p><ul>
+<li>Resolving incoming CAN messages to their source node</li>
+<li>Mapping CAN alias to full node structure</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alias</td><td>CAN alias to search for </td></tr>
+    <tr><td class="paramname">alias</td><td>12-bit CAN alias to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the node with matching alias or NULL if not found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to node with matching alias, or NULL if not found</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all allocated nodes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a45f1132ffd48a15bbae0f0be95a7aa71" title="Finds a node by its 64-bit OpenLCB node ID.">OpenLcbNode_find_by_node_id</a> - Finds node by 64-bit ID instead </dd>
+<dd>
+<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node structure containing alias field</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all allocated nodes (0 to count-1)</li>
+<li>For each node:<ul>
+<li>Compare node alias with search alias</li>
+<li>If match found, return pointer to node</li>
+</ul>
+</li>
+<li>If no match found after checking all nodes, return NULL</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Resolving incoming CAN messages to their source node</li>
+<li>Mapping CAN alias to full node structure</li>
+</ul>
+<pre class="fragment">* @param alias 12-bit CAN alias to search for
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to node with matching alias, or NULL if not found</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all allocated nodes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a45f1132ffd48a15bbae0f0be95a7aa71" title="Finds a node by its 64-bit OpenLCB node ID.">OpenLcbNode_find_by_node_id</a> - Finds node by 64-bit ID instead </dd>
+<dd>
+<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node structure containing alias field </dd></dl>
 
 </div>
 </div>
-<a id="a2720f6597cb2133ef99f37b8d05868dc" name="a2720f6597cb2133ef99f37b8d05868dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2720f6597cb2133ef99f37b8d05868dc">&#9670;&#160;</a></span>OpenLcbNode_find_by_node_id()</h2>
+<a id="a45f1132ffd48a15bbae0f0be95a7aa71" name="a45f1132ffd48a15bbae0f0be95a7aa71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45f1132ffd48a15bbae0f0be95a7aa71">&#9670;&#160;</a></span>OpenLcbNode_find_by_node_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -333,7 +512,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> * OpenLcbNode_find_by_node_id </td>
           <td>(</td>
-          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>nodeid</em></span></td><td>)</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>node_id</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -344,14 +523,42 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Finds a node by its 64-bit node ID. </p>
+<p>Finds a node by its 64-bit OpenLCB node ID. </p>
+<p>Searches the allocated node pool for a node with the specified 64-bit unique identifier. Uses linear search through all allocated nodes. Returns the first matching node or NULL if no node with that ID exists.</p>
+<p>Use cases:</p><ul>
+<li>Resolving full OpenLCB messages to their source node</li>
+<li>Looking up node by globally unique identifier</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nodeid</td><td>Node ID to search for </td></tr>
+    <tr><td class="paramname">node_id</td><td>64-bit OpenLCB node identifier to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the node with matching node ID or NULL if not found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to node with matching node ID, or NULL if not found</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all allocated nodes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a02012a27bb89bffc68816a980279949e" title="Finds a node by its CAN alias.">OpenLcbNode_find_by_alias</a> - Finds node by CAN alias instead </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate</a> - Creates nodes with specified node_id</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all allocated nodes (0 to count-1)</li>
+<li>For each node:<ul>
+<li>Compare node ID with search node_id</li>
+<li>If match found, return pointer to node</li>
+</ul>
+</li>
+<li>If no match found after checking all nodes, return NULL</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Resolving full OpenLCB messages to their source node</li>
+<li>Looking up node by globally unique identifier</li>
+</ul>
+<pre class="fragment">* @param node_id 64-bit OpenLCB node identifier to search for
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to node with matching node ID, or NULL if not found</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Linear search through all allocated nodes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a02012a27bb89bffc68816a980279949e" title="Finds a node by its CAN alias.">OpenLcbNode_find_by_alias</a> - Finds node by CAN alias instead </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#a0864e7f15b95e49cd2320217de99d403" title="Allocates a new OpenLCB node with specified configuration.">OpenLcbNode_allocate</a> - Creates nodes with specified node_id </dd></dl>
 
 </div>
 </div>
@@ -378,14 +585,40 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Resets the state of all nodes to initial conditions. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<p>Resets all nodes to initial uninitialized state. </p>
+<p>Resets the runtime state of all allocated nodes to their initial conditions. Sets run_state to RUNSTATE_INIT, clears permitted and initialized flags. Does not deallocate nodes or clear their configuration. Used when restarting the network login sequence.</p>
+<p>Use cases:</p><ul>
+<li>Restarting network login after error</li>
+<li>Resetting all nodes to power-up state</li>
+<li>Recovering from network disconnect</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Does not deallocate nodes or free memory </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__node__login__states.html#ga78bb04ebef2f0ee7fe6f15a27a8f8be0" title="General boot initialization - sets Node ID as initial seed.">RUNSTATE_INIT</a> - Initial run state value </dd>
+<dd>
+<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node structure containing state fields</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all allocated nodes (0 to count-1)</li>
+<li>For each node:<ul>
+<li>Set run_state to RUNSTATE_INIT</li>
+<li>Clear permitted flag</li>
+<li>Clear initialized flag</li>
+</ul>
+</li>
+</ol>
+<p>Does not deallocate nodes or clear configuration data. Used when restarting the network login sequence after error or disconnect.</p>
+<p>Use cases:</p><ul>
+<li>Restarting network login after error</li>
+<li>Resetting all nodes to power-up state</li>
+<li>Recovering from network disconnect</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Does not deallocate nodes or free memory </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__node__login__states.html#ga78bb04ebef2f0ee7fe6f15a27a8f8be0" title="General boot initialization - sets Node ID as initial seed.">RUNSTATE_INIT</a> - Initial run state value </dd>
+<dd>
+<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node structure containing state fields </dd></dl>
 
 </div>
 </div>
@@ -413,13 +646,36 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>100ms timer tick handler for all nodes </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<p>Increments the timer tick counter for each allocated node and invokes the optional application callback if provided. Should be called every 100ms by the system timer. The timer tick counters are used for protocol timing requirements.</p>
+<p>Use cases:</p><ul>
+<li>Called by system timer every 100ms</li>
+<li>Provides timing for protocol state machines</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Must be called every 100ms for proper protocol timing</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__node__t.html" title="Dependency injection interface for OpenLCB Node module.">interface_openlcb_node_t</a> - Contains optional callback </dd>
+<dd>
+<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node structure containing timerticks field</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Iterate through all allocated nodes (0 to count-1)</li>
+<li>For each node:<ul>
+<li>Increment timerticks counter by 1</li>
+</ul>
+</li>
+<li>If interface callback is registered:<ul>
+<li>Call interface-&gt;on_100ms_timer_tick()</li>
+</ul>
+</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called by system timer every 100ms</li>
+<li>Provides timing for protocol state machines</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Must be called every 100ms for proper protocol timing</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__node__t.html" title="Dependency injection interface for OpenLCB Node module.">interface_openlcb_node_t</a> - Contains optional callback </dd>
+<dd>
+<a class="el" href="structopenlcb__node__t.html" title="OpenLCB virtual node structure.">openlcb_node_t</a> - Node structure containing timerticks field </dd></dl>
 
 </div>
 </div>

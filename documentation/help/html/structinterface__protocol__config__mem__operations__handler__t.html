@@ -91,43 +91,72 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">interface_protocol_config_mem_operations_handler_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Interface structure for configuration memory operations protocol handler.  
+ <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:acbb0b05b4b90f1f8851f976ed278089d" id="r_acbb0b05b4b90f1f8851f976ed278089d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbb0b05b4b90f1f8851f976ed278089d">load_datagram_received_ok_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t reply_pending_time_in_seconds)</td></tr>
+<tr class="memdesc:acbb0b05b4b90f1f8851f976ed278089d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load a datagram received OK acknowledgment message.  <br /></td></tr>
 <tr class="separator:acbb0b05b4b90f1f8851f976ed278089d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05137d26998c7eef34c0ddc3debb621a" id="r_a05137d26998c7eef34c0ddc3debb621a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05137d26998c7eef34c0ddc3debb621a">load_datagram_received_rejected_message</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, uint16_t error_code)</td></tr>
+<tr class="memdesc:a05137d26998c7eef34c0ddc3debb621a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to load a datagram received rejected acknowledgment message.  <br /></td></tr>
 <tr class="separator:a05137d26998c7eef34c0ddc3debb621a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98881f1f9cce638ff8d7b51967a49877" id="r_a98881f1f9cce638ff8d7b51967a49877"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98881f1f9cce638ff8d7b51967a49877">operations_request_options_cmd</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a98881f1f9cce638ff8d7b51967a49877" id="r_a98881f1f9cce638ff8d7b51967a49877"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98881f1f9cce638ff8d7b51967a49877">operations_request_options_cmd</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a98881f1f9cce638ff8d7b51967a49877"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Get Configuration Options command request.  <br /></td></tr>
 <tr class="separator:a98881f1f9cce638ff8d7b51967a49877"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85f012c55072c87135354580efff57ee" id="r_a85f012c55072c87135354580efff57ee"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85f012c55072c87135354580efff57ee">operations_request_options_cmd_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a85f012c55072c87135354580efff57ee" id="r_a85f012c55072c87135354580efff57ee"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85f012c55072c87135354580efff57ee">operations_request_options_cmd_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a85f012c55072c87135354580efff57ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Get Configuration Options reply message.  <br /></td></tr>
 <tr class="separator:a85f012c55072c87135354580efff57ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fb431fafb3d78e924e8439207abe5ee" id="r_a3fb431fafb3d78e924e8439207abe5ee"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3fb431fafb3d78e924e8439207abe5ee">operations_request_get_address_space_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a3fb431fafb3d78e924e8439207abe5ee" id="r_a3fb431fafb3d78e924e8439207abe5ee"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3fb431fafb3d78e924e8439207abe5ee">operations_request_get_address_space_info</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a3fb431fafb3d78e924e8439207abe5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Get Address Space Information command request.  <br /></td></tr>
 <tr class="separator:a3fb431fafb3d78e924e8439207abe5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88a139eae746ba6d6791521eda8a19a7" id="r_a88a139eae746ba6d6791521eda8a19a7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88a139eae746ba6d6791521eda8a19a7">operations_request_get_address_space_info_reply_present</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a88a139eae746ba6d6791521eda8a19a7" id="r_a88a139eae746ba6d6791521eda8a19a7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88a139eae746ba6d6791521eda8a19a7">operations_request_get_address_space_info_reply_present</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a88a139eae746ba6d6791521eda8a19a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process an Address Space Information Present reply.  <br /></td></tr>
 <tr class="separator:a88a139eae746ba6d6791521eda8a19a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3988c2f565b1b7e56e30b278d799760f" id="r_a3988c2f565b1b7e56e30b278d799760f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3988c2f565b1b7e56e30b278d799760f">operations_request_get_address_space_info_reply_not_present</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a3988c2f565b1b7e56e30b278d799760f" id="r_a3988c2f565b1b7e56e30b278d799760f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3988c2f565b1b7e56e30b278d799760f">operations_request_get_address_space_info_reply_not_present</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a3988c2f565b1b7e56e30b278d799760f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process an Address Space Information Not Present reply.  <br /></td></tr>
 <tr class="separator:a3988c2f565b1b7e56e30b278d799760f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b3009d97376b4d65f0ceb5001edcede" id="r_a6b3009d97376b4d65f0ceb5001edcede"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b3009d97376b4d65f0ceb5001edcede">operations_request_reserve_lock</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a6b3009d97376b4d65f0ceb5001edcede" id="r_a6b3009d97376b4d65f0ceb5001edcede"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b3009d97376b4d65f0ceb5001edcede">operations_request_reserve_lock</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a6b3009d97376b4d65f0ceb5001edcede"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Lock/Reserve command request.  <br /></td></tr>
 <tr class="separator:a6b3009d97376b4d65f0ceb5001edcede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a966317983cd96c49661444614236ec51" id="r_a966317983cd96c49661444614236ec51"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a966317983cd96c49661444614236ec51">operations_request_reserve_lock_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a966317983cd96c49661444614236ec51" id="r_a966317983cd96c49661444614236ec51"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a966317983cd96c49661444614236ec51">operations_request_reserve_lock_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a966317983cd96c49661444614236ec51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Lock/Reserve reply message.  <br /></td></tr>
 <tr class="separator:a966317983cd96c49661444614236ec51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9898fd9c371eb43efebf0eee1462a02d" id="r_a9898fd9c371eb43efebf0eee1462a02d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9898fd9c371eb43efebf0eee1462a02d">operations_request_get_unique_id</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a9898fd9c371eb43efebf0eee1462a02d" id="r_a9898fd9c371eb43efebf0eee1462a02d"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9898fd9c371eb43efebf0eee1462a02d">operations_request_get_unique_id</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a9898fd9c371eb43efebf0eee1462a02d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Get Unique ID command request.  <br /></td></tr>
 <tr class="separator:a9898fd9c371eb43efebf0eee1462a02d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9031d677b11fedb301c9ab120a58f3b8" id="r_a9031d677b11fedb301c9ab120a58f3b8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9031d677b11fedb301c9ab120a58f3b8">operations_request_get_unique_id_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a9031d677b11fedb301c9ab120a58f3b8" id="r_a9031d677b11fedb301c9ab120a58f3b8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9031d677b11fedb301c9ab120a58f3b8">operations_request_get_unique_id_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a9031d677b11fedb301c9ab120a58f3b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Get Unique ID reply message.  <br /></td></tr>
 <tr class="separator:a9031d677b11fedb301c9ab120a58f3b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9d251619e06d250a8a8d2cd5714b0cb" id="r_aa9d251619e06d250a8a8d2cd5714b0cb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9d251619e06d250a8a8d2cd5714b0cb">operations_request_freeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:aa9d251619e06d250a8a8d2cd5714b0cb" id="r_aa9d251619e06d250a8a8d2cd5714b0cb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9d251619e06d250a8a8d2cd5714b0cb">operations_request_freeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:aa9d251619e06d250a8a8d2cd5714b0cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Freeze command request.  <br /></td></tr>
 <tr class="separator:aa9d251619e06d250a8a8d2cd5714b0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a885ea0d913c2e7cce681f3bd5aa35a4b" id="r_a885ea0d913c2e7cce681f3bd5aa35a4b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a885ea0d913c2e7cce681f3bd5aa35a4b">operations_request_unfreeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a885ea0d913c2e7cce681f3bd5aa35a4b" id="r_a885ea0d913c2e7cce681f3bd5aa35a4b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a885ea0d913c2e7cce681f3bd5aa35a4b">operations_request_unfreeze</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a885ea0d913c2e7cce681f3bd5aa35a4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process an Unfreeze command request.  <br /></td></tr>
 <tr class="separator:a885ea0d913c2e7cce681f3bd5aa35a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5ee4b72a10d50c7f04a816aae20b8b3" id="r_ad5ee4b72a10d50c7f04a816aae20b8b3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5ee4b72a10d50c7f04a816aae20b8b3">operations_request_update_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:ad5ee4b72a10d50c7f04a816aae20b8b3" id="r_ad5ee4b72a10d50c7f04a816aae20b8b3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5ee4b72a10d50c7f04a816aae20b8b3">operations_request_update_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:ad5ee4b72a10d50c7f04a816aae20b8b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process an Update Complete command request.  <br /></td></tr>
 <tr class="separator:ad5ee4b72a10d50c7f04a816aae20b8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6f4cb5cb298e0df3cd2b36c7d0dbee0" id="r_ac6f4cb5cb298e0df3cd2b36c7d0dbee0"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6f4cb5cb298e0df3cd2b36c7d0dbee0">operations_request_reset_reboot</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:ac6f4cb5cb298e0df3cd2b36c7d0dbee0" id="r_ac6f4cb5cb298e0df3cd2b36c7d0dbee0"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6f4cb5cb298e0df3cd2b36c7d0dbee0">operations_request_reset_reboot</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:ac6f4cb5cb298e0df3cd2b36c7d0dbee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Reset/Reboot command request.  <br /></td></tr>
 <tr class="separator:ac6f4cb5cb298e0df3cd2b36c7d0dbee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b90937efc54e3907c97a8ae6b188009" id="r_a5b90937efc54e3907c97a8ae6b188009"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b90937efc54e3907c97a8ae6b188009">operations_request_factory_reset</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memitem:a5b90937efc54e3907c97a8ae6b188009" id="r_a5b90937efc54e3907c97a8ae6b188009"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b90937efc54e3907c97a8ae6b188009">operations_request_factory_reset</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td></tr>
+<tr class="memdesc:a5b90937efc54e3907c97a8ae6b188009"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback to process a Factory Reset command request.  <br /></td></tr>
 <tr class="separator:a5b90937efc54e3907c97a8ae6b188009"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Interface structure for configuration memory operations protocol handler. </p>
+<p>This structure defines the callback interface for handling OpenLCB Configuration Memory Operations protocol messages. It contains function pointers for datagram acknowledgment and various configuration memory operation commands as defined in the OpenLCB Memory Configuration Protocol specification.</p>
+<p>The interface allows the application layer to customize behavior for different configuration operations while the protocol handler manages the message formatting and state machine logic.</p>
+<dl class="section note"><dt>Note</dt><dd>Required callbacks must be set before calling ProtocolConfigMemOperationsHandler_initialize </dd>
+<dd>
+Optional callbacks can be NULL if the corresponding functionality is not needed</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__config__mem__operations__handler_8c.html#a369608a6899d5ca9bd89fedef6a6c294" title="Initializes the configuration memory operations protocol handler.">ProtocolConfigMemOperationsHandler_initialize</a> </dd>
+<dd>
+<a class="el" href="structconfig__mem__operations__request__info__t.html" title="Configuration memory operations request information.">config_mem_operations_request_info_t</a> </dd></dl>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="acbb0b05b4b90f1f8851f976ed278089d" name="acbb0b05b4b90f1f8851f976ed278089d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acbb0b05b4b90f1f8851f976ed278089d">&#9670;&#160;</a></span>load_datagram_received_ok_message</h2>
 
@@ -139,6 +168,10 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Callback to load a datagram received OK acknowledgment message. </p>
+<p>This required callback formats a positive datagram acknowledgment message indicating the datagram was successfully received and will be processed. The reply_pending_time parameter indicates when a response message will be sent.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -154,6 +187,10 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Callback to load a datagram received rejected acknowledgment message. </p>
+<p>This required callback formats a negative datagram acknowledgment message indicating the datagram was rejected. The error_code specifies the reason for rejection per OpenLCB error code definitions.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
+
 </div>
 </div>
 <a id="a98881f1f9cce638ff8d7b51967a49877" name="a98881f1f9cce638ff8d7b51967a49877"></a>
@@ -163,10 +200,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_options_cmd) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_options_cmd) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Get Configuration Options command request. </p>
+<p>Handles incoming requests for configuration options information, which describes the capabilities and features supported by this node's configuration memory implementation.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd></dl>
 
 </div>
 </div>
@@ -177,10 +218,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_options_cmd_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_options_cmd_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Get Configuration Options reply message. </p>
+<p>Handles incoming replies to configuration options queries, typically used when this node is acting as a configuration tool.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
 
 </div>
 </div>
@@ -191,10 +236,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_get_address_space_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_get_address_space_info) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Get Address Space Information command request. </p>
+<p>Handles incoming requests for information about a specific address space, including size, flags, and description.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if address space queries are not supported </dd></dl>
 
 </div>
 </div>
@@ -205,10 +254,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_get_address_space_info_reply_present) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_get_address_space_info_reply_present) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process an Address Space Information Present reply. </p>
+<p>Handles incoming replies indicating the requested address space exists and contains information about its characteristics.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
 
 </div>
 </div>
@@ -219,10 +272,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_get_address_space_info_reply_not_present) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_get_address_space_info_reply_not_present) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process an Address Space Information Not Present reply. </p>
+<p>Handles incoming replies indicating the requested address space does not exist on the target node.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
 
 </div>
 </div>
@@ -233,10 +290,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_reserve_lock) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_reserve_lock) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Lock/Reserve command request. </p>
+<p>Handles incoming requests to lock or reserve the node's configuration for exclusive access during configuration operations.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if locking is not supported </dd></dl>
 
 </div>
 </div>
@@ -247,10 +308,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_reserve_lock_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_reserve_lock_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Lock/Reserve reply message. </p>
+<p>Handles incoming replies to lock/reserve requests, indicating success or failure and the current lock holder.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
 
 </div>
 </div>
@@ -261,10 +326,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_get_unique_id) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_get_unique_id) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Get Unique ID command request. </p>
+<p>Handles incoming requests for the node's unique event ID, used in the configuration protocol.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if unique ID queries are not supported </dd></dl>
 
 </div>
 </div>
@@ -275,10 +344,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_get_unique_id_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_get_unique_id_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Get Unique ID reply message. </p>
+<p>Handles incoming replies containing a node's unique event ID.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this node does not initiate configuration operations </dd></dl>
 
 </div>
 </div>
@@ -289,10 +362,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_freeze) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_freeze) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Freeze command request. </p>
+<p>Handles incoming requests to freeze (suspend) operations in a specific address space during configuration updates.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if freeze operations are not supported </dd></dl>
 
 </div>
 </div>
@@ -303,10 +380,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_unfreeze) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_unfreeze) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process an Unfreeze command request. </p>
+<p>Handles incoming requests to unfreeze (resume) operations in a specific address space after configuration updates are complete.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if freeze operations are not supported </dd></dl>
 
 </div>
 </div>
@@ -317,10 +398,14 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_update_complete) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_update_complete) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process an Update Complete command request. </p>
+<p>Handles incoming notifications that configuration updates are complete and the node should apply changes or reset as appropriate.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if update complete notifications are not supported </dd></dl>
 
 </div>
 </div>
@@ -331,10 +416,15 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_reset_reboot) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_reset_reboot) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Reset/Reboot command request. </p>
+<p>Handles incoming requests to reset or reboot the node, typically after configuration changes.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if reset operations are not supported </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Implementation must handle safe shutdown and restart </dd></dl>
 
 </div>
 </div>
@@ -345,10 +435,15 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* operations_request_factory_reset) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a117d2b090562ba06244209f946bd26c8">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
+          <td class="memname">void(* operations_request_factory_reset) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__operations__request__info__t.html">config_mem_operations_request_info_t</a> *config_mem_operations_request_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Optional callback to process a Factory Reset command request. </p>
+<p>Handles incoming requests to reset the node to factory default configuration, erasing all user settings.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if factory reset is not supported </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Implementation must handle safe restoration of factory defaults </dd></dl>
 
 </div>
 </div>

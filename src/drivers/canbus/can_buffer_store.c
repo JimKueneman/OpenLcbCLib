@@ -44,8 +44,31 @@
 #include "../../openlcb/openlcb_types.h"
 
 
+    /**
+     * @brief Pre-allocated array of CAN message buffers
+     *
+     * @details Static storage for all CAN message buffers. Size is determined by
+     * USER_DEFINED_CAN_MSG_BUFFER_DEPTH. Each buffer contains an 8-byte payload
+     * plus metadata (identifier, payload_count, state flags).
+     */
 static can_msg_array_t _can_buffer_store;
+
+    /**
+     * @brief Current number of allocated buffers
+     *
+     * @details Tracks how many buffers are currently allocated. Incremented by
+     * CanBufferStore_allocate_buffer() and decremented by CanBufferStore_free_buffer().
+     * Used for monitoring buffer usage and detecting leaks.
+     */
 static uint16_t _can_buffer_store_message_allocated;
+
+    /**
+     * @brief Peak number of allocated buffers
+     *
+     * @details Records the maximum number of buffers allocated simultaneously since
+     * initialization or last reset. Used for sizing analysis during stress testing.
+     * Reset by CanBufferStore_clear_max_allocated().
+     */
 static uint16_t _can_buffer_store_message_max_allocated;
 
 void CanBufferStore_initialize(void) {
@@ -69,7 +92,7 @@ void CanBufferStore_initialize(void) {
 
 }
 
-can_msg_t* CanBufferStore_allocate_buffer(void) {
+can_msg_t *CanBufferStore_allocate_buffer(void) {
 
     for (int i = 0; i < USER_DEFINED_CAN_MSG_BUFFER_DEPTH; i++) {
 
@@ -97,7 +120,7 @@ can_msg_t* CanBufferStore_allocate_buffer(void) {
 
 }
 
-void CanBufferStore_free_buffer(can_msg_t* msg) {
+void CanBufferStore_free_buffer(can_msg_t *msg) {
 
     if (!msg) {
 
