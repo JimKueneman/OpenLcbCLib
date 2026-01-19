@@ -107,40 +107,40 @@ Functions</h2></td></tr>
 <tr class="memdesc:aaa929fa9f3796aa554fb29771116b864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Buffer Store.  <br /></td></tr>
 <tr class="separator:aaa929fa9f3796aa554fb29771116b864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56857b0d3eaed4ee651e9ac794cad201" id="r_a56857b0d3eaed4ee651e9ac794cad201"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56857b0d3eaed4ee651e9ac794cad201">OpenLcbBufferStore_allocate_buffer</a> (<a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467">payload_type_enum</a> payload_type)</td></tr>
-<tr class="memdesc:a56857b0d3eaed4ee651e9ac794cad201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new buffer of the type passed.  <br /></td></tr>
+<tr class="memdesc:a56857b0d3eaed4ee651e9ac794cad201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocates a new buffer of the specified payload type.  <br /></td></tr>
 <tr class="separator:a56857b0d3eaed4ee651e9ac794cad201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a678e335cc01529581d2b7e69ae0ad023" id="r_a678e335cc01529581d2b7e69ae0ad023"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:a678e335cc01529581d2b7e69ae0ad023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the buffer so it can be reused.  <br /></td></tr>
+<tr class="memdesc:a678e335cc01529581d2b7e69ae0ad023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrements reference count and potentially frees the buffer for reuse.  <br /></td></tr>
 <tr class="separator:a678e335cc01529581d2b7e69ae0ad023"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8a5aa017d1dc54ceda7f0fa7c47d709" id="r_ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8a5aa017d1dc54ceda7f0fa7c47d709">OpenLcbBufferStore_basic_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Basic messages currently allocated in the buffer store.  <br /></td></tr>
+<tr class="memdesc:ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of BASIC messages currently allocated.  <br /></td></tr>
 <tr class="separator:ad8a5aa017d1dc54ceda7f0fa7c47d709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f3a667dbdbbf14793cadeb40b545331" id="r_a4f3a667dbdbbf14793cadeb40b545331"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f3a667dbdbbf14793cadeb40b545331">OpenLcbBufferStore_basic_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a4f3a667dbdbbf14793cadeb40b545331"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of Basic messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
+<tr class="memdesc:a4f3a667dbdbbf14793cadeb40b545331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of BASIC messages allocated simultaneously.  <br /></td></tr>
 <tr class="separator:a4f3a667dbdbbf14793cadeb40b545331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a775b6eb9b94b465a263a76b969cad4d3" id="r_a775b6eb9b94b465a263a76b969cad4d3"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a775b6eb9b94b465a263a76b969cad4d3">OpenLcbBufferStore_datagram_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a775b6eb9b94b465a263a76b969cad4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Datagram messages currently allocated in the buffer store.  <br /></td></tr>
+<tr class="memdesc:a775b6eb9b94b465a263a76b969cad4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of DATAGRAM messages currently allocated.  <br /></td></tr>
 <tr class="separator:a775b6eb9b94b465a263a76b969cad4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa047102a7e56925413814ead6e493723" id="r_aa047102a7e56925413814ead6e493723"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa047102a7e56925413814ead6e493723">OpenLcbBufferStore_datagram_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:aa047102a7e56925413814ead6e493723"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of Datagram messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
+<tr class="memdesc:aa047102a7e56925413814ead6e493723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of DATAGRAM messages allocated simultaneously.  <br /></td></tr>
 <tr class="separator:aa047102a7e56925413814ead6e493723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e17b0f879f93af66cd832a2f6c4c801" id="r_a5e17b0f879f93af66cd832a2f6c4c801"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e17b0f879f93af66cd832a2f6c4c801">OpenLcbBufferStore_snip_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a5e17b0f879f93af66cd832a2f6c4c801"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of SNIP message currently allocated in the buffer store.  <br /></td></tr>
+<tr class="memdesc:a5e17b0f879f93af66cd832a2f6c4c801"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of SNIP messages currently allocated.  <br /></td></tr>
 <tr class="separator:a5e17b0f879f93af66cd832a2f6c4c801"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1300bfb3d8db0268f6aa3024c87d464c" id="r_a1300bfb3d8db0268f6aa3024c87d464c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1300bfb3d8db0268f6aa3024c87d464c">OpenLcbBufferStore_snip_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a1300bfb3d8db0268f6aa3024c87d464c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of SNIP messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
+<tr class="memdesc:a1300bfb3d8db0268f6aa3024c87d464c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of SNIP messages allocated simultaneously.  <br /></td></tr>
 <tr class="separator:a1300bfb3d8db0268f6aa3024c87d464c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8263b6b25707d7cbd8040128d14800c0" id="r_a8263b6b25707d7cbd8040128d14800c0"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8263b6b25707d7cbd8040128d14800c0">OpenLcbBufferStore_stream_messages_allocated</a> (void)</td></tr>
-<tr class="memdesc:a8263b6b25707d7cbd8040128d14800c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of Stream message buffers currently allocated in the buffer store.  <br /></td></tr>
+<tr class="memdesc:a8263b6b25707d7cbd8040128d14800c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of STREAM message buffers currently allocated.  <br /></td></tr>
 <tr class="separator:a8263b6b25707d7cbd8040128d14800c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ca556cbdeaa4f86800156e103c872fa" id="r_a3ca556cbdeaa4f86800156e103c872fa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ca556cbdeaa4f86800156e103c872fa">OpenLcbBufferStore_stream_messages_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:a3ca556cbdeaa4f86800156e103c872fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of Stream messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing.  <br /></td></tr>
+<tr class="memdesc:a3ca556cbdeaa4f86800156e103c872fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of STREAM messages allocated simultaneously.  <br /></td></tr>
 <tr class="separator:a3ca556cbdeaa4f86800156e103c872fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36d2ba67201acfcfa2a5c67b406161e6" id="r_a36d2ba67201acfcfa2a5c67b406161e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36d2ba67201acfcfa2a5c67b406161e6">OpenLcbBufferStore_inc_reference_count</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:a36d2ba67201acfcfa2a5c67b406161e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the reference count on the allocated buffer.  <br /></td></tr>
+<tr class="memdesc:a36d2ba67201acfcfa2a5c67b406161e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the reference count on an allocated buffer.  <br /></td></tr>
 <tr class="separator:a36d2ba67201acfcfa2a5c67b406161e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad94eea5a323ffed37a490fdf71ea9d55" id="r_ad94eea5a323ffed37a490fdf71ea9d55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad94eea5a323ffed37a490fdf71ea9d55">OpenLcbBufferStore_clear_max_allocated</a> (void)</td></tr>
-<tr class="memdesc:ad94eea5a323ffed37a490fdf71ea9d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the running count of the Maximum number of buffer of each type have been allocated at a one time.  <br /></td></tr>
+<tr class="memdesc:ad94eea5a323ffed37a490fdf71ea9d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets all peak allocation counters to zero.  <br /></td></tr>
 <tr class="separator:ad94eea5a323ffed37a490fdf71ea9d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -152,6 +152,21 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>This module provides the memory pool for OpenLCB message allocation with support for four different payload sizes: Basic, Datagram, SNIP, and Stream. The buffer store pre-allocates a fixed pool of message structures at initialization and manages their lifecycle through allocation and deallocation.</p>
+<p>Key features:</p><ul>
+<li>Pre-allocated memory pool (no dynamic allocation during runtime)</li>
+<li>Four segregated buffer types by payload size</li>
+<li>Reference counting for shared buffer management</li>
+<li>Allocation telemetry for monitoring and stress testing</li>
+<li>Thread-unsafe (designed for single-threaded or externally synchronized use)</li>
+</ul>
+<p>Buffer types and sizes (defined in <a class="el" href="openlcb__types_8h.html" title="Core type definitions, structures, and configuration constants for OpenLCB library.">openlcb_types.h</a>):</p><ul>
+<li>BASIC: Small messages (8 bytes payload)</li>
+<li>DATAGRAM: Medium messages (72 bytes payload)</li>
+<li>SNIP: Simple Node Information (255 bytes payload)</li>
+<li>STREAM: Large messages (for streaming data)</li>
+</ul>
+<p>The buffer store must be initialized before any other OpenLCB operations and should never be reinitialized during runtime.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -179,14 +194,68 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the OpenLcb Buffer Store. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<p>Sets up the pre-allocated message pool by:</p><ul>
+<li>Clearing all message structures to zero</li>
+<li>Linking each message to its appropriate payload buffer</li>
+<li>Organizing buffers by type: [BASIC][DATAGRAM][SNIP][STREAM]</li>
+<li>Resetting all allocation counters and telemetry</li>
+</ul>
+<p>The buffer pool layout after initialization:</p><ul>
+<li>Messages 0 to (BASIC_DEPTH-1): BASIC payload type</li>
+<li>Messages (BASIC_DEPTH) to (BASIC+DATAGRAM-1): DATAGRAM payload type</li>
+<li>Messages (BASIC+DATAGRAM) to (BASIC+DATAGRAM+SNIP-1): SNIP payload type</li>
+<li>Remaining messages: STREAM payload type</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Required before any buffer allocation operations</li>
+<li>Must be called before <a class="el" href="openlcb__buffer__fifo_8c.html#a8a001a3bc68d6587d8d9b11c694e937e" title="Initializes the OpenLcb Message Buffer FIFO.">OpenLcbBufferFifo_initialize()</a> and <a class="el" href="openlcb__buffer__list_8c.html#ad977454a2b373e1e67d269232e41db3b" title="Initializes the OpenLcb Message Buffer List.">OpenLcbBufferList_initialize()</a></li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during application initialization before any buffer allocation operations. Calling multiple times will reset all allocation state and invalidate any outstanding buffer pointers. </dd>
+<dd>
+This function is NOT thread-safe. Must be called during single-threaded initialization phase only.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call this function before:<ul>
+<li><a class="el" href="openlcb__buffer__fifo_8c.html#a8a001a3bc68d6587d8d9b11c694e937e" title="Initializes the OpenLcb Message Buffer FIFO.">OpenLcbBufferFifo_initialize()</a></li>
+<li><a class="el" href="openlcb__buffer__list_8c.html#ad977454a2b373e1e67d269232e41db3b" title="Initializes the OpenLcb Message Buffer List.">OpenLcbBufferList_initialize()</a></li>
+<li>Any call to <a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer()</a> </li>
+</ul>
+</dd>
+<dd>
+The buffer pool size is determined by compile-time constants: USER_DEFINED_BASIC_BUFFER_DEPTH, USER_DEFINED_DATAGRAM_BUFFER_DEPTH, USER_DEFINED_SNIP_BUFFER_DEPTH, USER_DEFINED_STREAM_BUFFER_DEPTH</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Allocates buffers from initialized pool </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Returns buffers to the pool</dd></dl>
+<p>Algorithm: Sets up the pre-allocated message pool by iterating through all message slots and linking each to its appropriate payload buffer based on pool segmentation.</p><ol type="1">
+<li>Iterate through all LEN_MESSAGE_BUFFER message slots</li>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#aae9c2b155851377c1ce5eadca6a64a17" title="Completely clears and resets a message structure.">OpenLcbUtilities_clear_openlcb_message()</a> to zero each message structure</li>
+<li>Determine payload type based on index ranges:<ul>
+<li>[0 to BASIC_DEPTH-1] → BASIC type, link to basic[] array</li>
+<li>[BASIC_DEPTH to BASIC+DATAGRAM-1] → DATAGRAM type, link to datagram[] array</li>
+<li>[BASIC+DATAGRAM to BASIC+DATAGRAM+SNIP-1] → SNIP type, link to snip[] array</li>
+<li>[Remaining] → STREAM type, link to stream[] array</li>
+</ul>
+</li>
+<li>Set payload_type field in each message</li>
+<li>Calculate appropriate payload array index and link payload pointer</li>
+<li>Reset all allocation counters to zero</li>
+<li>Reset all peak usage counters to zero</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Required before any buffer allocation operations</li>
+<li>Must be called before <a class="el" href="openlcb__buffer__fifo_8c.html#a8a001a3bc68d6587d8d9b11c694e937e" title="Initializes the OpenLcb Message Buffer FIFO.">OpenLcbBufferFifo_initialize()</a> and <a class="el" href="openlcb__buffer__list_8c.html#ad977454a2b373e1e67d269232e41db3b" title="Initializes the OpenLcb Message Buffer List.">OpenLcbBufferList_initialize()</a></li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during application initialization </dd>
+<dd>
+Calling multiple times will reset all allocation state </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Must be called during single-threaded initialization only </dd>
+<dd>
+Call before any buffer allocation operations</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8c.html#aae9c2b155851377c1ce5eadca6a64a17" title="Completely clears and resets a message structure.">OpenLcbUtilities_clear_openlcb_message</a> - Clears individual message structures </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Uses the initialized pool </dd></dl>
 
 </div>
 </div>
@@ -213,14 +282,93 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Allocates a new buffer of the type passed. </p>
+<p>Allocates a new buffer of the specified payload type. </p>
+<p>Searches the appropriate buffer pool segment for an unallocated buffer and returns a pointer to it. The buffer is marked as allocated, cleared, and its reference count is set to 1.</p>
+<p>Allocation strategy:</p><ul>
+<li>Linear search within the specified payload type's range</li>
+<li>Returns first available (non-allocated) buffer</li>
+<li>Clears the message structure before returning</li>
+<li>Sets reference_count = 1</li>
+<li>Updates allocation telemetry counters</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Creating new outgoing OpenLCB messages</li>
+<li>Assembling multi-frame received messages</li>
+<li>Storing messages in FIFO or list structures</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Type</td><td>of buffer that is requested to be allocated (Basic, SNIP, Datagram, Stream) </td></tr>
+    <tr><td class="paramname">payload_type</td><td>Type of buffer requested (BASIC, DATAGRAM, SNIP, or STREAM) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the message buffer or NULL if it fails </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to allocated message buffer, or NULL if:<ul>
+<li>Pool exhausted (all buffers of this type allocated)</li>
+<li>Invalid payload_type parameter</li>
+</ul>
+</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when buffer pool is exhausted. Caller MUST check for NULL before dereferencing. Dereferencing NULL will cause immediate crash. </dd>
+<dd>
+Buffer pool is fixed size. System will stop allocating when pool is full. Design your application to handle allocation failures gracefully. </dd>
+<dd>
+This function is NOT thread-safe. Concurrent calls may return the same buffer to multiple callers.</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before use </dd>
+<dd>
+Buffer remains allocated until reference count reaches zero </dd>
+<dd>
+Use <a class="el" href="openlcb__buffer__store_8c.html#a36d2ba67201acfcfa2a5c67b406161e6" title="Increments the reference count on an allocated buffer.">OpenLcbBufferStore_inc_reference_count()</a> when sharing buffers</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Buffer is automatically cleared (zeroed) before being returned </dd>
+<dd>
+Allocation telemetry is updated on successful allocation</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Decrements reference count and potentially frees buffer </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a36d2ba67201acfcfa2a5c67b406161e6" title="Increments the reference count on an allocated buffer.">OpenLcbBufferStore_inc_reference_count</a> - Increments reference count for shared buffers </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Common use case for storing allocated buffers </dd>
+<dd>
+<a class="el" href="openlcb__buffer__list_8c.html#aeb62e6cfb246eaeea5cb13e9df3cf4f7" title="Inserts a new OpenLcb message into the buffer at the first open slot.">OpenLcbBufferList_add</a> - Another common use case for storing allocated buffers</dd></dl>
+<p>Algorithm: Searches the appropriate pool segment for an unallocated buffer and returns it.</p><ol type="1">
+<li>Calculate offset_start and offset_end based on payload_type:<ul>
+<li>BASIC: offset_start=0, offset_end=BASIC_DEPTH</li>
+<li>DATAGRAM: offset_start=BASIC_DEPTH, offset_end=BASIC+DATAGRAM_DEPTH</li>
+<li>SNIP: offset_start=BASIC+DATAGRAM, offset_end=BASIC+DATAGRAM+SNIP</li>
+<li>STREAM: offset_start=BASIC+DATAGRAM+SNIP, offset_end=BASIC+DATAGRAM+SNIP+STREAM</li>
+</ul>
+</li>
+<li>If invalid payload_type, return NULL immediately</li>
+<li>Linear search from offset_start to offset_end</li>
+<li>Check each message's state.allocated flag</li>
+<li>On first unallocated buffer found:<ul>
+<li>Call <a class="el" href="openlcb__utilities_8c.html#aae9c2b155851377c1ce5eadca6a64a17" title="Completely clears and resets a message structure.">OpenLcbUtilities_clear_openlcb_message()</a> to zero the structure</li>
+<li>Set reference_count = 1</li>
+<li>Set state.allocated = true</li>
+<li>Call _update_buffer_telemetry() to update counters</li>
+<li>Return pointer to the buffer</li>
+</ul>
+</li>
+<li>If no free buffer found in range, return NULL</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Creating new outgoing OpenLCB messages</li>
+<li>Assembling multi-frame received messages</li>
+<li>Storing messages in FIFO or list structures</li>
+</ul>
+<pre class="fragment">* @param payload_type Type of buffer requested (BASIC, DATAGRAM, SNIP, or STREAM)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to allocated message buffer, or NULL if pool exhausted or invalid type</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when buffer pool exhausted - caller MUST check for NULL </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before dereferencing </dd>
+<dd>
+Buffer is automatically cleared before being returned</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Buffer starts with reference_count = 1 </dd>
+<dd>
+Allocation telemetry is updated on success</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Decrements reference count and frees </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a36d2ba67201acfcfa2a5c67b406161e6" title="Increments the reference count on an allocated buffer.">OpenLcbBufferStore_inc_reference_count</a> - Increments reference count for sharing </dd>
+<dd>
+_update_buffer_telemetry - Updates allocation statistics </dd></dl>
 
 </div>
 </div>
@@ -247,15 +395,68 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Frees the buffer so it can be reused. </p>
+<p>Decrements reference count and potentially frees the buffer for reuse. </p>
+<p>Implements reference-counted buffer deallocation. Decrements the buffer's reference count and only marks it as free when the count reaches zero. This allows multiple parts of the system to safely share buffer pointers.</p>
+<p>Use cases:</p><ul>
+<li>Releasing a buffer after message transmission</li>
+<li>Removing a buffer from FIFO or list</li>
+<li>Cleaning up after message processing</li>
+<li>Each holder releasing their shared reference</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">msg</td><td>Pointer to a message to be freed </td></tr>
+    <tr><td class="paramname">msg</td><td>Pointer to message buffer to be freed (NULL safe)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The buffers are reference counted (see <a class="el" href="#a36d2ba67201acfcfa2a5c67b406161e6">OpenLcbBufferStore_inc_reference_count</a>) so this call may or may not actually release that buffer slot for reuse. If the count drops to zero then it will be released for reuse. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do NOT access buffer after calling free unless you know reference count was &gt; 1 </dd>
+<dd>
+Reference count underflow (calling free too many times) will cause undefined behavior </dd>
+<dd>
+This function is NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Safe to call with NULL pointer (function will return immediately) </dd>
+<dd>
+Buffer is only marked as free when reference_count reaches exactly 0 </dd>
+<dd>
+Always ensure each inc_reference_count() is paired with a free_buffer() call</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Telemetry counters are updated when buffer is actually freed </dd>
+<dd>
+Common pattern: allocate (count=1), increment for sharing (count=2), free twice to release</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Creates buffer with reference_count = 1 </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a36d2ba67201acfcfa2a5c67b406161e6" title="Increments the reference count on an allocated buffer.">OpenLcbBufferStore_inc_reference_count</a> - Increments count when sharing buffer</dd></dl>
+<p>Algorithm: Implements reference-counted deallocation to support buffer sharing.</p><ol type="1">
+<li>Check if msg pointer is NULL, return immediately if so</li>
+<li>Decrement msg-&gt;reference_count</li>
+<li>If reference_count &gt; 0, buffer is still referenced elsewhere, return without freeing</li>
+<li>If reference_count == 0, proceed with deallocation:<ul>
+<li>Switch on msg-&gt;payload_type</li>
+<li>Decrement appropriate allocation counter</li>
+<li>Set reference_count = 0 (redundant but explicit)</li>
+<li>Set state.allocated = false to mark buffer as free</li>
+</ul>
+</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Releasing a buffer after message transmission</li>
+<li>Removing a buffer from FIFO or list</li>
+<li>Cleaning up after message processing</li>
+</ul>
+<pre class="fragment">* @param msg Pointer to message buffer to be freed (NULL safe)
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Do NOT access buffer after calling free unless reference count was &gt; 1 </dd>
+<dd>
+Reference count underflow will cause undefined behavior </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Safe to call with NULL pointer (no-op) </dd>
+<dd>
+Buffer only freed when reference_count reaches exactly 0</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Telemetry counters updated when buffer actually freed </dd>
+<dd>
+Reference count must be managed correctly to prevent leaks</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Creates buffer with reference_count = 1 </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a36d2ba67201acfcfa2a5c67b406161e6" title="Increments the reference count on an allocated buffer.">OpenLcbBufferStore_inc_reference_count</a> - Increments count when sharing </dd></dl>
 
 </div>
 </div>
@@ -282,14 +483,27 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The number of Basic messages currently allocated in the buffer store. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of Basic sized messages currently allocated </dd></dl>
+<p>Returns the number of BASIC messages currently allocated. </p>
+<p>Provides real-time count of allocated BASIC-type message buffers. Useful for monitoring system load and detecting buffer leaks.</p>
+<p>Use cases:</p><ul>
+<li>Runtime monitoring of buffer usage</li>
+<li>Detecting buffer leaks</li>
+<li>Load balancing decisions</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of BASIC sized messages currently allocated (0 to USER_DEFINED_BASIC_BUFFER_DEPTH)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a live count that changes as buffers are allocated and freed</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a4f3a667dbdbbf14793cadeb40b545331" title="Returns the maximum number of BASIC messages allocated simultaneously.">OpenLcbBufferStore_basic_messages_max_allocated</a> - Peak usage counter</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_basic_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Runtime monitoring of buffer usage</li>
+<li>Detecting buffer leaks</li>
+<li>Load analysis</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of BASIC sized messages currently allocated</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a live count that changes as buffers are allocated and freed</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a4f3a667dbdbbf14793cadeb40b545331" title="Returns the maximum number of BASIC messages allocated simultaneously.">OpenLcbBufferStore_basic_messages_max_allocated</a> - Peak usage </dd></dl>
 
 </div>
 </div>
@@ -316,14 +530,28 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The maximum number of Basic messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Maximum number of Basic sized messages that have been allocated currently </dd></dl>
+<p>Returns the maximum number of BASIC messages allocated simultaneously. </p>
+<p>Tracks peak BASIC buffer usage for capacity planning and stress testing. This counter only increases, never decreases (until cleared).</p>
+<p>Use cases:</p><ul>
+<li>Stress testing to determine minimum buffer pool size</li>
+<li>Capacity planning for production systems</li>
+<li>Verifying buffer pool configuration is adequate</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of BASIC sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If this value equals USER_DEFINED_BASIC_BUFFER_DEPTH during testing, consider increasing pool size</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#ad8a5aa017d1dc54ceda7f0fa7c47d709" title="Returns the number of BASIC messages currently allocated.">OpenLcbBufferStore_basic_messages_allocated</a> - Current count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Resets all peak counters</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_basic_max_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Stress testing to determine minimum buffer pool size</li>
+<li>Capacity planning</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of BASIC sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Counter only increases, never decreases (until cleared)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Resets this counter </dd></dl>
 
 </div>
 </div>
@@ -350,14 +578,27 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The number of Datagram messages currently allocated in the buffer store. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of Datagram sized messages currently allocated </dd></dl>
+<p>Returns the number of DATAGRAM messages currently allocated. </p>
+<p>Provides real-time count of datagram message buffers. Datagram messages are used for configuration memory access and other protocol operations.</p>
+<p>Use cases:</p><ul>
+<li>Monitoring datagram protocol activity</li>
+<li>Detecting datagram buffer leaks</li>
+<li>Analyzing configuration memory operations</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of DATAGRAM sized messages currently allocated (0 to USER_DEFINED_DATAGRAM_BUFFER_DEPTH)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Datagram messages are larger than basic messages</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#aa047102a7e56925413814ead6e493723" title="Returns the maximum number of DATAGRAM messages allocated simultaneously.">OpenLcbBufferStore_datagram_messages_max_allocated</a> - Peak usage counter </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Allocates datagram buffers</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_datagram_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Monitoring datagram protocol activity</li>
+<li>Detecting datagram buffer leaks</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of DATAGRAM sized messages currently allocated</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#aa047102a7e56925413814ead6e493723" title="Returns the maximum number of DATAGRAM messages allocated simultaneously.">OpenLcbBufferStore_datagram_messages_max_allocated</a> - Peak usage </dd></dl>
 
 </div>
 </div>
@@ -384,14 +625,27 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The maximum number of Datagram messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Maximum number of Datagram sized messages that have been allocated currently </dd></dl>
+<p>Returns the maximum number of DATAGRAM messages allocated simultaneously. </p>
+<p>Tracks peak DATAGRAM buffer usage for capacity planning and stress testing. Datagram operations (like configuration memory access) can be resource intensive.</p>
+<p>Use cases:</p><ul>
+<li>Sizing datagram pool for configuration memory operations</li>
+<li>Stress testing with multiple simultaneous datagram operations</li>
+<li>Ensuring adequate buffers for expected load</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of DATAGRAM sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If this equals USER_DEFINED_DATAGRAM_BUFFER_DEPTH during testing, increase pool size</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a775b6eb9b94b465a263a76b969cad4d3" title="Returns the number of DATAGRAM messages currently allocated.">OpenLcbBufferStore_datagram_messages_allocated</a> - Current count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Reset peak counters</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_datagram_max_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Sizing datagram pool for configuration memory operations</li>
+<li>Stress testing</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of DATAGRAM sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Resets counter </dd></dl>
 
 </div>
 </div>
@@ -418,14 +672,25 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The number of SNIP message currently allocated in the buffer store. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of Basic sized messages currently allocated </dd></dl>
+<p>Returns the number of SNIP messages currently allocated. </p>
+<p>Provides real-time count of Simple Node Information Protocol message buffers. SNIP messages are larger and used for node identification and manufacturer information.</p>
+<p>Use cases:</p><ul>
+<li>Monitoring SNIP protocol activity</li>
+<li>Detecting SNIP buffer leaks</li>
+<li>Analyzing node discovery operations</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of SNIP sized messages currently allocated (0 to USER_DEFINED_SNIP_BUFFER_DEPTH)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>SNIP buffers contain node identification strings and manufacturer data</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a1300bfb3d8db0268f6aa3024c87d464c" title="Returns the maximum number of SNIP messages allocated simultaneously.">OpenLcbBufferStore_snip_messages_max_allocated</a> - Peak usage counter</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_snip_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Monitoring SNIP protocol activity</li>
+<li>Detecting SNIP buffer leaks</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of SNIP sized messages currently allocated</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a1300bfb3d8db0268f6aa3024c87d464c" title="Returns the maximum number of SNIP messages allocated simultaneously.">OpenLcbBufferStore_snip_messages_max_allocated</a> - Peak usage </dd></dl>
 
 </div>
 </div>
@@ -452,14 +717,25 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The maximum number of SNIP messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Maximum number of SNIP sized messages that have been allocated currently </dd></dl>
+<p>Returns the maximum number of SNIP messages allocated simultaneously. </p>
+<p>Tracks peak SNIP buffer usage. SNIP operations typically occur during node discovery and enumeration phases.</p>
+<p>Use cases:</p><ul>
+<li>Sizing SNIP pool for network enumeration</li>
+<li>Testing with multiple node discovery operations</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of SNIP sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a5e17b0f879f93af66cd832a2f6c4c801" title="Returns the number of SNIP messages currently allocated.">OpenLcbBufferStore_snip_messages_allocated</a> - Current count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Reset counters</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_snip_max_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Sizing SNIP pool for network enumeration</li>
+<li>Testing with multiple node discovery operations</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of SNIP sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Resets counter </dd></dl>
 
 </div>
 </div>
@@ -486,14 +762,25 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The number of Stream message buffers currently allocated in the buffer store. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of Stream sized messages currently allocated </dd></dl>
+<p>Returns the number of STREAM message buffers currently allocated. </p>
+<p>Provides real-time count of STREAM-type message buffers. Stream buffers are the largest and used for high-bandwidth data transfer operations.</p>
+<p>Use cases:</p><ul>
+<li>Monitoring stream protocol activity</li>
+<li>Detecting stream buffer leaks</li>
+<li>Analyzing firmware update or bulk data transfer operations</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of STREAM sized messages currently allocated (0 to USER_DEFINED_STREAM_BUFFER_DEPTH)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Stream buffers are used for firmware updates and large data transfers</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a3ca556cbdeaa4f86800156e103c872fa" title="Returns the maximum number of STREAM messages allocated simultaneously.">OpenLcbBufferStore_stream_messages_max_allocated</a> - Peak usage</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_stream_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Monitoring stream protocol activity</li>
+<li>Detecting stream buffer leaks</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of STREAM sized messages currently allocated</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a3ca556cbdeaa4f86800156e103c872fa" title="Returns the maximum number of STREAM messages allocated simultaneously.">OpenLcbBufferStore_stream_messages_max_allocated</a> - Peak usage </dd></dl>
 
 </div>
 </div>
@@ -520,14 +807,25 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The maximum number of Stream messages that have been allocated in the buffer store Useful for understanding how deep the buffer store needs to be during stress testing. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Maximum number of Stream sized messages that have been allocated currently </dd></dl>
+<p>Returns the maximum number of STREAM messages allocated simultaneously. </p>
+<p>Tracks peak STREAM buffer usage for capacity planning of bulk data transfer operations.</p>
+<p>Use cases:</p><ul>
+<li>Sizing stream pool for firmware update operations</li>
+<li>Testing large data transfer scenarios</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of STREAM sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a8263b6b25707d7cbd8040128d14800c0" title="Returns the number of STREAM message buffers currently allocated.">OpenLcbBufferStore_stream_messages_allocated</a> - Current count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Reset counters</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Return the value of _buffer_store_stream_max_messages_allocated</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Sizing stream pool for firmware update operations</li>
+<li>Testing large data transfer scenarios</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Maximum number of STREAM sized messages that have been allocated simultaneously</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#ad94eea5a323ffed37a490fdf71ea9d55" title="Resets all peak allocation counters to zero.">OpenLcbBufferStore_clear_max_allocated</a> - Resets counter </dd></dl>
 
 </div>
 </div>
@@ -554,15 +852,49 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Increases the reference count on the allocated buffer. </p>
+<p>Increments the reference count on an allocated buffer. </p>
+<p>Increases the buffer's reference count to indicate that an additional part of the system is now holding a pointer to this buffer. This prevents the buffer from being freed prematurely when one holder calls free() while another still needs the buffer. Each allocated buffer starts with reference_count = 1.</p>
+<p>Use cases:</p><ul>
+<li>Sharing a buffer between transmit and retry queues</li>
+<li>Holding a buffer in multiple lists simultaneously</li>
+<li>Passing a buffer to callback while keeping local reference</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">msg</td><td>Pointer to a message to increase the reference count </td></tr>
+    <tr><td class="paramname">msg</td><td>Pointer to message buffer to increment reference count</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>When <a class="el" href="#a678e335cc01529581d2b7e69ae0ad023">OpenLcbBufferStore_free_buffer(openlcb_msg_t *msg)</a> is called it is only freed when the reference count reaches zero. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Passing NULL will cause immediate crash on reference count access - no NULL check performed </dd>
+<dd>
+Reference count is NOT bounds-checked. Incrementing indefinitely may cause overflow and prevent buffer from ever being freed. </dd>
+<dd>
+This function is NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always pair with corresponding <a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer()</a> call </dd>
+<dd>
+Reference count must be managed carefully to prevent leaks </dd>
+<dd>
+If you increment, you must eventually decrement (via free)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Common pattern: allocate (count=1), increment for sharing (count=2), free twice (once per holder) to reach count=0</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Creates buffer with reference_count = 1 </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Decrements reference count</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Add 1 to msg-&gt;reference_count</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Sharing a buffer between transmit and retry queues</li>
+<li>Holding a buffer in multiple lists simultaneously</li>
+<li>Passing a buffer to callback while keeping local reference</li>
+</ul>
+<pre class="fragment">* @param msg Pointer to message buffer to increment reference count (must NOT be NULL)
+* </pre><dl class="section warning"><dt>Warning</dt><dd>Passing NULL will crash - no NULL check performed </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always pair with corresponding free_buffer() call </dd>
+<dd>
+Reference count overflow is not checked</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Decrements reference count </dd></dl>
 
 </div>
 </div>
@@ -571,6 +903,9 @@ Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void OpenLcbBufferStore_clear_max_allocated </td>
@@ -579,16 +914,56 @@ Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Resets the running count of the Maximum number of buffer of each type have been allocated at a one time. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+<p>Resets all peak allocation counters to zero. </p>
+<p>Clears the maximum allocated counters for all four buffer types (BASIC, DATAGRAM, SNIP, STREAM). This allows you to measure peak usage during specific test scenarios or operational phases.</p>
+<p>Use cases:</p><ul>
+<li>Starting a new stress test run</li>
+<li>Measuring peak usage for specific operational scenarios</li>
+<li>Resetting after configuration changes to remeasure</li>
+<li>Periodic monitoring with fresh baselines</li>
+</ul>
+<dl class="section attention"><dt>Attention</dt><dd>This does NOT affect current allocation counts, only the peak counters </dd>
+<dd>
+Current allocations remain valid and tracked</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typically called at the start of a test scenario or monitoring period </dd>
+<dd>
+Does not free any buffers or change allocation state</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a4f3a667dbdbbf14793cadeb40b545331" title="Returns the maximum number of BASIC messages allocated simultaneously.">OpenLcbBufferStore_basic_messages_max_allocated</a> - Counter that gets cleared </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#aa047102a7e56925413814ead6e493723" title="Returns the maximum number of DATAGRAM messages allocated simultaneously.">OpenLcbBufferStore_datagram_messages_max_allocated</a> - Counter that gets cleared </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a1300bfb3d8db0268f6aa3024c87d464c" title="Returns the maximum number of SNIP messages allocated simultaneously.">OpenLcbBufferStore_snip_messages_max_allocated</a> - Counter that gets cleared </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a3ca556cbdeaa4f86800156e103c872fa" title="Returns the maximum number of STREAM messages allocated simultaneously.">OpenLcbBufferStore_stream_messages_max_allocated</a> - Counter that gets cleared</dd></dl>
+<p>Algorithm:</p><ol type="1">
+<li>Set _buffer_store_basic_max_messages_allocated = 0</li>
+<li>Set _buffer_store_datagram_max_messages_allocated = 0</li>
+<li>Set _buffer_store_snip_max_messages_allocated = 0</li>
+<li>Set _buffer_store_stream_max_messages_allocated = 0</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Starting a new stress test run</li>
+<li>Measuring peak usage for specific operational scenarios</li>
+<li>Periodic monitoring with fresh baselines</li>
+</ul>
+<dl class="section attention"><dt>Attention</dt><dd>Does NOT affect current allocation counts </dd>
+<dd>
+Does not free any buffers</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Typically called at start of test scenario</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a4f3a667dbdbbf14793cadeb40b545331" title="Returns the maximum number of BASIC messages allocated simultaneously.">OpenLcbBufferStore_basic_messages_max_allocated</a> - Counter that gets cleared </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#aa047102a7e56925413814ead6e493723" title="Returns the maximum number of DATAGRAM messages allocated simultaneously.">OpenLcbBufferStore_datagram_messages_max_allocated</a> - Counter that gets cleared </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a1300bfb3d8db0268f6aa3024c87d464c" title="Returns the maximum number of SNIP messages allocated simultaneously.">OpenLcbBufferStore_snip_messages_max_allocated</a> - Counter that gets cleared </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a3ca556cbdeaa4f86800156e103c872fa" title="Returns the maximum number of STREAM messages allocated simultaneously.">OpenLcbBufferStore_stream_messages_max_allocated</a> - Counter that gets cleared </dd></dl>
 
 </div>
 </div>

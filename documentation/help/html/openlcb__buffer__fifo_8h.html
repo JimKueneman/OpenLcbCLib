@@ -107,7 +107,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a8a001a3bc68d6587d8d9b11c694e937e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLcb Message Buffer FIFO.  <br /></td></tr>
 <tr class="separator:a8a001a3bc68d6587d8d9b11c694e937e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e461994b9ea26603691ef8bddce9686" id="r_a3e461994b9ea26603691ef8bddce9686"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e461994b9ea26603691ef8bddce9686">OpenLcbBufferFifo_push</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *new_msg)</td></tr>
-<tr class="memdesc:a3e461994b9ea26603691ef8bddce9686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pushes a new OpenLcb message into the FIFO buffer that was allocated from the buffer store.  <br /></td></tr>
+<tr class="memdesc:a3e461994b9ea26603691ef8bddce9686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pushes a new OpenLcb message into the FIFO buffer.  <br /></td></tr>
 <tr class="separator:a3e461994b9ea26603691ef8bddce9686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b754f3f1d498fbaa62d1b0c80015232" id="r_a1b754f3f1d498fbaa62d1b0c80015232"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b754f3f1d498fbaa62d1b0c80015232">OpenLcbBufferFifo_pop</a> (void)</td></tr>
 <tr class="memdesc:a1b754f3f1d498fbaa62d1b0c80015232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pops an OpenLcb message off the FIFO buffer.  <br /></td></tr>
@@ -116,7 +116,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:af5bb38b5949241f2c65c14ec56e19cfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests if there is a message in the FIFO buffer.  <br /></td></tr>
 <tr class="separator:af5bb38b5949241f2c65c14ec56e19cfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53c7bb1734270e37eeec4a1d180306cc" id="r_a53c7bb1734270e37eeec4a1d180306cc"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53c7bb1734270e37eeec4a1d180306cc">OpenLcbBufferFifo_get_allocated_count</a> (void)</td></tr>
-<tr class="memdesc:a53c7bb1734270e37eeec4a1d180306cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of messages in the FIFO buffer.  <br /></td></tr>
+<tr class="memdesc:a53c7bb1734270e37eeec4a1d180306cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of messages currently in the FIFO buffer.  <br /></td></tr>
 <tr class="separator:a53c7bb1734270e37eeec4a1d180306cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -128,6 +128,24 @@ Functions</h2></td></tr>
 <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
 </ul>
 <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>This module provides a First-In-First-Out (FIFO) queue for OpenLCB message pointers using a circular buffer algorithm. Messages are allocated from the OpenLcbBufferStore and their pointers are queued in this FIFO for ordered processing.</p>
+<p>Key features:</p><ul>
+<li>Circular buffer with head and tail pointers</li>
+<li>Fixed size buffer (LEN_MESSAGE_BUFFER + 1 to allow full detection)</li>
+<li>Stores pointers only (actual messages allocated from buffer store)</li>
+<li>Full/empty detection without requiring additional state flags</li>
+</ul>
+<p>FIFO state detection:</p><ul>
+<li>Empty when: head == tail</li>
+<li>Full when: (head + 1) % buffer_size == tail</li>
+<li>Extra slot (+1) allows distinguishing full from empty</li>
+</ul>
+<p>Typical use cases:</p><ul>
+<li>Incoming message queue for sequential processing</li>
+<li>Outgoing message queue for transmission scheduling</li>
+<li>Event buffering during burst activity</li>
+</ul>
+<p>This FIFO must be initialized after <a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize()</a> but can be used independently of OpenLcbBufferList.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -155,14 +173,40 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the OpenLcb Message Buffer FIFO. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization </dd></dl>
+<p>Prepares the FIFO for use by clearing all slots and resetting pointers. The FIFO uses a circular buffer algorithm where head points to the next insertion position and tail points to the next removal position. The buffer includes one extra slot beyond LEN_MESSAGE_BUFFER to allow detection of the full condition without requiring an additional counter or flag.</p>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Required before any FIFO push/pop operations</li>
+<li>Must be called after <a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize()</a></li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during application initialization before any FIFO operations. Calling multiple times will discard any queued messages.</dd>
+<dd>
+NOT thread-safe - must be called during single-threaded initialization</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call this function after <a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize()</a> </dd>
+<dd>
+Call before using <a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push()</a> or <a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize</a> - Must be called first </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Adds messages to initialized FIFO </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Removes messages from initialized FIFO</dd></dl>
+<p>Algorithm: Sets up an empty FIFO by clearing all pointers and resetting indices.</p><ol type="1">
+<li>Iterate through all LEN_MESSAGE_FIFO_BUFFER slots</li>
+<li>Set each slot to NULL</li>
+<li>Set head = 0 (next insertion at position 0)</li>
+<li>Set tail = 0 (next removal from position 0)</li>
+<li>Result: Empty FIFO (head == tail)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Called once during application startup</li>
+<li>Required before any FIFO operations</li>
+<li>Must be called after <a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize()</a></li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after <a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#aaa929fa9f3796aa554fb29771116b864" title="Initializes the OpenLcb Buffer Store.">OpenLcbBufferStore_initialize</a> - Must be called first </dd></dl>
 
 </div>
 </div>
@@ -189,15 +233,70 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Pushes a new OpenLcb message into the FIFO buffer that was allocated from the buffer store. </p>
+<p>Pushes a new OpenLcb message into the FIFO buffer. </p>
+<p>Adds a message pointer to the tail of the queue if space is available. The message itself must have been previously allocated from the OpenLcb Buffer Store using <a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer()</a>. Returns the message pointer on success, or NULL if the FIFO is full.</p>
+<p>Use cases:</p><ul>
+<li>Queuing incoming messages for processing</li>
+<li>Buffering outgoing messages for transmission</li>
+<li>Managing message backlog during burst activity</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">new_msg</td><td>Pointer to a message allocated from the OpenLcb Buffer Pool </td></tr>
+    <tr><td class="paramname">new_msg</td><td>Pointer to a message allocated from OpenLcbBufferStore (must NOT be NULL) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the message or NULL if it fails </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8h.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the type passed.">OpenLcbBufferStore_allocate_buffer()</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the queued message on success, or NULL if FIFO is full</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>new_msg must NOT be NULL - passing NULL will store NULL in FIFO </dd>
+<dd>
+Returns NULL when FIFO is full - caller MUST check return value </dd>
+<dd>
+FIFO full condition means buffer is exhausted - messages may be dropped </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before assuming success </dd>
+<dd>
+Caller retains ownership - must free message with <a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer()</a> later </dd>
+<dd>
+FIFO stores pointers only - does not copy message data</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Allocates messages before pushing </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Removes messages from FIFO </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#af5bb38b5949241f2c65c14ec56e19cfd" title="Tests if there is a message in the FIFO buffer.">OpenLcbBufferFifo_is_empty</a> - Check before popping </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a53c7bb1734270e37eeec4a1d180306cc" title="Returns the number of messages currently in the FIFO buffer.">OpenLcbBufferFifo_get_allocated_count</a> - Check FIFO occupancy</dd></dl>
+<p>Algorithm: Implements circular buffer insertion with full detection.</p><ol type="1">
+<li>Calculate next head position: next = (head + 1) % buffer_size</li>
+<li>If next &gt;= buffer_size, wrap to 0</li>
+<li>Check if FIFO is full: if next == tail, return NULL</li>
+<li>If not full:<ul>
+<li>Store new_msg pointer at list[head]</li>
+<li>Update head = next</li>
+<li>Return new_msg (success)</li>
+</ul>
+</li>
+<li>If full, return NULL (failure)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Queuing incoming messages</li>
+<li>Buffering outgoing messages</li>
+<li>Managing message backlog</li>
+</ul>
+<pre class="fragment">* @param new_msg Pointer to message allocated from buffer store (must NOT be NULL)
+* </pre><dl class="section return"><dt>Returns</dt><dd>Pointer to queued message on success, NULL if FIFO is full</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when FIFO is full </dd>
+<dd>
+Passing NULL will store NULL in FIFO - no validation performed </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Caller retains ownership of message </dd>
+<dd>
+Check return value for NULL before assuming success</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>The "one slot wasted" approach means maximum capacity is LEN_MESSAGE_BUFFER, not LEN_MESSAGE_FIFO_BUFFER</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8c.html#a56857b0d3eaed4ee651e9ac794cad201" title="Allocates a new buffer of the specified payload type.">OpenLcbBufferStore_allocate_buffer</a> - Allocate message before pushing </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Remove messages from FIFO </dd></dl>
 
 </div>
 </div>
@@ -225,15 +324,62 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Pops an OpenLcb message off the FIFO buffer. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to the message or NULL if the buffer is empty </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The caller is responsible for freeing the message when done </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__store_8h.html#a678e335cc01529581d2b7e69ae0ad023" title="Frees the buffer so it can be reused.">OpenLcbBufferStore_free_buffer()</a> </dd></dl>
+<p>Removes and returns the message pointer from the head of the queue. Uses FIFO ordering (First-In-First-Out) so the oldest message is returned first. Returns NULL if the FIFO is empty.</p>
+<p>Use cases:</p><ul>
+<li>Processing queued incoming messages in order</li>
+<li>Transmitting queued outgoing messages sequentially</li>
+<li>Draining FIFO during shutdown or error recovery</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the oldest message in FIFO, or NULL if FIFO is empty</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when FIFO is empty - caller MUST check for NULL </dd>
+<dd>
+Caller becomes responsible for freeing the returned message </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL before dereferencing </dd>
+<dd>
+Caller must call <a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer()</a> when done with message </dd>
+<dd>
+Popped message is removed from FIFO but not freed from buffer store</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returns NULL if empty - check with <a class="el" href="openlcb__buffer__fifo_8c.html#af5bb38b5949241f2c65c14ec56e19cfd" title="Tests if there is a message in the FIFO buffer.">OpenLcbBufferFifo_is_empty()</a> first</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Adds messages to FIFO </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#af5bb38b5949241f2c65c14ec56e19cfd" title="Tests if there is a message in the FIFO buffer.">OpenLcbBufferFifo_is_empty</a> - Check before popping </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Free the message when done </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a53c7bb1734270e37eeec4a1d180306cc" title="Returns the number of messages currently in the FIFO buffer.">OpenLcbBufferFifo_get_allocated_count</a> - Check how many messages available</dd></dl>
+<p>Algorithm: Implements circular buffer removal with empty detection.</p><ol type="1">
+<li>Initialize result = NULL</li>
+<li>Check if FIFO is empty: if head == tail, return NULL</li>
+<li>If not empty:<ul>
+<li>Get message pointer from list[tail]</li>
+<li>Increment tail = tail + 1</li>
+<li>If tail &gt;= buffer_size, wrap tail to 0</li>
+<li>Return the retrieved message pointer</li>
+</ul>
+</li>
+<li>If empty, return NULL</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Processing queued messages in order</li>
+<li>Transmitting queued messages</li>
+<li>Draining FIFO</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to oldest message, or NULL if FIFO is empty</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when empty </dd>
+<dd>
+Caller must free returned message with <a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer()</a> </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always check return value for NULL </dd>
+<dd>
+Caller becomes responsible for freeing message</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Add messages to FIFO </dd>
+<dd>
+<a class="el" href="openlcb__buffer__store_8c.html#a678e335cc01529581d2b7e69ae0ad023" title="Decrements reference count and potentially frees the buffer for reuse.">OpenLcbBufferStore_free_buffer</a> - Free popped message when done </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#af5bb38b5949241f2c65c14ec56e19cfd" title="Tests if there is a message in the FIFO buffer.">OpenLcbBufferFifo_is_empty</a> - Check before popping </dd></dl>
 
 </div>
 </div>
@@ -261,13 +407,34 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Tests if there is a message in the FIFO buffer. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if there is at least one message, false if the list is empty </dd></dl>
+<p>Checks whether the FIFO contains any messages by comparing head and tail pointers. This is a non-destructive peek operation - it does not modify the FIFO state. Returns true if empty, false otherwise.</p>
+<p>Use cases:</p><ul>
+<li>Checking before attempting to pop</li>
+<li>Polling for message availability</li>
+<li>Conditional processing loops</li>
+<li>Idle detection</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>True if FIFO is empty, false if at least one message is present</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Non-destructive - does not modify FIFO state </dd>
+<dd>
+Safe to call at any time</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Use this after checking is_empty() returns false </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a53c7bb1734270e37eeec4a1d180306cc" title="Returns the number of messages currently in the FIFO buffer.">OpenLcbBufferFifo_get_allocated_count</a> - Get exact count instead of just empty/not empty</dd></dl>
+<p>Algorithm: Simple pointer comparison to determine empty state.</p><ol type="1">
+<li>Compare head pointer with tail pointer</li>
+<li>Return (head == tail)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Check before popping</li>
+<li>Polling for messages</li>
+<li>Idle detection</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>True if FIFO is empty (no messages), false if at least one message present</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Non-destructive operation</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Use after checking not empty </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a53c7bb1734270e37eeec4a1d180306cc" title="Returns the number of messages currently in the FIFO buffer.">OpenLcbBufferFifo_get_allocated_count</a> - Get exact count </dd></dl>
 
 </div>
 </div>
@@ -294,14 +461,53 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Returns the number of messages in the FIFO buffer. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of messages in the buffer </dd></dl>
+<p>Returns the number of messages currently in the FIFO buffer. </p>
+<p>Calculates the current occupancy of the FIFO by analyzing head and tail pointer positions. Handles the circular buffer wraparound case correctly.</p>
+<p>Use cases:</p><ul>
+<li>Monitoring FIFO utilization</li>
+<li>Load balancing decisions</li>
+<li>Flow control (backpressure)</li>
+<li>Debug and diagnostics</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>The number of messages currently in the buffer (0 to LEN_MESSAGE_BUFFER)</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Return value can range from 0 (empty) to LEN_MESSAGE_BUFFER (full) </dd>
+<dd>
+Does not count available slots, counts occupied slots</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Maximum count is LEN_MESSAGE_BUFFER (one slot reserved for full detection)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#af5bb38b5949241f2c65c14ec56e19cfd" title="Tests if there is a message in the FIFO buffer.">OpenLcbBufferFifo_is_empty</a> - Simpler check for zero count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Adding messages increases this count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Removing messages decreases this count</dd></dl>
+<p>Algorithm: Calculates occupancy handling circular buffer wraparound.</p><ol type="1">
+<li>If tail &gt; head (wraparound case):<ul>
+<li>count = head + (buffer_size - tail)</li>
+<li>This accounts for messages from tail to end, plus messages from start to head</li>
+</ul>
+</li>
+<li>Else (normal case):<ul>
+<li>count = head - tail</li>
+<li>Simple difference when head is ahead of tail</li>
+</ul>
+</li>
+<li>Return calculated count</li>
+</ol>
+<p>Examples:</p><ul>
+<li>head=5, tail=2, size=10: count = 5-2 = 3</li>
+<li>head=2, tail=8, size=10: count = 2+(10-8) = 4</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Monitoring FIFO utilization</li>
+<li>Load balancing</li>
+<li>Flow control</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Number of messages in buffer (0 to LEN_MESSAGE_BUFFER)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Maximum return value is LEN_MESSAGE_BUFFER (one slot reserved)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#af5bb38b5949241f2c65c14ec56e19cfd" title="Tests if there is a message in the FIFO buffer.">OpenLcbBufferFifo_is_empty</a> - Simpler zero check </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Increases count </dd>
+<dd>
+<a class="el" href="openlcb__buffer__fifo_8c.html#a1b754f3f1d498fbaa62d1b0c80015232" title="Pops an OpenLcb message off the FIFO buffer.">OpenLcbBufferFifo_pop</a> - Decreases count </dd></dl>
 
 </div>
 </div>

@@ -101,7 +101,7 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:ac122774ef5c3b5d237061918e3af6125"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the OpenLcb/LCC node that is being operated on.  <br /></td></tr>
 <tr class="separator:ac122774ef5c3b5d237061918e3af6125"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f205bad3d8a5b21f0b33bb5371b3850" id="r_a5f205bad3d8a5b21f0b33bb5371b3850"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f205bad3d8a5b21f0b33bb5371b3850">login_outgoing_can_msg</a></td></tr>
-<tr class="memdesc:a5f205bad3d8a5b21f0b33bb5371b3850"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag to mark that login_outgoibng_can_msg is a valid message that needs transmitting.  <br /></td></tr>
+<tr class="memdesc:a5f205bad3d8a5b21f0b33bb5371b3850"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag to mark that <a class="el" href="#a5f205bad3d8a5b21f0b33bb5371b3850">login_outgoing_can_msg</a> is a valid message that needs transmitting.  <br /></td></tr>
 <tr class="separator:a5f205bad3d8a5b21f0b33bb5371b3850"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f5b6fb969f1d0656c95c22776c04f45" id="r_a2f5b6fb969f1d0656c95c22776c04f45"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f5b6fb969f1d0656c95c22776c04f45">login_outgoing_can_msg_valid</a>: 1</td></tr>
 <tr class="memdesc:a2f5b6fb969f1d0656c95c22776c04f45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the CAN message that needs to be sent.  <br /></td></tr>
@@ -114,6 +114,35 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Structure to hold information needed by the CAN Statemachine as it is pulling messages from <a class="el" href="can__buffer__fifo_8h.html" title="FIFO buffer implementation for CAN message structures.">can_buffer_fifo.h</a> and then dispatching them to handlers that may require a reply. </p>
+<p>This structure serves as the working context for the CAN main state machine, maintaining pointers to the current node being processed and managing outgoing message buffers. It supports both stack-allocated login messages and heap-allocated general messages, with flags to control enumeration behavior for multi-message responses.</p>
+<p>The state machine uses this structure to:</p><ul>
+<li>Track which OpenLCB node is currently being processed</li>
+<li>Hold outgoing CAN messages waiting for transmission</li>
+<li>Coordinate between login sequence and normal message handling</li>
+<li>Support multi-message response sequences through enumeration flag</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Processing incoming CAN frames and generating responses</li>
+<li>Managing login sequence message transmission</li>
+<li>Handling multi-message responses (e.g., event enumeration)</li>
+<li>Coordinating between CAN layer and OpenLCB layer state machines</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Stack-allocated login buffer must not be freed </dd>
+<dd>
+Heap-allocated outgoing buffer must be freed after transmission </dd>
+<dd>
+NOT thread-safe - caller must handle synchronization</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>The enumerating flag prevents premature message cleanup </dd>
+<dd>
+Login messages use stack allocation for efficiency</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>login_outgoing_can_msg is always available (stack-allocated) </dd>
+<dd>
+outgoing_can_msg is NULL when no message pending</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8h.html" title="Main CAN layer state machine for orchestrating message dispatch and node management.">can_main_statemachine.h</a> - Uses this structure </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8h.html" title="State machine for logging nodes into the OpenLCB/LCC network.">can_login_statemachine.h</a> - Loads <a class="el" href="#a5f205bad3d8a5b21f0b33bb5371b3850" title="Flag to mark that login_outgoing_can_msg is a valid message that needs transmitting.">login_outgoing_can_msg</a> </dd>
+<dd>
+<a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> - Allocates <a class="el" href="#a675153279f12b87deb9ca3032497951f" title="Flag to tell the state machine that the current outgoing message is the first of N messages that this...">outgoing_can_msg</a> buffers </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ac122774ef5c3b5d237061918e3af6125" name="ac122774ef5c3b5d237061918e3af6125"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac122774ef5c3b5d237061918e3af6125">&#9670;&#160;</a></span>openlcb_node</h2>
@@ -145,7 +174,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Flag to mark that login_outgoibng_can_msg is a valid message that needs transmitting. </p>
+<p>Flag to mark that <a class="el" href="#a5f205bad3d8a5b21f0b33bb5371b3850">login_outgoing_can_msg</a> is a valid message that needs transmitting. </p>
 
 </div>
 </div>
@@ -162,7 +191,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Pointer to the CAN message that needs to be sent. </p>
-<dl class="section note"><dt>Note</dt><dd>This buffer is a buffer allocated from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> and will be freed and set to NULL after it is successfull transmitted </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This buffer is a buffer allocated from <a class="el" href="can__buffer__store_8h.html" title="Core buffer store for CAN frame allocation and management.">can_buffer_store.h</a> and will be freed and set to NULL after it is successfully transmitted </dd></dl>
 
 </div>
 </div>
@@ -179,7 +208,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Flag to tell the state machine that the current outgoing message is the first of N messages that this response needs to transmit. </p>
-<dl class="section note"><dt>Note</dt><dd>A good example of this is if a message to enumumerate all Consumers is recieved then N message will need to be sent as a response. If the handler sets this flag then the state machine knows that is should not free the current message is its handling and should continue to call the hander for that incoming message until this flag is clear. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>A good example of this is if a message to enumerate all Consumers is received then N message will need to be sent as a response. If the handler sets this flag then the state machine knows that is should not free the current message is its handling and should continue to call the hander for that incoming message until this flag is clear. </dd></dl>
 
 </div>
 </div>

@@ -575,20 +575,25 @@ void CanRxMessageHandler_stream_frame(can_msg_t* can_msg, uint8_t offset, payloa
      */
 void CanRxMessageHandler_cid_frame(can_msg_t* can_msg) {
 
-    // Check for duplicate Alias
-    uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
-    alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
+    if (!can_msg) { return; }
 
-    if (alias_mapping) {
+        // Check for duplicate Alias
+        uint16_t source_alias = CanUtilities_extract_source_alias_from_can_identifier(can_msg);
+        alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_alias(source_alias);
 
-        can_msg_t *reply_msg = _interface->can_buffer_store_allocate_buffer();
+        if (alias_mapping)
+        {
 
-        reply_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | source_alias;
-        reply_msg->payload_count = 0;
+            can_msg_t *reply_msg = _interface->can_buffer_store_allocate_buffer();
 
-        CanBufferFifo_push(reply_msg);
+            if (reply_msg)
+            {
+                reply_msg->identifier = RESERVED_TOP_BIT | CAN_CONTROL_FRAME_RID | source_alias;
+                reply_msg->payload_count = 0;
 
-    }
+                CanBufferFifo_push(reply_msg);
+            }
+        }
 
 }
 

@@ -460,6 +460,12 @@ void AliasMappings_unregister(uint16_t alias) {
  */
 alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
 
+    if (alias == 0 || alias > 0xFFF) {
+
+        return NULL; 
+
+    }
+
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
         if (_alias_mapping_info.list[i].alias == alias) {
@@ -515,6 +521,13 @@ alias_mapping_t *AliasMappings_find_mapping_by_alias(uint16_t alias) {
  * @see AliasMappings_register - Adds a mapping
  */
 alias_mapping_t *AliasMappings_find_mapping_by_node_id(node_id_t node_id) {
+
+    if (node_id == 0 || node_id > 0xFFFFFFFFFFFFULL)
+    {
+
+        return NULL;
+
+    }
 
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 

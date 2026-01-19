@@ -94,43 +94,43 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 <a href="can__buffer__fifo_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">// more than once.</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_BUFFERS__</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_BUFFERS__</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="can__buffer__fifo_8h.html#ab0652f39f104350007ad642b955ddbad">   49</a></span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__buffer__fifo_8h.html#ab0652f39f104350007ad642b955ddbad">CanBufferFifo_initialize</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="can__buffer__fifo_8h.html#a9506021e46c1e62c700b125252276346">   57</a></span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__buffer__fifo_8h.html#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a>(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *new_msg);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="can__buffer__fifo_8h.html#a2ffec18f770ac9eeb09eb5efc586addc">   65</a></span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *<a class="code hl_function" href="can__buffer__fifo_8h.html#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="can__buffer__fifo_8h.html#ad52fb1602439269439924aa2c962db07">   72</a></span>    <span class="keyword">extern</span> uint8_t <a class="code hl_function" href="can__buffer__fifo_8h.html#ad52fb1602439269439924aa2c962db07">CanBufferFifo_is_empty</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// This is a guard condition so that contents of this file are not included</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">// more than once.</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#ifndef __DRIVERS_CANBUS_CAN_BUFFER_FIFO__</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#define __DRIVERS_CANBUS_CAN_BUFFER_FIFO__</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &quot;<a class="code" href="can__types_8h.html">can_types.h</a>&quot;</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>{</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="can__buffer__fifo_8h.html#ab0652f39f104350007ad642b955ddbad">CanBufferFifo_initialize</a>(<span class="keywordtype">void</span>);</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="can__buffer__fifo_8h.html#a93d3428dcf398427024b61c4cfe096c3">   79</a></span>    <span class="keyword">extern</span> uint16_t <a class="code hl_function" href="can__buffer__fifo_8h.html#a93d3428dcf398427024b61c4cfe096c3">CanBufferFifo_get_allocated_count</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>}</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_COMMON_CAN_BUFFERS__ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="acan__buffer__fifo_8h_html_a2ffec18f770ac9eeb09eb5efc586addc"><div class="ttname"><a href="can__buffer__fifo_8h.html#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a></div><div class="ttdeci">can_msg_t * CanBufferFifo_pop(void)</div><div class="ttdoc">Pops a CAN message off the FIFO buffer. The caller is responsible to free the message when done see C...</div></div>
-<div class="ttc" id="acan__buffer__fifo_8h_html_a93d3428dcf398427024b61c4cfe096c3"><div class="ttname"><a href="can__buffer__fifo_8h.html#a93d3428dcf398427024b61c4cfe096c3">CanBufferFifo_get_allocated_count</a></div><div class="ttdeci">uint16_t CanBufferFifo_get_allocated_count(void)</div><div class="ttdoc">Returns the number of messages in the FIFO buffer.</div></div>
-<div class="ttc" id="acan__buffer__fifo_8h_html_a9506021e46c1e62c700b125252276346"><div class="ttname"><a href="can__buffer__fifo_8h.html#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a></div><div class="ttdeci">bool CanBufferFifo_push(can_msg_t *new_msg)</div><div class="ttdoc">Pushes a new CAN message into the FIFO buffer that was allocated see CanBufferStore_allocate_buffer()...</div></div>
-<div class="ttc" id="acan__buffer__fifo_8h_html_ab0652f39f104350007ad642b955ddbad"><div class="ttname"><a href="can__buffer__fifo_8h.html#ab0652f39f104350007ad642b955ddbad">CanBufferFifo_initialize</a></div><div class="ttdeci">void CanBufferFifo_initialize(void)</div><div class="ttdoc">Initializes the CAN Message Buffer FIFO.</div></div>
-<div class="ttc" id="acan__buffer__fifo_8h_html_ad52fb1602439269439924aa2c962db07"><div class="ttname"><a href="can__buffer__fifo_8h.html#ad52fb1602439269439924aa2c962db07">CanBufferFifo_is_empty</a></div><div class="ttdeci">uint8_t CanBufferFifo_is_empty(void)</div><div class="ttdoc">Tests if there is a message in the FIFO buffer.</div></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="can__buffer__fifo_8h.html#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a>(<a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *new_msg);</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structcan__msg__struct.html">can_msg_t</a> *<a class="code hl_function" href="can__buffer__fifo_8h.html#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    <span class="keyword">extern</span> uint8_t <a class="code hl_function" href="can__buffer__fifo_8h.html#ad52fb1602439269439924aa2c962db07">CanBufferFifo_is_empty</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="keyword">extern</span> uint16_t <a class="code hl_function" href="can__buffer__fifo_8h.html#a93d3428dcf398427024b61c4cfe096c3">CanBufferFifo_get_allocated_count</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>}</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="preprocessor">#endif </span><span class="comment">/* __DRIVERS_CANBUS_CAN_BUFFER_FIFO__ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="acan__buffer__fifo_8h_html_a2ffec18f770ac9eeb09eb5efc586addc"><div class="ttname"><a href="can__buffer__fifo_8h.html#a2ffec18f770ac9eeb09eb5efc586addc">CanBufferFifo_pop</a></div><div class="ttdeci">can_msg_t * CanBufferFifo_pop(void)</div><div class="ttdoc">Pops a CAN message off the FIFO buffer.</div><div class="ttdef"><b>Definition</b> can_buffer_fifo.c:192</div></div>
+<div class="ttc" id="acan__buffer__fifo_8h_html_a93d3428dcf398427024b61c4cfe096c3"><div class="ttname"><a href="can__buffer__fifo_8h.html#a93d3428dcf398427024b61c4cfe096c3">CanBufferFifo_get_allocated_count</a></div><div class="ttdeci">uint16_t CanBufferFifo_get_allocated_count(void)</div><div class="ttdoc">Returns the number of messages currently in the FIFO buffer.</div><div class="ttdef"><b>Definition</b> can_buffer_fifo.c:265</div></div>
+<div class="ttc" id="acan__buffer__fifo_8h_html_a9506021e46c1e62c700b125252276346"><div class="ttname"><a href="can__buffer__fifo_8h.html#a9506021e46c1e62c700b125252276346">CanBufferFifo_push</a></div><div class="ttdeci">bool CanBufferFifo_push(can_msg_t *new_msg)</div><div class="ttdoc">Pushes a new CAN message into the FIFO buffer.</div><div class="ttdef"><b>Definition</b> can_buffer_fifo.c:140</div></div>
+<div class="ttc" id="acan__buffer__fifo_8h_html_ab0652f39f104350007ad642b955ddbad"><div class="ttname"><a href="can__buffer__fifo_8h.html#ab0652f39f104350007ad642b955ddbad">CanBufferFifo_initialize</a></div><div class="ttdeci">void CanBufferFifo_initialize(void)</div><div class="ttdoc">Initializes the CAN Message Buffer FIFO.</div><div class="ttdef"><b>Definition</b> can_buffer_fifo.c:95</div></div>
+<div class="ttc" id="acan__buffer__fifo_8h_html_ad52fb1602439269439924aa2c962db07"><div class="ttname"><a href="can__buffer__fifo_8h.html#ad52fb1602439269439924aa2c962db07">CanBufferFifo_is_empty</a></div><div class="ttdeci">uint8_t CanBufferFifo_is_empty(void)</div><div class="ttdoc">Tests if the FIFO buffer is empty.</div><div class="ttdef"><b>Definition</b> can_buffer_fifo.c:233</div></div>
 <div class="ttc" id="acan__types_8h_html"><div class="ttname"><a href="can__types_8h.html">can_types.h</a></div><div class="ttdoc">Type definitions and constants for CAN operations.</div></div>
-<div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdoc">Structure to hold information needed by a CAN message/frame.</div><div class="ttdef"><b>Definition</b> can_types.h:136</div></div>
+<div class="ttc" id="astructcan__msg__struct_html"><div class="ttname"><a href="structcan__msg__struct.html">can_msg_struct</a></div><div class="ttdoc">Structure to hold information needed by a CAN message/frame.</div><div class="ttdef"><b>Definition</b> can_types.h:183</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!doctype html>
 <html>

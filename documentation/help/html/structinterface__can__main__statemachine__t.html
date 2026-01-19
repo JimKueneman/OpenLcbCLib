@@ -92,55 +92,59 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>.  
+<p>Dependency injection interface for CAN Main State Machine operations.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:ad5d977bbc45e071d19d77e261f17b7e7" id="r_ad5d977bbc45e071d19d77e261f17b7e7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7">lock_shared_resources</a> )(void)</td></tr>
-<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an Application supplied function that must stop the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library.  <br /></td></tr>
+<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disables interrupts and prevents concurrent access to shared resources.  <br /></td></tr>
 <tr class="separator:ad5d977bbc45e071d19d77e261f17b7e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a654fa7c6260aa2ac2c0589f57fcd67e9" id="r_a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9">unlock_shared_resources</a> )(void)</td></tr>
-<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an Application supplied function that must restart the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library buffers.  <br /></td></tr>
+<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-enables interrupts and allows access to shared resources.  <br /></td></tr>
 <tr class="separator:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0bbea8088c0d628d4e066570baf35f3" id="r_af0bbea8088c0d628d4e066570baf35f3"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0bbea8088c0d628d4e066570baf35f3">send_can_message</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *msg)</td></tr>
-<tr class="memdesc:af0bbea8088c0d628d4e066570baf35f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an Application supplied function that transmits the passed msg on the physical CAN line.  <br /></td></tr>
+<tr class="memdesc:af0bbea8088c0d628d4e066570baf35f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits a CAN message to the physical bus.  <br /></td></tr>
 <tr class="separator:af0bbea8088c0d628d4e066570baf35f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
-<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get enumerate current nodes.  <br /></td></tr>
+<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the first node for enumeration.  <br /></td></tr>
 <tr class="separator:a642f075eed427764e99bda659f1fd22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
-<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get enumerate current nodes.  <br /></td></tr>
+<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the next node in enumeration sequence.  <br /></td></tr>
 <tr class="separator:ae198d49b6505cbba8429aeb49fa3879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcc26a9aa6bd99c8b8c09cfac42e0125" id="r_afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afcc26a9aa6bd99c8b8c09cfac42e0125">openlcb_node_find_by_alias</a> )(uint16_t alias)</td></tr>
-<tr class="memdesc:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get find a current node using its Alias.  <br /></td></tr>
+<tr class="memdesc:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a node by its CAN alias.  <br /></td></tr>
 <tr class="separator:afcc26a9aa6bd99c8b8c09cfac42e0125"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac202b101b9553f768970f16f84691cdd" id="r_ac202b101b9553f768970f16f84691cdd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac202b101b9553f768970f16f84691cdd">login_statemachine_run</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ac202b101b9553f768970f16f84691cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a> functions to Run the Login state machine.  <br /></td></tr>
+<tr class="memdesc:ac202b101b9553f768970f16f84691cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Executes the login state machine for a node.  <br /></td></tr>
 <tr class="separator:ac202b101b9553f768970f16f84691cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11d6f4e079fa28cc00a01cdc38e526f6" id="r_a11d6f4e079fa28cc00a01cdc38e526f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="can__types_8h.html#a6f5fe2a96f016592936919dc52552b60">alias_mapping_info_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11d6f4e079fa28cc00a01cdc38e526f6">alias_mapping_get_alias_mapping_info</a> )(void)</td></tr>
+<tr class="memdesc:a11d6f4e079fa28cc00a01cdc38e526f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the alias mapping buffer.  <br /></td></tr>
 <tr class="separator:a11d6f4e079fa28cc00a01cdc38e526f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad579e2c105067c9311bb173b30cd9130" id="r_ad579e2c105067c9311bb173b30cd9130"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad579e2c105067c9311bb173b30cd9130">alias_mapping_unregister</a> )(uint16_t alias)</td></tr>
-<tr class="memdesc:ad579e2c105067c9311bb173b30cd9130"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to unregister the mapping pairs, typically due to a duplicate Alias error.  <br /></td></tr>
+<tr class="memdesc:ad579e2c105067c9311bb173b30cd9130"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an alias mapping from the table.  <br /></td></tr>
 <tr class="separator:ad579e2c105067c9311bb173b30cd9130"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdd549c43e6e2393090daf202ee785cf" id="r_acdd549c43e6e2393090daf202ee785cf"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdd549c43e6e2393090daf202ee785cf">handle_duplicate_aliases</a> )(void)</td></tr>
-<tr class="memdesc:acdd549c43e6e2393090daf202ee785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle duplicated Aliases that have been detected. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.  <br /></td></tr>
+<tr class="memdesc:acdd549c43e6e2393090daf202ee785cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes detected duplicate aliases.  <br /></td></tr>
 <tr class="separator:acdd549c43e6e2393090daf202ee785cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21202484ac69bd5be4a3304038cf2f5f" id="r_a21202484ac69bd5be4a3304038cf2f5f"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21202484ac69bd5be4a3304038cf2f5f">handle_outgoing_can_message</a> )(void)</td></tr>
+<tr class="memdesc:a21202484ac69bd5be4a3304038cf2f5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits pending outgoing CAN messages.  <br /></td></tr>
 <tr class="separator:a21202484ac69bd5be4a3304038cf2f5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28e939b74de1df461b469f2ddf7d663c" id="r_a28e939b74de1df461b469f2ddf7d663c"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28e939b74de1df461b469f2ddf7d663c">handle_login_outgoing_can_message</a> )(void)</td></tr>
-<tr class="memdesc:a28e939b74de1df461b469f2ddf7d663c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle outgoing login CAN messages. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.  <br /></td></tr>
+<tr class="memdesc:a28e939b74de1df461b469f2ddf7d663c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits pending login-related CAN messages.  <br /></td></tr>
 <tr class="separator:a28e939b74de1df461b469f2ddf7d663c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace54b5c03eafd093615c3de2f76587b1" id="r_ace54b5c03eafd093615c3de2f76587b1"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace54b5c03eafd093615c3de2f76587b1">handle_try_enumerate_first_node</a> )(void)</td></tr>
-<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.  <br /></td></tr>
+<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins node enumeration for state machine processing.  <br /></td></tr>
 <tr class="separator:ace54b5c03eafd093615c3de2f76587b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
-<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly.  <br /></td></tr>
+<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Continues node enumeration for state machine processing.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__main__statemachine_8h.html">can_main_statemachine.h</a>. </p>
-<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL. </p>
+<div class="textblock"><p>Dependency injection interface for CAN Main State Machine operations. </p>
+<p>OpenLcbCLib uses dependency injection to enable comprehensive testing by allowing function behaviors to be mocked with valid or invalid results. This approach also enables protocol-specific optimization by setting unused protocol handlers to NULL, which strips out unnecessary code and minimizes application size. The library automatically generates appropriate error responses when handlers are NULL.</p>
+<p>All function pointers in this structure must be initialized during application setup by calling <a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize()</a> with a properly configured interface.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
@@ -154,8 +158,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to an Application supplied function that must stop the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to an Application defined function. </dd></dl>
+<p>Disables interrupts and prevents concurrent access to shared resources. </p>
+<p>Application must implement this to stop the 100ms timer and CAN receive interrupt from accessing library buffers during critical operations. Typical implementations disable interrupts or acquire a mutex.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - must be implemented by application </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Lock duration must be minimal to avoid blocking CAN reception</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9" title="Re-enables interrupts and allows access to shared resources.">unlock_shared_resources</a> </dd></dl>
 
 </div>
 </div>
@@ -171,8 +178,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to an Application supplied function that must restart the Application supplied 100ms Timer and the hardware CAN Frame Receive (Rx) from accessing the library buffers. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to an Application defined function. </dd></dl>
+<p>Re-enables interrupts and allows access to shared resources. </p>
+<p>Application must implement this to restart the 100ms timer and CAN receive interrupt after critical section completes. Must be called after every <a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources()</a> call.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - must be implemented by application </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always call after <a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources()</a> to prevent deadlock</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources</a> </dd></dl>
 
 </div>
 </div>
@@ -188,9 +198,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to an Application supplied function that transmits the passed msg on the physical CAN line. </p>
-<dl class="section note"><dt>Note</dt><dd>The implementation of this may either place the message in the hardwares transmit buffer or create an internal software buffer </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__tx__statemachine_8h.html#acd862abdc607379d8c2854168949236f">CanTxStatemachine_send_can_message()</a>. </dd></dl>
+<p>Transmits a CAN message to the physical bus. </p>
+<p>Application implements this to interface with hardware CAN controller. Implementation may write directly to hardware buffer or queue to software buffer. Must handle cases where hardware transmit buffer is full.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__tx__statemachine_8c.html#acd862abdc607379d8c2854168949236f" title="Transmits a raw CAN frame on the physical layer.">CanTxStatemachine_send_can_message()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__statemachine_8c.html#acd862abdc607379d8c2854168949236f" title="Transmits a raw CAN frame on the physical layer.">CanTxStatemachine_send_can_message</a> </dd></dl>
 
 </div>
 </div>
@@ -206,8 +218,13 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get enumerate current nodes. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="openlcb__node_8h.html#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first()</a>. </dd></dl>
+<p>Retrieves the first node for enumeration. </p>
+<p>Starts enumeration of all allocated nodes. Used in conjunction with <a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e" title="Retrieves the next node in enumeration sequence.">openlcb_node_get_next()</a> to iterate through all virtual nodes for processing.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="openlcb__node_8c.html#aebb273e90eb5491704a9a42c830e5324" title="Gets the first node in the pool for enumeration.">OpenLcbNode_get_first()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e" title="Retrieves the next node in enumeration sequence.">openlcb_node_get_next</a> </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#aebb273e90eb5491704a9a42c830e5324" title="Gets the first node in the pool for enumeration.">OpenLcbNode_get_first</a> </dd></dl>
 
 </div>
 </div>
@@ -223,8 +240,13 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get enumerate current nodes. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="openlcb__node_8h.html#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next()</a>. </dd></dl>
+<p>Retrieves the next node in enumeration sequence. </p>
+<p>Continues enumeration started by <a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Retrieves the first node for enumeration.">openlcb_node_get_first()</a>. Returns NULL when all nodes have been enumerated.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="openlcb__node_8c.html#a67d1e4736a41064ac7c649831848b4ca" title="Gets the next node in the enumeration sequence.">OpenLcbNode_get_next()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Retrieves the first node for enumeration.">openlcb_node_get_first</a> </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#a67d1e4736a41064ac7c649831848b4ca" title="Gets the next node in the enumeration sequence.">OpenLcbNode_get_next</a> </dd></dl>
 
 </div>
 </div>
@@ -240,8 +262,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for access into the <a class="el" href="openlcb__node_8h.html">openlcb_node.h</a> functions get find a current node using its Alias. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="openlcb__node_8h.html#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias()</a>. </dd></dl>
+<p>Finds a node by its CAN alias. </p>
+<p>Searches all allocated nodes for matching 12-bit alias. Used when processing incoming messages to route them to the correct virtual node.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="openlcb__node_8c.html#a02012a27bb89bffc68816a980279949e" title="Finds a node by its CAN alias.">OpenLcbNode_find_by_alias()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#a02012a27bb89bffc68816a980279949e" title="Finds a node by its CAN alias.">OpenLcbNode_find_by_alias</a> </dd></dl>
 
 </div>
 </div>
@@ -257,8 +282,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for access into the <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a> functions to Run the Login state machine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__statemachine_8h.html#a19d57826974209f27f8883a2fa443aae">CanLoginStateMachine_run()</a>. </dd></dl>
+<p>Executes the login state machine for a node. </p>
+<p>Processes the CAN alias allocation sequence for nodes that have not completed login. Handles CID frame transmission, RID, and AMD frames according to OpenLCB CAN frame transfer standard.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> </dd></dl>
 
 </div>
 </div>
@@ -273,7 +301,12 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to access the mapping pairs. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a2ea6e19b9de3e4be35e2340ee9dc4af2">AliasMappings_get_alias_mapping_info()</a>. </dd></dl>
+
+<p>Accesses the alias mapping buffer. </p>
+<p>Returns pointer to structure containing all alias-to-NodeID mappings for the network. Used to detect duplicate aliases and manage alias allocations.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="alias__mappings_8c.html#a2ea6e19b9de3e4be35e2340ee9dc4af2" title="Allows access to the Alias Mapping Buffer itself.">AliasMappings_get_alias_mapping_info()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a2ea6e19b9de3e4be35e2340ee9dc4af2" title="Allows access to the Alias Mapping Buffer itself.">AliasMappings_get_alias_mapping_info</a> </dd></dl>
 
 </div>
 </div>
@@ -289,8 +322,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for access into the <a class="el" href="alias__mappings_8h.html">alias_mappings.h</a> functions to unregister the mapping pairs, typically due to a duplicate Alias error. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="alias__mappings_8h.html#a9f08c60c95f97546d47c8386270cc8b4">AliasMappings_unregister()</a>. </dd></dl>
+<p>Removes an alias mapping from the table. </p>
+<p>Called when duplicate alias detected or node goes offline. Clears the alias entry and allows it to be reallocated.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> </dd></dl>
 
 </div>
 </div>
@@ -306,8 +342,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function to handle duplicated Aliases that have been detected. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#a4c7be0999c73da181407f0ce473b4574">CanMainStatemachine_handle_duplicate_aliases()</a>. </dd></dl>
+<p>Processes detected duplicate aliases. </p>
+<p>Internal function exposed for testing. Iterates through alias mapping table and resets any nodes with duplicate aliases. Application typically assigns this to <a class="el" href="can__main__statemachine_8c.html#a4c7be0999c73da181407f0ce473b4574" title="Handles all detected duplicate alias conflicts.">CanMainStatemachine_handle_duplicate_aliases()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__main__statemachine_8c.html#a4c7be0999c73da181407f0ce473b4574" title="Handles all detected duplicate alias conflicts.">CanMainStatemachine_handle_duplicate_aliases()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a4c7be0999c73da181407f0ce473b4574" title="Handles all detected duplicate alias conflicts.">CanMainStatemachine_handle_duplicate_aliases</a> </dd></dl>
 
 </div>
 </div>
@@ -322,7 +361,12 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to a function to handle outgoing CAN messages. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly. </p><dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#a619bfa722d577c1295ae862500aef386">CanMainStatemachine_handle_outgoing_can_message()</a>. </dd></dl>
+
+<p>Transmits pending outgoing CAN messages. </p>
+<p>Internal function exposed for testing. Pops messages from outgoing FIFO and attempts transmission. Application typically assigns this to <a class="el" href="can__main__statemachine_8c.html#a619bfa722d577c1295ae862500aef386" title="Transmits pending outgoing CAN messages from FIFO.">CanMainStatemachine_handle_outgoing_can_message()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__main__statemachine_8c.html#a619bfa722d577c1295ae862500aef386" title="Transmits pending outgoing CAN messages from FIFO.">CanMainStatemachine_handle_outgoing_can_message()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a619bfa722d577c1295ae862500aef386" title="Transmits pending outgoing CAN messages from FIFO.">CanMainStatemachine_handle_outgoing_can_message</a> </dd></dl>
 
 </div>
 </div>
@@ -338,8 +382,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function to handle outgoing login CAN messages. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#acefbd0fe819bfc0be958202dca4bbab8">CanMainStatemachine_handle_login_outgoing_can_message()</a>. </dd></dl>
+<p>Transmits pending login-related CAN messages. </p>
+<p>Internal function exposed for testing. Handles transmission of CID, RID, and AMD frames during node login sequence. Application typically assigns this to <a class="el" href="can__main__statemachine_8c.html#acefbd0fe819bfc0be958202dca4bbab8" title="Transmits pending login-related CAN messages.">CanMainStatemachine_handle_login_outgoing_can_message()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__main__statemachine_8c.html#acefbd0fe819bfc0be958202dca4bbab8" title="Transmits pending login-related CAN messages.">CanMainStatemachine_handle_login_outgoing_can_message()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#acefbd0fe819bfc0be958202dca4bbab8" title="Transmits pending login-related CAN messages.">CanMainStatemachine_handle_login_outgoing_can_message</a> </dd></dl>
 
 </div>
 </div>
@@ -355,8 +402,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0">CanMainStatemachine_handle_try_enumerate_first_node()</a>. </dd></dl>
+<p>Begins node enumeration for state machine processing. </p>
+<p>Internal function exposed for testing. Gets first node and processes it through appropriate state machine. Application typically assigns this to <a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> </dd></dl>
 
 </div>
 </div>
@@ -372,8 +422,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function to handle enumerating the nodes to run through the statemachine. This function is defined and accessed from within this modules and exists to enable better test coverage as the test cases can return either true or false easily to ensure the statemachine functions properly. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__main__statemachine_8h.html#a326e8a6b5051c0b6821a460fab2ba410">CanMainStatemachine_handle_try_enumerate_next_node()</a>. </dd></dl>
+<p>Continues node enumeration for state machine processing. </p>
+<p>Internal function exposed for testing. Gets next node and processes it through appropriate state machine. Application typically assigns this to <a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> </dd></dl>
 
 </div>
 </div>
