@@ -95,7 +95,7 @@ typedef struct {
          *
          * @attention Callback should be non-blocking. Do not perform lengthy operations.
          *
-         * @note Called from library context, not interrupt context.
+         * @note This is a REQUIRED callback - must not be NULL
          */
     bool (*send_openlcb_msg)(openlcb_msg_t *openlcb_msg);
 
@@ -121,7 +121,7 @@ typedef struct {
          * @attention Some memory spaces are read-only (CDI, ACDI). Attempting to write
          *            to these spaces should return error.
          *
-         * @note Callback is synchronous and should complete quickly.
+         * @note This is a REQUIRED callback - must not be NULL
          */
     uint16_t (*config_memory_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
@@ -148,6 +148,7 @@ typedef struct {
          *
          * @note Callback is synchronous and should complete quickly.
          * @note Application is responsible for persistence mechanism (EEPROM, Flash, etc.)
+         * @note This is a REQUIRED callback - must not be NULL
          */
     uint16_t (*config_memory_write)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 

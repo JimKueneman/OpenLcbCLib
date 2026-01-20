@@ -53,154 +53,263 @@
     /**
     * @brief Interface structure for login state machine callback functions
     *
-    * @details This structure defines all function pointers that must be provided
-    * during initialization. The interface pattern allows the state machine to be
-    * decoupled from specific implementations, making the code more testable and flexible.
+    * @details This structure defines the callback interface for the OpenLCB login state
+    * machine, which orchestrates the complete node initialization sequence after successful
+    * CAN alias allocation. The login state machine manages the three-phase process of
+    * announcing nodes on the network:
     *
-    * Required callback categories:
-    * - Message transmission
-    * - Node enumeration
-    * - Message handlers
-    * - Internal state machine functions (for testability)
+    * 1. Send Initialization Complete message
+    * 2. Send Producer Event Identified messages for all produced events
+    * 3. Send Consumer Event Identified messages for all consumed events
+    *
+    * The interface provides callbacks organized into several functional categories:
+    *
+    * **Required Message Transmission Callbacks:**
+    * - send_openlcb_msg: Transmit OpenLCB messages to the network
+    *
+    * **Required Node Enumeration Callbacks:**
+    * - openlcb_node_get_first: Begin node enumeration
+    * - openlcb_node_get_next: Continue node enumeration
+    *
+    * **Required Message Handler Callbacks:**
+    * - load_initialization_complete: Construct Initialization Complete message
+    * - load_producer_events: Construct Producer Event Identified messages
+    * - load_consumer_events: Construct Consumer Event Identified messages
+    *
+    * **Internal Functions (for testing):**
+    * - process_login_statemachine: State dispatcher
+    * - handle_outgoing_openlcb_message: Message transmission handler
+    * - handle_try_reenumerate: Re-enumeration controller
+    * - handle_try_enumerate_first_node: First node enumerator
+    * - handle_try_enumerate_next_node: Next node enumerator
+    *
+    * The state machine operates in a non-blocking manner, performing one step of processing
+    * per call to OpenLcbLoginMainStatemachine_run(). It automatically enumerates all nodes
+    * that require login processing and dispatches them through the appropriate handlers based
+    * on their run_state.
+    *
+    * @note All required callbacks must be set before calling OpenLcbLoginStateMachine_initialize
+    * @note Internal function pointers are for unit testing - they reference module functions
+    *
+    * @see OpenLcbLoginStateMachine_initialize
+    * @see OpenLcbLoginMainStatemachine_run
+    * @see openlcb_login_statemachine_handler.h - Message construction handlers
     */
 typedef struct {
 
         /**
-        * @brief Callback to send an OpenLCB message to the network
-        *
-        * @details Called when a message is ready to transmit. The implementation should
-        * attempt to send the message and return true if successful.
-        *
-        * @param outgoing_msg Pointer to the message to transmit
-        * @return true if message was queued for transmission, false if transmission failed
-        *
-        * @warning outgoing_msg must NOT be NULL
-        *
-        * @note Returning false will cause the state machine to retry on the next iteration
-        */
+         * @brief Callback to send an OpenLCB message to the network
+         *
+         * @details This required callback transmits an OpenLCB message to the network.
+         * The implementation should attempt to queue the message for transmission and
+         * return true if successful. If the transmission buffer is full or transmission
+         * fails, the callback should return false, causing the state machine to retry
+         * on the next iteration.
+         *
+         * The message includes source alias, source Node ID, MTI, and payload data.
+         * The callback is responsible for converting the OpenLCB message to the
+         * appropriate CAN frames via the CAN TX state machine.
+         *
+         * @note This is a REQUIRED callback - must not be NULL
+         */
     bool (*send_openlcb_msg)(openlcb_msg_t *outgoing_msg);
 
         /**
-        * @brief Callback to get the first OpenLCB node for enumeration
-        *
-        * @details Returns the first node in the enumeration list for the given context key.
-        *
-        * @param key Enumeration context key
-        * @return Pointer to first node, or NULL if no nodes exist
-        *
-        * @note Returning NULL indicates no nodes need processing
-        *
-        * @see openlcb_node_get_next - Gets subsequent nodes
-        */
+         * @brief Callback to get the first OpenLCB node for enumeration
+         *
+         * @details This required callback initiates node enumeration by returning the first
+         * node in the node list. The enumeration uses a key parameter to maintain separate
+         * iteration contexts for different state machines (login vs main state machine).
+         *
+         * The callback should return the first allocated node in the node pool, or NULL
+         * if no nodes exist. The login state machine will process nodes that are in
+         * initialization states (not yet in RUNSTATE_RUN).
+         *
+         * Typical implementation: Return first entry from node pool array.
+         *
+         * @note This is a REQUIRED callback - must not be NULL
+         */
     openlcb_node_t *(*openlcb_node_get_first)(uint8_t key);
 
         /**
-        * @brief Callback to get the next OpenLCB node for enumeration
-        *
-        * @details Returns the next node in the enumeration list for the given context key.
-        *
-        * @param key Enumeration context key
-        * @return Pointer to next node, or NULL if no more nodes exist
-        *
-        * @note Returning NULL indicates enumeration is complete
-        *
-        * @see openlcb_node_get_first - Gets first node
-        */
+         * @brief Callback to get the next OpenLCB node for enumeration
+         *
+         * @details This required callback continues node enumeration by returning the next
+         * node in the node list. The enumeration uses a key parameter to maintain separate
+         * iteration contexts for different state machines.
+         *
+         * The callback should return the next allocated node in the node pool, or NULL
+         * when the end of the list is reached. The login state machine will process nodes
+         * that are in initialization states (not yet in RUNSTATE_RUN).
+         *
+         * Typical implementation: Increment index and return next entry from node pool array.
+         *
+         * @note This is a REQUIRED callback - must not be NULL
+         */
     openlcb_node_t *(*openlcb_node_get_next)(uint8_t key);
 
         /**
-        * @brief Callback to load an Initialization Complete message
-        *
-        * @details Constructs an Initialization Complete message for the node.
-        * This is the first message sent during the login sequence.
-        *
-        * @param openlcb_statemachine_info Pointer to state machine info with node and message buffer
-        *
-        * @see OpenLcbLoginMessageHandler_load_initialization_complete
-        */
+         * @brief Callback to load an Initialization Complete message
+         *
+         * @details This required callback constructs an Initialization Complete message
+         * for the node currently being processed. The message announces the node's presence
+         * on the network and signals readiness to participate in OpenLCB operations.
+         *
+         * The callback should:
+         * - Build the message with MTI 0x0100 (Full) or 0x0101 (Simple)
+         * - Include the node's 6-byte Node ID in the payload
+         * - Set outgoing_msg_info.valid to true to trigger transmission
+         * - Mark the node as initialized
+         * - Transition to RUNSTATE_LOAD_PRODUCER_EVENTS
+         *
+         * Typical implementation: OpenLcbLoginMessageHandler_load_initialization_complete
+         *
+         * @note This is a REQUIRED callback - must not be NULL
+         */
     void (*load_initialization_complete)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
         /**
-        * @brief Callback to load Producer Event Identified messages
-        *
-        * @details Constructs Producer Identified messages for the node's produced events.
-        * May be called multiple times via re-enumeration.
-        *
-        * @param openlcb_statemachine_info Pointer to state machine info with node and message buffer
-        *
-        * @see OpenLcbLoginMessageHandler_load_producer_event
-        */
+         * @brief Callback to load Producer Event Identified messages
+         *
+         * @details This required callback constructs Producer Identified messages for the
+         * node's produced events. The callback may be invoked multiple times via the
+         * enumeration mechanism to send one message per produced event.
+         *
+         * The callback should:
+         * - Check if producers exist (count > 0)
+         * - Get MTI for current event state (Valid/Invalid/Unknown)
+         * - Build message with 8-byte Event ID in payload
+         * - Increment enum_index
+         * - Set enumerate flag if more events remain
+         * - Transition to RUNSTATE_LOAD_CONSUMER_EVENTS when complete
+         *
+         * Typical implementation: OpenLcbLoginMessageHandler_load_producer_event
+         *
+         * @note This is a REQUIRED callback - must not be NULL
+         */
     void (*load_producer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
         /**
-        * @brief Callback to load Consumer Event Identified messages
-        *
-        * @details Constructs Consumer Identified messages for the node's consumed events.
-        * May be called multiple times via re-enumeration.
-        *
-        * @param openlcb_statemachine_info Pointer to state machine info with node and message buffer
-        *
-        * @see OpenLcbLoginMessageHandler_load_consumer_event
-        */
+         * @brief Callback to load Consumer Event Identified messages
+         *
+         * @details This required callback constructs Consumer Identified messages for the
+         * node's consumed events. The callback may be invoked multiple times via the
+         * enumeration mechanism to send one message per consumed event. This is the final
+         * step in the login sequence.
+         *
+         * The callback should:
+         * - Check if consumers exist (count > 0)
+         * - Get MTI for current event state (Valid/Invalid/Unknown)
+         * - Build message with 8-byte Event ID in payload
+         * - Increment enum_index
+         * - Set enumerate flag if more events remain
+         * - Transition to RUNSTATE_RUN when complete (node fully initialized)
+         *
+         * Typical implementation: OpenLcbLoginMessageHandler_load_consumer_event
+         *
+         * @note This is a REQUIRED callback - must not be NULL
+         */
     void (*load_consumer_events)(openlcb_login_statemachine_info_t *openlcb_statemachine_info);
 
         /**
-        * @brief Internal function pointer for state machine processing
-        *
-        * @details Dispatches to the appropriate handler based on node run_state.
-        * Exposed through interface for unit testing.
-        *
-        * @param statemachine_info Pointer to state machine info with node and message buffer
-        *
-        * @see OpenLcbLoginStateMachine_process
-        */
+         * @brief Internal function pointer for state machine processing
+         *
+         * @details This callback dispatches to the appropriate message handler based on the
+         * node's current run_state. It is exposed through the interface to enable unit testing
+         * of the state dispatch logic.
+         *
+         * Typical implementation: OpenLcbLoginStateMachine_process
+         *
+         * This callback examines node->run_state and calls:
+         * - load_initialization_complete if RUNSTATE_LOAD_INITIALIZATION_COMPLETE
+         * - load_producer_events if RUNSTATE_LOAD_PRODUCER_EVENTS
+         * - load_consumer_events if RUNSTATE_LOAD_CONSUMER_EVENTS
+         *
+         * @note This is a REQUIRED callback - must not be NULL (set to module function)
+         */
     void (*process_login_statemachine)(openlcb_login_statemachine_info_t *statemachine_info);
 
         /**
-        * @brief Internal function pointer for message transmission handling
-        *
-        * @details Attempts to send pending outgoing message. Exposed for unit testing.
-        *
-        * @return true if message transmission was handled, false if no message pending
-        *
-        * @see OpenLcbLoginStatemachine_handle_outgoing_openlcb_message
-        */
+         * @brief Internal function pointer for message transmission handling
+         *
+         * @details This callback attempts to transmit any pending outgoing message by
+         * checking the valid flag and calling send_openlcb_msg. It is exposed through
+         * the interface to enable unit testing of transmission logic.
+         *
+         * Typical implementation: OpenLcbLoginStatemachine_handle_outgoing_openlcb_message
+         *
+         * The callback should:
+         * - Check if outgoing_msg_info.valid is true
+         * - Call send_openlcb_msg if message is pending
+         * - Clear valid flag if transmission succeeds
+         * - Keep valid flag set if transmission fails (retry on next iteration)
+         *
+         * @note This is a REQUIRED callback - must not be NULL (set to module function)
+         */
     bool (*handle_outgoing_openlcb_message)(void);
 
         /**
-        * @brief Internal function pointer for re-enumeration handling
-        *
-        * @details Handles re-entry into handler for multi-message sequences. Exposed for unit testing.
-        *
-        * @return true if re-enumeration occurred, false if enumeration complete
-        *
-        * @see OpenLcbLoginStatemachine_handle_try_reenumerate
-        */
+         * @brief Internal function pointer for re-enumeration handling
+         *
+         * @details This callback handles the re-enumeration mechanism for multi-message
+         * sequences. When message handlers set the enumerate flag, this callback re-invokes
+         * the handler to generate the next message in the sequence. It is exposed through
+         * the interface to enable unit testing.
+         *
+         * Typical implementation: OpenLcbLoginStatemachine_handle_try_reenumerate
+         *
+         * The callback should:
+         * - Check if outgoing_msg_info.enumerate is true
+         * - Call process_login_statemachine if enumerate flag is set
+         * - Return true if re-enumeration occurred
+         *
+         * @note This is a REQUIRED callback - must not be NULL (set to module function)
+         */
     bool (*handle_try_reenumerate)(void);
 
         /**
-        * @brief Internal function pointer for first node enumeration
-        *
-        * @details Gets first node and processes it if not yet initialized. Exposed for unit testing.
-        *
-        * @return true if first node was handled, false if no action taken
-        *
-        * @see OpenLcbLoginStatemachine_handle_try_enumerate_first_node
-        */
+         * @brief Internal function pointer for first node enumeration
+         *
+         * @details This callback attempts to get and process the first node in the node pool.
+         * If no current node is being processed, it calls openlcb_node_get_first and dispatches
+         * the node if it requires login processing. It is exposed through the interface to
+         * enable unit testing.
+         *
+         * Typical implementation: OpenLcbLoginStatemachine_handle_try_enumerate_first_node
+         *
+         * The callback should:
+         * - Check if openlcb_node is NULL (no current node)
+         * - Call openlcb_node_get_first if needed
+         * - Skip nodes already in RUNSTATE_RUN
+         * - Call process_login_statemachine for nodes needing initialization
+         *
+         * @note This is a REQUIRED callback - must not be NULL (set to module function)
+         */
     bool (*handle_try_enumerate_first_node)(void);
 
         /**
-        * @brief Internal function pointer for next node enumeration
-        *
-        * @details Gets next node and processes it if not yet initialized. Exposed for unit testing.
-        *
-        * @return true if next node was handled, false if no action taken
-        *
-        * @see OpenLcbLoginStatemachine_handle_try_enumerate_next_node
-        */
+         * @brief Internal function pointer for next node enumeration
+         *
+         * @details This callback attempts to get and process the next node in the node pool.
+         * If a current node exists, it calls openlcb_node_get_next and dispatches the node
+         * if it requires login processing. It is exposed through the interface to enable
+         * unit testing.
+         *
+         * Typical implementation: OpenLcbLoginStatemachine_handle_try_enumerate_next_node
+         *
+         * The callback should:
+         * - Check if openlcb_node is not NULL (current node exists)
+         * - Call openlcb_node_get_next to advance enumeration
+         * - Skip nodes already in RUNSTATE_RUN
+         * - Call process_login_statemachine for nodes needing initialization
+         * - Clear openlcb_node to NULL when end of list reached
+         *
+         * @note This is a REQUIRED callback - must not be NULL (set to module function)
+         */
     bool (*handle_try_enumerate_next_node)(void);
 
 } interface_openlcb_login_state_machine_t;
+
 
 #ifdef    __cplusplus
 extern "C" {
@@ -209,24 +318,32 @@ extern "C" {
         /**
         * @brief Initializes the login state machine with callback interface
         *
-        * @details Stores the interface function pointers and initializes the internal
-        * state machine structure. Sets up the outgoing message buffer and prepares
-        * for node enumeration.
+        * @details Registers the application's callback interface with the login state machine.
+        * The interface provides all necessary callbacks for message transmission, node
+        * enumeration, message handler dispatch, and internal state machine operations.
+        *
+        * This function must be called once during system initialization after the login
+        * message handler has been initialized. The interface pointer is stored internally
+        * and must remain valid for the lifetime of the application.
+        *
+        * Typical initialization sequence:
+        * 1. OpenLcbLoginMessageHandler_initialize (message handlers)
+        * 2. OpenLcbLoginStateMachine_initialize (this function)
+        * 3. Begin calling OpenLcbLoginMainStatemachine_run from main loop
         *
         * Use cases:
         * - Called once during application startup
-        * - Must be called before any nodes begin login sequence
+        * - Must be called before OpenLcbLoginMainStatemachine_run
         *
-        * @param interface_openlcb_login_state_machine Pointer to interface structure
+        * @param interface_openlcb_login_state_machine Pointer to callback interface structure
         *
+        * @warning interface_openlcb_login_state_machine must remain valid for lifetime of application
+        * @warning All required callbacks in the interface must be valid (non-NULL)
         * @warning MUST be called exactly once during initialization
-        * @warning The interface pointer is stored in static memory - the pointed-to
-        *          structure must remain valid for the lifetime of the program
-        * @warning NOT thread-safe
+        * @warning NOT thread-safe - call during single-threaded initialization only
         *
-        * @attention Call during single-threaded initialization phase
-        * @attention All interface function pointers must be valid (non-NULL)
-        * @attention Call after message handler initialization
+        * @attention Call after OpenLcbLoginMessageHandler_initialize
+        * @attention Call before starting main state machine loop
         *
         * @see interface_openlcb_login_state_machine_t - Interface structure definition
         * @see OpenLcbLoginMainStatemachine_run - Main processing loop
@@ -238,11 +355,21 @@ extern "C" {
         *
         * @details This is the main entry point for login processing. Should be called
         * repeatedly by the application's main loop. Performs one step of processing
-        * and returns immediately (non-blocking design).
+        * per call and returns immediately, implementing a non-blocking cooperative
+        * multitasking design.
         *
-        * Processing handles message transmission, re-enumeration for multi-message
-        * sequences, and node iteration. Nodes are automatically processed through
-        * their initialization states.
+        * Processing sequence per call:
+        * 1. Attempt to send any pending outgoing message
+        * 2. If message pending, return (retry transmission next iteration)
+        * 3. Handle re-enumeration if enumerate flag is set
+        * 4. If re-enumerating, return (handler called again)
+        * 5. Attempt to process first node if no current node
+        * 6. If first node processed, return
+        * 7. Attempt to process next node if current node exists
+        *
+        * The state machine automatically enumerates all allocated nodes and processes
+        * each node through its login sequence based on run_state. Nodes already in
+        * RUNSTATE_RUN (fully initialized) are skipped.
         *
         * Use cases:
         * - Called continuously from main application loop
@@ -251,10 +378,11 @@ extern "C" {
         * @warning Must be called from non-interrupt context
         *
         * @attention Call repeatedly - this function does NOT block
-        * @attention Nodes transition themselves through states - this just dispatches
+        * @attention Safe to call even when no nodes need processing
         *
         * @note Non-blocking - returns immediately after one step
-        * @note Safe to call even when no nodes need processing
+        * @note Multiple nodes may require several loop iterations to complete
+        * @note Enumerate flag mechanism allows multi-message sequences
         *
         * @see OpenLcbLoginStateMachine_process - State dispatcher
         * @see OpenLcbLoginStatemachine_handle_outgoing_openlcb_message - Message transmission
@@ -266,20 +394,28 @@ extern "C" {
         * @brief Dispatches to appropriate handler based on node's run_state
         *
         * @details Examines the node's current run_state and calls the corresponding
-        * interface handler function. This function is exposed for unit testing but
-        * is normally called internally by the main state machine loop.
+        * interface handler function to construct the appropriate message. This function
+        * implements the state dispatch logic for the login sequence.
+        *
+        * State dispatch mapping:
+        * - RUNSTATE_LOAD_INITIALIZATION_COMPLETE → load_initialization_complete
+        * - RUNSTATE_LOAD_PRODUCER_EVENTS → load_producer_events
+        * - RUNSTATE_LOAD_CONSUMER_EVENTS → load_consumer_events
+        *
+        * This function is exposed for unit testing but is normally called internally
+        * by the main state machine loop.
         *
         * Use cases:
         * - Called internally by main state machine
         * - Called directly in unit tests
         *
-        * @param openlcb_statemachine_info Pointer to state machine info with node and message buffer
+        * @param openlcb_statemachine_info Pointer to state machine context containing node and message buffer
         *
         * @warning openlcb_statemachine_info must NOT be NULL
-        * @warning openlcb_statemachine_info->openlcb_node must be valid
+        * @warning openlcb_node within statemachine_info must be valid
         *
         * @note This is primarily an internal function exposed for testing
-        * @note Does nothing if node run_state is not one of the handled states
+        * @note Does nothing if node run_state is RUNSTATE_RUN or unrecognized
         *
         * @see interface_openlcb_login_state_machine_t - Handler callbacks
         * @see RUNSTATE_LOAD_INITIALIZATION_COMPLETE in openlcb_defines.h
@@ -289,10 +425,13 @@ extern "C" {
         /**
         * @brief Handles transmission of pending outgoing message
         *
-        * @details Checks if there is a valid outgoing message and attempts to send it.
-        * If transmission succeeds, clears the valid flag. If transmission fails,
-        * keeps the valid flag set to retry later. This function is exposed for unit
-        * testing but is normally called internally.
+        * @details Checks if there is a valid outgoing message (valid flag set to true)
+        * and attempts to send it via the send_openlcb_msg callback. If transmission
+        * succeeds, clears the valid flag. If transmission fails, keeps the valid flag
+        * set to retry on the next iteration.
+        *
+        * This function is exposed for unit testing but is normally called as the first
+        * step in the main state machine loop.
         *
         * Use cases:
         * - Called as first step in main state machine loop
@@ -301,7 +440,8 @@ extern "C" {
         * @return true if a message was pending (sent or queued for retry), false if no message pending
         *
         * @note This is primarily an internal function exposed for testing
-        * @note Returning true indicates state machine should retry on next iteration
+        * @note Returning true causes main loop to retry on next iteration
+        * @note Message remains valid until transmission succeeds
         *
         * @see interface_openlcb_login_state_machine_t - send_openlcb_msg callback
         * @see OpenLcbLoginMainStatemachine_run - Main loop caller
@@ -311,19 +451,23 @@ extern "C" {
         /**
         * @brief Handles re-enumeration for multi-message sequences
         *
-        * @details Checks if the enumerate flag is set and re-enters the handler if needed.
-        * The enumerate flag is set by handlers when they have more messages to send
-        * in the same state. This function is exposed for unit testing but is normally
-        * called internally.
+        * @details Checks if the enumerate flag is set and re-enters the state processor
+        * if needed. The enumerate flag is set by message handlers when they have more
+        * messages to send in the same state (e.g., multiple producer events or multiple
+        * consumer events).
+        *
+        * This function is exposed for unit testing but is normally called internally
+        * after message transmission handling.
         *
         * Use cases:
         * - Called after message transmission in main state machine loop
         * - Called directly in unit tests
         *
-        * @return true if re-enumeration occurred, false if enumeration complete
+        * @return true if re-enumeration occurred (handler was called), false if enumeration complete
         *
         * @note This is primarily an internal function exposed for testing
         * @note Handlers control enumeration by setting/clearing the enumerate flag
+        * @note Re-enumeration allows sending multiple events without changing run_state
         *
         * @see OpenLcbLoginMessageHandler_load_producer_event - Sets enumerate flag
         * @see OpenLcbLoginMessageHandler_load_consumer_event - Sets enumerate flag
@@ -333,9 +477,15 @@ extern "C" {
         /**
         * @brief Attempts to get and process the first node in enumeration
         *
-        * @details If the current node pointer is NULL, gets the first node and processes
-        * it if its run_state indicates initialization is needed. This function is exposed
-        * for unit testing but is normally called internally.
+        * @details If the current node pointer is NULL (no node currently being processed),
+        * calls openlcb_node_get_first to start node enumeration and processes the first
+        * node if its run_state indicates initialization is needed.
+        *
+        * Nodes already in RUNSTATE_RUN (fully initialized) are skipped. The function
+        * continues enumeration until a node needing initialization is found or the end
+        * of the list is reached.
+        *
+        * This function is exposed for unit testing but is normally called internally.
         *
         * Use cases:
         * - Called in main state machine loop to start node enumeration
@@ -345,6 +495,7 @@ extern "C" {
         *
         * @note This is primarily an internal function exposed for testing
         * @note Skips nodes already in RUNSTATE_RUN (already initialized)
+        * @note Uses OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX as enumeration key
         *
         * @see interface_openlcb_login_state_machine_t - openlcb_node_get_first callback
         * @see OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX in openlcb_defines.h
@@ -354,9 +505,15 @@ extern "C" {
         /**
         * @brief Attempts to get and process the next node in enumeration
         *
-        * @details If the current node pointer is not NULL, gets the next node and processes
-        * it if its run_state indicates initialization is needed. This function is exposed
-        * for unit testing but is normally called internally.
+        * @details If the current node pointer is not NULL (a node is currently being processed),
+        * calls openlcb_node_get_next to advance enumeration and processes the next node if its
+        * run_state indicates initialization is needed.
+        *
+        * Nodes already in RUNSTATE_RUN (fully initialized) are skipped. When the end of the
+        * node list is reached (openlcb_node_get_next returns NULL), the current node pointer
+        * is set to NULL to allow re-enumeration from the beginning.
+        *
+        * This function is exposed for unit testing but is normally called internally.
         *
         * Use cases:
         * - Called in main state machine loop to continue node enumeration
@@ -367,6 +524,7 @@ extern "C" {
         * @note This is primarily an internal function exposed for testing
         * @note Skips nodes already in RUNSTATE_RUN (already initialized)
         * @note When end of list is reached, sets openlcb_node to NULL
+        * @note Uses OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX as enumeration key
         *
         * @see interface_openlcb_login_state_machine_t - openlcb_node_get_next callback
         * @see OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX in openlcb_defines.h
@@ -377,21 +535,24 @@ extern "C" {
         * @brief Returns pointer to internal state machine info structure
         *
         * @details Provides access to the internal state machine info structure for
-        * debugging and unit testing purposes.
+        * debugging and unit testing purposes. The returned structure contains the
+        * current node being processed, outgoing message buffer, and state flags.
         *
         * Use cases:
         * - Unit testing to verify internal state
         * - Debugging to inspect current state machine status
         *
-        * @return Pointer to internal state machine info structure
+        * @return Pointer to internal static state machine info structure
         *
         * @warning The returned pointer is to static memory - do not free
         * @warning Modifying the returned structure can cause undefined behavior
         *
         * @attention Use only for testing and debugging
+        * @attention Do not modify the structure contents
         *
         * @note This is primarily for unit testing
         * @note The structure persists across all calls to the state machine
+        * @note Contains: openlcb_node pointer, outgoing message, valid flag, enumerate flag
         */
     extern openlcb_login_statemachine_info_t *OpenLcbLoginStatemachine_get_statemachine_info(void);
 

@@ -1232,3 +1232,58 @@ void OpenLcbMainStatemachine_run(void) {
     }
 
 }
+
+    /**
+    * @brief Returns pointer to internal state machine information structure
+    *
+    * @details Algorithm:
+    * -# Return address of static _statemachine_info structure
+    *
+    * This function provides controlled access to the internal state machine
+    * context for testing and debugging purposes. The structure contains all
+    * state information including current node, incoming/outgoing messages,
+    * and enumeration flags.
+    *
+    * Typical testing workflow:
+    * -# Initialize state machine normally
+    * -# Get pointer to state structure
+    * -# Manually set flags or messages for test scenario
+    * -# Call function under test
+    * -# Verify state changes and results
+    * -# Reset state for next test
+    *
+    * State structure contents:
+    * - openlcb_node: Currently processing node
+    * - incoming_msg_info.msg_ptr: Incoming message being processed
+    * - incoming_msg_info.enumerate: Multi-message response flag
+    * - outgoing_msg_info.msg_ptr: Outgoing message buffer
+    * - outgoing_msg_info.valid: Outgoing message pending flag
+    *
+    * Use cases:
+    * - Unit testing handle_outgoing_openlcb_message()
+    * - Unit testing handle_try_reenumerate()
+    * - Unit testing handle_try_pop_next_incoming_openlcb_message()
+    * - Unit testing handle_try_enumerate_first_node()
+    * - Unit testing handle_try_enumerate_next_node()
+    * - Integration testing of run() function
+    * - Debugging state machine behavior
+    *
+    * @return Pointer to internal static _statemachine_info structure
+    *
+    * @warning For testing/debugging only - not for production use
+    * @warning Direct state modification bypasses normal validation
+    *
+    * @attention Tests must restore state to valid condition after use
+    * @attention Do not cache pointer across initialize() calls
+    *
+    * @note Similar to OpenLcbLoginStatemachine_get_statemachine_info()
+    *
+    * @see openlcb_statemachine_info_t - Structure definition
+    * @see OpenLcbMainStatemachine_initialize - State initialization
+    * @see OpenLcbMainStatemachine_run - Main state consumer
+    */
+openlcb_statemachine_info_t *OpenLcbMainStatemachine_get_statemachine_info(void) {
+
+    return &_statemachine_info;
+
+}

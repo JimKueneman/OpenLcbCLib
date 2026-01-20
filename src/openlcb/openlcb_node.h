@@ -65,7 +65,9 @@ typedef struct
         * - Application-specific timer-based processing
         * - Periodic status monitoring
         *
-        * @warning NOT thread-safe
+        * @warning NOT thread-safe, called in context of interrupt or thread typically
+        * 
+        * @note Optional - can be NULL if this command is not supported
         *
         * @see OpenLcbNode_100ms_timer_tick - Invokes this callback
         */
