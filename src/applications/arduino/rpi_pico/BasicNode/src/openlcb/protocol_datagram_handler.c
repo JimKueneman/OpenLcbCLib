@@ -62,6 +62,7 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 
+
     /**
     * @brief Internal storage for callback interface pointer
     *
@@ -92,11 +93,13 @@ static interface_protocol_datagram_handler_t *_interface;
     * - Must be called before processing any datagrams
     * - Typically called after node initialization
     *
+    * @verbatim
     * @param interface_protocol_datagram_handler Pointer to initialized interface
+    * @endverbatim
     * structure containing all required and optional callback functions
     *
     * @warning The interface structure must remain valid after this call
-    * @warning lock_shared_resources and unlock_shared_resources callbacks are required
+    * @warning The locking callbacks are required
     *
     * @attention Call before any datagram processing begins
     * @attention Interface pointer is stored but structure is not copied
@@ -130,8 +133,12 @@ void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handle
     * - Provides consistent null-handler rejection behavior
     * - Reduces code duplication across switch statements
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context
+    * @endverbatim
+    * @verbatim
     * @param handler_ptr Function pointer to memory operation handler,
+    * @endverbatim
     * or NULL if operation not implemented
     *
     * @note Automatically generates rejection response for NULL handlers
@@ -176,11 +183,13 @@ static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, m
     * - Traction Function Configuration Memory
     *
     * Use cases:
-    * - Processing CONFIG_MEM_READ command
+    * - Processing read commands with space ID in byte 6
     * - Routing to appropriate address space handler
     * - Central dispatch for datagram-based reads
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming datagram with address space in payload[6]
     *
     * @note Payload byte 6 must contain valid address space identifier
@@ -268,7 +277,9 @@ static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *
     * - Completing client-side read operations
     * - Receiving configuration data from remote nodes
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming read reply datagram with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -356,7 +367,9 @@ static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine
     * - Handling errors from client-side read operations
     * - Detecting access restrictions or invalid addresses
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming read failure datagram with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -440,11 +453,13 @@ static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachi
     * of arbitrarily large address space contents.
     *
     * Use cases:
-    * - Processing CONFIG_MEM_READ_STREAM command
+    * - Processing stream read commands with space ID in byte 6
     * - Transferring large CDI or configuration data
     * - Efficient bulk read operations
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming stream read request with address space in payload[6]
     *
     * @note Used for large data transfers (>72 bytes)
@@ -532,7 +547,9 @@ static void _handle_read_stream_address_space_at_offset_6(openlcb_statemachine_i
     * - Completing client-side stream read setup
     * - Receiving large configuration data from remote nodes
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming stream read reply with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -620,7 +637,9 @@ static void _handle_read_stream_reply_ok_address_space_at_offset_6(openlcb_state
     * - Handling errors from client-side stream read operations
     * - Detecting access restrictions or resource limitations
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming stream read failure with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -704,11 +723,13 @@ static void _handle_read_stream_reply_fail_address_space_at_offset_6(openlcb_sta
     * (which should have NULL handlers and will auto-reject).
     *
     * Use cases:
-    * - Processing CONFIG_MEM_WRITE command
+    * - Processing write commands with space ID in byte 6
     * - Updating configuration memory
     * - Firmware upgrade operations
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming write request with address space in payload[6]
     *
     * @note Read-only spaces should have NULL handlers
@@ -735,7 +756,6 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_all);
 
             break;
-
         case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory);
@@ -766,7 +786,7 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
 
             break;
 
-        case CONFIG_MEM_SPACE_FIRMWARE_UPGRADE:
+        case CONFIG_MEM_SPACE_FIRMWARE:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_space_firmware_upgrade);
 
@@ -802,7 +822,9 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
     * - Completing client-side write operations
     * - Confirming configuration updates to remote nodes
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming write reply with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -890,7 +912,9 @@ static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachin
     * - Handling errors from client-side write operations
     * - Detecting write protection or invalid addresses
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming write failure with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -974,11 +998,13 @@ static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemach
     * of arbitrarily large amounts of data to address spaces.
     *
     * Use cases:
-    * - Processing CONFIG_MEM_WRITE_STREAM command
+    * - Processing stream write commands with space ID in byte 6
     * - Transferring large firmware images
     * - Efficient bulk write operations
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming stream write request with address space in payload[6]
     *
     * @note Used for large data transfers (>72 bytes)
@@ -1005,7 +1031,6 @@ static void _handle_write_stream_address_space_at_offset_6(openlcb_statemachine_
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all);
 
             break;
-
         case CONFIG_MEM_SPACE_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory);
@@ -1033,12 +1058,6 @@ static void _handle_write_stream_address_space_at_offset_6(openlcb_statemachine_
         case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
 
             _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory);
-
-            break;
-
-        case CONFIG_MEM_SPACE_FIRMWARE_UPGRADE:
-
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_firmware_upgrade);
 
             break;
 
@@ -1072,7 +1091,9 @@ static void _handle_write_stream_address_space_at_offset_6(openlcb_statemachine_
     * - Completing client-side stream write setup
     * - Preparing for large data transfer to remote nodes
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming stream write reply with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -1160,7 +1181,9 @@ static void _handle_write_stream_reply_ok_address_space_at_offset_6(openlcb_stat
     * - Handling errors from client-side stream write operations
     * - Detecting write protection or resource limitations
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming stream write failure with address space in payload[6]
     *
     * @note Only used when node is acting as client (requestor)
@@ -1244,11 +1267,13 @@ static void _handle_write_stream_reply_fail_address_space_at_offset_6(openlcb_st
     * updating individual configuration fields without affecting adjacent data.
     *
     * Use cases:
-    * - Processing CONFIG_MEM_WRITE_UNDER_MASK command
+    * - Processing write-under-mask commands with space ID in byte 6
     * - Selective bit/byte updates in configuration
     * - Atomic field modifications
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming write-under-mask request with address space in payload[6]
     *
     * @note Mask specifies which bits to modify
@@ -1306,12 +1331,6 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 
             break;
 
-        case CONFIG_MEM_SPACE_FIRMWARE_UPGRADE:
-
-            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_firmware_upgrade);
-
-            break;
-
         default:
 
             ProtocolDatagramHandler_load_datagram_rejected_message(statemachine_info, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
@@ -1339,8 +1358,8 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
     * operations including reads, writes, streams, and control commands.
     *
     * Supported subcommands:
-    * - Read operations (datagram and stream-based)
-    * - Write operations (datagram, stream, and under-mask)
+    * - Read operations (datagram and stream-based, with space in byte 6 or shorthand)
+    * - Write operations (datagram, stream, and under-mask, with space in byte 6 or shorthand)
     * - Reply handling (OK and FAIL for reads/writes)
     * - Configuration commands (options, lock, freeze, reset, etc.)
     *
@@ -1349,7 +1368,9 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
     * - Routing to appropriate subcommand handler
     * - Central dispatch for memory protocol
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming configuration memory command with subcommand in payload[1]
     *
     * @note Payload byte 1 contains subcommand identifier
@@ -1363,87 +1384,321 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
     */
 static void _handle_datagram_memory_configuration_command(openlcb_statemachine_info_t *statemachine_info) {
 
-    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[1]) { // sub-command
+    switch (*statemachine_info->incoming_msg_info.msg_ptr->payload[1]) { // which space?
 
-        case CONFIG_MEM_READ:
+        case CONFIG_MEM_READ_SPACE_IN_BYTE_6:
 
             _handle_read_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_READ_REPLY_OK:
+        case CONFIG_MEM_READ_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory);
+
+            break;
+
+        case CONFIG_MEM_READ_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all);
+
+            break;
+
+        case CONFIG_MEM_READ_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info);
+
+            break;
+
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_read_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_READ_REPLY_FAIL:
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_READ_REPLY_OK_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_read_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_READ_STREAM:
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_configuration_memory_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_all_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_READ_REPLY_FAIL_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_config_description_info_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6:
 
             _handle_read_stream_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_READ_STREAM_REPLY_OK:
+        case CONFIG_MEM_READ_STREAM_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_read_stream_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_READ_STREAM_REPLY_FAIL:
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_read_stream_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_WRITE:
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_configuration_memory_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_all_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_config_description_info_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_WRITE_SPACE_IN_BYTE_6:
 
             _handle_write_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_WRITE_REPLY_OK:
+        case CONFIG_MEM_WRITE_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory);
+
+            break;
+
+        case CONFIG_MEM_WRITE_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all);
+
+            break;
+
+        case CONFIG_MEM_WRITE_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info);
+
+            break;
+
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6:
 
             _handle_write_reply_ok_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_WRITE_REPLY_FAIL:
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_WRITE_REPLY_OK_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6:
 
             _handle_write_reply_fail_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_WRITE_STREAM:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FD:
 
-            _handle_write_stream_address_space_at_offset_6(statemachine_info);
-
-            break;
-
-        case CONFIG_MEM_WRITE_STREAM_REPLY_OK:
-
-            _handle_write_stream_reply_ok_address_space_at_offset_6(statemachine_info);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_configuration_memory_reply_fail);
 
             break;
 
-        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FE:
 
-            _handle_write_stream_reply_fail_address_space_at_offset_6(statemachine_info);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_all_reply_fail);
 
             break;
 
-        case CONFIG_MEM_WRITE_UNDER_MASK:
+        case CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_config_description_info_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6:
 
             _handle_write_under_mask_address_space_at_offset_6(statemachine_info);
 
             break;
 
-        case CONFIG_MEM_OPTIONS:
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_configuration_memory);
+
+            break;
+
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_all);
+
+            break;
+
+        case CONFIG_MEM_WRITE_UNDER_MASK_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_config_description_info);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6:
+
+            _handle_write_stream_address_space_at_offset_6(statemachine_info);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6:
+
+            _handle_write_stream_reply_ok_address_space_at_offset_6(statemachine_info);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_ok);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6:
+
+            _handle_write_stream_reply_fail_address_space_at_offset_6(statemachine_info);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FD:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_configuration_memory_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FE:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_all_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_FF:
+
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_config_description_info_reply_fail);
+
+            break;
+
+        case CONFIG_MEM_OPTIONS_CMD:
 
             _handle_subcommand(statemachine_info, _interface->memory_options_cmd);
 
@@ -1455,7 +1710,7 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
 
             break;
 
-        case CONFIG_MEM_GET_ADDRESS_SPACE_INFO:
+        case CONFIG_MEM_GET_ADDRESS_SPACE_INFO_CMD:
 
             _handle_subcommand(statemachine_info, _interface->memory_get_address_space_info);
 
@@ -1558,7 +1813,9 @@ static void _handle_datagram_memory_configuration_command(openlcb_statemachine_i
     * - Processing configuration memory requests
     * - Routing to appropriate protocol handlers
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * the received datagram message and node information
     *
     * @note Sets outgoing_msg_info.valid if response generated
@@ -1618,9 +1875,13 @@ void ProtocolDatagramHandler_datagram(openlcb_statemachine_info_t *statemachine_
     * - Indicating deferred processing with reply-pending timeout
     * - Normal datagram protocol flow completion
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming message details and outgoing message buffer
+    * @verbatim
     * @param reply_pending_time_in_seconds Time in seconds until reply will
+    * @endverbatim
     * be sent, encoded as 2^N (range: 0 to 16384 seconds). Value of 0 means
     * no reply pending.
     *
@@ -1744,9 +2005,13 @@ void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemach
     * - Rejecting datagrams when resources unavailable
     * - Indicating protocol violations or errors
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * incoming message details and outgoing message buffer
+    * @verbatim
     * @param return_code 16-bit OpenLCB error code indicating rejection
+    * @endverbatim
     * reason (see OpenLCB Error Codes specification)
     *
     * @note Outgoing message valid flag is set automatically
@@ -1793,7 +2058,9 @@ void ProtocolDatagramHandler_load_datagram_rejected_message(openlcb_statemachine
     * - Freeing resources after acknowledged send
     * - Normal datagram protocol completion
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * the received OK reply and node information
     *
     * @note Clears outgoing_msg_info.valid flag
@@ -1836,7 +2103,9 @@ void ProtocolDatagramHandler_datagram_received_ok(openlcb_statemachine_info_t *s
     * - Detecting permanent protocol failures
     * - Managing datagram retry logic
     *
+    * @verbatim
     * @param statemachine_info Pointer to state machine context containing
+    * @endverbatim
     * the received rejection reply and node information
     *
     * @note Sets resend_datagram flag for temporary errors
@@ -1890,7 +2159,9 @@ void ProtocolDatagramHandler_datagram_rejected(openlcb_statemachine_info_t *stat
     * - Aborting retry attempts
     * - Cleaning up node state
     *
+    * @verbatim
     * @param openlcb_node Pointer to the OpenLCB node structure to clear
+    * @endverbatim
     *
     * @note Uses lock_shared_resources/unlock_shared_resources for safety
     * @note Safe to call even if no datagram is stored
@@ -1945,3 +2216,9 @@ void ProtocolDatagramHandler_100ms_timer_tick(void) {
 
 
 }
+
+
+
+
+
+
