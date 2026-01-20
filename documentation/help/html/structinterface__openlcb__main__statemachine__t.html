@@ -86,151 +86,262 @@ $(function(){ initResizable(false); });
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">interface_openlcb_main_statemachine_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Interface structure for main state machine dependencies.  
+<p>Dependency injection interface for OpenLCB Main State Machine operations.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Resource Management Functions</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Functions for thread safety and message transmission </p>
+</div></td></tr>
 <tr class="memitem:ad5d977bbc45e071d19d77e261f17b7e7" id="r_ad5d977bbc45e071d19d77e261f17b7e7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7">lock_shared_resources</a> )(void)</td></tr>
+<tr class="memdesc:ad5d977bbc45e071d19d77e261f17b7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disables interrupts and prevents concurrent access to shared resources.  <br /></td></tr>
 <tr class="separator:ad5d977bbc45e071d19d77e261f17b7e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a654fa7c6260aa2ac2c0589f57fcd67e9" id="r_a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9">unlock_shared_resources</a> )(void)</td></tr>
+<tr class="memdesc:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-enables interrupts and allows access to shared resources.  <br /></td></tr>
 <tr class="separator:a654fa7c6260aa2ac2c0589f57fcd67e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a216efd7bdc468e6395aa0e5ba04f1060" id="r_a216efd7bdc468e6395aa0e5ba04f1060"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a216efd7bdc468e6395aa0e5ba04f1060">send_openlcb_msg</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg)</td></tr>
+<tr class="memdesc:a216efd7bdc468e6395aa0e5ba04f1060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits an OpenLCB message to the network.  <br /></td></tr>
 <tr class="separator:a216efd7bdc468e6395aa0e5ba04f1060"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Node Enumeration Functions</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Functions for iterating through active nodes </p>
+</div></td></tr>
 <tr class="memitem:a642f075eed427764e99bda659f1fd22f" id="r_a642f075eed427764e99bda659f1fd22f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a642f075eed427764e99bda659f1fd22f">openlcb_node_get_first</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:a642f075eed427764e99bda659f1fd22f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the first node for enumeration.  <br /></td></tr>
 <tr class="separator:a642f075eed427764e99bda659f1fd22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae198d49b6505cbba8429aeb49fa3879e" id="r_ae198d49b6505cbba8429aeb49fa3879e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e">openlcb_node_get_next</a> )(uint8_t key)</td></tr>
+<tr class="memdesc:ae198d49b6505cbba8429aeb49fa3879e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the next node in enumeration sequence.  <br /></td></tr>
 <tr class="separator:ae198d49b6505cbba8429aeb49fa3879e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Core State Machine Functions</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Functions for message handling and interaction management </p>
+</div></td></tr>
 <tr class="memitem:acb82224cbc102121448b6e90c211d19a" id="r_acb82224cbc102121448b6e90c211d19a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb82224cbc102121448b6e90c211d19a">load_interaction_rejected</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:acb82224cbc102121448b6e90c211d19a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs Optional Interaction Rejected message for unhandled MTIs.  <br /></td></tr>
 <tr class="separator:acb82224cbc102121448b6e90c211d19a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Required Message Network Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Core protocol messages - all nodes must implement these </p>
+</div></td></tr>
 <tr class="memitem:a5902fb9cf3c4a8fc0c11bc184652caec" id="r_a5902fb9cf3c4a8fc0c11bc184652caec"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5902fb9cf3c4a8fc0c11bc184652caec">message_network_initialization_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a5902fb9cf3c4a8fc0c11bc184652caec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Initialization Complete message (MTI 0x0100)  <br /></td></tr>
 <tr class="separator:a5902fb9cf3c4a8fc0c11bc184652caec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4707408ea3dc92994ccb11858f0c17cb" id="r_a4707408ea3dc92994ccb11858f0c17cb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4707408ea3dc92994ccb11858f0c17cb">message_network_initialization_complete_simple</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4707408ea3dc92994ccb11858f0c17cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Initialization Complete Simple message (MTI 0x0101)  <br /></td></tr>
 <tr class="separator:a4707408ea3dc92994ccb11858f0c17cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acab664de494430284a9d8d2740b211ff" id="r_acab664de494430284a9d8d2740b211ff"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acab664de494430284a9d8d2740b211ff">message_network_verify_node_id_addressed</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:acab664de494430284a9d8d2740b211ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Verify Node ID Addressed message (MTI 0x0488)  <br /></td></tr>
 <tr class="separator:acab664de494430284a9d8d2740b211ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4128ad6fc0b99bc8b779f4cf97c6ab49" id="r_a4128ad6fc0b99bc8b779f4cf97c6ab49"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4128ad6fc0b99bc8b779f4cf97c6ab49">message_network_verify_node_id_global</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4128ad6fc0b99bc8b779f4cf97c6ab49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Verify Node ID Global message (MTI 0x0490)  <br /></td></tr>
 <tr class="separator:a4128ad6fc0b99bc8b779f4cf97c6ab49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a018eacb0aea2d291dc77a08551add548" id="r_a018eacb0aea2d291dc77a08551add548"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a018eacb0aea2d291dc77a08551add548">message_network_verified_node_id</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a018eacb0aea2d291dc77a08551add548"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Verified Node ID message (MTI 0x0170 or 0x0171)  <br /></td></tr>
 <tr class="separator:a018eacb0aea2d291dc77a08551add548"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4838759850ab8363810460e64ea3aaa" id="r_ae4838759850ab8363810460e64ea3aaa"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4838759850ab8363810460e64ea3aaa">message_network_optional_interaction_rejected</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ae4838759850ab8363810460e64ea3aaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Optional Interaction Rejected message (MTI 0x0068)  <br /></td></tr>
 <tr class="separator:ae4838759850ab8363810460e64ea3aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f6a796bfc62c2068fef5ecbd9058156" id="r_a8f6a796bfc62c2068fef5ecbd9058156"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f6a796bfc62c2068fef5ecbd9058156">message_network_terminate_due_to_error</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a8f6a796bfc62c2068fef5ecbd9058156"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Terminate Due to Error message (MTI 0x00A8)  <br /></td></tr>
 <tr class="separator:a8f6a796bfc62c2068fef5ecbd9058156"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Required Protocol Support Protocol (PIP) Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Protocol capability advertisement - all nodes must implement </p>
+</div></td></tr>
 <tr class="memitem:a4b6063580959db4ff1b6fbd7d5663ca0" id="r_a4b6063580959db4ff1b6fbd7d5663ca0"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b6063580959db4ff1b6fbd7d5663ca0">message_network_protocol_support_inquiry</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4b6063580959db4ff1b6fbd7d5663ca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Protocol Support Inquiry message (MTI 0x0828)  <br /></td></tr>
 <tr class="separator:a4b6063580959db4ff1b6fbd7d5663ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3d62851e98dee2ae00a9b507382ad77" id="r_aa3d62851e98dee2ae00a9b507382ad77"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3d62851e98dee2ae00a9b507382ad77">message_network_protocol_support_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:aa3d62851e98dee2ae00a9b507382ad77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Protocol Support Reply message (MTI 0x0668)  <br /></td></tr>
 <tr class="separator:aa3d62851e98dee2ae00a9b507382ad77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Internal Testing and Debugging Functions</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Exposed for unit testing and debugging - normally called via dispatcher </p>
+</div></td></tr>
 <tr class="memitem:a6a1564a5e0fded2d1c325cd111eb7759" id="r_a6a1564a5e0fded2d1c325cd111eb7759"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a1564a5e0fded2d1c325cd111eb7759">process_main_statemachine</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a6a1564a5e0fded2d1c325cd111eb7759"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processes message through appropriate protocol handler based on MTI.  <br /></td></tr>
 <tr class="separator:a6a1564a5e0fded2d1c325cd111eb7759"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af94b252854c4de7a33ee7ec6deb93f6c" id="r_af94b252854c4de7a33ee7ec6deb93f6c"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af94b252854c4de7a33ee7ec6deb93f6c">does_node_process_msg</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:af94b252854c4de7a33ee7ec6deb93f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if node should process incoming message.  <br /></td></tr>
 <tr class="separator:af94b252854c4de7a33ee7ec6deb93f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21e0289f2a6d968d59d8f2392e7238d9" id="r_a21e0289f2a6d968d59d8f2392e7238d9"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21e0289f2a6d968d59d8f2392e7238d9">handle_outgoing_openlcb_message</a> )(void)</td></tr>
+<tr class="memdesc:a21e0289f2a6d968d59d8f2392e7238d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles transmission of pending outgoing messages.  <br /></td></tr>
 <tr class="separator:a21e0289f2a6d968d59d8f2392e7238d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87d0bb10ab97a4dfb5cc19819656c7db" id="r_a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87d0bb10ab97a4dfb5cc19819656c7db">handle_try_reenumerate</a> )(void)</td></tr>
+<tr class="memdesc:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles re-enumeration for multi-message protocol responses.  <br /></td></tr>
 <tr class="separator:a87d0bb10ab97a4dfb5cc19819656c7db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefa33df14681d77b7293680feb076844" id="r_aefa33df14681d77b7293680feb076844"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aefa33df14681d77b7293680feb076844">handle_try_pop_next_incoming_openlcb_message</a> )(void)</td></tr>
+<tr class="memdesc:aefa33df14681d77b7293680feb076844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pops next incoming message from receive queue.  <br /></td></tr>
 <tr class="separator:aefa33df14681d77b7293680feb076844"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace54b5c03eafd093615c3de2f76587b1" id="r_ace54b5c03eafd093615c3de2f76587b1"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace54b5c03eafd093615c3de2f76587b1">handle_try_enumerate_first_node</a> )(void)</td></tr>
+<tr class="memdesc:ace54b5c03eafd093615c3de2f76587b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates first node for message processing.  <br /></td></tr>
 <tr class="separator:ace54b5c03eafd093615c3de2f76587b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
+<tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerates next node for message processing.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional SNIP Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Simple Node Information Protocol - set to NULL if not implemented </p>
+</div></td></tr>
 <tr class="memitem:a4f1199c3f7acf62c2d3f47228d115127" id="r_a4f1199c3f7acf62c2d3f47228d115127"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f1199c3f7acf62c2d3f47228d115127">snip_simple_node_info_request</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4f1199c3f7acf62c2d3f47228d115127"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Simple Node Info Request message (MTI 0x0DE8)  <br /></td></tr>
 <tr class="separator:a4f1199c3f7acf62c2d3f47228d115127"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f1517ed921c17cfd04a426ceec7bf7c" id="r_a7f1517ed921c17cfd04a426ceec7bf7c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f1517ed921c17cfd04a426ceec7bf7c">snip_simple_node_info_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a7f1517ed921c17cfd04a426ceec7bf7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Simple Node Info Reply message (MTI 0x0A08)  <br /></td></tr>
 <tr class="separator:a7f1517ed921c17cfd04a426ceec7bf7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Event Transport Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Producer/Consumer event messaging - set to NULL if not implemented </p>
+</div></td></tr>
 <tr class="memitem:a484fcc2cb24eb19d2f5068feb4ea6781" id="r_a484fcc2cb24eb19d2f5068feb4ea6781"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a484fcc2cb24eb19d2f5068feb4ea6781">event_transport_consumer_identify</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a484fcc2cb24eb19d2f5068feb4ea6781"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Identify Consumer message (MTI 0x08F4)  <br /></td></tr>
 <tr class="separator:a484fcc2cb24eb19d2f5068feb4ea6781"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a220d33da5276df9c4b75137bb24249b0" id="r_a220d33da5276df9c4b75137bb24249b0"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a220d33da5276df9c4b75137bb24249b0">event_transport_consumer_range_identified</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a220d33da5276df9c4b75137bb24249b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Range Identified message (MTI 0x04A4)  <br /></td></tr>
 <tr class="separator:a220d33da5276df9c4b75137bb24249b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac00db3ca8f47e2ce017ceb16f685c1c5" id="r_ac00db3ca8f47e2ce017ceb16f685c1c5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac00db3ca8f47e2ce017ceb16f685c1c5">event_transport_consumer_identified_unknown</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ac00db3ca8f47e2ce017ceb16f685c1c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Unknown message (MTI 0x04C7)  <br /></td></tr>
 <tr class="separator:ac00db3ca8f47e2ce017ceb16f685c1c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d9ce698cfccc5ab86309f6486338ca8" id="r_a6d9ce698cfccc5ab86309f6486338ca8"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d9ce698cfccc5ab86309f6486338ca8">event_transport_consumer_identified_set</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a6d9ce698cfccc5ab86309f6486338ca8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Set message (MTI 0x04C4)  <br /></td></tr>
 <tr class="separator:a6d9ce698cfccc5ab86309f6486338ca8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e335317804b06c0cc68975c4e2c49e6" id="r_a4e335317804b06c0cc68975c4e2c49e6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e335317804b06c0cc68975c4e2c49e6">event_transport_consumer_identified_clear</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a4e335317804b06c0cc68975c4e2c49e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Clear message (MTI 0x04C5)  <br /></td></tr>
 <tr class="separator:a4e335317804b06c0cc68975c4e2c49e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad33f0942b8007793b62cc9ce7778f16b" id="r_ad33f0942b8007793b62cc9ce7778f16b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad33f0942b8007793b62cc9ce7778f16b">event_transport_consumer_identified_reserved</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ad33f0942b8007793b62cc9ce7778f16b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Consumer Identified Reserved message (MTI 0x04C6)  <br /></td></tr>
 <tr class="separator:ad33f0942b8007793b62cc9ce7778f16b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51ab1b81ef35f59b06b39b2d9af52877" id="r_a51ab1b81ef35f59b06b39b2d9af52877"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ab1b81ef35f59b06b39b2d9af52877">event_transport_producer_identify</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a51ab1b81ef35f59b06b39b2d9af52877"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Identify Producer message (MTI 0x0914)  <br /></td></tr>
 <tr class="separator:a51ab1b81ef35f59b06b39b2d9af52877"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ed8bf90692d087fa40187de615763c4" id="r_a9ed8bf90692d087fa40187de615763c4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ed8bf90692d087fa40187de615763c4">event_transport_producer_range_identified</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a9ed8bf90692d087fa40187de615763c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Range Identified message (MTI 0x0524)  <br /></td></tr>
 <tr class="separator:a9ed8bf90692d087fa40187de615763c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac7cd18a10e85fc03412fe901beac4d9" id="r_aac7cd18a10e85fc03412fe901beac4d9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac7cd18a10e85fc03412fe901beac4d9">event_transport_producer_identified_unknown</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:aac7cd18a10e85fc03412fe901beac4d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Unknown message (MTI 0x0547)  <br /></td></tr>
 <tr class="separator:aac7cd18a10e85fc03412fe901beac4d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37dd0cc95724acb0202683c27bdc7b4c" id="r_a37dd0cc95724acb0202683c27bdc7b4c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37dd0cc95724acb0202683c27bdc7b4c">event_transport_producer_identified_set</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a37dd0cc95724acb0202683c27bdc7b4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Set message (MTI 0x0544)  <br /></td></tr>
 <tr class="separator:a37dd0cc95724acb0202683c27bdc7b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c334d56cbe5c534a51d20ac68b4a86b" id="r_a7c334d56cbe5c534a51d20ac68b4a86b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c334d56cbe5c534a51d20ac68b4a86b">event_transport_producer_identified_clear</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a7c334d56cbe5c534a51d20ac68b4a86b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Clear message (MTI 0x0545)  <br /></td></tr>
 <tr class="separator:a7c334d56cbe5c534a51d20ac68b4a86b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a354d8408a075335ef9b09275804f56d7" id="r_a354d8408a075335ef9b09275804f56d7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a354d8408a075335ef9b09275804f56d7">event_transport_producer_identified_reserved</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a354d8408a075335ef9b09275804f56d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Reserved message (MTI 0x0546)  <br /></td></tr>
 <tr class="separator:a354d8408a075335ef9b09275804f56d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19edc7ac25366fc269b972c33924640e" id="r_a19edc7ac25366fc269b972c33924640e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19edc7ac25366fc269b972c33924640e">event_transport_identify_dest</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a19edc7ac25366fc269b972c33924640e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Identify Events Addressed message (MTI 0x0968)  <br /></td></tr>
 <tr class="separator:a19edc7ac25366fc269b972c33924640e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40d92750da48a2a0d469f3ec65ced386" id="r_a40d92750da48a2a0d469f3ec65ced386"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40d92750da48a2a0d469f3ec65ced386">event_transport_identify</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a40d92750da48a2a0d469f3ec65ced386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Identify Events Global message (MTI 0x0970)  <br /></td></tr>
 <tr class="separator:a40d92750da48a2a0d469f3ec65ced386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade002986b432c885a8619f7f70209ff7" id="r_ade002986b432c885a8619f7f70209ff7"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade002986b432c885a8619f7f70209ff7">event_transport_learn</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ade002986b432c885a8619f7f70209ff7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Learn Event message (MTI 0x0594)  <br /></td></tr>
 <tr class="separator:ade002986b432c885a8619f7f70209ff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc01111fedf9f7728a66f2ada7b711b1" id="r_adc01111fedf9f7728a66f2ada7b711b1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc01111fedf9f7728a66f2ada7b711b1">event_transport_pc_report</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:adc01111fedf9f7728a66f2ada7b711b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer/Consumer Event Report message (MTI 0x05B4)  <br /></td></tr>
 <tr class="separator:adc01111fedf9f7728a66f2ada7b711b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37e5a1a649985cd431628dd8d0377fa5" id="r_a37e5a1a649985cd431628dd8d0377fa5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37e5a1a649985cd431628dd8d0377fa5">event_transport_pc_report_with_payload</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a37e5a1a649985cd431628dd8d0377fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer/Consumer Event Report with Payload message (MTI 0x05F4)  <br /></td></tr>
 <tr class="separator:a37e5a1a649985cd431628dd8d0377fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Traction Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Train control protocol - set to NULL if not implemented </p>
+</div></td></tr>
 <tr class="memitem:a2dd644aa726fe290af3e4b7cf56e069c" id="r_a2dd644aa726fe290af3e4b7cf56e069c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2dd644aa726fe290af3e4b7cf56e069c">traction_control_command</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a2dd644aa726fe290af3e4b7cf56e069c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Traction Control Command message (MTI 0x05EB)  <br /></td></tr>
 <tr class="separator:a2dd644aa726fe290af3e4b7cf56e069c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05ba0a90b24a4a1f770f085ce2e3fd2c" id="r_a05ba0a90b24a4a1f770f085ce2e3fd2c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05ba0a90b24a4a1f770f085ce2e3fd2c">traction_control_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a05ba0a90b24a4a1f770f085ce2e3fd2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Traction Control Reply message (MTI 0x01E9)  <br /></td></tr>
 <tr class="separator:a05ba0a90b24a4a1f770f085ce2e3fd2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Traction SNIP Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Train node information - set to NULL if not implemented </p>
+</div></td></tr>
 <tr class="memitem:a073e47c65638014706cfa91e50589890" id="r_a073e47c65638014706cfa91e50589890"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a073e47c65638014706cfa91e50589890">simple_train_node_ident_info_request</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a073e47c65638014706cfa91e50589890"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Simple Train Node Ident Info Request message (MTI 0x0DA8)  <br /></td></tr>
 <tr class="separator:a073e47c65638014706cfa91e50589890"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46c769b6ab42c12b7cd84e6af468e8b9" id="r_a46c769b6ab42c12b7cd84e6af468e8b9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46c769b6ab42c12b7cd84e6af468e8b9">simple_train_node_ident_info_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a46c769b6ab42c12b7cd84e6af468e8b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Simple Train Node Ident Info Reply message (MTI 0x0A48)  <br /></td></tr>
 <tr class="separator:a46c769b6ab42c12b7cd84e6af468e8b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Datagram Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Reliable point-to-point data transfer - set to NULL if not implemented </p>
+</div></td></tr>
 <tr class="memitem:a01a33136c73a7e49bd1114a549b31ded" id="r_a01a33136c73a7e49bd1114a549b31ded"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01a33136c73a7e49bd1114a549b31ded">datagram</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a01a33136c73a7e49bd1114a549b31ded"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Datagram message (MTI 0x1C48)  <br /></td></tr>
 <tr class="separator:a01a33136c73a7e49bd1114a549b31ded"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61105cc4674534a45369db760045b04a" id="r_a61105cc4674534a45369db760045b04a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61105cc4674534a45369db760045b04a">datagram_ok_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a61105cc4674534a45369db760045b04a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Datagram Received OK message (MTI 0x0A28)  <br /></td></tr>
 <tr class="separator:a61105cc4674534a45369db760045b04a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fd12990d215ddef74f727ca1573c2e9" id="r_a6fd12990d215ddef74f727ca1573c2e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fd12990d215ddef74f727ca1573c2e9">datagram_rejected_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a6fd12990d215ddef74f727ca1573c2e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Datagram Rejected message (MTI 0x0A48)  <br /></td></tr>
 <tr class="separator:a6fd12990d215ddef74f727ca1573c2e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Stream Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>High-bandwidth data transfer - set to NULL if not implemented </p>
+</div></td></tr>
 <tr class="memitem:a344d21148e7e4aea207e7f2499de359e" id="r_a344d21148e7e4aea207e7f2499de359e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a344d21148e7e4aea207e7f2499de359e">stream_initiate_request</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a344d21148e7e4aea207e7f2499de359e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Stream Initiate Request message (MTI 0x0CC8)  <br /></td></tr>
 <tr class="separator:a344d21148e7e4aea207e7f2499de359e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a191486f83109c1e0fd90ac3aad413c2e" id="r_a191486f83109c1e0fd90ac3aad413c2e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a191486f83109c1e0fd90ac3aad413c2e">stream_initiate_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a191486f83109c1e0fd90ac3aad413c2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Stream Initiate Reply message (MTI 0x0868)  <br /></td></tr>
 <tr class="separator:a191486f83109c1e0fd90ac3aad413c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a317047b3f7f1050dd011108a4a3322eb" id="r_a317047b3f7f1050dd011108a4a3322eb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a317047b3f7f1050dd011108a4a3322eb">stream_send_data</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a317047b3f7f1050dd011108a4a3322eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Stream Data Send message (MTI 0x1F88)  <br /></td></tr>
 <tr class="separator:a317047b3f7f1050dd011108a4a3322eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4ef6bef2fc0ccee1b337b55aec77abd" id="r_ad4ef6bef2fc0ccee1b337b55aec77abd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4ef6bef2fc0ccee1b337b55aec77abd">stream_data_proceed</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ad4ef6bef2fc0ccee1b337b55aec77abd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Stream Data Proceed message (MTI 0x0888)  <br /></td></tr>
 <tr class="separator:ad4ef6bef2fc0ccee1b337b55aec77abd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7e86830e537ac54f7579f3d163184de" id="r_ac7e86830e537ac54f7579f3d163184de"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7e86830e537ac54f7579f3d163184de">stream_data_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:ac7e86830e537ac54f7579f3d163184de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Stream Data Complete message (MTI 0x08A8)  <br /></td></tr>
 <tr class="separator:ac7e86830e537ac54f7579f3d163184de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface structure for main state machine dependencies. </p>
-<p>This structure defines all function pointers required and optional for the main state machine operation. The application must populate this structure with appropriate callbacks before calling the initialize function.</p>
+<div class="textblock"><p>Dependency injection interface for OpenLCB Main State Machine operations. </p>
+<p>This structure defines all function pointers required and optional for the main OpenLCB protocol dispatcher. The application must populate this structure with appropriate callbacks before calling <a class="el" href="openlcb__main__statemachine_8c.html#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize()</a>.</p>
+<p>OpenLcbCLib uses dependency injection to enable:</p><ul>
+<li>Comprehensive unit testing with mock implementations</li>
+<li>Protocol-specific optimization (NULL handlers strip unused code)</li>
+<li>Flexible application integration</li>
+<li>Platform-independent operation</li>
+</ul>
 <p>Function pointers are organized into categories:</p><ul>
-<li>Resource management (lock/unlock, send)</li>
-<li>Node enumeration (get_first, get_next)</li>
-<li>Required protocol handlers (Message Network, PIP)</li>
-<li>Internal handlers (exposed for testing)</li>
-<li>Optional protocol handlers (SNIP, Events, Traction, Datagram, Stream)</li>
+<li>Resource management: Lock/unlock shared resources, message transmission</li>
+<li>Node enumeration: First/next node iteration for multi-node support</li>
+<li>Required protocol handlers: Message Network and Protocol Support (PIP)</li>
+<li>Internal handlers: Exposed for testing and debugging</li>
+<li>Optional protocol handlers: SNIP, Events, Traction, Datagram, Stream</li>
 </ul>
 <p>Required vs Optional handlers:</p><ul>
-<li>Required handlers must be provided (non-NULL)</li>
-<li>Optional handlers can be NULL if protocol not implemented</li>
-<li>When optional handler is NULL, MTI generates Interaction Rejected</li>
+<li>Required handlers MUST be non-NULL and properly implemented</li>
+<li>Optional handlers may be NULL if protocol not supported by node</li>
+<li>When optional handler is NULL, dispatcher automatically sends Interaction Rejected</li>
+<li>This allows minimal nodes to omit unnecessary protocol support</li>
 </ul>
+<p>Handler invocation flow:</p><ol type="1">
+<li>Main loop pops incoming message from FIFO</li>
+<li>Enumerate all nodes in system</li>
+<li>For each node, check if message applies (broadcast or addressed to node)</li>
+<li>Dispatch to handler based on MTI value</li>
+<li>Handler processes message and optionally prepares response</li>
+<li>Response queued for transmission</li>
+</ol>
 <p>Use cases:</p><ul>
 <li>Application initialization and configuration</li>
-<li>Dependency injection for testability</li>
-<li>Protocol selection and customization</li>
+<li>Dependency injection for comprehensive testing</li>
+<li>Protocol selection and node capability customization</li>
+<li>Platform-specific integration</li>
 </ul>
-<dl class="section warning"><dt>Warning</dt><dd>ALL required function pointers MUST be non-NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>ALL required function pointers MUST be non-NULL or undefined behavior occurs </dd>
 <dd>
-Optional pointers can be NULL to disable protocols</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Populate all required fields before calling initialize</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8c.html#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize</a> - Uses this interface </dd>
+Optional pointers can be NULL to disable specific protocols </dd>
 <dd>
-<a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> - State information passed to handlers </dd></dl>
+Handlers must not block - use cooperative multitasking patterns</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Populate all required fields before calling <a class="el" href="openlcb__main__statemachine_8c.html#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize()</a> </dd>
+<dd>
+Ensure thread safety in lock/unlock implementations </dd>
+<dd>
+Handlers receive state machine context via <a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> pointer</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8c.html#ab698af75d6fd66d8f68cc5a1b122eadc" title="Initializes the main OpenLCB state machine.">OpenLcbMainStatemachine_initialize</a> - Uses this interface for setup </dd>
+<dd>
+<a class="el" href="structopenlcb__statemachine__info__t.html" title="State machine context information.">openlcb_statemachine_info_t</a> - State context passed to all handlers </dd>
+<dd>
+<a class="el" href="openlcb__main__statemachine_8c.html#a8ff85d07b2775d7df84787073306b731" title="Main state machine processing loop.">OpenLcbMainStatemachine_run</a> - Main processing loop using these handlers </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad5d977bbc45e071d19d77e261f17b7e7" name="ad5d977bbc45e071d19d77e261f17b7e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad5d977bbc45e071d19d77e261f17b7e7">&#9670;&#160;</a></span>lock_shared_resources</h2>
@@ -243,7 +354,27 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Acquire exclusive access to shared resources </p>
+
+<p>Disables interrupts and prevents concurrent access to shared resources. </p>
+<p>Application implements this to prevent CAN receive interrupts and timer ticks from accessing shared buffer structures during critical operations. Typical implementations disable interrupts or acquire a mutex/semaphore.</p>
+<p>Resources that require protection:</p><ul>
+<li>OpenLCB message FIFOs (shared between interrupt and main loop)</li>
+<li>Buffer stores (allocation/deallocation must be atomic)</li>
+<li>Node state structures (modified by handlers)</li>
+</ul>
+<p>Implementation examples:</p><ul>
+<li>Bare metal: __disable_irq() or equivalent</li>
+<li>RTOS: Take mutex or enter critical section</li>
+<li>Linux: pthread_mutex_lock()</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Lock duration must be minimal to avoid blocking CAN reception </dd>
+<dd>
+Must be paired with <a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9" title="Re-enables interrupts and allows access to shared resources.">unlock_shared_resources()</a> - no nested locks</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Critical sections should be under 100 microseconds when possible </dd>
+<dd>
+Disable only necessary interrupts (CAN RX, timer tick)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9" title="Re-enables interrupts and allows access to shared resources.">unlock_shared_resources</a> - Must be called after every lock </dd></dl>
 
 </div>
 </div>
@@ -258,7 +389,17 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Release exclusive access to shared resources </p>
+
+<p>Re-enables interrupts and allows access to shared resources. </p>
+<p>Application implements this to restore normal operation after a critical section. Must re-enable the same resources that were disabled by <a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources()</a>.</p>
+<dl class="section warning"><dt>Warning</dt><dd>Must be called after every <a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources()</a> call to prevent deadlock </dd>
+<dd>
+Failure to unlock causes CAN reception to stop</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Always call even if error occurs in critical section </dd>
+<dd>
+Consider using try/finally or similar pattern in application</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources</a> - Must be called before this </dd></dl>
 
 </div>
 </div>
@@ -273,7 +414,24 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Transmit outgoing OpenLCB message </p>
+
+<p>Transmits an OpenLCB message to the network. </p>
+<p>Application implements this to send messages via the active transport layer (typically CAN bus). Implementation may queue to software buffer or write directly to hardware transmit buffer. Must handle cases where transmit buffer is full.</p>
+<p>Transport layer responsibilities:</p><ul>
+<li>Fragment large messages into transport frames (CAN = 8 bytes per frame)</li>
+<li>Manage frame sequencing (first, middle, last frame markers)</li>
+<li>Handle transmission failures and retries</li>
+<li>Update alias mappings for outgoing messages</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Must return false if transmission fails (buffer full, etc.) </dd>
+<dd>
+Caller retains message ownership - do not free in this function</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation typically: <a class="el" href="can__tx__statemachine_8c.html#a33de06b5158f3e1944cb5ea977a56e9e" title="Transmits an OpenLCB message on the CAN physical layer.">CanTxStatemachine_send_openlcb_message()</a> </dd>
+<dd>
+Return true only when message queued or transmitted successfully</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__statemachine_8c.html#a33de06b5158f3e1944cb5ea977a56e9e" title="Transmits an OpenLCB message on the CAN physical layer.">CanTxStatemachine_send_openlcb_message</a> - Typical CAN transport implementation </dd></dl>
 
 </div>
 </div>
@@ -288,7 +446,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Get first node in enumeration </p>
+
+<p>Retrieves the first node for enumeration. </p>
+<p>Starts enumeration of all allocated nodes in the system. OpenLcbCLib supports multiple virtual nodes (limited only by USER_DEFINED_NODE_BUFFER_DEPTH). Each incoming message is processed against all nodes to determine which should handle it based on addressing.</p>
+<p>The key parameter allows multiple simultaneous enumerations without interference:</p><ul>
+<li>Main state machine uses key=OPENLCB_STATEMACHINE_NODE_ENUMRATOR_KEY</li>
+<li>Login state machine uses different key</li>
+<li>Each key maintains independent enumeration position</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL if no nodes allocated in system</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__node_8c.html#aebb273e90eb5491704a9a42c830e5324" title="Gets the first node in the pool for enumeration.">OpenLcbNode_get_first()</a> </dd>
+<dd>
+Enumeration position tracked per-key to allow concurrent iterations</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e" title="Retrieves the next node in enumeration sequence.">openlcb_node_get_next</a> - Continues enumeration </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#aebb273e90eb5491704a9a42c830e5324" title="Gets the first node in the pool for enumeration.">OpenLcbNode_get_first</a> - Standard implementation </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a> - Maximum nodes supported </dd></dl>
 
 </div>
 </div>
@@ -303,7 +479,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Get next node in enumeration </p>
+
+<p>Retrieves the next node in enumeration sequence. </p>
+<p>Continues enumeration started by <a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Retrieves the first node for enumeration.">openlcb_node_get_first()</a>. Returns successive nodes until all have been enumerated, then returns NULL.</p>
+<p>Enumeration continues across calls:</p><ul>
+<li>First call after get_first() returns second node</li>
+<li>Subsequent calls return third, fourth, etc.</li>
+<li>NULL indicates enumeration complete</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Returns NULL when no more nodes available </dd>
+<dd>
+Must use same key value as corresponding get_first() call</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__node_8c.html#a67d1e4736a41064ac7c649831848b4ca" title="Gets the next node in the enumeration sequence.">OpenLcbNode_get_next()</a> </dd>
+<dd>
+Safe to call even if get_first() returned NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Retrieves the first node for enumeration.">openlcb_node_get_first</a> - Starts enumeration </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#a67d1e4736a41064ac7c649831848b4ca" title="Gets the next node in the enumeration sequence.">OpenLcbNode_get_next</a> - Standard implementation </dd></dl>
 
 </div>
 </div>
@@ -318,7 +512,26 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Load Interaction Rejected response </p>
+
+<p>Constructs Optional Interaction Rejected message for unhandled MTIs. </p>
+<p>Generates standardized rejection response when:</p><ul>
+<li>Optional protocol message received with NULL handler</li>
+<li>Unknown MTI addressed to node</li>
+<li>Protocol not implemented by node</li>
+</ul>
+<p>The response includes:</p><ul>
+<li>Error code: ERROR_PERMANENT_NOT_IMPLEMENTED_UNKNOWN_MTI (0x1000)</li>
+<li>Original MTI that triggered rejection</li>
+<li>Proper source and destination addressing</li>
+</ul>
+<p>This automatic rejection allows minimal nodes to safely ignore unimplemented protocols without manual error handling in application code.</p>
+<dl class="section warning"><dt>Warning</dt><dd>Do not call directly - used internally by dispatcher</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#a5f2678343f0776860a12e30479ead703" title="Loads an Optional Interaction Rejected response message.">OpenLcbMainStatemachine_load_interaction_rejected()</a> </dd>
+<dd>
+Response automatically sent by dispatcher when handler is NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8c.html#a5f2678343f0776860a12e30479ead703" title="Loads an Optional Interaction Rejected response message.">OpenLcbMainStatemachine_load_interaction_rejected</a> - Standard implementation </dd></dl>
 
 </div>
 </div>
@@ -333,7 +546,24 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Initialization Complete message </p>
+
+<p>Handles Initialization Complete message (MTI 0x0100) </p>
+<p>Processes announcement that a node has completed initialization and is entering normal operation. This message is broadcast by nodes after login sequence completes and configuration is loaded.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Use cases:</p><ul>
+<li>Network discovery and monitoring</li>
+<li>Detecting when new nodes come online</li>
+<li>Tracking node state changes</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Do not confuse with Initialization Complete Simple (0x0101)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#ae44398b4a2a77c1dd13e6ce579e4c45b" title="Handles Initialization Complete message.">ProtocolMessageNetwork_handle_initialization_complete()</a> </dd>
+<dd>
+No response required - observation only</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4707408ea3dc92994ccb11858f0c17cb" title="Handles Initialization Complete Simple message (MTI 0x0101)">message_network_initialization_complete_simple</a> - Simple protocol variant </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#ae44398b4a2a77c1dd13e6ce579e4c45b" title="Handles Initialization Complete message.">ProtocolMessageNetwork_handle_initialization_complete</a> </dd></dl>
 
 </div>
 </div>
@@ -348,7 +578,18 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Initialization Complete Simple message </p>
+
+<p>Handles Initialization Complete Simple message (MTI 0x0101) </p>
+<p>Processes initialization announcement from simple nodes that implement only the minimal required protocol subset. Identical to standard initialization complete but indicates limited protocol support.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a94fa4c988fd24bfc527f373ef3c89e2b" title="Handles Initialization Complete Simple message.">ProtocolMessageNetwork_handle_initialization_complete_simple()</a> </dd>
+<dd>
+No response required - observation only</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5902fb9cf3c4a8fc0c11bc184652caec" title="Handles Initialization Complete message (MTI 0x0100)">message_network_initialization_complete</a> - Full protocol variant </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a94fa4c988fd24bfc527f373ef3c89e2b" title="Handles Initialization Complete Simple message.">ProtocolMessageNetwork_handle_initialization_complete_simple</a> </dd></dl>
 
 </div>
 </div>
@@ -363,7 +604,26 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Verify Node ID Addressed message </p>
+
+<p>Handles Verify Node ID Addressed message (MTI 0x0488) </p>
+<p>Processes request to verify node identity. Sender is asking specific node to confirm it is online and respond with its Node ID. Used for network discovery and verifying node presence.</p>
+<p>Standard response: Verified Node ID (0x0170 or 0x0171)</p>
+<p>Response includes:</p><ul>
+<li>Source: this node's alias and ID</li>
+<li>Destination: requester</li>
+<li>Payload: this node's 48-bit Node ID</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Must respond even if payload contains different Node ID</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a7b2bdbb0e461bfb459ff560f3fe6a215" title="Handles addressed Verify Node ID message.">ProtocolMessageNetwork_handle_verify_node_id_addressed()</a> </dd>
+<dd>
+Always reply when addressed to this node</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4128ad6fc0b99bc8b779f4cf97c6ab49" title="Handles Verify Node ID Global message (MTI 0x0490)">message_network_verify_node_id_global</a> - Broadcast variant </dd>
+<dd>
+<a class="el" href="#a018eacb0aea2d291dc77a08551add548" title="Handles Verified Node ID message (MTI 0x0170 or 0x0171)">message_network_verified_node_id</a> - Response handler </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a7b2bdbb0e461bfb459ff560f3fe6a215" title="Handles addressed Verify Node ID message.">ProtocolMessageNetwork_handle_verify_node_id_addressed</a> </dd></dl>
 
 </div>
 </div>
@@ -378,7 +638,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Verify Node ID Global message </p>
+
+<p>Handles Verify Node ID Global message (MTI 0x0490) </p>
+<p>Processes broadcast request for all nodes or specific node to verify identity. If payload is empty, all nodes respond. If payload contains Node ID, only matching node responds.</p>
+<p>Standard response: Verified Node ID (0x0170 or 0x0171) if match or broadcast</p>
+<p>Payload handling:</p><ul>
+<li>Empty payload: All nodes respond (network enumeration)</li>
+<li>Contains Node ID: Only matching node responds (targeted verification)</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Check payload to determine if response required</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a24ea265253588c2f4e1c8bfc67073fa8" title="Handles global Verify Node ID message.">ProtocolMessageNetwork_handle_verify_node_id_global()</a> </dd>
+<dd>
+Used for network discovery and node verification</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#acab664de494430284a9d8d2740b211ff" title="Handles Verify Node ID Addressed message (MTI 0x0488)">message_network_verify_node_id_addressed</a> - Targeted variant </dd>
+<dd>
+<a class="el" href="#a018eacb0aea2d291dc77a08551add548" title="Handles Verified Node ID message (MTI 0x0170 or 0x0171)">message_network_verified_node_id</a> - Response handler </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a24ea265253588c2f4e1c8bfc67073fa8" title="Handles global Verify Node ID message.">ProtocolMessageNetwork_handle_verify_node_id_global</a> </dd></dl>
 
 </div>
 </div>
@@ -393,7 +671,27 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Verified Node ID message </p>
+
+<p>Handles Verified Node ID message (MTI 0x0170 or 0x0171) </p>
+<p>Processes node identity announcement. Contains 48-bit Node ID of responding node. Used to build network map and detect duplicate IDs.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Critical duplicate detection:</p><ul>
+<li>If payload Node ID matches this node's ID</li>
+<li>AND message is from different alias</li>
+<li>Then duplicate Node ID detected (serious error)</li>
+<li>Node should send Duplicate Node ID event and take corrective action</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>MUST detect and handle duplicate Node IDs</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a6cc5050fc4c003790bd5deb876fcf842" title="Handles Verified Node ID message.">ProtocolMessageNetwork_handle_verified_node_id()</a> </dd>
+<dd>
+No standard response except for duplicate detection</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#acab664de494430284a9d8d2740b211ff" title="Handles Verify Node ID Addressed message (MTI 0x0488)">message_network_verify_node_id_addressed</a> - Request message </dd>
+<dd>
+<a class="el" href="#a4128ad6fc0b99bc8b779f4cf97c6ab49" title="Handles Verify Node ID Global message (MTI 0x0490)">message_network_verify_node_id_global</a> - Broadcast request </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a6cc5050fc4c003790bd5deb876fcf842" title="Handles Verified Node ID message.">ProtocolMessageNetwork_handle_verified_node_id</a> </dd></dl>
 
 </div>
 </div>
@@ -408,7 +706,28 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Optional Interaction Rejected message </p>
+
+<p>Handles Optional Interaction Rejected message (MTI 0x0068) </p>
+<p>Processes rejection response indicating remote node does not support requested operation. Contains error code and rejected MTI.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Payload format:</p><ul>
+<li>Bytes 0-1: Error code (see OpenLCB error code definitions)</li>
+<li>Bytes 2-3: MTI that was rejected</li>
+<li>Bytes 4+: Optional additional error information</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Discovering which protocols remote node supports</li>
+<li>Handling feature unavailability gracefully</li>
+<li>Debugging protocol implementation issues</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a28784d330fe4b9dc5edaae0e0ed25970" title="Handles Optional Interaction Rejected message.">ProtocolMessageNetwork_handle_optional_interaction_rejected()</a> </dd>
+<dd>
+No response required - informational only</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#acb82224cbc102121448b6e90c211d19a" title="Constructs Optional Interaction Rejected message for unhandled MTIs.">load_interaction_rejected</a> - Generate this message </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a28784d330fe4b9dc5edaae0e0ed25970" title="Handles Optional Interaction Rejected message.">ProtocolMessageNetwork_handle_optional_interaction_rejected</a> </dd></dl>
 
 </div>
 </div>
@@ -423,7 +742,26 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Terminate Due to Error message </p>
+
+<p>Handles Terminate Due to Error message (MTI 0x00A8) </p>
+<p>Processes notification that remote node is terminating operation due to unrecoverable error. Contains error code and context information.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Payload format:</p><ul>
+<li>Bytes 0-1: Error code indicating failure type</li>
+<li>Bytes 2-3: MTI that triggered error (if applicable)</li>
+<li>Bytes 4+: Optional error context</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Detecting critical errors in remote nodes</li>
+<li>Network monitoring and diagnostics</li>
+<li>Triggering error recovery procedures</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#ad5696bf1ec10b7d0d07097a6cbc33fc4" title="Handles Terminate Due To Error message.">ProtocolMessageNetwork_handle_terminate_due_to_error()</a> </dd>
+<dd>
+No standard response - node may be offline after this</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__message__network_8c.html#ad5696bf1ec10b7d0d07097a6cbc33fc4" title="Handles Terminate Due To Error message.">ProtocolMessageNetwork_handle_terminate_due_to_error</a> </dd></dl>
 
 </div>
 </div>
@@ -438,7 +776,24 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Protocol Support Inquiry message </p>
+
+<p>Handles Protocol Support Inquiry message (MTI 0x0828) </p>
+<p>Processes request for node to advertise its protocol capabilities. Node responds with bitmask of supported protocols.</p>
+<p>Standard response: Protocol Support Reply (MTI 0x0668)</p>
+<p>Response payload (6 bytes):</p><ul>
+<li>Bit flags indicating which protocols are supported</li>
+<li>Bits defined in OpenLCB Protocol Support Standard</li>
+<li>Examples: Datagram, Stream, Configuration, Events, etc.</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Must accurately reflect actual node capabilities</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a2c1bd7d18c6b20c915f1ff93d953687d" title="Handles Protocol Support Inquiry message.">ProtocolMessageNetwork_handle_protocol_support_inquiry()</a> </dd>
+<dd>
+Reply built from node's protocol_support_flags configuration</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa3d62851e98dee2ae00a9b507382ad77" title="Handles Protocol Support Reply message (MTI 0x0668)">message_network_protocol_support_reply</a> - Response handler </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a2c1bd7d18c6b20c915f1ff93d953687d" title="Handles Protocol Support Inquiry message.">ProtocolMessageNetwork_handle_protocol_support_inquiry</a> </dd></dl>
 
 </div>
 </div>
@@ -453,7 +808,28 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Protocol Support Reply message </p>
+
+<p>Handles Protocol Support Reply message (MTI 0x0668) </p>
+<p>Processes protocol capability advertisement from remote node. Contains bitmask of supported protocols.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Payload interpretation:</p><ul>
+<li>6 bytes of protocol flags</li>
+<li>Bit positions defined in OpenLCB standard</li>
+<li>Used to determine what operations remote node supports</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Discovering remote node capabilities before operations</li>
+<li>Building network capability map</li>
+<li>Optimizing protocol interactions</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__message__network_8c.html#a6a00748f7b094019ef0743f7d1a0fc65" title="Handles Protocol Support Reply message.">ProtocolMessageNetwork_handle_protocol_support_reply()</a> </dd>
+<dd>
+No response required - informational only</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4b6063580959db4ff1b6fbd7d5663ca0" title="Handles Protocol Support Inquiry message (MTI 0x0828)">message_network_protocol_support_inquiry</a> - Request message </dd>
+<dd>
+<a class="el" href="protocol__message__network_8c.html#a6a00748f7b094019ef0743f7d1a0fc65" title="Handles Protocol Support Reply message.">ProtocolMessageNetwork_handle_protocol_support_reply</a> </dd></dl>
 
 </div>
 </div>
@@ -468,7 +844,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Process message through state machine </p>
+
+<p>Processes message through appropriate protocol handler based on MTI. </p>
+<p>Internal dispatcher function that examines incoming message MTI and routes to appropriate protocol handler. Implements large switch statement covering all supported MTIs.</p>
+<p>Handler dispatch order:</p><ol type="1">
+<li>Check if node should process message (addressing filter)</li>
+<li>Extract MTI from incoming message</li>
+<li>Switch on MTI value</li>
+<li>Call registered handler or load_interaction_rejected if NULL</li>
+<li>Return to allow handler's response to be sent</li>
+</ol>
+<dl class="section warning"><dt>Warning</dt><dd>Do not call directly in application - used by dispatcher</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#acf6127bfd2ace2fc6d83e5b9a8834569" title="Processes incoming message through protocol handlers.">OpenLcbMainStatemachine_process_main_statemachine()</a> </dd>
+<dd>
+Exposed to allow unit testing of dispatch logic</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af94b252854c4de7a33ee7ec6deb93f6c" title="Determines if node should process incoming message.">does_node_process_msg</a> - Addressing filter used before dispatch </dd>
+<dd>
+<a class="el" href="openlcb__main__statemachine_8c.html#acf6127bfd2ace2fc6d83e5b9a8834569" title="Processes incoming message through protocol handlers.">OpenLcbMainStatemachine_process_main_statemachine</a> </dd></dl>
 
 </div>
 </div>
@@ -483,7 +877,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Check if node should process message </p>
+
+<p>Determines if node should process incoming message. </p>
+<p>Implements addressing filter to determine message applicability. Checks if message is broadcast or specifically addressed to this node.</p>
+<p>Processing criteria (node processes if ANY true):</p><ul>
+<li>Node is initialized</li>
+<li>Message is broadcast (no destination address)</li>
+<li>Message destination alias matches node's alias</li>
+<li>Message destination ID matches node's ID</li>
+<li>Message is Verify Node ID Global (always processed)</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment for testing </dd>
+<dd>
+Must implement proper addressing logic per OpenLCB standard</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#a32f1ff60e7b248efcd4b6d3e626715f4" title="Determines if current node should process the message.">OpenLcbMainStatemachine_does_node_process_msg()</a> </dd>
+<dd>
+Returns true if node should handle message, false otherwise</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a6a1564a5e0fded2d1c325cd111eb7759" title="Processes message through appropriate protocol handler based on MTI.">process_main_statemachine</a> - Uses this filter before dispatch </dd>
+<dd>
+<a class="el" href="openlcb__main__statemachine_8c.html#a32f1ff60e7b248efcd4b6d3e626715f4" title="Determines if current node should process the message.">OpenLcbMainStatemachine_does_node_process_msg</a> </dd></dl>
 
 </div>
 </div>
@@ -498,7 +910,22 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle outgoing message transmission </p>
+
+<p>Handles transmission of pending outgoing messages. </p>
+<p>Attempts to transmit any message queued in outgoing buffer. Retries until successful or explicitly cleared. Part of main loop priority handling.</p>
+<p>Transmission flow:</p><ol type="1">
+<li>Check if outgoing message valid flag is set</li>
+<li>Call <a class="el" href="#a216efd7bdc468e6395aa0e5ba04f1060" title="Transmits an OpenLCB message to the network.">send_openlcb_msg()</a> with message</li>
+<li>If successful, clear valid flag</li>
+<li>If failed, keep valid flag set for retry</li>
+<li>Return true if message pending (continue trying)</li>
+</ol>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#ae7188254864ad6f2e9ab7f654a1000ae" title="Handles transmission of pending outgoing messages.">OpenLcbMainStatemachine_handle_outgoing_openlcb_message()</a> </dd>
+<dd>
+Exposed for testing, normally called by run loop</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8c.html#ae7188254864ad6f2e9ab7f654a1000ae" title="Handles transmission of pending outgoing messages.">OpenLcbMainStatemachine_handle_outgoing_openlcb_message</a> </dd></dl>
 
 </div>
 </div>
@@ -513,7 +940,28 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle re-enumeration of current node </p>
+
+<p>Handles re-enumeration for multi-message protocol responses. </p>
+<p>When protocol handler sets enumerate flag, continues processing same incoming message against same node. Allows handlers to send multiple responses (e.g., identifying multiple events) without losing message context.</p>
+<p>Re-enumeration pattern:</p><ol type="1">
+<li>Handler processes message</li>
+<li>If more responses needed, set enumerate flag</li>
+<li>Return to dispatcher</li>
+<li>Dispatcher calls handler again with same message</li>
+<li>Handler sends next response</li>
+<li>Repeat until handler clears enumerate flag</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Event identification with multiple producer/consumer events</li>
+<li>Multi-part configuration memory reads</li>
+<li>Segmented data transfers</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#a2b1a62ec85f81070f1766b82d5acbd8d" title="Handles re-enumeration for multi-message responses.">OpenLcbMainStatemachine_handle_try_reenumerate()</a> </dd>
+<dd>
+Exposed for testing, normally called by run loop</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__main__statemachine_8c.html#a2b1a62ec85f81070f1766b82d5acbd8d" title="Handles re-enumeration for multi-message responses.">OpenLcbMainStatemachine_handle_try_reenumerate</a> </dd></dl>
 
 </div>
 </div>
@@ -528,7 +976,28 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pop next incoming message from queue </p>
+
+<p>Pops next incoming message from receive queue. </p>
+<p>Retrieves next message from OpenLCB buffer FIFO if no message currently being processed. Uses resource locking for thread-safe FIFO access.</p>
+<p>Pop operation:</p><ol type="1">
+<li>Check if already have incoming message</li>
+<li>If not, lock shared resources</li>
+<li>Pop from OpenLcbBufferFifo</li>
+<li>Unlock shared resources</li>
+<li>Store message in state machine info</li>
+<li>Return true if message retrieved</li>
+</ol>
+<dl class="section warning"><dt>Warning</dt><dd>Uses lock/unlock callbacks - ensure proper implementation</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#ad33e639d0a19fa75a7baf215069dc532" title="Pops next incoming message from receive queue.">OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message()</a> </dd>
+<dd>
+Exposed for testing, normally called by run loop</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad5d977bbc45e071d19d77e261f17b7e7" title="Disables interrupts and prevents concurrent access to shared resources.">lock_shared_resources</a> - Used during FIFO access </dd>
+<dd>
+<a class="el" href="#a654fa7c6260aa2ac2c0589f57fcd67e9" title="Re-enables interrupts and allows access to shared resources.">unlock_shared_resources</a> - Released after access </dd>
+<dd>
+<a class="el" href="openlcb__main__statemachine_8c.html#ad33e639d0a19fa75a7baf215069dc532" title="Pops next incoming message from receive queue.">OpenLcbMainStatemachine_handle_try_pop_next_incoming_openlcb_message</a> </dd></dl>
 
 </div>
 </div>
@@ -543,7 +1012,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Enumerate first node for message processing </p>
+
+<p>Enumerates first node for message processing. </p>
+<p>Retrieves first node and processes current incoming message against it if node is in RUN state. Starts node enumeration sequence.</p>
+<p>Enumeration flow:</p><ol type="1">
+<li>Check if node pointer already set</li>
+<li>If not, get first node via <a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Retrieves the first node for enumeration.">openlcb_node_get_first()</a></li>
+<li>If no nodes exist, free incoming message and return</li>
+<li>If node in RUN state, call <a class="el" href="#a6a1564a5e0fded2d1c325cd111eb7759" title="Processes message through appropriate protocol handler based on MTI.">process_main_statemachine()</a></li>
+<li>Return true to continue with next node</li>
+</ol>
+<dl class="section warning"><dt>Warning</dt><dd>Skips nodes not in RUNSTATE_RUN</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#a03ab477b926644a184090fd827a2e2c3" title="Enumerates first node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_first_node()</a> </dd>
+<dd>
+Exposed for testing, normally called by run loop</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7" title="Enumerates next node for message processing.">handle_try_enumerate_next_node</a> - Continues enumeration </dd>
+<dd>
+<a class="el" href="openlcb__main__statemachine_8c.html#a03ab477b926644a184090fd827a2e2c3" title="Enumerates first node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_first_node</a> </dd></dl>
 
 </div>
 </div>
@@ -558,7 +1045,30 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Enumerate next node for message processing </p>
+
+<p>Enumerates next node for message processing. </p>
+<p>Retrieves next node and processes current incoming message against it if node is in RUN state. Continues enumeration until all nodes processed.</p>
+<p>Enumeration flow:</p><ol type="1">
+<li>Get next node via <a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e" title="Retrieves the next node in enumeration sequence.">openlcb_node_get_next()</a></li>
+<li>If no more nodes, free incoming message and return</li>
+<li>If node in RUN state, call <a class="el" href="#a6a1564a5e0fded2d1c325cd111eb7759" title="Processes message through appropriate protocol handler based on MTI.">process_main_statemachine()</a></li>
+<li>Return false to allow continued enumeration</li>
+</ol>
+<p>When enumeration completes:</p><ul>
+<li>Incoming message is freed back to buffer store</li>
+<li>State machine ready for next message</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Skips nodes not in RUNSTATE_RUN </dd>
+<dd>
+Frees message when enumeration complete</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Default implementation: <a class="el" href="openlcb__main__statemachine_8c.html#a637df8a2395f30856f318fc06d9f8540" title="Enumerates next node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_next_node()</a> </dd>
+<dd>
+Exposed for testing, normally called by run loop</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ace54b5c03eafd093615c3de2f76587b1" title="Enumerates first node for message processing.">handle_try_enumerate_first_node</a> - Starts enumeration </dd>
+<dd>
+<a class="el" href="openlcb__main__statemachine_8c.html#a637df8a2395f30856f318fc06d9f8540" title="Enumerates next node for message processing.">OpenLcbMainStatemachine_handle_try_enumerate_next_node</a> </dd></dl>
 
 </div>
 </div>
@@ -573,7 +1083,29 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle SNIP request (NULL if not implemented) </p>
+
+<p>Handles Simple Node Info Request message (MTI 0x0DE8) </p>
+<p>Processes request for node identification information. Node responds with manufacturer details, model info, and user-configured name/description.</p>
+<p>Standard response: Simple Node Info Reply (MTI 0x0A08)</p>
+<p>Response format (null-terminated strings):</p><ul>
+<li>Manufacturer version (1 byte)</li>
+<li>Manufacturer name</li>
+<li>Model name</li>
+<li>Hardware version</li>
+<li>Software version</li>
+<li>User version (1 byte)</li>
+<li>User name (from configuration memory)</li>
+<li>User description (from configuration memory)</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Optional - set to NULL if SNIP not implemented </dd>
+<dd>
+If NULL, dispatcher sends Interaction Rejected automatically</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="protocol__snip_8c.html#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles incoming Simple Node Info Request message.">ProtocolSnip_handle_simple_node_info_request()</a> </dd>
+<dd>
+Response may be multi-frame on CAN (up to 256 bytes)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7f1517ed921c17cfd04a426ceec7bf7c" title="Handles Simple Node Info Reply message (MTI 0x0A08)">snip_simple_node_info_reply</a> - Response handler </dd>
+<dd>
+<a class="el" href="protocol__snip_8c.html#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles incoming Simple Node Info Request message.">ProtocolSnip_handle_simple_node_info_request</a> </dd></dl>
 
 </div>
 </div>
@@ -588,7 +1120,23 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle SNIP reply (NULL if not implemented) </p>
+
+<p>Handles Simple Node Info Reply message (MTI 0x0A08) </p>
+<p>Processes node identification information from remote node.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Use cases:</p><ul>
+<li>Discovering node identities during network configuration</li>
+<li>Building node database for user interface</li>
+<li>Automatic node classification</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__snip_8c.html#a627c27accd1419434607d03030548079" title="Handles incoming Simple Node Info Reply message.">ProtocolSnip_handle_simple_node_info_reply()</a> </dd>
+<dd>
+No standard response - informational only</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4f1199c3f7acf62c2d3f47228d115127" title="Handles Simple Node Info Request message (MTI 0x0DE8)">snip_simple_node_info_request</a> - Request message </dd>
+<dd>
+<a class="el" href="protocol__snip_8c.html#a627c27accd1419434607d03030548079" title="Handles incoming Simple Node Info Reply message.">ProtocolSnip_handle_simple_node_info_reply</a> </dd></dl>
 
 </div>
 </div>
@@ -603,7 +1151,21 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Consumer Identify (NULL if not implemented) </p>
+
+<p>Handles Identify Consumer message (MTI 0x08F4) </p>
+<p>Processes request for node to identify if it consumes a specific event.</p>
+<p>Standard response: Consumer Identified (0x04C4, 0x04C5, or 0x04C7)</p>
+<p>Response variants:</p><ul>
+<li>Consumer Identified Valid (0x04C4): Node consumes this event, currently valid</li>
+<li>Consumer Identified Invalid (0x04C5): Node consumes this event, currently invalid</li>
+<li>Consumer Identified Unknown (0x04C7): Node consumes this event, state unknown</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#afb1be0b7e2081a031609849ebc876d71" title="Handles Consumer Identify message.">ProtocolEventTransport_handle_consumer_identify()</a> </dd>
+<dd>
+Only respond if event ID matches configured consumer events</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#afb1be0b7e2081a031609849ebc876d71" title="Handles Consumer Identify message.">ProtocolEventTransport_handle_consumer_identify</a> </dd></dl>
 
 </div>
 </div>
@@ -618,7 +1180,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Consumer Range Identified (NULL if not implemented) </p>
+
+<p>Handles Consumer Range Identified message (MTI 0x04A4) </p>
+<p>Processes announcement that remote node consumes a range of events.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a9c92a4094b3226a294930de68446ab3c" title="Handles Consumer Range Identified message.">ProtocolEventTransport_handle_consumer_range_identified()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a9c92a4094b3226a294930de68446ab3c" title="Handles Consumer Range Identified message.">ProtocolEventTransport_handle_consumer_range_identified</a> </dd></dl>
 
 </div>
 </div>
@@ -633,7 +1202,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Consumer Identified Unknown (NULL if not implemented) </p>
+
+<p>Handles Consumer Identified Unknown message (MTI 0x04C7) </p>
+<p>Processes announcement that remote node consumes event but state unknown.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a007dbd80061d2cdb1b9963ba8da8ea09" title="Handles Consumer Identified Unknown message.">ProtocolEventTransport_handle_consumer_identified_unknown()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a007dbd80061d2cdb1b9963ba8da8ea09" title="Handles Consumer Identified Unknown message.">ProtocolEventTransport_handle_consumer_identified_unknown</a> </dd></dl>
 
 </div>
 </div>
@@ -648,7 +1224,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Consumer Identified Set (NULL if not implemented) </p>
+
+<p>Handles Consumer Identified Set message (MTI 0x04C4) </p>
+<p>Processes announcement that remote node consumes event and it is currently valid/set.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a2d355cd6d9b89e3e556d5ccb3595e0ab" title="Handles Consumer Identified Set message.">ProtocolEventTransport_handle_consumer_identified_set()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a2d355cd6d9b89e3e556d5ccb3595e0ab" title="Handles Consumer Identified Set message.">ProtocolEventTransport_handle_consumer_identified_set</a> </dd></dl>
 
 </div>
 </div>
@@ -663,7 +1246,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Consumer Identified Clear (NULL if not implemented) </p>
+
+<p>Handles Consumer Identified Clear message (MTI 0x04C5) </p>
+<p>Processes announcement that remote node consumes event and it is currently invalid/clear.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a1c21e80d4ee1d344e00ed20f0b31c0fc" title="Handles Consumer Identified Clear message.">ProtocolEventTransport_handle_consumer_identified_clear()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a1c21e80d4ee1d344e00ed20f0b31c0fc" title="Handles Consumer Identified Clear message.">ProtocolEventTransport_handle_consumer_identified_clear</a> </dd></dl>
 
 </div>
 </div>
@@ -678,7 +1268,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Consumer Identified Reserved (NULL if not implemented) </p>
+
+<p>Handles Consumer Identified Reserved message (MTI 0x04C6) </p>
+<p>Processes reserved consumer state message (future use).</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a4db9e7259a0ab51f56f82f3fd46e3cc0" title="Handles Consumer Identified Reserved message.">ProtocolEventTransport_handle_consumer_identified_reserved()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a4db9e7259a0ab51f56f82f3fd46e3cc0" title="Handles Consumer Identified Reserved message.">ProtocolEventTransport_handle_consumer_identified_reserved</a> </dd></dl>
 
 </div>
 </div>
@@ -693,7 +1290,21 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer Identify (NULL if not implemented) </p>
+
+<p>Handles Identify Producer message (MTI 0x0914) </p>
+<p>Processes request for node to identify if it produces a specific event.</p>
+<p>Standard response: Producer Identified (0x0544, 0x0545, or 0x0547)</p>
+<p>Response variants:</p><ul>
+<li>Producer Identified Valid (0x0544): Node produces this event, currently valid</li>
+<li>Producer Identified Invalid (0x0545): Node produces this event, currently invalid</li>
+<li>Producer Identified Unknown (0x0547): Node produces this event, state unknown</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a190aa050c233838afbf8b13cce8f04cf" title="Handles Producer Identify message.">ProtocolEventTransport_handle_producer_identify()</a> </dd>
+<dd>
+Only respond if event ID matches configured producer events</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a190aa050c233838afbf8b13cce8f04cf" title="Handles Producer Identify message.">ProtocolEventTransport_handle_producer_identify</a> </dd></dl>
 
 </div>
 </div>
@@ -708,7 +1319,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer Range Identified (NULL if not implemented) </p>
+
+<p>Handles Producer Range Identified message (MTI 0x0524) </p>
+<p>Processes announcement that remote node produces a range of events.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#ad72129eda4bd4ad30e641004fe3484c9" title="Handles Producer Range Identified message.">ProtocolEventTransport_handle_producer_range_identified()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#ad72129eda4bd4ad30e641004fe3484c9" title="Handles Producer Range Identified message.">ProtocolEventTransport_handle_producer_range_identified</a> </dd></dl>
 
 </div>
 </div>
@@ -723,7 +1341,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer Identified Unknown (NULL if not implemented) </p>
+
+<p>Handles Producer Identified Unknown message (MTI 0x0547) </p>
+<p>Processes announcement that remote node produces event but state unknown.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#aabd4c8e176e511f24472dc6793f59dc7" title="Handles Producer Identified Unknown message.">ProtocolEventTransport_handle_producer_identified_unknown()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#aabd4c8e176e511f24472dc6793f59dc7" title="Handles Producer Identified Unknown message.">ProtocolEventTransport_handle_producer_identified_unknown</a> </dd></dl>
 
 </div>
 </div>
@@ -738,7 +1363,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer Identified Set (NULL if not implemented) </p>
+
+<p>Handles Producer Identified Set message (MTI 0x0544) </p>
+<p>Processes announcement that remote node produces event and it is currently valid/set.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a1e71394fcf36cc5d99b327cdd4001ac7" title="Handles Producer Identified Set message.">ProtocolEventTransport_handle_producer_identified_set()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a1e71394fcf36cc5d99b327cdd4001ac7" title="Handles Producer Identified Set message.">ProtocolEventTransport_handle_producer_identified_set</a> </dd></dl>
 
 </div>
 </div>
@@ -753,7 +1385,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer Identified Clear (NULL if not implemented) </p>
+
+<p>Handles Producer Identified Clear message (MTI 0x0545) </p>
+<p>Processes announcement that remote node produces event and it is currently invalid/clear.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#afdff7c7109ea8a3aaf1573075aaebadd" title="Handles Producer Identified Clear message.">ProtocolEventTransport_handle_producer_identified_clear()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#afdff7c7109ea8a3aaf1573075aaebadd" title="Handles Producer Identified Clear message.">ProtocolEventTransport_handle_producer_identified_clear</a> </dd></dl>
 
 </div>
 </div>
@@ -768,7 +1407,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer Identified Reserved (NULL if not implemented) </p>
+
+<p>Handles Producer Identified Reserved message (MTI 0x0546) </p>
+<p>Processes reserved producer state message (future use).</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a2f2b21811e9e91661c063489618c5250" title="Handles Producer Identified Reserved message.">ProtocolEventTransport_handle_producer_identified_reserved()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a2f2b21811e9e91661c063489618c5250" title="Handles Producer Identified Reserved message.">ProtocolEventTransport_handle_producer_identified_reserved</a> </dd></dl>
 
 </div>
 </div>
@@ -783,7 +1429,23 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Identify Destination (NULL if not implemented) </p>
+
+<p>Handles Identify Events Addressed message (MTI 0x0968) </p>
+<p>Processes request for node to identify all events it produces or consumes.</p>
+<p>Standard response: Producer/Consumer Identified messages for all events</p>
+<p>Response pattern:</p><ul>
+<li>Multiple Producer Identified messages (one per produced event)</li>
+<li>Multiple Consumer Identified messages (one per consumed event)</li>
+<li>Uses enumerate flag for multi-message response</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a38a7d9aaf31f6c47e7d0b393258b4a61" title="Handles Identify Events message with destination addressing.">ProtocolEventTransport_handle_events_identify_dest()</a> </dd>
+<dd>
+May generate many response messages</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a40d92750da48a2a0d469f3ec65ced386" title="Handles Identify Events Global message (MTI 0x0970)">event_transport_identify</a> - Global variant </dd>
+<dd>
+<a class="el" href="protocol__event__transport_8c.html#a38a7d9aaf31f6c47e7d0b393258b4a61" title="Handles Identify Events message with destination addressing.">ProtocolEventTransport_handle_events_identify_dest</a> </dd></dl>
 
 </div>
 </div>
@@ -798,7 +1460,18 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Identify Events (NULL if not implemented) </p>
+
+<p>Handles Identify Events Global message (MTI 0x0970) </p>
+<p>Processes broadcast request for all nodes to identify all events.</p>
+<p>Standard response: Producer/Consumer Identified messages for all event.</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify()</a> </dd>
+<dd>
+All nodes respond simultaneously</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a19edc7ac25366fc269b972c33924640e" title="Handles Identify Events Addressed message (MTI 0x0968)">event_transport_identify_dest</a> - Addressed variant </dd>
+<dd>
+<a class="el" href="protocol__event__transport_8c.html#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> </dd></dl>
 
 </div>
 </div>
@@ -813,7 +1486,19 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Learn Event (NULL if not implemented) </p>
+
+<p>Handles Learn Event message (MTI 0x0594) </p>
+<p>Processes teach/learn event for configuration. Used to configure nodes to produce or consume specific events through blue/gold button protocol.</p>
+<p>Standard response: Depends on node configuration mode</p>
+<p>Use cases:</p><ul>
+<li>Teaching node which events to produce</li>
+<li>Teaching node which events to consume</li>
+<li>Blue/gold button configuration</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a342736e386595db173e0aab6d14edf72" title="Handles Event Learn message.">ProtocolEventTransport_handle_event_learn()</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#a342736e386595db173e0aab6d14edf72" title="Handles Event Learn message.">ProtocolEventTransport_handle_event_learn</a> </dd></dl>
 
 </div>
 </div>
@@ -828,7 +1513,25 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Producer/Consumer Event Report (NULL if not implemented) </p>
+
+<p>Handles Producer/Consumer Event Report message (MTI 0x05B4) </p>
+<p>Processes event occurrence notification. Producers send this when event conditions change. Consumers act on events they're configured for.</p>
+<p>Standard response: None (consumers take action, no reply)</p>
+<p>Payload: 8-byte event ID</p>
+<p>Consumer actions:</p><ul>
+<li>Check if configured for this event ID</li>
+<li>If match, take configured action (toggle output, trigger sequence, etc.)</li>
+<li>No protocol-level response required</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Core event messaging - most event nodes need this</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a0871e8dff19e3b845da96bcc208af0ac" title="Handles Producer/Consumer Event Report message.">ProtocolEventTransport_handle_pc_event_report()</a> </dd>
+<dd>
+No automatic response - application handles event</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a37e5a1a649985cd431628dd8d0377fa5" title="Handles Producer/Consumer Event Report with Payload message (MTI 0x05F4)">event_transport_pc_report_with_payload</a> - Variant with data </dd>
+<dd>
+<a class="el" href="protocol__event__transport_8c.html#a0871e8dff19e3b845da96bcc208af0ac" title="Handles Producer/Consumer Event Report message.">ProtocolEventTransport_handle_pc_event_report</a> </dd></dl>
 
 </div>
 </div>
@@ -843,7 +1546,27 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle P/C Event Report with Payload (NULL if not implemented) </p>
+
+<p>Handles Producer/Consumer Event Report with Payload message (MTI 0x05F4) </p>
+<p>Processes event occurrence with additional data payload. Extended event reporting allowing up to 256 bytes of event-specific data.</p>
+<p>Standard response: None (consumers process event and data)</p>
+<p>Payload:</p><ul>
+<li>Bytes 0-7: Event ID</li>
+<li>Bytes 8+: Event-specific payload data</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Analog sensor values with event</li>
+<li>Multi-parameter state changes</li>
+<li>Complex event data</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: <a class="el" href="protocol__event__transport_8c.html#a766f9f46309f4aea60e279d233dfef4d" title="Handles Producer/Consumer Event Report message with payload.">ProtocolEventTransport_handle_pc_event_report_with_payload()</a> </dd>
+<dd>
+Payload size limited by transport (CAN: multi-frame up to 256 bytes)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#adc01111fedf9f7728a66f2ada7b711b1" title="Handles Producer/Consumer Event Report message (MTI 0x05B4)">event_transport_pc_report</a> - Variant without payload </dd>
+<dd>
+<a class="el" href="protocol__event__transport_8c.html#a766f9f46309f4aea60e279d233dfef4d" title="Handles Producer/Consumer Event Report message with payload.">ProtocolEventTransport_handle_pc_event_report_with_payload</a> </dd></dl>
 
 </div>
 </div>
@@ -858,7 +1581,14 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Traction Control Command (NULL if not implemented) </p>
+
+<p>Handles Traction Control Command message (MTI 0x05EB) </p>
+<p>Processes train control commands (speed, function, emergency stop, etc.).</p>
+<p>Standard response: Traction Control Reply (MTI 0x01E9)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
+<dd>
+Default implementation: Protocol-specific handler</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a05ba0a90b24a4a1f770f085ce2e3fd2c" title="Handles Traction Control Reply message (MTI 0x01E9)">traction_control_reply</a> - Response message </dd></dl>
 
 </div>
 </div>
@@ -873,7 +1603,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Traction Control Reply (NULL if not implemented) </p>
+
+<p>Handles Traction Control Reply message (MTI 0x01E9) </p>
+<p>Processes command acknowledgment from train node.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2dd644aa726fe290af3e4b7cf56e069c" title="Handles Traction Control Command message (MTI 0x05EB)">traction_control_command</a> - Command message </dd></dl>
 
 </div>
 </div>
@@ -888,7 +1623,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Simple Train Info Request (NULL if not implemented) </p>
+
+<p>Handles Simple Train Node Ident Info Request message (MTI 0x0DA8) </p>
+<p>Processes request for train-specific identification information.</p>
+<p>Standard response: Simple Train Node Ident Info Reply (MTI 0x0A48)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a46c769b6ab42c12b7cd84e6af468e8b9" title="Handles Simple Train Node Ident Info Reply message (MTI 0x0A48)">simple_train_node_ident_info_reply</a> - Response message </dd></dl>
 
 </div>
 </div>
@@ -903,7 +1643,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Simple Train Info Reply (NULL if not implemented) </p>
+
+<p>Handles Simple Train Node Ident Info Reply message (MTI 0x0A48) </p>
+<p>Processes train identification information from remote train node.</p>
+<p>Standard response: None (informational message only)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a073e47c65638014706cfa91e50589890" title="Handles Simple Train Node Ident Info Request message (MTI 0x0DA8)">simple_train_node_ident_info_request</a> - Request message </dd></dl>
 
 </div>
 </div>
@@ -918,7 +1663,23 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Datagram (NULL if not implemented) </p>
+
+<p>Handles Datagram message (MTI 0x1C48) </p>
+<p>Processes datagram (up to 72 bytes of reliable addressed data).</p>
+<p>Standard response: Datagram Received OK (MTI 0x0A28) or Rejected (MTI 0x0A48)</p>
+<p>First byte of payload indicates datagram content type:</p><ul>
+<li>0x20: Memory Configuration Protocol</li>
+<li>0x30: Remote Button Protocol</li>
+<li>0x40: Display Protocol</li>
+<li>0x50: Train Control Protocol</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Must send OK or Rejected response </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd>
+<dd>
+Default implementation: Protocol-specific handler based on content ID</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a61105cc4674534a45369db760045b04a" title="Handles Datagram Received OK message (MTI 0x0A28)">datagram_ok_reply</a> - Success response </dd>
+<dd>
+<a class="el" href="#a6fd12990d215ddef74f727ca1573c2e9" title="Handles Datagram Rejected message (MTI 0x0A48)">datagram_rejected_reply</a> - Error response </dd></dl>
 
 </div>
 </div>
@@ -933,7 +1694,16 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Datagram OK Reply (NULL if not implemented) </p>
+
+<p>Handles Datagram Received OK message (MTI 0x0A28) </p>
+<p>Processes acknowledgment that datagram was received successfully.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Optional payload flags:</p><ul>
+<li>Bit 7: Reply Pending (more data coming)</li>
+<li>Bits 3-0: Timeout value for pending reply</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Optional - set to NULL if not needed</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a01a33136c73a7e49bd1114a549b31ded" title="Handles Datagram message (MTI 0x1C48)">datagram</a> - Datagram message </dd></dl>
 
 </div>
 </div>
@@ -948,7 +1718,16 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Datagram Rejected Reply (NULL if not implemented) </p>
+
+<p>Handles Datagram Rejected message (MTI 0x0A48) </p>
+<p>Processes rejection notification for sent datagram.</p>
+<p>Standard response: None (informational message only)</p>
+<p>Payload:</p><ul>
+<li>Bytes 0-1: Error code</li>
+<li>Additional error information</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a01a33136c73a7e49bd1114a549b31ded" title="Handles Datagram message (MTI 0x1C48)">datagram</a> - Datagram message </dd></dl>
 
 </div>
 </div>
@@ -963,7 +1742,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Stream Initiate Request (NULL if not implemented) </p>
+
+<p>Handles Stream Initiate Request message (MTI 0x0CC8) </p>
+<p>Processes request to establish stream connection for bulk data transfer.</p>
+<p>Standard response: Stream Initiate Reply (MTI 0x0868)</p>
+<dl class="section warning"><dt>Warning</dt><dd>Optional - set to NULL if Stream Protocol not implemented</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a191486f83109c1e0fd90ac3aad413c2e" title="Handles Stream Initiate Reply message (MTI 0x0868)">stream_initiate_reply</a> - Response message </dd></dl>
 
 </div>
 </div>
@@ -978,7 +1762,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Stream Initiate Reply (NULL if not implemented) </p>
+
+<p>Handles Stream Initiate Reply message (MTI 0x0868) </p>
+<p>Processes stream establishment response.</p>
+<p>Standard response: None (begin stream data transfer)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a344d21148e7e4aea207e7f2499de359e" title="Handles Stream Initiate Request message (MTI 0x0CC8)">stream_initiate_request</a> - Request message </dd></dl>
 
 </div>
 </div>
@@ -993,7 +1782,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Stream Send Data (NULL if not implemented) </p>
+
+<p>Handles Stream Data Send message (MTI 0x1F88) </p>
+<p>Processes stream data packet.</p>
+<p>Standard response: Stream Data Proceed (MTI 0x0888) when ready for more</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad4ef6bef2fc0ccee1b337b55aec77abd" title="Handles Stream Data Proceed message (MTI 0x0888)">stream_data_proceed</a> - Flow control response </dd></dl>
 
 </div>
 </div>
@@ -1008,7 +1802,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Stream Data Proceed (NULL if not implemented) </p>
+
+<p>Handles Stream Data Proceed message (MTI 0x0888) </p>
+<p>Processes flow control allowing more stream data to be sent.</p>
+<p>Standard response: None (continue sending data)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a317047b3f7f1050dd011108a4a3322eb" title="Handles Stream Data Send message (MTI 0x1F88)">stream_send_data</a> - Data message </dd></dl>
 
 </div>
 </div>
@@ -1023,7 +1822,12 @@ Optional pointers can be NULL to disable protocols</dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Handle Stream Data Complete (NULL if not implemented) </p>
+
+<p>Handles Stream Data Complete message (MTI 0x08A8) </p>
+<p>Processes notification that stream transfer is complete.</p>
+<p>Standard response: None (close stream connection)</p>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a317047b3f7f1050dd011108a4a3322eb" title="Handles Stream Data Send message (MTI 0x1F88)">stream_send_data</a> - Data message </dd></dl>
 
 </div>
 </div>

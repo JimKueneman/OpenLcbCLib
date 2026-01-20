@@ -143,7 +143,7 @@ The structure must remain valid for the lifetime of the program</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>true if message was successfully queued for transmission, false if message buffer is full (library will retry or report error)</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Must be non-NULL. Library will crash if this callback is not provided.</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Callback should be non-blocking. Do not perform lengthy operations.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Called from library context, not interrupt context. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -175,7 +175,7 @@ The structure must remain valid for the lifetime of the program</dd></dl>
 <dd>
 Buffer must have sufficient space for the requested byte count.</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Some memory spaces are read-only (CDI, ACDI). Attempting to write to these spaces should return error.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Callback is synchronous and should complete quickly. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -209,7 +209,9 @@ Buffer must contain sufficient valid data for the requested operation.</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Read-only memory spaces (CDI, ACDI, etc.) should return 0 or 0xFFFF error.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Callback is synchronous and should complete quickly. </dd>
 <dd>
-Application is responsible for persistence mechanism (EEPROM, Flash, etc.) </dd></dl>
+Application is responsible for persistence mechanism (EEPROM, Flash, etc.) </dd>
+<dd>
+This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>

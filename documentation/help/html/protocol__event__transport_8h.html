@@ -150,7 +150,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a2f2b21811e9e91661c063489618c5250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer Identified Reserved message.  <br /></td></tr>
 <tr class="separator:a2f2b21811e9e91661c063489618c5250"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38a7d9aaf31f6c47e7d0b393258b4a61" id="r_a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38a7d9aaf31f6c47e7d0b393258b4a61">ProtocolEventTransport_handle_events_identify_dest</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Identify Events message with destination addressing.  <br /></td></tr>
+<tr class="memdesc:a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles addressed Identify Events message.  <br /></td></tr>
 <tr class="separator:a38a7d9aaf31f6c47e7d0b393258b4a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1fd18aec6a8fca64435b14d94c0752b" id="r_ab1fd18aec6a8fca64435b14d94c0752b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b">ProtocolEventTransport_handle_events_identify</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:ab1fd18aec6a8fca64435b14d94c0752b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles global Identify Events message.  <br /></td></tr>
@@ -459,10 +459,10 @@ Callback receives the base event ID of the range</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Consumer Identified Set message. </p>
-<p>Processes notification that a remote node consumes an event and its current state is SET (true/active). Invokes the registered callback if configured.</p>
+<p>Processes notification that a remote node consumes an event and its current state is SET (active/true). Invokes the registered callback if configured.</p>
 <p>Use cases:</p><ul>
 <li>Tracking consumer states on the network</li>
-<li>Synchronizing event states across nodes</li>
+<li>Updating event state displays</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -517,10 +517,10 @@ Callback receives the base event ID of the range</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Consumer Identified Clear message. </p>
-<p>Processes notification that a remote node consumes an event and its current state is CLEAR (false/inactive). Invokes the registered callback if configured.</p>
+<p>Processes notification that a remote node consumes an event and its current state is CLEAR (inactive/false). Invokes the registered callback if configured.</p>
 <p>Use cases:</p><ul>
 <li>Tracking consumer states on the network</li>
-<li>Synchronizing event states across nodes</li>
+<li>Updating event state displays</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -575,10 +575,10 @@ Callback receives the base event ID of the range</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Consumer Identified Reserved message. </p>
-<p>Processes notification that a remote node consumes an event with a reserved state value. Invokes the registered callback if configured.</p>
+<p>Processes notification that a remote node consumes an event with a reserved state indicator. Invokes the registered callback if configured.</p>
 <p>Use cases:</p><ul>
-<li>Handling future protocol extensions</li>
-<li>Logging unusual event states</li>
+<li>Supporting future protocol extensions</li>
+<li>Handling special event types</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -587,9 +587,7 @@ Callback receives the base event ID of the range</dd></dl>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Reserved states are defined by future OpenLCB specifications</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
@@ -832,10 +830,10 @@ Callback receives the base event ID of the range</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Producer Identified Set message. </p>
-<p>Processes notification that a remote node produces an event and its current state is SET (true/active). Invokes the registered callback if configured.</p>
+<p>Processes notification that a remote node produces an event and its current state is SET (active/true). Invokes the registered callback if configured.</p>
 <p>Use cases:</p><ul>
 <li>Tracking producer states on the network</li>
-<li>Synchronizing event states across nodes</li>
+<li>Updating event state displays</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -890,10 +888,10 @@ Callback receives the base event ID of the range</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Producer Identified Clear message. </p>
-<p>Processes notification that a remote node produces an event and its current state is CLEAR (false/inactive). Invokes the registered callback if configured.</p>
+<p>Processes notification that a remote node produces an event and its current state is CLEAR (inactive/false). Invokes the registered callback if configured.</p>
 <p>Use cases:</p><ul>
 <li>Tracking producer states on the network</li>
-<li>Synchronizing event states across nodes</li>
+<li>Updating event state displays</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -948,10 +946,10 @@ Callback receives the base event ID of the range</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Producer Identified Reserved message. </p>
-<p>Processes notification that a remote node produces an event with a reserved state value. Invokes the registered callback if configured.</p>
+<p>Processes notification that a remote node produces an event with a reserved state indicator. Invokes the registered callback if configured.</p>
 <p>Use cases:</p><ul>
-<li>Handling future protocol extensions</li>
-<li>Logging unusual event states</li>
+<li>Supporting future protocol extensions</li>
+<li>Handling special event types</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -960,9 +958,7 @@ Callback receives the base event ID of the range</dd></dl>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
-<dd>
-Reserved states are defined by future OpenLCB specifications</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__event__transport__t.html" title="Interface structure for Event Transport protocol callbacks.">interface_openlcb_protocol_event_transport_t</a> - Callback registration</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Check if callback is registered (!= NULL)</li>
@@ -1009,11 +1005,11 @@ Reserved states are defined by future OpenLCB specifications</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles Identify Events message with destination addressing. </p>
-<p>Processes a request addressed to this specific node to identify all events it produces and consumes. Only responds if the message is addressed to this node.</p>
+<p>Handles addressed Identify Events message. </p>
+<p>Processes an addressed request to identify all events this node produces and consumes. Verifies the message is addressed to this node before delegating to the actual event identification logic.</p>
 <p>Use cases:</p><ul>
-<li>Configuration tools requesting complete event list from specific node</li>
-<li>Targeted event discovery without network-wide broadcast</li>
+<li>Targeted event discovery for a specific node</li>
+<li>Configuration tools querying this node's events</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1025,11 +1021,12 @@ Reserved states are defined by future OpenLCB specifications</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Checks message destination before processing </dd>
 <dd>
 If not addressed to this node, no response is generated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic</dd></dl>
+<p>Handles addressed Identify Events message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if incoming message is addressed to this node</li>
 <li>If addressed to this node:<ul>
-<li>Call <a class="el" href="protocol__event__transport_8c.html#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify()</a> for processing</li>
+<li>Call <a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify()</a> for processing</li>
 <li>Return to caller</li>
 </ul>
 </li>
@@ -1047,7 +1044,7 @@ If not addressed to this node, no response is generated</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Checks message destination before processing </dd>
 <dd>
 If not addressed to this node, no response is generated</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__event__transport_8c.html#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab1fd18aec6a8fca64435b14d94c0752b" title="Handles global Identify Events message.">ProtocolEventTransport_handle_events_identify</a> - Actual event identification logic </dd></dl>
 
 </div>
 </div>

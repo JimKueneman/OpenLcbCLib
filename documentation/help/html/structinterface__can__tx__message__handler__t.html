@@ -92,21 +92,119 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Dependency injection interface for CAN transmit message handlers.  
+<p>Interface structure for CAN transmit message handler callback functions.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:abb132b7264a3f080f84953c8d3aa6b0e" id="r_abb132b7264a3f080f84953c8d3aa6b0e"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb132b7264a3f080f84953c8d3aa6b0e">transmit_can_frame</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:abb132b7264a3f080f84953c8d3aa6b0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to Application-defined function that transmits a CAN frame to the physical bus.  <br /></td></tr>
+<tr class="memdesc:abb132b7264a3f080f84953c8d3aa6b0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to transmit CAN frame to physical bus.  <br /></td></tr>
 <tr class="separator:abb132b7264a3f080f84953c8d3aa6b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bd106e7dc7aaf36e1bcc49cbb54725c" id="r_a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bd106e7dc7aaf36e1bcc49cbb54725c">on_transmit</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to Application callback function notified when a CAN frame is transmitted.  <br /></td></tr>
+<tr class="memdesc:a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for transmission notification.  <br /></td></tr>
 <tr class="separator:a3bd106e7dc7aaf36e1bcc49cbb54725c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Dependency injection interface for CAN transmit message handlers. </p>
-<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL. </p>
+<div class="textblock"><p>Interface structure for CAN transmit message handler callback functions. </p>
+<p>This structure defines the callback interface for CAN transmit message handlers, which convert OpenLCB messages to CAN frames and coordinate transmission to the physical CAN bus. The handlers manage multi-frame message fragmentation and ensure proper framing bit encoding for message reassembly at the receiving end.</p>
+<p>The CAN Tx message handlers perform the following key operations:</p>
+<p>Message Type-Specific Fragmentation: Different OpenLCB message types require different fragmentation strategies:</p>
+<ol type="1">
+<li>Addressed Messages:<ul>
+<li>Include 12-bit destination alias in first 2 bytes of each frame</li>
+<li>Leaves 6 bytes per frame for OpenLCB payload data</li>
+<li>Used for: Protocol Support Inquiry, Verify Node ID, targeted commands</li>
+<li>Handler: CanTxMessageHandler_addressed_msg_frame</li>
+</ul>
+</li>
+<li>Unaddressed Messages:<ul>
+<li>No destination alias (broadcast to all nodes)</li>
+<li>Full 8 bytes per frame available for payload</li>
+<li>Used for: Initialization Complete, Event Reports, Verified Node ID</li>
+<li>Handler: CanTxMessageHandler_unaddressed_msg_frame</li>
+<li>Note: Multi-frame unaddressed currently not implemented</li>
+</ul>
+</li>
+<li>Datagram Messages:<ul>
+<li>Up to 72 bytes maximum payload</li>
+<li>Uses datagram frame format with specific frame type encoding</li>
+<li>Used for: Memory Configuration, Remote Button, Display protocols</li>
+<li>Handler: CanTxMessageHandler_datagram_frame</li>
+</ul>
+</li>
+<li>Stream Messages:<ul>
+<li>High-throughput continuous data transfer</li>
+<li>Used for: Firmware upgrades, large file transfers</li>
+<li>Handler: CanTxMessageHandler_stream_frame</li>
+<li>Note: Currently placeholder - not fully implemented</li>
+</ul>
+</li>
+<li>Direct CAN Frames:<ul>
+<li>Pre-built CAN frames (no OpenLCB processing)</li>
+<li>Used for: CID, RID, AMD control frames</li>
+<li>Handler: CanTxMessageHandler_can_frame</li>
+</ul>
+</li>
+</ol>
+<p>Framing Bit Encoding: Multi-frame messages use framing flags in the first payload byte to indicate frame position in sequence:</p>
+<p>For Addressed Messages (destination alias in bytes 0-1):</p><ul>
+<li>Byte 0 bits 7-6: Framing flags</li>
+<li>Byte 0 bits 5-4: Reserved (typically 11)</li>
+<li>Byte 0 bits 3-0 + Byte 1: 12-bit destination alias</li>
+</ul>
+<p>Framing Flag Values:</p><ul>
+<li>00 (MULTIFRAME_ONLY): Complete message in one frame</li>
+<li>01 (MULTIFRAME_FIRST): First frame of multi-frame sequence</li>
+<li>10 (MULTIFRAME_LAST): Last frame of multi-frame sequence</li>
+<li>11 (MULTIFRAME_MIDDLE): Middle frame(s) of sequence</li>
+</ul>
+<p>Frame Sequence Rules:</p><ul>
+<li>Single-frame: ONLY flag, 0-8 bytes payload</li>
+<li>Multi-frame addressed: FIRST (6 bytes) → MIDDLE(s) (6 bytes each) → LAST (0-6 bytes)</li>
+<li>Multi-frame global: FIRST (8 bytes) → MIDDLE(s) (8 bytes each) → LAST (0-8 bytes)</li>
+<li>First and middle frames must contain maximum data</li>
+<li>Last frame contains remaining data (may be 0 bytes)</li>
+</ul>
+<p>Payload Index Management: Handlers maintain a payload index tracking the current position in the OpenLCB message:</p><ul>
+<li>Index passed by pointer to allow handler to update after each frame</li>
+<li>On successful transmission, index advanced by bytes transmitted</li>
+<li>On failed transmission, index unchanged (caller can retry)</li>
+<li>Caller checks index against total payload to determine completion</li>
+</ul>
+<p>Hardware Interface Integration: The transmit_can_frame callback provides the interface to hardware CAN controller:</p><ul>
+<li>Called after frame is fully constructed</li>
+<li>Pre-checked by Tx state machine via is_tx_buffer_empty</li>
+<li>Expected to succeed unless hardware failure</li>
+<li>Returns true on success, false on failure</li>
+</ul>
+<p>Transmission Flow:</p><ol type="1">
+<li>CAN Tx state machine checks is_tx_buffer_empty</li>
+<li>If buffer available, calls appropriate handler for message type</li>
+<li>Handler builds CAN frame with proper header and framing</li>
+<li>Handler copies appropriate payload chunk</li>
+<li>Handler calls transmit_can_frame</li>
+<li>If successful, handler updates payload index</li>
+<li>If failed, handler returns false, index unchanged for retry</li>
+<li>Handler invokes on_transmit callback if provided</li>
+</ol>
+<p>Optional Transmission Notification: The on_transmit callback allows applications to be notified after successful transmission for:</p><ul>
+<li>Logging transmitted frames</li>
+<li>Incrementing statistics counters</li>
+<li>Activity indicators (LEDs)</li>
+<li>Protocol analyzers</li>
+<li>Debug monitoring</li>
+</ul>
+<p>Only 1 required callback (transmit_can_frame) must be provided. The on_transmit callback is optional and can be NULL if notification is not needed.</p>
+<dl class="section note"><dt>Note</dt><dd>transmit_can_frame is REQUIRED - must not be NULL </dd>
+<dd>
+on_transmit is Optional - can be NULL if notification not needed </dd>
+<dd>
+Handlers called from Tx state machine context </dd>
+<dd>
+All handlers return success/failure status</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__message__handler_8c.html#a4bde37fc36f08ccbbb7dd4a9a17b2713" title="Initializes the CAN transmit message handler module.">CanTxMessageHandler_initialize</a> </dd>
+<dd>
+<a class="el" href="can__tx__statemachine_8h.html" title="State machine for transmitting CAN frames.">can_tx_statemachine.h</a> - Invokes these handlers </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="abb132b7264a3f080f84953c8d3aa6b0e" name="abb132b7264a3f080f84953c8d3aa6b0e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abb132b7264a3f080f84953c8d3aa6b0e">&#9670;&#160;</a></span>transmit_can_frame</h2>
@@ -120,9 +218,38 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to Application-defined function that transmits a CAN frame to the physical bus. </p>
-<p>The library ensures the transmit buffer is empty before calling this function by first calling the is_tx_buffer_empty function. This function is expected to succeed in transmitting the frame unless there is a hardware problem.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - application MUST provide this function </dd></dl>
+<p>Callback to transmit CAN frame to physical bus. </p>
+<p>This required callback writes a fully constructed CAN frame to the hardware CAN controller and initiates transmission. The CAN Tx state machine pre-checks buffer availability via is_tx_buffer_empty before calling this function, so transmission is expected to succeed unless a hardware error occurs.</p>
+<p>The callback receives a complete CAN frame containing:</p><ul>
+<li>29-bit extended CAN identifier with proper bit encoding</li>
+<li>0-8 payload data bytes</li>
+<li>Payload byte count</li>
+</ul>
+<p>The callback should:</p><ul>
+<li>Write CAN identifier to controller ID registers</li>
+<li>Write payload bytes to controller data registers</li>
+<li>Write payload count to controller DLC (Data Length Code)</li>
+<li>Set transmit request bit to initiate transmission</li>
+<li>Return true if initiated successfully, false on hardware error</li>
+</ul>
+<p>Common hardware implementations:</p><ul>
+<li>Microcontroller CAN peripheral: Write to CAN registers, set TXREQx bit</li>
+<li>External CAN controller (MCP2515): SPI write to TX buffer, send transmit command</li>
+<li>CAN driver library: Call library transmit function</li>
+</ul>
+<p>Hardware errors (rare since buffer pre-checked):</p><ul>
+<li>CAN controller offline or in error state</li>
+<li>Bus-off condition</li>
+<li>Transmit error counter exceeded</li>
+<li>Controller reset/failure</li>
+</ul>
+<p>Typical implementation:</p><ul>
+<li>Direct register writes for embedded MCU CAN peripheral</li>
+<li>CAN driver library call for abstracted hardware</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Buffer availability pre-checked - failures should be rare </dd></dl>
 
 </div>
 </div>
@@ -138,9 +265,28 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to Application callback function notified when a CAN frame is transmitted. </p>
-<p>Provides notification after successful CAN frame transmission. Useful for logging, debugging, or triggering post-transmission actions.</p>
-<dl class="section note"><dt>Note</dt><dd><b>Optional</b> application callback - defaults to NULL if not needed </dd></dl>
+<p>Optional callback for transmission notification. </p>
+<p>This optional callback provides immediate notification after successful CAN frame transmission. Called after transmit_can_frame returns true, allowing applications to monitor, log, or react to transmitted frames.</p>
+<p>The callback receives the CAN frame that was just transmitted, allowing inspection of identifier, payload, and payload count for logging or analysis.</p>
+<p>Common uses:</p><ul>
+<li>Logging: Write frame to file, console, or network</li>
+<li>Statistics: Increment transmission counters, calculate throughput</li>
+<li>Activity indicators: Toggle LEDs, update displays</li>
+<li>Protocol analyzers: Forward to monitoring tools</li>
+<li>Debug monitoring: Print frame details for debugging</li>
+<li>Timestamping: Record transmission time for performance analysis</li>
+</ul>
+<p>The callback should:</p><ul>
+<li>Execute very quickly (microseconds preferred)</li>
+<li>Avoid blocking operations</li>
+<li>Not call functions that could fail and require retry</li>
+<li>Consider queuing data for background processing if needed</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if notification is not needed </dd>
+<dd>
+Called in transmission path - keep processing minimal </dd>
+<dd>
+Avoid lengthy operations that delay subsequent transmissions </dd></dl>
 
 </div>
 </div>

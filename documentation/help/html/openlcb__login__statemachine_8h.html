@@ -178,27 +178,33 @@ OpenLCB Event Transport Standard S-9.7.4 - Event Transport Protocol </dd></dl>
 </div><div class="memdoc">
 
 <p>Initializes the login state machine with callback interface. </p>
-<p>Stores the interface function pointers and initializes the internal state machine structure. Sets up the outgoing message buffer and prepares for node enumeration.</p>
+<p>Registers the application's callback interface with the login state machine. The interface provides all necessary callbacks for message transmission, node enumeration, message handler dispatch, and internal state machine operations.</p>
+<p>This function must be called once during system initialization after the login message handler has been initialized. The interface pointer is stored internally and must remain valid for the lifetime of the application.</p>
+<p>Typical initialization sequence:</p><ol type="1">
+<li>OpenLcbLoginMessageHandler_initialize (message handlers)</li>
+<li>OpenLcbLoginStateMachine_initialize (this function)</li>
+<li>Begin calling OpenLcbLoginMainStatemachine_run from main loop</li>
+</ol>
 <p>Use cases:</p><ul>
 <li>Called once during application startup</li>
-<li>Must be called before any nodes begin login sequence</li>
+<li>Must be called before OpenLcbLoginMainStatemachine_run</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_openlcb_login_state_machine</td><td>Pointer to interface structure</td></tr>
+    <tr><td class="paramname">interface_openlcb_login_state_machine</td><td>Pointer to callback interface structure</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dl class="section warning"><dt>Warning</dt><dd>interface_openlcb_login_state_machine must remain valid for lifetime of application </dd>
 <dd>
-The interface pointer is stored in static memory - the pointed-to structure must remain valid for the lifetime of the program </dd>
+All required callbacks in the interface must be valid (non-NULL) </dd>
 <dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call during single-threaded initialization phase </dd>
+MUST be called exactly once during initialization </dd>
 <dd>
-All interface function pointers must be valid (non-NULL) </dd>
+NOT thread-safe - call during single-threaded initialization only</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after OpenLcbLoginMessageHandler_initialize </dd>
 <dd>
-Call after message handler initialization</dd></dl>
+Call before starting main state machine loop</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__state__machine__t.html" title="Interface structure for login state machine callback functions.">interface_openlcb_login_state_machine_t</a> - Interface structure definition </dd>
 <dd>
 <a class="el" href="openlcb__login__statemachine_8c.html#a48302fcd398ed4abdc719d2c883b382d" title="Main state machine processing loop - call repeatedly from application loop.">OpenLcbLoginMainStatemachine_run</a> - Main processing loop</dd></dl>
@@ -266,8 +272,17 @@ Call after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a02
 </div><div class="memdoc">
 
 <p>Main state machine processing loop - call repeatedly from application loop. </p>
-<p>This is the main entry point for login processing. Should be called repeatedly by the application's main loop. Performs one step of processing and returns immediately (non-blocking design).</p>
-<p>Processing handles message transmission, re-enumeration for multi-message sequences, and node iteration. Nodes are automatically processed through their initialization states.</p>
+<p>This is the main entry point for login processing. Should be called repeatedly by the application's main loop. Performs one step of processing per call and returns immediately, implementing a non-blocking cooperative multitasking design.</p>
+<p>Processing sequence per call:</p><ol type="1">
+<li>Attempt to send any pending outgoing message</li>
+<li>If message pending, return (retry transmission next iteration)</li>
+<li>Handle re-enumeration if enumerate flag is set</li>
+<li>If re-enumerating, return (handler called again)</li>
+<li>Attempt to process first node if no current node</li>
+<li>If first node processed, return</li>
+<li>Attempt to process next node if current node exists</li>
+</ol>
+<p>The state machine automatically enumerates all allocated nodes and processes each node through its login sequence based on run_state. Nodes already in RUNSTATE_RUN (fully initialized) are skipped.</p>
 <p>Use cases:</p><ul>
 <li>Called continuously from main application loop</li>
 <li>Automatically processes all nodes requiring initialization</li>
@@ -275,10 +290,12 @@ Call after <a class="el" href="openlcb__login__statemachine__handler_8c.html#a02
 <dl class="section warning"><dt>Warning</dt><dd>Must be called from non-interrupt context</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Call repeatedly - this function does NOT block </dd>
 <dd>
-Nodes transition themselves through states - this just dispatches</dd></dl>
+Safe to call even when no nodes need processing</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Non-blocking - returns immediately after one step </dd>
 <dd>
-Safe to call even when no nodes need processing</dd></dl>
+Multiple nodes may require several loop iterations to complete </dd>
+<dd>
+Enumerate flag mechanism allows multi-message sequences</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a0f3330b4f3d1fab79ca865ccca2ca9ef" title="Dispatches to appropriate handler based on node&#39;s run_state.">OpenLcbLoginStateMachine_process</a> - State dispatcher </dd>
 <dd>
 <a class="el" href="openlcb__login__statemachine_8c.html#a15755455ac11fbb6b09b4eabf9979353" title="Handles transmission of pending outgoing message.">OpenLcbLoginStatemachine_handle_outgoing_openlcb_message</a> - Message transmission </dd>
@@ -353,23 +370,29 @@ If message handler needs multiple messages, re-enumerate the same message</dd></
 </div><div class="memdoc">
 
 <p>Dispatches to appropriate handler based on node's run_state. </p>
-<p>Examines the node's current run_state and calls the corresponding interface handler function. This function is exposed for unit testing but is normally called internally by the main state machine loop.</p>
+<p>Examines the node's current run_state and calls the corresponding interface handler function to construct the appropriate message. This function implements the state dispatch logic for the login sequence.</p>
+<p>State dispatch mapping:</p><ul>
+<li>RUNSTATE_LOAD_INITIALIZATION_COMPLETE → load_initialization_complete</li>
+<li>RUNSTATE_LOAD_PRODUCER_EVENTS → load_producer_events</li>
+<li>RUNSTATE_LOAD_CONSUMER_EVENTS → load_consumer_events</li>
+</ul>
+<p>This function is exposed for unit testing but is normally called internally by the main state machine loop.</p>
 <p>Use cases:</p><ul>
 <li>Called internally by main state machine</li>
 <li>Called directly in unit tests</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
+    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine context containing node and message buffer</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>openlcb_statemachine_info must NOT be NULL </dd>
 <dd>
-openlcb_statemachine_info-&gt;openlcb_node must be valid</dd></dl>
+openlcb_node within statemachine_info must be valid</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This is primarily an internal function exposed for testing </dd>
 <dd>
-Does nothing if node run_state is not one of the handled states</dd></dl>
+Does nothing if node run_state is RUNSTATE_RUN or unrecognized</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__state__machine__t.html" title="Interface structure for login state machine callback functions.">interface_openlcb_login_state_machine_t</a> - Handler callbacks </dd>
 <dd>
 <a class="el" href="group__node__login__states.html#gac1cbddb1be6516477038aa787447be6f" title="Send Initialization Complete message, node becomes &quot;Initialized&quot;.">RUNSTATE_LOAD_INITIALIZATION_COMPLETE</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a></dd></dl>
@@ -448,7 +471,8 @@ Handlers may modify the node's run_state to advance the sequence</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles transmission of pending outgoing message. </p>
-<p>Checks if there is a valid outgoing message and attempts to send it. If transmission succeeds, clears the valid flag. If transmission fails, keeps the valid flag set to retry later. This function is exposed for unit testing but is normally called internally.</p>
+<p>Checks if there is a valid outgoing message (valid flag set to true) and attempts to send it via the send_openlcb_msg callback. If transmission succeeds, clears the valid flag. If transmission fails, keeps the valid flag set to retry on the next iteration.</p>
+<p>This function is exposed for unit testing but is normally called as the first step in the main state machine loop.</p>
 <p>Use cases:</p><ul>
 <li>Called as first step in main state machine loop</li>
 <li>Called directly in unit tests</li>
@@ -456,7 +480,9 @@ Handlers may modify the node's run_state to advance the sequence</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>true if a message was pending (sent or queued for retry), false if no message pending</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This is primarily an internal function exposed for testing </dd>
 <dd>
-Returning true indicates state machine should retry on next iteration</dd></dl>
+Returning true causes main loop to retry on next iteration </dd>
+<dd>
+Message remains valid until transmission succeeds</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__state__machine__t.html" title="Interface structure for login state machine callback functions.">interface_openlcb_login_state_machine_t</a> - send_openlcb_msg callback </dd>
 <dd>
 <a class="el" href="openlcb__login__statemachine_8c.html#a48302fcd398ed4abdc719d2c883b382d" title="Main state machine processing loop - call repeatedly from application loop.">OpenLcbLoginMainStatemachine_run</a> - Main loop caller</dd></dl>
@@ -520,15 +546,18 @@ The message buffer is reused, so valid flag must be cleared after transmission</
 </div><div class="memdoc">
 
 <p>Handles re-enumeration for multi-message sequences. </p>
-<p>Checks if the enumerate flag is set and re-enters the handler if needed. The enumerate flag is set by handlers when they have more messages to send in the same state. This function is exposed for unit testing but is normally called internally.</p>
+<p>Checks if the enumerate flag is set and re-enters the state processor if needed. The enumerate flag is set by message handlers when they have more messages to send in the same state (e.g., multiple producer events or multiple consumer events).</p>
+<p>This function is exposed for unit testing but is normally called internally after message transmission handling.</p>
 <p>Use cases:</p><ul>
 <li>Called after message transmission in main state machine loop</li>
 <li>Called directly in unit tests</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>true if re-enumeration occurred, false if enumeration complete</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if re-enumeration occurred (handler was called), false if enumeration complete</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This is primarily an internal function exposed for testing </dd>
 <dd>
-Handlers control enumeration by setting/clearing the enumerate flag</dd></dl>
+Handlers control enumeration by setting/clearing the enumerate flag </dd>
+<dd>
+Re-enumeration allows sending multiple events without changing run_state</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> - Sets enumerate flag </dd>
 <dd>
 <a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> - Sets enumerate flag</dd></dl>
@@ -595,7 +624,9 @@ Re-enumeration happens on the same node, not advancing to next node</dd></dl>
 </div><div class="memdoc">
 
 <p>Attempts to get and process the first node in enumeration. </p>
-<p>If the current node pointer is NULL, gets the first node and processes it if its run_state indicates initialization is needed. This function is exposed for unit testing but is normally called internally.</p>
+<p>If the current node pointer is NULL (no node currently being processed), calls openlcb_node_get_first to start node enumeration and processes the first node if its run_state indicates initialization is needed.</p>
+<p>Nodes already in RUNSTATE_RUN (fully initialized) are skipped. The function continues enumeration until a node needing initialization is found or the end of the list is reached.</p>
+<p>This function is exposed for unit testing but is normally called internally.</p>
 <p>Use cases:</p><ul>
 <li>Called in main state machine loop to start node enumeration</li>
 <li>Called directly in unit tests</li>
@@ -603,7 +634,9 @@ Re-enumeration happens on the same node, not advancing to next node</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>true if first node attempt was made, false if current node already exists</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This is primarily an internal function exposed for testing </dd>
 <dd>
-Skips nodes already in RUNSTATE_RUN (already initialized)</dd></dl>
+Skips nodes already in RUNSTATE_RUN (already initialized) </dd>
+<dd>
+Uses OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX as enumeration key</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__state__machine__t.html" title="Interface structure for login state machine callback functions.">interface_openlcb_login_state_machine_t</a> - openlcb_node_get_first callback </dd>
 <dd>
 <a class="el" href="group__node__enum__keys.html#gaad373a5580bf74102fd15f057be715bf" title="Enumeration key used by login state machine.">OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a></dd></dl>
@@ -675,7 +708,9 @@ Sets _statemachine_info.openlcb_node to first node</dd></dl>
 </div><div class="memdoc">
 
 <p>Attempts to get and process the next node in enumeration. </p>
-<p>If the current node pointer is not NULL, gets the next node and processes it if its run_state indicates initialization is needed. This function is exposed for unit testing but is normally called internally.</p>
+<p>If the current node pointer is not NULL (a node is currently being processed), calls openlcb_node_get_next to advance enumeration and processes the next node if its run_state indicates initialization is needed.</p>
+<p>Nodes already in RUNSTATE_RUN (fully initialized) are skipped. When the end of the node list is reached (openlcb_node_get_next returns NULL), the current node pointer is set to NULL to allow re-enumeration from the beginning.</p>
+<p>This function is exposed for unit testing but is normally called internally.</p>
 <p>Use cases:</p><ul>
 <li>Called in main state machine loop to continue node enumeration</li>
 <li>Called directly in unit tests</li>
@@ -685,7 +720,9 @@ Sets _statemachine_info.openlcb_node to first node</dd></dl>
 <dd>
 Skips nodes already in RUNSTATE_RUN (already initialized) </dd>
 <dd>
-When end of list is reached, sets openlcb_node to NULL</dd></dl>
+When end of list is reached, sets openlcb_node to NULL </dd>
+<dd>
+Uses OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX as enumeration key</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__login__state__machine__t.html" title="Interface structure for login state machine callback functions.">interface_openlcb_login_state_machine_t</a> - openlcb_node_get_next callback </dd>
 <dd>
 <a class="el" href="group__node__enum__keys.html#gaad373a5580bf74102fd15f057be715bf" title="Enumeration key used by login state machine.">OPENLCB_LOGIN_STATMACHINE_NODE_ENUMERATOR_INDEX</a> in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a></dd></dl>
@@ -753,19 +790,23 @@ When end of list is reached, openlcb_node remains pointing to last node</dd></dl
 </div><div class="memdoc">
 
 <p>Returns pointer to internal state machine info structure. </p>
-<p>Provides access to the internal state machine info structure for debugging and unit testing purposes.</p>
+<p>Provides access to the internal state machine info structure for debugging and unit testing purposes. The returned structure contains the current node being processed, outgoing message buffer, and state flags.</p>
 <p>Use cases:</p><ul>
 <li>Unit testing to verify internal state</li>
 <li>Debugging to inspect current state machine status</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to internal state machine info structure</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to internal static state machine info structure</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The returned pointer is to static memory - do not free </dd>
 <dd>
 Modifying the returned structure can cause undefined behavior</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Use only for testing and debugging</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Use only for testing and debugging </dd>
+<dd>
+Do not modify the structure contents</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This is primarily for unit testing </dd>
 <dd>
-The structure persists across all calls to the state machine</dd></dl>
+The structure persists across all calls to the state machine </dd>
+<dd>
+Contains: openlcb_node pointer, outgoing message, valid flag, enumerate flag</dd></dl>
 <p>Provides read access to the internal state machine info structure. The structure contains:</p><ul>
 <li>openlcb_node: Pointer to node currently being processed (NULL if none)</li>
 <li>outgoing_msg_info: Message buffer and control flags<ul>

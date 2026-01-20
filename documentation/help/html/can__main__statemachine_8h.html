@@ -105,7 +105,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__main__statemachine__t.html">interface_can_main_statemachine_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for CAN Main State Machine operations.  <a href="structinterface__can__main__statemachine__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for CAN main state machine callback functions.  <a href="structinterface__can__main__statemachine__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -170,8 +170,15 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the CAN Main State Machine. </p>
-<p>Sets up the state machine with required dependencies and prepares internal buffers for operation. Must be called once during application initialization before calling <a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run()</a>.</p>
-<p>The interface structure provides all required function pointers for state machine operation including resource locking, CAN transmission, node management, and alias handling. All function pointers must be valid (non-NULL).</p>
+<p>Registers the application's callback interface with the main state machine and prepares internal buffers for operation. Must be called once during application initialization before calling CanMainStateMachine_run.</p>
+<p>The interface structure must contain valid (non-NULL) function pointers for all required callbacks. The interface provides:</p><ul>
+<li>Resource locking for thread safety</li>
+<li>CAN message transmission</li>
+<li>Node management and enumeration</li>
+<li>Alias mapping operations</li>
+<li>Login state machine integration</li>
+<li>Internal operation handlers for testing</li>
+</ul>
 <p>Use cases:</p><ul>
 <li>Called once during application startup</li>
 <li>Required before any CAN communication can occur</li>
@@ -179,19 +186,25 @@ Functions</h2></td></tr>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_can_main_statemachine</td><td>Pointer to populated dependency interface structure containing all required function implementations</td></tr>
+    <tr><td class="paramname">interface_can_main_statemachine</td><td>Pointer to populated interface structure containing all required callback function pointers</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>MUST be called exactly once during initialization </dd>
+<dl class="section warning"><dt>Warning</dt><dd>interface_can_main_statemachine must remain valid for lifetime of application </dd>
+<dd>
+All function pointers in interface must be non-NULL </dd>
+<dd>
+MUST be called exactly once during initialization </dd>
 <dd>
 NOT thread-safe - call before starting interrupts/threads</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call after <a class="el" href="can__buffer__store_8c.html#a49fcb6055f37edb9e56977295cd0eaf2" title="Initializes the CAN Buffer Store.">CanBufferStore_initialize()</a> and <a class="el" href="can__buffer__fifo_8c.html#ab0652f39f104350007ad642b955ddbad" title="Initializes the CAN Message Buffer FIFO.">CanBufferFifo_initialize()</a> </dd>
+<dl class="section attention"><dt>Attention</dt><dd>Call after CanBufferStore_initialize and CanBufferFifo_initialize </dd>
 <dd>
-All function pointers in interface must be non-NULL</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run</a> </dd>
+Call after CanLoginStateMachine_initialize </dd>
 <dd>
-<a class="el" href="structinterface__can__main__statemachine__t.html" title="Dependency injection interface for CAN Main State Machine operations.">interface_can_main_statemachine_t</a></dd></dl>
+Call before starting CAN reception</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html" title="Interface structure for CAN main state machine callback functions.">interface_can_main_statemachine_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run</a> - Main execution loop</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Store pointer to dependency interface for later use</li>
 <li>Clear login outgoing message buffer to zero</li>
@@ -220,7 +233,7 @@ NOT thread-safe - call before starting interrupts/threads</dd></dl>
 All function pointers in interface must be non-NULL</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a9bdef5a88eff72849f2506381fe1742f" title="Executes one iteration of the main CAN state machine.">CanMainStateMachine_run</a> </dd>
 <dd>
-<a class="el" href="structinterface__can__main__statemachine__t.html" title="Dependency injection interface for CAN Main State Machine operations.">interface_can_main_statemachine_t</a> </dd></dl>
+<a class="el" href="structinterface__can__main__statemachine__t.html" title="Interface structure for CAN main state machine callback functions.">interface_can_main_statemachine_t</a> </dd></dl>
 
 </div>
 </div>
@@ -248,15 +261,20 @@ All function pointers in interface must be non-NULL</dd></dl>
 </div><div class="memdoc">
 
 <p>Executes one iteration of the main CAN state machine. </p>
-<p>Performs cooperative multitasking by processing one operation per call and returning. Handles duplicate alias detection, outgoing message transmission, login message processing, and node enumeration in priority order.</p>
-<p>Processing order per iteration:</p><ul>
-<li>Check for and handle duplicate aliases</li>
-<li>Transmit pending outgoing CAN messages <br  />
-</li>
-<li>Transmit pending login messages</li>
-<li>Enumerate and process first node</li>
-<li>Enumerate and process next node</li>
+<p>Implements cooperative multitasking by processing one operation per call and returning immediately. Handles duplicate alias detection, outgoing message transmission, login message processing, and node enumeration in priority order.</p>
+<p>Processing sequence per iteration:</p><ol type="1">
+<li>Check for and handle duplicate aliases (critical - highest priority)</li>
+<li>Transmit pending outgoing CAN messages from FIFO</li>
+<li>Transmit pending login messages (CID, RID, AMD frames)</li>
+<li>Enumerate and process first node (start enumeration)</li>
+<li>Enumerate and process next node (continue enumeration)</li>
+</ol>
+<p>Each operation:</p><ul>
+<li>Returns immediately after completion</li>
+<li>May lock shared resources briefly</li>
+<li>Processes exactly one item/node per call</li>
 </ul>
+<p>The state machine cycles through all operations continuously, providing cooperative multitasking with application code. Nodes are processed round-robin through their login sequences until all reach permitted state.</p>
 <p>Use cases:</p><ul>
 <li>Called continuously from main application loop</li>
 <li>Cooperative multitasking with other application code</li>
@@ -264,11 +282,22 @@ All function pointers in interface must be non-NULL</dd></dl>
 </ul>
 <dl class="section warning"><dt>Warning</dt><dd>Must be called frequently (as fast as possible in main loop) </dd>
 <dd>
-Assumes <a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize()</a> was already called</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Returns after processing one operation for cooperative multitasking </dd>
+Assumes CanMainStatemachine_initialize was already called </dd>
 <dd>
-Each operation may lock shared resources briefly</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize</a></dd></dl>
+NOT thread-safe - call from single context only</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Returns after processing one operation for cooperative multitasking </dd>
+<dd>
+Each operation may lock shared resources briefly (microseconds) </dd>
+<dd>
+Processes all operations in sequence before repeating</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Call as frequently as possible in main loop </dd>
+<dd>
+No blocking waits - always returns immediately </dd>
+<dd>
+Lock duration is minimal to prevent frame drops</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a360ebdb7ef110fdd62097a5fc56310f1" title="Initializes the CAN Main State Machine.">CanMainStatemachine_initialize</a> - Must be called first </dd>
+<dd>
+<a class="el" href="structinterface__can__main__statemachine__t.html" title="Interface structure for CAN main state machine callback functions.">interface_can_main_statemachine_t</a> - Callback interface</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Call handle_duplicate_aliases():<ul>
 <li>If returns true (duplicates processed), return</li>
@@ -360,8 +389,11 @@ Each operation may lock shared resources briefly</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>For debugging and testing only - do not modify returned structure </dd>
 <dd>
 NOT thread-safe - lock resources before accessing</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Provides read-only access to live state machine context</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a></dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Provides read-only access to live state machine context </dd>
+<dd>
+Returned pointer valid only during execution</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Use for testing and debugging purposes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> - State machine context structure</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Return pointer to static _can_statemachine_info structure</li>
 </ol>
@@ -404,27 +436,33 @@ NOT thread-safe - lock resources before accessing</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles all detected duplicate alias conflicts. </p>
-<p>Scans alias mapping table for duplicate flags, unregisters conflicting aliases, and resets affected nodes to force alias reallocation. Returns true if any duplicates were found and processed.</p>
+<p>Scans alias mapping table for duplicate flags, unregisters conflicting aliases, and resets affected nodes to Inhibited state forcing alias reallocation. Returns true if any duplicates were found and processed.</p>
 <p>When duplicate detected:</p><ul>
 <li>Alias is unregistered from mapping table</li>
-<li>Affected node is reset to inhibited state</li>
-<li>Node must reallocate new alias through login sequence</li>
+<li>Affected node is reset to Inhibited state</li>
+<li>Node permitted flag cleared</li>
+<li>Node must reallocate new alias through complete login sequence</li>
 </ul>
 <p>Use cases:</p><ul>
 <li>Called by main state machine run loop</li>
 <li>Unit testing of duplicate alias handling</li>
 <li>Debugging alias conflicts</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>true if duplicate aliases were found and processed, false if none detected</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if duplicate aliases were found and processed, false if none detected</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during operation </dd>
 <dd>
-Affected nodes will temporarily go offline during realias</dd></dl>
+Affected nodes will temporarily go offline during realias </dd>
+<dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Clears has_duplicate_alias flag after processing </dd>
+<dd>
+May affect multiple nodes if multiple duplicates exist</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
 <dd>
-Clears has_duplicate_alias flag after processing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf" title="Processes detected duplicate aliases.">interface_can_main_statemachine_t.handle_duplicate_aliases</a> </dd>
+Entire login sequence must be repeated for affected nodes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf" title="Callback to process duplicate alias conflicts.">interface_can_main_statemachine_t::handle_duplicate_aliases</a> </dd>
 <dd>
-<a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a></dd></dl>
+<a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> - Removes alias mapping</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Initialize result to false</li>
 <li>Lock shared resources to prevent concurrent access</li>
@@ -450,7 +488,7 @@ Affected nodes will temporarily go offline during realias</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
 <dd>
 Clears has_duplicate_alias flag after processing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf" title="Processes detected duplicate aliases.">interface_can_main_statemachine_t.handle_duplicate_aliases</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#acdd549c43e6e2393090daf202ee785cf" title="Callback to process duplicate alias conflicts.">interface_can_main_statemachine_t.handle_duplicate_aliases</a> </dd>
 <dd>
 <a class="el" href="alias__mappings_8c.html#a9f08c60c95f97546d47c8386270cc8b4" title="Deregisters an existing Alias/NodeID pair.">AliasMappings_unregister</a> </dd>
 <dd>
@@ -488,15 +526,17 @@ _process_duplicate_aliases </dd></dl>
 <li>Unit testing of login message transmission</li>
 <li>Debugging alias allocation sequence</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>true if login message was pending (whether sent or not), false if no message pending</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
-<dd>
-Clears valid flag only after successful transmission </dd>
+<dl class="section return"><dt>Returns</dt><dd>True if login message was pending (whether sent or not), false if no message pending</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Clears valid flag only after successful transmission </dd>
 <dd>
 May be called multiple times until transmission succeeds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c" title="Transmits pending login-related CAN messages.">interface_can_main_statemachine_t.handle_login_outgoing_can_message</a> </dd>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
 <dd>
-<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a></dd></dl>
+Handles CID, RID, and AMD frames from login state machine</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c" title="Callback to transmit pending login CAN messages.">interface_can_main_statemachine_t::handle_login_outgoing_can_message</a> </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> - Generates login messages</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Check if login_outgoing_can_msg_valid flag is set:<ul>
 <li>If set, message is pending transmission</li>
@@ -522,7 +562,7 @@ May be called multiple times until transmission succeeds</dd></dl>
 Clears valid flag only after successful transmission </dd>
 <dd>
 May be called multiple times until transmission succeeds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c" title="Transmits pending login-related CAN messages.">interface_can_main_statemachine_t.handle_login_outgoing_can_message</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a28e939b74de1df461b469f2ddf7d663c" title="Callback to transmit pending login CAN messages.">interface_can_main_statemachine_t.handle_login_outgoing_can_message</a> </dd>
 <dd>
 <a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> </dd></dl>
 
@@ -552,24 +592,27 @@ May be called multiple times until transmission succeeds</dd></dl>
 </div><div class="memdoc">
 
 <p>Transmits pending outgoing CAN messages from FIFO. </p>
-<p>Pops one message from outgoing FIFO and attempts transmission. If transmission succeeds, message is freed back to buffer pool. If transmission fails, message remains in working buffer for retry on next call.</p>
+<p>Pops one message from outgoing CAN FIFO and attempts transmission. If transmission succeeds, message is freed back to buffer pool. If transmission fails, message remains in working buffer for retry on next call.</p>
 <p>Use cases:</p><ul>
 <li>Called by main state machine run loop</li>
 <li>Unit testing of message transmission</li>
 <li>Debugging message flow</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>true if message was in FIFO (whether sent or not), false if FIFO empty</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during FIFO access</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
+<dl class="section return"><dt>Returns</dt><dd>True if message was in FIFO (whether sent or not), false if FIFO empty</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Locks shared resources during FIFO access </dd>
 <dd>
-Frees buffer only after successful transmission </dd>
+NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Frees buffer only after successful transmission </dd>
 <dd>
 May be called multiple times until transmission succeeds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f" title="Transmits pending outgoing CAN messages.">interface_can_main_statemachine_t.handle_outgoing_can_message</a> </dd>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
 <dd>
-<a class="el" href="can__buffer__fifo_8c.html#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> </dd>
+Works with outgoing FIFO populated by Rx handlers</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f" title="Callback to transmit pending outgoing CAN messages.">interface_can_main_statemachine_t::handle_outgoing_can_message</a> </dd>
 <dd>
-<a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a></dd></dl>
+<a class="el" href="can__buffer__fifo_8c.html#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> - Retrieves message from FIFO </dd>
+<dd>
+<a class="el" href="can__buffer__store_8c.html#ad95fb1127ec823f0cc9117848b78e5a7" title="Frees a CAN buffer back to the pool.">CanBufferStore_free_buffer</a> - Returns buffer to pool</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Check if working buffer already has a message:<ul>
 <li>If NULL, need to pop from FIFO</li>
@@ -606,7 +649,7 @@ May be called multiple times until transmission succeeds</dd></dl>
 Frees buffer only after successful transmission </dd>
 <dd>
 May be called multiple times until transmission succeeds</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f" title="Transmits pending outgoing CAN messages.">interface_can_main_statemachine_t.handle_outgoing_can_message</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a21202484ac69bd5be4a3304038cf2f5f" title="Callback to transmit pending outgoing CAN messages.">interface_can_main_statemachine_t.handle_outgoing_can_message</a> </dd>
 <dd>
 <a class="el" href="can__buffer__fifo_8c.html#a2ffec18f770ac9eeb09eb5efc586addc" title="Pops a CAN message off the FIFO buffer.">CanBufferFifo_pop</a> </dd>
 <dd>
@@ -644,17 +687,19 @@ May be called multiple times until transmission succeeds</dd></dl>
 <li>Unit testing of node enumeration</li>
 <li>Debugging multi-node operation</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>true if first node was found and processed (or none exist), false if enumeration already active</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
-<dd>
-Only processes node if not already enumerating </dd>
+<dl class="section return"><dt>Returns</dt><dd>True if first node was found and processed (or none exist), false if enumeration already active</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Only processes node if not already enumerating </dd>
 <dd>
 Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1" title="Begins node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_first_node</a> </dd>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
 <dd>
-<a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> </dd>
+Enumeration key 0 reserved for CAN main state machine</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1" title="Callback to begin node enumeration and process first node.">interface_can_main_statemachine_t::handle_try_enumerate_first_node</a> </dd>
 <dd>
-<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a></dd></dl>
+<a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> - Continue enumeration </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a> - Maximum nodes supported</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Check if currently enumerating a node:<ul>
 <li>If openlcb_node is NULL, no active enumeration</li>
@@ -686,7 +731,7 @@ Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
 Only processes node if not already enumerating </dd>
 <dd>
 Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1" title="Begins node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_first_node</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#ace54b5c03eafd093615c3de2f76587b1" title="Callback to begin node enumeration and process first node.">interface_can_main_statemachine_t.handle_try_enumerate_first_node</a> </dd>
 <dd>
 <a class="el" href="can__main__statemachine_8c.html#a326e8a6b5051c0b6821a460fab2ba410" title="Continues node enumeration to next node.">CanMainStatemachine_handle_try_enumerate_next_node</a> </dd>
 <dd>
@@ -726,17 +771,19 @@ Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
 <li>Unit testing of node enumeration</li>
 <li>Debugging multi-node operation</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>true if no more nodes available (enumeration complete), false if more nodes to process</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
-<dd>
-Works in conjunction with handle_try_enumerate_first_node() </dd>
+<dl class="section return"><dt>Returns</dt><dd>True if no more nodes available (enumeration complete), false if more nodes to process</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Works in conjunction with handle_try_enumerate_first_node </dd>
 <dd>
 Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7" title="Continues node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_next_node</a> </dd>
+<dl class="section note"><dt>Note</dt><dd>For testing/debugging - normally called via interface function pointer </dd>
 <dd>
-<a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> </dd>
+Round-robin processing ensures all nodes get equal time</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7" title="Callback to continue node enumeration to next node.">interface_can_main_statemachine_t::handle_try_enumerate_next_node</a> </dd>
 <dd>
-<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a></dd></dl>
+<a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> - Start enumeration </dd>
+<dd>
+<a class="el" href="group__user__config__constants.html#ga02b00dd66a6ba4b9d405bdff61cc5171" title="Maximum number of virtual nodes that can be allocated.">USER_DEFINED_NODE_BUFFER_DEPTH</a> - Maximum nodes supported</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Get next node using interface-&gt;openlcb_node_get_next()</li>
 <li>Store node pointer in state machine info</li>
@@ -763,7 +810,7 @@ Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
 Works in conjunction with handle_try_enumerate_first_node() </dd>
 <dd>
 Supports multiple virtual nodes up to USER_DEFINED_NODE_BUFFER_DEPTH</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7" title="Continues node enumeration for state machine processing.">interface_can_main_statemachine_t.handle_try_enumerate_next_node</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__main__statemachine__t.html#a41dbaa73eb2229932ffc76416db879e7" title="Callback to continue node enumeration to next node.">interface_can_main_statemachine_t.handle_try_enumerate_next_node</a> </dd>
 <dd>
 <a class="el" href="can__main__statemachine_8c.html#acfaf91c98c9fd3469d6f2fa9b5a3eaf0" title="Begins node enumeration and processes first node.">CanMainStatemachine_handle_try_enumerate_first_node</a> </dd>
 <dd>

@@ -105,7 +105,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__rx__statemachine__t.html">interface_can_rx_statemachine_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for CAN RX state machine module.  <a href="structinterface__can__rx__statemachine__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for CAN receive state machine callback functions.  <a href="structinterface__can__rx__statemachine__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -158,24 +158,32 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the CAN Receive State Machine module. </p>
-<p>Stores the dependency injection interface for use by the state machine. Must be called during application initialization before processing any CAN frames.</p>
+<p>Registers the application's callback interface with the receive state machine. The interface provides handlers for all CAN frame types and alias mapping lookups. Must be called during application initialization before processing any CAN frames.</p>
 <p>Use cases:</p><ul>
 <li>Application startup sequence</li>
 <li>System initialization</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_can_rx_statemachine</td><td>Pointer to interface structure containing required function pointers</td></tr>
+    <tr><td class="paramname">interface_can_rx_statemachine</td><td>Pointer to interface structure containing all required callback function pointers</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Must be called exactly once during initialization </dd>
+<dl class="section warning"><dt>Warning</dt><dd>interface_can_rx_statemachine must remain valid for lifetime of application </dd>
 <dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call before CanRxStatemachine_incoming_can_driver_callback is invoked </dd>
+All 13 required callbacks must be valid (non-NULL) </dd>
+<dd>
+Must be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe - call during single-threaded initialization only</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after CanRxMessageHandler_initialize </dd>
+<dd>
+Call before CanRxStatemachine_incoming_can_driver_callback is invoked </dd>
 <dd>
 All required function pointers in interface must be initialized</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__statemachine__t.html" title="Dependency injection interface for CAN RX state machine module.">interface_can_rx_statemachine_t</a> - Interface structure definition</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__statemachine__t.html" title="Interface structure for CAN receive state machine callback functions.">interface_can_rx_statemachine_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="can__rx__message__handler_8c.html#aaa035b3a9b3535b413f441c4cb6d741f" title="Initializes the CAN Receive Message Handler module.">CanRxMessageHandler_initialize</a> - Initialize message handlers first</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Store pointer to dependency injection interface</li>
 <li>Interface remains valid for application lifetime</li>
@@ -189,7 +197,7 @@ All required function pointers in interface must be initialized</dd></dl>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Call after CanRxMessageHandler_initialize</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__statemachine__t.html" title="Dependency injection interface for CAN RX state machine module.">interface_can_rx_statemachine_t</a> - Interface definition </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__statemachine__t.html" title="Interface structure for CAN receive state machine callback functions.">interface_can_rx_statemachine_t</a> - Interface definition </dd></dl>
 
 </div>
 </div>
@@ -217,7 +225,36 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Entry point for incoming CAN frames from hardware driver. </p>
-<p>Called by the application's CAN hardware driver when a frame is received. Decodes the CAN frame format, routes to appropriate handler based on frame type, and initiates multi-frame message assembly if needed. This is the primary entry point from the hardware layer into the OpenLCB library.</p>
+<p>Called by the application's CAN hardware driver when a frame is received. Serves as the primary entry point from the hardware layer into the OpenLCB library. Decodes the CAN frame format, determines frame type and routing, and dispatches to appropriate handler for processing.</p>
+<p>Frame Processing Flow:</p><ol type="1">
+<li>Invoke on_receive callback if provided (application notification)</li>
+<li>Examine CAN identifier bit 27 to determine frame category:<ul>
+<li>Bit 27 = 0: CAN control frame → route to control handlers</li>
+<li>Bit 27 = 1: OpenLCB message → continue to step 3</li>
+</ul>
+</li>
+<li>Extract MTI, addressing, and frame type from CAN header</li>
+<li>For addressed messages, validate destination alias belongs to our nodes</li>
+<li>Examine framing bits in first payload byte (for OpenLCB messages):<ul>
+<li>00 or no bits: Single frame → handle_single_frame</li>
+<li>01: First frame → handle_first_frame</li>
+<li>10: Last frame → handle_last_frame</li>
+<li>11: Middle frame → handle_middle_frame</li>
+</ul>
+</li>
+<li>Calculate payload offset (0 for global, 2 for addressed)</li>
+<li>Dispatch to appropriate handler with frame, offset, and buffer type</li>
+</ol>
+<p>Thread Safety Considerations: This function is typically called from interrupt/thread context and accesses shared resources (FIFOs, buffer lists). The application must ensure this function is not called while the main state machine has resources locked.</p>
+<p>Recommended approaches:</p><ul>
+<li>Interrupt-based: Disable CAN Rx interrupt during lock_shared_resources</li>
+<li>Thread-based (RTOS): Suspend Rx thread or queue frames during lock</li>
+<li>Polled: Don't poll during lock</li>
+</ul>
+<p>Lock duration is minimal (microseconds), so:</p><ul>
+<li>Interrupt method: Brief interrupt disable, no frames dropped</li>
+<li>Thread method: Use lightweight queuing, resume after unlock</li>
+</ul>
 <p>Use cases:</p><ul>
 <li>CAN receive interrupt handler</li>
 <li>CAN receive thread/task</li>
@@ -225,15 +262,17 @@ NOT thread-safe</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to received CAN frame buffer from hardware</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to received CAN frame buffer from hardware driver</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Must not be called when shared resources are locked </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_msg must NOT be NULL </dd>
 <dd>
-NOT thread-safe with main state machine </dd>
+Must not be called when shared resources are locked </dd>
 <dd>
-Frame buffer must remain valid until processing completes</dd></dl>
+Frame buffer must remain valid until processing completes </dd>
+<dd>
+NOT thread-safe with main state machine</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Application must respect lock_shared_resources/unlock_shared_resources </dd>
 <dd>
 If using interrupts, disable CAN RX interrupt during resource lock </dd>
@@ -250,7 +289,9 @@ Lock duration is minimal (microseconds) - queuing should not overflow</dd></dl>
 - Suspend receiving thread until unlock (RTOS only)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd>CanMainStatemachine_run - Main state machine that may lock resources </dd>
 <dd>
-<a class="el" href="structinterface__can__rx__statemachine__t.html#a74e23c8dcaedb643f11cb3c3791e7aad" title="Optional callback for application notification on CAN frame reception.">interface_can_rx_statemachine_t::on_receive</a> - Optional receive callback</dd></dl>
+<a class="el" href="structinterface__can__rx__statemachine__t.html#a74e23c8dcaedb643f11cb3c3791e7aad" title="Optional callback for application notification on frame reception.">interface_can_rx_statemachine_t::on_receive</a> - Optional receive callback </dd>
+<dd>
+<a class="el" href="structinterface__can__rx__statemachine__t.html" title="Interface structure for CAN receive state machine callback functions.">interface_can_rx_statemachine_t</a> - All handler callbacks</dd></dl>
 <p>Entry point for incoming CAN frames from hardware driver.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Call optional on_receive callback if registered</li>

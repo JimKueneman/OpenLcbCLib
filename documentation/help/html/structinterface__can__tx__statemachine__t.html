@@ -92,33 +92,140 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Dependency injection interface for CAN transmit state machine.  
+<p>Interface structure for CAN transmit state machine callback functions.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:a2e9d4e2d961ae1797f5a9877b4771b15" id="r_a2e9d4e2d961ae1797f5a9877b4771b15"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e9d4e2d961ae1797f5a9877b4771b15">is_tx_buffer_empty</a> )(void)</td></tr>
-<tr class="memdesc:a2e9d4e2d961ae1797f5a9877b4771b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to Application-defined function that checks if CAN transmit buffer is available.  <br /></td></tr>
+<tr class="memdesc:a2e9d4e2d961ae1797f5a9877b4771b15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to check hardware CAN transmit buffer availability.  <br /></td></tr>
 <tr class="separator:a2e9d4e2d961ae1797f5a9877b4771b15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81d51fab47fc2b3b3e70f6e2b65a5148" id="r_a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81d51fab47fc2b3b3e70f6e2b65a5148">handle_addressed_msg_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to handler function for addressed OpenLCB messages.  <br /></td></tr>
+<tr class="memdesc:a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to convert addressed OpenLCB messages to CAN frames.  <br /></td></tr>
 <tr class="separator:a81d51fab47fc2b3b3e70f6e2b65a5148"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93d8ee50aaa8499159254a17f204831a" id="r_a93d8ee50aaa8499159254a17f204831a"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93d8ee50aaa8499159254a17f204831a">handle_unaddressed_msg_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a93d8ee50aaa8499159254a17f204831a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to handler function for unaddressed OpenLCB messages.  <br /></td></tr>
+<tr class="memdesc:a93d8ee50aaa8499159254a17f204831a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to convert unaddressed OpenLCB messages to CAN frames.  <br /></td></tr>
 <tr class="separator:a93d8ee50aaa8499159254a17f204831a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83d342c6149ca670451917a4e2c6f5ac" id="r_a83d342c6149ca670451917a4e2c6f5ac"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83d342c6149ca670451917a4e2c6f5ac">handle_datagram_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a83d342c6149ca670451917a4e2c6f5ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to handler function for datagram OpenLCB messages.  <br /></td></tr>
+<tr class="memdesc:a83d342c6149ca670451917a4e2c6f5ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to convert datagram OpenLCB messages to CAN frames.  <br /></td></tr>
 <tr class="separator:a83d342c6149ca670451917a4e2c6f5ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a4e9f86e31d011f4701ecb016e07167" id="r_a3a4e9f86e31d011f4701ecb016e07167"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a4e9f86e31d011f4701ecb016e07167">handle_stream_frame</a> )(<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *openlcb_msg, <a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg_worker, uint16_t *openlcb_start_index)</td></tr>
-<tr class="memdesc:a3a4e9f86e31d011f4701ecb016e07167"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to handler function for stream OpenLCB messages.  <br /></td></tr>
+<tr class="memdesc:a3a4e9f86e31d011f4701ecb016e07167"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to convert stream OpenLCB messages to CAN frames.  <br /></td></tr>
 <tr class="separator:a3a4e9f86e31d011f4701ecb016e07167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe35e3ecf6dcbcdbeaa1e991e2fd9da3" id="r_afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe35e3ecf6dcbcdbeaa1e991e2fd9da3">handle_can_frame</a> )(<a class="el" href="can__types_8h.html#a9fec363f8b39411fc3ce3bafd7182309">can_msg_t</a> *can_msg)</td></tr>
-<tr class="memdesc:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to handler function for raw CAN frames.  <br /></td></tr>
+<tr class="memdesc:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to transmit pre-constructed CAN frames.  <br /></td></tr>
 <tr class="separator:afe35e3ecf6dcbcdbeaa1e991e2fd9da3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Dependency injection interface for CAN transmit state machine. </p>
-<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL. </p>
+<div class="textblock"><p>Interface structure for CAN transmit state machine callback functions. </p>
+<p>This structure defines the callback interface for the CAN transmit state machine, which orchestrates the conversion of OpenLCB messages to CAN frames and manages transmission to the physical CAN bus. The state machine coordinates hardware buffer availability checking, message type dispatch, and multi-frame sequencing.</p>
+<p>The CAN Tx state machine performs the following key operations:</p>
+<p>Transmission Orchestration: The state machine serves as the coordinator for all CAN transmission activities:</p><ol type="1">
+<li>Hardware buffer availability checking before each frame transmission</li>
+<li>Message type identification and handler dispatch</li>
+<li>Multi-frame sequence management for messages requiring fragmentation</li>
+<li>Retry coordination when hardware buffers temporarily unavailable</li>
+</ol>
+<p>Hardware Buffer Management: Before transmitting any frame, the state machine checks hardware buffer availability:</p><ul>
+<li>Calls is_tx_buffer_empty to query hardware transmit buffer status</li>
+<li>If buffer available: proceeds with frame construction and transmission</li>
+<li>If buffer full: returns false immediately, allowing caller to retry later</li>
+</ul>
+<p>This prevents:</p><ul>
+<li>Buffer overflow conditions</li>
+<li>Lost frames</li>
+<li>Transmission errors</li>
+<li>Hardware controller error states</li>
+</ul>
+<p>Message Type Dispatch: The state machine examines the OpenLCB message structure to determine message type and dispatches to the appropriate handler for frame conversion:</p>
+<ol type="1">
+<li>Addressed Messages (dest_alias present):<ul>
+<li>Handler: handle_addressed_msg_frame</li>
+<li>Includes 12-bit destination alias in each frame</li>
+<li>6 bytes payload per frame (2 bytes overhead)</li>
+<li>Used for: Protocol Support Inquiry, Verify Node ID, targeted commands</li>
+</ul>
+</li>
+<li>Unaddressed Messages (no dest_alias):<ul>
+<li>Handler: handle_unaddressed_msg_frame</li>
+<li>Broadcast to all nodes on network</li>
+<li>8 bytes payload per frame (no overhead)</li>
+<li>Used for: Initialization Complete, Event Reports, Verified Node ID</li>
+</ul>
+</li>
+<li>Datagram Messages (MTI indicates datagram):<ul>
+<li>Handler: handle_datagram_frame</li>
+<li>Up to 72 bytes maximum</li>
+<li>Special datagram frame format with type indicators</li>
+<li>Used for: Memory Configuration, Remote Button, Display protocols</li>
+</ul>
+</li>
+<li>Stream Messages (MTI indicates stream):<ul>
+<li>Handler: handle_stream_frame</li>
+<li>High-throughput continuous transfer</li>
+<li>Flow control coordination</li>
+<li>Used for: Firmware upgrades, large file transfers</li>
+</ul>
+</li>
+<li>Raw CAN Frames (pre-constructed):<ul>
+<li>Handler: handle_can_frame</li>
+<li>No OpenLCB processing</li>
+<li>Direct hardware transmission</li>
+<li>Used for: CID, RID, AMD control frames</li>
+</ul>
+</li>
+</ol>
+<p>Multi-Frame Transmission: For messages requiring multiple CAN frames, the state machine manages the sequence:</p>
+<p>Transmission Loop:</p><ol type="1">
+<li>Check hardware buffer availability</li>
+<li>Call appropriate handler to build next frame</li>
+<li>Handler builds frame and updates payload index</li>
+<li>Handler transmits frame</li>
+<li>Check if entire payload transmitted (index == payload_count)</li>
+<li>If more frames needed, repeat from step 1</li>
+<li>If transmission complete, return success</li>
+</ol>
+<p>The state machine ensures:</p><ul>
+<li>Frames transmitted in correct sequence (FIRST→MIDDLE(s)→LAST)</li>
+<li>No interruption by same or lower priority messages</li>
+<li>Proper framing bit encoding in each frame</li>
+<li>Complete payload transmission before returning</li>
+</ul>
+<p>Working Buffer Strategy: The state machine uses a working CAN buffer (can_msg_worker) for frame construction:</p><ul>
+<li>Allocated on stack in send_openlcb_message</li>
+<li>Reused for each frame in multi-frame sequence</li>
+<li>Avoids dynamic allocation overhead</li>
+<li>Cleared and rebuilt for each frame</li>
+</ul>
+<p>Error Handling: Transmission failures are handled at multiple levels:</p>
+<p>Hardware buffer full:</p><ul>
+<li>is_tx_buffer_empty returns false</li>
+<li>State machine returns immediately without attempting transmission</li>
+<li>Caller can retry later (typically in main loop)</li>
+</ul>
+<p>Handler failure:</p><ul>
+<li>Handler returns false if unable to transmit frame</li>
+<li>Payload index not updated on failure</li>
+<li>State machine can retry same frame on next call</li>
+</ul>
+<p>Partial transmission:</p><ul>
+<li>Multi-frame sequence interrupted by handler failure</li>
+<li>Payload index indicates how much was transmitted</li>
+<li>Receiver may timeout waiting for remaining frames</li>
+<li>Generally indicates serious hardware problem</li>
+</ul>
+<p>All 6 callbacks are REQUIRED and must be provided. Five handlers convert different OpenLCB message types to CAN frames, and one callback checks hardware buffer status.</p>
+<p>Integration with CAN Main State Machine: The CAN main state machine calls CanTxStatemachine_send_can_message for login frames and CanTxStatemachine_send_openlcb_message for protocol messages. This provides a single entry point for all outgoing CAN traffic.</p>
+<dl class="section note"><dt>Note</dt><dd>All 6 callbacks are REQUIRED - none can be NULL </dd>
+<dd>
+State machine handles complete multi-frame sequences atomically </dd>
+<dd>
+Buffer availability checked before each frame transmission</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__tx__statemachine_8c.html#acbe458eae799fff061319448b1855b3d" title="Initializes the CAN transmit state machine.">CanTxStatemachine_initialize</a> </dd>
+<dd>
+<a class="el" href="can__tx__statemachine_8c.html#a33de06b5158f3e1944cb5ea977a56e9e" title="Transmits an OpenLCB message on the CAN physical layer.">CanTxStatemachine_send_openlcb_message</a> </dd>
+<dd>
+<a class="el" href="can__tx__statemachine_8c.html#acd862abdc607379d8c2854168949236f" title="Transmits a raw CAN frame on the physical layer.">CanTxStatemachine_send_can_message</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a2e9d4e2d961ae1797f5a9877b4771b15" name="a2e9d4e2d961ae1797f5a9877b4771b15"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2e9d4e2d961ae1797f5a9877b4771b15">&#9670;&#160;</a></span>is_tx_buffer_empty</h2>
@@ -132,9 +239,44 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to Application-defined function that checks if CAN transmit buffer is available. </p>
-<p>Called before attempting to transmit each CAN frame to ensure the hardware transmit buffer can accept another frame. Prevents buffer overflow and lost frames.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - application MUST provide this function </dd></dl>
+<p>Callback to check hardware CAN transmit buffer availability. </p>
+<p>This required callback queries the hardware CAN controller to determine if the transmit buffer can accept another frame. Called before every frame transmission attempt to prevent buffer overflow and ensure reliable transmission.</p>
+<p>The callback should:</p><ul>
+<li>Read hardware transmit buffer status register/flag</li>
+<li>Return true if transmit buffer is empty/available</li>
+<li>Return false if transmit buffer is full/busy</li>
+</ul>
+<p>Common hardware implementations:</p>
+<p>Microcontroller CAN peripheral:</p><ul>
+<li>Check TXBnIF flag (transmit buffer n interrupt flag)</li>
+<li>Check TXREQn bit (transmit request pending)</li>
+<li>Return true if buffer ready for new frame</li>
+</ul>
+<p>External CAN controller (MCP2515 via SPI):</p><ul>
+<li>Read transmit buffer control register</li>
+<li>Check TXREQ bit status</li>
+<li>Return true if buffer available</li>
+</ul>
+<p>CAN driver library:</p><ul>
+<li>Call library function to query buffer status</li>
+<li>Return library's buffer availability status</li>
+</ul>
+<p>Why buffer checking is critical:</p><ul>
+<li>CAN controllers typically have 1-3 transmit buffers</li>
+<li>Attempting to write to full buffer corrupts data</li>
+<li>Full buffer indicates frames being transmitted slower than queued</li>
+<li>Allows caller to defer transmission and retry later</li>
+</ul>
+<p>Typical buffer states:</p><ul>
+<li>Empty: Previous frame transmitted and acknowledged</li>
+<li>Busy: Frame currently being transmitted on bus</li>
+<li>Full: Frame loaded and waiting for bus arbitration</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Called before every frame transmission </dd>
+<dd>
+Critical for preventing buffer overflow and lost frames </dd></dl>
 
 </div>
 </div>
@@ -150,9 +292,22 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to handler function for addressed OpenLCB messages. </p>
-<p>Converts addressed OpenLCB messages to CAN frame format with destination alias in payload. Handles multi-frame fragmentation as needed.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - defaults to <a class="el" href="can__tx__message__handler_8c.html#a79d6a3b6fd0db4921dc8630934e68bba" title="Converts and transmits addressed message as CAN frame(s)">CanTxMessageHandler_addressed_msg_frame()</a> </dd></dl>
+<p>Callback to convert addressed OpenLCB messages to CAN frames. </p>
+<p>This required callback converts OpenLCB addressed messages to CAN frame format with destination alias encoding. Handles multi-frame fragmentation when message payload exceeds 6 bytes (due to 2-byte destination alias overhead).</p>
+<p>The callback should:</p><ul>
+<li>Build CAN frame with proper header (MTI, source alias)</li>
+<li>Encode destination alias with framing flags in bytes 0-1</li>
+<li>Copy up to 6 bytes of payload data starting at current index</li>
+<li>Transmit frame via transmit_can_frame</li>
+<li>Update payload index if transmission successful</li>
+<li>Return true on success, false on failure</li>
+</ul>
+<p>Typical implementation: CanTxMessageHandler_addressed_msg_frame</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Handles multi-frame sequences automatically </dd>
+<dd>
+Index updated only on successful transmission </dd></dl>
 
 </div>
 </div>
@@ -168,9 +323,20 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to handler function for unaddressed OpenLCB messages. </p>
-<p>Converts broadcast OpenLCB messages to CAN frame format. No destination alias required in payload.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - defaults to <a class="el" href="can__tx__message__handler_8c.html#a0281e625469a52aec7f1e85a464c6222" title="Converts and transmits unaddressed message as CAN frame(s)">CanTxMessageHandler_unaddressed_msg_frame()</a> </dd></dl>
+<p>Callback to convert unaddressed OpenLCB messages to CAN frames. </p>
+<p>This required callback converts broadcast OpenLCB messages to CAN frame format without destination alias. All 8 payload bytes available for OpenLCB data.</p>
+<p>The callback should:</p><ul>
+<li>Build CAN frame with proper header (MTI, source alias)</li>
+<li>Copy up to 8 bytes of payload data starting at current index</li>
+<li>Transmit frame via transmit_can_frame</li>
+<li>Update payload index if transmission successful</li>
+<li>Return true on success, false on failure</li>
+</ul>
+<p>Note: Multi-frame unaddressed messages not currently implemented</p>
+<p>Typical implementation: CanTxMessageHandler_unaddressed_msg_frame</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Currently supports single-frame messages only (≤8 bytes) </dd></dl>
 
 </div>
 </div>
@@ -186,9 +352,22 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to handler function for datagram OpenLCB messages. </p>
-<p>Converts datagram messages to CAN datagram frame format. Handles fragmentation of datagrams up to 72 bytes across multiple frames.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - defaults to <a class="el" href="can__tx__message__handler_8c.html#aa9223150ff58342659336a51f75caf5a" title="Converts and transmits datagram message as CAN frame(s)">CanTxMessageHandler_datagram_frame()</a> </dd></dl>
+<p>Callback to convert datagram OpenLCB messages to CAN frames. </p>
+<p>This required callback converts datagram messages (up to 72 bytes) to CAN datagram frame format with proper type indicators. Handles fragmentation across multiple frames.</p>
+<p>The callback should:</p><ul>
+<li>Build CAN datagram frame with proper header</li>
+<li>Set datagram frame type bits (only/first/middle/last)</li>
+<li>Copy up to 8 bytes of payload data per frame</li>
+<li>Transmit frame via transmit_can_frame</li>
+<li>Update payload index if transmission successful</li>
+<li>Return true on success, false on failure</li>
+</ul>
+<p>Typical implementation: CanTxMessageHandler_datagram_frame</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Handles complete datagram fragmentation automatically </dd>
+<dd>
+Maximum 72 bytes per datagram on CAN </dd></dl>
 
 </div>
 </div>
@@ -204,9 +383,21 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to handler function for stream OpenLCB messages. </p>
-<p>Converts stream messages to CAN stream frame format for high-throughput data transfer applications.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - defaults to <a class="el" href="can__tx__message__handler_8c.html#a156df311b2fa14eea4912334cda0ca78" title="Converts and transmits stream message as CAN frame(s)">CanTxMessageHandler_stream_frame()</a> </dd></dl>
+<p>Callback to convert stream OpenLCB messages to CAN frames. </p>
+<p>This required callback converts stream messages to CAN stream frame format for high-throughput data transfer. Coordinates with stream flow control.</p>
+<p>The callback should:</p><ul>
+<li>Build CAN stream frame with proper header</li>
+<li>Handle stream initiation, data, and completion frames</li>
+<li>Coordinate with flow control mechanism</li>
+<li>Transmit frame via transmit_can_frame</li>
+<li>Update payload index if transmission successful</li>
+<li>Return true on success, false on failure</li>
+</ul>
+<p>Note: Stream protocol not fully implemented - placeholder</p>
+<p>Typical implementation: CanTxMessageHandler_stream_frame</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Currently placeholder - requires full implementation </dd></dl>
 
 </div>
 </div>
@@ -222,9 +413,27 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to handler function for raw CAN frames. </p>
-<p>Transmits pre-constructed CAN frames without OpenLCB message processing. Used for CAN control frames and low-level bus operations.</p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment - defaults to <a class="el" href="can__tx__message__handler_8c.html#aa99ced3d0e3dc246de366c88031b6596" title="Transmits a pre-built CAN frame to the physical bus.">CanTxMessageHandler_can_frame()</a> </dd></dl>
+<p>Callback to transmit pre-constructed CAN frames. </p>
+<p>This required callback transmits raw CAN frames without any OpenLCB message processing. Used for CAN control frames and direct bus operations.</p>
+<p>The callback should:</p><ul>
+<li>Transmit frame as-is via transmit_can_frame</li>
+<li>No frame construction or modification</li>
+<li>No payload processing</li>
+<li>Return true on success, false on failure</li>
+</ul>
+<p>Used for:</p><ul>
+<li>CID frames during alias allocation</li>
+<li>RID (Reserve ID) frames</li>
+<li>AMD (Alias Map Definition) frames</li>
+<li>AME responses</li>
+<li>Direct CAN control operations</li>
+</ul>
+<p>Typical implementation: CanTxMessageHandler_can_frame</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+No OpenLCB processing - raw CAN transmission </dd>
+<dd>
+Frame must be fully constructed before calling </dd></dl>
 
 </div>
 </div>

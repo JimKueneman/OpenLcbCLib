@@ -105,45 +105,46 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__openlcb__protocol__snip__t.html">interface_openlcb_protocol_snip_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for Simple Node Information Protocol (SNIP) handler.  <a href="structinterface__openlcb__protocol__snip__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a299e55a84322665954521e5e913372d8" id="r_a299e55a84322665954521e5e913372d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a299e55a84322665954521e5e913372d8">ProtocolSnip_initialize</a> (const <a class="el" href="structinterface__openlcb__protocol__snip__t.html">interface_openlcb_protocol_snip_t</a> *interface_openlcb_protocol_snip)</td></tr>
-<tr class="memdesc:a299e55a84322665954521e5e913372d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SNIP protocol handler.  <br /></td></tr>
+<tr class="memdesc:a299e55a84322665954521e5e913372d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the Simple Node Information Protocol handler.  <br /></td></tr>
 <tr class="separator:a299e55a84322665954521e5e913372d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4480bb3738c2db61ebf4ee6667c4eee3" id="r_a4480bb3738c2db61ebf4ee6667c4eee3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3">ProtocolSnip_handle_simple_node_info_request</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a4480bb3738c2db61ebf4ee6667c4eee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Simple Node Info Request message.  <br /></td></tr>
+<tr class="memdesc:a4480bb3738c2db61ebf4ee6667c4eee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Simple Node Information Request message.  <br /></td></tr>
 <tr class="separator:a4480bb3738c2db61ebf4ee6667c4eee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a627c27accd1419434607d03030548079" id="r_a627c27accd1419434607d03030548079"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a627c27accd1419434607d03030548079">ProtocolSnip_handle_simple_node_info_reply</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a627c27accd1419434607d03030548079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles incoming Simple Node Info Reply message.  <br /></td></tr>
+<tr class="memdesc:a627c27accd1419434607d03030548079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Simple Node Information Reply message.  <br /></td></tr>
 <tr class="separator:a627c27accd1419434607d03030548079"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14ec26901f3c7831ef7620dea7cc8d06" id="r_a14ec26901f3c7831ef7620dea7cc8d06"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14ec26901f3c7831ef7620dea7cc8d06">ProtocolSnip_load_manufacturer_version_id</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a14ec26901f3c7831ef7620dea7cc8d06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the Manufacturer Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:a14ec26901f3c7831ef7620dea7cc8d06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads Manufacturer Version ID into SNIP reply message.  <br /></td></tr>
 <tr class="separator:a14ec26901f3c7831ef7620dea7cc8d06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dd74deb933ebf436a89c4bd54f20ebe" id="r_a0dd74deb933ebf436a89c4bd54f20ebe"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0dd74deb933ebf436a89c4bd54f20ebe">ProtocolSnip_load_name</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a0dd74deb933ebf436a89c4bd54f20ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the Manufacturer Name string into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:a0dd74deb933ebf436a89c4bd54f20ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads Manufacturer Name string into SNIP reply message.  <br /></td></tr>
 <tr class="separator:a0dd74deb933ebf436a89c4bd54f20ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91990fd11c10daaad2092a284a893b16" id="r_a91990fd11c10daaad2092a284a893b16"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91990fd11c10daaad2092a284a893b16">ProtocolSnip_load_model</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a91990fd11c10daaad2092a284a893b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the Manufacturer Model string into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:a91990fd11c10daaad2092a284a893b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads Manufacturer Model string into SNIP reply message.  <br /></td></tr>
 <tr class="separator:a91990fd11c10daaad2092a284a893b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd70680bfcc3ef436ae004b06f7fb7cb" id="r_abd70680bfcc3ef436ae004b06f7fb7cb"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd70680bfcc3ef436ae004b06f7fb7cb">ProtocolSnip_load_hardware_version</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:abd70680bfcc3ef436ae004b06f7fb7cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the Manufacturer Hardware Version string into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:abd70680bfcc3ef436ae004b06f7fb7cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads Manufacturer Hardware Version string into SNIP reply message.  <br /></td></tr>
 <tr class="separator:abd70680bfcc3ef436ae004b06f7fb7cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a811f162e421877189fce8b6d01a0c5a8" id="r_a811f162e421877189fce8b6d01a0c5a8"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a811f162e421877189fce8b6d01a0c5a8">ProtocolSnip_load_software_version</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a811f162e421877189fce8b6d01a0c5a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the Manufacturer Software Version string into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:a811f162e421877189fce8b6d01a0c5a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads Manufacturer Software Version string into SNIP reply message.  <br /></td></tr>
 <tr class="separator:a811f162e421877189fce8b6d01a0c5a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c1fd41f4f0fa107b5cd64562562a222" id="r_a5c1fd41f4f0fa107b5cd64562562a222"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c1fd41f4f0fa107b5cd64562562a222">ProtocolSnip_load_user_version_id</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a5c1fd41f4f0fa107b5cd64562562a222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the User Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:a5c1fd41f4f0fa107b5cd64562562a222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads User Version ID into SNIP reply message.  <br /></td></tr>
 <tr class="separator:a5c1fd41f4f0fa107b5cd64562562a222"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af58e7ddcdcad7e8d80b616c5a2792607" id="r_af58e7ddcdcad7e8d80b616c5a2792607"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af58e7ddcdcad7e8d80b616c5a2792607">ProtocolSnip_load_user_name</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:af58e7ddcdcad7e8d80b616c5a2792607"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the User Name string into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:af58e7ddcdcad7e8d80b616c5a2792607"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads User Name string into SNIP reply message from configuration memory.  <br /></td></tr>
 <tr class="separator:af58e7ddcdcad7e8d80b616c5a2792607"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47326821545e530aa5d9227892c46caa" id="r_a47326821545e530aa5d9227892c46caa"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47326821545e530aa5d9227892c46caa">ProtocolSnip_load_user_description</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *outgoing_msg, uint16_t offset, uint16_t requested_bytes)</td></tr>
-<tr class="memdesc:a47326821545e530aa5d9227892c46caa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the User Description string into the outgoing OpenLcb/LCC buffer at the payload index.  <br /></td></tr>
+<tr class="memdesc:a47326821545e530aa5d9227892c46caa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads User Description string into SNIP reply message from configuration memory.  <br /></td></tr>
 <tr class="separator:a47326821545e530aa5d9227892c46caa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9dd288bc1780719e4078408eef25b03" id="r_ad9dd288bc1780719e4078408eef25b03"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9dd288bc1780719e4078408eef25b03">ProtocolSnip_validate_snip_reply</a> (<a class="el" href="structopenlcb__msg__t.html">openlcb_msg_t</a> *snip_reply_msg)</td></tr>
-<tr class="memdesc:ad9dd288bc1780719e4078408eef25b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates a SNIP reply message structure.  <br /></td></tr>
+<tr class="memdesc:ad9dd288bc1780719e4078408eef25b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates the format of a Simple Node Information reply message.  <br /></td></tr>
 <tr class="separator:ad9dd288bc1780719e4078408eef25b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -181,7 +182,27 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initializes the SNIP protocol handler. </p>
+<p>Initializes the Simple Node Information Protocol handler. </p>
+<p>Registers the application's callback interface with the SNIP protocol handler. Must be called once during system initialization before any SNIP messages are processed.</p>
+<p>The interface provides access to configuration memory for reading user-editable node information (user name and user description).</p>
+<p>Use cases:</p><ul>
+<li>Called during application startup</li>
+<li>Required before processing SNIP request messages</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface_openlcb_protocol_snip</td><td>Pointer to callback interface structure</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>interface_openlcb_protocol_snip must remain valid for lifetime of application </dd>
+<dd>
+config_memory_read callback must not be NULL </dd>
+<dd>
+NOT thread-safe - call during single-threaded initialization only</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call before enabling message reception</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__snip__t.html" title="Interface structure for Simple Node Information Protocol (SNIP) handler.">interface_openlcb_protocol_snip_t</a> - Callback interface structure</dd></dl>
+<p>Initializes the Simple Node Information Protocol handler.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Store interface pointer in static variable</li>
 <li>Make callback functions available to SNIP loader functions</li>
@@ -194,7 +215,7 @@ Functions</h2></td></tr>
 * </pre><dl class="section warning"><dt>Warning</dt><dd>Pointer must not be NULL </dd>
 <dd>
 Interface must remain valid for lifetime of application</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__snip__t.html">interface_openlcb_protocol_snip_t</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__protocol__snip__t.html" title="Interface structure for Simple Node Information Protocol (SNIP) handler.">interface_openlcb_protocol_snip_t</a> </dd></dl>
 
 </div>
 </div>
@@ -221,7 +242,54 @@ Interface must remain valid for lifetime of application</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles incoming Simple Node Info Request message. </p>
+<p>Handles Simple Node Information Request message. </p>
+<p>Processes an incoming SNIP request (MTI 0x0DE8) and generates a SNIP reply containing all node identification information. Loads manufacturer data from node parameters and user data from configuration memory.</p>
+<p>The reply message contains eight fields in sequence:</p><ol type="1">
+<li>Manufacturer version ID (1 byte)</li>
+<li>Manufacturer name (null-terminated string)</li>
+<li>Model (null-terminated string)</li>
+<li>Hardware version (null-terminated string)</li>
+<li>Software version (null-terminated string)</li>
+<li>User version ID (1 byte)</li>
+<li>User name (null-terminated string from config memory)</li>
+<li>User description (null-terminated string from config memory)</li>
+</ol>
+<p>Use cases:</p><ul>
+<li>Configuration tools requesting node identification</li>
+<li>Network browsers displaying node information</li>
+<li>Diagnostic tools identifying nodes</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL </dd>
+<dd>
+config_memory_read callback must be valid</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Sets outgoing_msg_info.valid to true with SNIP reply </dd>
+<dd>
+Reply MTI is 0x0A08 (Simple Node Info Reply) </dd>
+<dd>
+Maximum SNIP reply length is 253 bytes</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Requires configuration memory read callback for user data</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a14ec26901f3c7831ef7620dea7cc8d06" title="Loads Manufacturer Version ID into SNIP reply message.">ProtocolSnip_load_manufacturer_version_id</a> - Loads manufacturer version </dd>
+<dd>
+<a class="el" href="#a0dd74deb933ebf436a89c4bd54f20ebe" title="Loads Manufacturer Name string into SNIP reply message.">ProtocolSnip_load_name</a> - Loads manufacturer name </dd>
+<dd>
+<a class="el" href="#a91990fd11c10daaad2092a284a893b16" title="Loads Manufacturer Model string into SNIP reply message.">ProtocolSnip_load_model</a> - Loads model string </dd>
+<dd>
+<a class="el" href="#abd70680bfcc3ef436ae004b06f7fb7cb" title="Loads Manufacturer Hardware Version string into SNIP reply message.">ProtocolSnip_load_hardware_version</a> - Loads hardware version </dd>
+<dd>
+<a class="el" href="#a811f162e421877189fce8b6d01a0c5a8" title="Loads Manufacturer Software Version string into SNIP reply message.">ProtocolSnip_load_software_version</a> - Loads software version </dd>
+<dd>
+<a class="el" href="#a5c1fd41f4f0fa107b5cd64562562a222" title="Loads User Version ID into SNIP reply message.">ProtocolSnip_load_user_version_id</a> - Loads user version </dd>
+<dd>
+<a class="el" href="#af58e7ddcdcad7e8d80b616c5a2792607" title="Loads User Name string into SNIP reply message from configuration memory.">ProtocolSnip_load_user_name</a> - Loads user name from config memory </dd>
+<dd>
+<a class="el" href="#a47326821545e530aa5d9227892c46caa" title="Loads User Description string into SNIP reply message from configuration memory.">ProtocolSnip_load_user_description</a> - Loads user description from config memory</dd></dl>
+<p>Handles Simple Node Information Request message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Initialize payload offset to 0</li>
 <li>Load OpenLCB message header with SNIP reply MTI</li>
@@ -276,7 +344,25 @@ Reply is sent to the requesting node</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Handles incoming Simple Node Info Reply message. </p>
+<p>Handles Simple Node Information Reply message. </p>
+<p>Processes an incoming SNIP reply (MTI 0x0A08) from another node on the network. This handler is used when this node acts as a configuration tool requesting information from other nodes.</p>
+<p>Use cases:</p><ul>
+<li>Configuration tool receiving node identification data</li>
+<li>Network browser collecting node information</li>
+<li>Diagnostic tool cataloging network nodes</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine context containing incoming message</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>statemachine_info must NOT be NULL</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Always sets outgoing_msg_info.valid to false (no automatic response) </dd>
+<dd>
+Application should parse SNIP data from incoming message payload</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad9dd288bc1780719e4078408eef25b03" title="Validates the format of a Simple Node Information reply message.">ProtocolSnip_validate_snip_reply</a> - Validates <a class="el" href="openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467abe8ba0ab660a42ba2ab8aa7cdc1aa98c">SNIP</a> reply format</dd></dl>
+<p>Handles Simple Node Information Reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Set outgoing message valid flag to false (no reply needed)</li>
 </ol>
@@ -329,19 +415,30 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the Manufacturer Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads Manufacturer Version ID into SNIP reply message. </p>
+<p>Copies the manufacturer version ID byte from the node parameters into the outgoing message payload at the specified offset. The version ID is a single byte indicating the version of the manufacturer information structure.</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>First field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing manufacturer version in parameters </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where version byte should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (typically 1 for version byte)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the Manufacturer Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (always 1 for version ID)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+Version byte is typically 0x04 for current SNIP specification</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply</dd></dl>
+<p>Loads Manufacturer Version ID into SNIP reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if requested_bytes &gt; 0</li>
 <li>If yes: Call _process_snip_version with manufacturer version byte</li>
@@ -398,19 +495,32 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the Manufacturer Name string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads Manufacturer Name string into SNIP reply message. </p>
+<p>Copies the manufacturer name string from node parameters into the outgoing message payload at the specified offset. The string is null-terminated and typically contains the company or organization name that manufactured the node.</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Second field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing manufacturer name in parameters </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where string should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (includes null terminator)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the Manufacturer Name string into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (may be less than requested if string is shorter)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+String is null-terminated in the payload </dd>
+<dd>
+If string exceeds requested_bytes, it may be truncated without null terminator</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply</dd></dl>
+<p>Loads Manufacturer Name string into SNIP reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Call _process_snip_string with manufacturer name from node parameters</li>
 <li>String is limited to LEN_SNIP_NAME_BUFFER size</li>
@@ -467,19 +577,32 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the Manufacturer Model string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads Manufacturer Model string into SNIP reply message. </p>
+<p>Copies the model name string from node parameters into the outgoing message payload at the specified offset. The string is null-terminated and typically contains the product model name or number.</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Third field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing model name in parameters </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where string should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (includes null terminator)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the Manufacturer Model string into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (may be less than requested if string is shorter)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+String is null-terminated in the payload </dd>
+<dd>
+If string exceeds requested_bytes, it may be truncated without null terminator</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply</dd></dl>
+<p>Loads Manufacturer Model string into SNIP reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Call _process_snip_string with model string from node parameters</li>
 <li>String is limited to LEN_SNIP_MODEL_BUFFER size</li>
@@ -536,19 +659,32 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the Manufacturer Hardware Version string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads Manufacturer Hardware Version string into SNIP reply message. </p>
+<p>Copies the hardware version string from node parameters into the outgoing message payload at the specified offset. The string is null-terminated and typically contains hardware revision information (e.g., "1.0", "Rev A", "v2.1").</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Fourth field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing hardware version in parameters </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where string should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (includes null terminator)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the Manufacturer Hardware Version string into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (may be less than requested if string is shorter)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+String is null-terminated in the payload </dd>
+<dd>
+If string exceeds requested_bytes, it may be truncated without null terminator</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply</dd></dl>
+<p>Loads Manufacturer Hardware Version string into SNIP reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Call _process_snip_string with hardware version from node parameters</li>
 <li>String is limited to LEN_SNIP_HARDWARE_VERSION_BUFFER size</li>
@@ -605,19 +741,32 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the Manufacturer Software Version string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads Manufacturer Software Version string into SNIP reply message. </p>
+<p>Copies the software version string from node parameters into the outgoing message payload at the specified offset. The string is null-terminated and typically contains firmware or software version information (e.g., "1.0.5", "v2.3 beta").</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Fifth field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing software version in parameters </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where string should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (includes null terminator)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the Manufacturer Software Version string into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (may be less than requested if string is shorter)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+String is null-terminated in the payload </dd>
+<dd>
+If string exceeds requested_bytes, it may be truncated without null terminator</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply</dd></dl>
+<p>Loads Manufacturer Software Version string into SNIP reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Call _process_snip_string with software version from node parameters</li>
 <li>String is limited to LEN_SNIP_SOFTWARE_VERSION_BUFFER size</li>
@@ -674,19 +823,30 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the User Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads User Version ID into SNIP reply message. </p>
+<p>Copies the user version ID byte from node parameters into the outgoing message payload at the specified offset. The version ID is a single byte indicating the version of the user information structure.</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Sixth field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing user version in parameters </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where version byte should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (typically 1 for version byte)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the User Version ID byte into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (always 1 for version ID)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+Version byte is typically 0x02 for current SNIP specification</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply</dd></dl>
+<p>Loads User Version ID into SNIP reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check if requested_bytes &gt; 0</li>
 <li>If yes: Call _process_snip_version with user version byte</li>
@@ -743,19 +903,39 @@ No outgoing message generated</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the User Name string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads User Name string into SNIP reply message from configuration memory. </p>
+<p>Reads the user-assigned name from configuration memory and copies it into the outgoing message payload at the specified offset. The string is null-terminated and contains a user-editable friendly name for the node (e.g., "East Yard Turnout 1").</p>
+<p>Uses the config_memory_read callback to access the ACDI User address space at USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS. The user name can be edited via configuration tools or the Memory Configuration Protocol.</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Seventh field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node for configuration memory access </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where string should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (includes null terminator)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the User Name string into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (may be less than requested if string is shorter)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds </dd>
+<dd>
+config_memory_read callback must be valid</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+String is null-terminated in the payload </dd>
+<dd>
+Default maximum length is 63 bytes </dd>
+<dd>
+If string exceeds requested_bytes, it may be truncated without null terminator</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply </dd>
+<dd>
+<a class="el" href="structinterface__openlcb__protocol__snip__t.html" title="Interface structure for Simple Node Information Protocol (SNIP) handler.">interface_openlcb_protocol_snip_t</a> - Provides config_memory_read callback</dd></dl>
+<p>Loads User Name string into SNIP reply message from configuration memory.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Calculate data address (USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS)</li>
 <li>Add low_address offset if valid</li>
@@ -819,19 +999,39 @@ User name is read from configuration memory, not node parameters</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Copies the User Description string into the outgoing OpenLcb/LCC buffer at the payload index. </p>
+<p>Loads User Description string into SNIP reply message from configuration memory. </p>
+<p>Reads the user-assigned description from configuration memory and copies it into the outgoing message payload at the specified offset. The string is null-terminated and contains a user-editable description of the node (e.g., "Controls turnout motor 1").</p>
+<p>Uses the config_memory_read callback to access the ACDI User address space at USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS. The user description can be edited via configuration tools or the Memory Configuration Protocol.</p>
+<p>Use cases:</p><ul>
+<li>Building SNIP reply message</li>
+<li>Eighth (final) field in SNIP data sequence</li>
+</ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Node begin requested for the information </td></tr>
-    <tr><td class="paramname">outgoing_msg</td><td>Message to load the information into its payload </td></tr>
-    <tr><td class="paramname">offset</td><td>The Payload index to copy the information to </td></tr>
-    <tr><td class="paramname">requested_bytes</td><td>The max number of bytes to copy </td></tr>
+    <tr><td class="paramname">openlcb_node</td><td>Pointer to node for configuration memory access </td></tr>
+    <tr><td class="paramname">outgoing_msg</td><td>Pointer to message being constructed with SNIP data </td></tr>
+    <tr><td class="paramname">offset</td><td>Payload index where string should be written </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Maximum number of bytes to copy (includes null terminator)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of bytes copied (may be less than the requested bytes depending on which the data type/string length) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>The OpenLcb/LCC message's Payload Count is auto-updated</dd></dl>
-<p>Copies the User Description string into the outgoing OpenLcb/LCC buffer at the payload index.</p>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes actually copied (may be less than requested if string is shorter)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>All parameters must NOT be NULL </dd>
+<dd>
+offset must be valid within message payload bounds </dd>
+<dd>
+config_memory_read callback must be valid</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Automatically updates outgoing_msg payload_count </dd>
+<dd>
+String is null-terminated in the payload </dd>
+<dd>
+Default maximum length is 64 bytes </dd>
+<dd>
+If string exceeds requested_bytes, it may be truncated without null terminator</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a4480bb3738c2db61ebf4ee6667c4eee3" title="Handles Simple Node Information Request message.">ProtocolSnip_handle_simple_node_info_request</a> - Uses this to build reply </dd>
+<dd>
+<a class="el" href="structinterface__openlcb__protocol__snip__t.html" title="Interface structure for Simple Node Information Protocol (SNIP) handler.">interface_openlcb_protocol_snip_t</a> - Provides config_memory_read callback</dd></dl>
+<p>Loads User Description string into SNIP reply message from configuration memory.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Calculate data address (USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS)</li>
 <li>Add low_address offset if valid</li>
@@ -881,7 +1081,30 @@ User description is read from configuration memory, not node parameters</dd></dl
 </table>
 </div><div class="memdoc">
 
-<p>Validates a SNIP reply message structure. </p>
+<p>Validates the format of a Simple Node Information reply message. </p>
+<p>Checks that a SNIP reply message conforms to the protocol specification by verifying:</p><ul>
+<li>Message MTI is correct (0x0A08)</li>
+<li>Payload length is within valid range</li>
+<li>Payload contains exactly 6 null terminators (separating 6 string fields)</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Validating received SNIP replies before parsing</li>
+<li>Detecting malformed SNIP data</li>
+<li>Configuration tool data validation</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">snip_reply_msg</td><td>Pointer to message to validate</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if message is a valid SNIP reply, false otherwise</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>snip_reply_msg must NOT be NULL</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Valid SNIP format has 8 fields: 2 version bytes + 6 null-terminated strings </dd>
+<dd>
+Maximum SNIP reply length is 253 bytes</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a627c27accd1419434607d03030548079" title="Handles Simple Node Information Reply message.">ProtocolSnip_handle_simple_node_info_reply</a> - Should validate before parsing</dd></dl>
+<p>Validates the format of a Simple Node Information reply message.</p>
 <p>Algorithm:</p><ol type="1">
 <li>Check payload size doesn't exceed LEN_MESSAGE_BYTES_SNIP</li>
 <li>Verify MTI is MTI_SIMPLE_NODE_INFO_REPLY</li>

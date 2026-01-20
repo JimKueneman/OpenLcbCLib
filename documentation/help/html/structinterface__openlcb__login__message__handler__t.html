@@ -106,8 +106,24 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface structure for login message handler callback functions. </p>
-<p>This structure defines the function pointers that must be provided during initialization to extract event state information from nodes.</p>
-<p>Required callbacks allow the handler to query application-specific event states and generate appropriate Producer/Consumer Identified messages with Valid, Invalid, or Unknown states. </p>
+<p>This structure defines the callback interface for the OpenLCB login message handler, which constructs Initialization Complete and event identification messages during the node login sequence as defined in the OpenLCB Message Network and Event Transport Protocol specifications.</p>
+<p>The interface provides callbacks that allow the login handler to query application-specific event states and generate appropriate Producer Identified and Consumer Identified messages with the correct state indicators (Valid, Invalid, or Unknown).</p>
+<p>The login sequence consists of three phases:</p><ol type="1">
+<li>Send Initialization Complete message (announces node presence)</li>
+<li>Send Producer Identified messages for all produced events</li>
+<li>Send Consumer Identified messages for all consumed events</li>
+</ol>
+<p>Both callbacks are required to support event state reporting during the login process. The callbacks must examine the current state of each event (set, clear, or unknown) and return the appropriate MTI value for the corresponding Producer or Consumer Identified message.</p>
+<dl class="section note"><dt>Note</dt><dd>Required callbacks must be set before calling OpenLcbLoginMessageHandler_initialize </dd>
+<dd>
+Both callbacks are REQUIRED - neither can be NULL</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#a0240f7d8fb35fff420fcf60de82cb4ba" title="Initializes the login message handler with callback interface.">OpenLcbLoginMessageHandler_initialize</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#a63d4945cfcd4930d8b3bc780f59687eb" title="Loads an Initialization Complete message into the outgoing message buffer.">OpenLcbLoginMessageHandler_load_initialization_complete</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a07b2621b1cfa411657f6f8b68b56b187" name="a07b2621b1cfa411657f6f8b68b56b187"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a07b2621b1cfa411657f6f8b68b56b187">&#9670;&#160;</a></span>extract_producer_event_state_mti</h2>
@@ -122,19 +138,14 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to extract Producer Event Identified MTI for a given event. </p>
-<p>Returns the appropriate MTI based on the current state of the producer event. The returned MTI indicates whether the event is Valid, Invalid, or Unknown.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing the producer event </td></tr>
-    <tr><td class="paramname">event_index</td><td>Index into the node's producers.list array </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>MTI value for Producer Identified message (0x0914, 0x0915, or 0x0917)</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must NOT be NULL </dd>
-<dd>
-event_index must be less than openlcb_node-&gt;producers.count</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd></dl>
+<p>This required callback examines the current state of a producer event and returns the appropriate Message Type Indicator (MTI) for the Producer Identified message. The returned MTI indicates whether the producer event is currently in a valid (set/active), invalid (clear/inactive), or unknown state.</p>
+<p>The callback should examine the event at producers.list[event_index] and return:</p><ul>
+<li>MTI_PRODUCER_IDENTIFIED_VALID (0x0594) if event state is SET/ACTIVE</li>
+<li>MTI_PRODUCER_IDENTIFIED_INVALID (0x0595) if event state is CLEAR/INACTIVE</li>
+<li>MTI_PRODUCER_IDENTIFIED_UNKNOWN (0x0597) if event state cannot be determined</li>
+</ul>
+<p>This callback is invoked during the login sequence for each producer event the node supports, allowing the node to announce all produced events and their current states to the network.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -151,19 +162,14 @@ event_index must be less than openlcb_node-&gt;producers.count</dd></dl>
 </div><div class="memdoc">
 
 <p>Callback to extract Consumer Event Identified MTI for a given event. </p>
-<p>Returns the appropriate MTI based on the current state of the consumer event. The returned MTI indicates whether the event is Valid, Invalid, or Unknown.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_node</td><td>Pointer to node containing the consumer event </td></tr>
-    <tr><td class="paramname">event_index</td><td>Index into the node's consumers.list array </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>MTI value for Consumer Identified message (0x04C4, 0x04C5, or 0x04C7)</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>openlcb_node must NOT be NULL </dd>
-<dd>
-event_index must be less than openlcb_node-&gt;consumers.count</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>MTI_CONSUMER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" title="OpenLCB protocol constants and Message Type Indicators (MTI)">openlcb_defines.h</a> </dd></dl>
+<p>This required callback examines the current state of a consumer event and returns the appropriate Message Type Indicator (MTI) for the Consumer Identified message. The returned MTI indicates whether the consumer event is currently in a valid (set/active), invalid (clear/inactive), or unknown state.</p>
+<p>The callback should examine the event at consumers.list[event_index] and return:</p><ul>
+<li>MTI_CONSUMER_IDENTIFIED_VALID (0x04C4) if event state is SET/ACTIVE</li>
+<li>MTI_CONSUMER_IDENTIFIED_INVALID (0x04C5) if event state is CLEAR/INACTIVE</li>
+<li>MTI_CONSUMER_IDENTIFIED_UNKNOWN (0x04C7) if event state cannot be determined</li>
+</ul>
+<p>This callback is invoked during the login sequence for each consumer event the node supports, allowing the node to announce all consumed events and their current states to the network.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>

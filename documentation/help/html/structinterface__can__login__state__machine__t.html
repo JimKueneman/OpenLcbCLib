@@ -92,45 +92,79 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>.  
+<p>Interface structure for CAN login state machine handler callbacks.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
 <tr class="memitem:ae18f79f1e098bc647b2cdf20b904c82e" id="r_ae18f79f1e098bc647b2cdf20b904c82e"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae18f79f1e098bc647b2cdf20b904c82e">state_init</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ae18f79f1e098bc647b2cdf20b904c82e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the Initialization State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:ae18f79f1e098bc647b2cdf20b904c82e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for INIT state (state 1 of 10)  <br /></td></tr>
 <tr class="separator:ae18f79f1e098bc647b2cdf20b904c82e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab19e13db45965fc6703f29194456f226" id="r_ab19e13db45965fc6703f29194456f226"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab19e13db45965fc6703f29194456f226">state_generate_seed</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ab19e13db45965fc6703f29194456f226"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the Generate Seed State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:ab19e13db45965fc6703f29194456f226"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for GENERATE_SEED state (state 2 of 10)  <br /></td></tr>
 <tr class="separator:ab19e13db45965fc6703f29194456f226"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95703898648991c51af730d12235365b" id="r_a95703898648991c51af730d12235365b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95703898648991c51af730d12235365b">state_generate_alias</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a95703898648991c51af730d12235365b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the Generate Alias State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:a95703898648991c51af730d12235365b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for GENERATE_ALIAS state (state 3 of 10)  <br /></td></tr>
 <tr class="separator:a95703898648991c51af730d12235365b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8239c07b71a2f6811f79a4bc5746397a" id="r_a8239c07b71a2f6811f79a4bc5746397a"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8239c07b71a2f6811f79a4bc5746397a">state_load_cid07</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a8239c07b71a2f6811f79a4bc5746397a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the CID7 State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:a8239c07b71a2f6811f79a4bc5746397a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for LOAD_CHECK_ID_07 state (state 4 of 10)  <br /></td></tr>
 <tr class="separator:a8239c07b71a2f6811f79a4bc5746397a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9131bf514441a07d644f5c792eff292" id="r_ac9131bf514441a07d644f5c792eff292"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9131bf514441a07d644f5c792eff292">state_load_cid06</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ac9131bf514441a07d644f5c792eff292"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the CID6 State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:ac9131bf514441a07d644f5c792eff292"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for LOAD_CHECK_ID_06 state (state 5 of 10)  <br /></td></tr>
 <tr class="separator:ac9131bf514441a07d644f5c792eff292"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace4c8a5e73d84f6e9bf90e82b449efcf" id="r_ace4c8a5e73d84f6e9bf90e82b449efcf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace4c8a5e73d84f6e9bf90e82b449efcf">state_load_cid05</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:ace4c8a5e73d84f6e9bf90e82b449efcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the CID5 State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:ace4c8a5e73d84f6e9bf90e82b449efcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for LOAD_CHECK_ID_05 state (state 6 of 10)  <br /></td></tr>
 <tr class="separator:ace4c8a5e73d84f6e9bf90e82b449efcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cfae0c1448bc09741769000b73c46c3" id="r_a4cfae0c1448bc09741769000b73c46c3"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cfae0c1448bc09741769000b73c46c3">state_load_cid04</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a4cfae0c1448bc09741769000b73c46c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the CID4 State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:a4cfae0c1448bc09741769000b73c46c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for LOAD_CHECK_ID_04 state (state 7 of 10)  <br /></td></tr>
 <tr class="separator:a4cfae0c1448bc09741769000b73c46c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03bd36d0b8c5b760eedfd12ea305a2b5" id="r_a03bd36d0b8c5b760eedfd12ea305a2b5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03bd36d0b8c5b760eedfd12ea305a2b5">state_wait_200ms</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a03bd36d0b8c5b760eedfd12ea305a2b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the 200ms Wait State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:a03bd36d0b8c5b760eedfd12ea305a2b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for WAIT_200ms state (state 8 of 10)  <br /></td></tr>
 <tr class="separator:a03bd36d0b8c5b760eedfd12ea305a2b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf6268c4e81684bb335695fe7e0305a1" id="r_acf6268c4e81684bb335695fe7e0305a1"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf6268c4e81684bb335695fe7e0305a1">state_load_rid</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:acf6268c4e81684bb335695fe7e0305a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the RID State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:acf6268c4e81684bb335695fe7e0305a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for LOAD_RESERVE_ID state (state 9 of 10)  <br /></td></tr>
 <tr class="separator:acf6268c4e81684bb335695fe7e0305a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a895fa3aaf066f4be8472df376b8b0085" id="r_a895fa3aaf066f4be8472df376b8b0085"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a895fa3aaf066f4be8472df376b8b0085">state_load_amd</a> )(<a class="el" href="can__types_8h.html#ad52cca2be7565c8d23f3cc4d83cbc19e">can_statemachine_info_t</a> *can_statemachine_info)</td></tr>
-<tr class="memdesc:a895fa3aaf066f4be8472df376b8b0085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to a function for the AMD State Handler for the Login StateMachine.  <br /></td></tr>
+<tr class="memdesc:a895fa3aaf066f4be8472df376b8b0085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler for LOAD_ALIAS_MAP_DEFINITION state (state 10 of 10)  <br /></td></tr>
 <tr class="separator:a895fa3aaf066f4be8472df376b8b0085"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__statemachine_8h.html">can_login_statemachine.h</a>. </p>
-<p>OpenLcbCLib uses dependency injection to allow for writing full coverage tests as the functions that are used can be modeled in the test and return valid OR invalid results to fully test all program flows in the module. It also allows for reducing the program size. If a particular protocol does not need to be implemented simply filling in the dependency for that handler with a NULL will strip out code for that protocols handlers and minimize the application size (bootloader is an example). The library will automatically reply with the correct error/reply codes if the handler is defined as NULL. </p>
+<div class="textblock"><p>Interface structure for CAN login state machine handler callbacks. </p>
+<p>This structure defines the callback interface for the CAN login state machine, which orchestrates the 10-state alias allocation sequence defined by the OpenLCB CAN Frame Transfer Standard. The interface provides function pointers to all state handlers required to complete the login sequence.</p>
+<p>The CAN login sequence transitions through the following states in order:</p><ol type="1">
+<li>INIT - Initialize seed to Node ID</li>
+<li>GENERATE_SEED - Generate new seed (only used for conflict resolution)</li>
+<li>GENERATE_ALIAS - Extract 12-bit alias from seed via LFSR</li>
+<li>LOAD_CHECK_ID_07 - Build CID7 frame with Node ID bits 47-36</li>
+<li>LOAD_CHECK_ID_06 - Build CID6 frame with Node ID bits 35-24</li>
+<li>LOAD_CHECK_ID_05 - Build CID5 frame with Node ID bits 23-12</li>
+<li>LOAD_CHECK_ID_04 - Build CID4 frame with Node ID bits 11-0</li>
+<li>WAIT_200ms - Mandatory 200ms wait for conflict detection</li>
+<li>LOAD_RESERVE_ID - Build RID frame to claim alias</li>
+<li>LOAD_ALIAS_MAP_DEFINITION - Build AMD frame with full Node ID</li>
+</ol>
+<p>Each state handler:</p><ul>
+<li>Receives can_statemachine_info_t structure with node and message buffer</li>
+<li>Performs state-specific operations (generate alias, build CAN frame, wait)</li>
+<li>Sets login_outgoing_can_msg_valid flag if frame needs transmission</li>
+<li>Transitions node to next run_state</li>
+</ul>
+<p>After successful completion of all states, the node has:</p><ul>
+<li>Valid 12-bit CAN alias for its 48-bit Node ID</li>
+<li>Permitted status on the CAN network</li>
+<li>Alias/Node ID mapping registered in alias mapping table</li>
+</ul>
+<p>All 10 state handler callbacks are REQUIRED and must be provided before calling CanLoginStateMachine_initialize. The state machine dispatches to handlers based on the node's current run_state.</p>
+<dl class="section note"><dt>Note</dt><dd>All callbacks are REQUIRED - none can be NULL </dd>
+<dd>
+Handlers typically provided by <a class="el" href="can__login__message__handler_8h.html" title="Message handlers for CAN login sequence.">can_login_message_handler.h</a> </dd>
+<dd>
+State machine is non-blocking - each handler executes quickly</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__statemachine_8c.html#a2837c06613e89097db3602bf773332a8" title="Initializes the CAN Login State Machine.">CanLoginStateMachine_initialize</a> </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> </dd>
+<dd>
+<a class="el" href="can__login__message__handler_8h.html" title="Message handlers for CAN login sequence.">can_login_message_handler.h</a> - Provides standard implementations </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ae18f79f1e098bc647b2cdf20b904c82e" name="ae18f79f1e098bc647b2cdf20b904c82e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae18f79f1e098bc647b2cdf20b904c82e">&#9670;&#160;</a></span>state_init</h2>
@@ -144,8 +178,21 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the Initialization State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a15578ce7b04e385b036135db0fe04248">CanLoginMessageHandler_state_init()</a>. </dd></dl>
+<p>Handler for INIT state (state 1 of 10) </p>
+<p>Initializes the node's seed value to its 48-bit Node ID and transitions to GENERATE_ALIAS state. This is the entry point for the login sequence.</p>
+<p>State responsibilities:</p><ul>
+<li>Set node seed to Node ID value</li>
+<li>Transition to RUNSTATE_GENERATE_ALIAS</li>
+<li>Prepare for alias generation</li>
+</ul>
+<p>This state is entered when:</p><ul>
+<li>Node first begins login sequence</li>
+<li>Node restarts after going offline</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_init</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Normal login skips GENERATE_SEED and goes directly to GENERATE_ALIAS </dd></dl>
 
 </div>
 </div>
@@ -161,8 +208,21 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the Generate Seed State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a49950e3b1ce029449d252aa5bcf2c799">CanLoginMessageHandler_state_generate_seed()</a>. </dd></dl>
+<p>Handler for GENERATE_SEED state (state 2 of 10) </p>
+<p>Generates a new seed value using LFSR algorithm when alias conflict is detected. This state is normally skipped during initial login.</p>
+<p>State responsibilities:</p><ul>
+<li>Apply LFSR algorithm to generate new seed</li>
+<li>Overwrite previous seed value</li>
+<li>Transition to RUNSTATE_GENERATE_ALIAS</li>
+</ul>
+<p>This state is entered when:</p><ul>
+<li>Alias conflict detected during CID sequence</li>
+<li>Need to generate different alias from previous attempt</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_generate_seed</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Only used when conflicts occur, not during normal login </dd></dl>
 
 </div>
 </div>
@@ -178,8 +238,23 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the Generate Alias State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#acbada8cf2b6a3c5dc73bac3cb57ad6b0">CanLoginMessageHandler_state_generate_alias()</a>. </dd></dl>
+<p>Handler for GENERATE_ALIAS state (state 3 of 10) </p>
+<p>Generates 12-bit alias from current seed using LFSR algorithm and registers the alias/Node ID mapping as tentative (not yet permitted).</p>
+<p>State responsibilities:</p><ul>
+<li>Extract 12-bit alias from seed via LFSR</li>
+<li>Ensure alias is non-zero (0x001-0xFFF range)</li>
+<li>Register tentative alias mapping</li>
+<li>Invoke on_alias_change callback if provided</li>
+<li>Transition to RUNSTATE_LOAD_CHECK_ID_07</li>
+</ul>
+<p>This state is entered:</p><ul>
+<li>After INIT state (normal login)</li>
+<li>After GENERATE_SEED state (conflict recovery)</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_generate_alias</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Alias value must be in range 0x001-0xFFF (zero not allowed) </dd></dl>
 
 </div>
 </div>
@@ -195,8 +270,22 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the CID7 State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#ad417a47b53614faa89382dd1f724c311">CanLoginMessageHandler_state_load_cid07()</a>. </dd></dl>
+<p>Handler for LOAD_CHECK_ID_07 state (state 4 of 10) </p>
+<p>Constructs CID7 (Check ID frame 7) containing bits 47-36 of the Node ID in the CAN header. First of four CID frames.</p>
+<p>State responsibilities:</p><ul>
+<li>Build CID7 frame with Node ID bits 47-36</li>
+<li>Set payload_count to 0 (no data bytes)</li>
+<li>Set login_outgoing_can_msg_valid flag</li>
+<li>Transition to RUNSTATE_LOAD_CHECK_ID_06</li>
+</ul>
+<p>Frame format:</p><ul>
+<li>CAN header contains MMM=7 and bits 47-36 of Node ID</li>
+<li>No payload data bytes</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_load_cid07</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+CID frames announce Node ID fragments to detect conflicts </dd></dl>
 
 </div>
 </div>
@@ -212,8 +301,20 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the CID6 State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a0a4c529c0fdc15ba83cdd61fe91216d8">CanLoginMessageHandler_state_load_cid06()</a>. </dd></dl>
+<p>Handler for LOAD_CHECK_ID_06 state (state 5 of 10) </p>
+<p>Constructs CID6 (Check ID frame 6) containing bits 35-24 of the Node ID in the CAN header. Second of four CID frames.</p>
+<p>State responsibilities:</p><ul>
+<li>Build CID6 frame with Node ID bits 35-24</li>
+<li>Set payload_count to 0 (no data bytes)</li>
+<li>Set login_outgoing_can_msg_valid flag</li>
+<li>Transition to RUNSTATE_LOAD_CHECK_ID_05</li>
+</ul>
+<p>Frame format:</p><ul>
+<li>CAN header contains MMM=6 and bits 35-24 of Node ID</li>
+<li>No payload data bytes</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_load_cid06</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -229,8 +330,20 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the CID5 State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a452fa6a87c0be4de318f40958579e72c">CanLoginMessageHandler_state_load_cid05()</a>. </dd></dl>
+<p>Handler for LOAD_CHECK_ID_05 state (state 6 of 10) </p>
+<p>Constructs CID5 (Check ID frame 5) containing bits 23-12 of the Node ID in the CAN header. Third of four CID frames.</p>
+<p>State responsibilities:</p><ul>
+<li>Build CID5 frame with Node ID bits 23-12</li>
+<li>Set payload_count to 0 (no data bytes)</li>
+<li>Set login_outgoing_can_msg_valid flag</li>
+<li>Transition to RUNSTATE_LOAD_CHECK_ID_04</li>
+</ul>
+<p>Frame format:</p><ul>
+<li>CAN header contains MMM=5 and bits 23-12 of Node ID</li>
+<li>No payload data bytes</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_load_cid05</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -246,8 +359,23 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the CID4 State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#aa2d0270b36a9e0b33fb6966d08f1b390">CanLoginMessageHandler_state_load_cid04()</a> </dd></dl>
+<p>Handler for LOAD_CHECK_ID_04 state (state 7 of 10) </p>
+<p>Constructs CID4 (Check ID frame 4) containing bits 11-0 of the Node ID in the CAN header. Fourth and final CID frame. Also resets the node's timer for the mandatory 200ms wait period.</p>
+<p>State responsibilities:</p><ul>
+<li>Build CID4 frame with Node ID bits 11-0</li>
+<li>Set payload_count to 0 (no data bytes)</li>
+<li>Reset timerticks to 0 for 200ms wait</li>
+<li>Set login_outgoing_can_msg_valid flag</li>
+<li>Transition to RUNSTATE_WAIT_200ms</li>
+</ul>
+<p>Frame format:</p><ul>
+<li>CAN header contains MMM=4 and bits 11-0 of Node ID</li>
+<li>No payload data bytes</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_load_cid04</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Timer reset prepares for mandatory 200ms wait before RID </dd></dl>
 
 </div>
 </div>
@@ -263,8 +391,24 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the 200ms Wait State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a3ceb83bfdd574957d1e8ddc6d820caed">CanLoginMessageHandler_state_wait_200ms()</a>. </dd></dl>
+<p>Handler for WAIT_200ms state (state 8 of 10) </p>
+<p>Enforces the mandatory 200ms wait period required by the OpenLCB CAN Frame Transfer Standard between CID4 and RID frames. Uses the node's timerticks counter incremented by 100ms timer.</p>
+<p>State responsibilities:</p><ul>
+<li>Wait until timerticks exceeds 2 (200ms elapsed)</li>
+<li>Transition to RUNSTATE_LOAD_RESERVE_ID when wait completes</li>
+<li>Do not set valid flag (no message to transmit)</li>
+</ul>
+<p>This wait period allows:</p><ul>
+<li>Other nodes to detect alias conflicts</li>
+<li>Network to process all four CID frames</li>
+<li>Time for AMR/error frames if conflicts exist</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_wait_200ms</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Requires OpenLcbNode_100ms_timer_tick to be running </dd>
+<dd>
+OpenLCB spec mandates minimum 200ms wait </dd></dl>
 
 </div>
 </div>
@@ -280,8 +424,26 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the RID State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a41f40ed325a32cf2f61fb66522c21977">CanLoginMessageHandler_state_load_rid()</a>. </dd></dl>
+<p>Handler for LOAD_RESERVE_ID state (state 9 of 10) </p>
+<p>Constructs RID (Reserve ID) frame to claim the alias after successful conflict checking. Indicates no conflicts detected during CID sequence and wait.</p>
+<p>State responsibilities:</p><ul>
+<li>Build RID frame</li>
+<li>Set payload_count to 0 (no data bytes)</li>
+<li>Set login_outgoing_can_msg_valid flag</li>
+<li>Transition to RUNSTATE_LOAD_ALIAS_MAP_DEFINITION</li>
+</ul>
+<p>Frame format:</p><ul>
+<li>CAN header 0x0700 + alias</li>
+<li>No payload data bytes</li>
+</ul>
+<p>After RID transmission:</p><ul>
+<li>Alias is reserved (but not yet permitted)</li>
+<li>Ready to send AMD frame</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_load_rid</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+RID indicates successful alias allocation </dd></dl>
 
 </div>
 </div>
@@ -297,8 +459,32 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pointer to a function for the AMD State Handler for the Login StateMachine. </p>
-<dl class="section warning"><dt>Warning</dt><dd><b>Required</b> assignment. Defaults to <a class="el" href="can__login__message__handler_8c.html#a86ceb4c89ce3880a1a34fcd8805b4064">CanLoginMessageHandler_state_load_amd()</a>. </dd></dl>
+<p>Handler for LOAD_ALIAS_MAP_DEFINITION state (state 10 of 10) </p>
+<p>Constructs AMD (Alias Map Definition) frame containing the full 48-bit Node ID. Marks the node as permitted and completes the CAN login sequence. This is the final state in the login process.</p>
+<p>State responsibilities:</p><ul>
+<li>Build AMD frame with full 6-byte Node ID</li>
+<li>Set payload_count to 6</li>
+<li>Set node permitted flag to true</li>
+<li>Set alias mapping is_permitted flag to true</li>
+<li>Set login_outgoing_can_msg_valid flag</li>
+<li>Transition to RUNSTATE_LOAD_INITIALIZATION_COMPLETE</li>
+</ul>
+<p>Frame format:</p><ul>
+<li>CAN header 0x0701 + alias</li>
+<li>Payload contains 6 bytes of Node ID</li>
+</ul>
+<p>After AMD transmission:</p><ul>
+<li>Node is permitted on CAN network</li>
+<li>Can send/receive OpenLCB messages</li>
+<li>Alias mapping is complete and valid</li>
+<li>Ready for OpenLCB login sequence</li>
+</ul>
+<p>Typical implementation: CanLoginMessageHandler_state_load_amd</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd>
+<dd>
+Final state in CAN login - node transitions to OpenLCB login </dd>
+<dd>
+After this, node can send OpenLCB messages on network </dd></dl>
 
 </div>
 </div>

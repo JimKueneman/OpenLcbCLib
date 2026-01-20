@@ -133,13 +133,41 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface structure for login state machine callback functions. </p>
-<p>This structure defines all function pointers that must be provided during initialization. The interface pattern allows the state machine to be decoupled from specific implementations, making the code more testable and flexible.</p>
-<p>Required callback categories:</p><ul>
-<li>Message transmission</li>
-<li>Node enumeration</li>
-<li>Message handlers</li>
-<li>Internal state machine functions (for testability) </li>
+<p>This structure defines the callback interface for the OpenLCB login state machine, which orchestrates the complete node initialization sequence after successful CAN alias allocation. The login state machine manages the three-phase process of announcing nodes on the network:</p>
+<ol type="1">
+<li>Send Initialization Complete message</li>
+<li>Send Producer Event Identified messages for all produced events</li>
+<li>Send Consumer Event Identified messages for all consumed events</li>
+</ol>
+<p>The interface provides callbacks organized into several functional categories:</p>
+<p><b>Required Message Transmission Callbacks:</b></p><ul>
+<li>send_openlcb_msg: Transmit OpenLCB messages to the network</li>
 </ul>
+<p><b>Required Node Enumeration Callbacks:</b></p><ul>
+<li>openlcb_node_get_first: Begin node enumeration</li>
+<li>openlcb_node_get_next: Continue node enumeration</li>
+</ul>
+<p><b>Required Message Handler Callbacks:</b></p><ul>
+<li>load_initialization_complete: Construct Initialization Complete message</li>
+<li>load_producer_events: Construct Producer Event Identified messages</li>
+<li>load_consumer_events: Construct Consumer Event Identified messages</li>
+</ul>
+<p><b>Internal Functions (for testing):</b></p><ul>
+<li>process_login_statemachine: State dispatcher</li>
+<li>handle_outgoing_openlcb_message: Message transmission handler</li>
+<li>handle_try_reenumerate: Re-enumeration controller</li>
+<li>handle_try_enumerate_first_node: First node enumerator</li>
+<li>handle_try_enumerate_next_node: Next node enumerator</li>
+</ul>
+<p>The state machine operates in a non-blocking manner, performing one step of processing per call to <a class="el" href="openlcb__login__statemachine_8c.html#a48302fcd398ed4abdc719d2c883b382d" title="Main state machine processing loop - call repeatedly from application loop.">OpenLcbLoginMainStatemachine_run()</a>. It automatically enumerates all nodes that require login processing and dispatches them through the appropriate handlers based on their run_state.</p>
+<dl class="section note"><dt>Note</dt><dd>All required callbacks must be set before calling OpenLcbLoginStateMachine_initialize </dd>
+<dd>
+Internal function pointers are for unit testing - they reference module functions</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a3f2b3309b14784eba7f14e9e87a0fe09" title="Initializes the login state machine with callback interface.">OpenLcbLoginStateMachine_initialize</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine_8c.html#a48302fcd398ed4abdc719d2c883b382d" title="Main state machine processing loop - call repeatedly from application loop.">OpenLcbLoginMainStatemachine_run</a> </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine__handler_8h.html" title="Login state machine message handler for OpenLCB initialization and event broadcasting.">openlcb_login_statemachine_handler.h</a> - Message construction handlers </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a216efd7bdc468e6395aa0e5ba04f1060" name="a216efd7bdc468e6395aa0e5ba04f1060"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a216efd7bdc468e6395aa0e5ba04f1060">&#9670;&#160;</a></span>send_openlcb_msg</h2>
@@ -154,16 +182,9 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to send an OpenLCB message to the network. </p>
-<p>Called when a message is ready to transmit. The implementation should attempt to send the message and return true if successful.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">outgoing_msg</td><td>Pointer to the message to transmit </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if message was queued for transmission, false if transmission failed</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>outgoing_msg must NOT be NULL</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Returning false will cause the state machine to retry on the next iteration </dd></dl>
+<p>This required callback transmits an OpenLCB message to the network. The implementation should attempt to queue the message for transmission and return true if successful. If the transmission buffer is full or transmission fails, the callback should return false, causing the state machine to retry on the next iteration.</p>
+<p>The message includes source alias, source Node ID, MTI, and payload data. The callback is responsible for converting the OpenLCB message to the appropriate CAN frames via the CAN TX state machine.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -180,16 +201,10 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to get the first OpenLCB node for enumeration. </p>
-<p>Returns the first node in the enumeration list for the given context key.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Enumeration context key </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to first node, or NULL if no nodes exist</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Returning NULL indicates no nodes need processing</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae198d49b6505cbba8429aeb49fa3879e" title="Callback to get the next OpenLCB node for enumeration.">openlcb_node_get_next</a> - Gets subsequent nodes </dd></dl>
+<p>This required callback initiates node enumeration by returning the first node in the node list. The enumeration uses a key parameter to maintain separate iteration contexts for different state machines (login vs main state machine).</p>
+<p>The callback should return the first allocated node in the node pool, or NULL if no nodes exist. The login state machine will process nodes that are in initialization states (not yet in RUNSTATE_RUN).</p>
+<p>Typical implementation: Return first entry from node pool array.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -206,16 +221,10 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to get the next OpenLCB node for enumeration. </p>
-<p>Returns the next node in the enumeration list for the given context key.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Enumeration context key </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to next node, or NULL if no more nodes exist</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Returning NULL indicates enumeration is complete</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a642f075eed427764e99bda659f1fd22f" title="Callback to get the first OpenLCB node for enumeration.">openlcb_node_get_first</a> - Gets first node </dd></dl>
+<p>This required callback continues node enumeration by returning the next node in the node list. The enumeration uses a key parameter to maintain separate iteration contexts for different state machines.</p>
+<p>The callback should return the next allocated node in the node pool, or NULL when the end of the list is reached. The login state machine will process nodes that are in initialization states (not yet in RUNSTATE_RUN).</p>
+<p>Typical implementation: Increment index and return next entry from node pool array.</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -232,14 +241,16 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to load an Initialization Complete message. </p>
-<p>Constructs an Initialization Complete message for the node. This is the first message sent during the login sequence.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#a63d4945cfcd4930d8b3bc780f59687eb" title="Loads an Initialization Complete message into the outgoing message buffer.">OpenLcbLoginMessageHandler_load_initialization_complete</a> </dd></dl>
+<p>This required callback constructs an Initialization Complete message for the node currently being processed. The message announces the node's presence on the network and signals readiness to participate in OpenLCB operations.</p>
+<p>The callback should:</p><ul>
+<li>Build the message with MTI 0x0100 (Full) or 0x0101 (Simple)</li>
+<li>Include the node's 6-byte Node ID in the payload</li>
+<li>Set outgoing_msg_info.valid to true to trigger transmission</li>
+<li>Mark the node as initialized</li>
+<li>Transition to RUNSTATE_LOAD_PRODUCER_EVENTS</li>
+</ul>
+<p>Typical implementation: OpenLcbLoginMessageHandler_load_initialization_complete</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -256,14 +267,17 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to load Producer Event Identified messages. </p>
-<p>Constructs Producer Identified messages for the node's produced events. May be called multiple times via re-enumeration.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#a86d1ac7c901b8980d26547ef4b1b6f48" title="Loads a Producer Event Identified message for the current producer event.">OpenLcbLoginMessageHandler_load_producer_event</a> </dd></dl>
+<p>This required callback constructs Producer Identified messages for the node's produced events. The callback may be invoked multiple times via the enumeration mechanism to send one message per produced event.</p>
+<p>The callback should:</p><ul>
+<li>Check if producers exist (count &gt; 0)</li>
+<li>Get MTI for current event state (Valid/Invalid/Unknown)</li>
+<li>Build message with 8-byte Event ID in payload</li>
+<li>Increment enum_index</li>
+<li>Set enumerate flag if more events remain</li>
+<li>Transition to RUNSTATE_LOAD_CONSUMER_EVENTS when complete</li>
+</ul>
+<p>Typical implementation: OpenLcbLoginMessageHandler_load_producer_event</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -280,14 +294,17 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Callback to load Consumer Event Identified messages. </p>
-<p>Constructs Consumer Identified messages for the node's consumed events. May be called multiple times via re-enumeration.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">openlcb_statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine__handler_8c.html#ac6977ee9bd7b697ad431ddadd14779a9" title="Loads a Consumer Event Identified message for the current consumer event.">OpenLcbLoginMessageHandler_load_consumer_event</a> </dd></dl>
+<p>This required callback constructs Consumer Identified messages for the node's consumed events. The callback may be invoked multiple times via the enumeration mechanism to send one message per consumed event. This is the final step in the login sequence.</p>
+<p>The callback should:</p><ul>
+<li>Check if consumers exist (count &gt; 0)</li>
+<li>Get MTI for current event state (Valid/Invalid/Unknown)</li>
+<li>Build message with 8-byte Event ID in payload</li>
+<li>Increment enum_index</li>
+<li>Set enumerate flag if more events remain</li>
+<li>Transition to RUNSTATE_RUN when complete (node fully initialized)</li>
+</ul>
+<p>Typical implementation: OpenLcbLoginMessageHandler_load_consumer_event</p>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
 
 </div>
 </div>
@@ -304,14 +321,14 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Internal function pointer for state machine processing. </p>
-<p>Dispatches to the appropriate handler based on node run_state. Exposed through interface for unit testing.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">statemachine_info</td><td>Pointer to state machine info with node and message buffer</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a0f3330b4f3d1fab79ca865ccca2ca9ef" title="Dispatches to appropriate handler based on node&#39;s run_state.">OpenLcbLoginStateMachine_process</a> </dd></dl>
+<p>This callback dispatches to the appropriate message handler based on the node's current run_state. It is exposed through the interface to enable unit testing of the state dispatch logic.</p>
+<p>Typical implementation: OpenLcbLoginStateMachine_process</p>
+<p>This callback examines node-&gt;run_state and calls:</p><ul>
+<li>load_initialization_complete if RUNSTATE_LOAD_INITIALIZATION_COMPLETE</li>
+<li>load_producer_events if RUNSTATE_LOAD_PRODUCER_EVENTS</li>
+<li>load_consumer_events if RUNSTATE_LOAD_CONSUMER_EVENTS</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
 
 </div>
 </div>
@@ -328,9 +345,15 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Internal function pointer for message transmission handling. </p>
-<p>Attempts to send pending outgoing message. Exposed for unit testing.</p>
-<dl class="section return"><dt>Returns</dt><dd>true if message transmission was handled, false if no message pending</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a15755455ac11fbb6b09b4eabf9979353" title="Handles transmission of pending outgoing message.">OpenLcbLoginStatemachine_handle_outgoing_openlcb_message</a> </dd></dl>
+<p>This callback attempts to transmit any pending outgoing message by checking the valid flag and calling send_openlcb_msg. It is exposed through the interface to enable unit testing of transmission logic.</p>
+<p>Typical implementation: OpenLcbLoginStatemachine_handle_outgoing_openlcb_message</p>
+<p>The callback should:</p><ul>
+<li>Check if outgoing_msg_info.valid is true</li>
+<li>Call send_openlcb_msg if message is pending</li>
+<li>Clear valid flag if transmission succeeds</li>
+<li>Keep valid flag set if transmission fails (retry on next iteration)</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
 
 </div>
 </div>
@@ -347,9 +370,14 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Internal function pointer for re-enumeration handling. </p>
-<p>Handles re-entry into handler for multi-message sequences. Exposed for unit testing.</p>
-<dl class="section return"><dt>Returns</dt><dd>true if re-enumeration occurred, false if enumeration complete</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a4519cd137afe8fd412fa900b8278ec10" title="Handles re-enumeration for multi-message sequences.">OpenLcbLoginStatemachine_handle_try_reenumerate</a> </dd></dl>
+<p>This callback handles the re-enumeration mechanism for multi-message sequences. When message handlers set the enumerate flag, this callback re-invokes the handler to generate the next message in the sequence. It is exposed through the interface to enable unit testing.</p>
+<p>Typical implementation: OpenLcbLoginStatemachine_handle_try_reenumerate</p>
+<p>The callback should:</p><ul>
+<li>Check if outgoing_msg_info.enumerate is true</li>
+<li>Call process_login_statemachine if enumerate flag is set</li>
+<li>Return true if re-enumeration occurred</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
 
 </div>
 </div>
@@ -366,9 +394,15 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Internal function pointer for first node enumeration. </p>
-<p>Gets first node and processes it if not yet initialized. Exposed for unit testing.</p>
-<dl class="section return"><dt>Returns</dt><dd>true if first node was handled, false if no action taken</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a948366df2bf6d0e785d4f8fe5c7810c7" title="Attempts to get and process the first node in enumeration.">OpenLcbLoginStatemachine_handle_try_enumerate_first_node</a> </dd></dl>
+<p>This callback attempts to get and process the first node in the node pool. If no current node is being processed, it calls openlcb_node_get_first and dispatches the node if it requires login processing. It is exposed through the interface to enable unit testing.</p>
+<p>Typical implementation: OpenLcbLoginStatemachine_handle_try_enumerate_first_node</p>
+<p>The callback should:</p><ul>
+<li>Check if openlcb_node is NULL (no current node)</li>
+<li>Call openlcb_node_get_first if needed</li>
+<li>Skip nodes already in RUNSTATE_RUN</li>
+<li>Call process_login_statemachine for nodes needing initialization</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
 
 </div>
 </div>
@@ -385,9 +419,16 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Internal function pointer for next node enumeration. </p>
-<p>Gets next node and processes it if not yet initialized. Exposed for unit testing.</p>
-<dl class="section return"><dt>Returns</dt><dd>true if next node was handled, false if no action taken</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__login__statemachine_8c.html#a161b0d98a87850fd49c8f2b564a33b77" title="Attempts to get and process the next node in enumeration.">OpenLcbLoginStatemachine_handle_try_enumerate_next_node</a> </dd></dl>
+<p>This callback attempts to get and process the next node in the node pool. If a current node exists, it calls openlcb_node_get_next and dispatches the node if it requires login processing. It is exposed through the interface to enable unit testing.</p>
+<p>Typical implementation: OpenLcbLoginStatemachine_handle_try_enumerate_next_node</p>
+<p>The callback should:</p><ul>
+<li>Check if openlcb_node is not NULL (current node exists)</li>
+<li>Call openlcb_node_get_next to advance enumeration</li>
+<li>Skip nodes already in RUNSTATE_RUN</li>
+<li>Call process_login_statemachine for nodes needing initialization</li>
+<li>Clear openlcb_node to NULL when end of list reached</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
 
 </div>
 </div>

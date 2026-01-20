@@ -128,7 +128,8 @@ Data Fields</h2></td></tr>
 <li>Application-specific timer-based processing</li>
 <li>Periodic status monitoring</li>
 </ul>
-<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>NOT thread-safe, called in context of interrupt or thread typically</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__node_8c.html#ad69a221293d91383b8f8214ca9a38b40" title="100ms timer tick handler for all nodes">OpenLcbNode_100ms_timer_tick</a> - Invokes this callback </dd></dl>
 
 </div>

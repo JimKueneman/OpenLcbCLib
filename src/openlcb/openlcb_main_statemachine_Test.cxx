@@ -1527,6 +1527,32 @@ TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_no_nodes)
 }
 
 // ============================================================================
+// TEST: handle_try_enumerate_first_node - Already have node (safety exit)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, handle_enumerate_first_node_already_have_node)
+{
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+    
+    // ALREADY have a node set (safety condition)
+    openlcb_node_t *existing_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    state->openlcb_node = existing_node;
+    
+    node_get_first_called = false;
+    process_statemachine_called = false;
+
+    bool result = OpenLcbMainStatemachine_handle_try_enumerate_first_node();
+
+    // Should return false immediately (not applicable - already have node)
+    EXPECT_FALSE(result);
+    EXPECT_FALSE(node_get_first_called);  // Should NOT try to get first
+    EXPECT_FALSE(process_statemachine_called);
+    EXPECT_EQ(state->openlcb_node, existing_node);  // Node unchanged
+}
+
+// ============================================================================
 // TEST: handle_try_enumerate_next_node - Node available in RUN state
 // ============================================================================
 
@@ -1799,6 +1825,72 @@ TEST(OpenLcbMainStatemachine, run_comprehensive)
     EXPECT_TRUE(handle_pop_called);  // Returns true (no FIFO message)
     EXPECT_TRUE(handle_enumerate_first_called);  // Returns false (already have node)
     EXPECT_TRUE(handle_enumerate_next_called);
+}
+
+// ============================================================================
+// TEST: Main Run Loop - Pop returns true (FIFO empty, stops cascade)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, run_pop_returns_true)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+    state->outgoing_msg_info.valid = false;  // No outgoing message
+    state->incoming_msg_info.enumerate = false;  // No re-enumerate
+    state->incoming_msg_info.msg_ptr = nullptr;  // No current message
+    state->openlcb_node = nullptr;  // No current node
+    fifo_has_message = false;  // FIFO is empty
+
+    // Set up fail flags - we want pop to call the REAL function which returns true (FIFO empty)
+    fail_handle_outgoing_openlcb_message = false;
+    fail_handle_try_reenumerate = false;
+    fail_handle_try_pop_next_incoming_openlcb_message = false;  // Call real function
+    fail_handle_try_enumerate_first_node = false;
+    fail_handle_try_enumerate_next_node = false;
+
+    OpenLcbMainStatemachine_run();
+
+    // Pop should return true (FIFO empty), stopping cascade before enumerate
+    EXPECT_TRUE(handle_outgoing_called);
+    EXPECT_TRUE(handle_reenumerate_called);
+    EXPECT_TRUE(handle_pop_called);
+    EXPECT_FALSE(handle_enumerate_first_called);  // Should NOT be called (cascade stopped)
+    EXPECT_FALSE(handle_enumerate_next_called);
+}
+
+// ============================================================================
+// TEST: Main Run Loop - Enumerate next returns true (stops cascade)
+// ============================================================================
+
+TEST(OpenLcbMainStatemachine, run_enumerate_next_returns_true)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *current_node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    current_node->state.run_state = RUNSTATE_RUN;
+    
+    openlcb_node_t *next_node = OpenLcbNode_allocate(0x070605040302, &_node_parameters_main_node);
+    next_node->state.run_state = RUNSTATE_RUN;
+    node_get_next = next_node;
+
+    openlcb_statemachine_info_t *state = OpenLcbMainStatemachine_get_statemachine_info();
+    state->outgoing_msg_info.valid = false;  // No outgoing message
+    state->incoming_msg_info.enumerate = false;  // No re-enumerate
+    state->incoming_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(BASIC);  // Have message
+    state->openlcb_node = current_node;  // Already have a node
+    fifo_has_message = false;
+
+    OpenLcbMainStatemachine_run();
+
+    // Enumerate_next should return true (has node, processes next), stopping cascade
+    EXPECT_TRUE(handle_outgoing_called);
+    EXPECT_TRUE(handle_reenumerate_called);
+    EXPECT_TRUE(handle_pop_called);  // Returns false (already have message)
+    EXPECT_TRUE(handle_enumerate_first_called);  // Returns false (already have node)
+    EXPECT_TRUE(handle_enumerate_next_called);  // Returns true (processes node), STOPS
 }
 
 // ============================================================================

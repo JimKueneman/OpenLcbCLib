@@ -105,7 +105,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__login__message__handler__t.html">interface_can_login_message_handler_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure to hold pointers to functions for dependencies this module requires <a class="el" href="can__login__message__handler_8h.html">can_login_message_handler.h</a>.  <a href="structinterface__can__login__message__handler__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for CAN login message handler callback functions.  <a href="structinterface__can__login__message__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -179,22 +179,28 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the CAN Login Message Handler module. </p>
-<p>Stores the interface pointer for use by all state handler functions. Must be called before any state handlers are invoked.</p>
+<p>Registers the application's callback interface with the login message handler. The interface provides callbacks for alias mapping management and optional application notification. Must be called during system initialization before any login sequence processing begins.</p>
 <p>Use cases:</p><ul>
 <li>Called once during application initialization</li>
 <li>Must be called before login state machine starts</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface</td><td>Pointers to function dependencies this module requires</td></tr>
+    <tr><td class="paramname">interface</td><td>Pointer to callback interface structure containing required function pointers</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Interface pointer must remain valid for lifetime of application </dd>
+<dl class="section warning"><dt>Warning</dt><dd>interface pointer must remain valid for lifetime of application </dd>
 <dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>This must always be called during application initialization</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__statemachine_8c.html#a2837c06613e89097db3602bf773332a8" title="Initializes the CAN Login State Machine.">CanLoginStateMachine_initialize</a> - Initializes the state machine that calls these handlers</dd></dl>
+Both required callbacks must be valid (non-NULL) </dd>
+<dd>
+NOT thread-safe - call during single-threaded initialization only</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call before CanLoginStateMachine_initialize </dd>
+<dd>
+Both alias mapping callbacks are required</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__login__message__handler__t.html" title="Interface structure for CAN login message handler callback functions.">interface_can_login_message_handler_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="can__login__statemachine_8c.html#a2837c06613e89097db3602bf773332a8" title="Initializes the CAN Login State Machine.">CanLoginStateMachine_initialize</a> - Initializes state machine that calls these handlers</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Cast away const qualifier from interface pointer</li>
 <li>Store interface pointer in static variable</li>
@@ -243,16 +249,21 @@ NOT thread-safe</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
+<dd>
+Node pointer within structure must be valid </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Node seed is set to Node ID value </dd>
 <dd>
 Transitions node to RUNSTATE_GENERATE_ALIAS</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>First state in normal login sequence </dd>
+<dd>
+GENERATE_SEED is skipped unless conflict occurs</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#acbada8cf2b6a3c5dc73bac3cb57ad6b0" title="Handles the third state in the CAN login sequence.">CanLoginMessageHandler_state_generate_alias</a> - Next state in sequence </dd>
 <dd>
 <a class="el" href="can__login__message__handler_8c.html#a49950e3b1ce029449d252aa5bcf2c799" title="Handles the second state in the CAN login sequence.">CanLoginMessageHandler_state_generate_seed</a> - Used only for alias conflicts</dd></dl>
@@ -310,16 +321,19 @@ Transitions node to RUNSTATE_GENERATE_ALIAS</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>New seed value overwrites previous seed </dd>
 <dd>
 Transitions node to RUNSTATE_GENERATE_ALIAS</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Only used when alias conflict detected </dd>
+<dd>
+LFSR ensures different alias on each iteration</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#acbada8cf2b6a3c5dc73bac3cb57ad6b0" title="Handles the third state in the CAN login sequence.">CanLoginMessageHandler_state_generate_alias</a> - Next state in sequence</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Call _generate_seed with current seed</li>
@@ -374,18 +388,23 @@ Transitions node to RUNSTATE_GENERATE_ALIAS</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
-Alias must not be zero per OpenLCB spec </dd>
+Generated alias must not be zero per OpenLCB spec </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Alias is registered as tentative mapping </dd>
+<dl class="section attention"><dt>Attention</dt><dd>Alias is registered as tentative mapping (not yet permitted) </dd>
 <dd>
-Transitions node to RUNSTATE_LOAD_CHECK_ID_07</dd></dl>
+Transitions node to RUNSTATE_LOAD_CHECK_ID_07 </dd>
+<dd>
+Invokes on_alias_change callback if provided</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Uses LFSR algorithm to generate alias from seed </dd>
+<dd>
+Alias value must be in range 0x001-0xFFF (zero not allowed)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#ad417a47b53614faa89382dd1f724c311" title="Handles the fourth state in the CAN login sequence.">CanLoginMessageHandler_state_load_cid07</a> - Next state in sequence </dd>
 <dd>
 <a class="el" href="can__login__message__handler_8c.html#a49950e3b1ce029449d252aa5bcf2c799" title="Handles the second state in the CAN login sequence.">CanLoginMessageHandler_state_generate_seed</a> - Called if conflict detected</dd></dl>
@@ -448,18 +467,23 @@ Transitions node to RUNSTATE_LOAD_CHECK_ID_07</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 Outgoing message buffer must be valid </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Sets payload_count to 0 (CID frames have no data bytes) </dd>
 <dd>
-Transitions node to RUNSTATE_LOAD_CHECK_ID_06</dd></dl>
+Transitions node to RUNSTATE_LOAD_CHECK_ID_06 </dd>
+<dd>
+Sets login_outgoing_can_msg_valid flag for transmission</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>CID frames carry Node ID fragments in CAN header only </dd>
+<dd>
+No payload data bytes in CID frames</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a0a4c529c0fdc15ba83cdd61fe91216d8" title="Handles the fifth state in the CAN login sequence.">CanLoginMessageHandler_state_load_cid06</a> - Next state in sequence</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Set payload_count to 0 (CID frames have no data)</li>
@@ -518,18 +542,21 @@ Transitions node to RUNSTATE_LOAD_CHECK_ID_06</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 Outgoing message buffer must be valid </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Sets payload_count to 0 (CID frames have no data bytes) </dd>
 <dd>
-Transitions node to RUNSTATE_LOAD_CHECK_ID_05</dd></dl>
+Transitions node to RUNSTATE_LOAD_CHECK_ID_05 </dd>
+<dd>
+Sets login_outgoing_can_msg_valid flag for transmission</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>CID frames carry Node ID fragments in CAN header only</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a452fa6a87c0be4de318f40958579e72c" title="Handles the sixth state in the CAN login sequence.">CanLoginMessageHandler_state_load_cid05</a> - Next state in sequence</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Set payload_count to 0 (CID frames have no data)</li>
@@ -588,18 +615,21 @@ Transitions node to RUNSTATE_LOAD_CHECK_ID_05</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 Outgoing message buffer must be valid </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Sets payload_count to 0 (CID frames have no data bytes) </dd>
 <dd>
-Transitions node to RUNSTATE_LOAD_CHECK_ID_04</dd></dl>
+Transitions node to RUNSTATE_LOAD_CHECK_ID_04 </dd>
+<dd>
+Sets login_outgoing_can_msg_valid flag for transmission</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>CID frames carry Node ID fragments in CAN header only</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#aa2d0270b36a9e0b33fb6966d08f1b390" title="Handles the seventh state in the CAN login sequence.">CanLoginMessageHandler_state_load_cid04</a> - Next state in sequence</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Set payload_count to 0 (CID frames have no data)</li>
@@ -659,11 +689,11 @@ Transitions node to RUNSTATE_LOAD_CHECK_ID_04</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 Outgoing message buffer must be valid </dd>
 <dd>
@@ -672,7 +702,12 @@ NOT thread-safe</dd></dl>
 <dd>
 Resets timerticks to 0 for 200ms wait </dd>
 <dd>
-Transitions node to RUNSTATE_WAIT_200ms</dd></dl>
+Transitions node to RUNSTATE_WAIT_200ms </dd>
+<dd>
+Sets login_outgoing_can_msg_valid flag for transmission</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Final CID frame completes Node ID announcement </dd>
+<dd>
+Timer reset prepares for mandatory 200ms wait</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a3ceb83bfdd574957d1e8ddc6d820caed" title="Handles the eighth state in the CAN login sequence.">CanLoginMessageHandler_state_wait_200ms</a> - Next state in sequence</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Set payload_count to 0 (CID frames have no data)</li>
@@ -735,20 +770,26 @@ Transitions node to RUNSTATE_WAIT_200ms</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
-Requires 100ms timer to be running </dd>
+Requires 100ms timer to be running (OpenLcbNode_100ms_timer_tick) </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Transitions to RUNSTATE_LOAD_RESERVE_ID when timerticks exceeds 2 </dd>
 <dd>
-Does not modify any buffers during wait</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Timer value of 2 represents 200ms (2 x 100ms ticks)</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a41f40ed325a32cf2f61fb66522c21977" title="Handles the ninth state in the CAN login sequence.">CanLoginMessageHandler_state_load_rid</a> - Next state in sequence</dd></dl>
+Does not modify any buffers during wait </dd>
+<dd>
+Does not set valid flag (no message to transmit)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Timer value of 2 represents 200ms (2 × 100ms ticks) </dd>
+<dd>
+OpenLCB spec requires minimum 200ms wait</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a41f40ed325a32cf2f61fb66522c21977" title="Handles the ninth state in the CAN login sequence.">CanLoginMessageHandler_state_load_rid</a> - Next state in sequence </dd>
+<dd>
+<a class="el" href="openlcb__node_8c.html#ad69a221293d91383b8f8214ca9a38b40" title="100ms timer tick handler for all nodes">OpenLcbNode_100ms_timer_tick</a> - Timer that increments timerticks</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Check if timerticks exceeds 2 (200ms elapsed)</li>
 <li>If yes, set run_state to RUNSTATE_LOAD_RESERVE_ID</li>
@@ -804,19 +845,24 @@ Does not modify any buffers during wait</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 Outgoing message buffer must be valid </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Sets payload_count to 0 (RID frames have no data bytes) </dd>
 <dd>
-Transitions node to RUNSTATE_LOAD_ALIAS_MAP_DEFINITION</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a86ceb4c89ce3880a1a34fcd8805b4064" title="Handles the tenth and final state in the CAN login sequence.">CanLoginMessageHandler_state_load_amd</a> - Next state in sequence</dd></dl>
+Transitions node to RUNSTATE_LOAD_ALIAS_MAP_DEFINITION </dd>
+<dd>
+Sets login_outgoing_can_msg_valid flag for transmission</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>RID frame has no payload data </dd>
+<dd>
+Indicates alias is now reserved (but not yet permitted)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__login__message__handler_8c.html#a86ceb4c89ce3880a1a34fcd8805b4064" title="Handles the tenth and final state in the CAN login sequence.">CanLoginMessageHandler_state_load_amd</a> - Next and final state in sequence</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Build CAN identifier with RID format and alias</li>
 <li>Set payload_count to 0 (RID frames have no data)</li>
@@ -865,7 +911,7 @@ Transitions node to RUNSTATE_LOAD_ALIAS_MAP_DEFINITION</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles the tenth and final state in the CAN login sequence. </p>
-<p>Loads the CAN output buffer with an AMD (Alias Map Definition) frame containing the full 48-bit Node ID. Marks the node as permitted on the network and updates the alias mapping to permitted status.</p>
+<p>Loads the CAN output buffer with an AMD (Alias Map Definition) frame containing the full 48-bit Node ID. Marks the node as permitted on the network and updates the alias mapping to permitted status. This completes the CAN login sequence and allows the node to send OpenLCB messages.</p>
 <p>Use cases:</p><ul>
 <li>Completes CAN login sequence</li>
 <li>Announces full Node ID to network</li>
@@ -873,11 +919,11 @@ Transitions node to RUNSTATE_LOAD_ALIAS_MAP_DEFINITION</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to a struct that has the node and buffer for any outgoing message that may be necessary</td></tr>
+    <tr><td class="paramname">can_statemachine_info</td><td>Pointer to state machine context containing node and CAN message buffer</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Structure pointer must not be NULL </dd>
+<dl class="section warning"><dt>Warning</dt><dd>can_statemachine_info must NOT be NULL </dd>
 <dd>
 Outgoing message buffer must be valid </dd>
 <dd>
@@ -888,9 +934,15 @@ Sets node permitted flag to true </dd>
 <dd>
 Sets alias mapping is_permitted flag to true </dd>
 <dd>
-Transitions node to RUNSTATE_LOAD_INITIALIZATION_COMPLETE</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>After this state, node can send OpenLCB messages on CAN network</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a1c8cdd807ea3471409c6ae74a8472bfb" title="Copies a 48-bit Node ID into CAN message payload.">CanUtilities_copy_node_id_to_payload</a> - Helper used to copy Node ID</dd></dl>
+Transitions node to RUNSTATE_LOAD_INITIALIZATION_COMPLETE </dd>
+<dd>
+Sets login_outgoing_can_msg_valid flag for transmission</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>After this state, node can send OpenLCB messages on CAN network </dd>
+<dd>
+Node transitions from CAN login to OpenLCB login</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="can__utilities_8c.html#a1c8cdd807ea3471409c6ae74a8472bfb" title="Copies a 48-bit Node ID into CAN message payload.">CanUtilities_copy_node_id_to_payload</a> - Helper used to copy Node ID </dd>
+<dd>
+<a class="el" href="openlcb__login__statemachine_8h.html" title="Login state machine dispatcher for OpenLCB node initialization sequence.">openlcb_login_statemachine.h</a> - OpenLCB login begins after CAN login</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Build CAN identifier with AMD format and alias</li>
 <li>Copy 6-byte Node ID into payload using utility function</li>

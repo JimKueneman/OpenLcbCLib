@@ -105,7 +105,7 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterface__can__rx__message__handler__t.html">interface_can_rx_message_handler_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dependency injection interface for CAN RX message handler module.  <a href="structinterface__can__rx__message__handler__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface structure for CAN RX message handler callback functions.  <a href="structinterface__can__rx__message__handler__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -186,22 +186,30 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initializes the CAN Receive Message Handler module. </p>
-<p>Stores the dependency injection interface for use by message handlers. Must be called during application initialization before processing any CAN frames.</p>
+<p>Registers the application's callback interface with the receive message handlers. The interface provides access to buffer allocation, alias mapping lookups, and duplicate detection. Must be called during application initialization before processing any CAN frames.</p>
 <p>Use cases:</p><ul>
 <li>Application startup sequence</li>
 <li>System initialization</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">interface_can_frame_message_handler</td><td>Pointer to interface structure containing required function pointers</td></tr>
+    <tr><td class="paramname">interface_can_frame_message_handler</td><td>Pointer to interface structure containing all required callback function pointers</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Must be called exactly once during initialization </dd>
+<dl class="section warning"><dt>Warning</dt><dd>interface_can_frame_message_handler must remain valid for lifetime of application </dd>
 <dd>
-NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Call before CanRxStatemachine_incoming_can_driver_callback is invoked</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__message__handler__t.html" title="Dependency injection interface for CAN RX message handler module.">interface_can_rx_message_handler_t</a> - Interface structure definition</dd></dl>
+All required callbacks must be valid (non-NULL) </dd>
+<dd>
+Must be called exactly once during initialization </dd>
+<dd>
+NOT thread-safe - call during single-threaded initialization only</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Call after CanBufferStore_initialize and OpenLcbBufferStore_initialize </dd>
+<dd>
+Call before CanRxStatemachine_incoming_can_driver_callback is invoked</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__message__handler__t.html" title="Interface structure for CAN RX message handler callback functions.">interface_can_rx_message_handler_t</a> - Interface structure definition </dd>
+<dd>
+<a class="el" href="can__rx__statemachine_8c.html#a90ffc180158c3b8810f3cd68fc904b65" title="Initializes the CAN Receive State Machine module.">CanRxStatemachine_initialize</a> - Initialize Rx state machine</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Store pointer to dependency injection interface in static variable</li>
 <li>Interface remains valid for lifetime of application</li>
@@ -215,7 +223,7 @@ NOT thread-safe</dd></dl>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Call before any CAN frames are processed</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__message__handler__t.html" title="Dependency injection interface for CAN RX message handler module.">interface_can_rx_message_handler_t</a> - Interface structure definition </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__can__rx__message__handler__t.html" title="Interface structure for CAN RX message handler callback functions.">interface_can_rx_message_handler_t</a> - Interface structure definition </dd></dl>
 
 </div>
 </div>
@@ -252,7 +260,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles the first frame of a multi-frame OpenLCB message. </p>
-<p>Processes the initial CAN frame of a multi-frame message sequence. Allocates an OpenLCB message buffer, initializes it with source/dest/MTI information, copies payload data starting at the specified offset, and adds the message to the buffer list for continued assembly.</p>
+<p>Processes the initial CAN frame of a multi-frame message sequence. Allocates an OpenLCB message buffer of appropriate type, initializes it with source/dest/MTI information extracted from CAN header, copies payload data starting at the specified offset, and adds the message to the buffer list for continued assembly.</p>
 <p>Use cases:</p><ul>
 <li>Receiving first frame of datagram</li>
 <li>Receiving first frame of addressed message</li>
@@ -268,10 +276,13 @@ NOT thread-safe</dd></dl>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Sends rejection message if buffer allocation fails </dd>
 <dd>
-Sends rejection message if message already in progress (out of order) </dd>
+Sends rejection message if message already in progress (out of sequence) </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Frame must have framing bits set to MULTIFRAME_FIRST</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Frame must have framing bits set to MULTIFRAME_FIRST </dd>
+<dd>
+Addressed frames have 2-byte destination alias overhead</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>First frame must contain exactly 8 bytes (full CAN frame)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a27b7356b73282d498d6c6d7066d4ccdd" title="Handles a middle frame of a multi-frame OpenLCB message.">CanRxMessageHandler_middle_frame</a> - Processes subsequent frames </dd>
 <dd>
 <a class="el" href="#a11fa1d9a015fb786516b00eaa93aa3d4" title="Handles the last frame of a multi-frame OpenLCB message.">CanRxMessageHandler_last_frame</a> - Completes message assembly </dd></dl>
@@ -306,7 +317,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles a middle frame of a multi-frame OpenLCB message. </p>
-<p>Processes continuation frames in a multi-frame message sequence. Finds the in-progress message in the buffer list and appends payload data from this frame.</p>
+<p>Processes continuation frames in a multi-frame message sequence. Finds the in-progress message in the buffer list by matching source/dest aliases and MTI, then appends payload data from this frame.</p>
 <p>Use cases:</p><ul>
 <li>Receiving middle frames of long datagrams</li>
 <li>Receiving middle frames of SNIP replies</li>
@@ -319,12 +330,15 @@ NOT thread-safe</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Sends rejection message if no matching message found (out of order) </dd>
+<dl class="section warning"><dt>Warning</dt><dd>Sends rejection message if no matching message found (out of sequence) </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Frame must have framing bits set to MULTIFRAME_MIDDLE </dd>
 <dd>
-First frame must have been received and processed</dd></dl>
+First frame must have been received and processed </dd>
+<dd>
+Middle frames must contain exactly 8 bytes</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Searches buffer list for in-progress message</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#afd9720395ccc0ac4c72018bb248c62b8" title="Handles the first frame of a multi-frame OpenLCB message.">CanRxMessageHandler_first_frame</a> - Starts message assembly </dd>
 <dd>
 <a class="el" href="#a11fa1d9a015fb786516b00eaa93aa3d4" title="Handles the last frame of a multi-frame OpenLCB message.">CanRxMessageHandler_last_frame</a> - Completes message assembly </dd></dl>
@@ -359,7 +373,7 @@ First frame must have been received and processed</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles the last frame of a multi-frame OpenLCB message. </p>
-<p>Processes the final CAN frame of a multi-frame message sequence. Finds the in-progress message, appends final payload data, marks message as complete, removes from buffer list, and pushes to OpenLCB FIFO for protocol processing.</p>
+<p>Processes the final CAN frame of a multi-frame message sequence. Finds the in-progress message in buffer list, appends final payload data, marks message as complete, removes from buffer list, and pushes to OpenLCB FIFO for protocol processing.</p>
 <p>Use cases:</p><ul>
 <li>Completing datagram reception</li>
 <li>Completing SNIP message assembly</li>
@@ -372,12 +386,15 @@ First frame must have been received and processed</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Sends rejection message if no matching message found (out of order) </dd>
+<dl class="section warning"><dt>Warning</dt><dd>Sends rejection message if no matching message found (out of sequence) </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Frame must have framing bits set to MULTIFRAME_FINAL </dd>
 <dd>
-First frame must have been received and processed</dd></dl>
+First frame must have been received and processed </dd>
+<dd>
+Last frame may contain 0-8 bytes of data</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Completes assembly and forwards to OpenLCB layer</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#afd9720395ccc0ac4c72018bb248c62b8" title="Handles the first frame of a multi-frame OpenLCB message.">CanRxMessageHandler_first_frame</a> - Starts message assembly </dd>
 <dd>
 <a class="el" href="#a27b7356b73282d498d6c6d7066d4ccdd" title="Handles a middle frame of a multi-frame OpenLCB message.">CanRxMessageHandler_middle_frame</a> - Processes intermediate frames </dd></dl>
@@ -434,7 +451,10 @@ First frame must have been received and processed</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Silently drops message if buffer allocation fails </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Frame must have framing bits set to MULTIFRAME_ONLY or no framing bits</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Frame must have framing bits set to MULTIFRAME_ONLY or no framing bits </dd>
+<dd>
+Single-frame messages bypass buffer list (no assembly needed)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Most common message type (events, short commands)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__buffer__fifo_8c.html#a3e461994b9ea26603691ef8bddce9686" title="Pushes a new OpenLcb message into the FIFO buffer.">OpenLcbBufferFifo_push</a> - Where complete messages are queued</dd></dl>
 <p>Algorithm:</p><ol type="1">
 <li>Extract source and destination aliases</li>
@@ -494,7 +514,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles legacy SNIP messages without standard framing bits. </p>
-<p>Processes SNIP (Simple Node Information Protocol) messages from early OpenLCB implementations that predated the multi-frame framing bit protocol. Determines frame type by counting NULL bytes in the payload - when 6 NULLs are found, message is complete.</p>
+<p>Processes SNIP (Simple Node Information Protocol) messages from early OpenLCB implementations that predated the multi-frame framing bit protocol. Determines message completion by counting NULL terminators - complete SNIP messages contain exactly 6 NULLs marking the end of 6 null-terminated strings.</p>
 <p>Use cases:</p><ul>
 <li>Supporting legacy SNIP implementations</li>
 <li>Backward compatibility with older nodes</li>
@@ -508,12 +528,15 @@ NOT thread-safe</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only works correctly with SNIP messages </dd>
+<dl class="section warning"><dt>Warning</dt><dd>Only works correctly with SNIP messages (MTI 0x0A08) </dd>
 <dd>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Requires exactly 6 NULL terminators in complete message </dd>
 <dd>
-Do not use for messages with standard framing bits</dd></dl>
+Do not use for messages with standard framing bits </dd>
+<dd>
+Legacy protocol - modern implementations should use framing bits</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>SNIP format: 4 manufacturer strings + 2 user strings</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__rx__message__handler_8c.html#afd9720395ccc0ac4c72018bb248c62b8" title="Handles the first frame of a multi-frame OpenLCB message.">CanRxMessageHandler_first_frame</a> - Modern multi-frame handling </dd>
 <dd>
 <a class="el" href="protocol__snip_8c.html#ad9dd288bc1780719e4078408eef25b03" title="Validates a SNIP reply message structure.">ProtocolSnip_validate_snip_reply</a> - Validates 6 NULL requirement</dd></dl>
@@ -644,7 +667,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles stream protocol CAN frames. </p>
-<p>Placeholder for future stream protocol implementation. Stream protocol allows continuous data transfer between nodes. Currently unimplemented.</p>
+<p>Placeholder for future stream protocol implementation. Stream protocol allows continuous data transfer between nodes for applications like firmware upgrades and sensor data streaming. Currently unimplemented.</p>
 <p>Use cases:</p><ul>
 <li>Firmware upgrade data transfer (future)</li>
 <li>Continuous sensor data streaming (future)</li>
@@ -660,8 +683,12 @@ NOT thread-safe</dd></dl>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Currently unimplemented - function body is empty </dd>
 <dd>
+Do not rely on this function until implemented </dd>
+<dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Reserved for future use</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Reserved for future use </dd>
+<dd>
+Requires full implementation before production use</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group__can__frame__format.html#ga8dc98428ffc735944ad4bea972edda04" title="Frame type: Stream data frame.">CAN_FRAME_TYPE_STREAM</a> - Stream frame identifier</dd></dl>
 <p>Handles stream protocol CAN frames.</p>
 <p>Algorithm:</p><ol type="1">
@@ -706,10 +733,11 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles RID (Reserve ID) CAN control frames. </p>
-<p>Processes RID frames which indicate a node has completed its CID sequence and is claiming its alias. If we already have this alias mapped, sends an RID response to signal potential conflict.</p>
+<p>Processes RID frames which indicate a node has completed its CID sequence and is claiming its alias. If we already have this alias mapped to one of our nodes, sends an RID response to signal potential conflict.</p>
 <p>Use cases:</p><ul>
-<li>Alias conflict detection during login</li>
+<li>Alias conflict detection during other nodes' login</li>
 <li>Monitoring network for duplicate aliases</li>
+<li>Responding to RID claims</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -720,7 +748,10 @@ NOT thread-safe</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Silently drops response if buffer allocation fails </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Part of CAN Frame Transfer Protocol alias allocation sequence</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Part of CAN Frame Transfer Protocol alias allocation sequence </dd>
+<dd>
+RID follows 4 CID frames and 200ms wait</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>RID response indicates alias conflict</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa958ec2e603dabb8eed0c6c0e0bacc94" title="Handles CID (Check ID) CAN control frames.">CanRxMessageHandler_cid_frame</a> - Check ID frame handler </dd>
 <dd>
 <a class="el" href="#ae0edca70265b5777d972dfe607776276" title="Handles AMD (Alias Map Definition) CAN control frames.">CanRxMessageHandler_amd_frame</a> - Alias Map Definition handler</dd></dl>
@@ -765,7 +796,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles AMD (Alias Map Definition) CAN control frames. </p>
-<p>Processes AMD frames which announce alias/NodeID mappings. Checks for duplicate aliases and flags conflicts for main state machine to resolve.</p>
+<p>Processes AMD frames which announce alias/NodeID mappings to the network. Extracts the 48-bit NodeID from payload and checks for duplicate alias conditions by comparing with our registered aliases. Flags conflicts for main state machine to resolve.</p>
 <p>Use cases:</p><ul>
 <li>Learning alias/NodeID mappings from other nodes</li>
 <li>Duplicate alias detection</li>
@@ -773,16 +804,19 @@ NOT thread-safe</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to received AMD CAN frame containing 6-byte NodeID</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to received AMD CAN frame containing 6-byte NodeID in payload</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Sets duplicate flag if alias conflict detected </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>AMD frames contain full 48-bit NodeID in payload </dd>
+<dl class="section attention"><dt>Attention</dt><dd>AMD frames contain full 48-bit NodeID in 6-byte payload </dd>
 <dd>
-Part of CAN Frame Transfer Protocol</dd></dl>
+Part of CAN Frame Transfer Protocol </dd>
+<dd>
+AMD is final step in login sequence</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>AMD announces successful alias allocation</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#af5ab163a26257b020cff610f592a13d4" title="Handles RID (Reserve ID) CAN control frames.">CanRxMessageHandler_rid_frame</a> - Reserve ID handler </dd>
 <dd>
 <a class="el" href="alias__mappings_8c.html#afe1490dc1fc7c2f410abc31cad6f6447" title="Registers a new Alias/NodeID pair.">AliasMappings_register</a> - Where mappings are stored</dd></dl>
@@ -827,7 +861,10 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles AME (Alias Map Enquiry) CAN control frames. </p>
-<p>Processes AME frames which request alias information. Responds with AMD frames for all our registered aliases, or for a specific NodeID if provided.</p>
+<p>Processes AME frames which request alias information from the network. Responds with AMD frames for:</p><ul>
+<li>All our registered aliases (if AME payload empty - global query)</li>
+<li>Specific NodeID mapping (if AME contains 6-byte NodeID - targeted query)</li>
+</ul>
 <p>Use cases:</p><ul>
 <li>Responding to network topology queries</li>
 <li>Gateway alias table synchronization</li>
@@ -835,7 +872,7 @@ NOT thread-safe</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to received AME CAN frame (may contain optional NodeID)</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to received AME CAN frame (may contain optional 6-byte NodeID)</td></tr>
   </table>
   </dd>
 </dl>
@@ -844,9 +881,12 @@ NOT thread-safe</dd></dl>
 Returns early if duplicate alias detected </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Empty payload requests all mappings </dd>
+<dl class="section attention"><dt>Attention</dt><dd>Empty payload (0 bytes) requests all mappings </dd>
 <dd>
-6-byte payload requests specific NodeID mapping</dd></dl>
+6-byte payload requests specific NodeID mapping </dd>
+<dd>
+May generate multiple AMD responses for global query</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Gateways use AME to synchronize alias tables</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#ae0edca70265b5777d972dfe607776276" title="Handles AMD (Alias Map Definition) CAN control frames.">CanRxMessageHandler_amd_frame</a> - Processes our AMD replies</dd></dl>
 <p>Handles AME (Alias Map Enquiry) CAN control frames.</p>
 <p>Algorithm:</p><ol type="1">
@@ -890,7 +930,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles AMR (Alias Map Reset) CAN control frames. </p>
-<p>Processes AMR frames which command a node to release its alias. Checks for duplicate alias condition.</p>
+<p>Processes AMR frames which command a node to release its alias. Extracts NodeID from payload and checks if it matches any of our nodes' IDs. If match found, flags duplicate alias condition for main state machine to handle.</p>
 <p>Use cases:</p><ul>
 <li>Receiving alias conflict resolution commands</li>
 <li>Detecting duplicate aliases</li>
@@ -898,7 +938,7 @@ NOT thread-safe</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to received AMR CAN frame</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to received AMR CAN frame containing 6-byte NodeID</td></tr>
   </table>
   </dd>
 </dl>
@@ -907,7 +947,10 @@ NOT thread-safe</dd></dl>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Node must go to Inhibited state if AMR is for our alias </dd>
 <dd>
-Main state machine handles actual alias release</dd></dl>
+Main state machine handles actual alias release </dd>
+<dd>
+AMR payload contains full 48-bit NodeID</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>AMR typically sent when duplicate detected</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="can__main__statemachine_8c.html#a4c7be0999c73da181407f0ce473b4574" title="Handles all detected duplicate alias conflicts.">CanMainStatemachine_handle_duplicate_aliases</a> - Conflict resolution</dd></dl>
 <p>Handles AMR (Alias Map Reset) CAN control frames.</p>
 <p>Algorithm:</p><ol type="1">
@@ -949,7 +992,7 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles Error Information Report CAN control frames. </p>
-<p>Processes error report frames from other nodes. Checks for duplicate alias condition. Error reports indicate network problems or protocol violations.</p>
+<p>Processes error report frames from other nodes indicating network problems or protocol violations. Extracts NodeID and checks if it matches any of our nodes, flagging duplicate alias if match found.</p>
 <p>Use cases:</p><ul>
 <li>Receiving error notifications from other nodes</li>
 <li>Network diagnostics</li>
@@ -964,7 +1007,10 @@ NOT thread-safe</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Sets duplicate flag if alias conflict detected </dd>
 <dd>
 NOT thread-safe</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>Error reports are informational - no response required</dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Error reports are informational - no response required </dd>
+<dd>
+May indicate serious network problems</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Error codes defined in OpenLCB standards</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group__can__control__frames.html#ga933f60518d36b6dbe91f6b5e05db222e" title="Error Information Report frame type 0.">CAN_CONTROL_FRAME_ERROR_INFO_REPORT_0</a> - Error frame identifier base</dd></dl>
 <p>Handles Error Information Report CAN control frames.</p>
 <p>Algorithm:</p><ol type="1">
@@ -1006,7 +1052,13 @@ NOT thread-safe</dd></dl>
 </div><div class="memdoc">
 
 <p>Handles CID (Check ID) CAN control frames. </p>
-<p>Processes CID frames which check for alias conflicts during login sequence. If we already have this alias mapped, sends an RID response to indicate conflict.</p>
+<p>Processes CID frames which check for alias conflicts during another node's login sequence. If we already have this alias mapped to one of our nodes, sends an RID response to indicate conflict, forcing the other node to generate a new alias.</p>
+<p>The CID sequence consists of 4 frames announcing Node ID fragments:</p><ul>
+<li>CID7: Node ID bits 47-36</li>
+<li>CID6: Node ID bits 35-24</li>
+<li>CID5: Node ID bits 23-12</li>
+<li>CID4: Node ID bits 11-0</li>
+</ul>
 <p>Use cases:</p><ul>
 <li>Alias conflict detection during other nodes' login</li>
 <li>Responding to CID sequences</li>
@@ -1014,7 +1066,7 @@ NOT thread-safe</dd></dl>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">can_msg</td><td>Pointer to received CID CAN frame containing NodeID fragment</td></tr>
+    <tr><td class="paramname">can_msg</td><td>Pointer to received CID CAN frame containing NodeID fragment in header</td></tr>
   </table>
   </dd>
 </dl>
@@ -1023,7 +1075,10 @@ NOT thread-safe</dd></dl>
 NOT thread-safe</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>CID sequence uses frames CID7, CID6, CID5, CID4 with NodeID fragments </dd>
 <dd>
-Part of CAN Frame Transfer Protocol alias allocation</dd></dl>
+Part of CAN Frame Transfer Protocol alias allocation </dd>
+<dd>
+Node ID fragments are in CAN header, not payload</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>RID response indicates alias conflict</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#af5ab163a26257b020cff610f592a13d4" title="Handles RID (Reserve ID) CAN control frames.">CanRxMessageHandler_rid_frame</a> - Reserve ID handler </dd>
 <dd>
 <a class="el" href="can__login__statemachine_8c.html#a19d57826974209f27f8883a2fa443aae" title="Runs the CAN login state machine.">CanLoginStateMachine_run</a> - Our login sequence</dd></dl>

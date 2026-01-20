@@ -108,37 +108,37 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structinterface__openlcb__node__t.html">   55</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="structinterface__openlcb__node__t.html#aea0579c23d8e07b8762d20d1d7e0290d">   72</a></span>    void (*on_100ms_timer_tick)(void);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>} <a class="code hl_struct" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a>;</div>
-</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="structinterface__openlcb__node__t.html#aea0579c23d8e07b8762d20d1d7e0290d">   74</a></span>    void (*on_100ms_timer_tick)(void);</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>{</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__node_8h.html#a7beb45af246c8e2bf112bfca6c11375b">OpenLcbNode_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *interface);</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a>(uint64_t node_id, <span class="keyword">const</span> <a class="code hl_struct" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters);</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first</a>(uint8_t key);</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next</a>(uint8_t key);</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias</a>(uint16_t alias);</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a45f1132ffd48a15bbae0f0be95a7aa71">OpenLcbNode_find_by_node_id</a>(uint64_t node_id);</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__node_8h.html#a68c1a3c6196e96d3f17b68023607d163">OpenLcbNode_reset_state</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__node_8h.html#ad69a221293d91383b8f8214ca9a38b40">OpenLcbNode_100ms_timer_tick</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>}</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span> </div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="preprocessor">#endif </span><span class="comment">/* __OPENLCB_OPENLCB_NODE__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>} <a class="code hl_struct" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a>;</div>
+</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__node_8h.html#a7beb45af246c8e2bf112bfca6c11375b">OpenLcbNode_initialize</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structinterface__openlcb__node__t.html">interface_openlcb_node_t</a> *interface);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a>(uint64_t node_id, <span class="keyword">const</span> <a class="code hl_struct" href="structnode__parameters__t.html">node_parameters_t</a> *node_parameters);</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#aebb273e90eb5491704a9a42c830e5324">OpenLcbNode_get_first</a>(uint8_t key);</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a67d1e4736a41064ac7c649831848b4ca">OpenLcbNode_get_next</a>(uint8_t key);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias</a>(uint16_t alias);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    <span class="keyword">extern</span> <a class="code hl_struct" href="structopenlcb__node__t.html">openlcb_node_t</a> *<a class="code hl_function" href="openlcb__node_8h.html#a45f1132ffd48a15bbae0f0be95a7aa71">OpenLcbNode_find_by_node_id</a>(uint64_t node_id);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__node_8h.html#a68c1a3c6196e96d3f17b68023607d163">OpenLcbNode_reset_state</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span> </div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    <span class="keyword">extern</span> <span class="keywordtype">void</span> <a class="code hl_function" href="openlcb__node_8h.html#ad69a221293d91383b8f8214ca9a38b40">OpenLcbNode_100ms_timer_tick</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>}</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="preprocessor">#endif </span><span class="comment">/* __OPENLCB_OPENLCB_NODE__ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aopenlcb__node_8h_html_a02012a27bb89bffc68816a980279949e"><div class="ttname"><a href="openlcb__node_8h.html#a02012a27bb89bffc68816a980279949e">OpenLcbNode_find_by_alias</a></div><div class="ttdeci">openlcb_node_t * OpenLcbNode_find_by_alias(uint16_t alias)</div><div class="ttdoc">Finds a node by its CAN alias.</div><div class="ttdef"><b>Definition</b> openlcb_node.c:449</div></div>
 <div class="ttc" id="aopenlcb__node_8h_html_a0864e7f15b95e49cd2320217de99d403"><div class="ttname"><a href="openlcb__node_8h.html#a0864e7f15b95e49cd2320217de99d403">OpenLcbNode_allocate</a></div><div class="ttdeci">openlcb_node_t * OpenLcbNode_allocate(uint64_t node_id, const node_parameters_t *node_parameters)</div><div class="ttdoc">Allocates a new OpenLCB node with specified configuration.</div><div class="ttdef"><b>Definition</b> openlcb_node.c:396</div></div>
 <div class="ttc" id="aopenlcb__node_8h_html_a45f1132ffd48a15bbae0f0be95a7aa71"><div class="ttname"><a href="openlcb__node_8h.html#a45f1132ffd48a15bbae0f0be95a7aa71">OpenLcbNode_find_by_node_id</a></div><div class="ttdeci">openlcb_node_t * OpenLcbNode_find_by_node_id(uint64_t node_id)</div><div class="ttdoc">Finds a node by its 64-bit OpenLCB node ID.</div><div class="ttdef"><b>Definition</b> openlcb_node.c:490</div></div>
