@@ -75,7 +75,11 @@
 typedef struct
 {
 
-        /**
+    void (*on_consumed_event_identified)(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_status_enum status, event_payload_t *payload);
+
+    void (*on_consumed_event_pcer)(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_payload_t *payload);
+
+    /**
          * @brief Optional callback for Consumer Range Identified notification
          *
          * @details Invoked when a remote node on the network identifies itself as consuming

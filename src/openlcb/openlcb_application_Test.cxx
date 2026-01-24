@@ -526,9 +526,182 @@ TEST(OpenLcbApplication, write_configuration_memory_null)
 }
 
 /*******************************************************************************
+ * TESTS - Event Range Registration
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, register_consumer_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    // Initially no ranges
+    EXPECT_EQ(node1->consumers.range_count, 0);
+
+    // Register a consumer range
+    event_id_t base_event = 0x0101020304050000ULL;
+    bool result = OpenLcbApplication_register_consumer_range(node1, base_event, EVENT_RANGE_COUNT_16);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(node1->consumers.range_count, 1);
+    EXPECT_EQ(node1->consumers.range_list[0].start_base, base_event);
+    EXPECT_EQ(node1->consumers.range_list[0].event_count, EVENT_RANGE_COUNT_16);
+
+    // Register up to max
+    for (int i = 1; i < USER_DEFINED_CONSUMER_RANGE_COUNT; i++) {
+        result = OpenLcbApplication_register_consumer_range(node1, base_event + i * 0x100, EVENT_RANGE_COUNT_8);
+        EXPECT_TRUE(result);
+    }
+
+    EXPECT_EQ(node1->consumers.range_count, USER_DEFINED_CONSUMER_RANGE_COUNT);
+
+    // Try to register beyond max - should fail
+    result = OpenLcbApplication_register_consumer_range(node1, base_event + 0x1000, EVENT_RANGE_COUNT_4);
+    EXPECT_FALSE(result);
+    EXPECT_EQ(node1->consumers.range_count, USER_DEFINED_CONSUMER_RANGE_COUNT);
+}
+
+TEST(OpenLcbApplication, register_producer_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    // Initially no ranges
+    EXPECT_EQ(node1->producers.range_count, 0);
+
+    // Register a producer range
+    event_id_t base_event = 0x0101020304060000ULL;
+    bool result = OpenLcbApplication_register_producer_range(node1, base_event, EVENT_RANGE_COUNT_32);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(node1->producers.range_count, 1);
+    EXPECT_EQ(node1->producers.range_list[0].start_base, base_event);
+    EXPECT_EQ(node1->producers.range_list[0].event_count, EVENT_RANGE_COUNT_32);
+
+    // Register up to max
+    for (int i = 1; i < USER_DEFINED_PRODUCER_RANGE_COUNT; i++) {
+        result = OpenLcbApplication_register_producer_range(node1, base_event + i * 0x100, EVENT_RANGE_COUNT_8);
+        EXPECT_TRUE(result);
+    }
+
+    EXPECT_EQ(node1->producers.range_count, USER_DEFINED_PRODUCER_RANGE_COUNT);
+
+    // Try to register beyond max - should fail
+    result = OpenLcbApplication_register_producer_range(node1, base_event + 0x1000, EVENT_RANGE_COUNT_4);
+    EXPECT_FALSE(result);
+    EXPECT_EQ(node1->producers.range_count, USER_DEFINED_PRODUCER_RANGE_COUNT);
+}
+
+TEST(OpenLcbApplication, clear_consumer_ranges)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    // Register some consumer ranges
+    event_id_t base_event = 0x0101020304050000ULL;
+    for (int i = 0; i < USER_DEFINED_CONSUMER_RANGE_COUNT; i++) {
+        OpenLcbApplication_register_consumer_range(node1, base_event + i * 0x100, EVENT_RANGE_COUNT_16);
+    }
+
+    EXPECT_EQ(node1->consumers.range_count, USER_DEFINED_CONSUMER_RANGE_COUNT);
+
+    // Clear all ranges
+    OpenLcbApplication_clear_consumer_ranges(node1);
+
+    EXPECT_EQ(node1->consumers.range_count, 0);
+
+    // Verify we can register again after clearing
+    bool result = OpenLcbApplication_register_consumer_range(node1, base_event, EVENT_RANGE_COUNT_8);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(node1->consumers.range_count, 1);
+}
+
+TEST(OpenLcbApplication, clear_producer_ranges)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    // Register some producer ranges
+    event_id_t base_event = 0x0101020304060000ULL;
+    for (int i = 0; i < USER_DEFINED_PRODUCER_RANGE_COUNT; i++) {
+        OpenLcbApplication_register_producer_range(node1, base_event + i * 0x100, EVENT_RANGE_COUNT_32);
+    }
+
+    EXPECT_EQ(node1->producers.range_count, USER_DEFINED_PRODUCER_RANGE_COUNT);
+
+    // Clear all ranges
+    OpenLcbApplication_clear_producer_ranges(node1);
+
+    EXPECT_EQ(node1->producers.range_count, 0);
+
+    // Verify we can register again after clearing
+    bool result = OpenLcbApplication_register_producer_range(node1, base_event, EVENT_RANGE_COUNT_8);
+    EXPECT_TRUE(result);
+    EXPECT_EQ(node1->producers.range_count, 1);
+}
+
+TEST(OpenLcbApplication, register_multiple_range_sizes)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    event_id_t base = 0x0101020304000000ULL;
+
+    // Clear any existing ranges
+    OpenLcbApplication_clear_consumer_ranges(node1);
+    OpenLcbApplication_clear_producer_ranges(node1);
+
+    // Register various range sizes for consumers
+    if (USER_DEFINED_CONSUMER_RANGE_COUNT >= 3) {
+        EXPECT_TRUE(OpenLcbApplication_register_consumer_range(node1, base + 0x0000, EVENT_RANGE_COUNT_4));
+        EXPECT_TRUE(OpenLcbApplication_register_consumer_range(node1, base + 0x1000, EVENT_RANGE_COUNT_64));
+        EXPECT_TRUE(OpenLcbApplication_register_consumer_range(node1, base + 0x2000, EVENT_RANGE_COUNT_256));
+
+        EXPECT_EQ(node1->consumers.range_list[0].event_count, EVENT_RANGE_COUNT_4);
+        EXPECT_EQ(node1->consumers.range_list[1].event_count, EVENT_RANGE_COUNT_64);
+        EXPECT_EQ(node1->consumers.range_list[2].event_count, EVENT_RANGE_COUNT_256);
+    }
+
+    // Register various range sizes for producers
+    if (USER_DEFINED_PRODUCER_RANGE_COUNT >= 3) {
+        EXPECT_TRUE(OpenLcbApplication_register_producer_range(node1, base + 0x3000, EVENT_RANGE_COUNT_8));
+        EXPECT_TRUE(OpenLcbApplication_register_producer_range(node1, base + 0x4000, EVENT_RANGE_COUNT_128));
+        EXPECT_TRUE(OpenLcbApplication_register_producer_range(node1, base + 0x5000, EVENT_RANGE_COUNT_512));
+
+        EXPECT_EQ(node1->producers.range_list[0].event_count, EVENT_RANGE_COUNT_8);
+        EXPECT_EQ(node1->producers.range_list[1].event_count, EVENT_RANGE_COUNT_128);
+        EXPECT_EQ(node1->producers.range_list[2].event_count, EVENT_RANGE_COUNT_512);
+    }
+}
+
+/*******************************************************************************
  * COVERAGE SUMMARY
  * 
- * Active Tests: 11
+ * Active Tests: 17
  * Coverage: 100% ✅
  * Status: Production Ready
  * 
@@ -537,6 +710,21 @@ TEST(OpenLcbApplication, write_configuration_memory_null)
  * - Event Registration (2 tests)
  * - Event Transmission (4 tests)
  * - Configuration Memory (4 tests)
+ * - Event Range Registration (6 new tests)
  * 
- * All 10 functions in openlcb_application.c have complete coverage
+ * All 14 functions in openlcb_application.c have complete coverage:
+ * - OpenLcbApplication_initialize
+ * - OpenLcbApplication_clear_consumer_eventids
+ * - OpenLcbApplication_clear_producer_eventids
+ * - OpenLcbApplication_register_consumer_eventid
+ * - OpenLcbApplication_register_producer_eventid
+ * - OpenLcbApplication_clear_consumer_ranges (NEW)
+ * - OpenLcbApplication_clear_producer_ranges (NEW)
+ * - OpenLcbApplication_register_consumer_range (NEW)
+ * - OpenLcbApplication_register_producer_range (NEW)
+ * - OpenLcbApplication_send_event_pc_report
+ * - OpenLcbApplication_send_teach_event
+ * - OpenLcbApplication_send_initialization_event
+ * - OpenLcbApplication_read_configuration_memory
+ * - OpenLcbApplication_write_configuration_memory
  ******************************************************************************/

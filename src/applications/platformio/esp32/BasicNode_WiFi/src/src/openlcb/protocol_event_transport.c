@@ -41,7 +41,7 @@
 
 // Interface reserved for future callbacks and configuration
 // Currently stores callback pointers for event notifications
-static interface_openlcb_protocol_event_transport_t *_interface;
+static const interface_openlcb_protocol_event_transport_t *_interface;
 
     /**
     * @brief Initializes the Event Transport protocol layer
@@ -67,7 +67,7 @@ static interface_openlcb_protocol_event_transport_t *_interface;
     */
 void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_transport_t *interface_openlcb_protocol_event_transport) {
 
-    _interface = (interface_openlcb_protocol_event_transport_t *) interface_openlcb_protocol_event_transport;
+    _interface = interface_openlcb_protocol_event_transport;
 
 }
 
@@ -100,31 +100,88 @@ void ProtocolEventTransport_initialize(const interface_openlcb_protocol_event_tr
     * @see ProtocolEventTransport_handle_events_identify - Main enumeration handler
     * @see ProtocolEventTransport_extract_producer_event_status_mti - Determines response MTI
     */
-static void _identify_producers(openlcb_statemachine_info_t *statemachine_info) {
+static bool _identify_producers(openlcb_statemachine_info_t *statemachine_info) {
+    
+    if (statemachine_info->openlcb_node->consumers.enumerator.running) {
+        
+        return false;
+        
+    }
 
+     // Kick off enumeration if not already running
     if (!statemachine_info->openlcb_node->producers.enumerator.running) {
 
+        statemachine_info->incoming_msg_info.enumerate = true; // Keep the enumeration going 
         statemachine_info->openlcb_node->producers.enumerator.running = true; // Kick off the enumeration next loop
-        statemachine_info->incoming_msg_info.enumerate = true;
+        statemachine_info->openlcb_node->producers.enumerator.enum_index = 0;
+        statemachine_info->openlcb_node->producers.enumerator.range_enum_index = 0;
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(
+    // First handle ranges
+    if (statemachine_info->openlcb_node->producers.enumerator.range_enum_index < statemachine_info->openlcb_node->producers.range_count) {
+
+        OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index));
+            MTI_PRODUCER_RANGE_IDENTIFIED);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+        event_id_t event_id = OpenLcbUtilities_generate_event_range_id(
+            statemachine_info->openlcb_node->producers.range_list[statemachine_info->openlcb_node->producers.enumerator.range_enum_index].start_base,
+            statemachine_info->openlcb_node->producers.range_list[statemachine_info->openlcb_node->producers.enumerator.range_enum_index].event_count);
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->producers.list[statemachine_info->openlcb_node->producers.enumerator.enum_index].event);
+            event_id);
 
-    statemachine_info->openlcb_node->producers.enumerator.enum_index++;
+        statemachine_info->openlcb_node->producers.enumerator.range_enum_index++;
 
-    statemachine_info->outgoing_msg_info.valid = true;
+        statemachine_info->outgoing_msg_info.enumerate = true;
+        statemachine_info->outgoing_msg_info.valid = true;
 
+        return true;
+    }
+
+    // Next handle individual events
+    
+    if (statemachine_info->openlcb_node->producers.enumerator.enum_index < statemachine_info->openlcb_node->producers.count) {
+        
+        OpenLcbUtilities_load_openlcb_message(
+                                              statemachine_info->outgoing_msg_info.msg_ptr,
+                                              statemachine_info->openlcb_node->alias,
+                                              statemachine_info->openlcb_node->id,
+                                              statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+                                              statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                                              ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->producers.enumerator.enum_index));
+        
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                                                          statemachine_info->outgoing_msg_info.msg_ptr,
+                                                          statemachine_info->openlcb_node->producers.list[statemachine_info->openlcb_node->producers.enumerator.enum_index].event);
+        
+        statemachine_info->openlcb_node->producers.enumerator.enum_index++;
+        
+        statemachine_info->outgoing_msg_info.enumerate = true;
+        statemachine_info->outgoing_msg_info.valid = true;
+        
+        return true;
+        
+    }
+    
+    
+    // Done rest and jump to consumers
+
+    statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0; // Reset for next enumeration
+    statemachine_info->openlcb_node->consumers.enumerator.range_enum_index = 0; // Reset for next enumeration
+    statemachine_info->openlcb_node->consumers.enumerator.running = false;
+    
+    statemachine_info->outgoing_msg_info.enumerate = true;
+    statemachine_info->outgoing_msg_info.valid = false;
+    
+    return false;
+    
 }
 
     // Precondition: enum_index must be < consumers.count (verified by caller)
@@ -156,30 +213,140 @@ static void _identify_producers(openlcb_statemachine_info_t *statemachine_info) 
     * @see ProtocolEventTransport_handle_events_identify - Main enumeration handler
     * @see ProtocolEventTransport_extract_consumer_event_status_mti - Determines response MTI
     */
-static void _identify_consumers(openlcb_statemachine_info_t *statemachine_info) {
+static bool _identify_consumers(openlcb_statemachine_info_t *statemachine_info) {
 
+    // Kick off enumeration if not already running  
     if (!statemachine_info->openlcb_node->consumers.enumerator.running) {
 
+        statemachine_info->incoming_msg_info.enumerate = true; // Keep the enumeration going
         statemachine_info->openlcb_node->consumers.enumerator.running = true; // Kick off the enumeration next loop
-        statemachine_info->incoming_msg_info.enumerate = true;
+        statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0;
+        statemachine_info->openlcb_node->consumers.enumerator.range_enum_index = 0;
 
     }
 
-    OpenLcbUtilities_load_openlcb_message(
+    // First handle ranges
+    if (statemachine_info->openlcb_node->consumers.enumerator.range_enum_index < statemachine_info->openlcb_node->consumers.range_count)
+    {
+
+        OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
             statemachine_info->openlcb_node->alias,
             statemachine_info->openlcb_node->id,
             statemachine_info->incoming_msg_info.msg_ptr->source_alias,
             statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index));
+            MTI_CONSUMER_RANGE_IDENTIFIED);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+        event_id_t event_id = OpenLcbUtilities_generate_event_range_id(
+            statemachine_info->openlcb_node->consumers.range_list[statemachine_info->openlcb_node->consumers.enumerator.range_enum_index].start_base,
+            statemachine_info->openlcb_node->consumers.range_list[statemachine_info->openlcb_node->consumers.enumerator.range_enum_index].event_count);
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
             statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->consumers.list[statemachine_info->openlcb_node->consumers.enumerator.enum_index].event);
+            event_id);
 
-    statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
+        statemachine_info->openlcb_node->consumers.enumerator.range_enum_index++;
 
-    statemachine_info->outgoing_msg_info.valid = true;
+        statemachine_info->outgoing_msg_info.enumerate = true;
+        statemachine_info->outgoing_msg_info.valid = true;
+
+        return true;
+    }
+
+    
+    if (statemachine_info->openlcb_node->consumers.enumerator.enum_index < statemachine_info->openlcb_node->consumers.count) {
+        
+        OpenLcbUtilities_load_openlcb_message(
+                                              statemachine_info->outgoing_msg_info.msg_ptr,
+                                              statemachine_info->openlcb_node->alias,
+                                              statemachine_info->openlcb_node->id,
+                                              statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+                                              statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                                              ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, statemachine_info->openlcb_node->consumers.enumerator.enum_index));
+        
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                                                          statemachine_info->outgoing_msg_info.msg_ptr,
+                                                          statemachine_info->openlcb_node->consumers.list[statemachine_info->openlcb_node->consumers.enumerator.enum_index].event);
+        
+        statemachine_info->openlcb_node->consumers.enumerator.enum_index++;
+        
+        statemachine_info->outgoing_msg_info.enumerate = true;
+        statemachine_info->outgoing_msg_info.valid = true;
+        
+        return true;
+        
+    }
+    
+    // Done rest and jump to consumers
+    
+    statemachine_info->openlcb_node->producers.enumerator.enum_index = 0; // Reset for next enumeration
+    statemachine_info->openlcb_node->producers.enumerator.range_enum_index = 0; // Reset for next enumeration
+    statemachine_info->openlcb_node->producers.enumerator.running = false;
+    
+    statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0; // Reset for next enumeration
+    statemachine_info->openlcb_node->consumers.enumerator.range_enum_index = 0; // Reset for next enumeration
+    statemachine_info->openlcb_node->consumers.enumerator.running = false;
+    
+    statemachine_info->incoming_msg_info.enumerate = false; // Stop the enumeration
+    
+    statemachine_info->outgoing_msg_info.valid = false;
+    
+    return false;
+
+}
+
+static void _test_for_consumed_event(openlcb_statemachine_info_t *statemachine_info, event_status_enum status, event_payload_t *payload)
+{
+
+    if (_interface->on_consumed_event_identified)
+    {
+
+        uint16_t event_index = 0xFFFF;
+        
+        event_id_t target_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+
+        if (OpenLcbUtilities_is_event_id_in_consumer_ranges(statemachine_info->openlcb_node, target_event_id))
+        {
+            _interface->on_consumed_event_identified(statemachine_info->openlcb_node, -1, &target_event_id, status, payload);
+
+            return;
+        }
+
+        if (OpenLcbUtilities_is_consumer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index))
+        {
+
+            _interface->on_consumed_event_identified(statemachine_info->openlcb_node, event_index, &target_event_id, status, payload);
+
+        }
+
+    }
+
+}
+
+static void _test_for_consumed_event_pcer(openlcb_statemachine_info_t *statemachine_info, event_payload_t *payload)
+{
+
+    if (_interface->on_consumed_event_pcer)
+    {
+
+        uint16_t event_index = 0xFFFF;
+        event_id_t target_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+
+        if (OpenLcbUtilities_is_event_id_in_consumer_ranges(statemachine_info->openlcb_node, target_event_id)) {
+
+            _interface->on_consumed_event_pcer(statemachine_info->openlcb_node, -1, &target_event_id, payload);
+
+            return;
+        }
+
+        if (OpenLcbUtilities_is_consumer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index))
+        {
+
+            _interface->on_consumed_event_pcer(statemachine_info->openlcb_node, event_index, &target_event_id, payload);
+
+        }
+
+    }
 
 }
 
@@ -326,7 +493,8 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t
     uint16_t event_index = 0;
     event_id_t target_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
-    if (!OpenLcbUtilities_is_consumer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index)) {
+    if (!OpenLcbUtilities_is_consumer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index) &&
+          !OpenLcbUtilities_is_event_id_in_consumer_ranges(statemachine_info->openlcb_node, target_event_id)) {
 
         statemachine_info->outgoing_msg_info.valid = false;
 
@@ -578,12 +746,13 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t
     uint16_t event_index = 0;
     event_id_t target_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
-    if (!OpenLcbUtilities_is_producer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index)) {
+    if (!OpenLcbUtilities_is_producer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index) &&
+        !OpenLcbUtilities_is_event_id_in_producer_ranges(statemachine_info->openlcb_node, target_event_id))
+    {
 
         statemachine_info->outgoing_msg_info.valid = false;
 
         return;
-
     }
 
     OpenLcbUtilities_load_openlcb_message(
@@ -667,12 +836,14 @@ void ProtocolEventTransport_handle_producer_range_identified(openlcb_statemachin
     */
 void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (_interface->on_producer_identified_unknown) {
+    _test_for_consumed_event(statemachine_info, EVENT_STATUS_UNKNOWN, NULL);
+
+    if (_interface->on_producer_identified_unknown)
+    {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
         _interface->on_producer_identified_unknown(statemachine_info->openlcb_node, &eventid);
-
     }
 
     statemachine_info->outgoing_msg_info.valid = false;
@@ -704,6 +875,8 @@ void ProtocolEventTransport_handle_producer_identified_unknown(openlcb_statemach
     * @see interface_openlcb_protocol_event_transport_t - Callback registration
     */
 void ProtocolEventTransport_handle_producer_identified_set(openlcb_statemachine_info_t *statemachine_info) {
+
+    _test_for_consumed_event(statemachine_info, EVENT_STATUS_SET, NULL);
 
     if (_interface->on_producer_identified_set) {
 
@@ -742,6 +915,8 @@ void ProtocolEventTransport_handle_producer_identified_set(openlcb_statemachine_
     * @see interface_openlcb_protocol_event_transport_t - Callback registration
     */
 void ProtocolEventTransport_handle_producer_identified_clear(openlcb_statemachine_info_t *statemachine_info) {
+
+    _test_for_consumed_event(statemachine_info, EVENT_STATUS_CLEAR, NULL);
 
     if (_interface->on_producer_identified_clear) {
 
@@ -832,33 +1007,14 @@ void ProtocolEventTransport_handle_producer_identified_reserved(openlcb_statemac
     */
 void ProtocolEventTransport_handle_events_identify(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (statemachine_info->openlcb_node->producers.enumerator.enum_index < statemachine_info->openlcb_node->producers.count) {
-
-        _identify_producers(statemachine_info);
+    if (_identify_producers(statemachine_info)) {
 
         return;
 
-    } else {
-
-        statemachine_info->openlcb_node->producers.enumerator.running = false;
-
     }
-
-    if (statemachine_info->openlcb_node->consumers.enumerator.enum_index < statemachine_info->openlcb_node->consumers.count) {
-
-        _identify_consumers(statemachine_info);
-
-        return;
-
-    } else {
-
-        statemachine_info->openlcb_node->consumers.enumerator.enum_index = 0; // Reset for next enumeration
-        statemachine_info->openlcb_node->producers.enumerator.enum_index = 0; // Reset for next enumeration
-        statemachine_info->openlcb_node->consumers.enumerator.running = false;
-        statemachine_info->incoming_msg_info.enumerate = false;
-
-    }
-
+    
+    _identify_consumers(statemachine_info);
+   
 }
 
     /**
@@ -897,7 +1053,6 @@ void ProtocolEventTransport_handle_events_identify_dest(openlcb_statemachine_inf
         return;
 
     }
-
 
     statemachine_info->outgoing_msg_info.valid = false;
 
@@ -972,6 +1127,8 @@ void ProtocolEventTransport_handle_event_learn(openlcb_statemachine_info_t *stat
     */
 void ProtocolEventTransport_handle_pc_event_report(openlcb_statemachine_info_t *statemachine_info) {
 
+    _test_for_consumed_event_pcer(statemachine_info, NULL);
+
     if (_interface->on_pc_event_report) {
 
         event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
@@ -1029,10 +1186,12 @@ void ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemac
 
     }
 
-    if (_interface->on_pc_event_report_with_payload) {
+    event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+    uint16_t payload_count = (statemachine_info->incoming_msg_info.msg_ptr->payload_count - sizeof(event_id_t));
 
-        event_id_t eventid = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
-        uint16_t payload_count = (statemachine_info->incoming_msg_info.msg_ptr->payload_count - sizeof (event_id_t));
+    _test_for_consumed_event_pcer(statemachine_info, (event_payload_t *) statemachine_info->incoming_msg_info.msg_ptr->payload[sizeof (event_id_t)]);
+
+    if (_interface->on_pc_event_report_with_payload) {
 
         _interface->on_pc_event_report_with_payload(statemachine_info->openlcb_node, &eventid, payload_count, (event_payload_t *) statemachine_info->incoming_msg_info.msg_ptr->payload[sizeof (event_id_t)]);
 

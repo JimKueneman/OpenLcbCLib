@@ -256,53 +256,95 @@ uint16_t OpenLcbApplication_register_producer_eventid(openlcb_node_t *openlcb_no
     return 0xFFFF;
 }
 
-    /**
-     * @brief Sends a Producer/Consumer event report message
-     *
-     * @details Algorithm:
-     * Builds a PC Event Report message and queues it for transmission.
-     * -# Declare msg and payload structures on stack
-     * -# Set msg.payload to point to local payload structure
-     * -# Set msg.payload_type = BASIC (no extended payload)
-     * -# Call OpenLcbUtilities_load_openlcb_message() with:
-     *    - Source alias from openlcb_node->alias
-     *    - Source ID from openlcb_node->id
-     *    - Destination alias = 0 (global message)
-     *    - Destination ID = NULL_NODE_ID (global)
-     *    - MTI = MTI_PC_EVENT_REPORT (0x05B4)
-     * -# Call OpenLcbUtilities_copy_event_id_to_openlcb_payload() to add event_id to payload
-     * -# Check if _interface->send_openlcb_msg is non-NULL
-     * -# If NULL: Return false (callback not initialized)
-     * -# If non-NULL: Call _interface->send_openlcb_msg() to queue message
-     * -# Return true if send succeeded, false if buffer full or callback NULL
-     *
-     * @verbatim
-     * @param openlcb_node Pointer to the OpenLCB node sending the report
-     * @param event_id 64-bit Event ID to report (8 bytes MSB first)
-     *
-     * @endverbatim
-     * @return true if message was successfully queued for transmission,
-     *         false if message buffer is full or callback is NULL
-     *
-     * @warning Node pointer must not be NULL. No NULL check performed.
-     *
-     * @warning Returns false if _interface->send_openlcb_msg is NULL.
-     *          Ensure OpenLcbApplication_initialize() was called with valid callbacks.
-     *
-     * @attention Per OpenLCB Event Transport Protocol Section 7, events should be
-     *            advertised via Producer Identified before sending PCER (except
-     *            automatically-routed well-known events).
-     *
-     * @note This sends a global (unaddressed) message with MTI 0x05B4.
-     *       Event payload is 8 bytes (64-bit event ID).
-     *
-     * @note Function is non-blocking. Message is queued, not transmitted immediately.
-     *
-     * @see OpenLcbApplication_register_producer_eventid
-     * @see OpenLcbUtilities_load_openlcb_message
-     * @see OpenLcbUtilities_copy_event_id_to_openlcb_payload
-     * @see protocol_event_transport.c - PCER message handling
-     */
+void OpenLcbApplication_clear_consumer_ranges(openlcb_node_t *openlcb_node) {
+
+    openlcb_node->consumers.range_count = 0;
+
+}
+
+void OpenLcbApplication_clear_producer_ranges(openlcb_node_t *openlcb_node) {
+
+    openlcb_node->producers.range_count = 0;
+
+}
+
+bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size)
+{
+
+    if (openlcb_node->consumers.range_count < USER_DEFINED_CONSUMER_RANGE_COUNT) {
+
+        openlcb_node->consumers.range_list[openlcb_node->consumers.range_count].start_base = event_id_base;
+        openlcb_node->consumers.range_list[openlcb_node->consumers.range_count].event_count = range_size;
+        openlcb_node->consumers.range_count++;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size)
+{
+
+    if (openlcb_node->producers.range_count < USER_DEFINED_PRODUCER_RANGE_COUNT) {
+
+        openlcb_node->producers.range_list[openlcb_node->producers.range_count].start_base = event_id_base;
+        openlcb_node->producers.range_list[openlcb_node->producers.range_count].event_count = range_size;
+        openlcb_node->producers.range_count++;
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief Sends a Producer/Consumer event report message
+ *
+ * @details Algorithm:
+ * Builds a PC Event Report message and queues it for transmission.
+ * -# Declare msg and payload structures on stack
+ * -# Set msg.payload to point to local payload structure
+ * -# Set msg.payload_type = BASIC (no extended payload)
+ * -# Call OpenLcbUtilities_load_openlcb_message() with:
+ *    - Source alias from openlcb_node->alias
+ *    - Source ID from openlcb_node->id
+ *    - Destination alias = 0 (global message)
+ *    - Destination ID = NULL_NODE_ID (global)
+ *    - MTI = MTI_PC_EVENT_REPORT (0x05B4)
+ * -# Call OpenLcbUtilities_copy_event_id_to_openlcb_payload() to add event_id to payload
+ * -# Check if _interface->send_openlcb_msg is non-NULL
+ * -# If NULL: Return false (callback not initialized)
+ * -# If non-NULL: Call _interface->send_openlcb_msg() to queue message
+ * -# Return true if send succeeded, false if buffer full or callback NULL
+ *
+ * @verbatim
+ * @param openlcb_node Pointer to the OpenLCB node sending the report
+ * @param event_id 64-bit Event ID to report (8 bytes MSB first)
+ *
+ * @endverbatim
+ * @return true if message was successfully queued for transmission,
+ *         false if message buffer is full or callback is NULL
+ *
+ * @warning Node pointer must not be NULL. No NULL check performed.
+ *
+ * @warning Returns false if _interface->send_openlcb_msg is NULL.
+ *          Ensure OpenLcbApplication_initialize() was called with valid callbacks.
+ *
+ * @attention Per OpenLCB Event Transport Protocol Section 7, events should be
+ *            advertised via Producer Identified before sending PCER (except
+ *            automatically-routed well-known events).
+ *
+ * @note This sends a global (unaddressed) message with MTI 0x05B4.
+ *       Event payload is 8 bytes (64-bit event ID).
+ *
+ * @note Function is non-blocking. Message is queued, not transmitted immediately.
+ *
+ * @see OpenLcbApplication_register_producer_eventid
+ * @see OpenLcbUtilities_load_openlcb_message
+ * @see OpenLcbUtilities_copy_event_id_to_openlcb_payload
+ * @see protocol_event_transport.c - PCER message handling
+ */
 bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event_id_t event_id) {
 
     openlcb_msg_t msg;

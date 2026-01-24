@@ -17,6 +17,7 @@
 #include "src/openlcb/openlcb_main_statemachine.h"
 #include "src/openlcb/openlcb_login_statemachine.h"
 #include "src/openlcb/openlcb_node.h"
+#include "src/openlcb/openlcb_application.h"
 
 #include "function_injection_defines.h"
 
@@ -43,8 +44,13 @@ int main(int argc, char *argv[])
     sleep(2);
   }
 
-  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+  openlcb_node_t *node = OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
   printf("Node Allocated.....\n");
+    
+    OpenLcbApplication_clear_consumer_ranges(node);
+    OpenLcbApplication_clear_producer_ranges(node);
+    OpenLcbApplication_register_consumer_range(node,  0x0102030405060000, EVENT_RANGE_COUNT_64);
+    OpenLcbApplication_register_producer_range(node,  0x0605040302010000, EVENT_RANGE_COUNT_128);
 
   while (1)
   {

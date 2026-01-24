@@ -172,12 +172,22 @@ extern "C" {
 #define USER_DEFINED_PRODUCER_COUNT 64
 #endif
 
-    /** @brief Maximum number of events a node can consume */
+    /** @brief Maximum number of event ranges a node can produce, must be at least one for a non zero array */
+#ifndef USER_DEFINED_PRODUCER_RANGE_COUNT
+#define USER_DEFINED_PRODUCER_RANGE_COUNT 5
+#endif
+
+        /** @brief Maximum number of events a node can consume */
 #ifndef USER_DEFINED_CONSUMER_COUNT
 #define USER_DEFINED_CONSUMER_COUNT 32
 #endif
 
-    /** @brief Address in Configuration Memory for user-defined node name */
+    /** @brief Maximum number of event ranges a node can consume, must be at least one for a non zero array */
+#ifndef USER_DEFINED_CONSUMER_RANGE_COUNT
+#define USER_DEFINED_CONSUMER_RANGE_COUNT 5
+#endif
+
+        /** @brief Address in Configuration Memory for user-defined node name */
 #ifndef USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS
 #define USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS 0x00000000
 #endif
@@ -347,20 +357,41 @@ extern "C" {
 
     } space_encoding_enum;
 
-        /**
-        * @defgroup payload_buffer_types Message Payload Buffer Type Definitions
-        * @brief Array types for different message payload sizes
-        *
-        * @details These typedefs define fixed-size byte arrays for each message
-        * payload category. The buffer store allocates arrays of these types.
-        *
-        * @{
-        */
+    typedef enum
+    {
+        EVENT_RANGE_COUNT_1 = 0,         /**< 2^0 Single event */
+        EVENT_RANGE_COUNT_2 = 2,         /**< 2^1 Two consecutive events */
+        EVENT_RANGE_COUNT_4 = 4,         /**< 2^2 Four consecutive events */
+        EVENT_RANGE_COUNT_8 = 8,         /**< 2^3 Eight consecutive events */
+        EVENT_RANGE_COUNT_16 = 16,       /**< 2^4 Sixteen consecutive events */
+        EVENT_RANGE_COUNT_32 = 32,       /**< 2^5 Thirty-two    */
+        EVENT_RANGE_COUNT_64 = 64,       /**< 2^6 Sixty-four    */
+        EVENT_RANGE_COUNT_128 = 128,     /**< 2^7 One hundred twenty-eight  */
+        EVENT_RANGE_COUNT_256 = 256,     /**< 2^8 Two hundred fifty-six  */
+        EVENT_RANGE_COUNT_512 = 512,     /**< 2^9 Five hundred twelve  */
+        EVENT_RANGE_COUNT_1024 = 1024,   /**< 2^10 One thousand twenty-four  */
+        EVENT_RANGE_COUNT_2048 = 2048,   /**< 2^11 Two thousand forty-eight  */
+        EVENT_RANGE_COUNT_4096 = 4096,   /**< 2^12 Four thousand ninety-six  */
+        EVENT_RANGE_COUNT_8192 = 8192,   /**< 2^13 Eight thousand one hundred ninety-two  */
+        EVENT_RANGE_COUNT_16384 = 16384, /**< 2^14 Sixteen thousand three hundred eighty-four  */
+        EVENT_RANGE_COUNT_32768 = 32768  /**< 2^15 Thirty-two thousand seven hundred sixty-eight  */
 
-        /** @brief BASIC message payload buffer (16 bytes) */
+    } event_range_count_enum;
+
+    /**
+     * @defgroup payload_buffer_types Message Payload Buffer Type Definitions
+     * @brief Array types for different message payload sizes
+     *
+     * @details These typedefs define fixed-size byte arrays for each message
+     * payload category. The buffer store allocates arrays of these types.
+     *
+     * @{
+     */
+
+    /** @brief BASIC message payload buffer (16 bytes) */
     typedef uint8_t payload_basic_t[LEN_MESSAGE_BYTES_BASIC];
 
-        /** @brief DATAGRAM message payload buffer (72 bytes) */
+    /** @brief DATAGRAM message payload buffer (72 bytes) */
     typedef uint8_t payload_datagram_t[LEN_MESSAGE_BYTES_DATAGRAM];
 
         /** @brief SNIP message payload buffer (256 bytes) */
@@ -432,6 +463,13 @@ extern "C" {
         event_status_enum status;   /**< Current event status */
 
     } event_id_struct_t;
+
+
+    typedef struct {
+        event_id_t start_base;              /**< Starting Event ID of the range (bottom 16 bits must be 00.00) */
+        event_range_count_enum event_count; /**< Number of consecutive Event IDs in the range (max 65536) */
+
+    } event_id_range_t;
 
         /**
         * @brief Node ID type (64-bit unsigned integer)
@@ -733,6 +771,7 @@ extern "C" {
     typedef struct {
         bool running : 1;       /**< Enumeration is in progress */
         uint8_t enum_index;     /**< Current position in event list */
+        uint8_t range_enum_index; /**< Current position in range list */
     } event_id_enum_t;
 
         /**
@@ -752,7 +791,9 @@ extern "C" {
     typedef struct {
         uint16_t count;                                     /**< Number of events in list */
         event_id_struct_t list[USER_DEFINED_CONSUMER_COUNT];/**< Array of consumed Event IDs */
-        event_id_enum_t enumerator;                         /**< Enumeration state */
+        uint16_t range_count;                               /**< Number of ranges in list */
+        event_id_range_t range_list[USER_DEFINED_CONSUMER_RANGE_COUNT]; /**< Array of consumed Event ID ranges */
+        event_id_enum_t enumerator;                                     /**< Enumeration state */
 
     } event_id_consumer_list_t;
 
@@ -771,9 +812,11 @@ extern "C" {
         * @see openlcb_node_t.producers
         */
     typedef struct {
-        uint16_t count;                                     /**< Number of events in list */
-        event_id_struct_t list[USER_DEFINED_PRODUCER_COUNT];/**< Array of produced Event IDs */
-        event_id_enum_t enumerator;                         /**< Enumeration state */
+        uint16_t count;                                      /**< Number of events in list */
+        event_id_struct_t list[USER_DEFINED_PRODUCER_COUNT]; /**< Array of produced Event IDs */
+        uint16_t range_count;                                /**< Number of ranges in list */                                 
+        event_id_range_t range_list[USER_DEFINED_PRODUCER_RANGE_COUNT]; /**< Array of produced Event ID ranges */
+        event_id_enum_t enumerator;                                     /**< Enumeration state */
 
     } event_id_producer_list_t;
 

@@ -62,6 +62,12 @@ extern "C"
 
     extern void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
+    extern void Callbacks_on_consumed_event_identified(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_status_enum status, event_payload_t *payload);
+
+    extern void Callbacks_on_consumed_event_pcer(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_payload_t *payload);
+
+    extern void Callbacks_on_event_learn(openlcb_node_t *openlcb_node, event_id_t *event_id);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

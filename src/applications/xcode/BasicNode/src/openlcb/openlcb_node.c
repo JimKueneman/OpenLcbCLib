@@ -120,6 +120,22 @@ static void _clear_node(openlcb_node_t *openlcb_node)
 
     }
 
+    openlcb_node->consumers.range_count = 0;
+    for (int i = 0; i < USER_DEFINED_CONSUMER_RANGE_COUNT; i++)
+    {
+
+        openlcb_node->consumers.range_list[i].start_base = NULL_EVENT_ID;
+        openlcb_node->consumers.range_list[i].event_count = 0;
+    }
+
+    openlcb_node->producers.range_count = 0;
+    for (int j = 0; j < USER_DEFINED_PRODUCER_RANGE_COUNT; j++)
+    {
+
+        openlcb_node->producers.range_list[j].start_base = NULL_EVENT_ID;
+        openlcb_node->producers.range_list[j].event_count = 0;
+    }
+
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
 

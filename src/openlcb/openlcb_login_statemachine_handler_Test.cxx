@@ -148,25 +148,45 @@ node_parameters_t _node_parameters_main_node = {
 
 /**
  * @brief Mock function to extract producer event state MTI
- * @details Returns MTI_PRODUCER_IDENTIFIED_UNKNOWN for all events
- * @param openlcb_node Pointer to node (unused in mock)
- * @param event_index Index of event (unused in mock)
- * @return Always returns MTI_PRODUCER_IDENTIFIED_UNKNOWN
+ * @details Checks the event status and returns appropriate MTI
+ * @param openlcb_node Pointer to node
+ * @param event_index Index of event
+ * @return MTI based on event status (SET, CLEAR, or UNKNOWN)
  */
 uint16_t _extract_producer_event_state_mti(openlcb_node_t *openlcb_node, uint16_t event_index)
 {
+    if (event_index < openlcb_node->producers.count) {
+        switch (openlcb_node->producers.list[event_index].status) {
+            case EVENT_STATUS_SET:
+                return MTI_PRODUCER_IDENTIFIED_SET;
+            case EVENT_STATUS_CLEAR:
+                return MTI_PRODUCER_IDENTIFIED_CLEAR;
+            default:
+                return MTI_PRODUCER_IDENTIFIED_UNKNOWN;
+        }
+    }
     return MTI_PRODUCER_IDENTIFIED_UNKNOWN;
 }
 
 /**
  * @brief Mock function to extract consumer event state MTI
- * @details Returns MTI_CONSUMER_IDENTIFIED_UNKNOWN for all events
- * @param openlcb_node Pointer to node (unused in mock)
- * @param event_index Index of event (unused in mock)
- * @return Always returns MTI_CONSUMER_IDENTIFIED_UNKNOWN
+ * @details Checks the event status and returns appropriate MTI
+ * @param openlcb_node Pointer to node
+ * @param event_index Index of event
+ * @return MTI based on event status (SET, CLEAR, or UNKNOWN)
  */
 uint16_t _extract_consumer_event_state_mti(openlcb_node_t *openlcb_node, uint16_t event_index)
 {
+    if (event_index < openlcb_node->consumers.count) {
+        switch (openlcb_node->consumers.list[event_index].status) {
+            case EVENT_STATUS_SET:
+                return MTI_CONSUMER_IDENTIFIED_SET;
+            case EVENT_STATUS_CLEAR:
+                return MTI_CONSUMER_IDENTIFIED_CLEAR;
+            default:
+                return MTI_CONSUMER_IDENTIFIED_UNKNOWN;
+        }
+    }
     return MTI_CONSUMER_IDENTIFIED_UNKNOWN;
 }
 
@@ -440,10 +460,28 @@ TEST(OpenLcbLoginMessageHandler, load_producer_event_multiple_events)
     // Verify event ID (second event = (Node ID << 16) + 1)
     EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), (DEST_ID << 16) + 1);
     
-    // Verify transition to consumer enumeration after last producer
+    // Verify still in producer enumeration state (cleanup happens on next call)
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+    
+    // Verify enumerate flag still set (will trigger cleanup call)
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+    
+    // Verify index incremented to 2
+    EXPECT_EQ(statemachine_info.openlcb_node->producers.enumerator.enum_index, 2);
+
+    // ========================================================================
+    // Test Cleanup Call (no more events, triggers transition)
+    // ========================================================================
+    
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+
+    // Verify no message generated (cleanup only)
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
+    // Verify transition to consumer enumeration
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
     
-    // Verify enumerate flag is cleared (done with producers)
+    // Verify enumerate flag cleared (done with producers)
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
     
     // Verify producer enumeration stopped and consumer enumeration started
@@ -556,10 +594,28 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_multiple_events)
     // Verify event ID (second event = (Node ID << 16) + 1)
     EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), (DEST_ID << 16) + 1);
     
+    // Still in consumer state (cleanup happens on next call)
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+    
+    // Verify enumerate flag still set (will trigger cleanup call)
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+    
+    // Verify index incremented to 2
+    EXPECT_EQ(statemachine_info.openlcb_node->consumers.enumerator.enum_index, 2);
+
+    // ========================================================================
+    // Test Cleanup Call (no more events, triggers transition)
+    // ========================================================================
+    
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+
+    // Verify no message generated (cleanup only)
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
     // Verify transition to RUN state (login complete)
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
     
-    // Verify enumerate flag is cleared (done with consumers)
+    // Verify enumerate flag cleared (done with consumers)
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
     
     // Verify consumer enumeration stopped
@@ -609,11 +665,22 @@ TEST(OpenLcbLoginMessageHandler, load_producer_event_single_event)
     EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
     EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), DEST_ID << 16);
     
-    // Should transition to consumer events immediately after single producer
+    // Still in producer state, enumerate flag set (cleanup happens on next call)
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+    EXPECT_EQ(statemachine_info.openlcb_node->producers.enumerator.enum_index, 1);
+
+    // Process cleanup call
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
+    // Should transition to consumer events after cleanup
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
     EXPECT_FALSE(statemachine_info.openlcb_node->producers.enumerator.running);
     EXPECT_TRUE(statemachine_info.openlcb_node->consumers.enumerator.running);
+    EXPECT_EQ(statemachine_info.openlcb_node->producers.enumerator.enum_index, 0);
 
     _node_parameters_main_node.producer_count_autocreate = 0;
 }
@@ -652,10 +719,21 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_single_event)
     EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
     EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), DEST_ID << 16);
     
-    // Should transition to RUN immediately after single consumer
+    // Still in consumer state, enumerate flag set (cleanup happens on next call)
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+    EXPECT_EQ(statemachine_info.openlcb_node->consumers.enumerator.enum_index, 1);
+
+    // Process cleanup call
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
+    // Should transition to RUN after cleanup
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
     EXPECT_FALSE(statemachine_info.openlcb_node->consumers.enumerator.running);
+    EXPECT_EQ(statemachine_info.openlcb_node->consumers.enumerator.enum_index, 0);
 
     _node_parameters_main_node.consumer_count_autocreate = 0;
 }
@@ -698,19 +776,18 @@ TEST(OpenLcbLoginMessageHandler, load_producer_event_many_events)
         EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), 
                   (DEST_ID << 16) + i);
         
-        if (i < 9)
-        {
-            // Still enumerating
-            EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
-            EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
-        }
-        else
-        {
-            // Last event - should transition
-            EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
-            EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
-        }
+        // All events keep enumerate flag set and stay in LOAD_PRODUCER_EVENTS state
+        EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+        EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
     }
+
+    // One more call to trigger cleanup
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
+    EXPECT_EQ(statemachine_info.openlcb_node->producers.enumerator.enum_index, 0);
 
     _node_parameters_main_node.producer_count_autocreate = 0;
 }
@@ -752,19 +829,18 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_many_events)
         EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), 
                   (DEST_ID << 16) + i);
         
-        if (i < 9)
-        {
-            // Still enumerating
-            EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
-            EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
-        }
-        else
-        {
-            // Last event - should transition to RUN
-            EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
-            EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
-        }
+        // All events keep enumerate flag set and stay in LOAD_CONSUMER_EVENTS state
+        EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+        EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
     }
+
+    // One more call to trigger cleanup
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
+    EXPECT_EQ(statemachine_info.openlcb_node->consumers.enumerator.enum_index, 0);
 
     _node_parameters_main_node.consumer_count_autocreate = 0;
 }
@@ -809,16 +885,26 @@ TEST(OpenLcbLoginMessageHandler, full_login_sequence)
     // Step 3: Second Producer Event
     OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
     EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+
+    // Step 4: Producer Cleanup Call
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
 
-    // Step 4: First Consumer Event
+    // Step 5: First Consumer Event
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
 
-    // Step 5: Second Consumer Event
+    // Step 6: Second Consumer Event
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+
+    // Step 7: Consumer Cleanup Call
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
     EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
     
     // Final verification - node is fully initialized and in RUN state
@@ -929,7 +1015,11 @@ TEST(OpenLcbLoginMessageHandler, verify_producer_enumeration_index)
     OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
     EXPECT_EQ(node1->producers.enumerator.enum_index, 2);
 
-    // Third event - index becomes 3, then resets to 0
+    // Third event - index becomes 3
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(node1->producers.enumerator.enum_index, 3);
+
+    // Cleanup call - index resets to 0
     OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
     EXPECT_EQ(node1->producers.enumerator.enum_index, 0);
     EXPECT_FALSE(node1->producers.enumerator.running);
@@ -971,7 +1061,11 @@ TEST(OpenLcbLoginMessageHandler, verify_consumer_enumeration_index)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_EQ(node1->consumers.enumerator.enum_index, 2);
 
-    // Third event - index becomes 3, then resets to 0
+    // Third event - index becomes 3
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(node1->consumers.enumerator.enum_index, 3);
+
+    // Cleanup call - index resets to 0
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_EQ(node1->consumers.enumerator.enum_index, 0);
     EXPECT_FALSE(node1->consumers.enumerator.running);
@@ -1009,11 +1103,19 @@ TEST(OpenLcbLoginMessageHandler, verify_all_state_transitions)
     OpenLcbLoginMessageHandler_load_initialization_complete(&statemachine_info);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
 
-    // Transition 2: LOAD_PRODUCER_EVENTS -> LOAD_CONSUMER_EVENTS
+    // Transition 2: LOAD_PRODUCER_EVENTS (send event, stay in same state)
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+
+    // Transition 3: LOAD_PRODUCER_EVENTS -> LOAD_CONSUMER_EVENTS (cleanup call)
     OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
 
-    // Transition 3: LOAD_CONSUMER_EVENTS -> RUN
+    // Transition 4: LOAD_CONSUMER_EVENTS (send event, stay in same state)
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+
+    // Transition 5: LOAD_CONSUMER_EVENTS -> RUN (cleanup call)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_RUN);
 
@@ -1083,4 +1185,511 @@ TEST(OpenLcbLoginMessageHandler, zero_producers_and_consumers)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_EQ(node1->state.run_state, RUNSTATE_RUN);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+}
+
+// ============================================================================
+// ADDITIONAL COVERAGE TESTS FOR 100% CODE COVERAGE
+// ============================================================================
+
+// ============================================================================
+// TEST: Producer Range Events - Single Range
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_producer_range_event_single)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = (DEST_ID << 16);
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 1);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 0);
+}
+
+// ============================================================================
+// TEST: Producer Range Events - Multiple Ranges
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_producer_range_event_multiple)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Only use 1 range since array size is 1
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = (DEST_ID << 16);
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 1);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+}
+
+// ============================================================================
+// TEST: Producer Mixed Range and Normal Events
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_producer_mixed_range_and_normal)
+{
+    _node_parameters_main_node.producer_count_autocreate = 2;
+    
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Add 1 range (array size is 1)
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = (DEST_ID << 16) + 1000;
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // First call should process range
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+
+    // Next two calls should process normal events
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+    
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+
+    // Cleanup call
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+
+    _node_parameters_main_node.producer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Consumer Range Events - Single Range
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_consumer_range_event_single)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = (DEST_ID << 16);
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+    EXPECT_EQ(node1->consumers.enumerator.range_enum_index, 1);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(node1->consumers.enumerator.range_enum_index, 0);
+}
+
+// ============================================================================
+// TEST: Consumer Range Events - Multiple Ranges
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_consumer_range_event_multiple)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Only use 1 range since array size is 1
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = (DEST_ID << 16);
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+    EXPECT_EQ(node1->consumers.enumerator.range_enum_index, 1);
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.enumerate);
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+}
+
+// ============================================================================
+// TEST: Consumer Mixed Range and Normal Events
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_consumer_mixed_range_and_normal)
+{
+    _node_parameters_main_node.consumer_count_autocreate = 2;
+    
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Add 1 range (array size is 1)
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = (DEST_ID << 16) + 1000;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // First call should process range
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+
+    // Next two calls should process normal events
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+    
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+
+    // Cleanup call
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+
+    _node_parameters_main_node.consumer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Producer Event MTI Variations - Valid
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_producer_event_mti_valid)
+{
+    _node_parameters_main_node.producer_count_autocreate = 1;
+    
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Set the producer event status to SET
+    node1->producers.list[0].status = EVENT_STATUS_SET;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    _node_parameters_main_node.producer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Producer Event MTI Variations - Invalid
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_producer_event_mti_invalid)
+{
+    _node_parameters_main_node.producer_count_autocreate = 1;
+    
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Set the producer event status to CLEAR
+    node1->producers.list[0].status = EVENT_STATUS_CLEAR;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_CLEAR);
+
+    _node_parameters_main_node.producer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Consumer Event MTI Variations - Valid
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_consumer_event_mti_valid)
+{
+    _node_parameters_main_node.consumer_count_autocreate = 1;
+    
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Set the consumer event status to SET
+    node1->consumers.list[0].status = EVENT_STATUS_SET;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_SET);
+
+    _node_parameters_main_node.consumer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Consumer Event MTI Variations - Invalid
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, load_consumer_event_mti_invalid)
+{
+    _node_parameters_main_node.consumer_count_autocreate = 1;
+    
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Set the consumer event status to CLEAR
+    node1->consumers.list[0].status = EVENT_STATUS_CLEAR;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_CLEAR);
+
+    _node_parameters_main_node.consumer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Full Login with Ranges
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, full_login_sequence_with_ranges)
+{
+    _node_parameters_main_node.consumer_count_autocreate = 1;
+    _node_parameters_main_node.producer_count_autocreate = 1;
+
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = (DEST_ID << 16) + 1000;
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+    
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = (DEST_ID << 16) + 2000;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_initialization_complete(&statemachine_info);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_PRODUCER_EVENTS);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+
+    EXPECT_FALSE(node1->producers.enumerator.running);
+    EXPECT_FALSE(node1->consumers.enumerator.running);
+    EXPECT_EQ(node1->producers.enumerator.enum_index, 0);
+    EXPECT_EQ(node1->consumers.enumerator.enum_index, 0);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 0);
+    EXPECT_EQ(node1->consumers.enumerator.range_enum_index, 0);
+
+    _node_parameters_main_node.consumer_count_autocreate = 0;
+    _node_parameters_main_node.producer_count_autocreate = 0;
+}
+
+// ============================================================================
+// TEST: Only Range Events
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, only_range_events_no_normal)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = (DEST_ID << 16);
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+    
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = (DEST_ID << 16) + 1000;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOAD_CONSUMER_EVENTS);
+
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_CONSUMER_EVENTS;
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+
+    OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+}
+
+// ============================================================================
+// TEST: Range Index Management
+// ============================================================================
+
+TEST(OpenLcbLoginMessageHandler, verify_range_index_management)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    
+    // Only 1 range since array size is 1
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = (DEST_ID << 16);
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_4;
+
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_login_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.openlcb_node->state.run_state = RUNSTATE_LOAD_PRODUCER_EVENTS;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 0);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 1);
+
+    OpenLcbLoginMessageHandler_load_producer_event(&statemachine_info);
+    EXPECT_EQ(node1->producers.enumerator.range_enum_index, 0);
+    EXPECT_FALSE(node1->producers.enumerator.running);
 }

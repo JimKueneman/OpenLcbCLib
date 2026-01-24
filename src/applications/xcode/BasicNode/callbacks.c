@@ -92,3 +92,41 @@ void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *sta
 
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
 }
+
+void Callbacks_on_consumed_event_identified(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_status_enum status, event_payload_t *payload) {
+    
+    printf("Received a produced event identified that we are register as a consumer of: EventID = 0x%08llX\n", *event_id);
+    
+    if (index == 0xFFFF) {
+        
+        printf("Within registered Consumer Range\n");
+        
+    } else {
+        
+        printf("at index: %d in Node.Consumers.List[]\n", index);
+        
+    }
+    
+}
+
+void Callbacks_on_consumed_event_pcer(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_payload_t *payload) {
+    
+    printf("Received a PECR event that we are regstered as a consumer of: EventID = 0x%08llX\n", *event_id);
+    
+    if (index == 0xFFFF) {
+        
+        printf("Within registered Consumer Range\n");
+        
+    } else {
+        
+        printf("at index: %d in Node.Consumers.List[]\n", index);
+        
+    }
+    
+}
+
+void Callbacks_on_event_learn(openlcb_node_t *openlcb_node, event_id_t *event_id) {
+    
+    printf("Received Event Learn: EventID = 0x%08llX\n", *event_id);
+    
+}

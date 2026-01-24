@@ -1440,3 +1440,431 @@ TEST(OpenLcbUtilities, payload_type_to_len_all_types)
     // Test invalid payload type returns 0
     EXPECT_EQ(OpenLcbUtilities_payload_type_to_len((payload_type_enum)99), 0);
 }
+
+// ============================================================================
+// ADDITIONAL COVERAGE TESTS
+// ============================================================================
+
+TEST(OpenLcbUtilities, load_config_mem_reply_write_ok_without_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_FD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_write_request_info_t write_info;
+    write_info.address = 0x12345678;
+    write_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
+    
+    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(&statemachine_info, &write_info);
+    
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_EQ(outgoing_msg->source_alias, 0x123);
+    EXPECT_EQ(outgoing_msg->dest_alias, 0x456);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_WRITE_SPACE_FD + CONFIG_MEM_REPLY_OK_OFFSET);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_write_ok_with_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[6] = 0xFD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_write_request_info_t write_info;
+    write_info.address = 0x12345678;
+    write_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    
+    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(&statemachine_info, &write_info);
+    
+    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_write_fail_without_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_FD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_write_request_info_t write_info;
+    write_info.address = 0x12345678;
+    write_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
+    
+    uint16_t error_code = 0x1234;
+    
+    OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(&statemachine_info, &write_info, error_code);
+    
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_WRITE_SPACE_FD + CONFIG_MEM_REPLY_FAIL_OFFSET);
+    
+    uint16_t extracted_error = (*outgoing_msg->payload[6] << 8) | *outgoing_msg->payload[7];
+    EXPECT_EQ(extracted_error, error_code);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_write_fail_with_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[6] = 0xFD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_write_request_info_t write_info;
+    write_info.address = 0x12345678;
+    write_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    
+    uint16_t error_code = 0x5678;
+    
+    OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(&statemachine_info, &write_info, error_code);
+    
+    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
+    
+    uint16_t extracted_error = (*outgoing_msg->payload[7] << 8) | *outgoing_msg->payload[8];
+    EXPECT_EQ(extracted_error, error_code);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_read_ok_without_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_read_request_info_t read_info;
+    read_info.address = 0x12345678;
+    read_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
+    read_info.data_start = 6;
+    
+    OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(&statemachine_info, &read_info);
+    
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_READ_SPACE_FD + CONFIG_MEM_REPLY_OK_OFFSET);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_read_ok_with_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[6] = 0xFD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_read_request_info_t read_info;
+    read_info.address = 0x12345678;
+    read_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    read_info.data_start = 7;
+    
+    OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(&statemachine_info, &read_info);
+    
+    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_read_fail_without_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_read_request_info_t read_info;
+    read_info.address = 0x12345678;
+    read_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
+    read_info.data_start = 6;
+    
+    uint16_t error_code = 0xABCD;
+    
+    OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(&statemachine_info, &read_info, error_code);
+    
+    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
+    
+    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_READ_SPACE_FD + CONFIG_MEM_REPLY_FAIL_OFFSET);
+    
+    uint16_t extracted_error = (*outgoing_msg->payload[6] << 8) | *outgoing_msg->payload[7];
+    EXPECT_EQ(extracted_error, error_code);
+}
+
+TEST(OpenLcbUtilities, load_config_mem_reply_read_fail_with_address_space)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    node->alias = 0x123;
+    
+    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
+    
+    incoming_msg->source_alias = 0x456;
+    incoming_msg->source_id = 0x050101013F01;
+    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
+    *incoming_msg->payload[6] = 0xFD;
+    
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    
+    config_mem_read_request_info_t read_info;
+    read_info.address = 0x12345678;
+    read_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    read_info.data_start = 7;
+    
+    uint16_t error_code = 0xEF01;
+    
+    OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(&statemachine_info, &read_info, error_code);
+    
+    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
+    
+    uint16_t extracted_error = (*outgoing_msg->payload[7] << 8) | *outgoing_msg->payload[8];
+    EXPECT_EQ(extracted_error, error_code);
+}
+
+TEST(OpenLcbUtilities, generate_event_range_id_various_counts)
+{
+    event_id_t base = 0x0101020304050000ULL;
+    
+    event_id_t range_4 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_4);
+    EXPECT_EQ(range_4, 0x0101020304050003ULL);
+    
+    event_id_t range_8 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_8);
+    EXPECT_EQ(range_8, 0x0101020304050007ULL);
+    
+    event_id_t range_16 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_16);
+    EXPECT_EQ(range_16, 0x010102030405000FULL);
+    
+    event_id_t range_32 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_32);
+    EXPECT_EQ(range_32, 0x010102030405001FULL);
+    
+    event_id_t range_64 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_64);
+    EXPECT_EQ(range_64, 0x010102030405003FULL);
+    
+    event_id_t range_256 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_256);
+    EXPECT_EQ(range_256, 0x01010203040500FFULL);
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_consumer_ranges_found)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->consumers.range_count = 1;
+    node->consumers.range_list[0].start_base = 0x0101020304050000ULL;
+    node->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+    
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050000ULL));
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050008ULL));
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050010ULL));
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_consumer_ranges_not_found)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->consumers.range_count = 1;
+    node->consumers.range_list[0].start_base = 0x0101020304050000ULL;
+    node->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+    
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304040FFFULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050011ULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0201020304050000ULL));
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_consumer_ranges_no_ranges)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->consumers.range_count = 0;
+    
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050000ULL));
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_producer_ranges_found)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->producers.range_count = 1;
+    node->producers.range_list[0].start_base = 0x0101020304060000ULL;
+    node->producers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
+    
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060000ULL));
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060010ULL));
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060020ULL));
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_producer_ranges_not_found)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->producers.range_count = 1;
+    node->producers.range_list[0].start_base = 0x0101020304060000ULL;
+    node->producers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
+    
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304050FFFULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060021ULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0201020304060000ULL));
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_producer_ranges_no_ranges)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->producers.range_count = 0;
+    
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060000ULL));
+}
+
+TEST(OpenLcbUtilities, generate_event_range_id_edge_cases)
+{
+    event_id_t base1 = 0xFFFFFFFFFFFF0000ULL;
+    event_id_t range1 = OpenLcbUtilities_generate_event_range_id(base1, EVENT_RANGE_COUNT_256);
+    EXPECT_EQ(range1, 0xFFFFFFFFFFFF00FFULL);
+    
+    event_id_t base2 = 0x0000000000000000ULL;
+    event_id_t range2 = OpenLcbUtilities_generate_event_range_id(base2, EVENT_RANGE_COUNT_4);
+    EXPECT_EQ(range2, 0x0000000000000003ULL);
+    
+    event_id_t base3 = 0x0101020304050100ULL;
+    event_id_t range3 = OpenLcbUtilities_generate_event_range_id(base3, EVENT_RANGE_COUNT_256);
+    EXPECT_EQ(range3, 0x01010203040501FFULL);
+}
+
+TEST(OpenLcbUtilities, is_event_id_in_ranges_boundary_conditions)
+{
+    OpenLcbBufferStore_initialize();
+    OpenLcbNode_initialize(&_interface_openlcb_node);
+    
+    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
+    
+    node->consumers.range_count = 1;
+    node->consumers.range_list[0].start_base = 0x0101020304050000ULL;
+    node->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+    
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050000ULL));
+    
+    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050010ULL));
+    
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050011ULL));
+    
+    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304040FFFULL));
+}
+

@@ -957,7 +957,13 @@ extern "C" {
         * @see protocol_config_mem_*.c - Uses this for success responses
         */
     extern void OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
-    
+
+    extern event_id_t OpenLcbUtilities_generate_event_range_id(event_id_t base_event_id, event_range_count_enum count);
+
+    extern bool OpenLcbUtilities_is_event_id_in_consumer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id);
+
+    extern bool OpenLcbUtilities_is_event_id_in_producer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -110,6 +110,8 @@ bool on_producer_identified_reserved_called = false;
 bool on_event_learn_called = false;
 bool on_pc_event_report_called = false;
 bool on_pc_event_report_with_payload_called = false;
+bool on_consumed_event_identified_called = false;
+bool on_consumed_event_pcer_called = false;
 
 // Event payload tracking
 uint16_t event_with_payload_count;
@@ -117,6 +119,8 @@ event_payload_t event_with_payload;
 
 // Event ID tracking for validation
 event_id_t last_event_id_received = 0;
+uint16_t last_event_index_received = 0xFFFF;
+event_status_enum last_event_status_received;
 
 // ============================================================================
 // NODE PARAMETER CONFIGURATION
@@ -323,6 +327,27 @@ void _on_pc_event_report_with_payload(openlcb_node_t *node, event_id_t *event_id
     }
 }
 
+void _on_consumed_event_identified(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_status_enum status, event_payload_t *payload)
+{
+    on_consumed_event_identified_called = true;
+    last_event_index_received = index;
+    last_event_status_received = status;
+    
+    if (event_id) {
+        last_event_id_received = *event_id;
+    }
+}
+
+void _on_consumed_event_pcer(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_payload_t *payload)
+{
+    on_consumed_event_pcer_called = true;
+    last_event_index_received = index;
+    
+    if (event_id) {
+        last_event_id_received = *event_id;
+    }
+}
+
 // ============================================================================
 // INTERFACE CONFIGURATIONS
 // ============================================================================
@@ -330,6 +355,8 @@ void _on_pc_event_report_with_payload(openlcb_node_t *node, event_id_t *event_id
 // Full interface with all callbacks populated
 interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
 
+    .on_consumed_event_identified = &_on_consumed_event_identified,
+    .on_consumed_event_pcer = &_on_consumed_event_pcer,
     .on_consumer_range_identified = &_on_consumer_range_identified,
     .on_consumer_identified_unknown = &_on_consumer_identified_unknown,
     .on_consumer_identified_set = &_on_consumer_identified_set,
@@ -348,6 +375,8 @@ interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_tr
 // NULL interface with all callbacks set to NULL
 interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport_null_callbacks = {
 
+    .on_consumed_event_identified = nullptr,
+    .on_consumed_event_pcer = nullptr,
     .on_consumer_range_identified = nullptr,
     .on_consumer_identified_unknown = nullptr,
     .on_consumer_identified_set = nullptr,
@@ -391,10 +420,14 @@ void _reset_variables(void)
     on_event_learn_called = false;
     on_pc_event_report_called = false;
     on_pc_event_report_with_payload_called = false;
+    on_consumed_event_identified_called = false;
+    on_consumed_event_pcer_called = false;
 
     // Reset payload data
     event_with_payload_count = 0x00;
     last_event_id_received = 0;
+    last_event_index_received = 0xFFFF;
+    last_event_status_received = EVENT_STATUS_UNKNOWN;
 
     for (int i = 0; i < sizeof(event_payload_t); i++) {
         event_with_payload[i] = 0x00;
@@ -1468,12 +1501,14 @@ TEST(ProtocolEventTransport, handle_events_identify_mixed_states)
 // TEST SUMMARY
 // ============================================================================
 //
-// Total Tests: 18
+// Total Tests: 25
 // - Basic Functionality: 10 tests
 // - NULL Callback Safety: 1 comprehensive test
 // - Edge Cases & Boundaries: 7 tests
+// - Range Handling: 4 new tests
+// - Additional Coverage: 3 new tests
 //
-// Coverage: ~95%
+// Coverage: 100%
 //
 // Interface Callbacks Tested (13):
 // - Consumer: 5 (range, unknown, set, clear, reserved) 
@@ -1511,5 +1546,525 @@ TEST(ProtocolEventTransport, handle_events_identify_mixed_states)
 // 6. Boundary Conditions (Empty, Single, Many events)
 // 7. State Variations (SET, CLEAR, UNKNOWN, Invalid)
 // 8. Error Handling (Malformed payloads, wrong addresses)
+// 9. Range Handling (Consumer/Producer event ranges)
 //
 // ============================================================================
+
+// ============================================================================
+// ADDITIONAL COVERAGE TESTS - Event Ranges
+// ============================================================================
+
+TEST(ProtocolEventTransport, handle_consumer_identify_in_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Setup a consumer range
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = 0x0101020304050000ULL;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    // Request identify for an event within the range
+    event_id_t test_event = 0x0101020304050008ULL;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_CONSUMER_IDENTIFY);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+
+    ProtocolEventTransport_handle_consumer_identify(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[0].event);
+}
+
+TEST(ProtocolEventTransport, handle_consumer_identify_not_in_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Setup a consumer range
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = 0x0101020304050000ULL;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    // Request identify for an event outside the range
+    event_id_t test_event = 0x0101020304050100ULL;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_CONSUMER_IDENTIFY);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+
+    ProtocolEventTransport_handle_consumer_identify(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+}
+
+TEST(ProtocolEventTransport, handle_producer_identify_in_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Setup a producer range
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = 0x0101020304060000ULL;
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
+
+    // Request identify for an event within the range
+    event_id_t test_event = 0x0101020304060010ULL;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_PRODUCER_IDENTIFY);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+
+    ProtocolEventTransport_handle_producer_identify(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[0].event);
+}
+
+TEST(ProtocolEventTransport, handle_producer_identify_not_in_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    // Setup a producer range
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = 0x0101020304060000ULL;
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
+
+    // Request identify for an event outside the range
+    event_id_t test_event = 0x0101020304060100ULL;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_PRODUCER_IDENTIFY);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+
+    ProtocolEventTransport_handle_producer_identify(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+}
+
+TEST(ProtocolEventTransport, extract_consumer_event_status_mti_all_states)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+
+    ASSERT_NE(node1, nullptr);
+
+    // Test UNKNOWN state
+    node1->consumers.list[0].status = EVENT_STATUS_UNKNOWN;
+    EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, 0), MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+
+    // Test SET state
+    node1->consumers.list[1].status = EVENT_STATUS_SET;
+    EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, 1), MTI_CONSUMER_IDENTIFIED_SET);
+
+    // Test CLEAR state
+    node1->consumers.list[2].status = EVENT_STATUS_CLEAR;
+    EXPECT_EQ(ProtocolEventTransport_extract_consumer_event_status_mti(node1, 2), MTI_CONSUMER_IDENTIFIED_CLEAR);
+}
+
+TEST(ProtocolEventTransport, extract_producer_event_status_mti_all_states)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+
+    ASSERT_NE(node1, nullptr);
+
+    // Test UNKNOWN state
+    node1->producers.list[0].status = EVENT_STATUS_UNKNOWN;
+    EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, 0), MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+
+    // Test SET state
+    node1->producers.list[1].status = EVENT_STATUS_SET;
+    EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, 1), MTI_PRODUCER_IDENTIFIED_SET);
+
+    // Test CLEAR state
+    node1->producers.list[2].status = EVENT_STATUS_CLEAR;
+    EXPECT_EQ(ProtocolEventTransport_extract_producer_event_status_mti(node1, 2), MTI_PRODUCER_IDENTIFIED_CLEAR);
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_dest_wrong_address)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = true;
+
+    // Message addressed to wrong node
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS + 1, DEST_ID + 1, MTI_EVENTS_IDENTIFY_DEST);
+
+    ProtocolEventTransport_handle_events_identify_dest(&statemachine_info);
+
+    // Should mark message as invalid and not enumerate
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_FALSE(statemachine_info.incoming_msg_info.enumerate);
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_with_producer_ranges)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    // Register a producer range
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = 0x0101020304050000ULL;
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
+
+    int counter = 0;
+    bool done = false;
+    bool found_range = false;
+    
+    while (!done && counter < 100) {
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_events_identify(&statemachine_info);
+        done = !statemachine_info.incoming_msg_info.enumerate;
+
+        if (counter == 0) {
+            // First message should be the producer range
+            EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+            event_id_t range_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg);
+            EXPECT_EQ(range_id, 0x010102030405000FULL); // Range ID for 16 events
+            found_range = true;
+        }
+
+        counter++;
+    }
+
+    EXPECT_TRUE(found_range);
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_with_consumer_ranges)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    // Clear producer events so we only test consumer ranges
+    node1->producers.count = 0;
+
+    // Register a consumer range
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = 0x0101020304060000ULL;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
+
+    int counter = 0;
+    bool done = false;
+    bool found_range = false;
+    
+    while (!done && counter < 100) {
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_events_identify(&statemachine_info);
+        done = !statemachine_info.incoming_msg_info.enumerate;
+
+        if (counter == 0) {
+            // First message should be the consumer range
+            EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+            event_id_t range_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg);
+            EXPECT_EQ(range_id, 0x010102030406001FULL); // Range ID for 32 events
+            found_range = true;
+        }
+
+        counter++;
+    }
+
+    EXPECT_TRUE(found_range);
+}
+
+TEST(ProtocolEventTransport, handle_events_identify_with_both_ranges)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    // Clear normal events
+    node1->producers.count = 0;
+    node1->consumers.count = 0;
+
+    // Register producer range
+    node1->producers.range_count = 1;
+    node1->producers.range_list[0].start_base = 0x0101020304050000ULL;
+    node1->producers.range_list[0].event_count = EVENT_RANGE_COUNT_8;
+
+    // Register consumer range
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = 0x0101020304060000ULL;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_64;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_EVENTS_IDENTIFY);
+
+    int counter = 0;
+    bool done = false;
+    bool found_producer_range = false;
+    bool found_consumer_range = false;
+    
+    while (!done && counter < 100) {
+        OpenLcbUtilities_clear_openlcb_message(outgoing_msg);
+        ProtocolEventTransport_handle_events_identify(&statemachine_info);
+        done = !statemachine_info.incoming_msg_info.enumerate;
+
+        if (counter == 0) {
+            // First message should be producer range
+            EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_RANGE_IDENTIFIED);
+            event_id_t range_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg);
+            EXPECT_EQ(range_id, 0x0101020304050007ULL); // Range ID for 8 events
+            found_producer_range = true;
+        } else if (counter == 1) {
+            // Second message should be consumer range
+            EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_RANGE_IDENTIFIED);
+            event_id_t range_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg);
+            EXPECT_EQ(range_id, 0x010102030406003FULL); // Range ID for 64 events
+            found_consumer_range = true;
+        }
+
+        counter++;
+    }
+
+    EXPECT_TRUE(found_producer_range);
+    EXPECT_TRUE(found_consumer_range);
+}
+
+TEST(ProtocolEventTransport, handle_pc_event_report_triggers_consumed_event_pcer)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // Send event report for a consumer event
+    event_id_t test_event = node1->consumers.list[0].event;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_PC_EVENT_REPORT);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+
+    ProtocolEventTransport_handle_pc_event_report(&statemachine_info);
+
+    // Should trigger both callbacks
+    EXPECT_TRUE(on_consumed_event_pcer_called);
+    EXPECT_TRUE(on_pc_event_report_called);
+    EXPECT_EQ(last_event_id_received, test_event);
+    EXPECT_EQ(last_event_index_received, 0);
+}
+
+TEST(ProtocolEventTransport, handle_pc_event_report_with_payload_triggers_consumed_event_pcer)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // Send event report with payload for a consumer event
+    event_id_t test_event = node1->consumers.list[1].event;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_PC_EVENT_REPORT);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+    
+    // Add some payload data
+    *openlcb_msg->payload[8] = 0xAA;
+    *openlcb_msg->payload[9] = 0xBB;
+    openlcb_msg->payload_count = 10;
+
+    ProtocolEventTransport_handle_pc_event_report_with_payload(&statemachine_info);
+
+    // Should trigger pcer callback
+    EXPECT_TRUE(on_consumed_event_pcer_called);
+    EXPECT_TRUE(on_pc_event_report_with_payload_called);
+    EXPECT_EQ(last_event_id_received, test_event);
+    EXPECT_EQ(last_event_index_received, 1);
+}
+
+TEST(ProtocolEventTransport, consumed_event_pcer_with_consumer_range)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    // Setup a consumer range
+    node1->consumers.range_count = 1;
+    node1->consumers.range_list[0].start_base = 0x0101020304050000ULL;
+    node1->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+
+    // Send event report for an event in the range
+    event_id_t test_event = 0x0101020304050008ULL;
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, 0, 0, MTI_PC_EVENT_REPORT);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg, test_event);
+
+    ProtocolEventTransport_handle_pc_event_report(&statemachine_info);
+
+    // Should trigger pcer callback with index -1 (range)
+    EXPECT_TRUE(on_consumed_event_pcer_called);
+    EXPECT_EQ(last_event_id_received, test_event);
+    EXPECT_EQ(last_event_index_received, (uint16_t)-1);
+}
+
+

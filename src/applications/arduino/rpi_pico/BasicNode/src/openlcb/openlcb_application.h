@@ -358,6 +358,16 @@ extern "C" {
          * @see OpenLcbApplication_send_teach_event
          * @see protocol_event_transport.c - Event protocol implementation
          */
+
+
+    extern void OpenLcbApplication_clear_consumer_ranges(openlcb_node_t *openlcb_node);
+
+    extern void OpenLcbApplication_clear_producer_ranges(openlcb_node_t *openlcb_node);
+
+    extern bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size);
+
+    extern bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size);
+
     extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event_id_t event_id);
 
         /**

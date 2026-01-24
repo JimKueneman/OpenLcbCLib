@@ -385,6 +385,8 @@ void OpenLcbUtilities_copy_event_id_to_openlcb_payload(openlcb_msg_t* openlcb_ms
 
     }
 
+    openlcb_msg->payload_count = 8;
+
 }
 
     /**
@@ -1930,3 +1932,64 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
             config_mem_read_request_info->data_start);
 
 }
+
+ bool OpenLcbUtilities_is_event_id_in_consumer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id) {
+
+     event_id_range_t *range;
+
+     for (int i = 0; i < openlcb_node->consumers.range_count; i++)
+     {
+
+         range = &openlcb_node->consumers.range_list[i];
+         event_id_t start_event = range->start_base;
+         event_id_t end_event = range->start_base + range->event_count;
+
+         if ((event_id >= start_event) && (event_id <= end_event)) {
+
+             return true;
+
+         }
+     }
+
+     return false;
+ }
+
+ bool OpenLcbUtilities_is_event_id_in_producer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id) {
+
+     event_id_range_t *range;
+
+     for (int i = 0; i < openlcb_node->producers.range_count; i++)
+     {
+
+         range = &openlcb_node->producers.range_list[i];
+         event_id_t start_event = range->start_base;
+         event_id_t end_event = range->start_base + range->event_count;
+
+         if ((event_id >= start_event) && (event_id <= end_event))
+         {
+
+             return true;
+         }
+     }
+
+     return false;
+ }
+
+ event_id_t OpenLcbUtilities_generate_event_range_id(event_id_t base_event_id, event_range_count_enum count)
+ {
+
+     uint32_t bitsNeeded = 0;
+     uint32_t temp = count - 1;
+     while (temp > 0) {
+
+         bitsNeeded++;
+         temp >>= 1;
+
+     }
+
+     event_id_t mask = (1ULL << bitsNeeded) - 1;
+     event_id_t rangeEventID = (base_event_id & ~mask) | mask;
+
+     return rangeEventID;
+
+ }

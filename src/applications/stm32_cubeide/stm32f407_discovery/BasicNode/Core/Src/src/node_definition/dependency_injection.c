@@ -73,19 +73,9 @@ const interface_openlcb_protocol_message_network_t interface_openlcb_protocol_me
 const interface_openlcb_protocol_event_transport_t interface_openlcb_protocol_event_transport = {
 
     // Optional Callback function assignments
-    .on_consumer_range_identified = ON_CONSUMER_RANGE_IDENTIFIED_CALLBACK,
-    .on_consumer_identified_unknown = ON_CONSUMER_IDENTIFIED_UNKNOWN_CALLBACK,
-    .on_consumer_identified_set = ON_CONSUMER_IDENTIFIED_SET_CALLBACK,
-    .on_consumer_identified_clear = ON_CONSUMER_IDENTIFIED_CLEAR_CALLBACK,
-    .on_consumer_identified_reserved = ON_CONSUMER_IDENTIFIED_RESERVED_CALLBACK,
-    .on_producer_range_identified = ON_PRODUCER_RANGE_IDENTIFIED_CALLBACK,
-    .on_producer_identified_unknown = ON_PRODUCER_IDENTIFIED_UNKNOWN_CALLBACK,
-    .on_producer_identified_set = ON_PRODUCER_IDENTIFIED_SET_CALLBACK,
-    .on_producer_identified_clear = ON_PRODUCER_IDENTIFIED_CLEAR_CALLBACK,
-    .on_producer_identified_reserved = ON_PRODUCER_IDENTIFIED_RESERVED_CALLBACK,
+    .on_consumed_event_identified = ON_CONSUMED_EVENT_IDENTIFIED,
+    .on_consumed_event_pcer = ON_CONSUMED_EVENT_PCER,
     .on_event_learn = ON_EVENT_LEARN_CALLBACK,
-    .on_pc_event_report = ON_PC_EVENT_REPORT_CALLBACK,
-    .on_pc_event_report_with_payload = ON_PC_EVENT_REPORT_WITH_PAYLOAD_CALLBACK
 
 };
 
