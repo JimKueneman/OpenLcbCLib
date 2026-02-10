@@ -100,6 +100,34 @@ void OpenLcbApplication_initialize(const interface_openlcb_application_t *interf
 
 }
 
+static bool _send_event_with_mti(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t mti)
+{
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *)&payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+        &msg,
+        openlcb_node->alias,
+        openlcb_node->id,
+        0,
+        NULL_NODE_ID,
+        mti);
+
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(&msg, event_id);
+
+    if (_interface->send_openlcb_msg)
+    {
+
+        return _interface->send_openlcb_msg(&msg);
+    }
+
+    return false;
+}
+
     /**
      * @brief Clears all consumer event IDs registered for the specified node
      *
@@ -651,4 +679,173 @@ uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *openlcb_n
     }
 
     return 0xFFFF;
+}
+
+bool OpenLcbApplication_setup_clock_consumer(openlcb_node_t *openlcb_node, event_id_t clock_id) {
+
+    openlcb_node->is_clock_consumer = 1;
+    openlcb_node->clock_state.clock_id = clock_id;
+
+    if (!OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768))
+        return false;
+
+    if (!OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768))
+        return false;
+
+    return true;
+}
+
+bool OpenLcbApplication_setup_clock_producer(openlcb_node_t *openlcb_node, event_id_t clock_id) {
+
+    openlcb_node->is_clock_producer = 1;
+    openlcb_node->clock_state.clock_id = clock_id;
+
+    if (!OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768))
+        return false;
+
+    if (!OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768))
+        return false;
+
+    return true;
+}
+
+bool OpenLcbApplication_send_clock_report_time(openlcb_node_t *openlcb_node, uint8_t hour, uint8_t minute) {
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(openlcb_node->clock_state.clock_id, hour, minute, false);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_report_date(openlcb_node_t *openlcb_node, uint8_t month, uint8_t day) {
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(openlcb_node->clock_state.clock_id, month, day, false);
+
+    return _send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET);
+}
+
+bool OpenLcbApplication_send_clock_report_year(openlcb_node_t *openlcb_node, uint16_t year) {
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(openlcb_node->clock_state.clock_id, year, false);
+
+    return _send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET);
+}
+
+bool OpenLcbApplication_send_clock_report_rate(openlcb_node_t *openlcb_node, int16_t rate) {
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(openlcb_node->clock_state.clock_id, rate, false);
+
+    return _send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET);
+}
+
+bool OpenLcbApplication_send_clock_start(openlcb_node_t *openlcb_node) {
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(openlcb_node->clock_state.clock_id, BROADCAST_TIME_EVENT_START);
+
+    return _send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET);
+}
+
+bool OpenLcbApplication_send_clock_stop(openlcb_node_t *openlcb_node) {
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(openlcb_node->clock_state.clock_id, BROADCAST_TIME_EVENT_STOP);
+
+    return _send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET);
+}
+
+bool OpenLcbApplication_send_clock_date_rollover(openlcb_node_t *openlcb_node) {
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(openlcb_node->clock_state.clock_id, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+
+    return _send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET);
+}
+
+bool OpenLcbApplication_send_clock_full_sync(openlcb_node_t *openlcb_node, uint8_t next_hour, uint8_t next_minute) {
+
+    event_id_t event_id;
+
+    // 1. Start or Stop
+    if (openlcb_node->clock_state.is_running)
+        event_id = OpenLcbUtilities_create_command_event_id(openlcb_node->clock_state.clock_id, BROADCAST_TIME_EVENT_START);
+    else
+        event_id = OpenLcbUtilities_create_command_event_id(openlcb_node->clock_state.clock_id, BROADCAST_TIME_EVENT_STOP);
+
+    if (!_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET))
+        return false;
+
+    // 2. Rate
+    event_id = OpenLcbUtilities_create_rate_event_id(openlcb_node->clock_state.clock_id, openlcb_node->clock_state.rate.rate, false);
+
+    if (!_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET))
+        return false;
+
+    // 3. Year
+    event_id = OpenLcbUtilities_create_year_event_id(openlcb_node->clock_state.clock_id, openlcb_node->clock_state.year.year, false);
+
+    if (!_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET))
+        return false;
+
+    // 4. Date
+    event_id = OpenLcbUtilities_create_date_event_id(openlcb_node->clock_state.clock_id, openlcb_node->clock_state.date.month, openlcb_node->clock_state.date.day, false);
+
+    if (!_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET))
+        return false;
+
+    // 5. Time (Producer Identified Valid)
+    event_id = OpenLcbUtilities_create_time_event_id(openlcb_node->clock_state.clock_id, openlcb_node->clock_state.time.hour, openlcb_node->clock_state.time.minute, false);
+
+    if (!_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET))
+        return false;
+
+    // 6. Next minute (PC Event Report)
+    event_id = OpenLcbUtilities_create_time_event_id(openlcb_node->clock_state.clock_id, next_hour, next_minute, false);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_query(openlcb_node_t *openlcb_node) {
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(openlcb_node->clock_state.clock_id, BROADCAST_TIME_EVENT_QUERY);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_set_time(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t hour, uint8_t minute) {
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(clock_id, hour, minute, true);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_set_date(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t month, uint8_t day) {
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(clock_id, month, day, true);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_set_year(openlcb_node_t *openlcb_node, event_id_t clock_id, uint16_t year) {
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(clock_id, year, true);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_set_rate(openlcb_node_t *openlcb_node, event_id_t clock_id, int16_t rate){
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(clock_id, rate, true);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_command_start(openlcb_node_t *openlcb_node, event_id_t clock_id) {
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock_id, BROADCAST_TIME_EVENT_START);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+}
+
+bool OpenLcbApplication_send_clock_command_stop(openlcb_node_t *openlcb_node, event_id_t clock_id) {
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock_id, BROADCAST_TIME_EVENT_STOP);
+
+    return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
 }

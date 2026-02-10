@@ -68,6 +68,8 @@
 #define OPERATIONS_REQUEST_FREEZE_FUNC NULL
 // Implement Application defined for UnFreeze (used during boot-loading)
 #define OPERATIONS_REQUEST_UNFREEZE_FUNC NULL
+// Implement Application defined for Firmware Upgrade (used during boot-loading)
+#define FIRMWARE_WRITE_FUNC NULL
 
 // ******************************************************************************
 
@@ -95,6 +97,15 @@
 #define ON_PC_EVENT_REPORT_WITH_PAYLOAD_CALLBACK NULL
 
 // ******************************************************************************
+
+// Broadcast Time Callbacks
+#define ON_BROADCAST_TIME_RECEIVED NULL
+#define ON_BROADCAST_DATE_RECEIVED NULL
+#define ON_BROADCAST_YEAR_RECEIVED NULL
+#define ON_BROADCAST_RATE_RECEIVED NULL
+#define ON_BROADCAST_CLOCK_STARTED NULL
+#define ON_BROADCAST_CLOCK_STOPPED NULL
+#define ON_BROADCAST_DATE_ROLLOVER NULL
 
 // ******************************************************************************
 // Application defined library extended feature functions in dependency_injectors.h

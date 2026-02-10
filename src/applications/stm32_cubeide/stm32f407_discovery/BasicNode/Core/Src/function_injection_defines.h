@@ -85,6 +85,15 @@
 
 // ******************************************************************************
 
+// Broadcast Time Callbacks
+#define ON_BROADCAST_TIME_RECEIVED NULL
+#define ON_BROADCAST_DATE_RECEIVED NULL
+#define ON_BROADCAST_YEAR_RECEIVED NULL
+#define ON_BROADCAST_RATE_RECEIVED NULL
+#define ON_BROADCAST_CLOCK_STARTED NULL
+#define ON_BROADCAST_CLOCK_STOPPED NULL
+#define ON_BROADCAST_DATE_ROLLOVER NULL
+
 // ******************************************************************************
 // Application defined library extended feature functions in dependency_injectors.h
 // ******************************************************************************

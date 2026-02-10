@@ -43,7 +43,8 @@ typedef enum
 {
     SEND_MSG_PC_REPORT,
     SEND_MSG_TEACH,
-    SEND_MSG_INIT
+    SEND_MSG_INIT,
+    SEND_MSG_CLOCK
 } send_msg_enum_t;
 
 node_parameters_t _node_parameters_main_node = {
@@ -122,6 +123,11 @@ openlcb_msg_t *local_sent_msg = nullptr;
 send_msg_enum_t send_msg_enum = SEND_MSG_PC_REPORT;
 configuration_memory_buffer_t write_buffer;
 
+// Clock test tracking
+uint16_t last_sent_mti = 0;
+event_id_t last_sent_event_id = 0;
+int clock_msg_send_count = 0;
+
 /*******************************************************************************
  * Mock Functions
  ******************************************************************************/
@@ -150,6 +156,12 @@ bool _transmit_openlcb_message(openlcb_msg_t *openlcb_msg)
 
     case SEND_MSG_INIT:
         // INITIALIZATION_COMPLETE - no validation needed
+        break;
+
+    case SEND_MSG_CLOCK:
+        last_sent_mti = openlcb_msg->mti;
+        last_sent_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(openlcb_msg);
+        clock_msg_send_count++;
         break;
     }
 
@@ -220,6 +232,9 @@ void _reset_variables(void)
     send_msg_enum = SEND_MSG_PC_REPORT;
     fail_configuration_read = false;
     fail_configuration_write = false;
+    last_sent_mti = 0;
+    last_sent_event_id = 0;
+    clock_msg_send_count = 0;
 
     for (int i = 0; i < sizeof(write_buffer); i++)
     {
@@ -696,6 +711,559 @@ TEST(OpenLcbApplication, register_multiple_range_sizes)
         EXPECT_EQ(node1->producers.range_list[1].event_count, EVENT_RANGE_COUNT_128);
         EXPECT_EQ(node1->producers.range_list[2].event_count, EVENT_RANGE_COUNT_512);
     }
+}
+
+/*******************************************************************************
+ * TESTS - Broadcast Time Setup
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, setup_clock_consumer)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    OpenLcbApplication_clear_consumer_ranges(node1);
+
+    bool result = OpenLcbApplication_setup_clock_consumer(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(node1->is_clock_consumer, 1);
+    EXPECT_EQ(node1->clock_state.clock_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    EXPECT_EQ(node1->consumers.range_count, 2);
+    EXPECT_EQ(node1->consumers.range_list[0].start_base, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000);
+    EXPECT_EQ(node1->consumers.range_list[0].event_count, EVENT_RANGE_COUNT_32768);
+    EXPECT_EQ(node1->consumers.range_list[1].start_base, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8000);
+    EXPECT_EQ(node1->consumers.range_list[1].event_count, EVENT_RANGE_COUNT_32768);
+}
+
+TEST(OpenLcbApplication, setup_clock_producer)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    OpenLcbApplication_clear_producer_ranges(node1);
+
+    bool result = OpenLcbApplication_setup_clock_producer(node1, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(node1->is_clock_producer, 1);
+    EXPECT_EQ(node1->clock_state.clock_id, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
+    EXPECT_EQ(node1->producers.range_count, 2);
+    EXPECT_EQ(node1->producers.range_list[0].start_base, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0x0000);
+    EXPECT_EQ(node1->producers.range_list[0].event_count, EVENT_RANGE_COUNT_32768);
+    EXPECT_EQ(node1->producers.range_list[1].start_base, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0x8000);
+    EXPECT_EQ(node1->producers.range_list[1].event_count, EVENT_RANGE_COUNT_32768);
+}
+
+TEST(OpenLcbApplication, setup_clock_consumer_first_range_fails)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    OpenLcbApplication_clear_consumer_ranges(node1);
+
+    // Fill all consumer range slots
+    for (int i = 0; i < USER_DEFINED_CONSUMER_RANGE_COUNT; i++) {
+        OpenLcbApplication_register_consumer_range(node1, 0x0101020304050000ULL + i * 0x10000, EVENT_RANGE_COUNT_4);
+    }
+
+    EXPECT_EQ(node1->consumers.range_count, USER_DEFINED_CONSUMER_RANGE_COUNT);
+
+    // First register_consumer_range call should fail
+    EXPECT_FALSE(OpenLcbApplication_setup_clock_consumer(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+}
+
+TEST(OpenLcbApplication, setup_clock_consumer_second_range_fails)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    OpenLcbApplication_clear_consumer_ranges(node1);
+
+    // Fill all but one consumer range slot
+    for (int i = 0; i < USER_DEFINED_CONSUMER_RANGE_COUNT - 1; i++) {
+        OpenLcbApplication_register_consumer_range(node1, 0x0101020304050000ULL + i * 0x10000, EVENT_RANGE_COUNT_4);
+    }
+
+    EXPECT_EQ(node1->consumers.range_count, USER_DEFINED_CONSUMER_RANGE_COUNT - 1);
+
+    // First register succeeds, second fails
+    EXPECT_FALSE(OpenLcbApplication_setup_clock_consumer(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+}
+
+TEST(OpenLcbApplication, setup_clock_producer_first_range_fails)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    OpenLcbApplication_clear_producer_ranges(node1);
+
+    // Fill all producer range slots
+    for (int i = 0; i < USER_DEFINED_PRODUCER_RANGE_COUNT; i++) {
+        OpenLcbApplication_register_producer_range(node1, 0x0101020304060000ULL + i * 0x10000, EVENT_RANGE_COUNT_4);
+    }
+
+    EXPECT_EQ(node1->producers.range_count, USER_DEFINED_PRODUCER_RANGE_COUNT);
+
+    // First register_producer_range call should fail
+    EXPECT_FALSE(OpenLcbApplication_setup_clock_producer(node1, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK));
+}
+
+TEST(OpenLcbApplication, setup_clock_producer_second_range_fails)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_NE(node1, nullptr);
+
+    OpenLcbApplication_clear_producer_ranges(node1);
+
+    // Fill all but one producer range slot
+    for (int i = 0; i < USER_DEFINED_PRODUCER_RANGE_COUNT - 1; i++) {
+        OpenLcbApplication_register_producer_range(node1, 0x0101020304060000ULL + i * 0x10000, EVENT_RANGE_COUNT_4);
+    }
+
+    EXPECT_EQ(node1->producers.range_count, USER_DEFINED_PRODUCER_RANGE_COUNT - 1);
+
+    // First register succeeds, second fails
+    EXPECT_FALSE(OpenLcbApplication_setup_clock_producer(node1, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK));
+}
+
+/*******************************************************************************
+ * TESTS - Broadcast Time Producer
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, send_clock_report_time)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_report_time(node1, 14, 30));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_report_date)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_report_date(node1, 6, 15));
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    event_id_t expected = OpenLcbUtilities_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_report_year)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_report_year(node1, 2026));
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    event_id_t expected = OpenLcbUtilities_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_report_rate)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_report_rate(node1, 0x0010));  // 4.0x
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    event_id_t expected = OpenLcbUtilities_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_start)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_start(node1));
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_stop)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_stop(node1));
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_date_rollover)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_date_rollover(node1));
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_full_sync_running)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+    node1->clock_state.is_running = 1;
+    node1->clock_state.rate.rate = 0x0010;
+    node1->clock_state.year.year = 2026;
+    node1->clock_state.date.month = 3;
+    node1->clock_state.date.day = 15;
+    node1->clock_state.time.hour = 8;
+    node1->clock_state.time.minute = 10;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_full_sync(node1, 8, 11));
+
+    // Should have sent 6 messages: start, rate, year, date, time(PID), time(PCER)
+    EXPECT_EQ(clock_msg_send_count, 6);
+
+    // Last message should be the next-minute PCER
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+    event_id_t expected = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 11, false);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_full_sync_stopped)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+    node1->clock_state.is_running = 0;
+    node1->clock_state.rate.rate = 0x0004;
+    node1->clock_state.year.year = 1999;
+    node1->clock_state.date.month = 12;
+    node1->clock_state.date.day = 31;
+    node1->clock_state.time.hour = 23;
+    node1->clock_state.time.minute = 59;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_full_sync(node1, 0, 0));
+    EXPECT_EQ(clock_msg_send_count, 6);
+}
+
+TEST(OpenLcbApplication, send_clock_full_sync_fail)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+    node1->clock_state.is_running = 1;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+    fail_transmit_openlcb_msg = true;
+
+    EXPECT_FALSE(OpenLcbApplication_send_clock_full_sync(node1, 8, 11));
+}
+
+/*******************************************************************************
+ * TESTS - Broadcast Time Consumer
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, send_clock_query)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_query(node1));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+/*******************************************************************************
+ * TESTS - Broadcast Time Controller
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, send_clock_set_time)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_set_time(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, true);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_set_date)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_set_date(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, true);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_set_year)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_set_year(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_set_rate)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_set_rate(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, true);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_command_start)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_command_start(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+TEST(OpenLcbApplication, send_clock_command_stop)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+
+    EXPECT_TRUE(OpenLcbApplication_send_clock_command_stop(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+
+    event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    EXPECT_EQ(last_sent_event_id, expected);
+}
+
+/*******************************************************************************
+ * TESTS - Broadcast Time Null Interface
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, send_clock_report_null_interface)
+{
+    _reset_variables();
+    _global_initialize_nulls();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_time(node1, 14, 30));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_date(node1, 6, 15));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_year(node1, 2026));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_rate(node1, 0x0010));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_start(node1));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_stop(node1));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_date_rollover(node1));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_query(node1));
+}
+
+TEST(OpenLcbApplication, send_clock_controller_null_interface)
+{
+    _reset_variables();
+    _global_initialize_nulls();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_time(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_date(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_year(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_rate(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_command_start(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_command_stop(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+}
+
+/*******************************************************************************
+ * TESTS - Broadcast Time Transmit Failure
+ ******************************************************************************/
+
+TEST(OpenLcbApplication, send_clock_producer_transmit_fail)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+    fail_transmit_openlcb_msg = true;
+
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_time(node1, 14, 30));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_date(node1, 6, 15));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_year(node1, 2026));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_report_rate(node1, 0x0010));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_start(node1));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_stop(node1));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_date_rollover(node1));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_query(node1));
+}
+
+TEST(OpenLcbApplication, send_clock_controller_transmit_fail)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    send_msg_enum = SEND_MSG_CLOCK;
+    fail_transmit_openlcb_msg = true;
+
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_time(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_date(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_year(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_set_rate(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_command_start(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_FALSE(OpenLcbApplication_send_clock_command_stop(node1, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 }
 
 /*******************************************************************************

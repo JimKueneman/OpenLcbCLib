@@ -69,6 +69,8 @@
 #define OPERATIONS_REQUEST_FREEZE_FUNC NULL
 // Implement Application defined for UnFreeze (used during boot-loading)
 #define OPERATIONS_REQUEST_UNFREEZE_FUNC NULL
+// Implement Application defined for Firmware Upgrade (used during boot-loading)
+#define FIRMWARE_WRITE_FUNC NULL
 
 // ******************************************************************************
 
@@ -95,6 +97,15 @@
 #define CONFIG_MEM_READ_DELAYED_REPLY_TIME_FUNC NULL
 #define CONFIG_MEM_WRITE_DELAYED_REPLY_TIME_FUNC NULL
 
+// Broadcast Time Callbacks
+#define ON_BROADCAST_TIME_RECEIVED NULL
+#define ON_BROADCAST_DATE_RECEIVED NULL
+#define ON_BROADCAST_YEAR_RECEIVED NULL
+#define ON_BROADCAST_RATE_RECEIVED NULL
+#define ON_BROADCAST_CLOCK_STARTED NULL
+#define ON_BROADCAST_CLOCK_STOPPED NULL
+#define ON_BROADCAST_DATE_ROLLOVER NULL
+
 // ******************************************************************************
 // Required cross connections between the CANBUS drivers and the OpenLcb drivers
 // ******************************************************************************
@@ -106,7 +117,7 @@
 #define SEND_OPENLCB_MESSAGE_FUNC &CanTxStatemachine_send_openlcb_message
 
 #ifdef __cplusplus
-extern "C"
+    extern "C"
 {
 #endif /* __cplusplus */
 

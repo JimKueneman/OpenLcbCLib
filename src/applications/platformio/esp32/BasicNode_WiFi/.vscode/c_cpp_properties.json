@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/PlatformIO/ESP32/BasicNode_WiFi/include",
-                "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/PlatformIO/ESP32/BasicNode_WiFi/src",
+                "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/platformio/esp32/BasicNode_WiFi/include",
+                "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/platformio/esp32/BasicNode_WiFi/src",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -207,7 +207,6 @@
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/variants/esp32",
-                "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/PlatformIO/ESP32/BasicNode_WiFi/.pio/libdeps/esp32dev/Unity/src",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
                 "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
@@ -245,8 +244,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/PlatformIO/ESP32/BasicNode_WiFi/include",
-                    "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/PlatformIO/ESP32/BasicNode_WiFi/src",
+                    "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/platformio/esp32/BasicNode_WiFi/include",
+                    "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/platformio/esp32/BasicNode_WiFi/src",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -444,7 +443,6 @@
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/variants/esp32",
-                    "/Users/jimkueneman/Documents/OpenLcbCLib/src/applications/PlatformIO/ESP32/BasicNode_WiFi/.pio/libdeps/esp32dev/Unity/src",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
                     "/Users/jimkueneman/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
@@ -481,7 +479,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60118",
+                "PLATFORMIO=60119",
                 "ARDUINO_ESP32_DEV",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",

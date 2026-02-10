@@ -58,6 +58,19 @@
 #include "../openlcb/protocol_config_mem_read_handler.h"
 #include "../openlcb/protocol_config_mem_write_handler.h"
 #include "../openlcb/protocol_config_mem_operations_handler.h"
+#include "../openlcb/protocol_broadcast_time_handler.h"
+
+const interface_openlcb_protocol_broadcast_time_t interface_openlcb_protocol_broadcast_time = {
+
+    .on_time_received = ON_BROADCAST_TIME_RECEIVED,
+    .on_date_received = ON_BROADCAST_DATE_RECEIVED,
+    .on_year_received = ON_BROADCAST_YEAR_RECEIVED,
+    .on_rate_received = ON_BROADCAST_RATE_RECEIVED,
+    .on_clock_started = ON_BROADCAST_CLOCK_STARTED,
+    .on_clock_stopped = ON_BROADCAST_CLOCK_STOPPED,
+    .on_date_rollover = ON_BROADCAST_DATE_ROLLOVER,
+
+};
 
 const interface_openlcb_node_t interface_openlcb_node = {
 
@@ -433,6 +446,7 @@ void DependencyInjection_initialize(void)
     ProtocolConfigMemReadHandler_initialize(&interface_protocol_config_mem_read_handler);
     ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
     ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
+    ProtocolBroadcastTime_initialize(&interface_openlcb_protocol_broadcast_time);
 
     OpenLcbNode_initialize(&interface_openlcb_node);
 
