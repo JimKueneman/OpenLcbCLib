@@ -347,6 +347,15 @@ void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statema
 }
 
 // ============================================================================
+// Mock Protocol Handlers - Broadcast Time
+// ============================================================================
+
+void _ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
+{
+    _update_called_function_ptr((void *)&_ProtocolBroadcastTime_handle_time_event);
+}
+
+// ============================================================================
 // Mock Protocol Handlers - Traction
 // ============================================================================
 
@@ -681,6 +690,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .event_transport_learn = &_ProtocolEventTransport_handle_event_learn,
     .event_transport_pc_report = &_ProtocolEventTransport_handle_pc_event_report,
     .event_transport_pc_report_with_payload = &_ProtocolEventTransport_handle_pc_event_report_with_payload,
+
+    // Optional Protocol Handlers - Broadcast Time
+    .broadcast_time_event_handler = &_ProtocolBroadcastTime_handle_time_event,
 
     // Optional Protocol Handlers - Traction
     .traction_control_command = &_ProtocolTractionControl_command,
@@ -3509,6 +3521,84 @@ TEST(OpenLcbMainStatemachine, null_handler_stream_complete)
     load_interaction_rejected_called = false;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
     
+    EXPECT_FALSE(load_interaction_rejected_called);
+}
+
+// ----------------------------------------------------------------------------
+// Broadcast Time - Routing Tests
+// ----------------------------------------------------------------------------
+
+TEST(OpenLcbMainStatemachine, broadcast_time_event_calls_handler)
+{
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PC_EVENT_REPORT;
+
+    // Load a broadcast time event ID into the payload (default fast clock, 14:30)
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg,
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    called_function_ptr = nullptr;
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Should have called broadcast_time_event_handler, NOT event_transport_pc_report
+    EXPECT_EQ(called_function_ptr, (void *)&_ProtocolBroadcastTime_handle_time_event);
+}
+
+TEST(OpenLcbMainStatemachine, non_broadcast_time_event_falls_through)
+{
+    _global_initialize();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PC_EVENT_REPORT;
+
+    // Load a non-broadcast-time event ID into the payload
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg, 0x0505050505050000ULL);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    called_function_ptr = nullptr;
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // Should have called event_transport_pc_report, NOT broadcast_time_event_handler
+    EXPECT_EQ(called_function_ptr, (void *)&_ProtocolEventTransport_handle_pc_event_report);
+}
+
+TEST(OpenLcbMainStatemachine, broadcast_time_null_handler_falls_through)
+{
+    _global_initialize_null_handlers();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_PC_EVENT_REPORT;
+
+    // Load a broadcast time event ID — but null handlers mean no handler set
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(msg,
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    load_interaction_rejected_called = false;
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    // With null handlers, no rejection should happen (events don't generate rejections)
     EXPECT_FALSE(load_interaction_rejected_called);
 }
 

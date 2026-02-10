@@ -1442,429 +1442,868 @@ TEST(OpenLcbUtilities, payload_type_to_len_all_types)
 }
 
 // ============================================================================
-// ADDITIONAL COVERAGE TESTS
+// Section: Broadcast Time Utility Tests
 // ============================================================================
 
-TEST(OpenLcbUtilities, load_config_mem_reply_write_ok_without_address_space)
+// --- is_broadcast_time_event ---
+
+TEST(OpenLcbUtilities, broadcast_time_is_default_fast_clock)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_FD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_write_request_info_t write_info;
-    write_info.address = 0x12345678;
-    write_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
-    
-    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(&statemachine_info, &write_info);
-    
-    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_EQ(outgoing_msg->source_alias, 0x123);
-    EXPECT_EQ(outgoing_msg->dest_alias, 0x456);
-    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_WRITE_SPACE_FD + CONFIG_MEM_REPLY_OK_OFFSET);
+
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000));
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E));
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xFFFF));
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_write_ok_with_address_space)
+TEST(OpenLcbUtilities, broadcast_time_is_realtime_clock)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
-    *incoming_msg->payload[6] = 0xFD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_write_request_info_t write_info;
-    write_info.address = 0x12345678;
-    write_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    
-    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(&statemachine_info, &write_info);
-    
-    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
+
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0x0000));
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0xABCD));
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_write_fail_without_address_space)
+TEST(OpenLcbUtilities, broadcast_time_is_alternate_clocks)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_FD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_write_request_info_t write_info;
-    write_info.address = 0x12345678;
-    write_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
-    
-    uint16_t error_code = 0x1234;
-    
-    OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(&statemachine_info, &write_info, error_code);
-    
-    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_WRITE_SPACE_FD + CONFIG_MEM_REPLY_FAIL_OFFSET);
-    
-    uint16_t extracted_error = (*outgoing_msg->payload[6] << 8) | *outgoing_msg->payload[7];
-    EXPECT_EQ(extracted_error, error_code);
+
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1 | 0x0000));
+    EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_2 | 0x0000));
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_write_fail_with_address_space)
+TEST(OpenLcbUtilities, broadcast_time_is_not_clock_event)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
-    *incoming_msg->payload[6] = 0xFD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_write_request_info_t write_info;
-    write_info.address = 0x12345678;
-    write_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    
-    uint16_t error_code = 0x5678;
-    
-    OpenLcbUtilities_load_config_mem_reply_write_fail_message_header(&statemachine_info, &write_info, error_code);
-    
-    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
-    
-    uint16_t extracted_error = (*outgoing_msg->payload[7] << 8) | *outgoing_msg->payload[8];
-    EXPECT_EQ(extracted_error, error_code);
+
+    EXPECT_FALSE(OpenLcbUtilities_is_broadcast_time_event(0x0000000000000000ULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_broadcast_time_event(0x0505050505050000ULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_broadcast_time_event(0xFFFFFFFFFFFF0000ULL));
+    EXPECT_FALSE(OpenLcbUtilities_is_broadcast_time_event(0x0102030405060000ULL));
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_read_ok_without_address_space)
+// --- extract_clock_id_from_time_event ---
+
+TEST(OpenLcbUtilities, broadcast_time_extract_clock_id)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_read_request_info_t read_info;
-    read_info.address = 0x12345678;
-    read_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
-    read_info.data_start = 6;
-    
-    OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(&statemachine_info, &read_info);
-    
-    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_READ_SPACE_FD + CONFIG_MEM_REPLY_OK_OFFSET);
+
+    EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x1234),
+              BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK | 0xABCD),
+              BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
+
+    EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1 | 0x0000),
+              BROADCAST_TIME_ID_ALTERNATE_CLOCK_1);
+
+    EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(BROADCAST_TIME_ID_ALTERNATE_CLOCK_2 | 0xFFFF),
+              BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_read_ok_with_address_space)
+// --- get_broadcast_time_event_type ---
+
+TEST(OpenLcbUtilities, broadcast_time_event_type_report_time)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
-    *incoming_msg->payload[6] = 0xFD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_read_request_info_t read_info;
-    read_info.address = 0x12345678;
-    read_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    read_info.data_start = 7;
-    
-    OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(&statemachine_info, &read_info);
-    
-    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
+
+    // 0x0000 = midnight
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000),
+              BROADCAST_TIME_EVENT_REPORT_TIME);
+
+    // 0x173B = 23:59
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B),
+              BROADCAST_TIME_EVENT_REPORT_TIME);
+
+    // 0x17FF = upper boundary
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x17FF),
+              BROADCAST_TIME_EVENT_REPORT_TIME);
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_read_fail_without_address_space)
+TEST(OpenLcbUtilities, broadcast_time_event_type_report_date)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_FD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_read_request_info_t read_info;
-    read_info.address = 0x12345678;
-    read_info.encoding = ADDRESS_SPACE_IN_BYTE_1;
-    read_info.data_start = 6;
-    
-    uint16_t error_code = 0xABCD;
-    
-    OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(&statemachine_info, &read_info, error_code);
-    
-    EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    
-    EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
-    EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_READ_SPACE_FD + CONFIG_MEM_REPLY_FAIL_OFFSET);
-    
-    uint16_t extracted_error = (*outgoing_msg->payload[6] << 8) | *outgoing_msg->payload[7];
-    EXPECT_EQ(extracted_error, error_code);
+
+    // 0x2101 = Jan 1
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101),
+              BROADCAST_TIME_EVENT_REPORT_DATE);
+
+    // 0x2C1F = Dec 31
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F),
+              BROADCAST_TIME_EVENT_REPORT_DATE);
+
 }
 
-TEST(OpenLcbUtilities, load_config_mem_reply_read_fail_with_address_space)
+TEST(OpenLcbUtilities, broadcast_time_event_type_report_year)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    node->alias = 0x123;
-    
-    openlcb_msg_t* incoming_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    openlcb_msg_t* outgoing_msg = OpenLcbBufferStore_allocate_buffer(DATAGRAM);
-    
-    incoming_msg->source_alias = 0x456;
-    incoming_msg->source_id = 0x050101013F01;
-    *incoming_msg->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
-    *incoming_msg->payload[6] = 0xFD;
-    
-    openlcb_statemachine_info_t statemachine_info;
-    statemachine_info.openlcb_node = node;
-    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
-    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
-    
-    config_mem_read_request_info_t read_info;
-    read_info.address = 0x12345678;
-    read_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
-    read_info.data_start = 7;
-    
-    uint16_t error_code = 0xEF01;
-    
-    OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(&statemachine_info, &read_info, error_code);
-    
-    EXPECT_EQ(*outgoing_msg->payload[6], 0xFD);
-    
-    uint16_t extracted_error = (*outgoing_msg->payload[7] << 8) | *outgoing_msg->payload[8];
-    EXPECT_EQ(extracted_error, error_code);
+
+    // 0x3000 = year 0
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000),
+              BROADCAST_TIME_EVENT_REPORT_YEAR);
+
+    // 0x3FFF = year 4095
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF),
+              BROADCAST_TIME_EVENT_REPORT_YEAR);
+
 }
 
-TEST(OpenLcbUtilities, generate_event_range_id_various_counts)
+TEST(OpenLcbUtilities, broadcast_time_event_type_report_rate)
 {
-    event_id_t base = 0x0101020304050000ULL;
-    
-    event_id_t range_4 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_4);
-    EXPECT_EQ(range_4, 0x0101020304050003ULL);
-    
-    event_id_t range_8 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_8);
-    EXPECT_EQ(range_8, 0x0101020304050007ULL);
-    
-    event_id_t range_16 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_16);
-    EXPECT_EQ(range_16, 0x010102030405000FULL);
-    
-    event_id_t range_32 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_32);
-    EXPECT_EQ(range_32, 0x010102030405001FULL);
-    
-    event_id_t range_64 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_64);
-    EXPECT_EQ(range_64, 0x010102030405003FULL);
-    
-    event_id_t range_256 = OpenLcbUtilities_generate_event_range_id(base, EVENT_RANGE_COUNT_256);
-    EXPECT_EQ(range_256, 0x01010203040500FFULL);
+
+    // 0x4000 = rate 0
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000),
+              BROADCAST_TIME_EVENT_REPORT_RATE);
+
+    // 0x4FFF = upper boundary
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFF),
+              BROADCAST_TIME_EVENT_REPORT_RATE);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_consumer_ranges_found)
+TEST(OpenLcbUtilities, broadcast_time_event_type_set_time)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->consumers.range_count = 1;
-    node->consumers.range_list[0].start_base = 0x0101020304050000ULL;
-    node->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
-    
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050000ULL));
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050008ULL));
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050010ULL));
+
+    // 0x8000 = set midnight
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8000),
+              BROADCAST_TIME_EVENT_SET_TIME);
+
+    // 0x97FF = upper boundary
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x97FF),
+              BROADCAST_TIME_EVENT_SET_TIME);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_consumer_ranges_not_found)
+TEST(OpenLcbUtilities, broadcast_time_event_type_set_date)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->consumers.range_count = 1;
-    node->consumers.range_list[0].start_base = 0x0101020304050000ULL;
-    node->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
-    
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304040FFFULL));
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050011ULL));
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0201020304050000ULL));
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA101),
+              BROADCAST_TIME_EVENT_SET_DATE);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xACFF),
+              BROADCAST_TIME_EVENT_SET_DATE);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_consumer_ranges_no_ranges)
+TEST(OpenLcbUtilities, broadcast_time_event_type_set_year)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->consumers.range_count = 0;
-    
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050000ULL));
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB000),
+              BROADCAST_TIME_EVENT_SET_YEAR);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xBFFF),
+              BROADCAST_TIME_EVENT_SET_YEAR);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_producer_ranges_found)
+TEST(OpenLcbUtilities, broadcast_time_event_type_set_rate)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->producers.range_count = 1;
-    node->producers.range_list[0].start_base = 0x0101020304060000ULL;
-    node->producers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
-    
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060000ULL));
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060010ULL));
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060020ULL));
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC000),
+              BROADCAST_TIME_EVENT_SET_RATE);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xCFFF),
+              BROADCAST_TIME_EVENT_SET_RATE);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_producer_ranges_not_found)
+TEST(OpenLcbUtilities, broadcast_time_event_type_commands)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->producers.range_count = 1;
-    node->producers.range_list[0].start_base = 0x0101020304060000ULL;
-    node->producers.range_list[0].event_count = EVENT_RANGE_COUNT_32;
-    
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304050FFFULL));
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060021ULL));
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0201020304060000ULL));
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_QUERY),
+              BROADCAST_TIME_EVENT_QUERY);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_STOP),
+              BROADCAST_TIME_EVENT_STOP);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_START),
+              BROADCAST_TIME_EVENT_START);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_DATE_ROLLOVER),
+              BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_producer_ranges_no_ranges)
+TEST(OpenLcbUtilities, broadcast_time_event_type_unknown)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->producers.range_count = 0;
-    
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_producer_ranges(node, 0x0101020304060000ULL));
+
+    // Value in gap between report rate and set time
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x5000),
+              BROADCAST_TIME_EVENT_UNKNOWN);
+
+    // Value in gap between report and set ranges
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x6000),
+              BROADCAST_TIME_EVENT_UNKNOWN);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x7FFF),
+              BROADCAST_TIME_EVENT_UNKNOWN);
+
 }
 
-TEST(OpenLcbUtilities, generate_event_range_id_edge_cases)
+// --- extract_time_from_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_extract_time_midnight)
 {
-    event_id_t base1 = 0xFFFFFFFFFFFF0000ULL;
-    event_id_t range1 = OpenLcbUtilities_generate_event_range_id(base1, EVENT_RANGE_COUNT_256);
-    EXPECT_EQ(range1, 0xFFFFFFFFFFFF00FFULL);
-    
-    event_id_t base2 = 0x0000000000000000ULL;
-    event_id_t range2 = OpenLcbUtilities_generate_event_range_id(base2, EVENT_RANGE_COUNT_4);
-    EXPECT_EQ(range2, 0x0000000000000003ULL);
-    
-    event_id_t base3 = 0x0101020304050100ULL;
-    event_id_t range3 = OpenLcbUtilities_generate_event_range_id(base3, EVENT_RANGE_COUNT_256);
-    EXPECT_EQ(range3, 0x01010203040501FFULL);
+
+    uint8_t hour, minute;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000, &hour, &minute));
+    EXPECT_EQ(hour, 0);
+    EXPECT_EQ(minute, 0);
+
 }
 
-TEST(OpenLcbUtilities, is_event_id_in_ranges_boundary_conditions)
+TEST(OpenLcbUtilities, broadcast_time_extract_time_23_59)
 {
-    OpenLcbBufferStore_initialize();
-    OpenLcbNode_initialize(&_interface_openlcb_node);
-    
-    openlcb_node_t* node = OpenLcbNode_allocate(0x050101013F00, &node_parameters);
-    
-    node->consumers.range_count = 1;
-    node->consumers.range_list[0].start_base = 0x0101020304050000ULL;
-    node->consumers.range_list[0].event_count = EVENT_RANGE_COUNT_16;
-    
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050000ULL));
-    
-    EXPECT_TRUE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050010ULL));
-    
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304050011ULL));
-    
-    EXPECT_FALSE(OpenLcbUtilities_is_event_id_in_consumer_ranges(node, 0x0101020304040FFFULL));
+
+    uint8_t hour, minute;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B, &hour, &minute));
+    EXPECT_EQ(hour, 23);
+    EXPECT_EQ(minute, 59);
+
 }
 
+TEST(OpenLcbUtilities, broadcast_time_extract_time_from_set)
+{
+
+    uint8_t hour, minute;
+
+    // Set Time for 14:30 = 0x8000 + 0x0E1E = 0x8E1E
+    EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8E1E, &hour, &minute));
+    EXPECT_EQ(hour, 14);
+    EXPECT_EQ(minute, 30);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_time_null_hour)
+{
+
+    uint8_t minute;
+
+    EXPECT_FALSE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000, NULL, &minute));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_time_null_minute)
+{
+
+    uint8_t hour;
+
+    EXPECT_FALSE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000, &hour, NULL));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_time_invalid_hour)
+{
+
+    uint8_t hour, minute;
+
+    // hour=24 is invalid -> 0x1800
+    EXPECT_FALSE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x1800, &hour, &minute));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_time_invalid_minute)
+{
+
+    uint8_t hour, minute;
+
+    // minute=60 is invalid -> 0x003C
+    EXPECT_FALSE(OpenLcbUtilities_extract_time_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x003C, &hour, &minute));
+
+}
+
+// --- extract_date_from_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_jan_1)
+{
+
+    uint8_t month, day;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101, &month, &day));
+    EXPECT_EQ(month, 1);
+    EXPECT_EQ(day, 1);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_dec_31)
+{
+
+    uint8_t month, day;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F, &month, &day));
+    EXPECT_EQ(month, 12);
+    EXPECT_EQ(day, 31);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_from_set)
+{
+
+    uint8_t month, day;
+
+    // Set Date for Jun 15 = 0x8000 + 0x260F = 0xA60F
+    EXPECT_TRUE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA60F, &month, &day));
+    EXPECT_EQ(month, 6);
+    EXPECT_EQ(day, 15);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_null_month)
+{
+
+    uint8_t day;
+
+    EXPECT_FALSE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101, NULL, &day));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_null_day)
+{
+
+    uint8_t month;
+
+    EXPECT_FALSE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101, &month, NULL));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_invalid_month_zero)
+{
+
+    uint8_t month, day;
+
+    // month=0 -> upper byte 0x20, which means month = 0x20 - 0x20 = 0 (invalid)
+    EXPECT_FALSE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2001, &month, &day));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_invalid_month_13)
+{
+
+    uint8_t month, day;
+
+    // month=13 -> upper byte 0x2D
+    EXPECT_FALSE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2D01, &month, &day));
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_date_invalid_day_zero)
+{
+
+    uint8_t month, day;
+
+    // day=0 -> 0x2100
+    EXPECT_FALSE(OpenLcbUtilities_extract_date_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2100, &month, &day));
+
+}
+
+// --- extract_year_from_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_extract_year_zero)
+{
+
+    uint16_t year;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_year_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000, &year));
+    EXPECT_EQ(year, 0);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_year_2026)
+{
+
+    uint16_t year;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_year_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x37EA, &year));
+    EXPECT_EQ(year, 2026);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_year_4095)
+{
+
+    uint16_t year;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_year_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF, &year));
+    EXPECT_EQ(year, 4095);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_year_from_set)
+{
+
+    uint16_t year;
+
+    // Set Year 2026 = 0x8000 + 0x37EA = 0xB7EA
+    EXPECT_TRUE(OpenLcbUtilities_extract_year_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB7EA, &year));
+    EXPECT_EQ(year, 2026);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_year_null)
+{
+
+    EXPECT_FALSE(OpenLcbUtilities_extract_year_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x37EA, NULL));
+
+}
+
+// --- extract_rate_from_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_zero)
+{
+
+    int16_t rate;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000, &rate));
+    EXPECT_EQ(rate, 0);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_positive)
+{
+
+    int16_t rate;
+
+    // Rate 4.00 = 0x0010
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4010, &rate));
+    EXPECT_EQ(rate, 0x0010);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_negative)
+{
+
+    int16_t rate;
+
+    // -1.00 = 12-bit 0xFFC, event = 0x4FFC
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFC, &rate));
+    EXPECT_EQ(rate, (int16_t) 0xFFFC);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_max_positive)
+{
+
+    int16_t rate;
+
+    // Max positive 12-bit = 0x7FF
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x47FF, &rate));
+    EXPECT_EQ(rate, 0x07FF);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_max_negative)
+{
+
+    int16_t rate;
+
+    // Min 12-bit = 0x800 -> sign extended = 0xF800
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4800, &rate));
+    EXPECT_EQ(rate, (int16_t) 0xF800);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_from_set)
+{
+
+    int16_t rate;
+
+    // Set Rate 4.00 = 0xC010
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC010, &rate));
+    EXPECT_EQ(rate, 0x0010);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_extract_rate_null)
+{
+
+    EXPECT_FALSE(OpenLcbUtilities_extract_rate_from_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4004, NULL));
+
+}
+
+// --- create_time_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_create_time_report)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0E1E);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_time_set)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, true);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x8E1E);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_time_midnight)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 0, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_time_23_59)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 23, 59, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x173B);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_time_different_clock)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_ALTERNATE_CLOCK_2, 12, 0, false);
+
+    EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(event_id),
+              BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
+
+    uint8_t hour, minute;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(event_id, &hour, &minute));
+    EXPECT_EQ(hour, 12);
+    EXPECT_EQ(minute, 0);
+
+}
+
+// --- create_date_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_create_date_report)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x260F);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_date_set)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, true);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xA60F);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_date_jan_1)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 1, 1, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2101);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_date_dec_31)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 12, 31, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x2C1F);
+
+}
+
+// --- create_year_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_create_year_report)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x37EA);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_year_set)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xB7EA);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_year_zero)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3000);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_year_4095)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 4095, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x3FFF);
+
+}
+
+// --- create_rate_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_create_rate_report_positive)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4010);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_rate_set_positive)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, true);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0xC010);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_rate_negative)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, (int16_t) 0xFFFC, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4FFC);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_rate_zero)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, false);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x4000);
+
+}
+
+// --- create_command_event_id ---
+
+TEST(OpenLcbUtilities, broadcast_time_create_command_query)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_QUERY);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_command_stop)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_STOP);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_command_start)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_START);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_command_date_rollover)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | BROADCAST_TIME_DATE_ROLLOVER);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_create_command_invalid_defaults_zero)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_REPORT_TIME);
+
+    EXPECT_EQ(event_id, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x0000);
+
+}
+
+// --- Round-trip tests ---
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_time)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 23, 59, false);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_TIME);
+
+    uint8_t hour, minute;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(event_id, &hour, &minute));
+    EXPECT_EQ(hour, 23);
+    EXPECT_EQ(minute, 59);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_date)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK, 12, 25, false);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_DATE);
+
+    uint8_t month, day;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_date_from_event_id(event_id, &month, &day));
+    EXPECT_EQ(month, 12);
+    EXPECT_EQ(day, 25);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_year)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_ALTERNATE_CLOCK_1, 1955, false);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_YEAR);
+
+    uint16_t year;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_year_from_event_id(event_id, &year));
+    EXPECT_EQ(year, 1955);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_rate_positive)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0028, false);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_RATE);
+
+    int16_t rate;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(event_id, &rate));
+    EXPECT_EQ(rate, 0x0028);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_rate_negative)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, (int16_t) 0xFFF0, false);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_RATE);
+
+    int16_t rate;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_rate_from_event_id(event_id, &rate));
+    EXPECT_EQ(rate, (int16_t) 0xFFF0);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_set_time)
+{
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_ALTERNATE_CLOCK_2, 8, 15, true);
+
+    EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_SET_TIME);
+    EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(event_id), BROADCAST_TIME_ID_ALTERNATE_CLOCK_2);
+
+    uint8_t hour, minute;
+
+    EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(event_id, &hour, &minute));
+    EXPECT_EQ(hour, 8);
+    EXPECT_EQ(minute, 15);
+
+}
+
+TEST(OpenLcbUtilities, broadcast_time_roundtrip_all_clocks)
+{
+
+    uint64_t clocks[] = {
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK,
+        BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK,
+        BROADCAST_TIME_ID_ALTERNATE_CLOCK_1,
+        BROADCAST_TIME_ID_ALTERNATE_CLOCK_2
+    };
+
+    for (int i = 0; i < 4; i++) {
+
+        event_id_t event_id = OpenLcbUtilities_create_time_event_id(clocks[i], 12, 0, false);
+
+        EXPECT_TRUE(OpenLcbUtilities_is_broadcast_time_event(event_id));
+        EXPECT_EQ(OpenLcbUtilities_extract_clock_id_from_time_event(event_id), clocks[i]);
+        EXPECT_EQ(OpenLcbUtilities_get_broadcast_time_event_type(event_id), BROADCAST_TIME_EVENT_REPORT_TIME);
+
+        uint8_t hour, minute;
+
+        EXPECT_TRUE(OpenLcbUtilities_extract_time_from_event_id(event_id, &hour, &minute));
+        EXPECT_EQ(hour, 12);
+        EXPECT_EQ(minute, 0);
+
+    }
+
+}

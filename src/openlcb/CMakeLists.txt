@@ -18,6 +18,7 @@ set(SOURCES
     protocol_config_mem_read_handler.c
     protocol_config_mem_write_handler.c
     protocol_config_mem_operations_handler.c
+    protocol_broadcast_time.c
 
 )
 
@@ -42,6 +43,7 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/protocol_config_mem_read_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_config_mem_write_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_config_mem_operations_handler_Test.cxx
+    ${ROOT_DIR}/src/openlcb/protocol_broadcast_time_Test.cxx
 
 
     PARENT_SCOPE

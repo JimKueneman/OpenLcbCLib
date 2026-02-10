@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>Test</name>
+            <creation-uuid>4253a297-058f-4466-88e7-09124c14ec08</creation-uuid>
+            <make-project-type>0</make-project-type>
+        </data>
+    </configuration>
+</project>

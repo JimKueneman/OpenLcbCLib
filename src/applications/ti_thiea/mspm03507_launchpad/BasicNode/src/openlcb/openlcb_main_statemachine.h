@@ -1270,6 +1270,52 @@ typedef struct {
 
     /*@}*/
 
+    /*@{*/
+    /** @name Optional Broadcast Time Protocol Handler
+     * Fast clock synchronization - set to NULL if not implemented
+     */
+
+    /** 
+     * @brief Handles broadcast time events for clock synchronization
+     *
+     * @details Processes PC Event Report messages containing broadcast time Event IDs.
+     * This function is called by the Event Transport handler when it detects a
+     * broadcast time Event ID format.
+     *
+     * Broadcast time events encode clock data directly in the Event ID:
+     * - Time (hour/minute)
+     * - Date (month/day)
+     * - Year
+     * - Clock rate (for fast/slow time simulation)
+     * - Clock control commands (start/stop/query)
+     *
+     * Standard response: None (informational - consumer updates clock state)
+     *
+     * Event ID structure:
+     * - Bits 63-16: Clock ID (which clock this event belongs to)
+     * - Bits 15-0: Encoded time/date/year/rate/command
+     *
+     * Use cases:
+     * - Fast clock synchronization for model railroad operations
+     * - Multiple independent clocks on one network
+     * - Clock displays and time-triggered automation
+     *
+     * @warning Optional - set to NULL if broadcast time not implemented
+     * @warning Only processed if node->is_clock_consumer == 1
+     *
+     * @note Default implementation: ProtocolBroadcastTime_handle_time_event()
+     * @note Called from Event Transport handler, not main dispatcher
+     * @note Updates node->clock_state with decoded time data
+     *
+     * @see ProtocolBroadcastTime_handle_time_event - Default implementation
+     * @see ProtocolBroadcastTime_initialize - Register application callbacks
+     * @see event_transport_pc_report - Event Transport handler that calls this
+     */
+    void (*broadcast_time_event_handler)(openlcb_statemachine_info_t *statemachine_info, 
+                                         event_id_t event_id);
+
+    /*@}*/
+
 } interface_openlcb_main_statemachine_t;
 
 #ifdef __cplusplus

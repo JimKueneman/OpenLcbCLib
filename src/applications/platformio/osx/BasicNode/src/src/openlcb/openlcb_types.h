@@ -194,7 +194,7 @@ extern "C" {
 
     /** @brief Address in Configuration Memory for user description */
 #ifndef USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS
-#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS LEN_SNIP_USER_NAME_BUFFER
+#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS (LEN_SNIP_USER_NAME_BUFFER - 1)
 #endif
 
         /** @} */ // end of user_config_constants
@@ -379,6 +379,34 @@ extern "C" {
     } event_range_count_enum;
 
     /**
+     * @enum broadcast_time_event_type_enum
+     * @brief Broadcast Time Protocol event type enumeration
+     *
+     * @details Identifies the type of broadcast time event encoded in an Event ID.
+     * Used to determine which data (time/date/year/rate/command) is present.
+     *
+     * @see OpenLcbUtilities_get_broadcast_time_event_type
+     * @see ProtocolBroadcastTime_handle_time_event
+     */
+    typedef enum {
+        
+        BROADCAST_TIME_EVENT_REPORT_TIME = 0,    /**< Report Time event (hour/minute) */
+        BROADCAST_TIME_EVENT_REPORT_DATE = 1,    /**< Report Date event (month/day) */
+        BROADCAST_TIME_EVENT_REPORT_YEAR = 2,    /**< Report Year event (year) */
+        BROADCAST_TIME_EVENT_REPORT_RATE = 3,    /**< Report Rate event (clock rate) */
+        BROADCAST_TIME_EVENT_SET_TIME = 4,       /**< Set Time event (hour/minute) */
+        BROADCAST_TIME_EVENT_SET_DATE = 5,       /**< Set Date event (month/day) */
+        BROADCAST_TIME_EVENT_SET_YEAR = 6,       /**< Set Year event (year) */
+        BROADCAST_TIME_EVENT_SET_RATE = 7,       /**< Set Rate event (clock rate) */
+        BROADCAST_TIME_EVENT_QUERY = 8,          /**< Query event (request sync) */
+        BROADCAST_TIME_EVENT_STOP = 9,           /**< Stop event (stop clock) */
+        BROADCAST_TIME_EVENT_START = 10,         /**< Start event (start clock) */
+        BROADCAST_TIME_EVENT_DATE_ROLLOVER = 11, /**< Date Rollover event (midnight) */
+        BROADCAST_TIME_EVENT_UNKNOWN = 255       /**< Unknown/invalid event type */
+
+    } broadcast_time_event_type_enum;
+
+    /**
      * @defgroup payload_buffer_types Message Payload Buffer Type Definitions
      * @brief Array types for different message payload sizes
      *
@@ -505,6 +533,95 @@ extern "C" {
         * @see CONFIG_MEM_WRITE_SPACE_FD
         */
     typedef uint8_t configuration_memory_buffer_t[LEN_DATAGRAM_MAX_PAYLOAD];
+
+        /**
+         * @struct broadcast_time_t
+        * @brief Time representation for Broadcast Time Protocol
+        *
+        * @details Stores hour and minute for fast clock synchronization.
+        *
+        * @see broadcast_clock_state_t.time
+        */
+    typedef struct
+    {
+        uint8_t hour;   /**< Hour 0-23 */
+        uint8_t minute; /**< Minute 0-59 */
+
+    } broadcast_time_t;
+
+        /**
+         * @struct broadcast_date_t
+         * @brief Date representation for Broadcast Time Protocol
+         *
+         * @details Stores month and day for fast clock synchronization.
+         *
+         * @see broadcast_clock_state_t.date
+         */
+    typedef struct
+    {
+        uint8_t month; /**< Month 1-12 */
+        uint8_t day;   /**< Day 1-31 */
+
+    } broadcast_date_t;
+
+        /**
+         * @struct broadcast_year_t
+         * @brief Year representation for Broadcast Time Protocol
+        *
+         * @details Stores year for fast clock synchronization.
+         *
+         * @see broadcast_clock_state_t.year
+         */
+    typedef struct
+    {
+
+        uint16_t year; /**< Year 0-4095 AD */
+
+    } broadcast_year_t;
+
+        /**
+         * @struct broadcast_rate_t
+         * @brief Clock rate for fast/slow time simulation
+         *
+         * @details 12-bit signed fixed point value with 2 fractional bits.
+         * Format: rrrrrrrrrr.rr
+         * - Range: -512.00 to +511.75 in 0.25 increments
+         * - Examples: 0x0004 = 1.00 (real-time), 0x0010 = 4.00 (4x speed)
+         * - Negative values in 2's complement (e.g., 0xFFFC = -1.00)
+         *
+         * @see broadcast_clock_state_t.rate
+        */
+    typedef struct
+    {
+
+        int16_t rate; /**< Clock rate (12-bit signed fixed point, 2 fractional bits) */
+
+    } broadcast_rate_t;
+
+         /**
+         * @struct broadcast_clock_state_t
+         * @brief Complete clock state for Broadcast Time Protocol
+         *
+         * @details Contains all time/date/rate information and validity flags for a
+         * broadcast time clock. Updated as time events are received.
+         *
+         * @see openlcb_node_t.clock_state
+         * @see ProtocolBroadcastTime_handle_time_event
+         */
+    typedef struct
+    {
+        uint64_t clock_id;     /**< Clock identifier (upper 6 bytes of event IDs) */
+        broadcast_time_t time; /**< Current time */
+        broadcast_date_t date; /**< Current date */
+        broadcast_year_t year; /**< Current year */
+        broadcast_rate_t rate; /**< Clock rate */
+        uint8_t is_running;    /**< Clock running state: 1=running, 0=stopped */
+        uint8_t time_valid;    /**< Time data is valid */
+        uint8_t date_valid;    /**< Date data is valid */
+        uint8_t year_valid;    /**< Year data is valid */
+        uint8_t rate_valid;    /**< Rate data is valid */
+    } broadcast_clock_state_t;
+
 
         /**
         * @struct openlcb_msg_state_t
@@ -900,6 +1017,9 @@ extern "C" {
         uint64_t owner_node;                    /**< Node ID that has locked this node */
         openlcb_msg_t *last_received_datagram;  /**< Last datagram received (for replies) */
         uint8_t index;                          /**< Index in node array */
+        broadcast_clock_state_t clock_state;    /**< Last received broadcast time state */
+        uint8_t is_clock_consumer : 1;          /**< Consumes clock events */
+        uint8_t is_clock_producer : 1;          /**< Produces clock events */
     } openlcb_node_t;
 
         /**

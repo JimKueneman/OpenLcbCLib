@@ -1446,6 +1446,117 @@
 
     /** @} */ // end of node_enum_keys
 
+/**
+ * @defgroup broadcast_time_events Broadcast Time Protocol Event IDs
+ * @brief Well-known Event IDs for clock synchronization and fast time
+ *
+ * @details The Broadcast Time Protocol uses well-known Event IDs to distribute
+ * time information across the OpenLCB network. Time is encoded directly in the
+ * Event ID itself (no payload data). This allows fast clock synchronization for
+ * model railroad operations where time runs faster than real-time.
+ *
+ * **Event ID Structure (64 bits):**
+ * - Bits 63-16 (6 bytes): Clock Identifier - identifies which clock
+ * - Bits 15-0 (2 bytes): Time/Date/Year/Rate/Command Data
+ *
+ * **Well-Known Clock Identifiers (Upper 6 bytes):**
+ * - 01.01.00.00.01.00 - Default Fast Clock
+ * - 01.01.00.00.01.01 - Default Real-time Clock
+ * - 01.01.00.00.01.02 - Alternate Clock 1
+ * - 01.01.00.00.01.03 - Alternate Clock 2
+ * - Custom unique IDs for additional clocks
+ *
+ * **Event Types (Lower 2 bytes encoding):**
+ * - 0x0000-0x17FF: Report Time (hour 0-23, minute 0-59)
+ * - 0x2100-0x2CFF: Report Date (month 1-12, day 1-31)
+ * - 0x3000-0x3FFF: Report Year (year 0-4095 AD)
+ * - 0x4000-0x4FFF: Report Rate (12-bit signed fixed point)
+ * - 0x8000-0x97FF: Set Time (offset +0x8000 from Report Time)
+ * - 0xA100-0xACFF: Set Date (offset +0x8000 from Report Date)
+ * - 0xB000-0xBFFF: Set Year (offset +0x8000 from Report Year)
+ * - 0xC000-0xCFFF: Set Rate (offset +0x8000 from Report Rate)
+ * - 0xF000: Query (request clock synchronization)
+ * - 0xF001: Stop (stop clock)
+ * - 0xF002: Start (start clock)
+ * - 0xF003: Date Rollover (midnight crossing notification)
+ *
+ * **Rate Format:**
+ * Rate is a 12-bit signed fixed point value: rrrrrrrrrr.rr (2 fractional bits)
+ * - Range: -512.00 to +511.75 in 0.25 increments
+ * - Examples: 0x0004 = 1.00 (real-time), 0x0010 = 4.00 (4x speed)
+ * - Negative values in 2's complement (e.g., 0xFFFC = -1.00)
+ *
+ * **Protocol Behaviors:**
+ * - Report Time sent maximum once per real-world minute
+ * - Report Time sent minimum once per real-world hour
+ * - Date Rollover sent before midnight, Year/Date 3 seconds after
+ * - Query triggers full synchronization sequence from producers
+ * - Set commands echo as Report events, full sync 3 seconds later
+ *
+ * @see OpenLCB Broadcast Time Protocol Standard
+ * @see MTI_PC_EVENT_REPORT - Transport MTI for time events
+ * @{
+ */
+
+    /** @brief Default Fast Clock identifier (upper 6 bytes of Event ID) */
+#define BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK       0x0101000000010000ULL
+
+    /** @brief Default Real-time Clock identifier (upper 6 bytes of Event ID) */
+#define BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK   0x0101000000010100ULL
+
+    /** @brief Alternate Clock 1 identifier (upper 6 bytes of Event ID) */
+#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_1        0x0101000000010200ULL
+
+    /** @brief Alternate Clock 2 identifier (upper 6 bytes of Event ID) */
+#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_2        0x0101000000010300ULL
+
+    /** @brief Mask for extracting clock ID (upper 6 bytes) from Event ID */
+#define BROADCAST_TIME_MASK_CLOCK_ID               0xFFFFFFFFFFFF0000ULL
+
+    /** @brief Mask for extracting command/data (lower 2 bytes) from Event ID */
+#define BROADCAST_TIME_MASK_COMMAND_DATA           0x000000000000FFFFULL
+
+    /** @brief Report Time event base (lower 2 bytes: 0x0000-0x17FF) */
+#define BROADCAST_TIME_REPORT_TIME_BASE            0x0000
+
+    /** @brief Report Date event base (lower 2 bytes: 0x2100-0x2CFF) */
+#define BROADCAST_TIME_REPORT_DATE_BASE            0x2100
+
+    /** @brief Report Year event base (lower 2 bytes: 0x3000-0x3FFF) */
+#define BROADCAST_TIME_REPORT_YEAR_BASE            0x3000
+
+    /** @brief Report Rate event base (lower 2 bytes: 0x4000-0x4FFF) */
+#define BROADCAST_TIME_REPORT_RATE_BASE            0x4000
+
+    /** @brief Set Time event base (lower 2 bytes: 0x8000-0x97FF) */
+#define BROADCAST_TIME_SET_TIME_BASE               0x8000
+
+    /** @brief Set Date event base (lower 2 bytes: 0xA100-0xACFF) */
+#define BROADCAST_TIME_SET_DATE_BASE               0xA100
+
+    /** @brief Set Year event base (lower 2 bytes: 0xB000-0xBFFF) */
+#define BROADCAST_TIME_SET_YEAR_BASE               0xB000
+
+    /** @brief Set Rate event base (lower 2 bytes: 0xC000-0xCFFF) */
+#define BROADCAST_TIME_SET_RATE_BASE               0xC000
+
+    /** @brief Query event (lower 2 bytes: 0xF000) - request synchronization */
+#define BROADCAST_TIME_QUERY                       0xF000
+
+    /** @brief Stop event (lower 2 bytes: 0xF001) - stop clock */
+#define BROADCAST_TIME_STOP                        0xF001
+
+    /** @brief Start event (lower 2 bytes: 0xF002) - start clock */
+#define BROADCAST_TIME_START                       0xF002
+
+    /** @brief Date Rollover event (lower 2 bytes: 0xF003) - midnight crossing */
+#define BROADCAST_TIME_DATE_ROLLOVER               0xF003
+
+    /** @brief Offset to convert Report commands to Set commands (add 0x8000) */
+#define BROADCAST_TIME_SET_COMMAND_OFFSET          0x8000
+
+    /** @} */ // end of broadcast_time_events
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

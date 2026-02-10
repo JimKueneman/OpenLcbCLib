@@ -964,6 +964,189 @@ extern "C" {
 
     extern bool OpenLcbUtilities_is_event_id_in_producer_ranges(openlcb_node_t *openlcb_node, event_id_t event_id);
 
+    /**
+     * @brief Determines if an Event ID is a broadcast time event
+     *
+     * @details Checks if the upper 6 bytes of the Event ID match any of the
+     * well-known broadcast time clock IDs. This is used to detect time events
+     * before passing them to the broadcast time protocol handler.
+     *
+     * @param event_id 64-bit Event ID to check
+     *
+     * @return true if Event ID is a broadcast time event, false otherwise
+     *
+     * @see OpenLcbUtilities_get_broadcast_time_event_type - Determines event type
+     * @see BROADCAST_TIME_MASK_CLOCK_ID - Mask for extracting clock ID
+     */
+    extern bool OpenLcbUtilities_is_broadcast_time_event(event_id_t event_id);
+
+    /**
+     * @brief Extracts clock ID from broadcast time Event ID
+     *
+     * @details Extracts the upper 6 bytes of the Event ID which identify
+     * which clock this event belongs to.
+     *
+     * @param event_id 64-bit broadcast time Event ID
+     *
+     * @return 48-bit clock identifier (upper 6 bytes of Event ID)
+     *
+     * @see BROADCAST_TIME_MASK_CLOCK_ID - Mask used for extraction
+     */
+    extern uint64_t OpenLcbUtilities_extract_clock_id_from_time_event(event_id_t event_id);
+
+    /**
+     * @brief Determines the type of broadcast time event from Event ID
+     *
+     * @details Examines the lower 2 bytes of the Event ID to determine which
+     * type of broadcast time event it represents (time, date, year, rate, command).
+     *
+     * @param event_id 64-bit broadcast time Event ID
+     *
+     * @return Enumerated event type, or BROADCAST_TIME_EVENT_UNKNOWN if invalid
+     *
+     * @see broadcast_time_event_type_enum - Return value enumeration
+     */
+    extern broadcast_time_event_type_enum OpenLcbUtilities_get_broadcast_time_event_type(event_id_t event_id);
+
+    /**
+     * @brief Extracts time (hour/minute) from broadcast time Event ID
+     *
+     * @details Decodes hour and minute from the lower 2 bytes of a Report Time
+     * or Set Time Event ID.
+     *
+     * @param event_id 64-bit broadcast time Event ID
+     * @param hour Pointer to store extracted hour (0-23)
+     * @param minute Pointer to store extracted minute (0-59)
+     *
+     * @return true if extraction successful and values valid, false otherwise
+     *
+     * @warning Returns false if hour >= 24 or minute >= 60
+     */
+    extern bool OpenLcbUtilities_extract_time_from_event_id(event_id_t event_id, uint8_t *hour, uint8_t *minute);
+
+    /**
+     * @brief Extracts date (month/day) from broadcast time Event ID
+     *
+     * @details Decodes month and day from the lower 2 bytes of a Report Date
+     * or Set Date Event ID.
+     *
+     * @param event_id 64-bit broadcast time Event ID
+     * @param month Pointer to store extracted month (1-12)
+     * @param day Pointer to store extracted day (1-31)
+     *
+     * @return true if extraction successful and values valid, false otherwise
+     *
+     * @warning Returns false if month < 1 or month > 12 or day < 1 or day > 31
+     */
+    extern bool OpenLcbUtilities_extract_date_from_event_id(event_id_t event_id, uint8_t *month, uint8_t *day);
+
+    /**
+     * @brief Extracts year from broadcast time Event ID
+     *
+     * @details Decodes year from the lower 2 bytes of a Report Year
+     * or Set Year Event ID.
+     *
+     * @param event_id 64-bit broadcast time Event ID
+     * @param year Pointer to store extracted year (0-4095 AD)
+     *
+     * @return true if extraction successful, false otherwise
+     */
+    extern bool OpenLcbUtilities_extract_year_from_event_id(event_id_t event_id, uint16_t *year);
+
+    /**
+     * @brief Extracts clock rate from broadcast time Event ID
+     *
+     * @details Decodes the 12-bit signed fixed-point rate value from a Report Rate
+     * or Set Rate Event ID. Rate format is 10.2 fixed point (2 fractional bits).
+     *
+     * @param event_id 64-bit broadcast time Event ID
+     * @param rate Pointer to store extracted rate (12-bit signed fixed point)
+     *
+     * @return true if extraction successful, false otherwise
+     *
+     * @note Rate examples: 0x0004=1.00 (real-time), 0x0010=4.00 (4x speed)
+     */
+    extern bool OpenLcbUtilities_extract_rate_from_event_id(event_id_t event_id, int16_t *rate);
+
+    /**
+     * @brief Creates a broadcast time Event ID for time events
+     *
+     * @details Constructs a Report Time or Set Time Event ID by encoding
+     * hour and minute into the lower 2 bytes of the specified clock ID.
+     *
+     * @param clock_id 48-bit clock identifier (upper 6 bytes)
+     * @param hour Hour value (0-23)
+     * @param minute Minute value (0-59)
+     * @param is_set true for Set Time, false for Report Time
+     *
+     * @return 64-bit broadcast time Event ID
+     *
+     * @warning No validation - caller must ensure hour < 24 and minute < 60
+     */
+    extern event_id_t OpenLcbUtilities_create_time_event_id(uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set);
+
+    /**
+     * @brief Creates a broadcast time Event ID for date events
+     *
+     * @details Constructs a Report Date or Set Date Event ID by encoding
+     * month and day into the lower 2 bytes of the specified clock ID.
+     *
+     * @param clock_id 48-bit clock identifier (upper 6 bytes)
+     * @param month Month value (1-12)
+     * @param day Day value (1-31)
+     * @param is_set true for Set Date, false for Report Date
+     *
+     * @return 64-bit broadcast time Event ID
+     *
+     * @warning No validation - caller must ensure valid month/day values
+     */
+    extern event_id_t OpenLcbUtilities_create_date_event_id(uint64_t clock_id, uint8_t month, uint8_t day, bool is_set);
+
+    /**
+     * @brief Creates a broadcast time Event ID for year events
+     *
+     * @details Constructs a Report Year or Set Year Event ID by encoding
+     * year into the lower 2 bytes of the specified clock ID.
+     *
+     * @param clock_id 48-bit clock identifier (upper 6 bytes)
+     * @param year Year value (0-4095 AD)
+     * @param is_set true for Set Year, false for Report Year
+     *
+     * @return 64-bit broadcast time Event ID
+     *
+     * @warning No validation - caller must ensure year <= 4095
+     */
+    extern event_id_t OpenLcbUtilities_create_year_event_id(uint64_t clock_id, uint16_t year, bool is_set);
+
+    /**
+     * @brief Creates a broadcast time Event ID for rate events
+     *
+     * @details Constructs a Report Rate or Set Rate Event ID by encoding
+     * the 12-bit signed fixed-point rate into the lower 2 bytes.
+     *
+     * @param clock_id 48-bit clock identifier (upper 6 bytes)
+     * @param rate 12-bit signed fixed point rate value
+     * @param is_set true for Set Rate, false for Report Rate
+     *
+     * @return 64-bit broadcast time Event ID
+     *
+     * @note Rate format: 10.2 fixed point (e.g., 0x0004 = 1.00)
+     */
+    extern event_id_t OpenLcbUtilities_create_rate_event_id(uint64_t clock_id, int16_t rate, bool is_set);
+
+    /**
+     * @brief Creates a broadcast time Event ID for command events
+     *
+     * @details Constructs a command Event ID (Query, Start, Stop, Date Rollover)
+     * for the specified clock.
+     *
+     * @param clock_id 48-bit clock identifier (upper 6 bytes)
+     * @param command Command type (QUERY, START, STOP, DATE_ROLLOVER)
+     *
+     * @return 64-bit broadcast time Event ID
+     */
+    extern event_id_t OpenLcbUtilities_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
