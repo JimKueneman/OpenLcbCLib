@@ -194,7 +194,7 @@ extern "C" {
 
     /** @brief Address in Configuration Memory for user description */
 #ifndef USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS
-#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS LEN_SNIP_USER_NAME_BUFFER
+#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS (LEN_SNIP_USER_NAME_BUFFER - 1)
 #endif
 
         /** @} */ // end of user_config_constants
