@@ -525,7 +525,7 @@ uint16_t _config_memory_read_snip(openlcb_node_t *openlcb_node, uint32_t address
         return 5;
     }
 
-    if (address == LEN_SNIP_USER_NAME_BUFFER)
+    if (address == USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS)
     {
         (*buffer)[0] = 'D';
         (*buffer)[1] = 'e';

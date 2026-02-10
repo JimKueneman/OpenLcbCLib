@@ -77,6 +77,8 @@
 void *called_function_ptr = nullptr;
 bool track_all_calls = true;  // Control whether to track all calls or just specific ones
 bool load_interaction_rejected_called = false;
+bool broadcast_time_handler_called = false;
+bool pc_event_report_handler_called = false;
 bool reply_to_protocol_support_inquiry = false;
 bool force_process_statemachine_to_fail = false;
 bool send_openlcb_msg_called = false;
@@ -339,6 +341,7 @@ void _ProtocolEventTransport_handle_event_learn(openlcb_statemachine_info_t *sta
 void _ProtocolEventTransport_handle_pc_event_report(openlcb_statemachine_info_t *statemachine_info)
 {
     _update_called_function_ptr((void *)&_ProtocolEventTransport_handle_pc_event_report);
+    pc_event_report_handler_called = true;
 }
 
 void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statemachine_info_t *statemachine_info)
@@ -353,6 +356,7 @@ void _ProtocolEventTransport_handle_pc_event_report_with_payload(openlcb_statema
 void _ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id)
 {
     _update_called_function_ptr((void *)&_ProtocolBroadcastTime_handle_time_event);
+    broadcast_time_handler_called = true;
 }
 
 // ============================================================================
@@ -819,6 +823,8 @@ void _reset_variables(void)
 {
     called_function_ptr = nullptr;
     load_interaction_rejected_called = false;
+    broadcast_time_handler_called = false;
+    pc_event_report_handler_called = false;
     reply_to_protocol_support_inquiry = false;
     force_process_statemachine_to_fail = false;
     send_openlcb_msg_called = false;
@@ -3550,7 +3556,8 @@ TEST(OpenLcbMainStatemachine, broadcast_time_event_calls_handler)
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
 
     // Should have called broadcast_time_event_handler, NOT event_transport_pc_report
-    EXPECT_EQ(called_function_ptr, (void *)&_ProtocolBroadcastTime_handle_time_event);
+    EXPECT_TRUE(broadcast_time_handler_called);
+    EXPECT_FALSE(pc_event_report_handler_called);
 }
 
 TEST(OpenLcbMainStatemachine, non_broadcast_time_event_falls_through)
@@ -3574,7 +3581,8 @@ TEST(OpenLcbMainStatemachine, non_broadcast_time_event_falls_through)
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
 
     // Should have called event_transport_pc_report, NOT broadcast_time_event_handler
-    EXPECT_EQ(called_function_ptr, (void *)&_ProtocolEventTransport_handle_pc_event_report);
+    EXPECT_FALSE(broadcast_time_handler_called);
+    EXPECT_TRUE(pc_event_report_handler_called);
 }
 
 TEST(OpenLcbMainStatemachine, broadcast_time_null_handler_falls_through)

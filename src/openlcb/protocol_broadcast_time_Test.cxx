@@ -900,8 +900,6 @@ static const interface_openlcb_protocol_broadcast_time_t _test_broadcast_time_in
 
 };
 
-static const interface_openlcb_node_t _test_node_interface{};
-
 TEST(BroadcastTimeHandler, handle_report_time)
 {
 
@@ -1153,5 +1151,344 @@ TEST(BroadcastTimeHandler, set_time_updates_state)
     EXPECT_TRUE(g_time_callback_called);
     EXPECT_EQ(node.clock_state.time.hour, 8);
     EXPECT_EQ(node.clock_state.time.minute, 45);
+
+}
+
+TEST(BroadcastTimeHandler, null_node_pointer)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = NULL;
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_FALSE(g_time_callback_called);
+
+}
+
+TEST(BroadcastTimeHandler, set_date_updates_state)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 7, 4, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_TRUE(g_date_callback_called);
+    EXPECT_EQ(node.clock_state.date.month, 7);
+    EXPECT_EQ(node.clock_state.date.day, 4);
+    EXPECT_EQ(node.clock_state.date_valid, 1);
+
+}
+
+TEST(BroadcastTimeHandler, set_year_updates_state)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_TRUE(g_year_callback_called);
+    EXPECT_EQ(node.clock_state.year.year, 2026);
+    EXPECT_EQ(node.clock_state.year_valid, 1);
+
+}
+
+TEST(BroadcastTimeHandler, set_rate_updates_state)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0028, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_TRUE(g_rate_callback_called);
+    EXPECT_EQ(node.clock_state.rate.rate, 0x0028);
+    EXPECT_EQ(node.clock_state.rate_valid, 1);
+
+}
+
+TEST(BroadcastTimeHandler, handle_query_no_action)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_FALSE(g_time_callback_called);
+    EXPECT_FALSE(g_date_callback_called);
+    EXPECT_FALSE(g_year_callback_called);
+    EXPECT_FALSE(g_rate_callback_called);
+    EXPECT_FALSE(g_started_callback_called);
+    EXPECT_FALSE(g_stopped_callback_called);
+    EXPECT_FALSE(g_rollover_callback_called);
+
+}
+
+TEST(BroadcastTimeHandler, handle_unknown_event_type)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Use a value in the gap between ranges to trigger UNKNOWN
+    event_id_t event_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK | 0x1800;
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_FALSE(g_time_callback_called);
+    EXPECT_FALSE(g_date_callback_called);
+    EXPECT_FALSE(g_year_callback_called);
+    EXPECT_FALSE(g_rate_callback_called);
+    EXPECT_FALSE(g_started_callback_called);
+    EXPECT_FALSE(g_stopped_callback_called);
+    EXPECT_FALSE(g_rollover_callback_called);
+
+}
+
+TEST(BroadcastTimeHandler, null_interface_no_crash)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(NULL);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Report Time — should update state but not crash on null callback
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 10, 15, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.time.hour, 10);
+    EXPECT_EQ(node.clock_state.time.minute, 15);
+    EXPECT_EQ(node.clock_state.time_valid, 1);
+
+    // Report Date
+    event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 3, 14, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.date.month, 3);
+    EXPECT_EQ(node.clock_state.date.day, 14);
+    EXPECT_EQ(node.clock_state.date_valid, 1);
+
+    // Report Year
+    event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2000, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.year.year, 2000);
+    EXPECT_EQ(node.clock_state.year_valid, 1);
+
+    // Report Rate
+    event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.rate.rate, 0x0004);
+    EXPECT_EQ(node.clock_state.rate_valid, 1);
+
+    // Start
+    event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.is_running, 1);
+
+    // Stop
+    event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.is_running, 0);
+
+    // Date Rollover — just verify no crash
+    event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+}
+
+static const interface_openlcb_protocol_broadcast_time_t _test_null_callbacks_interface = {
+
+    .on_time_received = NULL,
+    .on_date_received = NULL,
+    .on_year_received = NULL,
+    .on_rate_received = NULL,
+    .on_clock_started = NULL,
+    .on_clock_stopped = NULL,
+    .on_date_rollover = NULL,
+
+};
+
+TEST(BroadcastTimeHandler, null_callbacks_no_crash)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_null_callbacks_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Report Time with null callback
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 10, 15, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.time.hour, 10);
+    EXPECT_EQ(node.clock_state.time.minute, 15);
+
+    // Report Date with null callback
+    event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 3, 14, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.date.month, 3);
+    EXPECT_EQ(node.clock_state.date.day, 14);
+
+    // Report Year with null callback
+    event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2000, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.year.year, 2000);
+
+    // Report Rate with null callback
+    event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.rate.rate, 0x0004);
+
+    // Start with null callback
+    event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.is_running, 1);
+
+    // Stop with null callback
+    event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.is_running, 0);
+
+    // Date Rollover with null callback — just verify no crash
+    event_id = OpenLcbUtilities_create_command_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+}
+
+TEST(BroadcastTimeHandler, clock_id_updated_in_state)
+{
+
+    _reset_callback_flags();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+    node.is_clock_consumer = 1;
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_ALTERNATE_CLOCK_1, 12, 0, false);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.clock_id, BROADCAST_TIME_ID_ALTERNATE_CLOCK_1);
+
+    // Switch to a different clock
+    event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK, 6, 30, false);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    EXPECT_EQ(node.clock_state.clock_id, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
 
 }

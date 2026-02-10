@@ -1499,16 +1499,16 @@
  */
 
     /** @brief Default Fast Clock identifier (upper 6 bytes of Event ID) */
-#define BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK       0x0101000000010000ULL
+#define BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK       0x0101000001000000ULL
 
     /** @brief Default Real-time Clock identifier (upper 6 bytes of Event ID) */
-#define BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK   0x0101000000010100ULL
+#define BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK   0x0101000001010000ULL
 
     /** @brief Alternate Clock 1 identifier (upper 6 bytes of Event ID) */
-#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_1        0x0101000000010200ULL
+#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_1        0x0101000001020000ULL
 
     /** @brief Alternate Clock 2 identifier (upper 6 bytes of Event ID) */
-#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_2        0x0101000000010300ULL
+#define BROADCAST_TIME_ID_ALTERNATE_CLOCK_2        0x0101000001030000ULL
 
     /** @brief Mask for extracting clock ID (upper 6 bytes) from Event ID */
 #define BROADCAST_TIME_MASK_CLOCK_ID               0xFFFFFFFFFFFF0000ULL

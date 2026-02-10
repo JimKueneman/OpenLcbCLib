@@ -88,13 +88,7 @@ static void _handle_report_time(
 ) {
     uint8_t hour;
     uint8_t minute;
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     if (OpenLcbUtilities_extract_time_from_event_id(event_id, &hour, &minute)) {
         
         node->clock_state.time.hour = hour;
@@ -118,13 +112,7 @@ static void _handle_report_date(
 ) {
     uint8_t month;
     uint8_t day;
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     if (OpenLcbUtilities_extract_date_from_event_id(event_id, &month, &day)) {
         
         node->clock_state.date.month = month;
@@ -147,13 +135,7 @@ static void _handle_report_year(
     event_id_t event_id
 ) {
     uint16_t year;
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     if (OpenLcbUtilities_extract_year_from_event_id(event_id, &year)) {
         
         node->clock_state.year.year = year;
@@ -175,13 +157,7 @@ static void _handle_report_rate(
     event_id_t event_id
 ) {
     int16_t rate;
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     if (OpenLcbUtilities_extract_rate_from_event_id(event_id, &rate)) {
         
         node->clock_state.rate.rate = rate;
@@ -202,13 +178,7 @@ static void _handle_start(
     openlcb_node_t *node,
     event_id_t event_id
 ) {
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     node->clock_state.is_running = 1;
     
     if (_interface_broadcast_time && _interface_broadcast_time->on_clock_started) {
@@ -224,13 +194,7 @@ static void _handle_stop(
     openlcb_node_t *node,
     event_id_t event_id
 ) {
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     node->clock_state.is_running = 0;
     
     if (_interface_broadcast_time && _interface_broadcast_time->on_clock_stopped) {
@@ -246,13 +210,7 @@ static void _handle_date_rollover(
     openlcb_node_t *node,
     event_id_t event_id
 ) {
-    
-    if (node->is_clock_consumer == 0) {
-        
-        return;
-        
-    }
-    
+
     if (_interface_broadcast_time && _interface_broadcast_time->on_date_rollover) {
         
         _interface_broadcast_time->on_date_rollover(node, &node->clock_state);
