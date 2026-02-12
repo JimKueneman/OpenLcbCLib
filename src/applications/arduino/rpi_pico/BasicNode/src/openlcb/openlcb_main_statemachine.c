@@ -660,6 +660,18 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
         case MTI_PRODUCER_IDENTIFIED_SET:
 
+            if (_interface->broadcast_time_event_handler) {
+
+                event_id_t event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+                if (OpenLcbUtilities_is_broadcast_time_event(event_id)) {
+
+                    _interface->broadcast_time_event_handler(statemachine_info, event_id);
+                    break;
+
+                }
+                
+            }
+
             if (_interface->event_transport_producer_identified_set) {
 
                 _interface->event_transport_producer_identified_set(statemachine_info);

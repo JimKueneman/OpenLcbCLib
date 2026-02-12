@@ -182,6 +182,13 @@ extern "C" {
     extern uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
     extern uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
+    // For clock_id in the Broadcast Time you can use
+    //   BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK,
+    //   BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK,
+    //   BROADCAST_TIME_ID_ALTERNATE_CLOCK_1,
+    //   BROADCAST_TIME_ID_ALTERNATE_CLOCK_2, or any custom clock ID with upper 6 bytes 0x0101000001XX0000
+    //   Clock IDs must have upper 6 bytes matching BROADCAST_TIME_MASK_CLOCK_ID and lower 2 bytes zero (clock ID only, no command/data)
+
     // Broadcast Time - Setup
     extern bool OpenLcbApplication_setup_clock_consumer(openlcb_node_t *openlcb_node, event_id_t clock_id);
     extern bool OpenLcbApplication_setup_clock_producer(openlcb_node_t *openlcb_node, event_id_t clock_id);
