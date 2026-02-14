@@ -80,11 +80,20 @@
 #define ON_CAN_RX_CALLBACK &Callbacks_on_can_rx_callback
 #define ON_CAN_TX_CALLBACK &Callbacks_on_can_tx_callback
 #define ON_ALIAS_CHANGE_CALLBACK &Callbacks_alias_change_callback
+#define ON_LOGIN_COMPLETE_CALLBACK NULL
+
 
 #define ON_CONSUMED_EVENT_IDENTIFIED NULL
 #define ON_CONSUMED_EVENT_PCER NULL
 #define ON_EVENT_LEARN_CALLBACK NULL
 
+#define ON_BROADCAST_TIME_RECEIVED NULL
+#define ON_BROADCAST_DATE_RECEIVED NULL
+#define ON_BROADCAST_YEAR_RECEIVED NULL
+#define ON_BROADCAST_RATE_RECEIVED NULL
+#define ON_BROADCAST_CLOCK_STARTED NULL
+#define ON_BROADCAST_CLOCK_STOPPED NULL
+#define ON_BROADCAST_DATE_ROLLOVER NULL
 // ******************************************************************************
 
 
@@ -109,7 +118,7 @@
 
 
 #ifdef	__cplusplus
-extern "C" {
+    extern "C" {
 #endif /* __cplusplus */
 
 

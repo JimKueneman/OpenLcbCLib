@@ -91,6 +91,7 @@
  * -# RUNSTATE_LOAD_INITIALIZATION_COMPLETE - Send Initialization Complete message
  * -# RUNSTATE_LOAD_CONSUMER_EVENTS - Broadcast consumer event IDs
  * -# RUNSTATE_LOAD_PRODUCER_EVENTS - Broadcast producer event IDs
+ * -# RUNSTATE_LOGIN_COMPLETE - Optional callback for final setup before normal operation
  * -# RUNSTATE_RUN - Normal operation mode
  *
  * If alias collision is detected during CID or wait period, state returns to
@@ -143,8 +144,11 @@
     /** @brief Broadcast all producer event IDs that this node generates */
 #define RUNSTATE_LOAD_PRODUCER_EVENTS 12
 
-    /** @brief Normal operation mode - process messages from FIFO */
-#define RUNSTATE_RUN 13
+/** @brief Callback to allow any startup messages to be sent */
+#define RUNSTATE_LOGIN_COMPLETE 13
+
+/** @brief Normal operation mode - process messages from FIFO */
+#define RUNSTATE_RUN 14
 
     /** @} */ // end of node_login_states
 

@@ -49,11 +49,11 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-    extern uint64_t swap_endian8(uint64_t x);
+    extern uint8_t swap_endian8(uint8_t x);
 
-    extern uint64_t swap_endian16(uint64_t x);
+    extern uint16_t swap_endian16(uint16_t x);
 
-    extern uint64_t swap_endian32(uint64_t x);
+    extern uint32_t swap_endian32(uint32_t x);
 
     extern uint64_t swap_endian64(uint64_t x);
     

@@ -713,11 +713,9 @@ TEST(OpenLcbApplication, register_multiple_range_sizes)
     }
 }
 
-/*******************************************************************************
- * TESTS - Broadcast Time Setup
- ******************************************************************************/
-
-TEST(OpenLcbApplication, setup_clock_consumer)
+// Broadcast Time tests moved to openlcb_application_broadcast_time_Test.cxx
+#if 0
+TEST(REMOVED, setup_clock_consumer)
 {
     _reset_variables();
     _global_initialize();
@@ -1296,3 +1294,4 @@ TEST(OpenLcbApplication, send_clock_controller_transmit_fail)
  * - OpenLcbApplication_read_configuration_memory
  * - OpenLcbApplication_write_configuration_memory
  ******************************************************************************/
+#endif

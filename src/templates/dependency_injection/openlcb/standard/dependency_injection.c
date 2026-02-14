@@ -59,8 +59,9 @@
 #include "../openlcb/protocol_config_mem_write_handler.h"
 #include "../openlcb/protocol_config_mem_operations_handler.h"
 #include "../openlcb/protocol_broadcast_time_handler.h"
+#include "../openlcb/openlcb_application_broadcast_time.h"
 
-const interface_openlcb_protocol_broadcast_time_t interface_openlcb_protocol_broadcast_time = {
+const interface_openlcb_protocol_broadcast_time_handler_t interface_openlcb_protocol_broadcast_time_handler = {
 
     .on_time_received = ON_BROADCAST_TIME_RECEIVED,
     .on_date_received = ON_BROADCAST_DATE_RECEIVED,
@@ -117,7 +118,12 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
     .handle_outgoing_openlcb_message = &OpenLcbLoginStatemachine_handle_outgoing_openlcb_message,
     .handle_try_reenumerate = &OpenLcbLoginStatemachine_handle_try_reenumerate,
     .handle_try_enumerate_first_node = &OpenLcbLoginStatemachine_handle_try_enumerate_first_node,
-    .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node};
+    .handle_try_enumerate_next_node = &OpenLcbLoginStatemachine_handle_try_enumerate_next_node,
+
+    // Optional
+    .on_login_complete = ON_LOGIN_COMPLETE_CALLBACK
+
+};
 
 const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine = {
 
@@ -446,7 +452,8 @@ void DependencyInjection_initialize(void)
     ProtocolConfigMemReadHandler_initialize(&interface_protocol_config_mem_read_handler);
     ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
     ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
-    ProtocolBroadcastTime_initialize(&interface_openlcb_protocol_broadcast_time);
+    ProtocolBroadcastTime_initialize(&interface_openlcb_protocol_broadcast_time_handler);
+    OpenLcbApplicationBroadcastTime_initialize();
 
     OpenLcbNode_initialize(&interface_openlcb_node);
 

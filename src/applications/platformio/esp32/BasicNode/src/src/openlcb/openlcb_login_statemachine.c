@@ -52,6 +52,7 @@
 * - RUNSTATE_LOAD_INITIALIZATION_COMPLETE -> load_initialization_complete()
 * - RUNSTATE_LOAD_PRODUCER_EVENTS -> load_producer_events()
 * - RUNSTATE_LOAD_CONSUMER_EVENTS -> load_consumer_events()
+* - RUNSTATE_LOGIN_COMPLETE -> on_login_complete() if set, then RUNSTATE_RUN
 * - RUNSTATE_RUN or higher -> skip (already initialized)
 *
 * Multi-Message Sequences:
@@ -164,19 +165,25 @@ void OpenLcbLoginStateMachine_initialize(const interface_openlcb_login_state_mac
     * -# For RUNSTATE_LOAD_INITIALIZATION_COMPLETE: Calls load_initialization_complete()
     * -# For RUNSTATE_LOAD_PRODUCER_EVENTS: Calls load_producer_events()
     * -# For RUNSTATE_LOAD_CONSUMER_EVENTS: Calls load_consumer_events()
+    * -# For RUNSTATE_LOGIN_COMPLETE: Calls on_login_complete() if set, transitions to RUNSTATE_RUN
     * -# For all other states (including RUNSTATE_RUN): Returns without action
     *
     * State-to-Handler Mapping:
-    * - RUNSTATE_LOAD_INITIALIZATION_COMPLETE (0x01) -> load_initialization_complete()
+    * - RUNSTATE_LOAD_INITIALIZATION_COMPLETE (10) -> load_initialization_complete()
     *   Generates Initialization Complete message (MTI 0x0100 or 0x0101)
     *
-    * - RUNSTATE_LOAD_PRODUCER_EVENTS (0x02) -> load_producer_events()
+    * - RUNSTATE_LOAD_PRODUCER_EVENTS (12) -> load_producer_events()
     *   Generates Producer Identified messages (MTI 0x0914/0x0915/0x0917)
     *   May be called multiple times via re-enumeration
     *
-    * - RUNSTATE_LOAD_CONSUMER_EVENTS (0x03) -> load_consumer_events()
+    * - RUNSTATE_LOAD_CONSUMER_EVENTS (11) -> load_consumer_events()
     *   Generates Consumer Identified messages (MTI 0x04C4/0x04C5/0x04C7)
     *   May be called multiple times via re-enumeration
+    *
+    * - RUNSTATE_LOGIN_COMPLETE (13) -> on_login_complete() if set
+    *   Optional callback for final setup before entering RUNSTATE_RUN
+    *   If callback returns false, stays in this state (retry on next iteration)
+    *   If callback returns true or is NULL, transitions to RUNSTATE_RUN
     *
     * Handler Responsibilities:
     * Each handler is responsible for:
@@ -223,15 +230,31 @@ void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb
 
             return;
 
+        case RUNSTATE_LOAD_CONSUMER_EVENTS:
+
+            _interface->load_consumer_events(openlcb_statemachine_info);
+
+            return;
+
         case RUNSTATE_LOAD_PRODUCER_EVENTS:
 
             _interface->load_producer_events(openlcb_statemachine_info);
 
             return;
 
-        case RUNSTATE_LOAD_CONSUMER_EVENTS:
+        case RUNSTATE_LOGIN_COMPLETE:
 
-            _interface->load_consumer_events(openlcb_statemachine_info);
+            if (_interface->on_login_complete) {
+
+                if (!_interface->on_login_complete()) {
+
+                    return;
+
+                }
+
+            }
+
+            openlcb_statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
 
             return;
 

@@ -173,46 +173,15 @@ extern "C" {
     extern bool OpenLcbApplication_register_consumer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size);
     extern bool OpenLcbApplication_register_producer_range(openlcb_node_t *openlcb_node, event_id_t event_id_base, event_range_count_enum range_size);
 
-    // Event Transmission   
+    // Event Transmission
     extern bool OpenLcbApplication_send_event_pc_report(openlcb_node_t *openlcb_node, event_id_t event_id);
+    extern bool OpenLcbApplication_send_event_with_mti(openlcb_node_t *openlcb_node, event_id_t event_id, uint16_t mti);
     extern bool OpenLcbApplication_send_teach_event(openlcb_node_t *openlcb_node, event_id_t event_id);
     extern bool OpenLcbApplication_send_initialization_event(openlcb_node_t *openlcb_node);
 
-    // Configuration Memory Access  
+    // Configuration Memory Access
     extern uint16_t OpenLcbApplication_read_configuration_memory(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
     extern uint16_t OpenLcbApplication_write_configuration_memory(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
-
-    // For clock_id in the Broadcast Time you can use
-    //   BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK,
-    //   BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK,
-    //   BROADCAST_TIME_ID_ALTERNATE_CLOCK_1,
-    //   BROADCAST_TIME_ID_ALTERNATE_CLOCK_2, or any custom clock ID with upper 6 bytes 0x0101000001XX0000
-    //   Clock IDs must have upper 6 bytes matching BROADCAST_TIME_MASK_CLOCK_ID and lower 2 bytes zero (clock ID only, no command/data)
-
-    // Broadcast Time - Setup
-    extern bool OpenLcbApplication_setup_clock_consumer(openlcb_node_t *openlcb_node, event_id_t clock_id);
-    extern bool OpenLcbApplication_setup_clock_producer(openlcb_node_t *openlcb_node, event_id_t clock_id);
-
-    // Broadcast Time - Producer
-    extern bool OpenLcbApplication_send_clock_report_time(openlcb_node_t *openlcb_node, uint8_t hour, uint8_t minute);
-    extern bool OpenLcbApplication_send_clock_report_date(openlcb_node_t *openlcb_node, uint8_t month, uint8_t day);
-    extern bool OpenLcbApplication_send_clock_report_year(openlcb_node_t *openlcb_node, uint16_t year);
-    extern bool OpenLcbApplication_send_clock_report_rate(openlcb_node_t *openlcb_node, int16_t rate);
-    extern bool OpenLcbApplication_send_clock_start(openlcb_node_t *openlcb_node);
-    extern bool OpenLcbApplication_send_clock_stop(openlcb_node_t *openlcb_node);
-    extern bool OpenLcbApplication_send_clock_date_rollover(openlcb_node_t *openlcb_node);
-    extern bool OpenLcbApplication_send_clock_full_sync(openlcb_node_t *openlcb_node, uint8_t next_hour, uint8_t next_minute);
-
-    // Broadcast Time - Consumer
-    extern bool OpenLcbApplication_send_clock_query(openlcb_node_t *openlcb_node);
-
-    // Broadcast Time - Controller
-    extern bool OpenLcbApplication_send_clock_set_time(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t hour, uint8_t minute);
-    extern bool OpenLcbApplication_send_clock_set_date(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t month, uint8_t day);
-    extern bool OpenLcbApplication_send_clock_set_year(openlcb_node_t *openlcb_node, event_id_t clock_id, uint16_t year);
-    extern bool OpenLcbApplication_send_clock_set_rate(openlcb_node_t *openlcb_node, event_id_t clock_id, int16_t rate);
-    extern bool OpenLcbApplication_send_clock_command_start(openlcb_node_t *openlcb_node, event_id_t clock_id);
-    extern bool OpenLcbApplication_send_clock_command_stop(openlcb_node_t *openlcb_node, event_id_t clock_id);
 
 #ifdef __cplusplus
 }

@@ -78,6 +78,7 @@
 #define ON_CAN_RX_CALLBACK &Callbacks_on_can_rx_callback
 #define ON_CAN_TX_CALLBACK &Callbacks_on_can_tx_callback
 #define ON_ALIAS_CHANGE_CALLBACK &Callbacks_alias_change_callback
+#define ON_LOGIN_COMPLETE_CALLBACK NULL
 
 #define ON_CONSUMED_EVENT_IDENTIFIED NULL
 #define ON_CONSUMED_EVENT_PCER NULL

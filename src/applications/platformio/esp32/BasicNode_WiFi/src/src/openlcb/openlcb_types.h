@@ -546,6 +546,7 @@ extern "C" {
     {
         uint8_t hour;   /**< Hour 0-23 */
         uint8_t minute; /**< Minute 0-59 */
+        bool valid;     /**< Time data is valid (true if valid, false if invalid) */    
 
     } broadcast_time_t;
 
@@ -561,6 +562,7 @@ extern "C" {
     {
         uint8_t month; /**< Month 1-12 */
         uint8_t day;   /**< Day 1-31 */
+        bool valid;    /**< Date data is valid (true if valid, false if invalid) */
 
     } broadcast_date_t;
 
@@ -576,6 +578,7 @@ extern "C" {
     {
 
         uint16_t year; /**< Year 0-4095 AD */
+        bool valid;    /**< Year data is valid (true if valid, false if invalid) */ 
 
     } broadcast_year_t;
 
@@ -595,6 +598,7 @@ extern "C" {
     {
 
         int16_t rate; /**< Clock rate (12-bit signed fixed point, 2 fractional bits) */
+        bool valid;   /**< Rate data is valid (true if valid, false if invalid) */  
 
     } broadcast_rate_t;
 
@@ -616,10 +620,8 @@ extern "C" {
         broadcast_year_t year; /**< Current year */
         broadcast_rate_t rate; /**< Clock rate */
         uint8_t is_running;    /**< Clock running state: 1=running, 0=stopped */
-        uint8_t time_valid;    /**< Time data is valid */
-        uint8_t date_valid;    /**< Date data is valid */
-        uint8_t year_valid;    /**< Year data is valid */
-        uint8_t rate_valid;    /**< Rate data is valid */
+        uint32_t ms_accumulator; /**< Internal: accumulated ms toward next minute (fixed-point scale) */
+
     } broadcast_clock_state_t;
 
 
@@ -1017,9 +1019,6 @@ extern "C" {
         uint64_t owner_node;                    /**< Node ID that has locked this node */
         openlcb_msg_t *last_received_datagram;  /**< Last datagram received (for replies) */
         uint8_t index;                          /**< Index in node array */
-        broadcast_clock_state_t clock_state;    /**< Last received broadcast time state */
-        uint8_t is_clock_consumer : 1;          /**< Consumes clock events */
-        uint8_t is_clock_producer : 1;          /**< Produces clock events */
     } openlcb_node_t;
 
         /**

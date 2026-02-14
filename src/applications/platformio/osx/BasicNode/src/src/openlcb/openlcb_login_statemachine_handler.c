@@ -50,7 +50,7 @@
 * State Transitions:
 * - load_initialization_complete: RUNSTATE_LOAD_INITIALIZATION_COMPLETE -> RUNSTATE_LOAD_PRODUCER_EVENTS
 * - load_producer_event: RUNSTATE_LOAD_PRODUCER_EVENTS -> (enumerate) -> RUNSTATE_LOAD_CONSUMER_EVENTS
-* - load_consumer_event: RUNSTATE_LOAD_CONSUMER_EVENTS -> (enumerate) -> RUNSTATE_RUN
+* - load_consumer_event: RUNSTATE_LOAD_CONSUMER_EVENTS -> (enumerate) -> RUNSTATE_LOGIN_COMPLETE
 *
 * @author Jim Kueneman
 * @date 17 Jan 2026
@@ -359,7 +359,7 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
     *
     * @details Algorithm:
     * -# Checks if node has any consumer events (consumers.count == 0)
-    * -# If no consumers: Sets valid=false, transitions to RUNSTATE_RUN, returns
+    * -# If no consumers: Sets valid=false, transitions to RUNSTATE_LOGIN_COMPLETE, returns
     * -# Calls interface->extract_consumer_event_state_mti() to get event state MTI
     * -# Retrieves event ID from consumers.list[enum_index]
     * -# Calls OpenLcbUtilities_load_openlcb_message() with node alias, ID, and event MTI
@@ -367,7 +367,7 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
     * -# Sets payload_count to 8 (64-bit Event ID)
     * -# Increments enum_index
     * -# Sets enumerate=true and valid=true to trigger transmission and re-entry
-    * -# If enum_index >= consumers.count: Resets enumeration, transitions to RUNSTATE_RUN
+    * -# If enum_index >= consumers.count: Resets enumeration, transitions to RUNSTATE_LOGIN_COMPLETE
     *
     * Message Structure:
     * - MTI: 0x04C4 (Valid), 0x04C5 (Invalid), or 0x04C7 (Unknown)
@@ -384,11 +384,12 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
     * - node->consumers.enumerator.running: true -> false
     * - node->consumers.enumerator.enum_index: -> 0
     * - outgoing_msg_info.enumerate: true -> false
-    * - node->state.run_state: RUNSTATE_LOAD_CONSUMER_EVENTS -> RUNSTATE_RUN
+    * - node->state.run_state: RUNSTATE_LOAD_CONSUMER_EVENTS -> RUNSTATE_LOGIN_COMPLETE
     *
     * Login Completion:
-    * When this function transitions to RUNSTATE_RUN, the login sequence is complete
-    * and the node is fully operational on the network.
+    * When this function transitions to RUNSTATE_LOGIN_COMPLETE, the login message
+    * sequence is complete. The state machine dispatcher will then call on_login_complete
+    * (if set) before transitioning to RUNSTATE_RUN for normal operation.
     *
     * Use cases:
     * - Called repeatedly during login to announce each consumed event
@@ -409,7 +410,7 @@ void OpenLcbLoginMessageHandler_load_producer_event(openlcb_login_statemachine_i
     * @note If consumers.count is 0, no messages are generated
     * @note Sets outgoing_msg_info.valid to false if no consumers exist
     * @note Sets outgoing_msg_info.enumerate to true to process next event
-    * @note Transitions to RUNSTATE_RUN when complete (node fully initialized)
+    * @note Transitions to RUNSTATE_LOGIN_COMPLETE when complete
     * @note Line length managed per StyleGuide 3x indentation for long function calls
     *
     * @see OpenLCB Event Transport Standard S-9.7.4.2 - Consumer Identified
@@ -425,7 +426,7 @@ void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_i
 
     if ((statemachine_info->openlcb_node->consumers.count == 0) && (statemachine_info->openlcb_node->consumers.range_count == 0)) {
 
-        statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
+        statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOGIN_COMPLETE;
 
         statemachine_info->outgoing_msg_info.valid = false;
 
@@ -503,7 +504,7 @@ void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_i
     statemachine_info->openlcb_node->consumers.enumerator.running = false;
 
     statemachine_info->outgoing_msg_info.enumerate = false;
-    statemachine_info->outgoing_msg_info.valid = false; 
+    statemachine_info->outgoing_msg_info.valid = false;
 
-    statemachine_info->openlcb_node->state.run_state = RUNSTATE_RUN;
+    statemachine_info->openlcb_node->state.run_state = RUNSTATE_LOGIN_COMPLETE;
 }

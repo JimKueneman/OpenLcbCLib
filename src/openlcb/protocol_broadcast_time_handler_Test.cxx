@@ -50,6 +50,7 @@
 #include "openlcb_buffer_store.h"
 #include "openlcb_node.h"
 #include "protocol_broadcast_time_handler.h"
+#include "openlcb_application_broadcast_time.h"
 
 
 // ============================================================================
@@ -888,7 +889,7 @@ static void _on_date_rollover(openlcb_node_t *node, broadcast_clock_state_t *sta
 
 }
 
-static const interface_openlcb_protocol_broadcast_time_t _test_broadcast_time_interface = {
+static const interface_openlcb_protocol_broadcast_time_handler_t _test_broadcast_time_interface = {
 
     .on_time_received = _on_time_received,
     .on_date_received = _on_date_received,
@@ -908,10 +909,11 @@ TEST(BroadcastTimeHandler, handle_report_time)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -922,10 +924,12 @@ TEST(BroadcastTimeHandler, handle_report_time)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_time_callback_called);
-    EXPECT_EQ(node.clock_state.time.hour, 14);
-    EXPECT_EQ(node.clock_state.time.minute, 30);
-    EXPECT_EQ(node.clock_state.time_valid, 1);
+    EXPECT_EQ(cs->time.hour, 14);
+    EXPECT_EQ(cs->time.minute, 30);
+    EXPECT_EQ(cs->time.valid, 1);
 
 }
 
@@ -937,10 +941,11 @@ TEST(BroadcastTimeHandler, handle_report_date)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -951,10 +956,12 @@ TEST(BroadcastTimeHandler, handle_report_date)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_date_callback_called);
-    EXPECT_EQ(node.clock_state.date.month, 12);
-    EXPECT_EQ(node.clock_state.date.day, 25);
-    EXPECT_EQ(node.clock_state.date_valid, 1);
+    EXPECT_EQ(cs->date.month, 12);
+    EXPECT_EQ(cs->date.day, 25);
+    EXPECT_EQ(cs->date.valid, 1);
 
 }
 
@@ -963,11 +970,14 @@ TEST(BroadcastTimeHandler, handle_report_year)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -978,9 +988,11 @@ TEST(BroadcastTimeHandler, handle_report_year)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_year_callback_called);
-    EXPECT_EQ(node.clock_state.year.year, 1955);
-    EXPECT_EQ(node.clock_state.year_valid, 1);
+    EXPECT_EQ(cs->year.year, 1955);
+    EXPECT_EQ(cs->year.valid, 1);
 
 }
 
@@ -989,11 +1001,14 @@ TEST(BroadcastTimeHandler, handle_report_rate)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1004,9 +1019,11 @@ TEST(BroadcastTimeHandler, handle_report_rate)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_rate_callback_called);
-    EXPECT_EQ(node.clock_state.rate.rate, 0x0010);
-    EXPECT_EQ(node.clock_state.rate_valid, 1);
+    EXPECT_EQ(cs->rate.rate, 0x0010);
+    EXPECT_EQ(cs->rate.valid, 1);
 
 }
 
@@ -1015,12 +1032,18 @@ TEST(BroadcastTimeHandler, handle_start)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    cs->is_running = 0;
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
-    node.clock_state.is_running = 0;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1032,7 +1055,7 @@ TEST(BroadcastTimeHandler, handle_start)
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
     EXPECT_TRUE(g_started_callback_called);
-    EXPECT_EQ(node.clock_state.is_running, 1);
+    EXPECT_EQ(cs->is_running, 1);
 
 }
 
@@ -1041,12 +1064,18 @@ TEST(BroadcastTimeHandler, handle_stop)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    cs->is_running = 1;
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
-    node.clock_state.is_running = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1058,7 +1087,7 @@ TEST(BroadcastTimeHandler, handle_stop)
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
     EXPECT_TRUE(g_stopped_callback_called);
-    EXPECT_EQ(node.clock_state.is_running, 0);
+    EXPECT_EQ(cs->is_running, 0);
 
 }
 
@@ -1067,11 +1096,14 @@ TEST(BroadcastTimeHandler, handle_date_rollover)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1091,11 +1123,14 @@ TEST(BroadcastTimeHandler, not_clock_consumer_ignores)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    // Do NOT call setup_consumer — clock slot will not exist
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 0;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1107,7 +1142,7 @@ TEST(BroadcastTimeHandler, not_clock_consumer_ignores)
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
     EXPECT_FALSE(g_time_callback_called);
-    EXPECT_EQ(node.clock_state.time_valid, 0);
+    EXPECT_EQ(OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK), nullptr);
 
 }
 
@@ -1116,7 +1151,11 @@ TEST(BroadcastTimeHandler, null_statemachine_info)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     event_id_t event_id = OpenLcbUtilities_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
@@ -1132,11 +1171,14 @@ TEST(BroadcastTimeHandler, set_time_updates_state)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1148,9 +1190,11 @@ TEST(BroadcastTimeHandler, set_time_updates_state)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_time_callback_called);
-    EXPECT_EQ(node.clock_state.time.hour, 8);
-    EXPECT_EQ(node.clock_state.time.minute, 45);
+    EXPECT_EQ(cs->time.hour, 8);
+    EXPECT_EQ(cs->time.minute, 45);
 
 }
 
@@ -1159,7 +1203,11 @@ TEST(BroadcastTimeHandler, null_node_pointer)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1179,11 +1227,14 @@ TEST(BroadcastTimeHandler, set_date_updates_state)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1194,10 +1245,12 @@ TEST(BroadcastTimeHandler, set_date_updates_state)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_date_callback_called);
-    EXPECT_EQ(node.clock_state.date.month, 7);
-    EXPECT_EQ(node.clock_state.date.day, 4);
-    EXPECT_EQ(node.clock_state.date_valid, 1);
+    EXPECT_EQ(cs->date.month, 7);
+    EXPECT_EQ(cs->date.day, 4);
+    EXPECT_EQ(cs->date.valid, 1);
 
 }
 
@@ -1206,11 +1259,14 @@ TEST(BroadcastTimeHandler, set_year_updates_state)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1221,9 +1277,11 @@ TEST(BroadcastTimeHandler, set_year_updates_state)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_year_callback_called);
-    EXPECT_EQ(node.clock_state.year.year, 2026);
-    EXPECT_EQ(node.clock_state.year_valid, 1);
+    EXPECT_EQ(cs->year.year, 2026);
+    EXPECT_EQ(cs->year.valid, 1);
 
 }
 
@@ -1232,11 +1290,14 @@ TEST(BroadcastTimeHandler, set_rate_updates_state)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1247,9 +1308,11 @@ TEST(BroadcastTimeHandler, set_rate_updates_state)
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_rate_callback_called);
-    EXPECT_EQ(node.clock_state.rate.rate, 0x0028);
-    EXPECT_EQ(node.clock_state.rate_valid, 1);
+    EXPECT_EQ(cs->rate.rate, 0x0028);
+    EXPECT_EQ(cs->rate.valid, 1);
 
 }
 
@@ -1258,11 +1321,14 @@ TEST(BroadcastTimeHandler, handle_query_no_action)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1288,11 +1354,14 @@ TEST(BroadcastTimeHandler, handle_unknown_event_type)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1318,11 +1387,14 @@ TEST(BroadcastTimeHandler, null_interface_no_crash)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(NULL);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1333,48 +1405,50 @@ TEST(BroadcastTimeHandler, null_interface_no_crash)
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 10, 15, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.time.hour, 10);
-    EXPECT_EQ(node.clock_state.time.minute, 15);
-    EXPECT_EQ(node.clock_state.time_valid, 1);
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_EQ(cs->time.hour, 10);
+    EXPECT_EQ(cs->time.minute, 15);
+    EXPECT_EQ(cs->time.valid, 1);
 
     // Report Date
     event_id = OpenLcbUtilities_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 3, 14, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.date.month, 3);
-    EXPECT_EQ(node.clock_state.date.day, 14);
-    EXPECT_EQ(node.clock_state.date_valid, 1);
+    EXPECT_EQ(cs->date.month, 3);
+    EXPECT_EQ(cs->date.day, 14);
+    EXPECT_EQ(cs->date.valid, 1);
 
     // Report Year
     event_id = OpenLcbUtilities_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2000, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.year.year, 2000);
-    EXPECT_EQ(node.clock_state.year_valid, 1);
+    EXPECT_EQ(cs->year.year, 2000);
+    EXPECT_EQ(cs->year.valid, 1);
 
     // Report Rate
     event_id = OpenLcbUtilities_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.rate.rate, 0x0004);
-    EXPECT_EQ(node.clock_state.rate_valid, 1);
+    EXPECT_EQ(cs->rate.rate, 0x0004);
+    EXPECT_EQ(cs->rate.valid, 1);
 
     // Start
     event_id = OpenLcbUtilities_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.is_running, 1);
+    EXPECT_EQ(cs->is_running, 1);
 
     // Stop
     event_id = OpenLcbUtilities_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.is_running, 0);
+    EXPECT_EQ(cs->is_running, 0);
 
     // Date Rollover — just verify no crash
     event_id = OpenLcbUtilities_create_command_event_id(
@@ -1383,7 +1457,7 @@ TEST(BroadcastTimeHandler, null_interface_no_crash)
 
 }
 
-static const interface_openlcb_protocol_broadcast_time_t _test_null_callbacks_interface = {
+static const interface_openlcb_protocol_broadcast_time_handler_t _test_null_callbacks_interface = {
 
     .on_time_received = NULL,
     .on_date_received = NULL,
@@ -1400,11 +1474,14 @@ TEST(BroadcastTimeHandler, null_callbacks_no_crash)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_null_callbacks_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
@@ -1415,44 +1492,46 @@ TEST(BroadcastTimeHandler, null_callbacks_no_crash)
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 10, 15, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.time.hour, 10);
-    EXPECT_EQ(node.clock_state.time.minute, 15);
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_EQ(cs->time.hour, 10);
+    EXPECT_EQ(cs->time.minute, 15);
 
     // Report Date with null callback
     event_id = OpenLcbUtilities_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 3, 14, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.date.month, 3);
-    EXPECT_EQ(node.clock_state.date.day, 14);
+    EXPECT_EQ(cs->date.month, 3);
+    EXPECT_EQ(cs->date.day, 14);
 
     // Report Year with null callback
     event_id = OpenLcbUtilities_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2000, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.year.year, 2000);
+    EXPECT_EQ(cs->year.year, 2000);
 
     // Report Rate with null callback
     event_id = OpenLcbUtilities_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.rate.rate, 0x0004);
+    EXPECT_EQ(cs->rate.rate, 0x0004);
 
     // Start with null callback
     event_id = OpenLcbUtilities_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.is_running, 1);
+    EXPECT_EQ(cs->is_running, 1);
 
     // Stop with null callback
     event_id = OpenLcbUtilities_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.is_running, 0);
+    EXPECT_EQ(cs->is_running, 0);
 
     // Date Rollover with null callback — just verify no crash
     event_id = OpenLcbUtilities_create_command_event_id(
@@ -1466,29 +1545,45 @@ TEST(BroadcastTimeHandler, clock_id_updated_in_state)
 
     _reset_callback_flags();
 
+    OpenLcbBufferStore_initialize();
+
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize();
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
-    node.is_clock_consumer = 1;
 
     openlcb_statemachine_info_t info;
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
+
+    // Setup consumer for ALTERNATE_CLOCK_1 and send a time event
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_ALTERNATE_CLOCK_1);
 
     event_id_t event_id = OpenLcbUtilities_create_time_event_id(
         BROADCAST_TIME_ID_ALTERNATE_CLOCK_1, 12, 0, false);
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.clock_id, BROADCAST_TIME_ID_ALTERNATE_CLOCK_1);
+    broadcast_clock_state_t *cs1 = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_ALTERNATE_CLOCK_1);
+    ASSERT_NE(cs1, nullptr);
+    EXPECT_TRUE(g_time_callback_called);
+    EXPECT_EQ(cs1->time.hour, 12);
+    EXPECT_EQ(cs1->time.minute, 0);
 
-    // Switch to a different clock
+    // Setup consumer for DEFAULT_REALTIME_CLOCK and send a time event
+    _reset_callback_flags();
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
+
     event_id = OpenLcbUtilities_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK, 6, 30, false);
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(node.clock_state.clock_id, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
+    broadcast_clock_state_t *cs2 = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
+    ASSERT_NE(cs2, nullptr);
+    EXPECT_TRUE(g_time_callback_called);
+    EXPECT_EQ(cs2->time.hour, 6);
+    EXPECT_EQ(cs2->time.minute, 30);
 
 }

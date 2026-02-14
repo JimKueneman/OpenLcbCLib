@@ -55,12 +55,13 @@
     *
     * @details This structure defines the callback interface for the OpenLCB login state
     * machine, which orchestrates the complete node initialization sequence after successful
-    * CAN alias allocation. The login state machine manages the three-phase process of
+    * CAN alias allocation. The login state machine manages the four-phase process of
     * announcing nodes on the network:
     *
     * 1. Send Initialization Complete message
     * 2. Send Producer Event Identified messages for all produced events
     * 3. Send Consumer Event Identified messages for all consumed events
+    * 4. Call on_login_complete callback (optional) for final setup before entering RUNSTATE_RUN
     *
     * The interface provides callbacks organized into several functional categories:
     *
@@ -203,7 +204,7 @@ typedef struct {
          * - Build message with 8-byte Event ID in payload
          * - Increment enum_index
          * - Set enumerate flag if more events remain
-         * - Transition to RUNSTATE_RUN when complete (node fully initialized)
+         * - Transition to RUNSTATE_LOGIN_COMPLETE when complete
          *
          * Typical implementation: OpenLcbLoginMessageHandler_load_consumer_event
          *
@@ -224,6 +225,7 @@ typedef struct {
          * - load_initialization_complete if RUNSTATE_LOAD_INITIALIZATION_COMPLETE
          * - load_producer_events if RUNSTATE_LOAD_PRODUCER_EVENTS
          * - load_consumer_events if RUNSTATE_LOAD_CONSUMER_EVENTS
+         * - on_login_complete if RUNSTATE_LOGIN_COMPLETE (then transitions to RUNSTATE_RUN)
          *
          * @note This is a REQUIRED callback - must not be NULL (set to module function)
          */
@@ -307,6 +309,16 @@ typedef struct {
          * @note This is a REQUIRED callback - must not be NULL (set to module function)
          */
     bool (*handle_try_enumerate_next_node)(void);
+
+
+       /**
+        * @brief Optional callback after login sequence completes
+        *   
+        * @details This optional callback is invoked after the login sequence completes for a node,
+        * just before transitioning to RUNSTATE_RUN. It allows the application to perform any final
+        * setup or send any final messages before the node enters normal operation mode.
+        */
+    bool (*on_login_complete)(void); // Optional callback after login sequence completes
 
 } interface_openlcb_login_state_machine_t;
 
@@ -401,6 +413,7 @@ extern "C" {
         * - RUNSTATE_LOAD_INITIALIZATION_COMPLETE → load_initialization_complete
         * - RUNSTATE_LOAD_PRODUCER_EVENTS → load_producer_events
         * - RUNSTATE_LOAD_CONSUMER_EVENTS → load_consumer_events
+        * - RUNSTATE_LOGIN_COMPLETE → on_login_complete (if set), then RUNSTATE_RUN
         *
         * This function is exposed for unit testing but is normally called internally
         * by the main state machine loop.

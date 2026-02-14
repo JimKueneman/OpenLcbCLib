@@ -264,7 +264,8 @@ extern "C" {
         * enumerate flag is set to true after each message to trigger re-entry until
         * all consumer events have been announced. This is the final step of the login
         * sequence - after all consumer events are sent, the node transitions to
-        * RUNSTATE_RUN (fully operational).
+        * RUNSTATE_LOGIN_COMPLETE, where the state machine dispatcher will call the
+        * optional on_login_complete callback before transitioning to RUNSTATE_RUN.
         *
         * Message format for each consumer event:
         * - MTI: 0x04C4 (Valid), 0x04C5 (Invalid), or 0x04C7 (Unknown)
@@ -284,17 +285,17 @@ extern "C" {
         * @attention This function may be called multiple times (once per consumer event)
         * @attention The enumerate flag controls re-entry until all events are sent
         * @attention This is the final step of the login sequence
-        * @attention After completion, node transitions to RUNSTATE_RUN (fully operational)
+        * @attention After completion, node transitions to RUNSTATE_LOGIN_COMPLETE
         *
         * @note If consumers.count is 0, no messages are generated and state transitions immediately
         * @note Sets outgoing_msg_info.valid to false if no consumers exist
         * @note Sets outgoing_msg_info.enumerate to true to process next event
         * @note Increments enum_index after each message
-        * @note Transitions to RUNSTATE_RUN when complete (node fully initialized)
+        * @note Transitions to RUNSTATE_LOGIN_COMPLETE when complete
         *
         * @see OpenLCB Event Transport Standard S-9.7.4.2 - Consumer Identified
         * @see MTI_CONSUMER_IDENTIFIED_VALID in openlcb_defines.h
-        * @see RUNSTATE_RUN in openlcb_defines.h - Final operational state
+        * @see RUNSTATE_LOGIN_COMPLETE in openlcb_defines.h
         * @see interface_openlcb_login_message_handler_t - Provides extract_consumer_event_state_mti callback
         */
     extern void OpenLcbLoginMessageHandler_load_consumer_event(openlcb_login_statemachine_info_t *statemachine_info);

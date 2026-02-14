@@ -139,22 +139,7 @@ static void _clear_node(openlcb_node_t *openlcb_node)
     openlcb_node->producers.enumerator.running = false;
     openlcb_node->consumers.enumerator.running = false;
 
-    // Clear broadcast time state
-    openlcb_node->clock_state.clock_id = 0;
-    openlcb_node->clock_state.time.hour = 0;
-    openlcb_node->clock_state.time.minute = 0;
-    openlcb_node->clock_state.date.month = 0;
-    openlcb_node->clock_state.date.day = 0;
-    openlcb_node->clock_state.year.year = 0;
-    openlcb_node->clock_state.rate.rate = 0;
-    openlcb_node->clock_state.is_running = 0;
-    openlcb_node->clock_state.time_valid = 0;
-    openlcb_node->clock_state.date_valid = 0;
-    openlcb_node->clock_state.year_valid = 0;
-    openlcb_node->clock_state.rate_valid = 0;
-    openlcb_node->is_clock_consumer = 0;
-    openlcb_node->is_clock_producer = 0;
-    
+
 }
 
     /**

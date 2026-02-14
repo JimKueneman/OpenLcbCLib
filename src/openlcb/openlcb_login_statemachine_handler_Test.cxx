@@ -526,7 +526,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_no_events)
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
     
     // Verify state transition to RUN (login complete)
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 }
 
 // ============================================================================
@@ -613,7 +613,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_multiple_events)
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
     
     // Verify transition to RUN state (login complete)
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
     
     // Verify enumerate flag cleared (done with consumers)
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
@@ -730,7 +730,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_single_event)
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
     
     // Should transition to RUN after cleanup
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
     EXPECT_FALSE(statemachine_info.openlcb_node->consumers.enumerator.running);
     EXPECT_EQ(statemachine_info.openlcb_node->consumers.enumerator.enum_index, 0);
@@ -838,7 +838,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_event_many_events)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.enumerate);
     EXPECT_EQ(statemachine_info.openlcb_node->consumers.enumerator.enum_index, 0);
 
@@ -905,7 +905,7 @@ TEST(OpenLcbLoginMessageHandler, full_login_sequence)
     // Step 7: Consumer Cleanup Call
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
     
     // Final verification - node is fully initialized and in RUN state
     EXPECT_TRUE(statemachine_info.openlcb_node->state.initialized);
@@ -1117,7 +1117,7 @@ TEST(OpenLcbLoginMessageHandler, verify_all_state_transitions)
 
     // Transition 5: LOAD_CONSUMER_EVENTS -> RUN (cleanup call)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
-    EXPECT_EQ(node1->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 
     _node_parameters_main_node.consumer_count_autocreate = 0;
     _node_parameters_main_node.producer_count_autocreate = 0;
@@ -1183,7 +1183,7 @@ TEST(OpenLcbLoginMessageHandler, zero_producers_and_consumers)
 
     // No consumers - skip to RUN
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
-    EXPECT_EQ(node1->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(node1->state.run_state, RUNSTATE_LOGIN_COMPLETE);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
 }
 
@@ -1345,7 +1345,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_range_event_single)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
     EXPECT_EQ(node1->consumers.enumerator.range_enum_index, 0);
 }
 
@@ -1383,7 +1383,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_range_event_multiple)
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 }
 
 // ============================================================================
@@ -1426,7 +1426,7 @@ TEST(OpenLcbLoginMessageHandler, load_consumer_mixed_range_and_normal)
     // Cleanup call
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 
     _node_parameters_main_node.consumer_count_autocreate = 0;
 }
@@ -1603,7 +1603,7 @@ TEST(OpenLcbLoginMessageHandler, full_login_sequence_with_ranges)
     EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
 
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 
     EXPECT_FALSE(node1->producers.enumerator.running);
     EXPECT_FALSE(node1->consumers.enumerator.running);
@@ -1657,7 +1657,7 @@ TEST(OpenLcbLoginMessageHandler, only_range_events_no_normal)
 
     OpenLcbLoginMessageHandler_load_consumer_event(&statemachine_info);
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_RUN);
+    EXPECT_EQ(statemachine_info.openlcb_node->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 }
 
 // ============================================================================
