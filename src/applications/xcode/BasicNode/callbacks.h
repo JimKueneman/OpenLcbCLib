@@ -68,6 +68,8 @@ extern "C"
 
     extern void Callbacks_on_event_learn(openlcb_node_t *openlcb_node, event_id_t *event_id);
 
+    extern bool Callbacks_on_login_complete(openlcb_node_t *openlcb_node);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -246,7 +246,7 @@ void OpenLcbLoginStateMachine_process(openlcb_login_statemachine_info_t *openlcb
 
             if (_interface->on_login_complete) {
 
-                if (!_interface->on_login_complete()) {
+                if (!_interface->on_login_complete(openlcb_statemachine_info->openlcb_node)) {
 
                     return;
 

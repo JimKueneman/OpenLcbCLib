@@ -318,7 +318,7 @@ typedef struct {
         * just before transitioning to RUNSTATE_RUN. It allows the application to perform any final
         * setup or send any final messages before the node enters normal operation mode.
         */
-    bool (*on_login_complete)(void); // Optional callback after login sequence completes
+    bool (*on_login_complete)(openlcb_node_t *openlcb_node); // Optional callback after login sequence completes
 
 } interface_openlcb_login_state_machine_t;
 

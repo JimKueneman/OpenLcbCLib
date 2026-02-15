@@ -88,6 +88,9 @@ extern "C" {
     extern uint8_t OpenLcbApplicationBroadcastTime_is_consumer(event_id_t clock_id);
     extern uint8_t OpenLcbApplicationBroadcastTime_is_producer(event_id_t clock_id);
 
+    extern void OpenLcbApplicationBroadcastTime_start(event_id_t clock_id);
+    extern void OpenLcbApplicationBroadcastTime_stop(event_id_t clock_id);
+
     // Timer tick — advances all active running clocks
 
     extern void OpenLcbApplicationBroadcastTime_100ms_time_tick(void);

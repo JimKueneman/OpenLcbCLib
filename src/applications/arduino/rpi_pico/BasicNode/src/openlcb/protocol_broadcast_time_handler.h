@@ -76,9 +76,7 @@ extern "C" {
      *
      * @param interface_openlcb_protocol_broadcast_time_handler Pointer to callback interface structure
      */
-    extern void ProtocolBroadcastTime_initialize(
-        const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler
-    );
+    extern void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler);
 
     /**
      * @brief Returns the stored callback interface pointer
@@ -97,10 +95,7 @@ extern "C" {
      * @param statemachine_info State machine context with incoming message and node
      * @param event_id Full 64-bit Event ID containing encoded time data
      */
-    extern void ProtocolBroadcastTime_handle_time_event(
-        openlcb_statemachine_info_t *statemachine_info,
-        event_id_t event_id
-    );
+    extern void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
 #ifdef __cplusplus
 }

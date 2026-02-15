@@ -118,8 +118,14 @@ broadcast_clock_state_t* OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_
 
     if (openlcb_node) {
 
+        // Consumer ranges for receiving Report Time/Date/Year/Rate events
         OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768);
         OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768);
+
+        // Producer ranges required by Event Transport Standard section 6:
+        // a node must be in Advertised state before sending PCERs (e.g. Query event)
+        OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768);
+        OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768);
 
     }
 
@@ -141,13 +147,47 @@ broadcast_clock_state_t* OpenLcbApplicationBroadcastTime_setup_producer(openlcb_
 
     if (openlcb_node) {
 
+        // Producer ranges for sending Report Time/Date/Year/Rate events
         OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768);
         OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768);
+
+        // Consumer ranges required by Broadcast Time Standard section 6.1:
+        // clock generator must consume Set Time/Date/Year/Rate/Start/Stop/Query events
+        OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768);
+        OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768);
 
     }
 
     return &clock->state;
 
+}
+
+void OpenLcbApplicationBroadcastTime_start(event_id_t clock_id) {
+   
+    broadcast_clock_t* broadcast_clock = _find_clock_by_id(clock_id);
+    
+    if (!broadcast_clock) {
+        
+        return;
+        
+    }
+    
+    broadcast_clock->state.is_running = true;
+    
+}
+
+void OpenLcbApplicationBroadcastTime_stop(event_id_t clock_id) {
+  
+    broadcast_clock_t* broadcast_clock = _find_clock_by_id(clock_id);
+    
+    if (!broadcast_clock) {
+        
+        return;
+        
+    }
+    
+    broadcast_clock->state.is_running  = false;
+    
 }
 
 

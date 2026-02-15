@@ -81,7 +81,7 @@
 #define ON_CAN_RX_CALLBACK &Callbacks_on_can_rx_callback
 #define ON_CAN_TX_CALLBACK &Callbacks_on_can_tx_callback
 #define ON_ALIAS_CHANGE_CALLBACK &Callbacks_alias_change_callback
-#define ON_LOGIN_COMPLETE_CALLBACK NULL
+#define ON_LOGIN_COMPLETE_CALLBACK &Callbacks_on_login_complete
 
 #define ON_CONSUMED_EVENT_IDENTIFIED &Callbacks_on_consumed_event_identified
 #define ON_CONSUMED_EVENT_PCER &Callbacks_on_consumed_event_pcer
@@ -90,6 +90,8 @@
 // ******************************************************************************
 
 // Broadcast Time Callbacks
+#define BROADCAST_TIME_EVENT_HANDLER &ProtocolBroadcastTime_handle_time_event
+
 #define ON_BROADCAST_TIME_RECEIVED NULL
 #define ON_BROADCAST_DATE_RECEIVED NULL
 #define ON_BROADCAST_YEAR_RECEIVED NULL
