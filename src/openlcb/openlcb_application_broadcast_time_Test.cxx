@@ -73,6 +73,7 @@
 // ============================================================================
 
 static bool fail_transmit = false;
+static int fail_after_count = -1;  // -1 means disabled; otherwise fail after N successful sends
 static uint16_t last_sent_mti = 0;
 static event_id_t last_sent_event_id = 0;
 static int send_count = 0;
@@ -138,6 +139,12 @@ static node_parameters_t _test_node_parameters = {
 static bool _mock_transmit_openlcb_message(openlcb_msg_t *openlcb_msg) {
 
     if (fail_transmit) {
+
+        return false;
+
+    }
+
+    if (fail_after_count >= 0 && send_count >= fail_after_count) {
 
         return false;
 
@@ -253,6 +260,7 @@ static const interface_openlcb_protocol_broadcast_time_handler_t _test_handler_i
 static void _reset_test_state(void) {
 
     fail_transmit = false;
+    fail_after_count = -1;
     last_sent_mti = 0;
     last_sent_event_id = 0;
     send_count = 0;
@@ -1713,5 +1721,831 @@ TEST(BroadcastTimeApp, century_not_leap_year_divisible_by_100)
     // Feb 28 -> Mar 1 in non-leap century year
     EXPECT_EQ(clock_state->date.day, 1);
     EXPECT_EQ(clock_state->date.month, 3);
+
+}
+
+
+// ============================================================================
+// Section 11: Start/Stop Function Tests
+// ============================================================================
+
+TEST(BroadcastTimeApp, start_sets_clock_running)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_FALSE(clock_state->is_running);
+
+    OpenLcbApplicationBroadcastTime_start(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(clock_state->is_running);
+
+}
+
+TEST(BroadcastTimeApp, stop_clears_clock_running)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = true;
+
+    OpenLcbApplicationBroadcastTime_stop(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_FALSE(clock_state->is_running);
+
+}
+
+TEST(BroadcastTimeApp, start_invalid_clock_id_does_not_crash)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    // No clock set up - should just return without crash
+    OpenLcbApplicationBroadcastTime_start(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+}
+
+TEST(BroadcastTimeApp, stop_invalid_clock_id_does_not_crash)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    // No clock set up - should just return without crash
+    OpenLcbApplicationBroadcastTime_stop(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+}
+
+
+// ============================================================================
+// Section 12: Setup Producer Overflow Test
+// ============================================================================
+
+TEST(BroadcastTimeApp, setup_producer_overflow_returns_null)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    // Allocate all available slots using producer setup
+    for (int i = 0; i < BROADCAST_TIME_TOTAL_CLOCK_COUNT; i++) {
+
+        event_id_t clock_id = 0x0101000002000000ULL + ((uint64_t)(i) << 16);
+        broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(NULL, clock_id);
+        ASSERT_NE(clock_state, nullptr);
+
+    }
+
+    // Next allocation should fail
+    event_id_t overflow_clock_id = 0x0101000003000000ULL;
+    broadcast_clock_state_t *overflow_state = OpenLcbApplicationBroadcastTime_setup_producer(NULL, overflow_clock_id);
+    EXPECT_EQ(overflow_state, nullptr);
+
+}
+
+
+// ============================================================================
+// Section 13: Additional Days-in-Month Coverage
+// ============================================================================
+
+TEST(BroadcastTimeApp, days_in_month_invalid_month_above_12)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    // Set month to 13 (above valid range) and advance past day boundary
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 4;
+    clock_state->time.hour = 23;
+    clock_state->time.minute = 59;
+    clock_state->date.day = 30;
+    clock_state->date.month = 13;  // Invalid month > 12
+    clock_state->year.year = 2026;
+
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    // With invalid month > 12, _days_in_month returns 30, so day 31 > 30 triggers rollover
+    // month++ makes it 14, which is > 12, so month resets to 1 and year increments
+    EXPECT_EQ(clock_state->date.day, 1);
+    EXPECT_EQ(clock_state->date.month, 1);
+    EXPECT_EQ(clock_state->year.year, 2027);
+
+}
+
+TEST(BroadcastTimeApp, time_tick_forward_30_day_month_rollover)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 4;
+    clock_state->time.hour = 23;
+    clock_state->time.minute = 59;
+    clock_state->date.day = 30;
+    clock_state->date.month = 4;  // April has 30 days
+    clock_state->year.year = 2026;
+
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    // April 30 -> May 1
+    EXPECT_EQ(clock_state->date.day, 1);
+    EXPECT_EQ(clock_state->date.month, 5);
+    EXPECT_TRUE(callback_date_received);
+
+}
+
+TEST(BroadcastTimeApp, time_tick_forward_no_month_rollover_at_day_30_in_31_day_month)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 4;
+    clock_state->time.hour = 23;
+    clock_state->time.minute = 59;
+    clock_state->date.day = 30;
+    clock_state->date.month = 3;  // March has 31 days
+    clock_state->year.year = 2026;
+
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    // March 30 -> March 31 (no month rollover)
+    EXPECT_EQ(clock_state->date.day, 31);
+    EXPECT_EQ(clock_state->date.month, 3);
+    EXPECT_FALSE(callback_date_received);
+
+}
+
+
+// ============================================================================
+// Section 14: Transmit Failure Tests for Individual Send Functions
+// ============================================================================
+
+TEST(BroadcastTimeApp, send_report_time_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_time(node, 14, 30));
+
+}
+
+TEST(BroadcastTimeApp, send_report_date_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_date(node, 6, 15));
+
+}
+
+TEST(BroadcastTimeApp, send_report_year_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_year(node, 2026));
+
+}
+
+TEST(BroadcastTimeApp, send_report_rate_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_rate(node, 0x0010));
+
+}
+
+TEST(BroadcastTimeApp, send_start_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_start(node));
+
+}
+
+TEST(BroadcastTimeApp, send_stop_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_stop(node));
+
+}
+
+TEST(BroadcastTimeApp, send_date_rollover_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_date_rollover(node));
+
+}
+
+TEST(BroadcastTimeApp, send_query_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query(node));
+
+}
+
+TEST(BroadcastTimeApp, send_set_time_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_set_time(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
+
+}
+
+TEST(BroadcastTimeApp, send_set_date_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_set_date(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
+
+}
+
+TEST(BroadcastTimeApp, send_set_year_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_set_year(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
+
+}
+
+TEST(BroadcastTimeApp, send_set_rate_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_set_rate(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
+
+}
+
+TEST(BroadcastTimeApp, send_command_start_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_command_start(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+
+}
+
+TEST(BroadcastTimeApp, send_command_stop_transmit_failure)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_command_stop(
+        node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+
+}
+
+
+// ============================================================================
+// Section 15: Null Interface Backward Tick Tests
+// ============================================================================
+
+TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
+{
+
+    _reset_test_state();
+
+    OpenLcbApplication_initialize(&_test_application_interface);
+    OpenLcbNode_initialize(&_test_node_interface);
+    OpenLcbBufferFifo_initialize();
+    OpenLcbBufferStore_initialize();
+    ProtocolBroadcastTime_initialize(NULL);
+    OpenLcbApplicationBroadcastTime_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = -4;  // Backward
+    clock_state->time.hour = 0;
+    clock_state->time.minute = 0;
+    clock_state->date.day = 1;
+    clock_state->date.month = 1;
+    clock_state->year.year = 2026;
+
+    // Should advance backward through year rollover without crash
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 23);
+    EXPECT_EQ(clock_state->time.minute, 59);
+    EXPECT_EQ(clock_state->date.day, 31);
+    EXPECT_EQ(clock_state->date.month, 12);
+    EXPECT_EQ(clock_state->year.year, 2025);
+
+}
+
+
+// ============================================================================
+// Section 16: Full Sync Transmit Failure at Different Stages
+// ============================================================================
+
+TEST(BroadcastTimeApp, send_full_sync_failure_at_rate_step)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 0x0004;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    // Fail after first message (start/stop) succeeds
+    // We need to fail on the second call (rate)
+    // Since our mock fails all-or-nothing, test that first step failure returns false
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_EQ(send_count, 0);
+
+}
+
+TEST(BroadcastTimeApp, send_full_sync_stopped_sends_stop_event)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 0;  // Stopped
+    clock_state->rate.rate = 0x0004;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_EQ(send_count, 6);
+
+}
+
+TEST(BroadcastTimeApp, send_full_sync_failure_at_rate)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 0x0004;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    // Fail after 1 successful send (start/stop succeeds, rate fails)
+    fail_after_count = 1;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_EQ(send_count, 1);
+
+}
+
+TEST(BroadcastTimeApp, send_full_sync_failure_at_year)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 0x0004;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    // Fail after 2 successful sends (start/stop + rate succeed, year fails)
+    fail_after_count = 2;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_EQ(send_count, 2);
+
+}
+
+TEST(BroadcastTimeApp, send_full_sync_failure_at_date)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 0x0004;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    // Fail after 3 successful sends (start/stop + rate + year succeed, date fails)
+    fail_after_count = 3;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_EQ(send_count, 3);
+
+}
+
+TEST(BroadcastTimeApp, send_full_sync_failure_at_time)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 0x0004;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    // Fail after 4 successful sends (start/stop + rate + year + date succeed, time fails)
+    fail_after_count = 4;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_EQ(send_count, 4);
+
+}
+
+
+// ============================================================================
+// Section 17: Additional Backward Time Tick Edge Cases
+// ============================================================================
+
+TEST(BroadcastTimeApp, time_tick_backward_month_rollover_to_31_day_month)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = -4;
+    clock_state->time.hour = 0;
+    clock_state->time.minute = 0;
+    clock_state->date.day = 1;
+    clock_state->date.month = 4;  // April -> back to March (31 days)
+    clock_state->year.year = 2026;
+
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 23);
+    EXPECT_EQ(clock_state->time.minute, 59);
+    EXPECT_EQ(clock_state->date.day, 31);
+    EXPECT_EQ(clock_state->date.month, 3);
+    EXPECT_TRUE(callback_date_rollover);
+    EXPECT_TRUE(callback_date_received);
+
+}
+
+TEST(BroadcastTimeApp, time_tick_backward_day_decrement_no_month_change)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = -4;
+    clock_state->time.hour = 0;
+    clock_state->time.minute = 0;
+    clock_state->date.day = 15;
+    clock_state->date.month = 6;
+    clock_state->year.year = 2026;
+
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    // Day 15 -> Day 14 (date.day > 1 branch, no month change)
+    EXPECT_EQ(clock_state->time.hour, 23);
+    EXPECT_EQ(clock_state->time.minute, 59);
+    EXPECT_EQ(clock_state->date.day, 14);
+    EXPECT_EQ(clock_state->date.month, 6);
+    EXPECT_TRUE(callback_date_rollover);
+    EXPECT_FALSE(callback_date_received);
+
+}
+
+TEST(BroadcastTimeApp, time_tick_quarter_speed_forward)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 1;  // 0.25x real-time
+    clock_state->time.hour = 10;
+    clock_state->time.minute = 0;
+
+    // At 0.25x, each tick adds 100 * 1 = 100
+    // Threshold is 240,000, so 2400 ticks = 1 fast-minute (4 real minutes)
+    for (int tick = 0; tick < 2400; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 10);
+    EXPECT_EQ(clock_state->time.minute, 1);
+
+}
+
+TEST(BroadcastTimeApp, time_tick_negative_rate_quarter_speed)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = -1;  // -0.25x real-time
+    clock_state->time.hour = 10;
+    clock_state->time.minute = 30;
+
+    // At -0.25x, each tick adds 100 * 1 = 100
+    // 2400 ticks = 1 fast-minute backward
+    for (int tick = 0; tick < 2400; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 10);
+    EXPECT_EQ(clock_state->time.minute, 29);
+
+}
+
+TEST(BroadcastTimeApp, time_tick_super_high_rate_multiple_minutes_per_tick)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 4 * 100;  // 100x real-time
+    clock_state->time.hour = 10;
+    clock_state->time.minute = 0;
+
+    // At 100x, each tick adds 100 * 400 = 40,000
+    // Threshold is 240,000, so ~6 ticks per fast-minute
+    // But each tick can accumulate > 240,000 at very high rates
+    // 1 tick: 40000 (no minute), 6 ticks: 240,000 (1 minute)
+    // Actually 100 * 400 = 40000, threshold 240000 -> needs exactly 6 ticks per minute
+    // 60 ticks = 10 fast-minutes
+    for (int tick = 0; tick < 60; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.hour, 10);
+    EXPECT_EQ(clock_state->time.minute, 10);
+
+}
+
+
+// ============================================================================
+// Section 18: Accumulator Residual Tests
+// ============================================================================
+
+TEST(BroadcastTimeApp, time_tick_accumulator_does_not_lose_fractional_time)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 4;  // 1.0x
+    clock_state->time.hour = 10;
+    clock_state->time.minute = 0;
+
+    // Advance 599 ticks (just short of 1 minute)
+    for (int tick = 0; tick < 599; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.minute, 0);  // Not yet advanced
+
+    // One more tick should trigger the minute
+    OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    EXPECT_EQ(clock_state->time.minute, 1);
+
+}
+
+TEST(BroadcastTimeApp, start_then_stop_then_tick_does_not_advance)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    clock_state->rate.rate = 4;
+    clock_state->time.hour = 10;
+    clock_state->time.minute = 0;
+
+    OpenLcbApplicationBroadcastTime_start(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    EXPECT_TRUE(clock_state->is_running);
+
+    OpenLcbApplicationBroadcastTime_stop(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    EXPECT_FALSE(clock_state->is_running);
+
+    // Tick should not advance because clock is stopped
+    for (int tick = 0; tick < 600; tick++) {
+
+        OpenLcbApplicationBroadcastTime_100ms_time_tick();
+
+    }
+
+    EXPECT_EQ(clock_state->time.minute, 0);
 
 }

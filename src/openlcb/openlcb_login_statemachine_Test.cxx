@@ -335,7 +335,24 @@ bool _handle_try_enumerate_next_node(void)
 }
 
 // ============================================================================
-// Interface Structure
+// Mock Interface Functions - Login Complete Callback
+// ============================================================================
+
+static bool login_complete_return_value = true;
+
+/**
+ * @brief Mock on_login_complete callback
+ * @param openlcb_node Node that completed login
+ * @return login_complete_return_value (configurable by test)
+ */
+bool _on_login_complete(openlcb_node_t *openlcb_node)
+{
+    _update_called_function_ptr((void *)&_on_login_complete);
+    return login_complete_return_value;
+}
+
+// ============================================================================
+// Interface Structures
 // ============================================================================
 
 const interface_openlcb_login_state_machine_t interface_openlcb_login_state_machine = {
@@ -355,6 +372,28 @@ const interface_openlcb_login_state_machine_t interface_openlcb_login_state_mach
     .handle_try_reenumerate = &_handle_try_reenumerate,
     .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
     .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node,
+
+    .on_login_complete = NULL,
+};
+
+const interface_openlcb_login_state_machine_t interface_with_login_complete = {
+
+    .load_initialization_complete = &_load_initialization_complete,
+    .load_producer_events = &_load_producer_events,
+    .load_consumer_events = &_load_consumer_events,
+
+    .send_openlcb_msg = &_send_openlcb_msg,
+
+    .openlcb_node_get_first = &_openlcb_node_get_first,
+    .openlcb_node_get_next = &_openlcb_node_get_next,
+    .process_login_statemachine = &_process_login_statemachine,
+
+    .handle_outgoing_openlcb_message = &_handle_outgoing_openlcb_message,
+    .handle_try_reenumerate = &_handle_try_reenumerate,
+    .handle_try_enumerate_first_node = &_handle_try_enumerate_first_node,
+    .handle_try_enumerate_next_node = &_handle_try_enumerate_next_node,
+
+    .on_login_complete = &_on_login_complete,
 };
 
 const interface_openlcb_node_t interface_openlcb_node = {};
@@ -378,6 +417,7 @@ void _reset_variables(void)
     fail_handle_try_reenumerate = false;
     fail_handle_try_enumerate_first_node = false;
     fail_handle_try_enumerate_next_node = false;
+    login_complete_return_value = true;
 }
 
 /**
@@ -1333,4 +1373,94 @@ TEST(OpenLcbLoginStateMachine, statemachine_info_persistence)
     EXPECT_EQ(info2->openlcb_node, node_1);
     EXPECT_TRUE(info2->outgoing_msg_info.valid);
     EXPECT_TRUE(info2->outgoing_msg_info.enumerate);
+}
+
+// ============================================================================
+// TEST: State Dispatch - RUNSTATE_LOGIN_COMPLETE with NULL callback
+// ============================================================================
+
+TEST(OpenLcbLoginStateMachine, process_login_complete_null_callback)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node_1->alias = DEST_ALIAS;
+    node_1->state.run_state = RUNSTATE_LOGIN_COMPLETE;
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+    statemachine_info->openlcb_node = node_1;
+
+    // Interface has on_login_complete = NULL, so should skip callback and transition to RUN
+    OpenLcbLoginStateMachine_process(statemachine_info);
+
+    // Verify NO handler was called (callback is NULL)
+    EXPECT_EQ(called_function_ptr, nullptr);
+
+    // Verify node transitioned to RUNSTATE_RUN
+    EXPECT_EQ(node_1->state.run_state, RUNSTATE_RUN);
+}
+
+// ============================================================================
+// TEST: State Dispatch - RUNSTATE_LOGIN_COMPLETE with callback returning true
+// ============================================================================
+
+TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_true)
+{
+    _reset_variables();
+
+    // Use interface with on_login_complete set
+    OpenLcbLoginStateMachine_initialize(&interface_with_login_complete);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferStore_initialize();
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node_1->alias = DEST_ALIAS;
+    node_1->state.run_state = RUNSTATE_LOGIN_COMPLETE;
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+    statemachine_info->openlcb_node = node_1;
+
+    // Callback returns true -> should transition to RUNSTATE_RUN
+    login_complete_return_value = true;
+
+    OpenLcbLoginStateMachine_process(statemachine_info);
+
+    // Verify on_login_complete was called
+    EXPECT_EQ(called_function_ptr, &_on_login_complete);
+
+    // Verify node transitioned to RUNSTATE_RUN
+    EXPECT_EQ(node_1->state.run_state, RUNSTATE_RUN);
+}
+
+// ============================================================================
+// TEST: State Dispatch - RUNSTATE_LOGIN_COMPLETE with callback returning false
+// ============================================================================
+
+TEST(OpenLcbLoginStateMachine, process_login_complete_callback_returns_false)
+{
+    _reset_variables();
+
+    // Use interface with on_login_complete set
+    OpenLcbLoginStateMachine_initialize(&interface_with_login_complete);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    OpenLcbBufferStore_initialize();
+
+    openlcb_node_t *node_1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node_1->alias = DEST_ALIAS;
+    node_1->state.run_state = RUNSTATE_LOGIN_COMPLETE;
+
+    openlcb_login_statemachine_info_t *statemachine_info = OpenLcbLoginStatemachine_get_statemachine_info();
+    statemachine_info->openlcb_node = node_1;
+
+    // Callback returns false -> should stay in LOGIN_COMPLETE (retry later)
+    login_complete_return_value = false;
+
+    OpenLcbLoginStateMachine_process(statemachine_info);
+
+    // Verify on_login_complete was called
+    EXPECT_EQ(called_function_ptr, &_on_login_complete);
+
+    // Verify node did NOT transition - stays in LOGIN_COMPLETE
+    EXPECT_EQ(node_1->state.run_state, RUNSTATE_LOGIN_COMPLETE);
 }
