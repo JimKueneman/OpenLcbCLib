@@ -63,20 +63,20 @@ const interface_openlcb_protocol_broadcast_time_handler_t* ProtocolBroadcastTime
 }
 
 
-static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *cs, event_id_t event_id) {
+static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint8_t hour;
     uint8_t minute;
 
     if (OpenLcbUtilities_extract_time_from_event_id(event_id, &hour, &minute)) {
 
-        cs->time.hour = hour;
-        cs->time.minute = minute;
-        cs->time.valid = 1;
+        clock->time.hour = hour;
+        clock->time.minute = minute;
+        clock->time.valid = 1;
 
         if (_interface && _interface->on_time_received) {
 
-            _interface->on_time_received(node, cs);
+            _interface->on_time_received(node, clock);
 
         }
 
@@ -85,20 +85,20 @@ static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
-static void _handle_report_date(openlcb_node_t *node, broadcast_clock_state_t *cs, event_id_t event_id) {
+static void _handle_report_date(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint8_t month;
     uint8_t day;
 
     if (OpenLcbUtilities_extract_date_from_event_id(event_id, &month, &day)) {
 
-        cs->date.month = month;
-        cs->date.day = day;
-        cs->date.valid = 1;
+        clock->date.month = month;
+        clock->date.day = day;
+        clock->date.valid = 1;
 
         if (_interface && _interface->on_date_received) {
 
-            _interface->on_date_received(node, cs);
+            _interface->on_date_received(node, clock);
 
         }
 
@@ -107,18 +107,18 @@ static void _handle_report_date(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
-static void _handle_report_year(openlcb_node_t *node, broadcast_clock_state_t *cs, event_id_t event_id) {
+static void _handle_report_year(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint16_t year;
 
     if (OpenLcbUtilities_extract_year_from_event_id(event_id, &year)) {
 
-        cs->year.year = year;
-        cs->year.valid = 1;
+        clock->year.year = year;
+        clock->year.valid = 1;
 
         if (_interface && _interface->on_year_received) {
 
-            _interface->on_year_received(node, cs);
+            _interface->on_year_received(node, clock);
 
         }
 
@@ -127,18 +127,18 @@ static void _handle_report_year(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
-static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *cs, event_id_t event_id) {
+static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     int16_t rate;
 
     if (OpenLcbUtilities_extract_rate_from_event_id(event_id, &rate)) {
 
-        cs->rate.rate = rate;
-        cs->rate.valid = 1;
+        clock->rate.rate = rate;
+        clock->rate.valid = 1;
 
         if (_interface && _interface->on_rate_received) {
 
-            _interface->on_rate_received(node, cs);
+            _interface->on_rate_received(node, clock);
 
         }
 
@@ -147,37 +147,37 @@ static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *c
 }
 
 
-static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *cs) {
+static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
-    cs->is_running = 1;
+    clock->is_running = 1;
 
     if (_interface && _interface->on_clock_started) {
 
-        _interface->on_clock_started(node, cs);
+        _interface->on_clock_started(node, clock);
 
     }
 
 }
 
 
-static void _handle_stop(openlcb_node_t *node, broadcast_clock_state_t *cs) {
+static void _handle_stop(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
-    cs->is_running = 0;
+    clock->is_running = 0;
 
     if (_interface && _interface->on_clock_stopped) {
 
-        _interface->on_clock_stopped(node, cs);
+        _interface->on_clock_stopped(node, clock);
 
     }
 
 }
 
 
-static void _handle_date_rollover(openlcb_node_t *node, broadcast_clock_state_t *cs) {
+static void _handle_date_rollover(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
     if (_interface && _interface->on_date_rollover) {
 
-        _interface->on_date_rollover(node, cs);
+        _interface->on_date_rollover(node, clock);
 
     }
 
@@ -189,7 +189,7 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
     broadcast_time_event_type_enum event_type;
     openlcb_node_t *node;
     uint64_t clock_id;
-    broadcast_clock_state_t *cs;
+    broadcast_clock_state_t *clock;
 
     if (!statemachine_info) {
 
@@ -212,9 +212,9 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
     }
 
     clock_id = OpenLcbUtilities_extract_clock_id_from_time_event(event_id);
-    cs = OpenLcbApplicationBroadcastTime_get_clock(clock_id);
+    clock = OpenLcbApplicationBroadcastTime_get_clock(clock_id);
 
-    if (!cs) {
+    if (!clock) {
 
         return;
 
@@ -225,47 +225,47 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
     switch (event_type) {
 
         case BROADCAST_TIME_EVENT_REPORT_TIME:
-            _handle_report_time(node, cs, event_id);
+            _handle_report_time(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_REPORT_DATE:
-            _handle_report_date(node, cs, event_id);
+            _handle_report_date(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_REPORT_YEAR:
-            _handle_report_year(node, cs, event_id);
+            _handle_report_year(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_REPORT_RATE:
-            _handle_report_rate(node, cs, event_id);
+            _handle_report_rate(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_SET_TIME:
-            _handle_report_time(node, cs, event_id);
+            _handle_report_time(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_SET_DATE:
-            _handle_report_date(node, cs, event_id);
+            _handle_report_date(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_SET_YEAR:
-            _handle_report_year(node, cs, event_id);
+            _handle_report_year(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_SET_RATE:
-            _handle_report_rate(node, cs, event_id);
+            _handle_report_rate(node, clock, event_id);
             break;
 
         case BROADCAST_TIME_EVENT_START:
-            _handle_start(node, cs);
+            _handle_start(node, clock);
             break;
 
         case BROADCAST_TIME_EVENT_STOP:
-            _handle_stop(node, cs);
+            _handle_stop(node, clock);
             break;
 
         case BROADCAST_TIME_EVENT_DATE_ROLLOVER:
-            _handle_date_rollover(node, cs);
+            _handle_date_rollover(node, clock);
             break;
 
         case BROADCAST_TIME_EVENT_QUERY:

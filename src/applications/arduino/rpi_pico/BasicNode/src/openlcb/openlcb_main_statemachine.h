@@ -1311,8 +1311,7 @@ typedef struct {
      * @see ProtocolBroadcastTime_initialize - Register application callbacks
      * @see event_transport_pc_report - Event Transport handler that calls this
      */
-    void (*broadcast_time_event_handler)(openlcb_statemachine_info_t *statemachine_info, 
-                                         event_id_t event_id);
+    void (*broadcast_time_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
     /*@}*/
 
