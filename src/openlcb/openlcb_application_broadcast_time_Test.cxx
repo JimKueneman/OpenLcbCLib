@@ -252,6 +252,20 @@ static const interface_openlcb_protocol_broadcast_time_handler_t _test_handler_i
 
 };
 
+static bool callback_app_time_changed = false;
+
+static void _test_on_app_time_changed(broadcast_clock_t *clock) {
+    callback_app_time_changed = true;
+}
+
+static const interface_openlcb_application_broadcast_time_t _test_app_broadcast_time_interface = {
+    .on_time_changed = _test_on_app_time_changed,
+};
+
+static const interface_openlcb_application_broadcast_time_t _test_app_broadcast_time_null_callback_interface = {
+    .on_time_changed = NULL,
+};
+
 
 // ============================================================================
 // Setup / Teardown
@@ -271,6 +285,7 @@ static void _reset_test_state(void) {
     callback_clock_started = false;
     callback_clock_stopped = false;
     callback_date_rollover = false;
+    callback_app_time_changed = false;
 
 }
 
@@ -281,7 +296,7 @@ static void _full_initialize(void) {
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
     ProtocolBroadcastTime_initialize(&_test_handler_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
 
 }
 
@@ -316,7 +331,7 @@ TEST(BroadcastTimeApp, initialize_resets_previously_setup_clocks)
     ASSERT_NE(OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK), nullptr);
 
     // Re-initialize should clear all
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
 
     EXPECT_EQ(OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK), nullptr);
 
@@ -1693,7 +1708,7 @@ TEST(BroadcastTimeApp, time_tick_null_interface_no_crash)
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
     ProtocolBroadcastTime_initialize(NULL);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_null_callback_interface);
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
@@ -2224,7 +2239,7 @@ TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
     OpenLcbBufferFifo_initialize();
     OpenLcbBufferStore_initialize();
     ProtocolBroadcastTime_initialize(NULL);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_null_callback_interface);
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);

@@ -901,6 +901,10 @@ static const interface_openlcb_protocol_broadcast_time_handler_t _test_broadcast
 
 };
 
+static const interface_openlcb_application_broadcast_time_t _test_app_broadcast_time_interface = {
+    .on_time_changed = NULL,
+};
+
 TEST(BroadcastTimeHandler, handle_report_time)
 {
 
@@ -909,7 +913,7 @@ TEST(BroadcastTimeHandler, handle_report_time)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -941,7 +945,7 @@ TEST(BroadcastTimeHandler, handle_report_date)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -973,7 +977,7 @@ TEST(BroadcastTimeHandler, handle_report_year)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1004,7 +1008,7 @@ TEST(BroadcastTimeHandler, handle_report_rate)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1035,7 +1039,7 @@ TEST(BroadcastTimeHandler, handle_start)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
@@ -1067,7 +1071,7 @@ TEST(BroadcastTimeHandler, handle_stop)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
@@ -1099,7 +1103,7 @@ TEST(BroadcastTimeHandler, handle_date_rollover)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1126,7 +1130,7 @@ TEST(BroadcastTimeHandler, not_clock_consumer_ignores)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     // Do NOT call setup_consumer — clock slot will not exist
 
     openlcb_node_t node;
@@ -1154,7 +1158,7 @@ TEST(BroadcastTimeHandler, null_statemachine_info)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     event_id_t event_id = OpenLcbUtilities_create_time_event_id(
@@ -1174,7 +1178,7 @@ TEST(BroadcastTimeHandler, set_time_updates_state)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1206,7 +1210,7 @@ TEST(BroadcastTimeHandler, null_node_pointer)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_statemachine_info_t info;
@@ -1230,7 +1234,7 @@ TEST(BroadcastTimeHandler, set_date_updates_state)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1262,7 +1266,7 @@ TEST(BroadcastTimeHandler, set_year_updates_state)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1293,7 +1297,7 @@ TEST(BroadcastTimeHandler, set_rate_updates_state)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1324,7 +1328,7 @@ TEST(BroadcastTimeHandler, handle_query_no_action)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1357,7 +1361,7 @@ TEST(BroadcastTimeHandler, handle_unknown_event_type)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1390,7 +1394,7 @@ TEST(BroadcastTimeHandler, null_interface_no_crash)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(NULL);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1477,7 +1481,7 @@ TEST(BroadcastTimeHandler, null_callbacks_no_crash)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_null_callbacks_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
@@ -1548,7 +1552,7 @@ TEST(BroadcastTimeHandler, clock_id_updated_in_state)
     OpenLcbBufferStore_initialize();
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
