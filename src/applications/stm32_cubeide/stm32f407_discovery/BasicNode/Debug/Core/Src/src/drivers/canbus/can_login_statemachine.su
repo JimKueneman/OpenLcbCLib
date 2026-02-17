@@ -1,2 +1,2 @@
-../Core/Src/src/drivers/canbus/can_login_statemachine.c:49:6:CanLoginStateMachine_initialize	16	static
-../Core/Src/src/drivers/canbus/can_login_statemachine.c:55:6:CanLoginStateMachine_run	16	static
+../Core/Src/src/drivers/canbus/can_login_statemachine.c:78:6:CanLoginStateMachine_initialize	16	static
+../Core/Src/src/drivers/canbus/can_login_statemachine.c:118:6:CanLoginStateMachine_run	16	static

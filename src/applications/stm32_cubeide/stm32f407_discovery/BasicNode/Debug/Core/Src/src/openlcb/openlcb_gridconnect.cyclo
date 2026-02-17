@@ -1,4 +1,4 @@
-../Core/Src/src/openlcb/openlcb_gridconnect.c:56:13:_is_valid_hex_char	7
-../Core/Src/src/openlcb/openlcb_gridconnect.c:64:6:OpenLcbGridConnect_copy_out_gridconnect_when_done	17
-../Core/Src/src/openlcb/openlcb_gridconnect.c:188:6:OpenLcbGridConnect_to_can_msg	3
-../Core/Src/src/openlcb/openlcb_gridconnect.c:228:6:OpenLcbGridConnect_from_can_msg	2
+../Core/Src/src/openlcb/openlcb_gridconnect.c:136:13:_is_valid_hex_char	7
+../Core/Src/src/openlcb/openlcb_gridconnect.c:219:6:OpenLcbGridConnect_copy_out_gridconnect_when_done	17
+../Core/Src/src/openlcb/openlcb_gridconnect.c:422:6:OpenLcbGridConnect_to_can_msg	4
+../Core/Src/src/openlcb/openlcb_gridconnect.c:563:6:OpenLcbGridConnect_from_can_msg	2

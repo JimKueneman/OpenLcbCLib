@@ -46,14 +46,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/src/application_drivers/../openlcb/openlcb_types.h \
  ../Core/Src/src/application_drivers/stm32_driverlib_can_driver.h \
  ../Core/Src/src/application_drivers/../drivers/canbus/can_types.h \
- ../Core/Src/src/node_definition/dependency_injection.h \
- ../Core/Src/src/node_definition/dependency_injection_canbus.h \
- ../Core/Src/src/drivers/canbus/can_main_statemachine.h \
+ ../Core/Src/src/drivers/canbus/can_config.h \
  ../Core/Src/src/drivers/canbus/can_types.h \
- ../Core/Src/src/openlcb/openlcb_main_statemachine.h \
- ../Core/Src/src/openlcb/openlcb_types.h \
- ../Core/Src/src/openlcb/openlcb_login_statemachine.h \
- ../Core/Src/src/openlcb/openlcb_node.h ../Core/Src/debug_tools.h \
+ ../Core/Src/src/openlcb/openlcb_config.h \
+ ../Core/Src/src/openlcb/openlcb_types.h ../Core/Src/debug_tools.h \
  ../Core/Src/./src/drivers/canbus/can_types.h \
  ../Core/Src/./src/openlcb/openlcb_defines.h
 ../Core/Inc/main.h:
@@ -106,14 +102,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/src/application_drivers/../openlcb/openlcb_types.h:
 ../Core/Src/src/application_drivers/stm32_driverlib_can_driver.h:
 ../Core/Src/src/application_drivers/../drivers/canbus/can_types.h:
-../Core/Src/src/node_definition/dependency_injection.h:
-../Core/Src/src/node_definition/dependency_injection_canbus.h:
-../Core/Src/src/drivers/canbus/can_main_statemachine.h:
+../Core/Src/src/drivers/canbus/can_config.h:
 ../Core/Src/src/drivers/canbus/can_types.h:
-../Core/Src/src/openlcb/openlcb_main_statemachine.h:
+../Core/Src/src/openlcb/openlcb_config.h:
 ../Core/Src/src/openlcb/openlcb_types.h:
-../Core/Src/src/openlcb/openlcb_login_statemachine.h:
-../Core/Src/src/openlcb/openlcb_node.h:
 ../Core/Src/debug_tools.h:
 ../Core/Src/./src/drivers/canbus/can_types.h:
 ../Core/Src/./src/openlcb/openlcb_defines.h:

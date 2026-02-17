@@ -39,16 +39,32 @@
 #include "node_parameters.h"
 #include "src/application_drivers/rpi_pico_drivers.h"
 #include "src/application_drivers/rpi_pico_can_drivers.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
 
-#include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
+#include "src/drivers/canbus/can_config.h"
+#include "src/openlcb/openlcb_config.h"
 
 
 #define NODE_ID 0x050101010777
+
+static const can_config_t can_config = {
+    .transmit_raw_can_frame  = &RPiPicoCanDriver_transmit_raw_can_frame,
+    .is_tx_buffer_clear      = &RPiPicoCanDriver_is_can_tx_buffer_clear,
+    .lock_shared_resources   = &RPiPicoDrivers_lock_shared_resources,
+    .unlock_shared_resources = &RPiPicoDrivers_unlock_shared_resources,
+    .on_rx                   = &Callbacks_on_can_rx_callback,
+    .on_tx                   = &Callbacks_on_can_tx_callback,
+    .on_alias_change         = &Callbacks_alias_change_callback,
+};
+
+static const openlcb_config_t openlcb_config = {
+    .lock_shared_resources   = &RPiPicoDrivers_lock_shared_resources,
+    .unlock_shared_resources = &RPiPicoDrivers_unlock_shared_resources,
+    .config_mem_read         = &RPiPicoDrivers_config_mem_read,
+    .config_mem_write        = &RPiPicoDrivers_config_mem_write,
+    .reboot                  = &RPiPicoDrivers_reboot,
+    .factory_reset           = &Callbacks_operations_request_factory_reset,
+    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+};
 
 void setup()
 {
@@ -60,18 +76,18 @@ void setup()
   while (!Serial) {}
 
   Serial.println("Can Statemachine init.....");
-  
+
   RPiPicoCanDriver_setup();
   RPiPicoDriver_setup();
 
-  DependencyInjectionCanBus_initialize();
-  DependencyInjection_initialize();
+  CanConfig_initialize(&can_config);
+  OpenLcb_initialize(&openlcb_config, OPENLCB_PROFILE_STANDARD | OPENLCB_FEATURE_FIRMWARE_UPGRADE);
 
   Callbacks_initialize();
 
   Serial.println("Creating Node.....");
 
-  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+  OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
 
 }
 
@@ -96,7 +112,5 @@ void loop()
   // // put your main code here, to run repeatedly
   RPiPicoCanDriver_process_receive();
 
-  CanMainStateMachine_run();
-  OpenLcbLoginMainStatemachine_run();
-  OpenLcbMainStatemachine_run();
+  OpenLcb_run();
 }

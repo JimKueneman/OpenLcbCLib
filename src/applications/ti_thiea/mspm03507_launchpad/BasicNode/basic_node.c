@@ -42,39 +42,52 @@
 #include "node_parameters.h"
 #include "src/application_drivers/ti_driverlib_can_driver.h"
 #include "src/application_drivers/ti_driverlib_drivers.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
 
-#include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/drivers/canbus/can_rx_statemachine.h"
-#include "src/drivers/canbus/can_tx_statemachine.h"
-#include "src/drivers/canbus/can_types.h"
-#include "src/drivers/canbus/can_utilities.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
+#include "src/drivers/canbus/can_config.h"
+#include "src/openlcb/openlcb_config.h"
 
 #define NODE_ID 0x0501010107EE
 #define DELAY_TIME (50000000)
 
+static const can_config_t can_config = {
+    .transmit_raw_can_frame  = &TI_DriverLibCanDriver_transmit_can_frame,
+    .is_tx_buffer_clear      = &TI_DriverLibCanDriver_is_can_tx_buffer_clear,
+    .lock_shared_resources   = &TI_DriverLibDrivers_lock_shared_resources,
+    .unlock_shared_resources = &TI_DriverLibDrivers_unlock_shared_resources,
+    .on_rx                   = &Callbacks_on_can_rx_callback,
+    .on_tx                   = &Callbacks_on_can_tx_callback,
+    .on_alias_change         = &Callbacks_alias_change_callback,
+};
+
+static const openlcb_config_t openlcb_config = {
+    .lock_shared_resources   = &TI_DriverLibDrivers_lock_shared_resources,
+    .unlock_shared_resources = &TI_DriverLibDrivers_unlock_shared_resources,
+    .config_mem_read         = &TI_DriverLibDrivers_config_mem_read,
+    .config_mem_write        = &TI_DriverLibDrivers_config_mem_write,
+    .reboot                  = &TI_DriverLibDrivers_reboot,
+    .freeze                  = &Callbacks_freeze,
+    .unfreeze                = &Callbacks_unfreeze,
+    .firmware_write          = &Callbacks_write_firemware,
+    .factory_reset           = &Callbacks_operations_request_factory_reset,
+    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+};
+
 int main(void)
 {
 
-  can_msg_t can_msg;
-
   SYSCFG_DL_init();
-
-  DependencyInjectionCanBus_initialize();
-  DependencyInjection_initialize();
 
   TI_DriverLibCanDriver_initialize();
   TI_DriverLibDrivers_initialize();
+
+  CanConfig_initialize(&can_config);
+  OpenLcb_initialize(&openlcb_config, OPENLCB_PROFILE_STANDARD | OPENLCB_FEATURE_FIRMWARE_UPGRADE);
 
   Callbacks_initialize();
 
   printf("Booted\n");
 
-  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+  OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
 
   while (1)
   {
@@ -83,8 +96,6 @@ int main(void)
 
     // delay_cycles(DELAY_TIME);
 
-    CanMainStateMachine_run();
-    OpenLcbLoginMainStatemachine_run();
-    OpenLcbMainStatemachine_run();
+    OpenLcb_run();
   }
 }

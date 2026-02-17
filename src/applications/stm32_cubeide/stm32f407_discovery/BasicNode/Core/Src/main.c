@@ -29,29 +29,11 @@
 #include "node_parameters.h"
 #include "src/application_drivers/stm32_driverlib_drivers.h"
 #include "src/application_drivers/stm32_driverlib_can_driver.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
 
-#include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
-
-
-
-//#include "src/drivers/canbus/can_main_statemachine.h"
-//#include "src/drivers/canbus/can_rx_statemachine.h"
-//#include "src/drivers/canbus/can_tx_statemachine.h"
-//#include "src/drivers/canbus/can_types.h"
-//#include "src/drivers/canbus/can_utilities.h"
-//#include "src/openlcb/openlcb_login_statemachine.h"
-//#include "src/openlcb/openlcb_main_statemachine.h"
-//#include "src/openlcb/openlcb_node.h"
-
+#include "src/drivers/canbus/can_config.h"
+#include "src/openlcb/openlcb_config.h"
 
 #include "debug_tools.h"
-
-
 
 /* USER CODE END Includes */
 
@@ -135,6 +117,29 @@ void MX_USB_HOST_Process(void);
 //     return -1;
 // }
 
+static const can_config_t can_config = {
+    .transmit_raw_can_frame  = &STM32_DriverLibCanDriver_transmit_can_frame,
+    .is_tx_buffer_clear      = &STM32_DriverLibCanDriver_is_can_tx_buffer_clear,
+    .lock_shared_resources   = &STM32_DriverLibDrivers_lock_shared_resources,
+    .unlock_shared_resources = &STM32_DriverLibDrivers_unlock_shared_resources,
+    .on_rx                   = &Callbacks_on_can_rx_callback,
+    .on_tx                   = &Callbacks_on_can_tx_callback,
+    .on_alias_change         = &Callbacks_alias_change_callback,
+};
+
+static const openlcb_config_t openlcb_config = {
+    .lock_shared_resources   = &STM32_DriverLibDrivers_lock_shared_resources,
+    .unlock_shared_resources = &STM32_DriverLibDrivers_unlock_shared_resources,
+    .config_mem_read         = &STM32_DriverLibDrivers_config_mem_read,
+    .config_mem_write        = &STM32_DriverLibDrivers_config_mem_write,
+    .reboot                  = &STM32_DriverLibDrivers_reboot,
+    .freeze                  = &Callbacks_freeze,
+    .unfreeze                = &Callbacks_unfreeze,
+    .firmware_write          = &Callbacks_write_firemware,
+    .factory_reset           = &STM32_DriverLibDrivers_config_mem_factory_reset,
+    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+};
+
 /* USER CODE END 0 */
 
 /**
@@ -174,16 +179,15 @@ int main(void)
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 
-  DependencyInjectionCanBus_initialize();
-  DependencyInjection_initialize();
-
-  Callbacks_initialize();
-
-
   STM32_DriverLibCanDriver_initialize(&hcan1);
   STM32_DriverLibDrivers_initialize(&htim7);
 
-  OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+  CanConfig_initialize(&can_config);
+  OpenLcb_initialize(&openlcb_config, OPENLCB_PROFILE_STANDARD | OPENLCB_FEATURE_FIRMWARE_UPGRADE);
+
+  Callbacks_initialize();
+
+  OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
 
   /* USER CODE END 2 */
 
@@ -199,9 +203,7 @@ int main(void)
 
     HAL_GPIO_TogglePin(MAIN_LOOP_GREEN_LED_GPIO_Port, MAIN_LOOP_GREEN_LED_Pin);
 
-    CanMainStateMachine_run();
-    OpenLcbLoginMainStatemachine_run();
-    OpenLcbMainStatemachine_run();
+    OpenLcb_run();
   }
   /* USER CODE END 3 */
 }

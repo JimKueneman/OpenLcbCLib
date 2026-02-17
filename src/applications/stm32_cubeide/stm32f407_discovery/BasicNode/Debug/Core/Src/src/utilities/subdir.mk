@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Src/src/utilities/mustangpeak_endian_helper.c \
 ../Core/Src/src/utilities/mustangpeak_string_helper.c 
 
 OBJS += \
+./Core/Src/src/utilities/mustangpeak_endian_helper.o \
 ./Core/Src/src/utilities/mustangpeak_string_helper.o 
 
 C_DEPS += \
+./Core/Src/src/utilities/mustangpeak_endian_helper.d \
 ./Core/Src/src/utilities/mustangpeak_string_helper.d 
 
 
@@ -21,7 +24,7 @@ Core/Src/src/utilities/%.o Core/Src/src/utilities/%.su Core/Src/src/utilities/%.
 clean: clean-Core-2f-Src-2f-src-2f-utilities
 
 clean-Core-2f-Src-2f-src-2f-utilities:
-	-$(RM) ./Core/Src/src/utilities/mustangpeak_string_helper.cyclo ./Core/Src/src/utilities/mustangpeak_string_helper.d ./Core/Src/src/utilities/mustangpeak_string_helper.o ./Core/Src/src/utilities/mustangpeak_string_helper.su
+	-$(RM) ./Core/Src/src/utilities/mustangpeak_endian_helper.cyclo ./Core/Src/src/utilities/mustangpeak_endian_helper.d ./Core/Src/src/utilities/mustangpeak_endian_helper.o ./Core/Src/src/utilities/mustangpeak_endian_helper.su ./Core/Src/src/utilities/mustangpeak_string_helper.cyclo ./Core/Src/src/utilities/mustangpeak_string_helper.d ./Core/Src/src/utilities/mustangpeak_string_helper.o ./Core/Src/src/utilities/mustangpeak_string_helper.su
 
 .PHONY: clean-Core-2f-Src-2f-src-2f-utilities
 

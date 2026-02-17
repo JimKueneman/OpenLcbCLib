@@ -42,8 +42,6 @@
 
 #define LED_PIN 2
 
-static uint16_t _100ms_ticks = 0;
-
 void Callbacks_initialize(void) {
     
 
@@ -53,30 +51,7 @@ void Callbacks_initialize(void) {
 void Callbacks_on_100ms_timer_callback(void)
 {
     
-    OpenLcbApplicationBroadcastTime_100ms_time_tick();
 
-    if (_100ms_ticks > 10) {
-
-        broadcast_clock_state_t* broadcast_state = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-        
-        if (broadcast_state) {
-            
-            if (broadcast_state->is_running) {
-                
-                printf("Time is Running\n");
-                printf("Time: %2d:%d, rate: %d\n", broadcast_state->time.hour, broadcast_state->time.minute, broadcast_state->rate.rate);
-                
-            } else {
-                
-                printf("Time is Stopped\n");
-            }
-            
-        }
-        
-        _100ms_ticks = 0;
-    }
-
-    _100ms_ticks++;
 }
 
 void Callbacks_on_can_rx_callback(can_msg_t *can_msg)
@@ -153,6 +128,13 @@ bool Callbacks_on_login_complete(openlcb_node_t *openlcb_node) {
     
     OpenLcbApplicationBroadcastTime_start(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     
-    return OpenLcbApplicationBroadcastTime_send_query(openlcb_node);
+    return OpenLcbApplicationBroadcastTime_send_query(openlcb_node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    
+}
+
+
+void Callbacks_on_broadcast_time_changed(broadcast_clock_t *clock) {
+    
+    printf("Time: %2d:%d, rate: %d\n", clock->state.time.hour, clock->state.time.minute, clock->state.rate.rate);
     
 }

@@ -70,6 +70,8 @@ extern "C"
 
     extern bool Callbacks_on_login_complete(openlcb_node_t *openlcb_node);
 
+    extern void Callbacks_on_broadcast_time_changed(broadcast_clock_t *clock);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -41,6 +41,8 @@
 #include "../openlcb/openlcb_node.h"
 #include "../openlcb/openlcb_application.h"
 #include "../openlcb/openlcb_utilities.h"
+#include "../openlcb/openlcb_application_broadcast_time.h"
+#include "../openlcb/protocol_datagram_handler.h"
 
 #include <stdio.h>
 #include <pthread.h>
@@ -113,7 +115,9 @@ void *thread_function_timer(void *arg)
         if (_timer_pause == 0)
         {
             
+            OpenLcbApplicationBroadcastTime_100ms_time_tick();
             OpenLcbNode_100ms_timer_tick();
+            ProtocolDatagramHandler_100ms_timer_tick();
             
         }
 

@@ -4,3 +4,6 @@
 ../Core/Src/callbacks.c:75:6:Callbacks_on_can_tx_callback	16	static
 ../Core/Src/callbacks.c:87:6:Callbacks_alias_change_callback	24	static
 ../Core/Src/callbacks.c:94:6:Callbacks_operations_request_factory_reset	16	static
+../Core/Src/callbacks.c:103:6:Callbacks_write_firemware	16	static
+../Core/Src/callbacks.c:109:6:Callbacks_freeze	16	static
+../Core/Src/callbacks.c:119:6:Callbacks_unfreeze	16	static

@@ -1,0 +1,8 @@
+../Core/Src/src/drivers/canbus/can_config.c:76:13:_build_login_message_handler	1
+../Core/Src/src/drivers/canbus/can_config.c:87:13:_build_login_statemachine	1
+../Core/Src/src/drivers/canbus/can_config.c:103:13:_build_rx_message_handler	1
+../Core/Src/src/drivers/canbus/can_config.c:115:13:_build_rx_statemachine	1
+../Core/Src/src/drivers/canbus/can_config.c:139:13:_build_tx_message_handler	1
+../Core/Src/src/drivers/canbus/can_config.c:149:13:_build_tx_statemachine	1
+../Core/Src/src/drivers/canbus/can_config.c:163:13:_build_main_statemachine	1
+../Core/Src/src/drivers/canbus/can_config.c:189:6:CanConfig_initialize	1

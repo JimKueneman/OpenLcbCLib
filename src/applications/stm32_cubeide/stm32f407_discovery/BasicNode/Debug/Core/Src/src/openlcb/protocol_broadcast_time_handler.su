@@ -1,0 +1,10 @@
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:53:6:ProtocolBroadcastTime_initialize	16	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:59:60:ProtocolBroadcastTime_get_interface	4	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:66:13:_handle_report_time	32	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:88:13:_handle_report_date	32	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:110:13:_handle_report_year	32	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:130:13:_handle_report_rate	32	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:150:13:_handle_start	16	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:163:13:_handle_stop	16	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:176:13:_handle_date_rollover	16	static
+../Core/Src/src/openlcb/protocol_broadcast_time_handler.c:187:6:ProtocolBroadcastTime_handle_time_event	48	static

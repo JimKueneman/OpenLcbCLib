@@ -96,7 +96,7 @@ void Callbacks_operations_request_factory_reset(openlcb_statemachine_info_t *sta
     printf("Factory Reset: NodeID = 0x%06llX\n", OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0));
 }
 
-void Callbacks_write_firemware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
+void Callbacks_write_firmmware(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
 {
 
     printf("Firmware Write, buffer is in config_mem_write_request_info->writebuffer ");

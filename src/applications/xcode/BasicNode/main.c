@@ -10,33 +10,52 @@
 #include "node_parameters.h"
 #include "src/application_drivers/osx_drivers.h"
 #include "src/application_drivers/osx_can_drivers.h"
-#include "src/node_definition/dependency_injection.h"
-#include "src/node_definition/dependency_injection_canbus.h"
 
-#include "src/drivers/canbus/can_main_statemachine.h"
-#include "src/openlcb/openlcb_main_statemachine.h"
-#include "src/openlcb/openlcb_login_statemachine.h"
-#include "src/openlcb/openlcb_node.h"
-#include "src/openlcb/openlcb_application.h"
+#include "src/drivers/canbus/can_config.h"
+#include "src/openlcb/openlcb_config.h"
 #include "src/openlcb/openlcb_application_broadcast_time.h"
-
-#include "function_injection_defines.h"
 
 #define NODE_ID 0x050701010033
 
 openlcb_node_t *node = NULL;
 
+static const can_config_t can_config = {
+    .transmit_raw_can_frame  = &OSxCanDriver_transmit_raw_can_frame,
+    .is_tx_buffer_clear      = &OSxCanDriver_is_can_tx_buffer_clear,
+    .lock_shared_resources   = &OSxDrivers_lock_shared_resources,
+    .unlock_shared_resources = &OSxDrivers_unlock_shared_resources,
+    .on_rx                   = &Callbacks_on_can_rx_callback,
+    .on_tx                   = &Callbacks_on_can_tx_callback,
+    .on_alias_change         = &Callbacks_alias_change_callback,
+};
 
-extern bool OpenLcbApplicationBroadcastTime_send_query(openlcb_node_t *openlcb_node);
+static const openlcb_config_t openlcb_config = {
+    // Required hardware
+    .lock_shared_resources   = &OSxDrivers_lock_shared_resources,
+    .unlock_shared_resources = &OSxDrivers_unlock_shared_resources,
+    .config_mem_read         = &OSxDrivers_config_mem_read,
+    .config_mem_write        = &OSxDrivers_config_mem_write,
+    .reboot                  = &OSxDrivers_reboot,
 
-// Controller send functions (any node can set a clock generator)
+    // Optional hardware extensions
+    .freeze                  = &OSxDrivers_freeze,
+    .unfreeze                = &OSxDrivers_unfreeze,
+    .firmware_write          = &OSxDrivers_write_firemware,
+    .factory_reset           = &Callbacks_operations_request_factory_reset,
 
-extern bool OpenLcbApplicationBroadcastTime_send_set_time(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t hour, uint8_t minute);
-extern bool OpenLcbApplicationBroadcastTime_send_set_date(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t month, uint8_t day);
-extern bool OpenLcbApplicationBroadcastTime_send_set_year(openlcb_node_t *openlcb_node, event_id_t clock_id, uint16_t year);
-extern bool OpenLcbApplicationBroadcastTime_send_set_rate(openlcb_node_t *openlcb_node, event_id_t clock_id, int16_t rate);
-extern bool OpenLcbApplicationBroadcastTime_send_command_start(openlcb_node_t *openlcb_node, event_id_t clock_id);
-extern bool OpenLcbApplicationBroadcastTime_send_command_stop(openlcb_node_t *openlcb_node, event_id_t clock_id);
+    // Core application callbacks
+    .on_100ms_timer          = &Callbacks_on_100ms_timer_callback,
+    .on_login_complete       = &Callbacks_on_login_complete,
+
+    // Event transport callbacks
+    .on_consumed_event_identified = &Callbacks_on_consumed_event_identified,
+    .on_consumed_event_pcer       = &Callbacks_on_consumed_event_pcer,
+    .on_event_learn               = &Callbacks_on_event_learn,
+    
+    // Broadcast time callbacks
+    .on_broadcast_time_changed    = &Callbacks_on_broadcast_time_changed,
+};
+
 
 void *thread_function_char_read(void *arg) {
     
@@ -52,7 +71,7 @@ void *thread_function_char_read(void *arg) {
                 
             case '1':
                 printf("Send Query\n");
-                OpenLcbApplicationBroadcastTime_send_query(node);
+                OpenLcbApplicationBroadcastTime_send_query(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
             break;
                 
             case '2':
@@ -90,14 +109,13 @@ void *thread_function_char_read(void *arg) {
     }
 }
 
-
 int main(int argc, char *argv[])
 {
 
   printf("Initializing...\n");
-    
-  DependencyInjectionCanBus_initialize();
-  DependencyInjection_initialize();
+
+  CanConfig_initialize(&can_config);
+  OpenLcb_initialize(&openlcb_config, OPENLCB_PROFILE_STANDARD | OPENLCB_FEATURE_BROADCAST_TIME |OPENLCB_FEATURE_FIRMWARE_UPGRADE);
 
   Callbacks_initialize();
 
@@ -112,10 +130,9 @@ int main(int argc, char *argv[])
     sleep(2);
   }
 
-  node = OpenLcbNode_allocate(NODE_ID, &NodeParameters_main_node);
+  node = OpenLcb_create_node(NODE_ID, &NodeParameters_main_node);
   printf("Node Allocated.....\n");
 
-    
   OpenLcbApplicationBroadcastTime_setup_consumer(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     
   pthread_t thread4;
@@ -126,9 +143,8 @@ int main(int argc, char *argv[])
   {
 
     usleep(2);
-
-    CanMainStateMachine_run();
-    OpenLcbLoginMainStatemachine_run();
-    OpenLcbMainStatemachine_run();
+    OpenLcb_run();
+      
   }
+    
 }

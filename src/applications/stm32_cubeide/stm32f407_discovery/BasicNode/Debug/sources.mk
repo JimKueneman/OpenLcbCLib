@@ -27,7 +27,6 @@ SUBDIRS := \
 Core/Src \
 Core/Src/src/application_drivers \
 Core/Src/src/drivers/canbus \
-Core/Src/src/node_definition \
 Core/Src/src/openlcb \
 Core/Src/src/utilities \
 Core/Startup \

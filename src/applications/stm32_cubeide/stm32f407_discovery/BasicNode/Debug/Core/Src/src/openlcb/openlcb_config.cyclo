@@ -1,0 +1,16 @@
+../Core/Src/src/openlcb/openlcb_config.c:88:13:_build_event_transport	1
+../Core/Src/src/openlcb/openlcb_config.c:109:13:_build_broadcast_time	1
+../Core/Src/src/openlcb/openlcb_config.c:121:13:_build_app_broadcast_time	1
+../Core/Src/src/openlcb/openlcb_config.c:127:13:_build_node	1
+../Core/Src/src/openlcb/openlcb_config.c:133:13:_build_login_message_handler	1
+../Core/Src/src/openlcb/openlcb_config.c:143:13:_build_login_statemachine	1
+../Core/Src/src/openlcb/openlcb_config.c:169:13:_build_snip	1
+../Core/Src/src/openlcb/openlcb_config.c:175:13:_build_config_mem_read	1
+../Core/Src/src/openlcb/openlcb_config.c:216:13:_build_config_mem_write	1
+../Core/Src/src/openlcb/openlcb_config.c:242:13:_build_config_mem_operations	1
+../Core/Src/src/openlcb/openlcb_config.c:263:13:_build_datagram_handler	3
+../Core/Src/src/openlcb/openlcb_config.c:336:13:_build_main_statemachine	6
+../Core/Src/src/openlcb/openlcb_config.c:466:13:_build_application	1
+../Core/Src/src/openlcb/openlcb_config.c:476:6:OpenLcb_initialize	11
+../Core/Src/src/openlcb/openlcb_config.c:547:17:OpenLcb_create_node	1
+../Core/Src/src/openlcb/openlcb_config.c:552:6:OpenLcb_run	1
