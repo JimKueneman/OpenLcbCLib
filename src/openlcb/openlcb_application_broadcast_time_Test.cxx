@@ -36,7 +36,7 @@
 * - Section 6: Producer Send Function Tests
 * - Section 7: Consumer Send Function Tests
 * - Section 8: Controller Send Function Tests
-* - Section 9: Full Sync Tests
+* - Section 9: Query Reply (State Machine) Tests
 * - Section 10: Edge Cases
 *
 * @author Jim Kueneman
@@ -284,6 +284,8 @@ static void _full_initialize(void) {
     OpenLcbApplicationBroadcastTime_initialize();
 
 }
+
+
 
 
 // ============================================================================
@@ -1048,7 +1050,7 @@ TEST(BroadcastTimeApp, send_report_time)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_time(node, 14, 30));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_time(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
@@ -1056,7 +1058,7 @@ TEST(BroadcastTimeApp, send_report_time)
 
 }
 
-TEST(BroadcastTimeApp, send_report_time_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_report_time_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1068,11 +1070,11 @@ TEST(BroadcastTimeApp, send_report_time_no_producer_returns_false)
     // Only setup consumer, not producer
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_time(node, 14, 30));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_time(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
 
 }
 
-TEST(BroadcastTimeApp, send_report_time_no_clocks_returns_false)
+TEST(BroadcastTimeApp, send_report_time_no_clocks_returns_true)
 {
 
     _reset_test_state();
@@ -1081,7 +1083,7 @@ TEST(BroadcastTimeApp, send_report_time_no_clocks_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_time(node, 14, 30));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_time(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
 
 }
 
@@ -1096,15 +1098,15 @@ TEST(BroadcastTimeApp, send_report_date)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_date(node, 6, 15));
-    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_date(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
 
-TEST(BroadcastTimeApp, send_report_date_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_report_date_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1113,7 +1115,10 @@ TEST(BroadcastTimeApp, send_report_date_no_producer_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_date(node, 6, 15));
+    // Setup consumer only (not producer) - clock found but is_producer is false
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_date(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
 
 }
 
@@ -1128,15 +1133,15 @@ TEST(BroadcastTimeApp, send_report_year)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_year(node, 2026));
-    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_year(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
 
-TEST(BroadcastTimeApp, send_report_year_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_report_year_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1145,7 +1150,9 @@ TEST(BroadcastTimeApp, send_report_year_no_producer_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_year(node, 2026));
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_year(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
 
 }
 
@@ -1160,15 +1167,15 @@ TEST(BroadcastTimeApp, send_report_rate)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_rate(node, 0x0010));
-    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_rate(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
 
-TEST(BroadcastTimeApp, send_report_rate_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_report_rate_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1177,7 +1184,9 @@ TEST(BroadcastTimeApp, send_report_rate_no_producer_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_rate(node, 0x0010));
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_report_rate(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
 
 }
 
@@ -1192,15 +1201,15 @@ TEST(BroadcastTimeApp, send_start)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_start(node));
-    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_start(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
 
-TEST(BroadcastTimeApp, send_start_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_start_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1209,7 +1218,9 @@ TEST(BroadcastTimeApp, send_start_no_producer_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_start(node));
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_start(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -1224,15 +1235,15 @@ TEST(BroadcastTimeApp, send_stop)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_stop(node));
-    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_stop(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
 
-TEST(BroadcastTimeApp, send_stop_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_stop_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1241,7 +1252,9 @@ TEST(BroadcastTimeApp, send_stop_no_producer_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_stop(node));
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_stop(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -1256,15 +1269,15 @@ TEST(BroadcastTimeApp, send_date_rollover)
 
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_date_rollover(node));
-    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_date_rollover(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
     EXPECT_EQ(last_sent_event_id, expected);
 
 }
 
-TEST(BroadcastTimeApp, send_date_rollover_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_date_rollover_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1273,7 +1286,9 @@ TEST(BroadcastTimeApp, send_date_rollover_no_producer_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_date_rollover(node));
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_date_rollover(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -1293,7 +1308,7 @@ TEST(BroadcastTimeApp, send_query)
 
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query(node));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
     event_id_t expected = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_QUERY);
@@ -1301,7 +1316,7 @@ TEST(BroadcastTimeApp, send_query)
 
 }
 
-TEST(BroadcastTimeApp, send_query_no_consumer_returns_false)
+TEST(BroadcastTimeApp, send_query_no_consumer_returns_true)
 {
 
     _reset_test_state();
@@ -1313,11 +1328,11 @@ TEST(BroadcastTimeApp, send_query_no_consumer_returns_false)
     // Only producer, not consumer
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query(node));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
-TEST(BroadcastTimeApp, send_query_no_clocks_returns_false)
+TEST(BroadcastTimeApp, send_query_no_clocks_returns_true)
 {
 
     _reset_test_state();
@@ -1326,7 +1341,7 @@ TEST(BroadcastTimeApp, send_query_no_clocks_returns_false)
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
     node->alias = TEST_DEST_ALIAS;
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query(node));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -1445,10 +1460,10 @@ TEST(BroadcastTimeApp, send_command_stop)
 
 
 // ============================================================================
-// Section 9: Full Sync Tests
+// Section 9: Query Reply (State Machine) Tests
 // ============================================================================
 
-TEST(BroadcastTimeApp, send_full_sync_running_clock)
+TEST(BroadcastTimeApp, send_query_reply_running_clock_full_sequence)
 {
 
     _reset_test_state();
@@ -1468,14 +1483,31 @@ TEST(BroadcastTimeApp, send_full_sync_running_clock)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    // The state machine advances state when send_event_with_mti fails (!false=true).
+    // When send succeeds (!true=false), it breaks and returns true (done).
+    // To drive through all 6 states, we fail sends for states 0-4 (advancing state each time)
+    // then succeed at state 5 (send_event_pc_report).
 
-    // Full sync sends 6 messages: start/stop, rate, year, date, time, next_minute
-    EXPECT_EQ(send_count, 6);
+    // States 0-4: Send fails -> state advances -> returns false (not done)
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 0->1
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 1->2
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 2->3
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 3->4
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 4->5
+    EXPECT_EQ(send_count, 0);  // No messages actually sent yet
+
+    // State 5: send_event_pc_report succeeds -> state resets to 0 -> returns true (done)
+    fail_transmit = false;
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 1);
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+    event_id_t expected_next = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31, false);
+    EXPECT_EQ(last_sent_event_id, expected_next);
 
 }
 
-TEST(BroadcastTimeApp, send_full_sync_stopped_clock)
+TEST(BroadcastTimeApp, send_query_reply_success_at_state_0_returns_true)
 {
 
     _reset_test_state();
@@ -1487,7 +1519,37 @@ TEST(BroadcastTimeApp, send_full_sync_stopped_clock)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 0;
+    clock_state->is_running = 1;
+    clock_state->rate.rate = 0x0010;
+    clock_state->year.year = 2026;
+    clock_state->date.month = 6;
+    clock_state->date.day = 15;
+    clock_state->time.hour = 14;
+    clock_state->time.minute = 30;
+
+    // When send succeeds at state 0, function returns true immediately (done)
+    // and sends a Producer Identified Set with start event
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 1);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_start = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    EXPECT_EQ(last_sent_event_id, expected_start);
+
+}
+
+TEST(BroadcastTimeApp, send_query_reply_stopped_clock_sends_stop_event)
+{
+
+    _reset_test_state();
+    _full_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+
+    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
+        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    clock_state->is_running = 0;  // Stopped
     clock_state->rate.rate = 0x0004;
     clock_state->year.year = 2026;
     clock_state->date.month = 1;
@@ -1495,15 +1557,16 @@ TEST(BroadcastTimeApp, send_full_sync_stopped_clock)
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
 
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 0, 1));
-    EXPECT_EQ(send_count, 6);
-
-    // Last message should be PC Event Report (next minute time)
-    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
+    // State 0: Send succeeds with stop event -> returns true (done)
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));
+    EXPECT_EQ(send_count, 1);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_stop = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
+    EXPECT_EQ(last_sent_event_id, expected_stop);
 
 }
 
-TEST(BroadcastTimeApp, send_full_sync_no_producer_returns_false)
+TEST(BroadcastTimeApp, send_query_reply_no_producer_returns_true)
 {
 
     _reset_test_state();
@@ -1513,12 +1576,12 @@ TEST(BroadcastTimeApp, send_full_sync_no_producer_returns_false)
     node->alias = TEST_DEST_ALIAS;
 
     // No clock setup at all
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 0);
 
 }
 
-TEST(BroadcastTimeApp, send_full_sync_consumer_only_returns_false)
+TEST(BroadcastTimeApp, send_query_reply_consumer_only_returns_true)
 {
 
     _reset_test_state();
@@ -1529,12 +1592,12 @@ TEST(BroadcastTimeApp, send_full_sync_consumer_only_returns_false)
 
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 0);
 
 }
 
-TEST(BroadcastTimeApp, send_full_sync_transmit_failure)
+TEST(BroadcastTimeApp, send_query_reply_fail_advances_state_then_success)
 {
 
     _reset_test_state();
@@ -1554,9 +1617,27 @@ TEST(BroadcastTimeApp, send_full_sync_transmit_failure)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
+    // Transmit fails: !false = true, state 0->1, returns false (not done)
     fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 0);
 
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    // Now allow transmit to succeed at state 1 (Rate):
+    // send succeeds: !true = false, break, return true (done)
+    fail_transmit = false;
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 1);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+
+    // Note: state is still at 1 (success doesn't advance/reset state for states 0-4).
+    // Drive state machine to completion to reset state to 0 for next test.
+    fail_transmit = true;
+    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 1->2
+    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 2->3
+    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 3->4
+    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 4->5
+    fail_transmit = false;
+    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 5->0 (done)
 
 }
 
@@ -1922,7 +2003,7 @@ TEST(BroadcastTimeApp, send_report_time_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_time(node, 14, 30));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_time(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30));
 
 }
 
@@ -1938,7 +2019,7 @@ TEST(BroadcastTimeApp, send_report_date_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_date(node, 6, 15));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_date(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15));
 
 }
 
@@ -1954,7 +2035,7 @@ TEST(BroadcastTimeApp, send_report_year_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_year(node, 2026));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_year(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026));
 
 }
 
@@ -1970,7 +2051,7 @@ TEST(BroadcastTimeApp, send_report_rate_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_rate(node, 0x0010));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_report_rate(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010));
 
 }
 
@@ -1986,7 +2067,7 @@ TEST(BroadcastTimeApp, send_start_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_start(node));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_start(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -2002,7 +2083,7 @@ TEST(BroadcastTimeApp, send_stop_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_stop(node));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_stop(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -2018,7 +2099,7 @@ TEST(BroadcastTimeApp, send_date_rollover_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_date_rollover(node));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_date_rollover(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -2034,7 +2115,7 @@ TEST(BroadcastTimeApp, send_query_transmit_failure)
     OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query(node));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK));
 
 }
 
@@ -2172,10 +2253,10 @@ TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
 
 
 // ============================================================================
-// Section 16: Full Sync Transmit Failure at Different Stages
+// Section 16: Query Reply Transmit Failure at Different Stages
 // ============================================================================
 
-TEST(BroadcastTimeApp, send_full_sync_failure_at_rate_step)
+TEST(BroadcastTimeApp, send_query_reply_failure_at_state_5_returns_true)
 {
 
     _reset_test_state();
@@ -2195,41 +2276,27 @@ TEST(BroadcastTimeApp, send_full_sync_failure_at_rate_step)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // Fail after first message (start/stop) succeeds
-    // We need to fail on the second call (rate)
-    // Since our mock fails all-or-nothing, test that first step failure returns false
+    // Drive through states 0-4 with failed sends (state advances on failure)
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 0->1
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 1->2
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 2->3
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 3->4
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 4->5
     EXPECT_EQ(send_count, 0);
 
-}
+    // State 5: send_event_pc_report also fails -> falls through break -> returns true (done)
+    // (state 5 does NOT advance state on failure, it just falls through)
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 0);
 
-TEST(BroadcastTimeApp, send_full_sync_stopped_sends_stop_event)
-{
-
-    _reset_test_state();
-    _full_initialize();
-
-    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
-    node->alias = TEST_DEST_ALIAS;
-
-    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
-        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-
-    clock_state->is_running = 0;  // Stopped
-    clock_state->rate.rate = 0x0004;
-    clock_state->year.year = 2026;
-    clock_state->date.month = 6;
-    clock_state->date.day = 15;
-    clock_state->time.hour = 14;
-    clock_state->time.minute = 30;
-
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
-    EXPECT_EQ(send_count, 6);
+    // Reset state to 0: succeed at state 5 to complete the sequence
+    fail_transmit = false;
+    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);
 
 }
 
-TEST(BroadcastTimeApp, send_full_sync_failure_at_rate)
+TEST(BroadcastTimeApp, send_query_reply_can_run_twice_consecutively)
 {
 
     _reset_test_state();
@@ -2249,91 +2316,28 @@ TEST(BroadcastTimeApp, send_full_sync_failure_at_rate)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // Fail after 1 successful send (start/stop succeeds, rate fails)
-    fail_after_count = 1;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
+    // First full sequence: fail states 0-4, succeed at state 5
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    fail_transmit = false;
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
 
-}
-
-TEST(BroadcastTimeApp, send_full_sync_failure_at_year)
-{
-
-    _reset_test_state();
-    _full_initialize();
-
-    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
-    node->alias = TEST_DEST_ALIAS;
-
-    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
-        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-
-    clock_state->is_running = 1;
-    clock_state->rate.rate = 0x0004;
-    clock_state->year.year = 2026;
-    clock_state->date.month = 6;
-    clock_state->date.day = 15;
-    clock_state->time.hour = 14;
-    clock_state->time.minute = 30;
-
-    // Fail after 2 successful sends (start/stop + rate succeed, year fails)
-    fail_after_count = 2;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
-    EXPECT_EQ(send_count, 2);
-
-}
-
-TEST(BroadcastTimeApp, send_full_sync_failure_at_date)
-{
-
-    _reset_test_state();
-    _full_initialize();
-
-    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
-    node->alias = TEST_DEST_ALIAS;
-
-    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
-        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-
-    clock_state->is_running = 1;
-    clock_state->rate.rate = 0x0004;
-    clock_state->year.year = 2026;
-    clock_state->date.month = 6;
-    clock_state->date.day = 15;
-    clock_state->time.hour = 14;
-    clock_state->time.minute = 30;
-
-    // Fail after 3 successful sends (start/stop + rate + year succeed, date fails)
-    fail_after_count = 3;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
-    EXPECT_EQ(send_count, 3);
-
-}
-
-TEST(BroadcastTimeApp, send_full_sync_failure_at_time)
-{
-
-    _reset_test_state();
-    _full_initialize();
-
-    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
-    node->alias = TEST_DEST_ALIAS;
-
-    broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
-        NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-
-    clock_state->is_running = 1;
-    clock_state->rate.rate = 0x0004;
-    clock_state->year.year = 2026;
-    clock_state->date.month = 6;
-    clock_state->date.day = 15;
-    clock_state->time.hour = 14;
-    clock_state->time.minute = 30;
-
-    // Fail after 4 successful sends (start/stop + rate + year + date succeed, time fails)
-    fail_after_count = 4;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_full_sync(node, 14, 31));
-    EXPECT_EQ(send_count, 4);
+    // Second full sequence should work (state resets to 0 after completion)
+    send_count = 0;
+    fail_transmit = true;
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
+    fail_transmit = false;
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
+    EXPECT_EQ(send_count, 1);
 
 }
 

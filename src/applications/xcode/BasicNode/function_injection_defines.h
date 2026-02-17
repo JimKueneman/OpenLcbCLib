@@ -90,7 +90,11 @@
 // ******************************************************************************
 
 // Broadcast Time Callbacks
-#define BROADCAST_TIME_EVENT_HANDLER &ProtocolBroadcastTime_handle_time_event
+//#define ON_BROADCAST_TIME_TIME_CHANGED NULL
+// if using Broadcast Time, the application must assign the time event handler to update the system time and generate the Broadcast Time Received events to this
+ #define BROADCAST_TIME_TIME_EVENT_HANDLER &ProtocolBroadcastTime_handle_time_event
+#define BROADCAST_TIME_EVENT_HANDLER NULL
+
 
 #define ON_BROADCAST_TIME_RECEIVED NULL
 #define ON_BROADCAST_DATE_RECEIVED NULL

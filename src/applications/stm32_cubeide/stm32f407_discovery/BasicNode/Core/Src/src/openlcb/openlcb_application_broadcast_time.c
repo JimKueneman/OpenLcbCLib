@@ -44,7 +44,7 @@
 
 
 static broadcast_clock_t _clocks[BROADCAST_TIME_TOTAL_CLOCK_COUNT];
-
+static const interface_openlcb_application_broadcast_time_t *_interface;
 
 // Static helpers
 
@@ -88,9 +88,11 @@ static broadcast_clock_t *_find_or_allocate_clock(event_id_t clock_id) {
 
 // Initialization
 
-void OpenLcbApplicationBroadcastTime_initialize(void) {
+void OpenLcbApplicationBroadcastTime_initialize(const interface_openlcb_application_broadcast_time_t *interface) {
 
   memset(_clocks, 0, sizeof(_clocks));
+  _interface = interface;
+
 }
 
 
@@ -103,6 +105,7 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_
   if (!clock) {
 
     return NULL;
+
   }
 
   clock->is_consumer = 1;
@@ -117,9 +120,11 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_consumer(openlcb_
     // a node must be in Advertised state before sending PCERs (e.g. Query event)
     OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768);
     OpenLcbApplication_register_producer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768);
+
   }
 
   return &clock->state;
+
 }
 
 broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_producer(openlcb_node_t *openlcb_node, event_id_t clock_id) {
@@ -129,6 +134,7 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_producer(openlcb_
   if (!clock) {
 
     return NULL;
+
   }
 
   clock->is_producer = 1;
@@ -143,9 +149,11 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_setup_producer(openlcb_
     // clock generator must consume Set Time/Date/Year/Rate/Start/Stop/Query events
     OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x0000, EVENT_RANGE_COUNT_32768);
     OpenLcbApplication_register_consumer_range(openlcb_node, clock_id | 0x8000, EVENT_RANGE_COUNT_32768);
+
   }
 
   return &clock->state;
+
 }
 
 void OpenLcbApplicationBroadcastTime_start(event_id_t clock_id) {
@@ -155,9 +163,11 @@ void OpenLcbApplicationBroadcastTime_start(event_id_t clock_id) {
   if (!broadcast_clock) {
 
     return;
+
   }
 
   broadcast_clock->state.is_running = true;
+
 }
 
 void OpenLcbApplicationBroadcastTime_stop(event_id_t clock_id) {
@@ -167,9 +177,11 @@ void OpenLcbApplicationBroadcastTime_stop(event_id_t clock_id) {
   if (!broadcast_clock) {
 
     return;
+
   }
 
   broadcast_clock->state.is_running = false;
+
 }
 
 
@@ -182,9 +194,11 @@ broadcast_clock_state_t *OpenLcbApplicationBroadcastTime_get_clock(event_id_t cl
   if (clock) {
 
     return &clock->state;
+
   }
 
   return NULL;
+
 }
 
 bool OpenLcbApplicationBroadcastTime_is_consumer(event_id_t clock_id) {
@@ -194,9 +208,11 @@ bool OpenLcbApplicationBroadcastTime_is_consumer(event_id_t clock_id) {
   if (clock) {
 
     return clock->is_consumer;
+
   }
 
   return 0;
+
 }
 
 bool OpenLcbApplicationBroadcastTime_is_producer(event_id_t clock_id) {
@@ -206,9 +222,11 @@ bool OpenLcbApplicationBroadcastTime_is_producer(event_id_t clock_id) {
   if (clock) {
 
     return clock->is_producer;
+
   }
 
   return 0;
+
 }
 
 // Time tick helpers
@@ -218,6 +236,7 @@ static const uint8_t _days_in_month_table[12] = { 31, 28, 31, 30, 31, 30, 31, 31
 static bool _is_leap_year(uint16_t year) {
 
   return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+
 }
 
 static uint8_t _days_in_month(uint8_t month, uint16_t year) {
@@ -225,6 +244,7 @@ static uint8_t _days_in_month(uint8_t month, uint16_t year) {
   if (month < 1 || month > 12) {
 
     return 30;
+
   }
 
   uint8_t days = _days_in_month_table[month - 1];
@@ -232,9 +252,11 @@ static uint8_t _days_in_month(uint8_t month, uint16_t year) {
   if (month == 2 && _is_leap_year(year)) {
 
     days = 29;
+
   }
 
   return days;
+
 }
 
 static void _advance_minute_forward(broadcast_clock_state_t *clock, openlcb_node_t *node) {
@@ -253,6 +275,7 @@ static void _advance_minute_forward(broadcast_clock_state_t *clock, openlcb_node
       if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_rollover) {
 
         ProtocolBroadcastTime_get_interface()->on_date_rollover(node, clock);
+
       }
 
       clock->date.day++;
@@ -272,21 +295,28 @@ static void _advance_minute_forward(broadcast_clock_state_t *clock, openlcb_node
           if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_year_received) {
 
             ProtocolBroadcastTime_get_interface()->on_year_received(node, clock);
+
           }
+
         }
 
         if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_received) {
 
           ProtocolBroadcastTime_get_interface()->on_date_received(node, clock);
         }
+
       }
+
     }
+
   }
 
   if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_time_received) {
 
     ProtocolBroadcastTime_get_interface()->on_time_received(node, clock);
+
   }
+
 }
 
 static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_node_t *node) {
@@ -302,6 +332,7 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
       if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_rollover) {
 
         ProtocolBroadcastTime_get_interface()->on_date_rollover(node, clock);
+
       }
 
       if (clock->date.day <= 1) {
@@ -314,11 +345,13 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
           if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_year_received) {
 
             ProtocolBroadcastTime_get_interface()->on_year_received(node, clock);
+
           }
 
         } else {
 
           clock->date.month--;
+
         }
 
         clock->date.day = _days_in_month(clock->date.month, clock->year.year);
@@ -326,27 +359,33 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
         if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_received) {
 
           ProtocolBroadcastTime_get_interface()->on_date_received(node, clock);
+
         }
 
       } else {
 
         clock->date.day--;
+
       }
 
     } else {
 
       clock->time.hour--;
+
     }
 
   } else {
 
     clock->time.minute--;
+
   }
 
   if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_time_received) {
 
     ProtocolBroadcastTime_get_interface()->on_time_received(node, clock);
+
   }
+
 }
 
 
@@ -396,6 +435,7 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
     if (!clock->is_allocated || !clock->is_consumer || !clock->state.is_running) {
 
       continue;
+
     }
 
     int16_t rate = clock->state.rate.rate;
@@ -403,11 +443,12 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
     if (rate == 0) {
 
       continue;
+
     }
 
     uint16_t abs_rate = (rate < 0) ? (uint16_t)(-rate) : (uint16_t)(rate);
 
-    clock->state.ms_accumulator += (uint32_t)(100) * abs_rate;
+    clock->state.ms_accumulator += (uint32_t)(50) * abs_rate;
 
     while (clock->state.ms_accumulator >= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT) {
 
@@ -420,9 +461,19 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
       } else {
 
         _advance_minute_backward(&clock->state, NULL);
+
       }
+
+      if (_interface->on_time_changed) {
+
+        _interface->on_time_changed(clock);
+
+      }
+
     }
+
   }
+
 }
 
 
@@ -439,10 +490,13 @@ bool OpenLcbApplicationBroadcastTime_send_report_time(openlcb_node_t *openlcb_no
       event_id_t event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, hour, minute, false);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_report_date(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t month, uint8_t day) {
@@ -456,10 +510,13 @@ bool OpenLcbApplicationBroadcastTime_send_report_date(openlcb_node_t *openlcb_no
       event_id_t event_id = OpenLcbUtilities_create_date_event_id(clock->state.clock_id, month, day, false);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_report_year(openlcb_node_t *openlcb_node, event_id_t clock_id, uint16_t year) {
@@ -473,10 +530,13 @@ bool OpenLcbApplicationBroadcastTime_send_report_year(openlcb_node_t *openlcb_no
       event_id_t event_id = OpenLcbUtilities_create_year_event_id(clock->state.clock_id, year, false);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_report_rate(openlcb_node_t *openlcb_node, event_id_t clock_id, int16_t rate) {
@@ -490,10 +550,13 @@ bool OpenLcbApplicationBroadcastTime_send_report_rate(openlcb_node_t *openlcb_no
       event_id_t event_id = OpenLcbUtilities_create_rate_event_id(clock->state.clock_id, rate, false);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_start(openlcb_node_t *openlcb_node, event_id_t clock_id) {
@@ -507,10 +570,13 @@ bool OpenLcbApplicationBroadcastTime_send_start(openlcb_node_t *openlcb_node, ev
       event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_START);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_stop(openlcb_node_t *openlcb_node, event_id_t clock_id) {
@@ -524,10 +590,13 @@ bool OpenLcbApplicationBroadcastTime_send_stop(openlcb_node_t *openlcb_node, eve
       event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_STOP);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_node, event_id_t clock_id) {
@@ -541,10 +610,13 @@ bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_
       event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_DATE_ROLLOVER);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t next_hour, uint8_t next_minute) {
@@ -569,6 +641,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
           } else {
 
             event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_STOP);
+
           }
 
           if (!OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
@@ -576,6 +649,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
             _send_query_reply_state = 1;
 
             return false; // not done
+
           }
 
           break;
@@ -589,6 +663,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
             _send_query_reply_state = 2;
 
             return false; // not done
+
           }
 
           break;
@@ -602,6 +677,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
             _send_query_reply_state = 3;
 
             return false; // not done
+
           }
 
           break;
@@ -615,6 +691,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
             _send_query_reply_state = 4;
 
             return false; // not done
+
           }
 
           break;
@@ -628,6 +705,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
             _send_query_reply_state = 5;
 
             return false; // not done
+
           }
 
           break;
@@ -641,6 +719,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
             _send_query_reply_state = 0;
 
             return true; // done
+
           }
 
           break;
@@ -651,6 +730,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
   }  // if (clock)
 
   return true;  // done
+
 }
 
 
@@ -667,7 +747,9 @@ bool OpenLcbApplicationBroadcastTime_send_query(openlcb_node_t *openlcb_node, ev
       event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock->state.clock_id, BROADCAST_TIME_EVENT_QUERY);
 
       return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
     }
+
   }
 
   return true;  // done
@@ -681,6 +763,7 @@ bool OpenLcbApplicationBroadcastTime_send_set_time(openlcb_node_t *openlcb_node,
   event_id_t event_id = OpenLcbUtilities_create_time_event_id(clock_id, hour, minute, true);
 
   return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_set_date(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t month, uint8_t day) {
@@ -688,6 +771,7 @@ bool OpenLcbApplicationBroadcastTime_send_set_date(openlcb_node_t *openlcb_node,
   event_id_t event_id = OpenLcbUtilities_create_date_event_id(clock_id, month, day, true);
 
   return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_set_year(openlcb_node_t *openlcb_node, event_id_t clock_id, uint16_t year) {
@@ -695,6 +779,7 @@ bool OpenLcbApplicationBroadcastTime_send_set_year(openlcb_node_t *openlcb_node,
   event_id_t event_id = OpenLcbUtilities_create_year_event_id(clock_id, year, true);
 
   return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_set_rate(openlcb_node_t *openlcb_node, event_id_t clock_id, int16_t rate) {
@@ -702,6 +787,7 @@ bool OpenLcbApplicationBroadcastTime_send_set_rate(openlcb_node_t *openlcb_node,
   event_id_t event_id = OpenLcbUtilities_create_rate_event_id(clock_id, rate, true);
 
   return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_command_start(openlcb_node_t *openlcb_node, event_id_t clock_id) {
@@ -709,6 +795,7 @@ bool OpenLcbApplicationBroadcastTime_send_command_start(openlcb_node_t *openlcb_
   event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock_id, BROADCAST_TIME_EVENT_START);
 
   return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
 }
 
 bool OpenLcbApplicationBroadcastTime_send_command_stop(openlcb_node_t *openlcb_node, event_id_t clock_id) {
@@ -716,4 +803,5 @@ bool OpenLcbApplicationBroadcastTime_send_command_stop(openlcb_node_t *openlcb_n
   event_id_t event_id = OpenLcbUtilities_create_command_event_id(clock_id, BROADCAST_TIME_EVENT_STOP);
 
   return OpenLcbApplication_send_event_pc_report(openlcb_node, event_id);
+
 }

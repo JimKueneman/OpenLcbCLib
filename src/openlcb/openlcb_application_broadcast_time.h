@@ -56,18 +56,12 @@
 #define BROADCAST_TIME_WELLKNOWN_CLOCK_COUNT 4
 #define BROADCAST_TIME_TOTAL_CLOCK_COUNT (BROADCAST_TIME_WELLKNOWN_CLOCK_COUNT + BROADCAST_TIME_MAX_CUSTOM_CLOCKS)
 
-    /**
-     * @struct broadcast_clock_t
-     * @brief A clock slot with state and subscription flags
-     */
+
     typedef struct {
 
-        broadcast_clock_state_t state;
-        bool is_consumer : 1;
-        bool is_producer : 1;
-        bool is_allocated : 1;
+        void (*on_time_changed)(broadcast_clock_t *clock);
 
-    } broadcast_clock_t;
+    } interface_openlcb_application_broadcast_time_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,7 +69,7 @@ extern "C" {
 
     // Initialization
 
-    extern void OpenLcbApplicationBroadcastTime_initialize(void);
+    extern void OpenLcbApplicationBroadcastTime_initialize(const interface_openlcb_application_broadcast_time_t *interface);
 
     // Setup — registers a clock slot and event ranges on the node
 

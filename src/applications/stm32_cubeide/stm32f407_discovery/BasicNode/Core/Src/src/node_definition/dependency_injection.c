@@ -61,6 +61,12 @@
 #include "../openlcb/protocol_broadcast_time_handler.h"
 #include "../openlcb/openlcb_application_broadcast_time.h"
 
+const interface_openlcb_application_broadcast_time_t interface_openlcb_application_broadcast_time = {
+
+    .on_time_changed = ON_BROADCAST_TIME_TIME_CHANGED
+
+};
+
 const interface_openlcb_protocol_broadcast_time_handler_t interface_openlcb_protocol_broadcast_time_handler = {
 
     .on_time_received = ON_BROADCAST_TIME_RECEIVED,
@@ -179,6 +185,7 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     .event_transport_learn = &ProtocolEventTransport_handle_event_learn,
     .event_transport_pc_report = &ProtocolEventTransport_handle_pc_event_report,
     .event_transport_pc_report_with_payload = &ProtocolEventTransport_handle_pc_event_report_with_payload,
+    .broadcast_time_event_handler = BROADCAST_TIME_EVENT_HANDLER,
 
     // Optional Traction Protocol Handler function assignments
     .traction_control_command = NULL,
@@ -453,7 +460,7 @@ void DependencyInjection_initialize(void)
     ProtocolConfigMemWriteHandler_initialize(&interface_protocol_config_mem_write_handler);
     ProtocolConfigMemOperationsHandler_initialize(&interface_protocol_config_mem_operations_handler);
     ProtocolBroadcastTime_initialize(&interface_openlcb_protocol_broadcast_time_handler);
-    OpenLcbApplicationBroadcastTime_initialize();
+    OpenLcbApplicationBroadcastTime_initialize(&interface_openlcb_application_broadcast_time);
 
     OpenLcbNode_initialize(&interface_openlcb_node);
 

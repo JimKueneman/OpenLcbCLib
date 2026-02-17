@@ -626,6 +626,19 @@ extern "C" {
 
 
         /**
+         * @struct broadcast_clock_t
+         * @brief A clock slot with state and subscription flags
+         */
+    typedef struct {
+
+        broadcast_clock_state_t state;
+        bool is_consumer : 1;
+        bool is_producer : 1;
+        bool is_allocated : 1;
+
+    } broadcast_clock_t;
+
+        /**
         * @struct openlcb_msg_state_t
         * @brief Message state flags
         *

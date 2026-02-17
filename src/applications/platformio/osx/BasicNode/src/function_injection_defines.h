@@ -71,21 +71,29 @@
 
 // ******************************************************************************
 
-
-// ******************************************************************************
-// Application defined callback functions in dependency_injectors.h
-// ******************************************************************************
-
 #define ON_100MS_TIMER_CALLBACK &Callbacks_on_100ms_timer_callback
 #define ON_CAN_RX_CALLBACK &Callbacks_on_can_rx_callback
 #define ON_CAN_TX_CALLBACK &Callbacks_on_can_tx_callback
 #define ON_ALIAS_CHANGE_CALLBACK &Callbacks_alias_change_callback
 #define ON_LOGIN_COMPLETE_CALLBACK NULL
 
+// ******************************************************************************
+// Application defined callback functions in dependency_injectors.h
+// ******************************************************************************
+
+#define OPERATIONS_REQUEST_FACTORY_RESET_FUNC &Callbacks_operations_request_factory_reset
+#define CONFIG_MEM_READ_DELAYED_REPLY_TIME_FUNC NULL
+#define CONFIG_MEM_WRITE_DELAYED_REPLY_TIME_FUNC NULL
 
 #define ON_CONSUMED_EVENT_IDENTIFIED NULL
 #define ON_CONSUMED_EVENT_PCER NULL
 #define ON_EVENT_LEARN_CALLBACK NULL
+
+// Broadcast Time Callbacks
+#define ON_BROADCAST_TIME_TIME_CHANGED NULL
+// if using Broadcast Time, the application must assign the time event handler to update the system time and generate the Broadcast Time Received events to this
+// #define BROADCAST_TIME_TIME_EVENT_HANDLER &ProtocolBroadcastTime_handle_time_event
+#define BROADCAST_TIME_EVENT_HANDLER NULL
 
 #define ON_BROADCAST_TIME_RECEIVED NULL
 #define ON_BROADCAST_DATE_RECEIVED NULL
@@ -95,7 +103,6 @@
 #define ON_BROADCAST_CLOCK_STOPPED NULL
 #define ON_BROADCAST_DATE_ROLLOVER NULL
 // ******************************************************************************
-
 
 // ******************************************************************************
 // Application defined library extended feature functions in dependency_injectors.h
