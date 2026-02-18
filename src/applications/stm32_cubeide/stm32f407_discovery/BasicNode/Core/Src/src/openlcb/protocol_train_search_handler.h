@@ -65,8 +65,7 @@
          * @param search_address The numeric DCC address from the search query
          * @param flags The raw flags byte from the search event
          */
-        void (*on_search_matched)(openlcb_node_t *openlcb_node,
-                uint16_t search_address, uint8_t flags);
+        void (*on_search_matched)(openlcb_node_t *openlcb_node, uint16_t search_address, uint8_t flags);
 
         /**
          * @brief Called when no train node matches (allocate case, deferred)
@@ -74,8 +73,7 @@
          * @param flags The raw flags byte from the search event
          * @return Pointer to a newly allocated train node, or NULL
          */
-        openlcb_node_t* (*on_search_no_match)(uint16_t search_address,
-                uint8_t flags);
+        openlcb_node_t* (*on_search_no_match)(uint16_t search_address, uint8_t flags);
 
     } interface_protocol_train_search_handler_t;
 
@@ -87,14 +85,7 @@ extern "C" {
      * @brief Initializes the Train Search Protocol handler
      * @param interface Pointer to callback interface structure (may be NULL)
      */
-    extern void ProtocolTrainSearch_initialize(
-            const interface_protocol_train_search_handler_t *interface);
-
-    /**
-     * @brief Returns the stored callback interface pointer
-     * @return Pointer to the callback interface, or NULL if not initialized
-     */
-    extern const interface_protocol_train_search_handler_t* ProtocolTrainSearch_get_interface(void);
+    extern void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface);
 
     /**
      * @brief Handles incoming train search events
@@ -106,9 +97,7 @@ extern "C" {
      * @param statemachine_info State machine context with incoming message and node
      * @param event_id Full 64-bit Event ID containing encoded search query
      */
-    extern void ProtocolTrainSearch_handle_search_event(
-            openlcb_statemachine_info_t *statemachine_info,
-            event_id_t event_id);
+    extern void ProtocolTrainSearch_handle_search_event(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
 #ifdef __cplusplus
 }

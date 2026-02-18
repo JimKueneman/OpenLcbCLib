@@ -19,6 +19,9 @@ Core/Src/src/openlcb/openlcb_config.o: \
  ../Core/Src/src/openlcb/protocol_config_mem_operations_handler.h \
  ../Core/Src/src/openlcb/protocol_broadcast_time_handler.h \
  ../Core/Src/src/openlcb/openlcb_application_broadcast_time.h \
+ ../Core/Src/src/openlcb/protocol_train_handler.h \
+ ../Core/Src/src/openlcb/openlcb_application_train.h \
+ ../Core/Src/src/openlcb/protocol_train_search_handler.h \
  ../Core/Src/src/openlcb/../drivers/canbus/can_tx_statemachine.h \
  ../Core/Src/src/openlcb/../drivers/canbus/can_types.h \
  ../Core/Src/src/openlcb/../drivers/canbus/../../openlcb/openlcb_defines.h \
@@ -43,6 +46,9 @@ Core/Src/src/openlcb/openlcb_config.o: \
 ../Core/Src/src/openlcb/protocol_config_mem_operations_handler.h:
 ../Core/Src/src/openlcb/protocol_broadcast_time_handler.h:
 ../Core/Src/src/openlcb/openlcb_application_broadcast_time.h:
+../Core/Src/src/openlcb/protocol_train_handler.h:
+../Core/Src/src/openlcb/openlcb_application_train.h:
+../Core/Src/src/openlcb/protocol_train_search_handler.h:
 ../Core/Src/src/openlcb/../drivers/canbus/can_tx_statemachine.h:
 ../Core/Src/src/openlcb/../drivers/canbus/can_types.h:
 ../Core/Src/src/openlcb/../drivers/canbus/../../openlcb/openlcb_defines.h:

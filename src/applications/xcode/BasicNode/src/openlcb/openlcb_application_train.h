@@ -54,58 +54,6 @@
 
 #include "openlcb_types.h"
 
-#ifndef USER_DEFINED_TRAIN_NODE_COUNT
-#define USER_DEFINED_TRAIN_NODE_COUNT 4
-#endif
-
-#ifndef USER_DEFINED_MAX_LISTENERS_PER_TRAIN
-#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN 6
-#endif
-
-#ifndef USER_DEFINED_MAX_TRAIN_FUNCTIONS
-#define USER_DEFINED_MAX_TRAIN_FUNCTIONS 29   /**< F0-F28, standard DCC range */
-#endif
-
-    /**
-     * @struct train_listener_entry_t
-     * @brief A single listener entry for a train consist
-     */
-    typedef struct {
-
-        uint64_t node_id;   /**< Listener node ID (0 = empty/unused slot) */
-        uint8_t flags;      /**< Listener flags (reverse, link F0, link Fn, hide) */
-
-    } train_listener_entry_t;
-
-    /**
-     * @struct train_state_TAG
-     * @brief Per-node train state
-     *
-     * @details Holds the mutable runtime state for a single train node.
-     * Allocated from a static pool by OpenLcbApplicationTrain_setup().
-     */
-    typedef struct train_state_TAG {
-
-        uint16_t set_speed;              /**< Last commanded speed (float16 IEEE 754) */
-        uint16_t commanded_speed;        /**< Control algorithm output speed (float16) */
-        uint16_t actual_speed;           /**< Measured speed, optional (float16) */
-        uint8_t estop_active;            /**< Emergency stop active flag */
-        uint64_t controller_node_id;     /**< Active controller node ID (0 if none) */
-        uint8_t reserved_node_count;     /**< Reservation count */
-        uint32_t heartbeat_timeout_s;    /**< Heartbeat deadline in seconds (0 = disabled) */
-        uint32_t heartbeat_counter_100ms;/**< Heartbeat countdown in 100ms ticks */
-
-        train_listener_entry_t listeners[USER_DEFINED_MAX_LISTENERS_PER_TRAIN];
-        uint8_t listener_count;          /**< Number of active listeners */
-
-        uint16_t functions[USER_DEFINED_MAX_TRAIN_FUNCTIONS]; /**< Function values (16-bit per function, indexed by function number) */
-
-        uint16_t dcc_address;            /**< DCC address (0 = not set) */
-        uint8_t is_long_address;         /**< 1 = extended (long) DCC address, 0 = short */
-        uint8_t speed_steps;             /**< DCC speed steps: 0=default, 1=14, 2=28, 3=128 */
-
-    } train_state_t;
-
     /**
      * @struct interface_openlcb_application_train_t
      * @brief Application interface for train module
@@ -115,6 +63,7 @@
     typedef struct {
 
         bool (*send_openlcb_msg)(openlcb_msg_t *openlcb_msg);
+        void (*on_heartbeat_timeout)(openlcb_node_t *openlcb_node);
 
     } interface_openlcb_application_train_t;
 
@@ -126,8 +75,6 @@ extern "C" {
 
     extern void OpenLcbApplicationTrain_initialize(
             const interface_openlcb_application_train_t *interface);
-
-    extern const interface_openlcb_application_train_t* OpenLcbApplicationTrain_get_interface(void);
 
     // Setup — allocates train state from pool, assigns to node->train_state
 
@@ -141,66 +88,35 @@ extern "C" {
 
     extern void OpenLcbApplicationTrain_100ms_timer_tick(void);
 
-    // Listener management (train node side)
-
-    extern bool OpenLcbApplicationTrain_attach_listener(
-            train_state_t *state, uint64_t node_id, uint8_t flags);
-
-    extern bool OpenLcbApplicationTrain_detach_listener(
-            train_state_t *state, uint64_t node_id);
-
-    extern train_listener_entry_t* OpenLcbApplicationTrain_find_listener(
-            train_state_t *state, uint64_t node_id);
-
-    extern uint8_t OpenLcbApplicationTrain_get_listener_count(train_state_t *state);
-
-    extern train_listener_entry_t* OpenLcbApplicationTrain_get_listener_by_index(
-            train_state_t *state, uint8_t index);
-
     // Send helpers (throttle side — build and send train commands)
 
-    extern void OpenLcbApplicationTrain_send_set_speed(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id, uint16_t speed);
+    extern void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint16_t speed);
 
-    extern void OpenLcbApplicationTrain_send_set_function(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id,
-            uint32_t fn_address, uint16_t fn_value);
+    extern void OpenLcbApplicationTrain_send_set_function(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint32_t fn_address, uint16_t fn_value);
 
-    extern void OpenLcbApplicationTrain_send_emergency_stop(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_emergency_stop(openlcb_node_t *openlcb_node, node_id_t train_node_id);
 
-    extern void OpenLcbApplicationTrain_send_query_speeds(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_query_speeds(openlcb_node_t *openlcb_node, node_id_t train_node_id);
 
-    extern void OpenLcbApplicationTrain_send_query_function(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id, uint32_t fn_address);
+    extern void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint32_t fn_address);
 
-    extern void OpenLcbApplicationTrain_send_assign_controller(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, node_id_t train_node_id);
 
-    extern void OpenLcbApplicationTrain_send_release_controller(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, node_id_t train_node_id);
 
-    extern void OpenLcbApplicationTrain_send_noop(
-            openlcb_node_t *openlcb_node, uint64_t train_node_id);
+    extern void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, node_id_t train_node_id);
 
     // Train search properties — set during setup, used by search handler
 
-    extern void OpenLcbApplicationTrain_set_dcc_address(
-            openlcb_node_t *openlcb_node, uint16_t dcc_address,
-            bool is_long_address);
+    extern void OpenLcbApplicationTrain_set_dcc_address(openlcb_node_t *openlcb_node, uint16_t dcc_address, bool is_long_address);
 
-    extern uint16_t OpenLcbApplicationTrain_get_dcc_address(
-            openlcb_node_t *openlcb_node);
+    extern uint16_t OpenLcbApplicationTrain_get_dcc_address(openlcb_node_t *openlcb_node);
 
-    extern bool OpenLcbApplicationTrain_is_long_address(
-            openlcb_node_t *openlcb_node);
+    extern bool OpenLcbApplicationTrain_is_long_address(openlcb_node_t *openlcb_node);
 
-    extern void OpenLcbApplicationTrain_set_speed_steps(
-            openlcb_node_t *openlcb_node, uint8_t speed_steps);
+    extern void OpenLcbApplicationTrain_set_speed_steps(openlcb_node_t *openlcb_node, uint8_t speed_steps);
 
-    extern uint8_t OpenLcbApplicationTrain_get_speed_steps(
-            openlcb_node_t *openlcb_node);
+    extern uint8_t OpenLcbApplicationTrain_get_speed_steps(openlcb_node_t *openlcb_node);
 
 #ifdef __cplusplus
 }

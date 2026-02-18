@@ -43,7 +43,6 @@
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "openlcb_application_train.h"
 #include "openlcb_float16.h"
 
 
@@ -56,9 +55,125 @@ void ProtocolTrainHandler_initialize(const interface_protocol_train_handler_t *i
 
 }
 
-const interface_protocol_train_handler_t* ProtocolTrainHandler_get_interface(void) {
+// ============================================================================
+// Listener management
+// ============================================================================
 
-    return _interface;
+bool ProtocolTrainHandler_attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags)
+{
+
+    if (!state || node_id == 0) {
+
+        return false;
+
+    }
+
+    // Check if already attached — update flags if so
+    for (uint8_t i = 0; i < state->listener_count; i++) {
+
+        if (state->listeners[i].node_id == node_id) {
+
+            state->listeners[i].flags = flags;
+            return true;
+
+        }
+
+    }
+
+    // Check for capacity
+    if (state->listener_count >= USER_DEFINED_MAX_LISTENERS_PER_TRAIN) {
+
+        return false;
+
+    }
+
+    state->listeners[state->listener_count].node_id = node_id;
+    state->listeners[state->listener_count].flags = flags;
+    state->listener_count++;
+
+    return true;
+
+}
+
+bool ProtocolTrainHandler_detach_listener(train_state_t *state, node_id_t node_id) {
+
+    if (!state || node_id == 0) {
+
+        return false;
+
+    }
+
+    for (uint8_t i = 0; i < state->listener_count; i++) {
+
+        if (state->listeners[i].node_id == node_id) {
+
+            // Shift remaining entries down
+            for (uint8_t j = i; j < state->listener_count - 1; j++) {
+
+                state->listeners[j] = state->listeners[j + 1];
+
+            }
+
+            state->listener_count--;
+
+            // Clear the vacated slot
+            state->listeners[state->listener_count].node_id = 0;
+            state->listeners[state->listener_count].flags = 0;
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}
+
+train_listener_entry_t* ProtocolTrainHandler_find_listener(
+        train_state_t *state, node_id_t node_id) {
+
+    if (!state || node_id == 0) {
+
+        return NULL;
+
+    }
+
+    for (uint8_t i = 0; i < state->listener_count; i++) {
+
+        if (state->listeners[i].node_id == node_id) {
+
+            return &state->listeners[i];
+
+        }
+
+    }
+
+    return NULL;
+
+}
+
+uint8_t ProtocolTrainHandler_get_listener_count(train_state_t *state) {
+
+    if (!state) {
+
+        return 0;
+
+    }
+
+    return state->listener_count;
+
+}
+
+train_listener_entry_t* ProtocolTrainHandler_get_listener_by_index(train_state_t *state, uint8_t index) {
+
+    if (!state || index >= state->listener_count) {
+
+        return NULL;
+
+    }
+
+    return &state->listeners[index];
 
 }
 
@@ -79,10 +194,7 @@ static void _load_reply_header(openlcb_statemachine_info_t *statemachine_info) {
 
 }
 
-static void _load_query_speeds_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint16_t set_speed, uint8_t status,
-        uint16_t commanded_speed, uint16_t actual_speed) {
+static void _load_query_speeds_reply(openlcb_statemachine_info_t *statemachine_info, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed) {
 
     _load_reply_header(statemachine_info);
 
@@ -98,9 +210,7 @@ static void _load_query_speeds_reply(
 
 }
 
-static void _load_query_function_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint32_t fn_address, uint16_t fn_value) {
+static void _load_query_function_reply(openlcb_statemachine_info_t *statemachine_info, uint32_t fn_address, uint16_t fn_value) {
 
     _load_reply_header(statemachine_info);
 
@@ -116,9 +226,7 @@ static void _load_query_function_reply(
 
 }
 
-static void _load_controller_assign_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint8_t result) {
+static void _load_controller_assign_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
 
     _load_reply_header(statemachine_info);
 
@@ -132,9 +240,8 @@ static void _load_controller_assign_reply(
 
 }
 
-static void _load_controller_query_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint8_t flags, uint64_t controller_node_id) {
+static void _load_controller_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t flags, node_id_t controller_node_id)
+{
 
     _load_reply_header(statemachine_info);
 
@@ -146,12 +253,9 @@ static void _load_controller_query_reply(
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(msg, controller_node_id, 3);
 
     statemachine_info->outgoing_msg_info.valid = true;
-
 }
 
-static void _load_controller_changed_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint8_t result) {
+static void _load_controller_changed_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
 
     _load_reply_header(statemachine_info);
 
@@ -165,9 +269,8 @@ static void _load_controller_changed_reply(
 
 }
 
-static void _load_listener_attach_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint64_t node_id, uint8_t result) {
+static void _load_listener_attach_reply(openlcb_statemachine_info_t *statemachine_info,node_id_t node_id, uint8_t result)
+{
 
     _load_reply_header(statemachine_info);
 
@@ -179,12 +282,10 @@ static void _load_listener_attach_reply(
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, result, 8);
 
     statemachine_info->outgoing_msg_info.valid = true;
-
 }
 
-static void _load_listener_detach_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint64_t node_id, uint8_t result) {
+static void _load_listener_detach_reply(openlcb_statemachine_info_t *statemachine_info, node_id_t node_id, uint8_t result)
+{
 
     _load_reply_header(statemachine_info);
 
@@ -196,12 +297,10 @@ static void _load_listener_detach_reply(
     OpenLcbUtilities_copy_byte_to_openlcb_payload(msg, result, 8);
 
     statemachine_info->outgoing_msg_info.valid = true;
-
 }
 
-static void _load_listener_query_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint8_t count, uint8_t index, uint8_t flags, uint64_t node_id) {
+static void _load_listener_query_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t count, uint8_t index, uint8_t flags, node_id_t node_id)
+{
 
     _load_reply_header(statemachine_info);
 
@@ -215,12 +314,9 @@ static void _load_listener_query_reply(
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(msg, node_id, 5);
 
     statemachine_info->outgoing_msg_info.valid = true;
-
 }
 
-static void _load_reserve_reply(
-        openlcb_statemachine_info_t *statemachine_info,
-        uint8_t result) {
+static void _load_reserve_reply(openlcb_statemachine_info_t *statemachine_info, uint8_t result) {
 
     _load_reply_header(statemachine_info);
 
@@ -259,10 +355,9 @@ static uint32_t _extract_fn_address(openlcb_msg_t *msg, uint16_t offset) {
 static void _handle_set_speed(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
-    uint16_t speed = OpenLcbUtilities_extract_word_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 1);
+    uint16_t speed = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 1);
 
     if (state) {
 
@@ -282,12 +377,10 @@ static void _handle_set_speed(openlcb_statemachine_info_t *statemachine_info) {
 static void _handle_set_function(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
-    uint32_t fn_address = _extract_fn_address(
-            statemachine_info->incoming_msg_info.msg_ptr, 1);
-    uint16_t fn_value = OpenLcbUtilities_extract_word_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 4);
+    uint32_t fn_address = _extract_fn_address(statemachine_info->incoming_msg_info.msg_ptr, 1);
+    uint16_t fn_value = OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 4);
 
     if (state && fn_address < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
 
@@ -306,7 +399,7 @@ static void _handle_set_function(openlcb_statemachine_info_t *statemachine_info)
 static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
     if (state) {
 
@@ -328,8 +421,7 @@ static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_inf
 
 static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info) {
 
-    openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
     uint16_t set_speed = 0;
     uint8_t status = 0;
@@ -345,18 +437,16 @@ static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info)
 
     }
 
-    _load_query_speeds_reply(statemachine_info,
-            set_speed, status, commanded_speed, actual_speed);
+    _load_query_speeds_reply(statemachine_info, set_speed, status, commanded_speed, actual_speed);
 
 }
 
 static void _handle_query_function(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
-    uint32_t fn_address = _extract_fn_address(
-            statemachine_info->incoming_msg_info.msg_ptr, 1);
+    uint32_t fn_address = _extract_fn_address(statemachine_info->incoming_msg_info.msg_ptr, 1);
 
     uint16_t fn_value = 0;
 
@@ -380,7 +470,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
     openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
     uint8_t sub_cmd = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 1);
 
@@ -388,13 +478,12 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_ASSIGN: {
 
-            uint64_t requesting_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+            node_id_t requesting_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
             uint8_t result = 0;
 
             if (state) {
 
-                if (state->controller_node_id == 0 ||
-                        state->controller_node_id == requesting_id) {
+                if (state->controller_node_id == 0 || state->controller_node_id == requesting_id) {
 
                     // No current controller, or same controller — accept
                     state->controller_node_id = requesting_id;
@@ -404,8 +493,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
                     // Different controller — ask app or default accept
                     if (_interface && _interface->on_controller_assign_request) {
 
-                        result = _interface->on_controller_assign_request(
-                                node, state->controller_node_id, requesting_id);
+                        result = _interface->on_controller_assign_request(node, state->controller_node_id, requesting_id);
 
                     }
 
@@ -433,7 +521,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_RELEASE: {
 
-            uint64_t releasing_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+            node_id_t releasing_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
 
             if (state && state->controller_node_id == releasing_id) {
 
@@ -453,7 +541,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_QUERY: {
 
-            uint64_t ctrl_id = 0;
+            node_id_t ctrl_id = 0;
             uint8_t flags = 0;
 
             if (state) {
@@ -476,7 +564,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
         case TRAIN_CONTROLLER_CHANGED: {
 
-            uint64_t new_controller_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+            node_id_t new_controller_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
             uint8_t result = 0;
 
             if (_interface && _interface->on_controller_changed_request) {
@@ -502,7 +590,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
     openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
     uint8_t sub_cmd = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 1);
 
@@ -511,12 +599,12 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
         case TRAIN_LISTENER_ATTACH: {
 
             uint8_t flags = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
-            uint64_t listener_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
+            node_id_t listener_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
             uint8_t result = 0;
 
             if (state) {
 
-                bool ok = OpenLcbApplicationTrain_attach_listener(state, listener_id, flags);
+                bool ok = ProtocolTrainHandler_attach_listener(state, listener_id, flags);
 
                 if (!ok) {
 
@@ -545,14 +633,14 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
         case TRAIN_LISTENER_DETACH: {
 
             uint8_t flags = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
-            uint64_t listener_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
+            node_id_t listener_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
             uint8_t result = 0;
 
             (void) flags;
 
             if (state) {
 
-                bool ok = OpenLcbApplicationTrain_detach_listener(state, listener_id);
+                bool ok = ProtocolTrainHandler_detach_listener(state, listener_id);
 
                 if (!ok) {
 
@@ -584,7 +672,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
             if (state) {
 
-                count = OpenLcbApplicationTrain_get_listener_count(state);
+                count = ProtocolTrainHandler_get_listener_count(state);
 
             }
 
@@ -598,13 +686,11 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
                 // Reply with the first listener entry
                 // Per spec, additional entries would need additional replies
                 // which requires multi-message support (future enhancement)
-                train_listener_entry_t *entry =
-                        OpenLcbApplicationTrain_get_listener_by_index(state, 0);
+                train_listener_entry_t *entry = ProtocolTrainHandler_get_listener_by_index(state, 0);
 
                 if (entry) {
 
-                    _load_listener_query_reply(statemachine_info,
-                            count, 0, entry->flags, entry->node_id);
+                    _load_listener_query_reply(statemachine_info, count, 0, entry->flags, entry->node_id);
 
                 } else {
 
@@ -619,6 +705,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
         }
 
         default:
+
             break;
 
     }
@@ -628,8 +715,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
     openlcb_msg_t *msg = statemachine_info->incoming_msg_info.msg_ptr;
-    openlcb_node_t *node = statemachine_info->openlcb_node;
-    train_state_t *state = OpenLcbApplicationTrain_get_state(node);
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
 
     uint8_t sub_cmd = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 1);
 
@@ -674,6 +760,7 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
         }
 
         default:
+
             break;
 
     }
@@ -696,8 +783,7 @@ static void _handle_query_speeds_reply(openlcb_statemachine_info_t *statemachine
         uint16_t commanded_speed = OpenLcbUtilities_extract_word_from_openlcb_payload(msg, 4);
         uint16_t actual_speed = OpenLcbUtilities_extract_word_from_openlcb_payload(msg, 6);
 
-        _interface->on_query_speeds_reply(statemachine_info->openlcb_node,
-                set_speed, status, commanded_speed, actual_speed);
+        _interface->on_query_speeds_reply(statemachine_info->openlcb_node, set_speed, status, commanded_speed, actual_speed);
 
     }
 
@@ -712,8 +798,7 @@ static void _handle_query_function_reply(openlcb_statemachine_info_t *statemachi
         uint32_t fn_address = _extract_fn_address(msg, 1);
         uint16_t fn_value = OpenLcbUtilities_extract_word_from_openlcb_payload(msg, 4);
 
-        _interface->on_query_function_reply(statemachine_info->openlcb_node,
-                fn_address, fn_value);
+        _interface->on_query_function_reply(statemachine_info->openlcb_node, fn_address, fn_value);
 
     }
 
@@ -744,7 +829,7 @@ static void _handle_controller_config_reply(openlcb_statemachine_info_t *statema
             if (_interface && _interface->on_controller_query_reply) {
 
                 uint8_t flags = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
-                uint64_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
+                node_id_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 3);
                 _interface->on_controller_query_reply(node, flags, node_id);
 
             }
@@ -763,6 +848,7 @@ static void _handle_controller_config_reply(openlcb_statemachine_info_t *statema
             break;
 
         default:
+
             break;
 
     }
@@ -782,7 +868,7 @@ static void _handle_listener_config_reply(openlcb_statemachine_info_t *statemach
 
             if (_interface && _interface->on_listener_attach_reply) {
 
-                uint64_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+                node_id_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
                 uint8_t result = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 8);
                 _interface->on_listener_attach_reply(node, node_id, result);
 
@@ -794,7 +880,7 @@ static void _handle_listener_config_reply(openlcb_statemachine_info_t *statemach
 
             if (_interface && _interface->on_listener_detach_reply) {
 
-                uint64_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
+                node_id_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
                 uint8_t result = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 8);
                 _interface->on_listener_detach_reply(node, node_id, result);
 
@@ -809,7 +895,7 @@ static void _handle_listener_config_reply(openlcb_statemachine_info_t *statemach
                 uint8_t count = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
                 uint8_t index = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 3);
                 uint8_t flags = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 4);
-                uint64_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 5);
+                node_id_t node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 5);
                 _interface->on_listener_query_reply(node, count, index, flags, node_id);
 
             }
@@ -817,6 +903,7 @@ static void _handle_listener_config_reply(openlcb_statemachine_info_t *statemach
             break;
 
         default:
+
             break;
 
     }
@@ -859,6 +946,7 @@ static void _handle_management_reply(openlcb_statemachine_info_t *statemachine_i
             break;
 
         default:
+
             break;
 
     }
@@ -876,8 +964,7 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
 
     if (!statemachine_info->incoming_msg_info.msg_ptr) { return; }
 
-    uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 0);
+    uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
 
     switch (instruction) {
 
@@ -930,12 +1017,20 @@ void ProtocolTrainHandler_handle_train_command(openlcb_statemachine_info_t *stat
 
 void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statemachine_info) {
 
-    if (!statemachine_info) { return; }
+    if (!statemachine_info)
+    { 
+        
+        return; 
+    
+    }
 
-    if (!statemachine_info->incoming_msg_info.msg_ptr) { return; }
+    if (!statemachine_info->incoming_msg_info.msg_ptr) { 
+        
+        return; 
+    
+    }
 
-    uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(
-            statemachine_info->incoming_msg_info.msg_ptr, 0);
+    uint8_t instruction = OpenLcbUtilities_extract_byte_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0);
 
     switch (instruction) {
 
@@ -965,6 +1060,7 @@ void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statem
             break;
 
         default:
+
             break;
 
     }

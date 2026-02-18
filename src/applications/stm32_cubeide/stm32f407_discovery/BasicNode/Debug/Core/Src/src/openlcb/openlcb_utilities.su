@@ -45,3 +45,8 @@
 ../Core/Src/src/openlcb/openlcb_utilities.c:2309:13:OpenLcbUtilities_create_year_event_id	56	static
 ../Core/Src/src/openlcb/openlcb_utilities.c:2325:13:OpenLcbUtilities_create_rate_event_id	56	static
 ../Core/Src/src/openlcb/openlcb_utilities.c:2341:13:OpenLcbUtilities_create_command_event_id	56	static
+../Core/Src/src/openlcb/openlcb_utilities.c:2382:6:OpenLcbUtilities_is_train_search_event	16	static
+../Core/Src/src/openlcb/openlcb_utilities.c:2388:6:OpenLcbUtilities_extract_train_search_digits	32	static
+../Core/Src/src/openlcb/openlcb_utilities.c:2408:9:OpenLcbUtilities_extract_train_search_flags	16	static
+../Core/Src/src/openlcb/openlcb_utilities.c:2414:10:OpenLcbUtilities_train_search_digits_to_address	24	static
+../Core/Src/src/openlcb/openlcb_utilities.c:2434:12:OpenLcbUtilities_create_train_search_event_id	40	static

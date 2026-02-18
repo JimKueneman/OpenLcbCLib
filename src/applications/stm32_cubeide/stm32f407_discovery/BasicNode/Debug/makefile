@@ -18,7 +18,7 @@ RM := rm -rf
 -include Core/Src/src/utilities/subdir.mk
 -include Core/Src/src/openlcb/subdir.mk
 -include Core/Src/src/drivers/canbus/subdir.mk
--include Core/Src/src/application_drivers/subdir.mk
+-include Core/Src/application_drivers/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
 

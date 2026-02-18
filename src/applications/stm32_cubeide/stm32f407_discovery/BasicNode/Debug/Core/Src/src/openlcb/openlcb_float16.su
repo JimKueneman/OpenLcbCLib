@@ -1,0 +1,10 @@
+../Core/Src/src/openlcb/openlcb_float16.c:39:17:_float_to_bits	24	static
+../Core/Src/src/openlcb/openlcb_float16.c:49:14:_bits_to_float	24	static
+../Core/Src/src/openlcb/openlcb_float16.c:60:10:OpenLcbFloat16_from_float	48	static
+../Core/Src/src/openlcb/openlcb_float16.c:126:7:OpenLcbFloat16_to_float	56	static
+../Core/Src/src/openlcb/openlcb_float16.c:179:10:OpenLcbFloat16_negate	16	static
+../Core/Src/src/openlcb/openlcb_float16.c:186:6:OpenLcbFloat16_is_nan	24	static
+../Core/Src/src/openlcb/openlcb_float16.c:196:6:OpenLcbFloat16_is_zero	16	static
+../Core/Src/src/openlcb/openlcb_float16.c:203:10:OpenLcbFloat16_speed_with_direction	24	static
+../Core/Src/src/openlcb/openlcb_float16.c:228:7:OpenLcbFloat16_get_speed	24	static
+../Core/Src/src/openlcb/openlcb_float16.c:238:6:OpenLcbFloat16_get_direction	16	static

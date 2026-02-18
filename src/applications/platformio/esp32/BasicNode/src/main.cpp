@@ -7,8 +7,8 @@
 #include "node_parameters.h"
 #include "callbacks.h"
 
-#include "src/application_drivers/esp32_can_drivers.h"
-#include "src/application_drivers/esp32_drivers.h"
+#include "application_drivers/esp32_can_drivers.h"
+#include "application_drivers/esp32_drivers.h"
 
 #include "src/drivers/canbus/can_config.h"
 #include "src/openlcb/openlcb_config.h"

@@ -1,0 +1,3 @@
+../Core/Src/src/openlcb/protocol_train_search_handler.c:53:6:ProtocolTrainSearch_initialize	16	static
+../Core/Src/src/openlcb/protocol_train_search_handler.c:59:13:_does_train_match	16	static
+../Core/Src/src/openlcb/protocol_train_search_handler.c:95:6:ProtocolTrainSearch_handle_search_event	88	static

@@ -145,8 +145,7 @@ typedef struct {
      *  @param count Number of bytes to read
      *  @param buffer Destination buffer (configuration_memory_buffer_t = uint8_t[64])
      *  @return Number of bytes actually read */
-    uint16_t (*config_mem_read)(openlcb_node_t *openlcb_node, uint32_t address,
-            uint16_t count, configuration_memory_buffer_t *buffer);
+    uint16_t (*config_mem_read)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
     /** @brief Write to configuration memory (EEPROM/Flash/file). REQUIRED.
      *  @param openlcb_node The node requesting the write
@@ -154,15 +153,13 @@ typedef struct {
      *  @param count Number of bytes to write
      *  @param buffer Source buffer (configuration_memory_buffer_t = uint8_t[64])
      *  @return Number of bytes actually written */
-    uint16_t (*config_mem_write)(openlcb_node_t *openlcb_node, uint32_t address,
-            uint16_t count, configuration_memory_buffer_t *buffer);
+    uint16_t (*config_mem_write)(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer);
 
     /** @brief Reboot the processor. REQUIRED.
      *  Called by the Memory Config "Reset/Reboot" command.
      *  @param statemachine_info State machine context
      *  @param config_mem_operations_request_info Operations request context */
-    void (*reboot)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_operations_request_info_t *config_mem_operations_request_info);
+    void (*reboot)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
     // =========================================================================
     // OPTIONAL: Hardware Driver Extensions
@@ -171,39 +168,33 @@ typedef struct {
     /** @brief Freeze the node for firmware upgrade. Optional.
      *  @param statemachine_info State machine context
      *  @param config_mem_operations_request_info Operations request context */
-    void (*freeze)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_operations_request_info_t *config_mem_operations_request_info);
+    void (*freeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
     /** @brief Unfreeze the node after firmware upgrade. Optional.
      *  @param statemachine_info State machine context
      *  @param config_mem_operations_request_info Operations request context */
-    void (*unfreeze)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_operations_request_info_t *config_mem_operations_request_info);
+    void (*unfreeze)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
     /** @brief Write firmware data during upgrade. Optional.
      *  @param statemachine_info State machine context
      *  @param config_mem_write_request_info Write request context with address and data */
-    void (*firmware_write)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_write_request_info_t *config_mem_write_request_info);
+    void (*firmware_write)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
     /** @brief Factory reset handler -- erase user config and restore defaults. Optional.
      *  @param statemachine_info State machine context
      *  @param config_mem_operations_request_info Operations request context */
-    void (*factory_reset)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_operations_request_info_t *config_mem_operations_request_info);
+    void (*factory_reset)(openlcb_statemachine_info_t *statemachine_info, config_mem_operations_request_info_t *config_mem_operations_request_info);
 
     /** @brief Return delayed reply time flag for config memory reads. Optional.
      *  Return 0 for no delay, or (0x80 | N) for 2^N second reply pending.
      *  @param statemachine_info State machine context
      *  @param config_mem_read_request_info Read request context */
-    uint16_t (*config_mem_read_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_read_request_info_t *config_mem_read_request_info);
+    uint16_t (*config_mem_read_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
     /** @brief Return delayed reply time flag for config memory writes. Optional.
      *  @param statemachine_info State machine context
      *  @param config_mem_write_request_info Write request context */
-    uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info,
-            config_mem_write_request_info_t *config_mem_write_request_info);
+    uint16_t (*config_mem_write_delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
     // =========================================================================
     // OPTIONAL: Core Application Callbacks
@@ -223,13 +214,11 @@ typedef struct {
 
     /** @brief An event this node consumes has been identified on the network. Optional.
      *  Called when a Consumer Identified message matches one of this node's consumed events. */
-    void (*on_consumed_event_identified)(openlcb_node_t *openlcb_node, uint16_t index,
-            event_id_t *event_id, event_status_enum status, event_payload_t *payload);
+    void (*on_consumed_event_identified)(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_status_enum status, event_payload_t *payload);
 
     /** @brief A PC Event Report was received for an event this node consumes. Optional.
      *  This is the primary "an event happened" notification. */
-    void (*on_consumed_event_pcer)(openlcb_node_t *openlcb_node, uint16_t index,
-            event_id_t *event_id, event_payload_t *payload);
+    void (*on_consumed_event_pcer)(openlcb_node_t *openlcb_node, uint16_t index, event_id_t *event_id, event_payload_t *payload);
 
     /** @brief Event learn/teach message received. Optional.
      *  Implement to support blue/gold button configuration. */
@@ -269,8 +258,7 @@ typedef struct {
     void (*on_pc_event_report)(openlcb_node_t *openlcb_node, event_id_t *event_id);
 
     /** @brief PC Event Report with payload received. Optional. */
-    void (*on_pc_event_report_with_payload)(openlcb_node_t *openlcb_node, event_id_t *event_id,
-            uint16_t count, event_payload_t *payload);
+    void (*on_pc_event_report_with_payload)(openlcb_node_t *openlcb_node, event_id_t *event_id, uint16_t count, event_payload_t *payload);
 
     // =========================================================================
     // OPTIONAL: Broadcast Time Callbacks
@@ -313,15 +301,13 @@ typedef struct {
     void (*on_train_speed_changed)(openlcb_node_t *openlcb_node, uint16_t speed_float16);
 
     /** @brief Function was set on this train node. Standard functions stored in train_state.functions[]. */
-    void (*on_train_function_changed)(openlcb_node_t *openlcb_node,
-            uint32_t fn_address, uint16_t fn_value);
+    void (*on_train_function_changed)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
     /** @brief Emergency stop triggered. estop_active and speed already updated in state. */
     void (*on_train_emergency_stopped)(openlcb_node_t *openlcb_node);
 
     /** @brief Controller was assigned or changed. State already updated. */
-    void (*on_train_controller_assigned)(openlcb_node_t *openlcb_node,
-            uint64_t controller_node_id);
+    void (*on_train_controller_assigned)(openlcb_node_t *openlcb_node, node_id_t controller_node_id);
 
     /** @brief Controller was released. State already cleared. */
     void (*on_train_controller_released)(openlcb_node_t *openlcb_node);
@@ -335,71 +321,56 @@ typedef struct {
     // ---- Train-node side: decision callbacks ----
 
     /** @brief Another controller wants to take over. Return 0 to accept, non-zero to reject. If NULL, default = accept. */
-    uint8_t (*on_train_controller_assign_request)(openlcb_node_t *openlcb_node,
-            uint64_t current_controller, uint64_t requesting_controller);
+    uint8_t (*on_train_controller_assign_request)(openlcb_node_t *openlcb_node, node_id_t current_controller, node_id_t requesting_controller);
 
     /** @brief Old controller receiving Controller Changed Notify. Return 0 to accept, non-zero to reject. If NULL, default = accept. */
-    uint8_t (*on_train_controller_changed_request)(openlcb_node_t *openlcb_node,
-            uint64_t new_controller);
+    uint8_t (*on_train_controller_changed_request)(openlcb_node_t *openlcb_node, node_id_t new_controller);
 
     /** @brief Query function value override. Return the 16-bit value. If NULL, default = return stored value. */
-    uint16_t (*on_train_query_function_request)(openlcb_node_t *openlcb_node,
-            uint32_t fn_address);
+    uint16_t (*on_train_query_function_request)(openlcb_node_t *openlcb_node, uint32_t fn_address);
 
     // ---- Throttle side: notifiers (receiving replies from train) ----
 
     /** @brief Query speeds reply received. */
-    void (*on_train_query_speeds_reply)(openlcb_node_t *openlcb_node,
-            uint16_t set_speed, uint8_t status,
-            uint16_t commanded_speed, uint16_t actual_speed);
+    void (*on_train_query_speeds_reply)(openlcb_node_t *openlcb_node, uint16_t set_speed, uint8_t status, uint16_t commanded_speed, uint16_t actual_speed);
 
     /** @brief Query function reply received. */
-    void (*on_train_query_function_reply)(openlcb_node_t *openlcb_node,
-            uint32_t fn_address, uint16_t fn_value);
+    void (*on_train_query_function_reply)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
     /** @brief Controller assign reply received. 0 = success. */
-    void (*on_train_controller_assign_reply)(openlcb_node_t *openlcb_node,
-            uint8_t result);
+    void (*on_train_controller_assign_reply)(openlcb_node_t *openlcb_node, uint8_t result);
 
     /** @brief Controller query reply received. */
-    void (*on_train_controller_query_reply)(openlcb_node_t *openlcb_node,
-            uint8_t flags, uint64_t controller_node_id);
+    void (*on_train_controller_query_reply)(openlcb_node_t *openlcb_node, uint8_t flags, node_id_t controller_node_id);
 
     /** @brief Controller changed notify reply received. */
-    void (*on_train_controller_changed_notify_reply)(openlcb_node_t *openlcb_node,
-            uint8_t result);
+    void (*on_train_controller_changed_notify_reply)(openlcb_node_t *openlcb_node, uint8_t result);
 
     /** @brief Listener attach reply received. */
-    void (*on_train_listener_attach_reply)(openlcb_node_t *openlcb_node,
-            uint64_t node_id, uint8_t result);
+    void (*on_train_listener_attach_reply)(openlcb_node_t *openlcb_node, node_id_t node_id, uint8_t result);
 
     /** @brief Listener detach reply received. */
-    void (*on_train_listener_detach_reply)(openlcb_node_t *openlcb_node,
-            uint64_t node_id, uint8_t result);
+    void (*on_train_listener_detach_reply)(openlcb_node_t *openlcb_node, node_id_t node_id, uint8_t result);
 
     /** @brief Listener query reply received. */
-    void (*on_train_listener_query_reply)(openlcb_node_t *openlcb_node,
-            uint8_t count, uint8_t index, uint8_t flags, uint64_t node_id);
+    void (*on_train_listener_query_reply)(openlcb_node_t *openlcb_node, uint8_t count, uint8_t index, uint8_t flags, node_id_t node_id);
 
     /** @brief Reserve reply received. 0 = success. */
     void (*on_train_reserve_reply)(openlcb_node_t *openlcb_node, uint8_t result);
 
     /** @brief Heartbeat request received from train. timeout_seconds is deadline. */
-    void (*on_train_heartbeat_request)(openlcb_node_t *openlcb_node,
-            uint32_t timeout_seconds);
+    void (*on_train_heartbeat_request)(openlcb_node_t *openlcb_node, uint32_t timeout_seconds);
 
     // =========================================================================
     // OPTIONAL: Train Search Callbacks (OPENLCB_FEATURE_TRAIN_SEARCH)
     // =========================================================================
 
     /** @brief A train search matched this node. Optional. */
-    void (*on_train_search_matched)(openlcb_node_t *openlcb_node,
-            uint16_t search_address, uint8_t flags);
+    void (*on_train_search_matched)(openlcb_node_t *openlcb_node, uint16_t search_address, uint8_t flags);
 
     /** @brief No train node matched the search. If allocate bit set,
      *  return a newly created train node, or NULL to decline. Optional. */
-    openlcb_node_t* (*on_train_search_no_match)(uint16_t search_address,
-            uint8_t flags);
+    openlcb_node_t* (*on_train_search_no_match)(uint16_t search_address, uint8_t flags);
 
 } openlcb_config_t;
 
@@ -437,8 +408,7 @@ extern void OpenLcb_initialize(const openlcb_config_t *config, uint32_t features
  * @param parameters Node parameter structure (SNIP info, protocol flags, events)
  * @return Pointer to allocated node, or NULL if no slots available
  */
-extern openlcb_node_t *OpenLcb_create_node(uint64_t node_id,
-        const node_parameters_t *parameters);
+extern openlcb_node_t *OpenLcb_create_node(node_id_t node_id, const node_parameters_t *parameters);
 
 /**
  * @brief Run one iteration of all state machines.

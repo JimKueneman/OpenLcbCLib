@@ -81,7 +81,6 @@
 #include "protocol_datagram_handler.h"
 #include "protocol_snip.h"
 #include "openlcb_application_train.h"
-#include "protocol_train_handler.h"
 
 #define AUTO_CREATE_EVENT_COUNT 10
 #define DEST_EVENT_ID 0x0605040302010000
@@ -2584,18 +2583,18 @@ TEST(ProtocolConfigMemWriteHandler, write_request_function_config_memory_single)
 {
 
     _reset_variables();
-    _global_initialize();
+
+    // Initialize config mem write handler with on_function_changed callback
+    interface_protocol_config_mem_write_handler_t cmw_interface = interface_protocol_config_mem_write_handler;
+    cmw_interface.on_function_changed = &_test_on_function_changed;
+    ProtocolConfigMemWriteHandler_initialize(&cmw_interface);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
 
     // Initialize train application
     interface_openlcb_application_train_t train_app_interface;
     memset(&train_app_interface, 0, sizeof(train_app_interface));
     OpenLcbApplicationTrain_initialize(&train_app_interface);
-
-    // Initialize train handler with on_function_changed callback
-    interface_protocol_train_handler_t train_handler_interface;
-    memset(&train_handler_interface, 0, sizeof(train_handler_interface));
-    train_handler_interface.on_function_changed = &_test_on_function_changed;
-    ProtocolTrainHandler_initialize(&train_handler_interface);
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node1->alias = DEST_ALIAS;
@@ -2645,16 +2644,17 @@ TEST(ProtocolConfigMemWriteHandler, write_request_function_config_memory_bulk)
 {
 
     _reset_variables();
-    _global_initialize();
+
+    // Initialize config mem write handler with on_function_changed callback
+    interface_protocol_config_mem_write_handler_t cmw_interface = interface_protocol_config_mem_write_handler;
+    cmw_interface.on_function_changed = &_test_on_function_changed;
+    ProtocolConfigMemWriteHandler_initialize(&cmw_interface);
+    OpenLcbNode_initialize(&interface_openlcb_node);
+    ProtocolSnip_initialize(&interface_openlcb_protocol_snip);
 
     interface_openlcb_application_train_t train_app_interface;
     memset(&train_app_interface, 0, sizeof(train_app_interface));
     OpenLcbApplicationTrain_initialize(&train_app_interface);
-
-    interface_protocol_train_handler_t train_handler_interface;
-    memset(&train_handler_interface, 0, sizeof(train_handler_interface));
-    train_handler_interface.on_function_changed = &_test_on_function_changed;
-    ProtocolTrainHandler_initialize(&train_handler_interface);
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node1->alias = DEST_ALIAS;
@@ -2709,16 +2709,11 @@ TEST(ProtocolConfigMemWriteHandler, write_request_function_config_memory_no_call
 {
 
     _reset_variables();
-    _global_initialize();
+    _global_initialize();  // Default interface has on_function_changed = NULL
 
     interface_openlcb_application_train_t train_app_interface;
     memset(&train_app_interface, 0, sizeof(train_app_interface));
     OpenLcbApplicationTrain_initialize(&train_app_interface);
-
-    // Initialize train handler with NO on_function_changed callback
-    interface_protocol_train_handler_t train_handler_interface;
-    memset(&train_handler_interface, 0, sizeof(train_handler_interface));
-    ProtocolTrainHandler_initialize(&train_handler_interface);
 
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node1->alias = DEST_ALIAS;

@@ -56,13 +56,6 @@ void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast
 
 }
 
-const interface_openlcb_protocol_broadcast_time_handler_t* ProtocolBroadcastTime_get_interface(void) {
-
-    return _interface;
-
-}
-
-
 static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *clock, event_id_t event_id) {
 
     uint8_t hour;

@@ -192,6 +192,14 @@ typedef struct {
          */
     uint16_t (*delayed_reply_time)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
 
+    /**
+     * @brief Notifier called when a train function value changes via 0xF9 write
+     * @param openlcb_node The train node whose function changed
+     * @param fn_address The function address that was modified
+     * @param fn_value The new function value
+     */
+    void (*on_function_changed)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
+
 } interface_protocol_config_mem_write_handler_t;
 
 #ifdef    __cplusplus

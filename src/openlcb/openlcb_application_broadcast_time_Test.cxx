@@ -259,11 +259,23 @@ static void _test_on_app_time_changed(broadcast_clock_t *clock) {
 }
 
 static const interface_openlcb_application_broadcast_time_t _test_app_broadcast_time_interface = {
+
     .on_time_changed = _test_on_app_time_changed,
+    .on_time_received = _test_on_time_received,
+    .on_date_received = _test_on_date_received,
+    .on_year_received = _test_on_year_received,
+    .on_date_rollover = _test_on_date_rollover,
+
 };
 
 static const interface_openlcb_application_broadcast_time_t _test_app_broadcast_time_null_callback_interface = {
+
     .on_time_changed = NULL,
+    .on_time_received = NULL,
+    .on_date_received = NULL,
+    .on_year_received = NULL,
+    .on_date_rollover = NULL,
+
 };
 
 

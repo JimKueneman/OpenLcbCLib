@@ -60,6 +60,10 @@
     typedef struct {
 
         void (*on_time_changed)(broadcast_clock_t *clock);
+        void (*on_time_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+        void (*on_date_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+        void (*on_year_received)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+        void (*on_date_rollover)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
 
     } interface_openlcb_application_broadcast_time_t;
 

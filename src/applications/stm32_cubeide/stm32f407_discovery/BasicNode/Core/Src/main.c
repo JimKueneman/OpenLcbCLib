@@ -27,8 +27,8 @@
 
 #include "callbacks.h"
 #include "node_parameters.h"
-#include "src/application_drivers/stm32_driverlib_drivers.h"
-#include "src/application_drivers/stm32_driverlib_can_driver.h"
+#include "application_drivers/stm32_driverlib_drivers.h"
+#include "application_drivers/stm32_driverlib_can_driver.h"
 
 #include "src/drivers/canbus/can_config.h"
 #include "src/openlcb/openlcb_config.h"

@@ -40,7 +40,6 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_application.h"
-#include "protocol_broadcast_time_handler.h"
 
 
 static broadcast_clock_t _clocks[BROADCAST_TIME_TOTAL_CLOCK_COUNT];
@@ -272,9 +271,9 @@ static void _advance_minute_forward(broadcast_clock_state_t *clock, openlcb_node
 
       clock->time.hour = 0;
 
-      if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_rollover) {
+      if (_interface && _interface->on_date_rollover) {
 
-        ProtocolBroadcastTime_get_interface()->on_date_rollover(node, clock);
+        _interface->on_date_rollover(node, clock);
 
       }
 
@@ -292,17 +291,17 @@ static void _advance_minute_forward(broadcast_clock_state_t *clock, openlcb_node
           clock->date.month = 1;
           clock->year.year++;
 
-          if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_year_received) {
+          if (_interface && _interface->on_year_received) {
 
-            ProtocolBroadcastTime_get_interface()->on_year_received(node, clock);
+            _interface->on_year_received(node, clock);
 
           }
 
         }
 
-        if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_received) {
+        if (_interface && _interface->on_date_received) {
 
-          ProtocolBroadcastTime_get_interface()->on_date_received(node, clock);
+          _interface->on_date_received(node, clock);
         }
 
       }
@@ -311,9 +310,9 @@ static void _advance_minute_forward(broadcast_clock_state_t *clock, openlcb_node
 
   }
 
-  if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_time_received) {
+  if (_interface && _interface->on_time_received) {
 
-    ProtocolBroadcastTime_get_interface()->on_time_received(node, clock);
+    _interface->on_time_received(node, clock);
 
   }
 
@@ -329,9 +328,9 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
 
       clock->time.hour = 23;
 
-      if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_rollover) {
+      if (_interface && _interface->on_date_rollover) {
 
-        ProtocolBroadcastTime_get_interface()->on_date_rollover(node, clock);
+        _interface->on_date_rollover(node, clock);
 
       }
 
@@ -342,9 +341,9 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
           clock->date.month = 12;
           clock->year.year--;
 
-          if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_year_received) {
+          if (_interface && _interface->on_year_received) {
 
-            ProtocolBroadcastTime_get_interface()->on_year_received(node, clock);
+            _interface->on_year_received(node, clock);
 
           }
 
@@ -356,9 +355,9 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
 
         clock->date.day = _days_in_month(clock->date.month, clock->year.year);
 
-        if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_date_received) {
+        if (_interface && _interface->on_date_received) {
 
-          ProtocolBroadcastTime_get_interface()->on_date_received(node, clock);
+          _interface->on_date_received(node, clock);
 
         }
 
@@ -380,9 +379,9 @@ static void _advance_minute_backward(broadcast_clock_state_t *clock, openlcb_nod
 
   }
 
-  if (ProtocolBroadcastTime_get_interface() && ProtocolBroadcastTime_get_interface()->on_time_received) {
+  if (_interface && _interface->on_time_received) {
 
-    ProtocolBroadcastTime_get_interface()->on_time_received(node, clock);
+    _interface->on_time_received(node, clock);
 
   }
 

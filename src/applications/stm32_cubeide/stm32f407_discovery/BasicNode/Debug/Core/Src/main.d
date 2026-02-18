@@ -42,10 +42,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/src/openlcb/openlcb_gridconnect.h \
  ../Core/Src/src/openlcb/../drivers/canbus/can_types.h \
  ../Core/Src/node_parameters.h ../Core/Src/./src/openlcb/openlcb_types.h \
- ../Core/Src/src/application_drivers/stm32_driverlib_drivers.h \
- ../Core/Src/src/application_drivers/../openlcb/openlcb_types.h \
- ../Core/Src/src/application_drivers/stm32_driverlib_can_driver.h \
- ../Core/Src/src/application_drivers/../drivers/canbus/can_types.h \
+ ../Core/Src/application_drivers/stm32_driverlib_drivers.h \
+ ../Core/Src/application_drivers/../src/openlcb/openlcb_types.h \
+ ../Core/Src/application_drivers/stm32_driverlib_can_driver.h \
+ ../Core/Src/application_drivers/../src/drivers/canbus/can_types.h \
  ../Core/Src/src/drivers/canbus/can_config.h \
  ../Core/Src/src/drivers/canbus/can_types.h \
  ../Core/Src/src/openlcb/openlcb_config.h \
@@ -98,10 +98,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/src/openlcb/../drivers/canbus/can_types.h:
 ../Core/Src/node_parameters.h:
 ../Core/Src/./src/openlcb/openlcb_types.h:
-../Core/Src/src/application_drivers/stm32_driverlib_drivers.h:
-../Core/Src/src/application_drivers/../openlcb/openlcb_types.h:
-../Core/Src/src/application_drivers/stm32_driverlib_can_driver.h:
-../Core/Src/src/application_drivers/../drivers/canbus/can_types.h:
+../Core/Src/application_drivers/stm32_driverlib_drivers.h:
+../Core/Src/application_drivers/../src/openlcb/openlcb_types.h:
+../Core/Src/application_drivers/stm32_driverlib_can_driver.h:
+../Core/Src/application_drivers/../src/drivers/canbus/can_types.h:
 ../Core/Src/src/drivers/canbus/can_config.h:
 ../Core/Src/src/drivers/canbus/can_types.h:
 ../Core/Src/src/openlcb/openlcb_config.h:

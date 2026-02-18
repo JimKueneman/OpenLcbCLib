@@ -39,7 +39,6 @@
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
-#include "protocol_train_handler.h"
 
 
 static train_state_t _train_pool[USER_DEFINED_TRAIN_NODE_COUNT];
@@ -56,13 +55,6 @@ void OpenLcbApplicationTrain_initialize(const interface_openlcb_application_trai
     _interface = interface;
 
 }
-
-const interface_openlcb_application_train_t* OpenLcbApplicationTrain_get_interface(void) {
-
-    return _interface;
-
-}
-
 
 // Setup
 
@@ -111,135 +103,9 @@ train_state_t* OpenLcbApplicationTrain_get_state(openlcb_node_t *openlcb_node) {
 }
 
 
-// Listener management
-
-bool OpenLcbApplicationTrain_attach_listener(
-        train_state_t *state, uint64_t node_id, uint8_t flags) {
-
-    if (!state || node_id == 0) {
-
-        return false;
-
-    }
-
-    // Check if already attached — update flags if so
-    for (uint8_t i = 0; i < state->listener_count; i++) {
-
-        if (state->listeners[i].node_id == node_id) {
-
-            state->listeners[i].flags = flags;
-            return true;
-
-        }
-
-    }
-
-    // Check for capacity
-    if (state->listener_count >= USER_DEFINED_MAX_LISTENERS_PER_TRAIN) {
-
-        return false;
-
-    }
-
-    state->listeners[state->listener_count].node_id = node_id;
-    state->listeners[state->listener_count].flags = flags;
-    state->listener_count++;
-
-    return true;
-
-}
-
-bool OpenLcbApplicationTrain_detach_listener(
-        train_state_t *state, uint64_t node_id) {
-
-    if (!state || node_id == 0) {
-
-        return false;
-
-    }
-
-    for (uint8_t i = 0; i < state->listener_count; i++) {
-
-        if (state->listeners[i].node_id == node_id) {
-
-            // Shift remaining entries down
-            for (uint8_t j = i; j < state->listener_count - 1; j++) {
-
-                state->listeners[j] = state->listeners[j + 1];
-
-            }
-
-            state->listener_count--;
-
-            // Clear the vacated slot
-            state->listeners[state->listener_count].node_id = 0;
-            state->listeners[state->listener_count].flags = 0;
-
-            return true;
-
-        }
-
-    }
-
-    return false;
-
-}
-
-train_listener_entry_t* OpenLcbApplicationTrain_find_listener(
-        train_state_t *state, uint64_t node_id) {
-
-    if (!state || node_id == 0) {
-
-        return NULL;
-
-    }
-
-    for (uint8_t i = 0; i < state->listener_count; i++) {
-
-        if (state->listeners[i].node_id == node_id) {
-
-            return &state->listeners[i];
-
-        }
-
-    }
-
-    return NULL;
-
-}
-
-uint8_t OpenLcbApplicationTrain_get_listener_count(train_state_t *state) {
-
-    if (!state) {
-
-        return 0;
-
-    }
-
-    return state->listener_count;
-
-}
-
-train_listener_entry_t* OpenLcbApplicationTrain_get_listener_by_index(
-        train_state_t *state, uint8_t index) {
-
-    if (!state || index >= state->listener_count) {
-
-        return NULL;
-
-    }
-
-    return &state->listeners[index];
-
-}
-
-
 // Heartbeat timer
 
 void OpenLcbApplicationTrain_100ms_timer_tick(void) {
-
-    const interface_protocol_train_handler_t *handler_iface =
-            ProtocolTrainHandler_get_interface();
 
     for (uint8_t i = 0; i < _train_pool_count; i++) {
 
@@ -262,9 +128,9 @@ void OpenLcbApplicationTrain_100ms_timer_tick(void) {
             state->estop_active = 1;
             state->set_speed = 0;
 
-            if (handler_iface && handler_iface->on_heartbeat_timeout) {
+            if (_interface && _interface->on_heartbeat_timeout) {
 
-                handler_iface->on_heartbeat_timeout(NULL);
+                _interface->on_heartbeat_timeout(NULL);
 
             }
 
@@ -277,8 +143,7 @@ void OpenLcbApplicationTrain_100ms_timer_tick(void) {
 
 // Send helpers (throttle side)
 
-static bool _prepare_train_command(openlcb_msg_t *msg, payload_basic_t *payload,
-        openlcb_node_t *openlcb_node, uint64_t train_node_id) {
+static bool _prepare_train_command(openlcb_msg_t *msg, payload_basic_t *payload, openlcb_node_t *openlcb_node, node_id_t train_node_id) {
 
     if (!openlcb_node || !_interface || !_interface->send_openlcb_msg) {
 
@@ -301,13 +166,16 @@ static bool _prepare_train_command(openlcb_msg_t *msg, payload_basic_t *payload,
 
 }
 
-void OpenLcbApplicationTrain_send_set_speed(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id, uint16_t speed) {
+void OpenLcbApplicationTrain_send_set_speed(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint16_t speed) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return; 
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_SET_SPEED_DIRECTION, 0);
     OpenLcbUtilities_copy_word_to_openlcb_payload(&msg, speed, 1);
@@ -317,13 +185,17 @@ void OpenLcbApplicationTrain_send_set_speed(
 }
 
 void OpenLcbApplicationTrain_send_set_function(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id,
+        openlcb_node_t *openlcb_node, node_id_t train_node_id,
         uint32_t fn_address, uint16_t fn_value) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return; 
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_SET_FUNCTION, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (fn_address >> 16) & 0xFF, 1);
@@ -336,12 +208,16 @@ void OpenLcbApplicationTrain_send_set_function(
 }
 
 void OpenLcbApplicationTrain_send_emergency_stop(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id) {
+        openlcb_node_t *openlcb_node, node_id_t train_node_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return; 
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_EMERGENCY_STOP, 0);
 
@@ -350,12 +226,16 @@ void OpenLcbApplicationTrain_send_emergency_stop(
 }
 
 void OpenLcbApplicationTrain_send_query_speeds(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id) {
+        openlcb_node_t *openlcb_node, node_id_t train_node_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return; 
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_QUERY_SPEEDS, 0);
 
@@ -363,13 +243,16 @@ void OpenLcbApplicationTrain_send_query_speeds(
 
 }
 
-void OpenLcbApplicationTrain_send_query_function(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id, uint32_t fn_address) {
+void OpenLcbApplicationTrain_send_query_function(openlcb_node_t *openlcb_node, node_id_t train_node_id, uint32_t fn_address) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return; 
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_QUERY_FUNCTION, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (fn_address >> 16) & 0xFF, 1);
@@ -380,13 +263,16 @@ void OpenLcbApplicationTrain_send_query_function(
 
 }
 
-void OpenLcbApplicationTrain_send_assign_controller(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id) {
+void OpenLcbApplicationTrain_send_assign_controller(openlcb_node_t *openlcb_node, node_id_t train_node_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return;
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_ASSIGN, 1);
@@ -396,13 +282,16 @@ void OpenLcbApplicationTrain_send_assign_controller(
 
 }
 
-void OpenLcbApplicationTrain_send_release_controller(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id) {
+void OpenLcbApplicationTrain_send_release_controller(openlcb_node_t *openlcb_node, node_id_t train_node_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
 
-    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { return; }
+    if (!_prepare_train_command(&msg, &payload, openlcb_node, train_node_id)) { 
+        
+        return; 
+    
+    }
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_CONTROLLER_RELEASE, 1);
@@ -412,8 +301,7 @@ void OpenLcbApplicationTrain_send_release_controller(
 
 }
 
-void OpenLcbApplicationTrain_send_noop(
-        openlcb_node_t *openlcb_node, uint64_t train_node_id) {
+void OpenLcbApplicationTrain_send_noop(openlcb_node_t *openlcb_node, node_id_t train_node_id) {
 
     openlcb_msg_t msg;
     payload_basic_t payload;
@@ -430,11 +318,13 @@ void OpenLcbApplicationTrain_send_noop(
 
 // Train search properties
 
-void OpenLcbApplicationTrain_set_dcc_address(
-        openlcb_node_t *openlcb_node, uint16_t dcc_address,
-        bool is_long_address) {
+void OpenLcbApplicationTrain_set_dcc_address(openlcb_node_t *openlcb_node, uint16_t dcc_address, bool is_long_address) {
 
-    if (!openlcb_node || !openlcb_node->train_state) { return; }
+    if (!openlcb_node || !openlcb_node->train_state) {
+        
+        return; 
+    
+    }
 
     openlcb_node->train_state->dcc_address = dcc_address;
     openlcb_node->train_state->is_long_address = is_long_address ? 1 : 0;
@@ -443,7 +333,11 @@ void OpenLcbApplicationTrain_set_dcc_address(
 
 uint16_t OpenLcbApplicationTrain_get_dcc_address(openlcb_node_t *openlcb_node) {
 
-    if (!openlcb_node || !openlcb_node->train_state) { return 0; }
+    if (!openlcb_node || !openlcb_node->train_state) { 
+        
+        return 0; 
+    
+    }
 
     return openlcb_node->train_state->dcc_address;
 
@@ -451,16 +345,23 @@ uint16_t OpenLcbApplicationTrain_get_dcc_address(openlcb_node_t *openlcb_node) {
 
 bool OpenLcbApplicationTrain_is_long_address(openlcb_node_t *openlcb_node) {
 
-    if (!openlcb_node || !openlcb_node->train_state) { return false; }
+    if (!openlcb_node || !openlcb_node->train_state) { 
+
+        return false;
+    
+    }
 
     return openlcb_node->train_state->is_long_address != 0;
 
 }
 
-void OpenLcbApplicationTrain_set_speed_steps(
-        openlcb_node_t *openlcb_node, uint8_t speed_steps) {
+void OpenLcbApplicationTrain_set_speed_steps(openlcb_node_t *openlcb_node, uint8_t speed_steps) {
 
-    if (!openlcb_node || !openlcb_node->train_state) { return; }
+    if (!openlcb_node || !openlcb_node->train_state) { 
+        
+        return;
+    
+    }
 
     openlcb_node->train_state->speed_steps = speed_steps;
 
@@ -468,7 +369,11 @@ void OpenLcbApplicationTrain_set_speed_steps(
 
 uint8_t OpenLcbApplicationTrain_get_speed_steps(openlcb_node_t *openlcb_node) {
 
-    if (!openlcb_node || !openlcb_node->train_state) { return 0; }
+    if (!openlcb_node || !openlcb_node->train_state) { 
+        
+        return 0; 
+    
+    }
 
     return openlcb_node->train_state->speed_steps;
 

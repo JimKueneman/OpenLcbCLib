@@ -9,8 +9,8 @@
 
 #include "callbacks.h"
 #include "node_parameters.h"
-#include "src/application_drivers/osx_drivers.h"
-#include "src/application_drivers/osx_can_drivers.h"
+#include "application_drivers/osx_drivers.h"
+#include "application_drivers/osx_can_drivers.h"
 
 #include "src/drivers/canbus/can_config.h"
 #include "src/openlcb/openlcb_config.h"

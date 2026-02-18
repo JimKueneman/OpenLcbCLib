@@ -43,7 +43,6 @@
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
 #include "openlcb_application_train.h"
-#include "protocol_train_handler.h"
 
 
 static interface_protocol_config_mem_write_handler_t* _interface;
@@ -911,7 +910,6 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
     * @warning Node must have train_state initialized via OpenLcbApplicationTrain_setup()
     *
     * @see OpenLcbUtilities_load_config_mem_reply_write_ok_message_header
-    * @see ProtocolTrainHandler_get_interface
     */
 void ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
 
@@ -949,13 +947,12 @@ void ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(op
 
         uint16_t first_fn = address / 2;
         uint16_t last_fn = (address + bytes - 1) / 2;
-        const interface_protocol_train_handler_t *train_iface = ProtocolTrainHandler_get_interface();
 
         for (uint16_t fn = first_fn; fn <= last_fn && fn < USER_DEFINED_MAX_TRAIN_FUNCTIONS; fn++) {
 
-            if (train_iface && train_iface->on_function_changed) {
+            if (_interface && _interface->on_function_changed) {
 
-                train_iface->on_function_changed(
+                _interface->on_function_changed(
                         statemachine_info->openlcb_node,
                         (uint32_t) fn,
                         state->functions[fn]);

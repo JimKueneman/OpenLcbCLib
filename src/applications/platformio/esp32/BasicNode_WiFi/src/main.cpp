@@ -6,10 +6,10 @@
 
 #include "callbacks.h"
 #include "node_parameters.h"
-#include "src/application_drivers/esp32_drivers.h"
-#include "src/application_drivers/esp32_wifi_gridconnect_drivers.h"
-#include "src/application_drivers/wifi_tools.h"
-#include "src/application_drivers/wifi_tools_debug.h"
+#include "application_drivers/esp32_drivers.h"
+#include "application_drivers/esp32_wifi_gridconnect_drivers.h"
+#include "application_drivers/wifi_tools.h"
+#include "application_drivers/wifi_tools_debug.h"
 
 #include "src/drivers/canbus/can_config.h"
 #include "src/openlcb/openlcb_config.h"

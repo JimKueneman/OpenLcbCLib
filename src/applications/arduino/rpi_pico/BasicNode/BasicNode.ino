@@ -37,8 +37,8 @@
 
 #include "callbacks.h"
 #include "node_parameters.h"
-#include "src/application_drivers/rpi_pico_drivers.h"
-#include "src/application_drivers/rpi_pico_can_drivers.h"
+#include "rpi_pico_drivers.h"
+#include "rpi_pico_can_drivers.h"
 
 #include "src/drivers/canbus/can_config.h"
 #include "src/openlcb/openlcb_config.h"

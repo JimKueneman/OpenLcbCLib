@@ -40,8 +40,8 @@
 
 #include "callbacks.h"
 #include "node_parameters.h"
-#include "src/application_drivers/ti_driverlib_can_driver.h"
-#include "src/application_drivers/ti_driverlib_drivers.h"
+#include "application_drivers/ti_driverlib_can_driver.h"
+#include "application_drivers/ti_driverlib_drivers.h"
 
 #include "src/drivers/canbus/can_config.h"
 #include "src/openlcb/openlcb_config.h"

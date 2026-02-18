@@ -79,13 +79,6 @@ extern "C" {
     extern void ProtocolBroadcastTime_initialize(const interface_openlcb_protocol_broadcast_time_handler_t *interface_openlcb_protocol_broadcast_time_handler);
 
     /**
-     * @brief Returns the stored callback interface pointer
-     *
-     * @return Pointer to the callback interface, or NULL if not initialized
-     */
-    extern const interface_openlcb_protocol_broadcast_time_handler_t* ProtocolBroadcastTime_get_interface(void);
-
-    /**
      * @brief Handles incoming broadcast time events
      *
      * @details Decodes the Event ID and updates the singleton clock state.

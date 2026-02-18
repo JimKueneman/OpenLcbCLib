@@ -50,22 +50,13 @@
 static const interface_protocol_train_search_handler_t *_interface;
 
 
-void ProtocolTrainSearch_initialize(
-        const interface_protocol_train_search_handler_t *interface) {
+void ProtocolTrainSearch_initialize(const interface_protocol_train_search_handler_t *interface) {
 
     _interface = interface;
 
 }
 
-const interface_protocol_train_search_handler_t* ProtocolTrainSearch_get_interface(void) {
-
-    return _interface;
-
-}
-
-
-static bool _does_train_match(train_state_t *train_state,
-        uint16_t search_address, uint8_t flags) {
+static bool _does_train_match(train_state_t *train_state, uint16_t search_address, uint8_t flags) {
 
     // Address must match
     if (train_state->dcc_address != search_address) { return false; }
@@ -76,14 +67,21 @@ static bool _does_train_match(train_state_t *train_state,
         if (flags & TRAIN_SEARCH_FLAG_LONG_ADDR) {
 
             // Requesting long address — train must be long address
-            if (!train_state->is_long_address) { return false; }
+            if (!train_state->is_long_address) { 
+                
+                return false; 
+            
+            }
 
         } else {
 
             // Not requesting long address — if address < 128 and train is long, no match
             // (unless allocate bit is set, which is handled separately)
-            if (search_address < 128 && train_state->is_long_address &&
-                    !(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) { return false; }
+            if (search_address < 128 && train_state->is_long_address && !(flags & TRAIN_SEARCH_FLAG_ALLOCATE)) { 
+                
+                return false; 
+            
+            }
 
         }
 
@@ -98,10 +96,18 @@ void ProtocolTrainSearch_handle_search_event(
         openlcb_statemachine_info_t *statemachine_info,
         event_id_t event_id) {
 
-    if (!statemachine_info || !statemachine_info->openlcb_node) { return; }
+    if (!statemachine_info || !statemachine_info->openlcb_node) { 
+        
+        return; 
+    
+    }
 
     train_state_t *train_state = statemachine_info->openlcb_node->train_state;
-    if (!train_state) { return; }
+    if (!train_state) { 
+        
+        return; 
+    
+    }
 
     // Decode the search query
     uint8_t digits[6];
@@ -125,8 +131,7 @@ void ProtocolTrainSearch_handle_search_event(
     }
     reply_flags |= (train_state->speed_steps & TRAIN_SEARCH_SPEED_STEP_MASK);
 
-    event_id_t reply_event = OpenLcbUtilities_create_train_search_event_id(
-            train_state->dcc_address, reply_flags);
+    event_id_t reply_event = OpenLcbUtilities_create_train_search_event_id(train_state->dcc_address, reply_flags);
 
     OpenLcbUtilities_load_openlcb_message(
             statemachine_info->outgoing_msg_info.msg_ptr,
@@ -136,17 +141,14 @@ void ProtocolTrainSearch_handle_search_event(
             0,
             MTI_PRODUCER_IDENTIFIED_SET);
 
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            reply_event);
+    OpenLcbUtilities_copy_event_id_to_openlcb_payload(statemachine_info->outgoing_msg_info.msg_ptr, reply_event);
 
     statemachine_info->outgoing_msg_info.valid = true;
 
     // Fire callback
     if (_interface && _interface->on_search_matched) {
 
-        _interface->on_search_matched(statemachine_info->openlcb_node,
-                search_address, flags);
+        _interface->on_search_matched(statemachine_info->openlcb_node, search_address, flags);
 
     }
 

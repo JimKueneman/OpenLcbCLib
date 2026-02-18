@@ -197,6 +197,18 @@ extern "C" {
 #define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS (LEN_SNIP_USER_NAME_BUFFER - 1)
 #endif
 
+#ifndef USER_DEFINED_TRAIN_NODE_COUNT
+#define USER_DEFINED_TRAIN_NODE_COUNT USER_DEFINED_NODE_BUFFER_DEPTH
+#endif
+
+#ifndef USER_DEFINED_MAX_LISTENERS_PER_TRAIN
+#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN 6
+#endif
+
+#ifndef USER_DEFINED_MAX_TRAIN_FUNCTIONS
+#define USER_DEFINED_MAX_TRAIN_FUNCTIONS 29 /**< F0-F28, standard DCC range */
+#endif
+
         /** @} */ // end of user_config_constants
 
         /**
@@ -987,10 +999,47 @@ extern "C" {
         bool firmware_upgrade_active : 1;       /**< Firmware upgrade in progress */
     } openlcb_node_state_t;
 
-        /**
-        * @brief Forward declaration for train state (defined in openlcb_application_train.h)
-        */
-    struct train_state_TAG;
+    /**
+     * @struct train_listener_entry_t
+     * @brief A single listener entry for a train consist
+     */
+    typedef struct
+    {
+
+        node_id_t node_id; /**< Listener node ID (0 = empty/unused slot) */
+        uint8_t flags;     /**< Listener flags (reverse, link F0, link Fn, hide) */
+
+    } train_listener_entry_t;
+
+    /**
+     * @struct train_state_TAG
+     * @brief Per-node train state
+     *
+     * @details Holds the mutable runtime state for a single train node.
+     * Allocated from a static pool by OpenLcbApplicationTrain_setup().
+     */
+    typedef struct train_state_TAG
+    {
+
+        uint16_t set_speed;               /**< Last commanded speed (float16 IEEE 754) */
+        uint16_t commanded_speed;         /**< Control algorithm output speed (float16) */
+        uint16_t actual_speed;            /**< Measured speed, optional (float16) */
+        uint8_t estop_active;             /**< Emergency stop active flag */
+        node_id_t controller_node_id;     /**< Active controller node ID (0 if none) */
+        uint8_t reserved_node_count;      /**< Reservation count */
+        uint32_t heartbeat_timeout_s;     /**< Heartbeat deadline in seconds (0 = disabled) */
+        uint32_t heartbeat_counter_100ms; /**< Heartbeat countdown in 100ms ticks */
+
+        train_listener_entry_t listeners[USER_DEFINED_MAX_LISTENERS_PER_TRAIN];
+        uint8_t listener_count; /**< Number of active listeners */
+
+        uint16_t functions[USER_DEFINED_MAX_TRAIN_FUNCTIONS]; /**< Function values (16-bit per function, indexed by function number) */
+
+        uint16_t dcc_address;    /**< DCC address (0 = not set) */
+        uint8_t is_long_address; /**< 1 = extended (long) DCC address, 0 = short */
+        uint8_t speed_steps;     /**< DCC speed steps: 0=default, 1=14, 2=28, 3=128 */
+
+    } train_state_t;
 
         /**
         * @struct openlcb_node_t
