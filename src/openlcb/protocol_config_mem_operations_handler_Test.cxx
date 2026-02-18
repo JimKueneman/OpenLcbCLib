@@ -192,22 +192,22 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_user.description = "ADCI User storage",
 
     // Space 0xFA
-    .address_space_traction_function_definition_info.read_only = true,
-    .address_space_traction_function_definition_info.present = true,
-    .address_space_traction_function_definition_info.low_address_valid = true, // assume the low address starts at 0
-    .address_space_traction_function_definition_info.low_address = 0x100,      // ignored if low_address_valid is false
-    .address_space_traction_function_definition_info.highest_address = 0x0200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_definition_info.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
-    .address_space_traction_function_definition_info.description = "Traction Configuration Definition Info",
+    .address_space_train_function_definition_info.read_only = true,
+    .address_space_train_function_definition_info.present = true,
+    .address_space_train_function_definition_info.low_address_valid = true, // assume the low address starts at 0
+    .address_space_train_function_definition_info.low_address = 0x100,      // ignored if low_address_valid is false
+    .address_space_train_function_definition_info.highest_address = 0x0200, // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+    .address_space_train_function_definition_info.description = "Train Configuration Definition Info",
 
     // Space 0xF9
-    .address_space_traction_function_config_memory.read_only = false,
-    .address_space_traction_function_config_memory.present = true,
-    .address_space_traction_function_config_memory.low_address_valid = true, // assume the low address starts at 0
-    .address_space_traction_function_config_memory.low_address = 0x100,       // ignored if low_address_valid is false
-    .address_space_traction_function_config_memory.highest_address = 0x200,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_config_memory.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
-    .address_space_traction_function_config_memory.description = "Traction Configuration Memory storage",
+    .address_space_train_function_config_memory.read_only = false,
+    .address_space_train_function_config_memory.present = true,
+    .address_space_train_function_config_memory.low_address_valid = true, // assume the low address starts at 0
+    .address_space_train_function_config_memory.low_address = 0x100,       // ignored if low_address_valid is false
+    .address_space_train_function_config_memory.highest_address = 0x200,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+    .address_space_train_function_config_memory.description = "Train Configuration Memory storage",
 
     // Space 0xEF
     .address_space_firmware.read_only = false,
@@ -1299,9 +1299,9 @@ TEST(ProtocolConfigMemOperationsHandler, cover_all_spaces)
     EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_acdi_user);
 
     // *****************************************
-    // CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO
+    // CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO
     // *****************************************
-    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
 
     _reset_variables();
     ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
@@ -1314,12 +1314,12 @@ TEST(ProtocolConfigMemOperationsHandler, cover_all_spaces)
 
     EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
     EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
-    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_traction_function_definition_info);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_train_function_definition_info);
 
     // *****************************************
-    // CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY
+    // CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY
     // *****************************************
-    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
 
     _reset_variables();
     ProtocolConfigMemOperationsHandler_freeze(&statemachine_info);
@@ -1332,7 +1332,7 @@ TEST(ProtocolConfigMemOperationsHandler, cover_all_spaces)
 
     EXPECT_EQ(called_function_ptr, (void *)&_operations_request_freeze);
     EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_freeze);
-    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_traction_function_config_memory);
+    EXPECT_EQ(local_config_mem_operations_request_info.space_info, &_node_parameters_main_node.address_space_train_function_config_memory);
 
     // *****************************************
     // CONFIG_MEM_SPACE_FIRMWARE
@@ -1641,41 +1641,41 @@ TEST(ProtocolConfigMemOperationsHandler, request_get_address_space_info)
     //  Get Info on the All Space (0xFA)
     // ************************************************************************
 
-    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
-    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_traction_function_definition_info;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_train_function_definition_info;
 
     _reset_variables();
     ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
 
     EXPECT_EQ(called_function_ptr, nullptr);
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_EQ(outgoing_msg->payload_count, 12 + strlen((char *)&_node_parameters_main_node.address_space_traction_function_definition_info.description) + 1);
+    EXPECT_EQ(outgoing_msg->payload_count, 12 + strlen((char *)&_node_parameters_main_node.address_space_train_function_definition_info.description) + 1);
     EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
-    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO);
-    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_traction_function_definition_info.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_train_function_definition_info.highest_address);
     EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_READ_ONLY | CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS);
-    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 8), _node_parameters_main_node.address_space_traction_function_definition_info.low_address);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 8), _node_parameters_main_node.address_space_train_function_definition_info.low_address);
 
      // ************************************************************************
     //  Get Info on the All Space (0xFA)
     // ************************************************************************
 
-    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
-    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_traction_function_config_memory;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
+    config_mem_operations_request_info.space_info = &_node_parameters_main_node.address_space_train_function_config_memory;
 
     _reset_variables();
     ProtocolConfigMemOperationsHandler_request_get_address_space_info(&statemachine_info, &config_mem_operations_request_info);
 
     EXPECT_EQ(called_function_ptr, nullptr);
     EXPECT_EQ(outgoing_msg->mti, MTI_DATAGRAM);
-    EXPECT_EQ(outgoing_msg->payload_count, 12 + strlen((char *)&_node_parameters_main_node.address_space_traction_function_config_memory.description) + 1);
+    EXPECT_EQ(outgoing_msg->payload_count, 12 + strlen((char *)&_node_parameters_main_node.address_space_train_function_config_memory.description) + 1);
     EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_PRESENT);
-    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY);
-    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_traction_function_config_memory.highest_address);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 3), _node_parameters_main_node.address_space_train_function_config_memory.highest_address);
     EXPECT_EQ(*outgoing_msg->payload[7], CONFIG_OPTIONS_SPACE_INFO_FLAG_USE_LOW_ADDRESS);
-    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 8), _node_parameters_main_node.address_space_traction_function_config_memory.low_address);
+    EXPECT_EQ(OpenLcbUtilities_extract_dword_from_openlcb_payload(outgoing_msg, 8), _node_parameters_main_node.address_space_train_function_config_memory.low_address);
 
      // ************************************************************************
     //  Space that is not present
@@ -1698,7 +1698,7 @@ TEST(ProtocolConfigMemOperationsHandler, request_get_address_space_info)
     //  Invalid space info
     // ************************************************************************
 
-    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[2] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     config_mem_operations_request_info.space_info = nullptr;
 
     _reset_variables();
@@ -1709,7 +1709,7 @@ TEST(ProtocolConfigMemOperationsHandler, request_get_address_space_info)
     EXPECT_EQ(outgoing_msg->payload_count, 8);
     EXPECT_EQ(*outgoing_msg->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*outgoing_msg->payload[1], CONFIG_MEM_GET_ADDRESS_SPACE_INFO_REPLY_NOT_PRESENT);
-    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY);
+    EXPECT_EQ(*outgoing_msg->payload[2], CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY);
 
 
 }

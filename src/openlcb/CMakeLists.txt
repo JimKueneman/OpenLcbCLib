@@ -20,6 +20,9 @@ set(SOURCES
     protocol_config_mem_operations_handler.c
     protocol_broadcast_time_handler.c
     openlcb_application_broadcast_time.c
+    protocol_train_handler.c
+    openlcb_application_train.c
+    openlcb_float16.c
 
 )
 
@@ -46,7 +49,9 @@ set(TESTS ${TESTS}
     ${ROOT_DIR}/src/openlcb/protocol_config_mem_operations_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/protocol_broadcast_time_handler_Test.cxx
     ${ROOT_DIR}/src/openlcb/openlcb_application_broadcast_time_Test.cxx
-
+    ${ROOT_DIR}/src/openlcb/protocol_train_handler_Test.cxx
+    ${ROOT_DIR}/src/openlcb/openlcb_application_train_Test.cxx
+    ${ROOT_DIR}/src/openlcb/openlcb_float16_Test.cxx
 
     PARENT_SCOPE
 )

@@ -41,6 +41,7 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
+#include "openlcb_application_train.h"
 
 static interface_protocol_config_mem_read_handler_t *_interface;
 
@@ -367,6 +368,130 @@ void ProtocolConfigMemReadHandler_read_request_config_definition_info(openlcb_st
             config_mem_read_request_info->bytes);
 
     statemachine_info->outgoing_msg_info.valid = true;
+}
+
+    /**
+    * @brief Processes a read request for Train Function Definition Info (FDI) space (0xFA)
+    *
+    * @details Algorithm:
+    * -# Load read reply OK message header into outgoing message
+    * -# Copy FDI data from node parameters to outgoing payload:
+    *    - Source: node->parameters->fdi array at requested address offset
+    *    - Destination: payload starting at data_start position
+    *    - Count: requested number of bytes
+    * -# Set outgoing message as valid
+    *
+    * This function reads XML function definition data from the FDI buffer
+    * stored in the node's parameters. The FDI describes the train's function
+    * layout (kind, number, name) similar to how CDI describes configuration.
+    * FDI is read-only.
+    *
+    * Use cases:
+    * - Responding to FDI read requests from configuration tools (JMRI)
+    * - Providing function description information for train nodes
+    *
+    * @verbatim
+    * @param statemachine_info Pointer to state machine context for message generation
+    * @endverbatim
+    * @verbatim
+    * @param config_mem_read_request_info Pointer to request info with address and byte count
+    * @endverbatim
+    *
+    * @warning Both parameters must not be NULL
+    * @warning FDI buffer in node parameters must be valid
+    * @warning Address and byte count must have been validated by caller
+    *
+    * @see ProtocolConfigMemReadHandler_read_request_config_definition_info
+    * @see OpenLcbUtilities_load_config_mem_reply_read_ok_message_header
+    * @see OpenLcbUtilities_copy_byte_array_to_openlcb_payload
+    */
+void ProtocolConfigMemReadHandler_read_request_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+
+    OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(statemachine_info, config_mem_read_request_info);
+
+    OpenLcbUtilities_copy_byte_array_to_openlcb_payload(
+            statemachine_info->outgoing_msg_info.msg_ptr,
+            &statemachine_info->openlcb_node->parameters->fdi[config_mem_read_request_info->address],
+            config_mem_read_request_info->data_start,
+            config_mem_read_request_info->bytes);
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
+}
+
+    /**
+    * @brief Processes a read request for Train Function Configuration Memory space (0xF9)
+    *
+    * @details Algorithm:
+    * -# Load read reply OK message header into outgoing message
+    * -# Get train state for the node
+    * -# If train state exists:
+    *    - Iterate over requested bytes
+    *    - For each byte, calculate function index (address / 2) and byte selector (address % 2)
+    *    - Byte selector 0 = high byte (big-endian), byte selector 1 = low byte
+    *    - Copy each byte to outgoing payload
+    * -# Set outgoing message as valid
+    *
+    * This function reads function values from the train_state_t.functions[] array
+    * as a flat byte array in big-endian format. Function N's 16-bit value occupies
+    * byte offsets N*2 (high byte) and N*2+1 (low byte). Bulk reads spanning
+    * multiple functions are supported.
+    *
+    * Use cases:
+    * - Responding to function value read requests from configuration tools
+    * - Bulk reading multiple function values in a single datagram
+    *
+    * @verbatim
+    * @param statemachine_info Pointer to state machine context for message generation
+    * @endverbatim
+    * @verbatim
+    * @param config_mem_read_request_info Pointer to request info with address and byte count
+    * @endverbatim
+    *
+    * @warning Both parameters must not be NULL
+    * @warning Node must have train_state initialized via OpenLcbApplicationTrain_setup()
+    *
+    * @see OpenLcbUtilities_load_config_mem_reply_read_ok_message_header
+    * @see OpenLcbUtilities_copy_byte_to_openlcb_payload
+    */
+void ProtocolConfigMemReadHandler_read_request_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info) {
+
+    OpenLcbUtilities_load_config_mem_reply_read_ok_message_header(statemachine_info, config_mem_read_request_info);
+
+    train_state_t *state = OpenLcbApplicationTrain_get_state(statemachine_info->openlcb_node);
+
+    if (state) {
+
+        uint32_t addr = config_mem_read_request_info->address;
+        uint16_t bytes = config_mem_read_request_info->bytes;
+        uint16_t payload_offset = config_mem_read_request_info->data_start;
+
+        for (uint16_t i = 0; i < bytes; i++) {
+
+            uint16_t fn_index = (addr + i) / 2;
+            uint8_t byte_sel = (addr + i) % 2;
+
+            uint8_t val = 0;
+
+            if (fn_index < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
+
+                val = (byte_sel == 0)
+                        ? (uint8_t) (state->functions[fn_index] >> 8)
+                        : (uint8_t) (state->functions[fn_index] & 0xFF);
+
+            }
+
+            OpenLcbUtilities_copy_byte_to_openlcb_payload(
+                    statemachine_info->outgoing_msg_info.msg_ptr,
+                    val,
+                    payload_offset + i);
+
+        }
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
 }
 
     /**
@@ -917,15 +1042,15 @@ void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info
 }
 
     /**
-    * @brief Entry point for processing read command for Traction Function Definition space
+    * @brief Entry point for processing read command for Train Function Definition space
     *
     * @details Algorithm:
     * -# Create local config_mem_read_request_info structure
-    * -# Set read_space_func to interface callback for traction function CDI reads
-    * -# Set space_info to point to Traction Function Definition address space definition
+    * -# Set read_space_func to interface callback for train function CDI reads
+    * -# Set space_info to point to Train Function Definition address space definition
     * -# Call central _handle_read_request dispatcher
     *
-    * This wrapper processes reads to traction function configuration structure (XML).
+    * This wrapper processes reads to train function configuration structure (XML).
     *
     * @verbatim
     * @param statemachine_info Pointer to state machine context containing incoming message
@@ -935,26 +1060,26 @@ void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info
     *
     * @see _handle_read_request
     */
-void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_config_definition_info;
-    config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
+    config_mem_read_request_info.read_space_func = _interface->read_request_train_function_config_definition_info;
+    config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_definition_info;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }
 
     /**
-    * @brief Entry point for processing read command for Traction Function Configuration space
+    * @brief Entry point for processing read command for Train Function Configuration space
     *
     * @details Algorithm:
     * -# Create local config_mem_read_request_info structure
-    * -# Set read_space_func to interface callback for traction function config reads
-    * -# Set space_info to point to Traction Function Config address space definition
+    * -# Set read_space_func to interface callback for train function config reads
+    * -# Set space_info to point to Train Function Config address space definition
     * -# Call central _handle_read_request dispatcher
     *
-    * This wrapper processes reads to traction function configuration data.
+    * This wrapper processes reads to train function configuration data.
     *
     * @verbatim
     * @param statemachine_info Pointer to state machine context containing incoming message
@@ -964,12 +1089,12 @@ void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(o
     *
     * @see _handle_read_request
     */
-void ProtocolConfigMemReadHandler_read_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemReadHandler_read_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_read_request_info_t config_mem_read_request_info;
 
-    config_mem_read_request_info.read_space_func = _interface->read_request_traction_function_config_memory;
-    config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
+    config_mem_read_request_info.read_space_func = _interface->read_request_train_function_config_memory;
+    config_mem_read_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
 
     _handle_read_request(statemachine_info, &config_mem_read_request_info);
 }

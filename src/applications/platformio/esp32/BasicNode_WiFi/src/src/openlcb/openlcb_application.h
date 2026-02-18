@@ -34,7 +34,7 @@
  * The application layer sits above the protocol handlers and provides:
  * - Producer/Consumer event registration and management
  * - Event transmission (PC Event Report, Learn Event, Initialization Complete)
- * - Configuration memory read/write abstraction
+ * - Configuration memory read/write abstrain
  * - Application callback interface for message transmission and memory operations
  *
  * This is the primary interface used by application code to interact with the

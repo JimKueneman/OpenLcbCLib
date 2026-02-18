@@ -448,7 +448,7 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
 
     uint16_t abs_rate = (rate < 0) ? (uint16_t)(-rate) : (uint16_t)(rate);
 
-    clock->state.ms_accumulator += (uint32_t)(50) * abs_rate;
+    clock->state.ms_accumulator += (uint32_t)(100) * abs_rate;
 
     while (clock->state.ms_accumulator >= BROADCAST_TIME_MS_PER_MINUTE_FIXED_POINT) {
 

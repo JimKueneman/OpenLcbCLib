@@ -209,16 +209,16 @@ void _memory_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info
     _update_called_function_ptr((void *)&_memory_read_space_acdi_user);
 }
 
-void _memory_read_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_memory_read_space_traction_function_definition_info);
+    _update_called_function_ptr((void *)&_memory_read_space_train_function_definition_info);
 }
 
-void _memory_read_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_memory_read_space_traction_function_config_memory);
+    _update_called_function_ptr((void *)&_memory_read_space_train_function_config_memory);
 }
 
 void _memory_read_space_config_description_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
@@ -246,14 +246,14 @@ void _memory_read_space_acdi_user_reply_ok(openlcb_statemachine_info_t *statemac
     _update_called_function_ptr((void *)&_memory_read_space_acdi_user_reply_ok);
 }
 
-void _memory_read_space_traction_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_space_train_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_space_traction_function_definition_info_reply_ok);
+    _update_called_function_ptr((void *)&_memory_read_space_train_function_definition_info_reply_ok);
 }
 
-void _memory_read_space_traction_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_space_train_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_space_traction_function_config_memory_reply_ok);
+    _update_called_function_ptr((void *)&_memory_read_space_train_function_config_memory_reply_ok);
 }
 
 void _memory_read_space_config_description_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
@@ -281,14 +281,14 @@ void _memory_read_space_acdi_user_reply_fail(openlcb_statemachine_info_t *statem
     _update_called_function_ptr((void *)&_memory_read_space_acdi_user_reply_fail);
 }
 
-void _memory_read_space_traction_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_space_train_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_space_traction_function_definition_info_reply_fail);
+    _update_called_function_ptr((void *)&_memory_read_space_train_function_definition_info_reply_fail);
 }
 
-void _memory_read_space_traction_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_space_train_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_space_traction_function_config_memory_reply_fail);
+    _update_called_function_ptr((void *)&_memory_read_space_train_function_config_memory_reply_fail);
 }
 
 void _memory_read_stream_space_config_description_info(openlcb_statemachine_info_t *statemachine_info)
@@ -321,16 +321,16 @@ void _memory_read_stream_space_acdi_user(openlcb_statemachine_info_t *statemachi
     _update_called_function_ptr((void *)&_memory_read_stream_space_acdi_user);
 }
 
-void _memory_read_stream_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_stream_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_memory_read_stream_space_traction_function_definition_info);
+    _update_called_function_ptr((void *)&_memory_read_stream_space_train_function_definition_info);
 }
 
-void _memory_read_stream_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_stream_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_memory_read_stream_space_traction_function_config_memory);
+    _update_called_function_ptr((void *)&_memory_read_stream_space_train_function_config_memory);
 }
 
 void _memory_read_stream_space_config_description_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
@@ -358,14 +358,14 @@ void _memory_read_stream_space_acdi_user_reply_ok(openlcb_statemachine_info_t *s
     _update_called_function_ptr((void *)&_memory_read_stream_space_acdi_user_reply_ok);
 }
 
-void _memory_read_stream_space_traction_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_stream_space_train_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_stream_space_traction_function_definition_info_reply_ok);
+    _update_called_function_ptr((void *)&_memory_read_stream_space_train_function_definition_info_reply_ok);
 }
 
-void _memory_read_stream_space_traction_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_stream_space_train_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_stream_space_traction_function_config_memory_reply_ok);
+    _update_called_function_ptr((void *)&_memory_read_stream_space_train_function_config_memory_reply_ok);
 }
 
 void _memory_read_stream_space_config_description_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
@@ -393,14 +393,14 @@ void _memory_read_stream_space_acdi_user_reply_fail(openlcb_statemachine_info_t 
     _update_called_function_ptr((void *)&_memory_read_stream_space_acdi_user_reply_fail);
 }
 
-void _memory_read_stream_space_traction_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_stream_space_train_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_stream_space_traction_function_definition_info_reply_fail);
+    _update_called_function_ptr((void *)&_memory_read_stream_space_train_function_definition_info_reply_fail);
 }
 
-void _memory_read_stream_space_traction_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_read_stream_space_train_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_read_stream_space_traction_function_config_memory_reply_fail);
+    _update_called_function_ptr((void *)&_memory_read_stream_space_train_function_config_memory_reply_fail);
 }
 
 void _memory_write_space_config_description_info(openlcb_statemachine_info_t *statemachine_info)
@@ -428,14 +428,14 @@ void _memory_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_inf
     _update_called_function_ptr((void *)&_memory_write_space_acdi_user);
 }
 
-void _memory_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_space_traction_function_definition_info);
+    _update_called_function_ptr((void *)&_memory_write_space_train_function_definition_info);
 }
 
-void _memory_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_space_traction_function_config_memory);
+    _update_called_function_ptr((void *)&_memory_write_space_train_function_config_memory);
 }
 
 void _memory_write_space_firmware_upgrade(openlcb_statemachine_info_t *statemachine_info)
@@ -468,14 +468,14 @@ void _memory_write_space_acdi_user_reply_ok(openlcb_statemachine_info_t *statema
     _update_called_function_ptr((void *)&_memory_write_space_acdi_user_reply_ok);
 }
 
-void _memory_write_space_traction_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_space_train_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_space_traction_function_definition_info_reply_ok);
+    _update_called_function_ptr((void *)&_memory_write_space_train_function_definition_info_reply_ok);
 }
 
-void _memory_write_space_traction_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_space_train_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_space_traction_function_config_memory_reply_ok);
+    _update_called_function_ptr((void *)&_memory_write_space_train_function_config_memory_reply_ok);
 }
 
 void _memory_write_space_config_description_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
@@ -503,14 +503,14 @@ void _memory_write_space_acdi_user_reply_fail(openlcb_statemachine_info_t *state
     _update_called_function_ptr((void *)&_memory_write_space_acdi_user_reply_fail);
 }
 
-void _memory_write_space_traction_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_space_train_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_space_traction_function_definition_info_reply_fail);
+    _update_called_function_ptr((void *)&_memory_write_space_train_function_definition_info_reply_fail);
 }
 
-void _memory_write_space_traction_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_space_train_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_space_traction_function_config_memory_reply_fail);
+    _update_called_function_ptr((void *)&_memory_write_space_train_function_config_memory_reply_fail);
 }
 
 void _memory_write_under_mask_space_config_description_info(openlcb_statemachine_info_t *statemachine_info)
@@ -538,14 +538,14 @@ void _memory_write_under_mask_space_acdi_user(openlcb_statemachine_info_t *state
     _update_called_function_ptr((void *)&_memory_write_under_mask_space_acdi_user);
 }
 
-void _memory_write_under_mask_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_under_mask_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_under_mask_space_traction_function_definition_info);
+    _update_called_function_ptr((void *)&_memory_write_under_mask_space_train_function_definition_info);
 }
 
-void _memory_write_under_mask_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_under_mask_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_under_mask_space_traction_function_config_memory);
+    _update_called_function_ptr((void *)&_memory_write_under_mask_space_train_function_config_memory);
 }
 
 void _memory_write_under_mask_space_firmware_upgrade(openlcb_statemachine_info_t *statemachine_info)
@@ -583,16 +583,16 @@ void _memory_write_stream_space_acdi_user(openlcb_statemachine_info_t *statemach
     _update_called_function_ptr((void *)&_memory_write_stream_space_acdi_user);
 }
 
-void _memory_write_stream_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_stream_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_memory_write_stream_space_traction_function_definition_info);
+    _update_called_function_ptr((void *)&_memory_write_stream_space_train_function_definition_info);
 }
 
-void _memory_write_stream_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_stream_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info)
 {
 
-    _update_called_function_ptr((void *)&_memory_write_stream_space_traction_function_config_memory);
+    _update_called_function_ptr((void *)&_memory_write_stream_space_train_function_config_memory);
 }
 
 void _memory_write_stream_space_firmware_upgrade(openlcb_statemachine_info_t *statemachine_info)
@@ -626,14 +626,14 @@ void _memory_write_stream_space_acdi_user_reply_ok(openlcb_statemachine_info_t *
     _update_called_function_ptr((void *)&_memory_write_stream_space_acdi_user_reply_ok);
 }
 
-void _memory_write_stream_space_traction_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_stream_space_train_function_definition_info_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_stream_space_traction_function_definition_info_reply_ok);
+    _update_called_function_ptr((void *)&_memory_write_stream_space_train_function_definition_info_reply_ok);
 }
 
-void _memory_write_stream_space_traction_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_stream_space_train_function_config_memory_reply_ok(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_stream_space_traction_function_config_memory_reply_ok);
+    _update_called_function_ptr((void *)&_memory_write_stream_space_train_function_config_memory_reply_ok);
 }
 
 void _memory_write_stream_space_config_description_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
@@ -661,14 +661,14 @@ void _memory_write_stream_space_acdi_user_reply_fail(openlcb_statemachine_info_t
     _update_called_function_ptr((void *)&_memory_write_stream_space_acdi_user_reply_fail);
 }
 
-void _memory_write_stream_space_traction_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_stream_space_train_function_definition_info_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_stream_space_traction_function_definition_info_reply_fail);
+    _update_called_function_ptr((void *)&_memory_write_stream_space_train_function_definition_info_reply_fail);
 }
 
-void _memory_write_stream_space_traction_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
+void _memory_write_stream_space_train_function_config_memory_reply_fail(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_memory_write_stream_space_traction_function_config_memory_reply_fail);
+    _update_called_function_ptr((void *)&_memory_write_stream_space_train_function_config_memory_reply_fail);
 }
 
 void _memory_options_cmd(openlcb_statemachine_info_t *statemachine_info)
@@ -760,8 +760,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_space_configuration_memory = &_memory_read_space_configuration_memory,
     .memory_read_space_acdi_manufacturer = &_memory_read_space_acdi_manufacturer,
     .memory_read_space_acdi_user = &_memory_read_space_acdi_user,
-    .memory_read_space_traction_function_definition_info = &_memory_read_space_traction_function_definition_info,
-    .memory_read_space_traction_function_config_memory = &_memory_read_space_traction_function_config_memory,
+    .memory_read_space_train_function_definition_info = &_memory_read_space_train_function_definition_info,
+    .memory_read_space_train_function_config_memory = &_memory_read_space_train_function_config_memory,
 
     // Config Memory Read Reply Ok
     .memory_read_space_config_description_info_reply_ok = &_memory_read_space_config_description_info_reply_ok,
@@ -769,8 +769,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_space_configuration_memory_reply_ok = &_memory_read_space_configuration_memory_reply_ok,
     .memory_read_space_acdi_manufacturer_reply_ok = &_memory_read_space_acdi_manufacturer_reply_ok,
     .memory_read_space_acdi_user_reply_ok = &_memory_read_space_acdi_user_reply_ok,
-    .memory_read_space_traction_function_definition_info_reply_ok = &_memory_read_space_traction_function_definition_info_reply_ok,
-    .memory_read_space_traction_function_config_memory_reply_ok = &_memory_read_space_traction_function_config_memory_reply_ok,
+    .memory_read_space_train_function_definition_info_reply_ok = &_memory_read_space_train_function_definition_info_reply_ok,
+    .memory_read_space_train_function_config_memory_reply_ok = &_memory_read_space_train_function_config_memory_reply_ok,
 
     // Config Memory Read Reply Failed
     .memory_read_space_config_description_info_reply_fail = &_memory_read_space_config_description_info_reply_fail,
@@ -778,8 +778,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_space_configuration_memory_reply_fail = &_memory_read_space_configuration_memory_reply_fail,
     .memory_read_space_acdi_manufacturer_reply_fail = &_memory_read_space_acdi_manufacturer_reply_fail,
     .memory_read_space_acdi_user_reply_fail = &_memory_read_space_acdi_user_reply_fail,
-    .memory_read_space_traction_function_definition_info_reply_fail = &_memory_read_space_traction_function_definition_info_reply_fail,
-    .memory_read_space_traction_function_config_memory_reply_fail = &_memory_read_space_traction_function_config_memory_reply_fail,
+    .memory_read_space_train_function_definition_info_reply_fail = &_memory_read_space_train_function_definition_info_reply_fail,
+    .memory_read_space_train_function_config_memory_reply_fail = &_memory_read_space_train_function_config_memory_reply_fail,
 
     // Config Memory Stream Read
     .memory_read_stream_space_config_description_info = &_memory_read_stream_space_config_description_info,
@@ -787,8 +787,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_stream_space_configuration_memory = &_memory_read_stream_space_configuration_memory,
     .memory_read_stream_space_acdi_manufacturer = &_memory_read_stream_space_acdi_manufacturer,
     .memory_read_stream_space_acdi_user = &_memory_read_stream_space_acdi_user,
-    .memory_read_stream_space_traction_function_definition_info = &_memory_read_stream_space_traction_function_definition_info,
-    .memory_read_stream_space_traction_function_config_memory = &_memory_read_stream_space_traction_function_config_memory,
+    .memory_read_stream_space_train_function_definition_info = &_memory_read_stream_space_train_function_definition_info,
+    .memory_read_stream_space_train_function_config_memory = &_memory_read_stream_space_train_function_config_memory,
 
     // Config Memory Stream Read Reply = Ok
     .memory_read_stream_space_config_description_info_reply_ok = &_memory_read_stream_space_config_description_info_reply_ok,
@@ -796,8 +796,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_stream_space_configuration_memory_reply_ok = &_memory_read_stream_space_configuration_memory_reply_ok,
     .memory_read_stream_space_acdi_manufacturer_reply_ok = &_memory_read_stream_space_acdi_manufacturer_reply_ok,
     .memory_read_stream_space_acdi_user_reply_ok = &_memory_read_stream_space_acdi_user_reply_ok,
-    .memory_read_stream_space_traction_function_definition_info_reply_ok = &_memory_read_stream_space_traction_function_definition_info_reply_ok,
-    .memory_read_stream_space_traction_function_config_memory_reply_ok = &_memory_read_stream_space_traction_function_config_memory_reply_ok,
+    .memory_read_stream_space_train_function_definition_info_reply_ok = &_memory_read_stream_space_train_function_definition_info_reply_ok,
+    .memory_read_stream_space_train_function_config_memory_reply_ok = &_memory_read_stream_space_train_function_config_memory_reply_ok,
 
     // Config Memory Stream Read Reply = Failed
     .memory_read_stream_space_config_description_info_reply_fail = &_memory_read_stream_space_config_description_info_reply_fail,
@@ -805,8 +805,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_read_stream_space_configuration_memory_reply_fail = &_memory_read_stream_space_configuration_memory_reply_fail,
     .memory_read_stream_space_acdi_manufacturer_reply_fail = &_memory_read_stream_space_acdi_manufacturer_reply_fail,
     .memory_read_stream_space_acdi_user_reply_fail = &_memory_read_stream_space_acdi_user_reply_fail,
-    .memory_read_stream_space_traction_function_definition_info_reply_fail = &_memory_read_stream_space_traction_function_definition_info_reply_fail,
-    .memory_read_stream_space_traction_function_config_memory_reply_fail = &_memory_read_stream_space_traction_function_config_memory_reply_fail,
+    .memory_read_stream_space_train_function_definition_info_reply_fail = &_memory_read_stream_space_train_function_definition_info_reply_fail,
+    .memory_read_stream_space_train_function_config_memory_reply_fail = &_memory_read_stream_space_train_function_config_memory_reply_fail,
 
     // Config Memory Write
     .memory_write_space_config_description_info = &_memory_write_space_config_description_info,
@@ -814,8 +814,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_space_configuration_memory = &_memory_write_space_configuration_memory,
     .memory_write_space_acdi_manufacturer = &_memory_write_space_acdi_manufacturer,
     .memory_write_space_acdi_user = &_memory_write_space_acdi_user,
-    .memory_write_space_traction_function_definition_info = &_memory_write_space_traction_function_definition_info,
-    .memory_write_space_traction_function_config_memory = &_memory_write_space_traction_function_config_memory,
+    .memory_write_space_train_function_definition_info = &_memory_write_space_train_function_definition_info,
+    .memory_write_space_train_function_config_memory = &_memory_write_space_train_function_config_memory,
     .memory_write_space_firmware_upgrade = _memory_write_space_firmware_upgrade,
 
     // Config Memory Write Reply Ok
@@ -824,8 +824,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_space_configuration_memory_reply_ok = &_memory_write_space_configuration_memory_reply_ok,
     .memory_write_space_acdi_manufacturer_reply_ok = &_memory_write_space_acdi_manufacturer_reply_ok,
     .memory_write_space_acdi_user_reply_ok = &_memory_write_space_acdi_user_reply_ok,
-    .memory_write_space_traction_function_definition_info_reply_ok = &_memory_write_space_traction_function_definition_info_reply_ok,
-    .memory_write_space_traction_function_config_memory_reply_ok = &_memory_write_space_traction_function_config_memory_reply_ok,
+    .memory_write_space_train_function_definition_info_reply_ok = &_memory_write_space_train_function_definition_info_reply_ok,
+    .memory_write_space_train_function_config_memory_reply_ok = &_memory_write_space_train_function_config_memory_reply_ok,
 
     // Config Memory Write Reply Fail
     .memory_write_space_config_description_info_reply_fail = &_memory_write_space_config_description_info_reply_fail,
@@ -833,8 +833,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_space_configuration_memory_reply_fail = &_memory_write_space_configuration_memory_reply_fail,
     .memory_write_space_acdi_manufacturer_reply_fail = &_memory_write_space_acdi_manufacturer_reply_fail,
     .memory_write_space_acdi_user_reply_fail = &_memory_write_space_acdi_user_reply_fail,
-    .memory_write_space_traction_function_definition_info_reply_fail = &_memory_write_space_traction_function_definition_info_reply_fail,
-    .memory_write_space_traction_function_config_memory_reply_fail = &_memory_write_space_traction_function_config_memory_reply_fail,
+    .memory_write_space_train_function_definition_info_reply_fail = &_memory_write_space_train_function_definition_info_reply_fail,
+    .memory_write_space_train_function_config_memory_reply_fail = &_memory_write_space_train_function_config_memory_reply_fail,
 
     // Config Memory Write Under Mask
     .memory_write_under_mask_space_config_description_info = &_memory_write_under_mask_space_config_description_info,
@@ -842,8 +842,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_under_mask_space_configuration_memory = &_memory_write_under_mask_space_configuration_memory,
     .memory_write_under_mask_space_acdi_manufacturer = &_memory_write_under_mask_space_acdi_manufacturer,
     .memory_write_under_mask_space_acdi_user = &_memory_write_under_mask_space_acdi_user,
-    .memory_write_under_mask_space_traction_function_definition_info = _memory_write_under_mask_space_traction_function_definition_info,
-    .memory_write_under_mask_space_traction_function_config_memory = &_memory_write_under_mask_space_traction_function_config_memory,
+    .memory_write_under_mask_space_train_function_definition_info = _memory_write_under_mask_space_train_function_definition_info,
+    .memory_write_under_mask_space_train_function_config_memory = &_memory_write_under_mask_space_train_function_config_memory,
     .memory_write_under_mask_space_firmware_upgrade = &_memory_write_under_mask_space_firmware_upgrade,
 
     // Config Memory Stream Write
@@ -852,8 +852,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_stream_space_configuration_memory = &_memory_write_stream_space_configuration_memory,
     .memory_write_stream_space_acdi_manufacturer = &_memory_write_stream_space_acdi_manufacturer,
     .memory_write_stream_space_acdi_user = &_memory_write_stream_space_acdi_user,
-    .memory_write_stream_space_traction_function_definition_info = &_memory_write_stream_space_traction_function_definition_info,
-    .memory_write_stream_space_traction_function_config_memory = &_memory_write_stream_space_traction_function_config_memory,
+    .memory_write_stream_space_train_function_definition_info = &_memory_write_stream_space_train_function_definition_info,
+    .memory_write_stream_space_train_function_config_memory = &_memory_write_stream_space_train_function_config_memory,
     .memory_write_stream_space_firmware_upgrade = &_memory_write_stream_space_firmware_upgrade,
 
     // Config Memory Stream Write Reply = Ok
@@ -862,8 +862,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_stream_space_configuration_memory_reply_ok = &_memory_write_stream_space_configuration_memory_reply_ok,
     .memory_write_stream_space_acdi_manufacturer_reply_ok = &_memory_write_stream_space_acdi_manufacturer_reply_ok,
     .memory_write_stream_space_acdi_user_reply_ok = &_memory_write_stream_space_acdi_user_reply_ok,
-    .memory_write_stream_space_traction_function_definition_info_reply_ok = &_memory_write_stream_space_traction_function_definition_info_reply_ok,
-    .memory_write_stream_space_traction_function_config_memory_reply_ok = &_memory_write_stream_space_traction_function_config_memory_reply_ok,
+    .memory_write_stream_space_train_function_definition_info_reply_ok = &_memory_write_stream_space_train_function_definition_info_reply_ok,
+    .memory_write_stream_space_train_function_config_memory_reply_ok = &_memory_write_stream_space_train_function_config_memory_reply_ok,
 
     // Config Memory Stream Write Reply = Failed
     .memory_write_stream_space_config_description_info_reply_fail = &_memory_write_stream_space_config_description_info_reply_fail,
@@ -871,8 +871,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler = {
     .memory_write_stream_space_configuration_memory_reply_fail = &_memory_write_stream_space_configuration_memory_reply_fail,
     .memory_write_stream_space_acdi_manufacturer_reply_fail = &_memory_write_stream_space_acdi_manufacturer_reply_fail,
     .memory_write_stream_space_acdi_user_reply_fail = &_memory_write_stream_space_acdi_user_reply_fail,
-    .memory_write_stream_space_traction_function_definition_info_reply_fail = &_memory_write_stream_space_traction_function_definition_info_reply_fail,
-    .memory_write_stream_space_traction_function_config_memory_reply_fail = &_memory_write_stream_space_traction_function_config_memory_reply_fail,
+    .memory_write_stream_space_train_function_definition_info_reply_fail = &_memory_write_stream_space_train_function_definition_info_reply_fail,
+    .memory_write_stream_space_train_function_config_memory_reply_fail = &_memory_write_stream_space_train_function_config_memory_reply_fail,
 
     // Config Memory Commands
     .memory_options_cmd = &_memory_options_cmd,
@@ -902,8 +902,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_read_space_configuration_memory = NULL,
     .memory_read_space_acdi_manufacturer = NULL,
     .memory_read_space_acdi_user = NULL,
-    .memory_read_space_traction_function_definition_info = NULL,
-    .memory_read_space_traction_function_config_memory = NULL,
+    .memory_read_space_train_function_definition_info = NULL,
+    .memory_read_space_train_function_config_memory = NULL,
 
     // Config Memory Read Reply Ok
     .memory_read_space_config_description_info_reply_ok = NULL,
@@ -911,8 +911,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_read_space_configuration_memory_reply_ok = NULL,
     .memory_read_space_acdi_manufacturer_reply_ok = NULL,
     .memory_read_space_acdi_user_reply_ok = NULL,
-    .memory_read_space_traction_function_definition_info_reply_ok = NULL,
-    .memory_read_space_traction_function_config_memory_reply_ok = NULL,
+    .memory_read_space_train_function_definition_info_reply_ok = NULL,
+    .memory_read_space_train_function_config_memory_reply_ok = NULL,
 
     // Config Memory Read Reply Failed
     .memory_read_space_config_description_info_reply_fail = NULL,
@@ -920,8 +920,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_read_space_configuration_memory_reply_fail = NULL,
     .memory_read_space_acdi_manufacturer_reply_fail = NULL,
     .memory_read_space_acdi_user_reply_fail = NULL,
-    .memory_read_space_traction_function_definition_info_reply_fail = NULL,
-    .memory_read_space_traction_function_config_memory_reply_fail = NULL,
+    .memory_read_space_train_function_definition_info_reply_fail = NULL,
+    .memory_read_space_train_function_config_memory_reply_fail = NULL,
 
     // Config Memory Stream Read
     .memory_read_stream_space_config_description_info = NULL,
@@ -935,8 +935,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_read_stream_space_configuration_memory_reply_ok = NULL,
     .memory_read_stream_space_acdi_manufacturer_reply_ok = NULL,
     .memory_read_stream_space_acdi_user_reply_ok = NULL,
-    .memory_read_stream_space_traction_function_definition_info_reply_ok = NULL,
-    .memory_read_stream_space_traction_function_config_memory_reply_ok = NULL,
+    .memory_read_stream_space_train_function_definition_info_reply_ok = NULL,
+    .memory_read_stream_space_train_function_config_memory_reply_ok = NULL,
 
     // Config Memory Stream Read Reply = Failed
     .memory_read_stream_space_config_description_info_reply_fail = NULL,
@@ -944,16 +944,16 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_read_stream_space_configuration_memory_reply_fail = NULL,
     .memory_read_stream_space_acdi_manufacturer_reply_fail = NULL,
     .memory_read_stream_space_acdi_user_reply_fail = NULL,
-    .memory_read_stream_space_traction_function_definition_info_reply_fail = NULL,
-    .memory_read_stream_space_traction_function_config_memory_reply_fail = NULL,
+    .memory_read_stream_space_train_function_definition_info_reply_fail = NULL,
+    .memory_read_stream_space_train_function_config_memory_reply_fail = NULL,
     // Config Memory Write
     .memory_write_space_config_description_info = NULL,
     .memory_write_space_all = NULL,
     .memory_write_space_configuration_memory = NULL,
     .memory_write_space_acdi_manufacturer = NULL,
     .memory_write_space_acdi_user = NULL,
-    .memory_write_space_traction_function_definition_info = NULL,
-    .memory_write_space_traction_function_config_memory = NULL,
+    .memory_write_space_train_function_definition_info = NULL,
+    .memory_write_space_train_function_config_memory = NULL,
     .memory_write_space_firmware_upgrade = NULL,
 
     // Config Memory Write Reply Ok
@@ -962,8 +962,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_write_space_configuration_memory_reply_ok = NULL,
     .memory_write_space_acdi_manufacturer_reply_ok = NULL,
     .memory_write_space_acdi_user_reply_ok = NULL,
-    .memory_write_space_traction_function_definition_info_reply_ok = NULL,
-    .memory_write_space_traction_function_config_memory_reply_ok = NULL,
+    .memory_write_space_train_function_definition_info_reply_ok = NULL,
+    .memory_write_space_train_function_config_memory_reply_ok = NULL,
 
     // Config Memory Write Reply Fail
     .memory_write_space_config_description_info_reply_fail = NULL,
@@ -971,8 +971,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_write_space_configuration_memory_reply_fail = NULL,
     .memory_write_space_acdi_manufacturer_reply_fail = NULL,
     .memory_write_space_acdi_user_reply_fail = NULL,
-    .memory_write_space_traction_function_definition_info_reply_fail = NULL,
-    .memory_write_space_traction_function_config_memory_reply_fail = NULL,
+    .memory_write_space_train_function_definition_info_reply_fail = NULL,
+    .memory_write_space_train_function_config_memory_reply_fail = NULL,
 
     // Config Memory Write Under Mask
     .memory_write_under_mask_space_config_description_info = NULL,
@@ -980,8 +980,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_write_under_mask_space_configuration_memory = NULL,
     .memory_write_under_mask_space_acdi_manufacturer = NULL,
     .memory_write_under_mask_space_acdi_user = NULL,
-    .memory_write_under_mask_space_traction_function_definition_info = NULL,
-    .memory_write_under_mask_space_traction_function_config_memory = NULL,
+    .memory_write_under_mask_space_train_function_definition_info = NULL,
+    .memory_write_under_mask_space_train_function_config_memory = NULL,
     .memory_write_under_mask_space_firmware_upgrade = NULL,
 
     // Config Memory Stream Write
@@ -996,8 +996,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_write_stream_space_configuration_memory_reply_ok = NULL,
     .memory_write_stream_space_acdi_manufacturer_reply_ok = NULL,
     .memory_write_stream_space_acdi_user_reply_ok = NULL,
-    .memory_write_stream_space_traction_function_definition_info_reply_ok = NULL,
-    .memory_write_stream_space_traction_function_config_memory_reply_ok = NULL,
+    .memory_write_stream_space_train_function_definition_info_reply_ok = NULL,
+    .memory_write_stream_space_train_function_config_memory_reply_ok = NULL,
 
     // Config Memory Stream Write Reply = Failed
     .memory_write_stream_space_config_description_info_reply_fail = NULL,
@@ -1005,8 +1005,8 @@ interface_protocol_datagram_handler_t interface_protocol_datagram_handler_with_n
     .memory_write_stream_space_configuration_memory_reply_fail = NULL,
     .memory_write_stream_space_acdi_manufacturer_reply_fail = NULL,
     .memory_write_stream_space_acdi_user_reply_fail = NULL,
-    .memory_write_stream_space_traction_function_definition_info_reply_fail = NULL,
-    .memory_write_stream_space_traction_function_config_memory_reply_fail = NULL,
+    .memory_write_stream_space_train_function_definition_info_reply_fail = NULL,
+    .memory_write_stream_space_train_function_config_memory_reply_fail = NULL,
 
     // Config Memory Commands
     .memory_options_cmd = NULL,
@@ -1151,7 +1151,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1160,12 +1160,12 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_definition_info);
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_definition_info);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1174,7 +1174,7 @@ void _read_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_inf
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_config_memory);
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_config_memory);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -1317,7 +1317,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1326,12 +1326,12 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_definition_info_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_definition_info_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1340,7 +1340,7 @@ void _read_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_config_memory_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_config_memory_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -1483,7 +1483,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1492,12 +1492,12 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_definition_info_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_definition_info_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1506,7 +1506,7 @@ void _read_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine_
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_space_traction_function_config_memory_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_read_space_train_function_config_memory_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -1649,7 +1649,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1658,12 +1658,12 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_definition_info);
+        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_train_function_definition_info);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1672,7 +1672,7 @@ void _read_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemach
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_config_memory);
+        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_train_function_config_memory);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -1815,7 +1815,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1824,12 +1824,12 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_definition_info_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_train_function_definition_info_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1838,7 +1838,7 @@ void _read_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemac
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_config_memory_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_train_function_config_memory_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -1981,7 +1981,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -1990,12 +1990,12 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_definition_info_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_train_function_definition_info_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_READ_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2004,7 +2004,7 @@ void _read_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statem
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_traction_function_config_memory_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_read_stream_space_train_function_config_memory_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2147,7 +2147,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2156,12 +2156,12 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_definition_info);
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_definition_info);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2170,7 +2170,7 @@ void _write_command_space_in_byte_6(openlcb_statemachine_info_t *statemachine_in
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_config_memory);
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_config_memory);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2313,7 +2313,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2322,12 +2322,12 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_definition_info_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_definition_info_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2336,7 +2336,7 @@ void _write_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statemachine_i
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_config_memory_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_config_memory_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2482,7 +2482,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2491,12 +2491,12 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_definition_info_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_definition_info_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2505,7 +2505,7 @@ void _write_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_space_traction_function_config_memory_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_write_space_train_function_config_memory_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2647,7 +2647,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2656,12 +2656,12 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_traction_function_definition_info);
+        EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_train_function_definition_info);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_UNDER_MASK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2670,7 +2670,7 @@ void _write_under_mask_space_in_byte_6(openlcb_statemachine_info_t *statemachine
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_traction_function_config_memory);
+        EXPECT_EQ(called_function_ptr, &_memory_write_under_mask_space_train_function_config_memory);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2813,7 +2813,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2822,12 +2822,12 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_definition_info);
+        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_train_function_definition_info);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2836,7 +2836,7 @@ void _write_stream_command_space_in_byte_6(openlcb_statemachine_info_t *statemac
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_config_memory);
+        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_train_function_config_memory);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -2979,7 +2979,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -2988,12 +2988,12 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_definition_info_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_train_function_definition_info_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_OK_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3002,7 +3002,7 @@ void _write_stream_reply_ok_space_in_byte_6(openlcb_statemachine_info_t *statema
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_config_memory_reply_ok);
+        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_train_function_config_memory_reply_ok);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -3145,7 +3145,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3154,12 +3154,12 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_definition_info_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_train_function_definition_info_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
     *statemachine_info->incoming_msg_info.msg_ptr->payload[1] = CONFIG_MEM_WRITE_STREAM_REPLY_FAIL_SPACE_IN_BYTE_6;
-    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *statemachine_info->incoming_msg_info.msg_ptr->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
     OpenLcbUtilities_copy_dword_to_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, CONFIG_MEM_ADDRESS, 2);
     statemachine_info->incoming_msg_info.msg_ptr->payload_count = 8;
 
@@ -3168,7 +3168,7 @@ void _write_stream_reply_fail_space_in_byte_6(openlcb_statemachine_info_t *state
     if (is_null_subcommand)
         _test_for_rejected_datagram(statemachine_info);
     else
-        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_traction_function_config_memory_reply_fail);
+        EXPECT_EQ(called_function_ptr, &_memory_write_stream_space_train_function_config_memory_reply_fail);
 
     _reset_variables();
     *statemachine_info->incoming_msg_info.msg_ptr->payload[0] = CONFIG_MEM_CONFIGURATION;
@@ -4017,8 +4017,8 @@ TEST(ProtocolDatagramHandler, null_callbacks_memory_read_operations)
     null_interface.memory_read_space_configuration_memory = nullptr;
     null_interface.memory_read_space_acdi_manufacturer = nullptr;
     null_interface.memory_read_space_acdi_user = nullptr;
-    null_interface.memory_read_space_traction_function_definition_info = nullptr;
-    null_interface.memory_read_space_traction_function_config_memory = nullptr;
+    null_interface.memory_read_space_train_function_definition_info = nullptr;
+    null_interface.memory_read_space_train_function_config_memory = nullptr;
     null_interface.memory_read_space_firmware_upgrade = nullptr;
     // ... and all other memory_read_space_* callbacks
     
@@ -4050,8 +4050,8 @@ TEST(ProtocolDatagramHandler, null_callbacks_memory_write_operations)
     null_interface.memory_write_space_configuration_memory = nullptr;
     null_interface.memory_write_space_acdi_manufacturer = nullptr;
     null_interface.memory_write_space_acdi_user = nullptr;
-    null_interface.memory_write_space_traction_function_definition_info = nullptr;
-    null_interface.memory_write_space_traction_function_config_memory = nullptr;
+    null_interface.memory_write_space_train_function_definition_info = nullptr;
+    null_interface.memory_write_space_train_function_config_memory = nullptr;
     null_interface.memory_write_space_firmware_upgrade = nullptr;
     // ... and all other memory_write_space_* callbacks
     
@@ -4083,8 +4083,8 @@ TEST(ProtocolDatagramHandler, null_callbacks_memory_read_stream_operations)
     null_interface.memory_read_stream_space_configuration_memory = nullptr;
     null_interface.memory_read_stream_space_acdi_manufacturer = nullptr;
     null_interface.memory_read_stream_space_acdi_user = nullptr;
-    null_interface.memory_read_stream_space_traction_function_definition_info = nullptr;
-    null_interface.memory_read_stream_space_traction_function_config_memory = nullptr;
+    null_interface.memory_read_stream_space_train_function_definition_info = nullptr;
+    null_interface.memory_read_stream_space_train_function_config_memory = nullptr;
     null_interface.memory_read_stream_space_firmware_upgrade = nullptr;
     
     ProtocolDatagramHandler_initialize(&null_interface);
@@ -4115,8 +4115,8 @@ TEST(ProtocolDatagramHandler, null_callbacks_memory_write_stream_ok)
     null_interface.memory_write_stream_space_configuration_memory_reply_ok = nullptr;
     null_interface.memory_write_stream_space_acdi_manufacturer_reply_ok = nullptr;
     null_interface.memory_write_stream_space_acdi_user_reply_ok = nullptr;
-    null_interface.memory_write_stream_space_traction_function_definition_info_reply_ok = nullptr;
-    null_interface.memory_write_stream_space_traction_function_config_memory_reply_ok = nullptr;
+    null_interface.memory_write_stream_space_train_function_definition_info_reply_ok = nullptr;
+    null_interface.memory_write_stream_space_train_function_config_memory_reply_ok = nullptr;
     // Note: firmware upgrade doesn't have OK callback in interface
     
     ProtocolDatagramHandler_initialize(&null_interface);
@@ -4147,8 +4147,8 @@ TEST(ProtocolDatagramHandler, null_callbacks_memory_write_stream_fail)
     null_interface.memory_write_stream_space_configuration_memory_reply_fail = nullptr;
     null_interface.memory_write_stream_space_acdi_manufacturer_reply_fail = nullptr;
     null_interface.memory_write_stream_space_acdi_user_reply_fail = nullptr;
-    null_interface.memory_write_stream_space_traction_function_definition_info_reply_fail = nullptr;
-    null_interface.memory_write_stream_space_traction_function_config_memory_reply_fail = nullptr;
+    null_interface.memory_write_stream_space_train_function_definition_info_reply_fail = nullptr;
+    null_interface.memory_write_stream_space_train_function_config_memory_reply_fail = nullptr;
     
     ProtocolDatagramHandler_initialize(&null_interface);
 

@@ -232,24 +232,24 @@ typedef struct {
     void (*read_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
 
         /**
-         * @brief Optional callback to handle reads from Traction Function Definition space
+         * @brief Optional callback to handle reads from Train Function Definition space
          *
-         * @details Processes read requests for address space 0xFA (Traction Function CDI),
-         * which contains XML describing traction function configurations.
+         * @details Processes read requests for address space 0xFA (Train Function CDI),
+         * which contains XML describing train function configurations.
          *
-         * @note Optional - can be NULL if traction function definition reads are not supported
+         * @note Optional - can be NULL if train function definition reads are not supported
          */
-    void (*read_request_traction_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
 
         /**
-         * @brief Optional callback to handle reads from Traction Function Configuration space
+         * @brief Optional callback to handle reads from Train Function Configuration space
          *
-         * @details Processes read requests for address space 0xF9 (Traction Function Config),
-         * which contains actual traction function configuration data.
+         * @details Processes read requests for address space 0xF9 (Train Function Config),
+         * which contains actual train function configuration data.
          *
-         * @note Optional - can be NULL if traction function config reads are not supported
+         * @note Optional - can be NULL if train function config reads are not supported
          */
-    void (*read_request_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
+    void (*read_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t* config_mem_read_request_info);
 
         /**
          * @brief Optional callback to override reply delay time
@@ -403,13 +403,13 @@ extern "C" {
     extern void ProtocolConfigMemReadHandler_read_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Processes an incoming read command for Traction Function Definition space
+         * @brief Processes an incoming read command for Train Function Definition space
          *
-         * @details Handles read requests for address space 0xFA (Traction Function CDI),
-         * which contains XML describing traction function configurations for train control.
+         * @details Handles read requests for address space 0xFA (Train Function CDI),
+         * which contains XML describing train function configurations for train control.
          *
          * Use cases:
-         * - Responding to traction CDI queries
+         * - Responding to train CDI queries
          * - Providing function configuration structure for trains
          *
          * @param statemachine_info Pointer to state machine context containing incoming message
@@ -417,18 +417,18 @@ extern "C" {
          * @warning statemachine_info must not be NULL
          * @warning statemachine_info->incoming_msg_info.msg_ptr must contain valid read command
          *
-         * @see ProtocolConfigMemReadHandler_read_request_traction_function_config_definition_info
+         * @see ProtocolConfigMemReadHandler_read_request_train_function_config_definition_info
          */
-    extern void ProtocolConfigMemReadHandler_read_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemReadHandler_read_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Processes an incoming read command for Traction Function Configuration space
+         * @brief Processes an incoming read command for Train Function Configuration space
          *
-         * @details Handles read requests for address space 0xF9 (Traction Function Config),
-         * which contains actual traction function configuration data for train control.
+         * @details Handles read requests for address space 0xF9 (Train Function Config),
+         * which contains actual train function configuration data for train control.
          *
          * Use cases:
-         * - Reading traction function settings
+         * - Reading train function settings
          * - Responding to train configuration queries
          *
          * @param statemachine_info Pointer to state machine context containing incoming message
@@ -436,9 +436,9 @@ extern "C" {
          * @warning statemachine_info must not be NULL
          * @warning statemachine_info->incoming_msg_info.msg_ptr must contain valid read command
          *
-         * @see ProtocolConfigMemReadHandler_read_request_traction_function_config_memory
+         * @see ProtocolConfigMemReadHandler_read_request_train_function_config_memory
          */
-    extern void ProtocolConfigMemReadHandler_read_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemReadHandler_read_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
 
 
 
@@ -527,7 +527,27 @@ extern "C" {
          */
     extern void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
+        /**
+         * @brief Reads from Train Function Definition Information space (0xFA)
+         *
+         * @details Reads FDI XML data from the node's fdi[] buffer. Identical
+         * pattern to CDI read but targets address space 0xFA. Read-only.
+         *
+         * @param statemachine_info Pointer to state machine context
+         * @param config_mem_read_request_info Pointer to read request information
+         */
+    extern void ProtocolConfigMemReadHandler_read_request_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
+        /**
+         * @brief Reads from Train Function Configuration Memory space (0xF9)
+         *
+         * @details Reads function values as a flat byte array from the train's
+         * in-RAM functions[] array. Function N at byte offset N*2, big-endian.
+         *
+         * @param statemachine_info Pointer to state machine context
+         * @param config_mem_read_request_info Pointer to read request information
+         */
+    extern void ProtocolConfigMemReadHandler_read_request_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_read_request_info_t *config_mem_read_request_info);
 
         /**
          * @brief Processes a generic read message

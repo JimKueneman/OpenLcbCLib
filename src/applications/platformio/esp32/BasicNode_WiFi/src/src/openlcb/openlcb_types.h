@@ -67,7 +67,7 @@
  * - 0xFD: Configuration Memory (user settings)
  * - 0xFC: ACDI Manufacturer (read-only)
  * - 0xFB: ACDI User (user name/description)
- * - 0xFA/0xF9: Traction FDI and configuration
+ * - 0xFA/0xF9: Train FDI and configuration
  * - 0xEF: Firmware upgrade
  *
  * **Design Philosophy:**
@@ -162,7 +162,7 @@ extern "C" {
 #define USER_DEFINED_CDI_LENGTH 20000
 #endif
 
-    /** @brief Size of FDI (Function Description Information) buffer in bytes for traction nodes */
+    /** @brief Size of FDI (Function Description Information) buffer in bytes for train nodes */
 #ifndef USER_DEFINED_FDI_LENGTH
 #define USER_DEFINED_FDI_LENGTH 1000
 #endif
@@ -208,7 +208,7 @@ extern "C" {
         *
         * **Message Payload Sizes:**
         * - BASIC (16 bytes): Handles most OpenLCB messages; some protocols like
-        *   Traction may use two consecutive frames
+        *   Train may use two consecutive frames
         * - DATAGRAM (72 bytes): Maximum datagram payload after protocol overhead
         * - SNIP (256 bytes): Supports SNIP replies and Events with Payload
         * - STREAM (512 bytes): Stream protocol bulk data transfer
@@ -851,7 +851,7 @@ extern "C" {
         *
         * **Configuration Definitions:**
         * - cdi[]: Configuration Description Information (XML)
-        * - fdi[]: Function Description Information (for traction nodes)
+        * - fdi[]: Function Description Information (for train nodes)
         *
         * **Memory Spaces:**
         * - configuration_options: Supported memory operations
@@ -869,14 +869,14 @@ extern "C" {
         uint8_t consumer_count_autocreate;                              /**< Auto-create this many consumer events */
         uint8_t producer_count_autocreate;                              /**< Auto-create this many producer events */
         uint8_t cdi[USER_DEFINED_CDI_LENGTH];                           /**< CDI XML data */
-        uint8_t fdi[USER_DEFINED_FDI_LENGTH];                           /**< FDI data (traction nodes) */
+        uint8_t fdi[USER_DEFINED_FDI_LENGTH];                           /**< FDI data (train nodes) */
         user_address_space_info_t address_space_configuration_definition;/**< Space 0xFF info */
         user_address_space_info_t address_space_all;                    /**< Space 0xFE info */
         user_address_space_info_t address_space_config_memory;          /**< Space 0xFD info */
         user_address_space_info_t address_space_acdi_manufacturer;      /**< Space 0xFC info */
         user_address_space_info_t address_space_acdi_user;              /**< Space 0xFB info */
-        user_address_space_info_t address_space_traction_function_definition_info; /**< Space 0xFA info */
-        user_address_space_info_t address_space_traction_function_config_memory;   /**< Space 0xF9 info */
+        user_address_space_info_t address_space_train_function_definition_info; /**< Space 0xFA info */
+        user_address_space_info_t address_space_train_function_config_memory;   /**< Space 0xF9 info */
         user_configuration_options configuration_options;               /**< Memory operation capabilities */
         user_address_space_info_t address_space_firmware;               /**< Space 0xEF info */
 
@@ -988,6 +988,11 @@ extern "C" {
     } openlcb_node_state_t;
 
         /**
+        * @brief Forward declaration for train state (defined in openlcb_application_train.h)
+        */
+    struct train_state_TAG;
+
+        /**
         * @struct openlcb_node_t
         * @brief OpenLCB virtual node structure
         *
@@ -1013,6 +1018,7 @@ extern "C" {
         * **Protocol State:**
         * - owner_node: Node ID that currently has this node locked
         * - last_received_datagram: Saved for reply processing
+        * - train_state: Train protocol state (NULL if not a train node)
         *
         * @warning Node structures cannot be deallocated once allocated
         * @warning parameters pointer must remain valid for node lifetime
@@ -1032,6 +1038,7 @@ extern "C" {
         uint64_t owner_node;                    /**< Node ID that has locked this node */
         openlcb_msg_t *last_received_datagram;  /**< Last datagram received (for replies) */
         uint8_t index;                          /**< Index in node array */
+        struct train_state_TAG *train_state;    /**< Train state (NULL if not a train node) */
     } openlcb_node_t;
 
         /**

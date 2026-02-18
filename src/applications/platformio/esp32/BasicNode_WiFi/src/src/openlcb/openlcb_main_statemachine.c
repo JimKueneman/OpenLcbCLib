@@ -52,7 +52,7 @@
 *
 * Protocol support:
 * - Required: Message Network Protocol, Protocol Support (PIP)
-* - Optional: SNIP, Events, Traction, Datagrams, Streams
+* - Optional: SNIP, Events, Train, Datagrams, Streams
 * Optional protocols with NULL handlers automatically generate Interaction
 * Rejected responses for compliance with OpenLCB specifications.
 *
@@ -391,9 +391,9 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
     * - MTI_PC_EVENT_REPORT → event_transport_pc_report
     * - MTI_PC_EVENT_REPORT_WITH_PAYLOAD → event_transport_pc_report_with_payload
     *
-    * Traction Protocol:
-    * - MTI_TRACTION_PROTOCOL → traction_control_command (or reject)
-    * - MTI_TRACTION_REPLY → traction_control_reply
+    * Train Protocol:
+    * - MTI_TRAIN_PROTOCOL → train_control_command (or reject)
+    * - MTI_TRAIN_REPLY → train_control_reply
     * - MTI_SIMPLE_TRAIN_INFO_REQUEST → simple_train_node_ident_info_request (or reject)
     * - MTI_SIMPLE_TRAIN_INFO_REPLY → simple_train_node_ident_info_reply
     *
@@ -410,7 +410,7 @@ void OpenLcbMainStatemachine_load_interaction_rejected(openlcb_statemachine_info
     * - MTI_STREAM_COMPLETE → stream_data_complete
     *
     * Interaction Rejected behavior:
-    * - Request messages (SNIP request, Traction command, Train info request):
+    * - Request messages (SNIP request, Train command, Train info request):
     *   Generate Interaction Rejected if handler is NULL
     * - Reply/indication messages: Silently ignored if handler is NULL
     * - Unknown addressed MTIs: Generate Interaction Rejected
@@ -764,11 +764,11 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             break;
 
-        case MTI_TRACTION_PROTOCOL:
+        case MTI_TRAIN_PROTOCOL:
 
-            if (_interface->traction_control_command) {
+            if (_interface->train_control_command) {
 
-                _interface->traction_control_command(statemachine_info);
+                _interface->train_control_command(statemachine_info);
 
             } else {
 
@@ -778,11 +778,11 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             break;
 
-        case MTI_TRACTION_REPLY:
+        case MTI_TRAIN_REPLY:
 
-            if (_interface->traction_control_reply) {
+            if (_interface->train_control_reply) {
 
-                _interface->traction_control_reply(statemachine_info);
+                _interface->train_control_reply(statemachine_info);
 
             }
 

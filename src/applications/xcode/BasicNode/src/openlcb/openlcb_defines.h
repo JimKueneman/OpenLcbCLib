@@ -370,24 +370,24 @@
     /** @} */ // end of mti_snip
 
 /**
- * @defgroup mti_traction Traction Protocol MTI Codes
- * @brief Message Type Indicators for locomotive control (traction)
+ * @defgroup mti_train Train Protocol MTI Codes
+ * @brief Message Type Indicators for locomotive control (train)
  *
- * @details The traction protocol controls model railroad locomotives including:
+ * @details The train protocol controls model railroad locomotives including:
  * - Speed and direction
  * - Function controls (lights, horn, etc.)
  * - Consisting (multiple locomotive control)
  * - Train identification
  *
- * @see OpenLCB Traction Protocol Standard
+ * @see OpenLCB Train Protocol Standard
  * @{
  */
 
     /** @brief Train control command (speed, direction, functions) */
-#define MTI_TRACTION_PROTOCOL 0x05EB
+#define MTI_TRAIN_PROTOCOL 0x05EB
 
     /** @brief Train control command reply/acknowledgment */
-#define MTI_TRACTION_REPLY 0x01E9
+#define MTI_TRAIN_REPLY 0x01E9
 
     /** @brief Request train node information */
 #define MTI_SIMPLE_TRAIN_INFO_REQUEST 0x0DA8
@@ -395,7 +395,7 @@
     /** @brief Train node information response */
 #define MTI_SIMPLE_TRAIN_INFO_REPLY 0x09C8
 
-    /** @} */ // end of mti_traction
+    /** @} */ // end of mti_train
 
 /**
  * @defgroup mti_stream Stream Protocol MTI Codes
@@ -672,7 +672,7 @@
     /** @brief Configuration Description Information (CDI) Protocol support */
 #define PSI_CONFIGURATION_DESCRIPTION_INFO 0x000800
 
-    /** @brief Traction Control Protocol support */
+    /** @brief Train Control Protocol support */
 #define PSI_TRAIN_CONTROL 0x000400
 
     /** @brief Function Description Information (FDI) Protocol support */
@@ -1203,8 +1203,8 @@
  * - 0xFD: Configuration memory - user-configurable values
  * - 0xFC: ACDI Manufacturer - factory set identification
  * - 0xFB: ACDI User - user-assignable identification
- * - 0xFA: FDI (Function Description Information) - for traction nodes
- * - 0xF9: Function configuration memory - for traction nodes
+ * - 0xFA: FDI (Function Description Information) - for train nodes
+ * - 0xF9: Function configuration memory - for train nodes
  * - 0xEF: Firmware upgrade space
  *
  * @{
@@ -1225,11 +1225,11 @@
     /** @brief ACDI User space - user-assignable node name and description */
 #define CONFIG_MEM_SPACE_ACDI_USER_ACCESS 0xFB
 
-    /** @brief FDI (Function Description Information) space - traction function descriptions */
-#define CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO 0xFA
+    /** @brief FDI (Function Description Information) space - train function descriptions */
+#define CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO 0xFA
 
-    /** @brief Traction Function Configuration Memory space */
-#define CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY 0xF9
+    /** @brief Train Function Configuration Memory space */
+#define CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY 0xF9
 
     /** @brief Firmware upgrade space */
 #define CONFIG_MEM_SPACE_FIRMWARE 0xEF
@@ -1560,6 +1560,95 @@
 #define BROADCAST_TIME_SET_COMMAND_OFFSET          0x8000
 
     /** @} */ // end of broadcast_time_events
+
+/**
+ * @defgroup train_protocol Train Control Protocol Defines
+ * @brief Instruction bytes and sub-commands for Train Control Protocol
+ *
+ * @details Byte layouts for MTI_TRAIN_PROTOCOL (0x05EB) commands
+ * and MTI_TRAIN_REPLY (0x01E9) replies.
+ *
+ * @see OpenLCB Train Control Standard S-9.7.4.6
+ * @{
+ */
+
+    // Train instruction bytes (byte 0 of payload)
+
+    /** @brief Set speed and direction: [0x00] [speed_hi] [speed_lo] (float16) */
+#define TRAIN_SET_SPEED_DIRECTION    0x00
+
+    /** @brief Set function: [0x01] [addr2] [addr1] [addr0] [val_hi] [val_lo] */
+#define TRAIN_SET_FUNCTION           0x01
+
+    /** @brief Emergency stop: [0x02] */
+#define TRAIN_EMERGENCY_STOP         0x02
+
+    /** @brief Query speeds: [0x10] */
+#define TRAIN_QUERY_SPEEDS           0x10
+
+    /** @brief Query function: [0x11] [addr2] [addr1] [addr0] */
+#define TRAIN_QUERY_FUNCTION         0x11
+
+    /** @brief Controller configuration: [0x20] [sub-cmd] ... */
+#define TRAIN_CONTROLLER_CONFIG      0x20
+
+    /** @brief Listener configuration: [0x30] [sub-cmd] ... */
+#define TRAIN_LISTENER_CONFIG        0x30
+
+    /** @brief Management commands: [0x40] [sub-cmd] */
+#define TRAIN_MANAGEMENT             0x40
+
+    // Controller config sub-commands (byte 1)
+
+    /** @brief Assign controller: [0x20] [0x01] [node_id 6B] */
+#define TRAIN_CONTROLLER_ASSIGN      0x01
+
+    /** @brief Release controller: [0x20] [0x02] [node_id 6B] */
+#define TRAIN_CONTROLLER_RELEASE     0x02
+
+    /** @brief Query controller: [0x20] [0x03] */
+#define TRAIN_CONTROLLER_QUERY       0x03
+
+    /** @brief Controller changed notify: [0x20] [0x04] [node_id 6B] */
+#define TRAIN_CONTROLLER_CHANGED     0x04
+
+    // Listener config sub-commands (byte 1)
+
+    /** @brief Attach listener: [0x30] [0x01] [flags] [node_id 6B] */
+#define TRAIN_LISTENER_ATTACH        0x01
+
+    /** @brief Detach listener: [0x30] [0x02] [flags] [node_id 6B] */
+#define TRAIN_LISTENER_DETACH        0x02
+
+    /** @brief Query listener: [0x30] [0x03] [index (opt)] */
+#define TRAIN_LISTENER_QUERY         0x03
+
+    // Management sub-commands (byte 1)
+
+    /** @brief Reserve train node: [0x40] [0x01] */
+#define TRAIN_MGMT_RESERVE           0x01
+
+    /** @brief Release train node: [0x40] [0x02] */
+#define TRAIN_MGMT_RELEASE           0x02
+
+    /** @brief Heartbeat noop: [0x40] [0x03] */
+#define TRAIN_MGMT_NOOP             0x03
+
+    // Listener flags
+
+    /** @brief Reverse of train in consist */
+#define TRAIN_LISTENER_FLAG_REVERSE       0x02
+
+    /** @brief Link F0 (headlight) with consist lead */
+#define TRAIN_LISTENER_FLAG_LINK_F0       0x04
+
+    /** @brief Link Fn functions with consist lead */
+#define TRAIN_LISTENER_FLAG_LINK_FN       0x08
+
+    /** @brief Hide this listener from enumeration */
+#define TRAIN_LISTENER_FLAG_HIDE          0x80
+
+    /** @} */ // end of train_protocol
 
 #ifdef __cplusplus
 extern "C" {

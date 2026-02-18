@@ -879,11 +879,11 @@ void PrintMtiName(uint16_t mti)
     case MTI_SIMPLE_TRAIN_INFO_REPLY:
         printf("MTI_SIMPLE_TRAIN_INFO_REPLY");
         break;
-    case MTI_TRACTION_PROTOCOL:
-        printf("MTI_TRACTION_PROTOCOL");
+    case MTI_TRAIN_PROTOCOL:
+        printf("MTI_TRAIN_PROTOCOL");
         break;
-    case MTI_TRACTION_REPLY:
-        printf("MTI_TRACTION_REPLY ");
+    case MTI_TRAIN_REPLY:
+        printf("MTI_TRAIN_REPLY ");
         break;
     case MTI_STREAM_INIT_REQUEST:
         printf("MTI_STREAM_INIT_REQUEST");

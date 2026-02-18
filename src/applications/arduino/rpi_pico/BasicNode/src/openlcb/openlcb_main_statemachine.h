@@ -49,7 +49,7 @@
 * - Protocol Support Protocol/PIP (required)
 * - Simple Node Information Protocol/SNIP (optional)
 * - Event Transport Protocol (optional)
-* - Traction Protocol (optional)
+* - Train Protocol (optional)
 * - Datagram Protocol (optional)
 * - Stream Protocol (optional)
 *
@@ -88,7 +88,7 @@
      * - Node enumeration: First/next node iteration for multi-node support
      * - Required protocol handlers: Message Network and Protocol Support (PIP)
      * - Internal handlers: Exposed for testing and debugging
-     * - Optional protocol handlers: SNIP, Events, Traction, Datagram, Stream
+     * - Optional protocol handlers: SNIP, Events, Train, Datagram, Stream
      *
      * Required vs Optional handlers:
      * - Required handlers MUST be non-NULL and properly implemented
@@ -1068,26 +1068,26 @@ typedef struct {
     /*@}*/
 
     /*@{*/
-    /** @name Optional Traction Protocol Handlers
+    /** @name Optional Train Protocol Handlers
      * Train control protocol - set to NULL if not implemented
      */
 
     /** 
-     * @brief Handles Traction Control Command message (MTI 0x05EB)
+     * @brief Handles Train Control Command message (MTI 0x05EB)
      *
      * @details Processes train control commands (speed, function, emergency stop, etc.).
      *
-     * Standard response: Traction Control Reply (MTI 0x01E9)
+     * Standard response: Train Control Reply (MTI 0x01E9)
      *
      * @note Optional - can be NULL if this command is not supported
      * @note Default implementation: Protocol-specific handler
      *
-     * @see traction_control_reply - Response message
+     * @see train_control_reply - Response message
      */
-    void (*traction_control_command)(openlcb_statemachine_info_t *statemachine_info);
+    void (*train_control_command)(openlcb_statemachine_info_t *statemachine_info);
 
     /** 
-     * @brief Handles Traction Control Reply message (MTI 0x01E9)
+     * @brief Handles Train Control Reply message (MTI 0x01E9)
      *
      * @details Processes command acknowledgment from train node.
      *
@@ -1095,14 +1095,14 @@ typedef struct {
      *
      * @note Optional - can be NULL if this command is not supported
      * 
-     * @see traction_control_command - Command message
+     * @see train_control_command - Command message
      */
-    void (*traction_control_reply)(openlcb_statemachine_info_t *statemachine_info);
+    void (*train_control_reply)(openlcb_statemachine_info_t *statemachine_info);
 
     /*@}*/
 
     /*@{*/
-    /** @name Optional Traction SNIP Protocol Handlers
+    /** @name Optional Train SNIP Protocol Handlers
      * Train node information - set to NULL if not implemented
      */
 

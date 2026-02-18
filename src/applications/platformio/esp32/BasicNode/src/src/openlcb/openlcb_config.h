@@ -64,8 +64,8 @@
 #define OPENLCB_FEATURE_STREAMS          (1 << 4)
 /** @brief Broadcast Time protocol (requires EVENTS) */
 #define OPENLCB_FEATURE_BROADCAST_TIME   (1 << 5)
-/** @brief Traction Control protocol */
-#define OPENLCB_FEATURE_TRACTION         (1 << 6)
+/** @brief Train Control protocol */
+#define OPENLCB_FEATURE_TRAIN         (1 << 6)
 /** @brief Firmware Upgrade protocol (requires DATAGRAMS) */
 #define OPENLCB_FEATURE_FIRMWARE_UPGRADE (1 << 7)
 
@@ -88,9 +88,9 @@
                                      OPENLCB_FEATURE_DATAGRAMS | \
                                      OPENLCB_FEATURE_CONFIG_MEMORY)
 
-/** @brief Train node -- Standard + Traction Control + FDI/Function Config spaces */
+/** @brief Train node -- Standard + Train Control + FDI/Function Config spaces */
 #define OPENLCB_PROFILE_TRAIN       (OPENLCB_PROFILE_STANDARD | \
-                                     OPENLCB_FEATURE_TRACTION)
+                                     OPENLCB_FEATURE_TRAIN)
 
 /** @brief Full node -- everything in Standard + Streams */
 #define OPENLCB_PROFILE_FULL        (OPENLCB_PROFILE_STANDARD | \
@@ -298,6 +298,93 @@ typedef struct {
 
     /** @brief Date rollover event received. Optional. */
     void (*on_broadcast_date_rollover)(openlcb_node_t *openlcb_node, broadcast_clock_state_t *clock_state);
+
+    // =========================================================================
+    // OPTIONAL: Train Control Callbacks (OPENLCB_FEATURE_TRAIN)
+    // All are optional (NULL = use handler defaults).
+    // Notifiers fire AFTER state is updated. Decision callbacks return a value.
+    // =========================================================================
+
+    // ---- Train-node side: notifiers (fire after state updated) ----
+
+    /** @brief Speed was set on this train node. State already updated. */
+    void (*on_train_speed_changed)(openlcb_node_t *openlcb_node, uint16_t speed_float16);
+
+    /** @brief Function was set on this train node. Standard functions stored in train_state.functions[]. */
+    void (*on_train_function_changed)(openlcb_node_t *openlcb_node,
+            uint32_t fn_address, uint16_t fn_value);
+
+    /** @brief Emergency stop triggered. estop_active and speed already updated in state. */
+    void (*on_train_emergency_stopped)(openlcb_node_t *openlcb_node);
+
+    /** @brief Controller was assigned or changed. State already updated. */
+    void (*on_train_controller_assigned)(openlcb_node_t *openlcb_node,
+            uint64_t controller_node_id);
+
+    /** @brief Controller was released. State already cleared. */
+    void (*on_train_controller_released)(openlcb_node_t *openlcb_node);
+
+    /** @brief Listener list was modified (attach or detach). */
+    void (*on_train_listener_changed)(openlcb_node_t *openlcb_node);
+
+    /** @brief Heartbeat timed out. estop_active and speed already updated. */
+    void (*on_train_heartbeat_timeout)(openlcb_node_t *openlcb_node);
+
+    // ---- Train-node side: decision callbacks ----
+
+    /** @brief Another controller wants to take over. Return 0 to accept, non-zero to reject. If NULL, default = accept. */
+    uint8_t (*on_train_controller_assign_request)(openlcb_node_t *openlcb_node,
+            uint64_t current_controller, uint64_t requesting_controller);
+
+    /** @brief Old controller receiving Controller Changed Notify. Return 0 to accept, non-zero to reject. If NULL, default = accept. */
+    uint8_t (*on_train_controller_changed_request)(openlcb_node_t *openlcb_node,
+            uint64_t new_controller);
+
+    /** @brief Query function value override. Return the 16-bit value. If NULL, default = return stored value. */
+    uint16_t (*on_train_query_function_request)(openlcb_node_t *openlcb_node,
+            uint32_t fn_address);
+
+    // ---- Throttle side: notifiers (receiving replies from train) ----
+
+    /** @brief Query speeds reply received. */
+    void (*on_train_query_speeds_reply)(openlcb_node_t *openlcb_node,
+            uint16_t set_speed, uint8_t status,
+            uint16_t commanded_speed, uint16_t actual_speed);
+
+    /** @brief Query function reply received. */
+    void (*on_train_query_function_reply)(openlcb_node_t *openlcb_node,
+            uint32_t fn_address, uint16_t fn_value);
+
+    /** @brief Controller assign reply received. 0 = success. */
+    void (*on_train_controller_assign_reply)(openlcb_node_t *openlcb_node,
+            uint8_t result);
+
+    /** @brief Controller query reply received. */
+    void (*on_train_controller_query_reply)(openlcb_node_t *openlcb_node,
+            uint8_t flags, uint64_t controller_node_id);
+
+    /** @brief Controller changed notify reply received. */
+    void (*on_train_controller_changed_notify_reply)(openlcb_node_t *openlcb_node,
+            uint8_t result);
+
+    /** @brief Listener attach reply received. */
+    void (*on_train_listener_attach_reply)(openlcb_node_t *openlcb_node,
+            uint64_t node_id, uint8_t result);
+
+    /** @brief Listener detach reply received. */
+    void (*on_train_listener_detach_reply)(openlcb_node_t *openlcb_node,
+            uint64_t node_id, uint8_t result);
+
+    /** @brief Listener query reply received. */
+    void (*on_train_listener_query_reply)(openlcb_node_t *openlcb_node,
+            uint8_t count, uint8_t index, uint8_t flags, uint64_t node_id);
+
+    /** @brief Reserve reply received. 0 = success. */
+    void (*on_train_reserve_reply)(openlcb_node_t *openlcb_node, uint8_t result);
+
+    /** @brief Heartbeat request received from train. timeout_seconds is deadline. */
+    void (*on_train_heartbeat_request)(openlcb_node_t *openlcb_node,
+            uint32_t timeout_seconds);
 
 } openlcb_config_t;
 

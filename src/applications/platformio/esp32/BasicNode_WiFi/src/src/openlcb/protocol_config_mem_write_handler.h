@@ -149,25 +149,25 @@ typedef struct {
     void (*write_request_acdi_user)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
 
         /**
-         * @brief Optional callback to handle writes to Traction Function Definition space
+         * @brief Optional callback to handle writes to Train Function Definition space
          *
-         * @details Processes write requests for address space 0xFA (Traction Function CDI).
+         * @details Processes write requests for address space 0xFA (Train Function CDI).
          * Typically this space is read-only as it contains XML structure definitions.
          *
-         * @note Optional - can be NULL if traction function definition space is read-only
-         * @warning Traction function CDI space is typically read-only
+         * @note Optional - can be NULL if train function definition space is read-only
+         * @warning Train function CDI space is typically read-only
          */
-    void (*write_request_traction_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_train_function_config_definition_info)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
 
         /**
-         * @brief Optional callback to handle writes to Traction Function Configuration space
+         * @brief Optional callback to handle writes to Train Function Configuration space
          *
-         * @details Processes write requests for address space 0xF9 (Traction Function Config),
-         * which contains actual traction function configuration data that can be modified.
+         * @details Processes write requests for address space 0xF9 (Train Function Config),
+         * which contains actual train function configuration data that can be modified.
          *
-         * @note Optional - can be NULL if traction function config writes use default implementation
+         * @note Optional - can be NULL if train function config writes use default implementation
          */
-    void (*write_request_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
+    void (*write_request_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t* config_mem_write_request_info);
 
         /**
          * @brief Optional callback to handle writes to Firmware space
@@ -326,34 +326,34 @@ extern "C" {
     extern void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Processes an incoming write command for Traction Function Definition space
+         * @brief Processes an incoming write command for Train Function Definition space
          *
-         * @details Handles write requests for address space 0xFA (Traction Function CDI).
+         * @details Handles write requests for address space 0xFA (Train Function CDI).
          * This space is typically read-only, so this handler will normally reject
          * write attempts.
          *
          * Use cases:
-         * - Rejecting writes to read-only traction CDI
-         * - Custom traction CDI handling if writeable
+         * - Rejecting writes to read-only train CDI
+         * - Custom train CDI handling if writeable
          *
          * @param statemachine_info Pointer to state machine context containing incoming message
          *
          * @warning statemachine_info must not be NULL
          * @warning statemachine_info->incoming_msg_info.msg_ptr must contain valid write command
-         * @attention Traction function CDI is typically read-only
+         * @attention Train function CDI is typically read-only
          *
-         * @see ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory
+         * @see ProtocolConfigMemWriteHandler_write_space_train_function_config_memory
          */
-    extern void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Processes an incoming write command for Traction Function Configuration space
+         * @brief Processes an incoming write command for Train Function Configuration space
          *
-         * @details Handles write requests for address space 0xF9 (Traction Function Config),
-         * which contains actual traction function configuration data that can be modified.
+         * @details Handles write requests for address space 0xF9 (Train Function Config),
+         * which contains actual train function configuration data that can be modified.
          *
          * Use cases:
-         * - Writing traction function settings
+         * - Writing train function settings
          * - Configuring train functions
          *
          * @param statemachine_info Pointer to state machine context containing incoming message
@@ -361,9 +361,9 @@ extern "C" {
          * @warning statemachine_info must not be NULL
          * @warning statemachine_info->incoming_msg_info.msg_ptr must contain valid write command with data
          *
-         * @see ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info
+         * @see ProtocolConfigMemWriteHandler_write_space_train_function_definition_info
          */
-    extern void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
+    extern void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Processes an incoming write command for Firmware space
@@ -453,6 +453,17 @@ extern "C" {
          */
     extern void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
+        /**
+         * @brief Writes to Train Function Configuration Memory space (0xF9)
+         *
+         * @details Writes function values from datagram data into the train's
+         * in-RAM functions[] array. Function N at byte offset N*2, big-endian.
+         * Fires on_function_changed notifier for each modified function.
+         *
+         * @param statemachine_info Pointer to state machine context
+         * @param config_mem_write_request_info Pointer to write request information
+         */
+    extern void ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info);
 
         /**
          * @brief Processes a generic write message

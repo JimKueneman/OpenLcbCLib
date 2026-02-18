@@ -58,6 +58,8 @@
 #include "protocol_config_mem_operations_handler.h"
 #include "protocol_broadcast_time_handler.h"
 #include "openlcb_application_broadcast_time.h"
+#include "protocol_train_handler.h"
+#include "openlcb_application_train.h"
 
 // CAN transport
 #include "../drivers/canbus/can_tx_statemachine.h"
@@ -79,6 +81,8 @@ static interface_protocol_config_mem_write_handler_t _config_write;
 static interface_protocol_config_mem_operations_handler_t _config_ops;
 static interface_openlcb_protocol_broadcast_time_handler_t _broadcast_time;
 static interface_openlcb_application_broadcast_time_t _app_broadcast_time;
+static interface_protocol_train_handler_t _train_handler;
+static interface_openlcb_application_train_t _app_train;
 
 static const openlcb_config_t *_config;
 static uint32_t _features;
@@ -122,6 +126,46 @@ static void _build_app_broadcast_time(void) {
     memset(&_app_broadcast_time, 0, sizeof(_app_broadcast_time));
 
     _app_broadcast_time.on_time_changed = _config->on_broadcast_time_changed;
+}
+
+static void _build_train_handler(void) {
+
+    memset(&_train_handler, 0, sizeof(_train_handler));
+
+    // Train-node side: notifiers
+    _train_handler.on_speed_changed        = _config->on_train_speed_changed;
+    _train_handler.on_function_changed     = _config->on_train_function_changed;
+    _train_handler.on_emergency_stopped    = _config->on_train_emergency_stopped;
+    _train_handler.on_controller_assigned  = _config->on_train_controller_assigned;
+    _train_handler.on_controller_released  = _config->on_train_controller_released;
+    _train_handler.on_listener_changed     = _config->on_train_listener_changed;
+    _train_handler.on_heartbeat_timeout    = _config->on_train_heartbeat_timeout;
+
+    // Train-node side: decision callbacks
+    _train_handler.on_controller_assign_request  = _config->on_train_controller_assign_request;
+    _train_handler.on_controller_changed_request = _config->on_train_controller_changed_request;
+    _train_handler.on_query_function_request     = _config->on_train_query_function_request;
+
+    // Throttle-side: reply notifiers
+    _train_handler.on_query_speeds_reply              = _config->on_train_query_speeds_reply;
+    _train_handler.on_query_function_reply            = _config->on_train_query_function_reply;
+    _train_handler.on_controller_assign_reply         = _config->on_train_controller_assign_reply;
+    _train_handler.on_controller_query_reply          = _config->on_train_controller_query_reply;
+    _train_handler.on_controller_changed_notify_reply = _config->on_train_controller_changed_notify_reply;
+    _train_handler.on_listener_attach_reply           = _config->on_train_listener_attach_reply;
+    _train_handler.on_listener_detach_reply           = _config->on_train_listener_detach_reply;
+    _train_handler.on_listener_query_reply            = _config->on_train_listener_query_reply;
+    _train_handler.on_reserve_reply                   = _config->on_train_reserve_reply;
+    _train_handler.on_heartbeat_request               = _config->on_train_heartbeat_request;
+
+}
+
+static void _build_app_train(void) {
+
+    memset(&_app_train, 0, sizeof(_app_train));
+
+    _app_train.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+
 }
 
 static void _build_node(void) {
@@ -203,11 +247,14 @@ static void _build_config_mem_read(void) {
             &ProtocolConfigMemReadHandler_read_request_acdi_user;
 
     // Train profile: FDI + Function Config Memory read request handlers
-    // Not yet implemented in the library -- uncomment when traction is added
-    // if (_features & OPENLCB_FEATURE_TRACTION) {
-    //     _config_read.read_request_traction_function_config_definition_info = ...;
-    //     _config_read.read_request_traction_function_config_memory = ...;
-    // }
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+
+        _config_read.read_request_train_function_config_definition_info =
+                &ProtocolConfigMemReadHandler_read_request_train_function_definition_info;
+        _config_read.read_request_train_function_config_memory =
+                &ProtocolConfigMemReadHandler_read_request_train_function_config_memory;
+
+    }
 
     // User extension
     _config_read.delayed_reply_time = _config->config_mem_read_delayed_reply_time;
@@ -228,10 +275,13 @@ static void _build_config_mem_write(void) {
             &ProtocolConfigMemWriteHandler_write_request_acdi_user;
 
     // Train profile: Function Config Memory write request handler
-    // Not yet implemented in the library -- uncomment when traction is added
-    // if (_features & OPENLCB_FEATURE_TRACTION) {
-    //     _config_write.write_request_traction_function_config_memory = ...;
-    // }
+    // Note: FDI (0xFA) write is intentionally NOT wired -- it is read-only.
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+
+        _config_write.write_request_train_function_config_memory =
+                &ProtocolConfigMemWriteHandler_write_request_train_function_config_memory;
+
+    }
 
     // Firmware write (optional user callback)
     _config_write.write_request_firmware = _config->firmware_write;
@@ -279,11 +329,11 @@ static void _build_datagram_handler(void) {
             &ProtocolConfigMemReadHandler_read_space_acdi_user;
 
     // Train profile: FDI + Function Config Memory read spaces
-    if (_features & OPENLCB_FEATURE_TRACTION) {
-        _datagram.memory_read_space_traction_function_definition_info =
-                &ProtocolConfigMemReadHandler_read_space_traction_function_definition_info;
-        _datagram.memory_read_space_traction_function_config_memory =
-                &ProtocolConfigMemReadHandler_read_space_traction_function_config_memory;
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+        _datagram.memory_read_space_train_function_definition_info =
+                &ProtocolConfigMemReadHandler_read_space_train_function_definition_info;
+        _datagram.memory_read_space_train_function_config_memory =
+                &ProtocolConfigMemReadHandler_read_space_train_function_config_memory;
     }
 
     // Write address spaces
@@ -295,9 +345,9 @@ static void _build_datagram_handler(void) {
             &ProtocolConfigMemWriteHandler_write_space_firmware;
 
     // Train profile: Function Config Memory write space
-    if (_features & OPENLCB_FEATURE_TRACTION) {
-        _datagram.memory_write_space_traction_function_config_memory =
-                &ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory;
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+        _datagram.memory_write_space_train_function_config_memory =
+                &ProtocolConfigMemWriteHandler_write_space_train_function_config_memory;
     }
 
     // Operations commands
@@ -445,13 +495,12 @@ static void _build_main_statemachine(void) {
         _main_sm.datagram_rejected_reply = &ProtocolDatagramHandler_datagram_rejected;
     }
 
-    // Traction -- only if TRACTION feature enabled
-    // if (_features & OPENLCB_FEATURE_TRACTION) {
-    //     _main_sm.traction_control_command = ...;
-    //     _main_sm.traction_control_reply = ...;
-    //     _main_sm.simple_train_node_ident_info_request = ...;
-    //     _main_sm.simple_train_node_ident_info_reply = ...;
-    // }
+    // Train -- only if TRAIN feature enabled
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+        _main_sm.train_control_command = &ProtocolTrainHandler_handle_train_command;
+        _main_sm.train_control_reply   = &ProtocolTrainHandler_handle_train_reply;
+        // simple_train_node_ident_info_request/reply will be wired in Phase 2
+    }
 
     // Stream -- only if STREAMS feature enabled
     // if (_features & OPENLCB_FEATURE_STREAMS) {
@@ -509,6 +558,11 @@ void OpenLcb_initialize(const openlcb_config_t *config, uint32_t features) {
         _build_app_broadcast_time();
     }
 
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+        _build_train_handler();
+        _build_app_train();
+    }
+
     _build_main_statemachine();  // Uses _features internally to select what to wire
 
     // 3. Initialize modules in dependency order -- only those that were built
@@ -533,6 +587,11 @@ void OpenLcb_initialize(const openlcb_config_t *config, uint32_t features) {
     if (_features & OPENLCB_FEATURE_BROADCAST_TIME) {
         ProtocolBroadcastTime_initialize(&_broadcast_time);
         OpenLcbApplicationBroadcastTime_initialize(&_app_broadcast_time);
+    }
+
+    if (_features & OPENLCB_FEATURE_TRAIN) {
+        ProtocolTrainHandler_initialize(&_train_handler);
+        OpenLcbApplicationTrain_initialize(&_app_train);
     }
 
     OpenLcbNode_initialize(&_node);

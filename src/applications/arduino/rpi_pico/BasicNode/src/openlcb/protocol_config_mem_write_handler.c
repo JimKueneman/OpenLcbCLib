@@ -42,6 +42,8 @@
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
 #include "openlcb_buffer_store.h"
+#include "openlcb_application_train.h"
+#include "protocol_train_handler.h"
 
 
 static interface_protocol_config_mem_write_handler_t* _interface;
@@ -496,15 +498,15 @@ void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_in
 }
 
     /**
-    * @brief Entry point for processing write command for Traction Function Definition space
+    * @brief Entry point for processing write command for Train Function Definition space
     *
     * @details Algorithm:
     * -# Create local config_mem_write_request_info structure
-    * -# Set write_space_func to interface callback for traction function CDI writes
-    * -# Set space_info to point to Traction Function Definition address space definition
+    * -# Set write_space_func to interface callback for train function CDI writes
+    * -# Set space_info to point to Train Function Definition address space definition
     * -# Call central _dispatch_write_request dispatcher
     *
-    * This wrapper processes writes to traction function configuration structure (XML).
+    * This wrapper processes writes to train function configuration structure (XML).
     * This space is typically read-only.
     *
     * @verbatim
@@ -512,30 +514,30 @@ void ProtocolConfigMemWriteHandler_write_space_acdi_user(openlcb_statemachine_in
     * @endverbatim
     *
     * @warning Pointer must not be NULL
-    * @attention Traction Function CDI space is typically read-only
+    * @attention Train Function CDI space is typically read-only
     *
     * @see _dispatch_write_request
     */
-void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_train_function_definition_info(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_config_definition_info;
-    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
+    config_mem_write_request_info.write_space_func = _interface->write_request_train_function_config_definition_info;
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_definition_info;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
 }
 
     /**
-    * @brief Entry point for processing write command for Traction Function Configuration space
+    * @brief Entry point for processing write command for Train Function Configuration space
     *
     * @details Algorithm:
     * -# Create local config_mem_write_request_info structure
-    * -# Set write_space_func to interface callback for traction function config writes
-    * -# Set space_info to point to Traction Function Config address space definition
+    * -# Set write_space_func to interface callback for train function config writes
+    * -# Set space_info to point to Train Function Config address space definition
     * -# Call central _dispatch_write_request dispatcher
     *
-    * This wrapper processes writes to traction function configuration data.
+    * This wrapper processes writes to train function configuration data.
     * This space is writeable for configuring train functions.
     *
     * @verbatim
@@ -546,12 +548,12 @@ void ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info
     *
     * @see _dispatch_write_request
     */
-void ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
+void ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info) {
 
     config_mem_write_request_info_t config_mem_write_request_info;
 
-    config_mem_write_request_info.write_space_func = _interface->write_request_traction_function_config_memory;
-    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
+    config_mem_write_request_info.write_space_func = _interface->write_request_train_function_config_memory;
+    config_mem_write_request_info.space_info = &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
 
     _dispatch_write_request(statemachine_info, &config_mem_write_request_info);
 }
@@ -868,4 +870,102 @@ void ProtocolConfigMemWriteHandler_write_request_acdi_user(openlcb_statemachine_
     }
 
     statemachine_info->outgoing_msg_info.valid = true;
+}
+
+    /**
+    * @brief Processes a write request for Train Function Configuration Memory space (0xF9)
+    *
+    * @details Algorithm:
+    * -# Load write reply OK message header
+    * -# Get train state for the node
+    * -# If train state exists:
+    *    - Iterate over incoming bytes
+    *    - For each byte, calculate function index (address / 2) and byte selector (address % 2)
+    *    - Byte selector 0 = high byte (big-endian), byte selector 1 = low byte
+    *    - Update the corresponding byte of the function value
+    *    - Fire on_function_changed notifier for each function whose bytes were touched
+    * -# Set outgoing message as valid
+    *
+    * This function writes function values into the train_state_t.functions[] array
+    * from datagram data using big-endian byte order. Function N's 16-bit value
+    * occupies byte offsets N*2 (high byte) and N*2+1 (low byte). Bulk writes
+    * spanning multiple functions are supported.
+    *
+    * After storing the values, this fires the same on_function_changed notifier
+    * that Set Function commands use, ensuring consistent application behavior
+    * regardless of whether the function was set via Train Control command or
+    * via Memory Config write to 0xF9.
+    *
+    * Use cases:
+    * - Writing function values from configuration tools (JMRI)
+    * - Bulk writing multiple function values in a single datagram
+    *
+    * @verbatim
+    * @param statemachine_info Pointer to state machine context for message generation
+    * @endverbatim
+    * @verbatim
+    * @param config_mem_write_request_info Pointer to request info with address, data, and byte count
+    * @endverbatim
+    *
+    * @warning Both parameters must not be NULL
+    * @warning Node must have train_state initialized via OpenLcbApplicationTrain_setup()
+    *
+    * @see OpenLcbUtilities_load_config_mem_reply_write_ok_message_header
+    * @see ProtocolTrainHandler_get_interface
+    */
+void ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info) {
+
+    OpenLcbUtilities_load_config_mem_reply_write_ok_message_header(statemachine_info, config_mem_write_request_info);
+
+    train_state_t *state = OpenLcbApplicationTrain_get_state(statemachine_info->openlcb_node);
+
+    if (state) {
+
+        uint32_t address = config_mem_write_request_info->address;
+        uint16_t bytes = config_mem_write_request_info->bytes;
+
+        for (uint16_t i = 0; i < bytes; i++) {
+
+            uint16_t fn_index = (address + i) / 2;
+            uint8_t byte_sel = (address + i) % 2;
+
+            if (fn_index < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
+
+                uint8_t incoming = (*config_mem_write_request_info->write_buffer)[i];
+
+                if (byte_sel == 0) {
+
+                    state->functions[fn_index] = (state->functions[fn_index] & 0x00FF) | ((uint16_t) incoming << 8);
+
+                } else {
+
+                    state->functions[fn_index] = (state->functions[fn_index] & 0xFF00) | (uint16_t) incoming;
+
+                }
+
+            }
+
+        }
+
+        uint16_t first_fn = address / 2;
+        uint16_t last_fn = (address + bytes - 1) / 2;
+        const interface_protocol_train_handler_t *train_iface = ProtocolTrainHandler_get_interface();
+
+        for (uint16_t fn = first_fn; fn <= last_fn && fn < USER_DEFINED_MAX_TRAIN_FUNCTIONS; fn++) {
+
+            if (train_iface && train_iface->on_function_changed) {
+
+                train_iface->on_function_changed(
+                        statemachine_info->openlcb_node,
+                        (uint32_t) fn,
+                        state->functions[fn]);
+
+            }
+
+        }
+
+    }
+
+    statemachine_info->outgoing_msg_info.valid = true;
+
 }

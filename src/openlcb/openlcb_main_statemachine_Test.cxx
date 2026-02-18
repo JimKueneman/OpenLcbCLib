@@ -362,17 +362,17 @@ void _ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *state
 }
 
 // ============================================================================
-// Mock Protocol Handlers - Traction
+// Mock Protocol Handlers - Train
 // ============================================================================
 
-void _ProtocolTractionControl_command(openlcb_statemachine_info_t *statemachine_info)
+void _ProtocolTrainControl_command(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_ProtocolTractionControl_command);
+    _update_called_function_ptr((void *)&_ProtocolTrainControl_command);
 }
 
-void _ProtocolTractionControl_reply(openlcb_statemachine_info_t *statemachine_info)
+void _ProtocolTrainControl_reply(openlcb_statemachine_info_t *statemachine_info)
 {
-    _update_called_function_ptr((void *)&_ProtocolTractionControl_reply);
+    _update_called_function_ptr((void *)&_ProtocolTrainControl_reply);
 }
 
 // ============================================================================
@@ -700,9 +700,9 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine 
     // Optional Protocol Handlers - Broadcast Time
     .broadcast_time_event_handler = &_ProtocolBroadcastTime_handle_time_event,
 
-    // Optional Protocol Handlers - Traction
-    .traction_control_command = &_ProtocolTractionControl_command,
-    .traction_control_reply = &_ProtocolTractionControl_reply,
+    // Optional Protocol Handlers - Train
+    .train_control_command = &_ProtocolTrainControl_command,
+    .train_control_reply = &_ProtocolTrainControl_reply,
 
     // Optional Protocol Handlers - Simple Train Node
     .simple_train_node_ident_info_request = &_ProtocolSimpleTrainNodeIdentInfo_request,
@@ -777,8 +777,8 @@ const interface_openlcb_main_statemachine_t interface_openlcb_main_statemachine_
     .event_transport_pc_report = nullptr,
     .event_transport_pc_report_with_payload = nullptr,
 
-    .traction_control_command = nullptr,
-    .traction_control_reply = nullptr,
+    .train_control_command = nullptr,
+    .train_control_reply = nullptr,
 
     .simple_train_node_ident_info_request = nullptr,
     .simple_train_node_ident_info_reply = nullptr,
@@ -2027,10 +2027,10 @@ TEST(OpenLcbMainStatemachine, process_producer_identify)
 }
 
 // ============================================================================
-// TEST: Traction - Command with handler
+// TEST: Train - Command with handler
 // ============================================================================
 
-TEST(OpenLcbMainStatemachine, process_traction_command_with_handler)
+TEST(OpenLcbMainStatemachine, process_train_command_with_handler)
 {
     _global_initialize();
 
@@ -2039,7 +2039,7 @@ TEST(OpenLcbMainStatemachine, process_traction_command_with_handler)
     node->alias = 0xBBB;
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_TRACTION_PROTOCOL;
+    msg->mti = MTI_TRAIN_PROTOCOL;
     msg->dest_alias = 0xBBB;
 
     openlcb_statemachine_info_t statemachine_info;
@@ -2057,10 +2057,10 @@ TEST(OpenLcbMainStatemachine, process_traction_command_with_handler)
 }
 
 // ============================================================================
-// TEST: Traction - Command with NULL handler (should reject)
+// TEST: Train - Command with NULL handler (should reject)
 // ============================================================================
 
-TEST(OpenLcbMainStatemachine, process_traction_command_null_handler)
+TEST(OpenLcbMainStatemachine, process_train_command_null_handler)
 {
     _global_initialize_null_handlers();
 
@@ -2069,7 +2069,7 @@ TEST(OpenLcbMainStatemachine, process_traction_command_null_handler)
     node->alias = 0xBBB;
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_TRACTION_PROTOCOL;
+    msg->mti = MTI_TRAIN_PROTOCOL;
     msg->dest_alias = 0xBBB;
 
     openlcb_statemachine_info_t statemachine_info;
@@ -2438,14 +2438,14 @@ TEST(OpenLcbMainStatemachine, process_terminate_due_to_error)
 }
 
 // ============================================================================
-// ADDITIONAL MTI COVERAGE - Traction Protocol
+// ADDITIONAL MTI COVERAGE - Train Protocol
 // ============================================================================
 
 // ============================================================================
-// TEST: Traction - Reply
+// TEST: Train - Reply
 // ============================================================================
 
-TEST(OpenLcbMainStatemachine, process_traction_reply)
+TEST(OpenLcbMainStatemachine, process_train_reply)
 {
     _global_initialize();
 
@@ -2453,7 +2453,7 @@ TEST(OpenLcbMainStatemachine, process_traction_reply)
     node->state.initialized = true;
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_TRACTION_REPLY;
+    msg->mti = MTI_TRAIN_REPLY;
 
     openlcb_statemachine_info_t statemachine_info;
     statemachine_info.openlcb_node = node;
@@ -2468,7 +2468,7 @@ TEST(OpenLcbMainStatemachine, process_traction_reply)
 }
 
 // ============================================================================
-// TEST: Traction - Simple Train Info Request
+// TEST: Train - Simple Train Info Request
 // ============================================================================
 
 TEST(OpenLcbMainStatemachine, process_simple_train_info_request)
@@ -2498,7 +2498,7 @@ TEST(OpenLcbMainStatemachine, process_simple_train_info_request)
 }
 
 // ============================================================================
-// TEST: Traction - Simple Train Info Request with NULL Handler (should reject)
+// TEST: Train - Simple Train Info Request with NULL Handler (should reject)
 // ============================================================================
 
 TEST(OpenLcbMainStatemachine, process_simple_train_info_request_null_handler)
@@ -2527,7 +2527,7 @@ TEST(OpenLcbMainStatemachine, process_simple_train_info_request_null_handler)
 }
 
 // ============================================================================
-// TEST: Traction - Simple Train Info Reply
+// TEST: Train - Simple Train Info Reply
 // ============================================================================
 
 TEST(OpenLcbMainStatemachine, process_simple_train_info_reply)
@@ -3316,17 +3316,17 @@ TEST(OpenLcbMainStatemachine, null_handler_simple_node_info_reply)
 }
 
 // ----------------------------------------------------------------------------
-// Traction - NULL Handler Tests
+// Train - NULL Handler Tests
 // ----------------------------------------------------------------------------
 
-TEST(OpenLcbMainStatemachine, null_handler_traction_reply)
+TEST(OpenLcbMainStatemachine, null_handler_train_reply)
 {
     _global_initialize_null_handlers();
     openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
     node->state.initialized = true;
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_TRACTION_REPLY;
+    msg->mti = MTI_TRAIN_REPLY;
 
     openlcb_statemachine_info_t statemachine_info;
     statemachine_info.openlcb_node = node;

@@ -162,25 +162,25 @@ typedef struct {
     void (*memory_read_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Definition Info read via datagram
+         * @brief Optional callback to handle Train Function Definition Info read via datagram
          *
-         * @details Handles incoming datagram requests to read from Traction Function
-         * Definition Information address space (0xFA), which describes available traction
+         * @details Handles incoming datagram requests to read from Train Function
+         * Definition Information address space (0xFA), which describes available train
          * control functions.
          *
-         * @note Optional - can be NULL if Traction FDI reads are not supported via datagram
+         * @note Optional - can be NULL if Train FDI reads are not supported via datagram
          */
-    void (*memory_read_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Configuration read via datagram
+         * @brief Optional callback to handle Train Function Configuration read via datagram
          *
-         * @details Handles incoming datagram requests to read from Traction Function
-         * Configuration address space (0xF9), which contains traction function settings.
+         * @details Handles incoming datagram requests to read from Train Function
+         * Configuration address space (0xF9), which contains train function settings.
          *
-         * @note Optional - can be NULL if Traction Function Config reads are not supported via datagram
+         * @note Optional - can be NULL if Train Function Config reads are not supported via datagram
          */
-    void (*memory_read_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process successful CDI read reply via datagram
@@ -233,24 +233,24 @@ typedef struct {
     void (*memory_read_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction FDI read reply via datagram
+         * @brief Optional callback to process successful Train FDI read reply via datagram
          *
-         * @details Handles incoming successful read reply from Traction Function Definition
+         * @details Handles incoming successful read reply from Train Function Definition
          * Information address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction FDI reads
+         * @note Optional - can be NULL if this node does not initiate Train FDI reads
          */
-    void (*memory_read_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_train_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction Function Config read reply via datagram
+         * @brief Optional callback to process successful Train Function Config read reply via datagram
          *
-         * @details Handles incoming successful read reply from Traction Function Configuration
+         * @details Handles incoming successful read reply from Train Function Configuration
          * address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config reads
+         * @note Optional - can be NULL if this node does not initiate Train Function Config reads
          */
-    void (*memory_read_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_train_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process failed CDI read reply via datagram
@@ -303,24 +303,24 @@ typedef struct {
     void (*memory_read_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction FDI read reply via datagram
+         * @brief Optional callback to process failed Train FDI read reply via datagram
          *
-         * @details Handles incoming failed read reply from Traction Function Definition
+         * @details Handles incoming failed read reply from Train Function Definition
          * Information address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction FDI reads
+         * @note Optional - can be NULL if this node does not initiate Train FDI reads
          */
-    void (*memory_read_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_train_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction Function Config read reply via datagram
+         * @brief Optional callback to process failed Train Function Config read reply via datagram
          *
-         * @details Handles incoming failed read reply from Traction Function Configuration
+         * @details Handles incoming failed read reply from Train Function Configuration
          * address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config reads
+         * @note Optional - can be NULL if this node does not initiate Train Function Config reads
          */
-    void (*memory_read_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_space_train_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to handle Configuration Description Information read via stream
@@ -374,25 +374,25 @@ typedef struct {
     void (*memory_read_stream_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Definition Info read via stream
+         * @brief Optional callback to handle Train Function Definition Info read via stream
          *
-         * @details Handles incoming stream-based requests to read from Traction Function
-         * Definition Information address space (0xFA), which describes available traction
+         * @details Handles incoming stream-based requests to read from Train Function
+         * Definition Information address space (0xFA), which describes available train
          * control functions.
          *
-         * @note Optional - can be NULL if Traction FDI reads are not supported via stream transport
+         * @note Optional - can be NULL if Train FDI reads are not supported via stream transport
          */
-    void (*memory_read_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Configuration read via stream
+         * @brief Optional callback to handle Train Function Configuration read via stream
          *
-         * @details Handles incoming stream-based requests to read from Traction Function
-         * Configuration address space (0xF9), which contains traction function settings.
+         * @details Handles incoming stream-based requests to read from Train Function
+         * Configuration address space (0xF9), which contains train function settings.
          *
-         * @note Optional - can be NULL if Traction Function Config reads are not supported via stream transport
+         * @note Optional - can be NULL if Train Function Config reads are not supported via stream transport
          */
-    void (*memory_read_stream_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process successful CDI read reply via stream
@@ -445,24 +445,24 @@ typedef struct {
     void (*memory_read_stream_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction FDI read reply via stream
+         * @brief Optional callback to process successful Train FDI read reply via stream
          *
-         * @details Handles incoming successful stream-based read reply from Traction Function
+         * @details Handles incoming successful stream-based read reply from Train Function
          * Definition Information address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction FDI stream reads
+         * @note Optional - can be NULL if this node does not initiate Train FDI stream reads
          */
-    void (*memory_read_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_train_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction Function Config read reply via stream
+         * @brief Optional callback to process successful Train Function Config read reply via stream
          *
-         * @details Handles incoming successful stream-based read reply from Traction Function
+         * @details Handles incoming successful stream-based read reply from Train Function
          * Configuration address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config stream reads
+         * @note Optional - can be NULL if this node does not initiate Train Function Config stream reads
          */
-    void (*memory_read_stream_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_train_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process failed CDI read reply via stream
@@ -515,24 +515,24 @@ typedef struct {
     void (*memory_read_stream_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction FDI read reply via stream
+         * @brief Optional callback to process failed Train FDI read reply via stream
          *
-         * @details Handles incoming failed stream-based read reply from Traction Function
+         * @details Handles incoming failed stream-based read reply from Train Function
          * Definition Information address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction FDI stream reads
+         * @note Optional - can be NULL if this node does not initiate Train FDI stream reads
          */
-    void (*memory_read_stream_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_train_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction Function Config read reply via stream
+         * @brief Optional callback to process failed Train Function Config read reply via stream
          *
-         * @details Handles incoming failed stream-based read reply from Traction Function
+         * @details Handles incoming failed stream-based read reply from Train Function
          * Configuration address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config stream reads
+         * @note Optional - can be NULL if this node does not initiate Train Function Config stream reads
          */
-    void (*memory_read_stream_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_read_stream_space_train_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to handle CDI write via datagram
@@ -585,24 +585,24 @@ typedef struct {
     void (*memory_write_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction FDI write via datagram
+         * @brief Optional callback to handle Train FDI write via datagram
          *
-         * @details Handles incoming datagram write requests to Traction Function Definition
+         * @details Handles incoming datagram write requests to Train Function Definition
          * Information address space (0xFA). Typically NULL as FDI is read-only in most implementations.
          *
-         * @note Optional - typically NULL as Traction FDI is usually a read-only address space
+         * @note Optional - typically NULL as Train FDI is usually a read-only address space
          */
-    void (*memory_write_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Config write via datagram
+         * @brief Optional callback to handle Train Function Config write via datagram
          *
-         * @details Handles incoming datagram write requests to Traction Function Configuration
-         * address space (0xF9), which contains traction control function settings.
+         * @details Handles incoming datagram write requests to Train Function Configuration
+         * address space (0xF9), which contains train control function settings.
          *
-         * @note Optional - can be NULL if Traction Function Config writes are not supported via datagram
+         * @note Optional - can be NULL if Train Function Config writes are not supported via datagram
          */
-    void (*memory_write_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to handle Firmware Upgrade write via datagram
@@ -665,24 +665,24 @@ typedef struct {
     void (*memory_write_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction FDI write reply via datagram
+         * @brief Optional callback to process successful Train FDI write reply via datagram
          *
-         * @details Handles incoming successful write reply from Traction FDI address space.
+         * @details Handles incoming successful write reply from Train FDI address space.
          * Typically never called as FDI is read-only in most implementations.
          *
-         * @note Optional - typically NULL as Traction FDI is usually a read-only address space
+         * @note Optional - typically NULL as Train FDI is usually a read-only address space
          */
-    void (*memory_write_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_train_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction Function Config write reply via datagram
+         * @brief Optional callback to process successful Train Function Config write reply via datagram
          *
-         * @details Handles incoming successful write reply from Traction Function Configuration
+         * @details Handles incoming successful write reply from Train Function Configuration
          * address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config writes
+         * @note Optional - can be NULL if this node does not initiate Train Function Config writes
          */
-    void (*memory_write_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_train_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process failed CDI write reply via datagram
@@ -735,24 +735,24 @@ typedef struct {
     void (*memory_write_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction FDI write reply via datagram
+         * @brief Optional callback to process failed Train FDI write reply via datagram
          *
-         * @details Handles incoming failed write reply from Traction FDI address space
+         * @details Handles incoming failed write reply from Train FDI address space
          * when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction FDI writes
+         * @note Optional - can be NULL if this node does not initiate Train FDI writes
          */
-    void (*memory_write_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_train_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction Function Config write reply via datagram
+         * @brief Optional callback to process failed Train Function Config write reply via datagram
          *
-         * @details Handles incoming failed write reply from Traction Function Configuration
+         * @details Handles incoming failed write reply from Train Function Configuration
          * address space when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config writes
+         * @note Optional - can be NULL if this node does not initiate Train Function Config writes
          */
-    void (*memory_write_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_space_train_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to handle CDI write under mask via datagram
@@ -806,24 +806,24 @@ typedef struct {
     void (*memory_write_under_mask_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction FDI write under mask via datagram
+         * @brief Optional callback to handle Train FDI write under mask via datagram
          *
-         * @details Handles incoming datagram write-under-mask requests to Traction FDI space.
+         * @details Handles incoming datagram write-under-mask requests to Train FDI space.
          * Typically NULL as FDI is read-only in most implementations.
          *
-         * @note Optional - typically NULL as Traction FDI is usually a read-only address space
+         * @note Optional - typically NULL as Train FDI is usually a read-only address space
          */
-    void (*memory_write_under_mask_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Config write under mask via datagram
+         * @brief Optional callback to handle Train Function Config write under mask via datagram
          *
-         * @details Handles incoming datagram write-under-mask requests to Traction Function
+         * @details Handles incoming datagram write-under-mask requests to Train Function
          * Configuration space. Allows bit-level modification of function settings.
          *
-         * @note Optional - can be NULL if write-under-mask is not supported for Traction Function Config
+         * @note Optional - can be NULL if write-under-mask is not supported for Train Function Config
          */
-    void (*memory_write_under_mask_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_under_mask_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to handle Firmware Upgrade write under mask via datagram
@@ -886,24 +886,24 @@ typedef struct {
     void (*memory_write_stream_space_acdi_user)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction FDI write via stream
+         * @brief Optional callback to handle Train FDI write via stream
          *
-         * @details Handles incoming stream-based write requests to Traction FDI space.
+         * @details Handles incoming stream-based write requests to Train FDI space.
          * Typically NULL as FDI is read-only in most implementations.
          *
-         * @note Optional - typically NULL as Traction FDI is usually a read-only address space
+         * @note Optional - typically NULL as Train FDI is usually a read-only address space
          */
-    void (*memory_write_stream_space_traction_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_train_function_definition_info)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to handle Traction Function Config write via stream
+         * @brief Optional callback to handle Train Function Config write via stream
          *
-         * @details Handles incoming stream-based write requests to Traction Function Configuration.
+         * @details Handles incoming stream-based write requests to Train Function Configuration.
          * Streams enable efficient transfer of function configuration blocks.
          *
-         * @note Optional - can be NULL if Traction Function Config writes are not supported via stream
+         * @note Optional - can be NULL if Train Function Config writes are not supported via stream
          */
-    void (*memory_write_stream_space_traction_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_train_function_config_memory)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to handle Firmware Upgrade write via stream
@@ -966,24 +966,24 @@ typedef struct {
     void (*memory_write_stream_space_acdi_user_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction FDI write reply via stream
+         * @brief Optional callback to process successful Train FDI write reply via stream
          *
-         * @details Handles incoming successful stream-based write reply from Traction FDI space.
+         * @details Handles incoming successful stream-based write reply from Train FDI space.
          * Typically never called as FDI is read-only in most implementations.
          *
-         * @note Optional - typically NULL as Traction FDI is usually a read-only address space
+         * @note Optional - typically NULL as Train FDI is usually a read-only address space
          */
-    void (*memory_write_stream_space_traction_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_train_function_definition_info_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process successful Traction Function Config write reply via stream
+         * @brief Optional callback to process successful Train Function Config write reply via stream
          *
-         * @details Handles incoming successful stream-based write reply from Traction Function
+         * @details Handles incoming successful stream-based write reply from Train Function
          * Configuration when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config stream writes
+         * @note Optional - can be NULL if this node does not initiate Train Function Config stream writes
          */
-    void (*memory_write_stream_space_traction_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_train_function_config_memory_reply_ok)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process failed CDI write reply via stream
@@ -1036,24 +1036,24 @@ typedef struct {
     void (*memory_write_stream_space_acdi_user_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction FDI write reply via stream
+         * @brief Optional callback to process failed Train FDI write reply via stream
          *
-         * @details Handles incoming failed stream-based write reply from Traction FDI space
+         * @details Handles incoming failed stream-based write reply from Train FDI space
          * when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction FDI stream writes
+         * @note Optional - can be NULL if this node does not initiate Train FDI stream writes
          */
-    void (*memory_write_stream_space_traction_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_train_function_definition_info_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
-         * @brief Optional callback to process failed Traction Function Config write reply via stream
+         * @brief Optional callback to process failed Train Function Config write reply via stream
          *
-         * @details Handles incoming failed stream-based write reply from Traction Function
+         * @details Handles incoming failed stream-based write reply from Train Function
          * Configuration when this node is acting as a configuration tool.
          *
-         * @note Optional - can be NULL if this node does not initiate Traction Function Config stream writes
+         * @note Optional - can be NULL if this node does not initiate Train Function Config stream writes
          */
-    void (*memory_write_stream_space_traction_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
+    void (*memory_write_stream_space_train_function_config_memory_reply_fail)(openlcb_statemachine_info_t *statemachine_info);
 
         /**
          * @brief Optional callback to process Get Configuration Options command

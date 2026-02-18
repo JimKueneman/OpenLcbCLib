@@ -96,8 +96,8 @@ void ProtocolConfigMemOperationsHandler_initialize(const interface_protocol_conf
     * - 0xFD: Configuration Memory
     * - 0xFC: ACDI Manufacturer
     * - 0xFB: ACDI User
-    * - 0xFA: Traction Function Definition Info
-    * - 0xF9: Traction Function Configuration Memory
+    * - 0xFA: Train Function Definition Info
+    * - 0xF9: Train Function Configuration Memory
     * - 0xEF: Firmware
     *
     * @verbatim
@@ -139,13 +139,13 @@ static const user_address_space_info_t* _decode_to_space_definition(openlcb_stat
 
             return &statemachine_info->openlcb_node->parameters->address_space_acdi_user;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            return &statemachine_info->openlcb_node->parameters->address_space_traction_function_definition_info;
+            return &statemachine_info->openlcb_node->parameters->address_space_train_function_definition_info;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            return &statemachine_info->openlcb_node->parameters->address_space_traction_function_config_memory;
+            return &statemachine_info->openlcb_node->parameters->address_space_train_function_config_memory;
 
         case CONFIG_MEM_SPACE_FIRMWARE:
 

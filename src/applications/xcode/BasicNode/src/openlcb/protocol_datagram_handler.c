@@ -179,8 +179,8 @@ static void _handle_subcommand(openlcb_statemachine_info_t *statemachine_info, m
     * - Configuration Memory
     * - ACDI Manufacturer
     * - ACDI User
-    * - Traction Function Definition Info
-    * - Traction Function Configuration Memory
+    * - Train Function Definition Info
+    * - Train Function Configuration Memory
     *
     * Use cases:
     * - Processing read commands with space ID in byte 6
@@ -235,15 +235,15 @@ static void _handle_read_address_space_at_offset_6(openlcb_statemachine_info_t *
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info);
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_train_function_definition_info);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory);
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_train_function_config_memory);
 
             break;
 
@@ -325,15 +325,15 @@ static void _handle_read_reply_ok_address_space_at_offset_6(openlcb_statemachine
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_train_function_definition_info_reply_ok);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_train_function_config_memory_reply_ok);
 
             break;
 
@@ -415,15 +415,15 @@ static void _handle_read_reply_fail_address_space_at_offset_6(openlcb_statemachi
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_definition_info_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_train_function_definition_info_reply_fail);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_space_traction_function_config_memory_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_read_space_train_function_config_memory_reply_fail);
 
             break;
 
@@ -505,15 +505,15 @@ static void _handle_read_stream_address_space_at_offset_6(openlcb_statemachine_i
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_definition_info);
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_train_function_definition_info);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_config_memory);
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_train_function_config_memory);
 
             break;
 
@@ -595,15 +595,15 @@ static void _handle_read_stream_reply_ok_address_space_at_offset_6(openlcb_state
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_definition_info_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_train_function_definition_info_reply_ok);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_config_memory_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_train_function_config_memory_reply_ok);
 
             break;
 
@@ -685,15 +685,15 @@ static void _handle_read_stream_reply_fail_address_space_at_offset_6(openlcb_sta
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_definition_info_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_train_function_definition_info_reply_fail);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_traction_function_config_memory_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_read_stream_space_train_function_config_memory_reply_fail);
 
             break;
 
@@ -719,7 +719,7 @@ static void _handle_read_stream_reply_fail_address_space_at_offset_6(openlcb_sta
     *    - Generate "unknown subcommand" rejection
     *
     * Supported address spaces include both read-write spaces (Configuration
-    * Memory, ACDI User, Traction Config, Firmware) and read-only spaces
+    * Memory, ACDI User, Train Config, Firmware) and read-only spaces
     * (which should have NULL handlers and will auto-reject).
     *
     * Use cases:
@@ -774,15 +774,15 @@ static void _handle_write_address_space_at_offset_6(openlcb_statemachine_info_t 
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_definition_info);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_config_memory);
 
             break;
 
@@ -870,15 +870,15 @@ static void _handle_write_reply_ok_address_space_at_offset_6(openlcb_statemachin
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_definition_info_reply_ok);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_config_memory_reply_ok);
 
             break;
 
@@ -960,15 +960,15 @@ static void _handle_write_reply_fail_address_space_at_offset_6(openlcb_statemach
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_definition_info_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_definition_info_reply_fail);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_space_traction_function_config_memory_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_write_space_train_function_config_memory_reply_fail);
 
             break;
 
@@ -1049,15 +1049,15 @@ static void _handle_write_stream_address_space_at_offset_6(openlcb_statemachine_
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_definition_info);
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_train_function_definition_info);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory);
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_train_function_config_memory);
 
             break;
 
@@ -1139,15 +1139,15 @@ static void _handle_write_stream_reply_ok_address_space_at_offset_6(openlcb_stat
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_definition_info_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_train_function_definition_info_reply_ok);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory_reply_ok);
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_train_function_config_memory_reply_ok);
 
             break;
 
@@ -1229,15 +1229,15 @@ static void _handle_write_stream_reply_fail_address_space_at_offset_6(openlcb_st
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_definition_info_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_train_function_definition_info_reply_fail);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_traction_function_config_memory_reply_fail);
+            _handle_subcommand(statemachine_info, _interface->memory_write_stream_space_train_function_config_memory_reply_fail);
 
             break;
 
@@ -1319,15 +1319,15 @@ static void _handle_write_under_mask_address_space_at_offset_6(openlcb_statemach
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_definition_info);
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_train_function_definition_info);
 
             break;
 
-        case CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY:
+        case CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY:
 
-            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_traction_function_config_memory);
+            _handle_subcommand(statemachine_info, _interface->memory_write_under_mask_space_train_function_config_memory);
 
             break;
 

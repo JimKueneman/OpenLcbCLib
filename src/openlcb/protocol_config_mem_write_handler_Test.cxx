@@ -45,7 +45,7 @@
 * 1. load_datagram_received_ok_message
 * 2. load_datagram_received_rejected_message
 * 3. config_memory_write
-* 4-10. Write request callbacks (8): config_def, all, config_mem, acdi_mfg, acdi_user, traction_def, traction_mem, firmware
+* 4-10. Write request callbacks (8): config_def, all, config_mem, acdi_mfg, acdi_user, train_def, train_mem, firmware
 * 11. delayed_reply_time
 *
 * New Tests Focus On:
@@ -80,6 +80,8 @@
 #include "openlcb_buffer_fifo.h"
 #include "protocol_datagram_handler.h"
 #include "protocol_snip.h"
+#include "openlcb_application_train.h"
+#include "protocol_train_handler.h"
 
 #define AUTO_CREATE_EVENT_COUNT 10
 #define DEST_EVENT_ID 0x0605040302010000
@@ -185,22 +187,22 @@ const node_parameters_t _node_parameters_main_node = {
     .address_space_acdi_user.description = "ADCI User storage",
 
     // Space 0xFA
-    .address_space_traction_function_definition_info.read_only = false,
-    .address_space_traction_function_definition_info.present = true,
-    .address_space_traction_function_definition_info.low_address_valid = false, // assume the low address starts at 0
-    .address_space_traction_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_traction_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_definition_info.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
-    .address_space_traction_function_definition_info.description = "Traction Configuration Definition Info",
+    .address_space_train_function_definition_info.read_only = false,
+    .address_space_train_function_definition_info.present = true,
+    .address_space_train_function_definition_info.low_address_valid = false, // assume the low address starts at 0
+    .address_space_train_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
+    .address_space_train_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+    .address_space_train_function_definition_info.description = "Train Configuration Definition Info",
 
     // Space 0xF9
-    .address_space_traction_function_config_memory.read_only = false,
-    .address_space_traction_function_config_memory.present = true,
-    .address_space_traction_function_config_memory.low_address_valid = false, // assume the low address starts at 0
-    .address_space_traction_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_traction_function_config_memory.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_config_memory.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
-    .address_space_traction_function_config_memory.description = "Traction Configuration Memory storage",
+    .address_space_train_function_config_memory.read_only = false,
+    .address_space_train_function_config_memory.present = true,
+    .address_space_train_function_config_memory.low_address_valid = false, // assume the low address starts at 0
+    .address_space_train_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
+    .address_space_train_function_config_memory.highest_address = (USER_DEFINED_MAX_TRAIN_FUNCTIONS * 2) - 1, // 29 functions x 2 bytes each
+    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+    .address_space_train_function_config_memory.description = "Train Configuration Memory storage",
 
     // Space 0xEF
     .address_space_firmware.read_only = false,
@@ -334,22 +336,22 @@ const node_parameters_t _node_parameters_main_node_all_not_present = {
     .address_space_acdi_user.description = "ADCI User storage",
 
     // Space 0xFA
-    .address_space_traction_function_definition_info.read_only = true,
-    .address_space_traction_function_definition_info.present = true,
-    .address_space_traction_function_definition_info.low_address_valid = false, // assume the low address starts at 0
-    .address_space_traction_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_traction_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_definition_info.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO,
-    .address_space_traction_function_definition_info.description = "Traction Configuration Definition Info",
+    .address_space_train_function_definition_info.read_only = true,
+    .address_space_train_function_definition_info.present = true,
+    .address_space_train_function_definition_info.low_address_valid = false, // assume the low address starts at 0
+    .address_space_train_function_definition_info.low_address = 0,           // ignored if low_address_valid is false
+    .address_space_train_function_definition_info.highest_address = 0x0100,  // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_definition_info.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO,
+    .address_space_train_function_definition_info.description = "Train Configuration Definition Info",
 
     // Space 0xF9
-    .address_space_traction_function_config_memory.read_only = false,
-    .address_space_traction_function_config_memory.present = true,
-    .address_space_traction_function_config_memory.low_address_valid = false, // assume the low address starts at 0
-    .address_space_traction_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
-    .address_space_traction_function_config_memory.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
-    .address_space_traction_function_config_memory.address_space = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY,
-    .address_space_traction_function_config_memory.description = "Traction Configuration Memory storage",
+    .address_space_train_function_config_memory.read_only = false,
+    .address_space_train_function_config_memory.present = true,
+    .address_space_train_function_config_memory.low_address_valid = false, // assume the low address starts at 0
+    .address_space_train_function_config_memory.low_address = 0,           // ignored if low_address_valid is false
+    .address_space_train_function_config_memory.highest_address = 0x100,   // This is important for multi node applications as the config memory for node N will start at (N * high-low) and they all must be the same for any parameter file in a single app
+    .address_space_train_function_config_memory.address_space = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY,
+    .address_space_train_function_config_memory.description = "Train Configuration Memory storage",
 
     // Space 0xEF
     .address_space_firmware.read_only = false,
@@ -470,22 +472,22 @@ void _write_request_acdi_user(openlcb_statemachine_info_t *statemachine_info, co
     _update_called_function_ptr((void *)&_write_request_acdi_user);
 }
 
-void _write_request_traction_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
+void _write_request_train_config_decscription_info(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
 {
 
     statemachine_info->outgoing_msg_info.valid = false;
     local_config_mem_write_request_info = *config_mem_write_request_info;
 
-    _update_called_function_ptr((void *)&_write_request_traction_config_decscription_info);
+    _update_called_function_ptr((void *)&_write_request_train_config_decscription_info);
 }
 
-void _write_request_traction_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
+void _write_request_train_config_memory(openlcb_statemachine_info_t *statemachine_info, config_mem_write_request_info_t *config_mem_write_request_info)
 {
 
     statemachine_info->outgoing_msg_info.valid = false;
     local_config_mem_write_request_info = *config_mem_write_request_info;
 
-    _update_called_function_ptr((void *)&_write_request_traction_config_memory);
+    _update_called_function_ptr((void *)&_write_request_train_config_memory);
 }
 
 uint16_t _config_memory_write(openlcb_node_t *openlcb_node, uint32_t address, uint16_t count, configuration_memory_buffer_t *buffer)
@@ -565,8 +567,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_config_mem = &_write_request_config_memory,
     .write_request_acdi_manufacturer = &_write_request_acdi_manufacturer,
     .write_request_acdi_user = &_write_request_acdi_user,
-    .write_request_traction_function_config_definition_info = &_write_request_traction_config_decscription_info,
-    .write_request_traction_function_config_memory = &_write_request_traction_config_memory,
+    .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
+    .write_request_train_function_config_memory = &_write_request_train_config_memory,
 
     .config_memory_write = &_config_memory_write,
     .delayed_reply_time = nullptr
@@ -585,8 +587,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_config_mem = &_write_request_config_memory,
     .write_request_acdi_manufacturer = &_write_request_acdi_manufacturer,
     .write_request_acdi_user = &_write_request_acdi_user,
-    .write_request_traction_function_config_definition_info = &_write_request_traction_config_decscription_info,
-    .write_request_traction_function_config_memory = &_write_request_traction_config_memory,
+    .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
+    .write_request_train_function_config_memory = &_write_request_train_config_memory,
 
     .delayed_reply_time = nullptr
 
@@ -602,8 +604,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_config_mem = &_write_request_config_memory,
     .write_request_acdi_manufacturer = &_write_request_acdi_manufacturer,
     .write_request_acdi_user = &_write_request_acdi_user,
-    .write_request_traction_function_config_definition_info = &_write_request_traction_config_decscription_info,
-    .write_request_traction_function_config_memory = &_write_request_traction_config_memory,
+    .write_request_train_function_config_definition_info = &_write_request_train_config_decscription_info,
+    .write_request_train_function_config_memory = &_write_request_train_config_memory,
 
     .config_memory_write = &_config_memory_write,
     .delayed_reply_time = &_delayed_reply_time
@@ -620,8 +622,8 @@ const interface_protocol_config_mem_write_handler_t interface_protocol_config_me
     .write_request_config_mem = nullptr,
     .write_request_acdi_manufacturer = nullptr,
     .write_request_acdi_user = nullptr,
-    .write_request_traction_function_config_definition_info = nullptr,
-    .write_request_traction_function_config_memory = nullptr,
+    .write_request_train_function_config_definition_info = nullptr,
+    .write_request_train_function_config_memory = nullptr,
 
     .config_memory_write = nullptr,
     .delayed_reply_time = nullptr
@@ -965,45 +967,45 @@ TEST(ProtocolConfigMemWriteHandler, memory_write_spaces)
 
     // *****************************************
 
-    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO;
 
     _reset_variables();
-    ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(&statemachine_info);
+    ProtocolConfigMemWriteHandler_write_space_train_function_definition_info(&statemachine_info);
 
     EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
     EXPECT_EQ(datagram_reply_code, 0x0000);
 
     _reset_variables();
-    ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(&statemachine_info);
+    ProtocolConfigMemWriteHandler_write_space_train_function_definition_info(&statemachine_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_write_request_traction_config_decscription_info);
+    EXPECT_EQ(called_function_ptr, (void *)&_write_request_train_config_decscription_info);
 
-    EXPECT_EQ(local_config_mem_write_request_info.write_space_func, &_write_request_traction_config_decscription_info);
+    EXPECT_EQ(local_config_mem_write_request_info.write_space_func, &_write_request_train_config_decscription_info);
     EXPECT_EQ(local_config_mem_write_request_info.bytes, 64);
     EXPECT_EQ(local_config_mem_write_request_info.encoding, ADDRESS_SPACE_IN_BYTE_6);
     EXPECT_EQ(local_config_mem_write_request_info.address, 0x0000);
-    EXPECT_EQ(local_config_mem_write_request_info.space_info, &_node_parameters_main_node.address_space_traction_function_definition_info);
+    EXPECT_EQ(local_config_mem_write_request_info.space_info, &_node_parameters_main_node.address_space_train_function_definition_info);
 
     // *****************************************
 
-    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY;
 
     _reset_variables();
-    ProtocolConfigMemWriteHandler_write_space_traction_function_definition_info(&statemachine_info);
+    ProtocolConfigMemWriteHandler_write_space_train_function_definition_info(&statemachine_info);
 
     EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_received_ok_message);
     EXPECT_EQ(datagram_reply_code, 0x0000);
 
     _reset_variables();
-    ProtocolConfigMemWriteHandler_write_space_traction_function_config_memory(&statemachine_info);
+    ProtocolConfigMemWriteHandler_write_space_train_function_config_memory(&statemachine_info);
 
-    EXPECT_EQ(called_function_ptr, (void *)&_write_request_traction_config_memory);
+    EXPECT_EQ(called_function_ptr, (void *)&_write_request_train_config_memory);
 
-    EXPECT_EQ(local_config_mem_write_request_info.write_space_func, &_write_request_traction_config_memory);
-    EXPECT_EQ(local_config_mem_write_request_info.bytes, 64);
+    EXPECT_EQ(local_config_mem_write_request_info.write_space_func, &_write_request_train_config_memory);
+    EXPECT_EQ(local_config_mem_write_request_info.bytes, USER_DEFINED_MAX_TRAIN_FUNCTIONS * 2); // Clipped to highest_address + 1 = 58
     EXPECT_EQ(local_config_mem_write_request_info.encoding, ADDRESS_SPACE_IN_BYTE_6);
     EXPECT_EQ(local_config_mem_write_request_info.address, 0x0000);
-    EXPECT_EQ(local_config_mem_write_request_info.space_info, &_node_parameters_main_node.address_space_traction_function_config_memory);
+    EXPECT_EQ(local_config_mem_write_request_info.space_info, &_node_parameters_main_node.address_space_train_function_config_memory);
 }
 
 TEST(ProtocolConfigMemWriteHandler, memory_write_spaces_delayed)
@@ -2072,17 +2074,17 @@ TEST(ProtocolConfigMemWriteHandler, null_callback_write_request_acdi_user_null)
 
 /*
 // ============================================================================
-// TEST: NULL Callback - write_request_traction_function_config_definition_info
-// @details Verifies NULL callback for traction function config definition write
-// @coverage NULL callback: write_request_traction_function_config_definition_info
+// TEST: NULL Callback - write_request_train_function_config_definition_info
+// @details Verifies NULL callback for train function config definition write
+// @coverage NULL callback: write_request_train_function_config_definition_info
 // ============================================================================
 
-TEST(ProtocolConfigMemWriteHandler, null_callback_traction_function_def)
+TEST(ProtocolConfigMemWriteHandler, null_callback_train_function_def)
 {
     _global_initialize();
 
     interface_protocol_config_mem_write_handler_t null_interface = _interface_protocol_config_mem_write_handler;
-    null_interface.write_request_traction_function_config_definition_info = nullptr;
+    null_interface.write_request_train_function_config_definition_info = nullptr;
     
     ProtocolConfigMemWriteHandler_initialize(&null_interface);
 
@@ -2098,7 +2100,7 @@ TEST(ProtocolConfigMemWriteHandler, null_callback_traction_function_def)
     request_info.byte_count = 64;
 
     // Should not crash with NULL callback
-    ProtocolConfigMemWriteHandler_write_request_traction_function_config_definition_info(statemachine_info, &request_info);
+    ProtocolConfigMemWriteHandler_write_request_train_function_config_definition_info(statemachine_info, &request_info);
     
     EXPECT_TRUE(true);
 }
@@ -2106,17 +2108,17 @@ TEST(ProtocolConfigMemWriteHandler, null_callback_traction_function_def)
 
 /*
 // ============================================================================
-// TEST: NULL Callback - write_request_traction_function_config_memory
-// @details Verifies NULL callback for traction function config memory write
-// @coverage NULL callback: write_request_traction_function_config_memory
+// TEST: NULL Callback - write_request_train_function_config_memory
+// @details Verifies NULL callback for train function config memory write
+// @coverage NULL callback: write_request_train_function_config_memory
 // ============================================================================
 
-TEST(ProtocolConfigMemWriteHandler, null_callback_traction_function_mem)
+TEST(ProtocolConfigMemWriteHandler, null_callback_train_function_mem)
 {
     _global_initialize();
 
     interface_protocol_config_mem_write_handler_t null_interface = _interface_protocol_config_mem_write_handler;
-    null_interface.write_request_traction_function_config_memory = nullptr;
+    null_interface.write_request_train_function_config_memory = nullptr;
     
     ProtocolConfigMemWriteHandler_initialize(&null_interface);
 
@@ -2132,7 +2134,7 @@ TEST(ProtocolConfigMemWriteHandler, null_callback_traction_function_mem)
     request_info.byte_count = 64;
 
     // Should not crash with NULL callback
-    ProtocolConfigMemWriteHandler_write_request_traction_function_config_memory(statemachine_info, &request_info);
+    ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(statemachine_info, &request_info);
     
     EXPECT_TRUE(true);
 }
@@ -2226,8 +2228,8 @@ TEST(ProtocolConfigMemWriteHandler, all_write_request_callbacks_null)
     null_interface.write_request_config_mem = nullptr;
     null_interface.write_request_acdi_manufacturer = nullptr;
     null_interface.write_request_acdi_user = nullptr;
-    null_interface.write_request_traction_function_config_definition_info = nullptr;
-    null_interface.write_request_traction_function_config_memory = nullptr;
+    null_interface.write_request_train_function_config_definition_info = nullptr;
+    null_interface.write_request_train_function_config_memory = nullptr;
     null_interface.write_request_firmware = nullptr;
     
     ProtocolConfigMemWriteHandler_initialize(&null_interface);
@@ -2368,10 +2370,10 @@ TEST(ProtocolConfigMemWriteHandler, all_memory_spaces_write_coverage)
                 ProtocolConfigMemWriteHandler_write_request_acdi_user(statemachine_info, &request_info);
                 break;
             case CONFIG_MEM_SPACE_FUNCTION_DEFINITION_INFO:
-                ProtocolConfigMemWriteHandler_write_request_traction_function_config_definition_info(statemachine_info, &request_info);
+                ProtocolConfigMemWriteHandler_write_request_train_function_config_definition_info(statemachine_info, &request_info);
                 break;
             case CONFIG_MEM_SPACE_FUNCTION_MEMORY:
-                ProtocolConfigMemWriteHandler_write_request_traction_function_config_memory(statemachine_info, &request_info);
+                ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(statemachine_info, &request_info);
                 break;
             case CONFIG_MEM_SPACE_FIRMWARE:
                 ProtocolConfigMemWriteHandler_write_request_firmware(statemachine_info, &request_info);
@@ -2416,8 +2418,8 @@ TEST(ProtocolConfigMemWriteHandler, all_memory_spaces_write_coverage)
 // - null_callback_write_request_all
 // - null_callback_write_request_acdi_manufacturer
 // - null_callback_write_request_acdi_user_null
-// - null_callback_traction_function_def
-// - null_callback_traction_function_mem
+// - null_callback_train_function_def
+// - null_callback_train_function_mem
 // - null_callback_write_request_firmware
 // - null_callback_delayed_reply_time
 // - all_write_request_callbacks_null (comprehensive)
@@ -2439,7 +2441,7 @@ TEST(ProtocolConfigMemWriteHandler, all_memory_spaces_write_coverage)
 // Interface Callbacks by Category:
 // - Datagram responses: 2 (ok, rejected)
 // - Config memory: 1 (config_memory_write)
-// - Write requests: 8 (config_def, all, config_mem, acdi_mfg, acdi_user, traction_def, traction_mem, firmware)
+// - Write requests: 8 (config_def, all, config_mem, acdi_mfg, acdi_user, train_def, train_mem, firmware)
 // - Utility: 1 (delayed_reply_time)
 // Total: 11 callbacks
 //
@@ -2554,4 +2556,203 @@ TEST(ProtocolConfigMemWriteHandler, write_space_under_mask_stub)
 
     // Verify stub completed without crash
     EXPECT_TRUE(true);
+}
+
+
+// ============================================================================
+// Section 4: Function Config Memory (0xF9) Write Tests
+// ============================================================================
+
+static uint32_t _fn_changed_addresses[USER_DEFINED_MAX_TRAIN_FUNCTIONS];
+static uint16_t _fn_changed_values[USER_DEFINED_MAX_TRAIN_FUNCTIONS];
+static int _fn_changed_count = 0;
+
+static void _test_on_function_changed(openlcb_node_t *openlcb_node,
+        uint32_t fn_address, uint16_t fn_value) {
+
+    if (_fn_changed_count < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
+
+        _fn_changed_addresses[_fn_changed_count] = fn_address;
+        _fn_changed_values[_fn_changed_count] = fn_value;
+        _fn_changed_count++;
+
+    }
+
+}
+
+TEST(ProtocolConfigMemWriteHandler, write_request_function_config_memory_single)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    // Initialize train application
+    interface_openlcb_application_train_t train_app_interface;
+    memset(&train_app_interface, 0, sizeof(train_app_interface));
+    OpenLcbApplicationTrain_initialize(&train_app_interface);
+
+    // Initialize train handler with on_function_changed callback
+    interface_protocol_train_handler_t train_handler_interface;
+    memset(&train_handler_interface, 0, sizeof(train_handler_interface));
+    train_handler_interface.on_function_changed = &_test_on_function_changed;
+    ProtocolTrainHandler_initialize(&train_handler_interface);
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    train_state_t *state = OpenLcbApplicationTrain_setup(node1);
+    ASSERT_NE(state, nullptr);
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_statemachine_info_t statemachine_info;
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    // Write 2 bytes at address 0 (function F0 = 0xABCD, big-endian)
+    configuration_memory_buffer_t write_buf;
+    write_buf[0] = 0xAB;  // high byte
+    write_buf[1] = 0xCD;  // low byte
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = 0x00000000;
+    config_mem_write_request_info.bytes = 2;
+    config_mem_write_request_info.write_buffer = &write_buf;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _fn_changed_count = 0;
+
+    ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(state->functions[0], 0xABCD);
+
+    // Verify on_function_changed fired for F0
+    EXPECT_EQ(_fn_changed_count, 1);
+    EXPECT_EQ(_fn_changed_addresses[0], 0u);
+    EXPECT_EQ(_fn_changed_values[0], 0xABCD);
+
+}
+
+TEST(ProtocolConfigMemWriteHandler, write_request_function_config_memory_bulk)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    interface_openlcb_application_train_t train_app_interface;
+    memset(&train_app_interface, 0, sizeof(train_app_interface));
+    OpenLcbApplicationTrain_initialize(&train_app_interface);
+
+    interface_protocol_train_handler_t train_handler_interface;
+    memset(&train_handler_interface, 0, sizeof(train_handler_interface));
+    train_handler_interface.on_function_changed = &_test_on_function_changed;
+    ProtocolTrainHandler_initialize(&train_handler_interface);
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    train_state_t *state = OpenLcbApplicationTrain_setup(node1);
+    ASSERT_NE(state, nullptr);
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_statemachine_info_t statemachine_info;
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    // Write 4 bytes at address 4 (functions F2=0x0012 and F3=0x0034)
+    configuration_memory_buffer_t write_buf;
+    write_buf[0] = 0x00;  // F2 high byte
+    write_buf[1] = 0x12;  // F2 low byte
+    write_buf[2] = 0x00;  // F3 high byte
+    write_buf[3] = 0x34;  // F3 low byte
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = 4;  // byte offset 4 = F2
+    config_mem_write_request_info.bytes = 4;
+    config_mem_write_request_info.write_buffer = &write_buf;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    _fn_changed_count = 0;
+
+    ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(state->functions[2], 0x0012);
+    EXPECT_EQ(state->functions[3], 0x0034);
+
+    // Verify on_function_changed fired for F2 and F3
+    EXPECT_EQ(_fn_changed_count, 2);
+    EXPECT_EQ(_fn_changed_addresses[0], 2u);
+    EXPECT_EQ(_fn_changed_values[0], 0x0012);
+    EXPECT_EQ(_fn_changed_addresses[1], 3u);
+    EXPECT_EQ(_fn_changed_values[1], 0x0034);
+
+}
+
+TEST(ProtocolConfigMemWriteHandler, write_request_function_config_memory_no_callback)
+{
+
+    _reset_variables();
+    _global_initialize();
+
+    interface_openlcb_application_train_t train_app_interface;
+    memset(&train_app_interface, 0, sizeof(train_app_interface));
+    OpenLcbApplicationTrain_initialize(&train_app_interface);
+
+    // Initialize train handler with NO on_function_changed callback
+    interface_protocol_train_handler_t train_handler_interface;
+    memset(&train_handler_interface, 0, sizeof(train_handler_interface));
+    ProtocolTrainHandler_initialize(&train_handler_interface);
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    train_state_t *state = OpenLcbApplicationTrain_setup(node1);
+    ASSERT_NE(state, nullptr);
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    openlcb_statemachine_info_t statemachine_info;
+    config_mem_write_request_info_t config_mem_write_request_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+
+    // Write F0 = 0x5678 with no on_function_changed callback (should not crash)
+    configuration_memory_buffer_t write_buf;
+    write_buf[0] = 0x56;
+    write_buf[1] = 0x78;
+
+    config_mem_write_request_info.encoding = ADDRESS_SPACE_IN_BYTE_6;
+    config_mem_write_request_info.address = 0x00000000;
+    config_mem_write_request_info.bytes = 2;
+    config_mem_write_request_info.write_buffer = &write_buf;
+    config_mem_write_request_info.data_start = 7;
+    config_mem_write_request_info.space_info = nullptr;
+    config_mem_write_request_info.write_space_func = nullptr;
+
+    ProtocolConfigMemWriteHandler_write_request_train_function_config_memory(&statemachine_info, &config_mem_write_request_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(state->functions[0], 0x5678);
+
 }
