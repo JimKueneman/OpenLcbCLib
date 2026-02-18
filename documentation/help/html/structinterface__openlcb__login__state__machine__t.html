@@ -130,14 +130,18 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a41dbaa73eb2229932ffc76416db879e7" id="r_a41dbaa73eb2229932ffc76416db879e7"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41dbaa73eb2229932ffc76416db879e7">handle_try_enumerate_next_node</a> )(void)</td></tr>
 <tr class="memdesc:a41dbaa73eb2229932ffc76416db879e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function pointer for next node enumeration.  <br /></td></tr>
 <tr class="separator:a41dbaa73eb2229932ffc76416db879e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a867b36c22557d8dfff3fc10dbf0b69e4" id="r_a867b36c22557d8dfff3fc10dbf0b69e4"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a867b36c22557d8dfff3fc10dbf0b69e4">on_login_complete</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="memdesc:a867b36c22557d8dfff3fc10dbf0b69e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback after login sequence completes.  <br /></td></tr>
+<tr class="separator:a867b36c22557d8dfff3fc10dbf0b69e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface structure for login state machine callback functions. </p>
-<p>This structure defines the callback interface for the OpenLCB login state machine, which orchestrates the complete node initialization sequence after successful CAN alias allocation. The login state machine manages the three-phase process of announcing nodes on the network:</p>
+<p>This structure defines the callback interface for the OpenLCB login state machine, which orchestrates the complete node initialization sequence after successful CAN alias allocation. The login state machine manages the four-phase process of announcing nodes on the network:</p>
 <ol type="1">
 <li>Send Initialization Complete message</li>
 <li>Send Producer Event Identified messages for all produced events</li>
 <li>Send Consumer Event Identified messages for all consumed events</li>
+<li>Call on_login_complete callback (optional) for final setup before entering RUNSTATE_RUN</li>
 </ol>
 <p>The interface provides callbacks organized into several functional categories:</p>
 <p><b>Required Message Transmission Callbacks:</b></p><ul>
@@ -301,7 +305,7 @@ Internal function pointers are for unit testing - they reference module function
 <li>Build message with 8-byte Event ID in payload</li>
 <li>Increment enum_index</li>
 <li>Set enumerate flag if more events remain</li>
-<li>Transition to RUNSTATE_RUN when complete (node fully initialized)</li>
+<li>Transition to RUNSTATE_LOGIN_COMPLETE when complete</li>
 </ul>
 <p>Typical implementation: OpenLcbLoginMessageHandler_load_consumer_event</p>
 <dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL </dd></dl>
@@ -327,6 +331,7 @@ Internal function pointers are for unit testing - they reference module function
 <li>load_initialization_complete if RUNSTATE_LOAD_INITIALIZATION_COMPLETE</li>
 <li>load_producer_events if RUNSTATE_LOAD_PRODUCER_EVENTS</li>
 <li>load_consumer_events if RUNSTATE_LOAD_CONSUMER_EVENTS</li>
+<li>on_login_complete if RUNSTATE_LOGIN_COMPLETE (then transitions to RUNSTATE_RUN)</li>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
 
@@ -429,6 +434,23 @@ Internal function pointers are for unit testing - they reference module function
 <li>Clear openlcb_node to NULL when end of list reached</li>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>This is a REQUIRED callback - must not be NULL (set to module function) </dd></dl>
+
+</div>
+</div>
+<a id="a867b36c22557d8dfff3fc10dbf0b69e4" name="a867b36c22557d8dfff3fc10dbf0b69e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a867b36c22557d8dfff3fc10dbf0b69e4">&#9670;&#160;</a></span>on_login_complete</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool(* on_login_complete) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional callback after login sequence completes. </p>
+<p>This optional callback is invoked after the login sequence completes for a node, just before transitioning to RUNSTATE_RUN. It allows the application to perform any final setup or send any final messages before the node enters normal operation mode. </p>
 
 </div>
 </div>

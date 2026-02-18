@@ -136,7 +136,10 @@ Macros</h2></td></tr>
 <tr class="memitem:ga08482f1fdb216fe0bd36cacf8dbf092e" id="r_ga08482f1fdb216fe0bd36cacf8dbf092e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga08482f1fdb216fe0bd36cacf8dbf092e">RUNSTATE_LOAD_PRODUCER_EVENTS</a>&#160;&#160;&#160;12</td></tr>
 <tr class="memdesc:ga08482f1fdb216fe0bd36cacf8dbf092e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast all producer event IDs that this node generates.  <br /></td></tr>
 <tr class="separator:ga08482f1fdb216fe0bd36cacf8dbf092e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf6eaeb155cdfde837a166bac521293a8" id="r_gaf6eaeb155cdfde837a166bac521293a8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf6eaeb155cdfde837a166bac521293a8">RUNSTATE_RUN</a>&#160;&#160;&#160;13</td></tr>
+<tr class="memitem:gab50b5205137c139c1579000b889c27b9" id="r_gab50b5205137c139c1579000b889c27b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab50b5205137c139c1579000b889c27b9">RUNSTATE_LOGIN_COMPLETE</a>&#160;&#160;&#160;13</td></tr>
+<tr class="memdesc:gab50b5205137c139c1579000b889c27b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback to allow any startup messages to be sent.  <br /></td></tr>
+<tr class="separator:gab50b5205137c139c1579000b889c27b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6eaeb155cdfde837a166bac521293a8" id="r_gaf6eaeb155cdfde837a166bac521293a8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf6eaeb155cdfde837a166bac521293a8">RUNSTATE_RUN</a>&#160;&#160;&#160;14</td></tr>
 <tr class="memdesc:gaf6eaeb155cdfde837a166bac521293a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normal operation mode - process messages from FIFO.  <br /></td></tr>
 <tr class="separator:gaf6eaeb155cdfde837a166bac521293a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -153,6 +156,7 @@ Macros</h2></td></tr>
 <li>RUNSTATE_LOAD_INITIALIZATION_COMPLETE - Send Initialization Complete message</li>
 <li>RUNSTATE_LOAD_CONSUMER_EVENTS - Broadcast consumer event IDs</li>
 <li>RUNSTATE_LOAD_PRODUCER_EVENTS - Broadcast producer event IDs</li>
+<li>RUNSTATE_LOGIN_COMPLETE - Optional callback for final setup before normal operation</li>
 <li>RUNSTATE_RUN - Normal operation mode</li>
 </ol>
 <p>If alias collision is detected during CID or wait period, state returns to RUNSTATE_GENERATE_SEED to create a new alias.</p>
@@ -370,6 +374,22 @@ OpenLCB CAN Frame Transfer Standard S-9.7.3 </dd></dl>
 
 </div>
 </div>
+<a id="gab50b5205137c139c1579000b889c27b9" name="gab50b5205137c139c1579000b889c27b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab50b5205137c139c1579000b889c27b9">&#9670;&#160;</a></span>RUNSTATE_LOGIN_COMPLETE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RUNSTATE_LOGIN_COMPLETE&#160;&#160;&#160;13</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback to allow any startup messages to be sent. </p>
+
+</div>
+</div>
 <a id="gaf6eaeb155cdfde837a166bac521293a8" name="gaf6eaeb155cdfde837a166bac521293a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaf6eaeb155cdfde837a166bac521293a8">&#9670;&#160;</a></span>RUNSTATE_RUN</h2>
 
@@ -377,7 +397,7 @@ OpenLCB CAN Frame Transfer Standard S-9.7.3 </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define RUNSTATE_RUN&#160;&#160;&#160;13</td>
+          <td class="memname">#define RUNSTATE_RUN&#160;&#160;&#160;14</td>
         </tr>
       </table>
 </div><div class="memdoc">

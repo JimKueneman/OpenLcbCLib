@@ -142,6 +142,27 @@ Macros</h2></td></tr>
 <tr class="memitem:ga84e9603e0e63e96ea42a0d6a65fe584c" id="r_ga84e9603e0e63e96ea42a0d6a65fe584c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga84e9603e0e63e96ea42a0d6a65fe584c">EVENT_TRAIN_SEARCH_SPACE</a>&#160;&#160;&#160;0x090099FF00000000</td></tr>
 <tr class="memdesc:ga84e9603e0e63e96ea42a0d6a65fe584c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search event space base.  <br /></td></tr>
 <tr class="separator:ga84e9603e0e63e96ea42a0d6a65fe584c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga71b82b2398d81c677e37ba950bc046d3" id="r_ga71b82b2398d81c677e37ba950bc046d3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga71b82b2398d81c677e37ba950bc046d3">TRAIN_SEARCH_MASK</a>&#160;&#160;&#160;0xFFFFFFFF00000000ULL</td></tr>
+<tr class="memdesc:ga71b82b2398d81c677e37ba950bc046d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for upper 4 bytes of train search event ID.  <br /></td></tr>
+<tr class="separator:ga71b82b2398d81c677e37ba950bc046d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac8a929779a9f24fd1345ef4d5272aaf3" id="r_gac8a929779a9f24fd1345ef4d5272aaf3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac8a929779a9f24fd1345ef4d5272aaf3">TRAIN_SEARCH_FLAG_ALLOCATE</a>&#160;&#160;&#160;0x80</td></tr>
+<tr class="memdesc:gac8a929779a9f24fd1345ef4d5272aaf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search flags byte — allocate new node if no match.  <br /></td></tr>
+<tr class="separator:gac8a929779a9f24fd1345ef4d5272aaf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga01879f6103f5383457dec9d6dd355e1a" id="r_ga01879f6103f5383457dec9d6dd355e1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga01879f6103f5383457dec9d6dd355e1a">TRAIN_SEARCH_FLAG_EXACT</a>&#160;&#160;&#160;0x40</td></tr>
+<tr class="memdesc:ga01879f6103f5383457dec9d6dd355e1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search flags byte — exact match only.  <br /></td></tr>
+<tr class="separator:ga01879f6103f5383457dec9d6dd355e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac0e0a41dd7e5551b7b18031fa7b5f7fe" id="r_gac0e0a41dd7e5551b7b18031fa7b5f7fe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac0e0a41dd7e5551b7b18031fa7b5f7fe">TRAIN_SEARCH_FLAG_ADDRESS_ONLY</a>&#160;&#160;&#160;0x20</td></tr>
+<tr class="memdesc:gac0e0a41dd7e5551b7b18031fa7b5f7fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search flags byte — match address only (not name)  <br /></td></tr>
+<tr class="separator:gac0e0a41dd7e5551b7b18031fa7b5f7fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf99af2ebbaef6cebb932d6e2715e3c6c" id="r_gaf99af2ebbaef6cebb932d6e2715e3c6c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf99af2ebbaef6cebb932d6e2715e3c6c">TRAIN_SEARCH_FLAG_DCC</a>&#160;&#160;&#160;0x08</td></tr>
+<tr class="memdesc:gaf99af2ebbaef6cebb932d6e2715e3c6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search flags byte — DCC protocol.  <br /></td></tr>
+<tr class="separator:gaf99af2ebbaef6cebb932d6e2715e3c6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7cfac7e79e3e28b5c319a061a2152753" id="r_ga7cfac7e79e3e28b5c319a061a2152753"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7cfac7e79e3e28b5c319a061a2152753">TRAIN_SEARCH_FLAG_LONG_ADDR</a>&#160;&#160;&#160;0x04</td></tr>
+<tr class="memdesc:ga7cfac7e79e3e28b5c319a061a2152753"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search flags byte — force long (14-bit) DCC address.  <br /></td></tr>
+<tr class="separator:ga7cfac7e79e3e28b5c319a061a2152753"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacc938b547bc0558b96a889d19e4ced54" id="r_gacc938b547bc0558b96a889d19e4ced54"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gacc938b547bc0558b96a889d19e4ced54">TRAIN_SEARCH_SPEED_STEP_MASK</a>&#160;&#160;&#160;0x03</td></tr>
+<tr class="memdesc:gacc938b547bc0558b96a889d19e4ced54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train search flags byte — speed step mode mask (bits 1-0)  <br /></td></tr>
+<tr class="separator:gacc938b547bc0558b96a889d19e4ced54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Events that remain local to network segment. </p>
@@ -384,6 +405,118 @@ Macros</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Train search event space base. </p>
+
+</div>
+</div>
+<a id="ga71b82b2398d81c677e37ba950bc046d3" name="ga71b82b2398d81c677e37ba950bc046d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga71b82b2398d81c677e37ba950bc046d3">&#9670;&#160;</a></span>TRAIN_SEARCH_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_MASK&#160;&#160;&#160;0xFFFFFFFF00000000ULL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mask for upper 4 bytes of train search event ID. </p>
+
+</div>
+</div>
+<a id="gac8a929779a9f24fd1345ef4d5272aaf3" name="gac8a929779a9f24fd1345ef4d5272aaf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac8a929779a9f24fd1345ef4d5272aaf3">&#9670;&#160;</a></span>TRAIN_SEARCH_FLAG_ALLOCATE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_FLAG_ALLOCATE&#160;&#160;&#160;0x80</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Train search flags byte — allocate new node if no match. </p>
+
+</div>
+</div>
+<a id="ga01879f6103f5383457dec9d6dd355e1a" name="ga01879f6103f5383457dec9d6dd355e1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga01879f6103f5383457dec9d6dd355e1a">&#9670;&#160;</a></span>TRAIN_SEARCH_FLAG_EXACT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_FLAG_EXACT&#160;&#160;&#160;0x40</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Train search flags byte — exact match only. </p>
+
+</div>
+</div>
+<a id="gac0e0a41dd7e5551b7b18031fa7b5f7fe" name="gac0e0a41dd7e5551b7b18031fa7b5f7fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac0e0a41dd7e5551b7b18031fa7b5f7fe">&#9670;&#160;</a></span>TRAIN_SEARCH_FLAG_ADDRESS_ONLY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_FLAG_ADDRESS_ONLY&#160;&#160;&#160;0x20</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Train search flags byte — match address only (not name) </p>
+
+</div>
+</div>
+<a id="gaf99af2ebbaef6cebb932d6e2715e3c6c" name="gaf99af2ebbaef6cebb932d6e2715e3c6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf99af2ebbaef6cebb932d6e2715e3c6c">&#9670;&#160;</a></span>TRAIN_SEARCH_FLAG_DCC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_FLAG_DCC&#160;&#160;&#160;0x08</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Train search flags byte — DCC protocol. </p>
+
+</div>
+</div>
+<a id="ga7cfac7e79e3e28b5c319a061a2152753" name="ga7cfac7e79e3e28b5c319a061a2152753"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7cfac7e79e3e28b5c319a061a2152753">&#9670;&#160;</a></span>TRAIN_SEARCH_FLAG_LONG_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_FLAG_LONG_ADDR&#160;&#160;&#160;0x04</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Train search flags byte — force long (14-bit) DCC address. </p>
+
+</div>
+</div>
+<a id="gacc938b547bc0558b96a889d19e4ced54" name="gacc938b547bc0558b96a889d19e4ced54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacc938b547bc0558b96a889d19e4ced54">&#9670;&#160;</a></span>TRAIN_SEARCH_SPEED_STEP_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRAIN_SEARCH_SPEED_STEP_MASK&#160;&#160;&#160;0x03</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Train search flags byte — speed step mode mask (bits 1-0) </p>
 
 </div>
 </div>

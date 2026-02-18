@@ -97,6 +97,10 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
+<tr class="memitem:acd175ca6a2189943def77d179b4d70f4" id="r_acd175ca6a2189943def77d179b4d70f4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd175ca6a2189943def77d179b4d70f4">on_consumed_event_identified</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> status, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="separator:acd175ca6a2189943def77d179b4d70f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a013d004bc16d4fb128a3160bde27191c" id="r_a013d004bc16d4fb128a3160bde27191c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a013d004bc16d4fb128a3160bde27191c">on_consumed_event_pcer</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td></tr>
+<tr class="separator:a013d004bc16d4fb128a3160bde27191c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4893226a2fd15405ef5d823b4cbbd97" id="r_aa4893226a2fd15405ef5d823b4cbbd97"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4893226a2fd15405ef5d823b4cbbd97">on_consumer_range_identified</a> )(<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id)</td></tr>
 <tr class="memdesc:aa4893226a2fd15405ef5d823b4cbbd97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional callback for Consumer Range Identified notification.  <br /></td></tr>
 <tr class="separator:aa4893226a2fd15405ef5d823b4cbbd97"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,6 +164,34 @@ Callbacks must not block or perform lengthy operations</dd></dl>
 <dd>
 <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c" title="Event ID type (64-bit unsigned integer)">event_id_t</a> - Event identifier type </dd></dl>
 </div><h2 class="groupheader">Field Documentation</h2>
+<a id="acd175ca6a2189943def77d179b4d70f4" name="acd175ca6a2189943def77d179b4d70f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd175ca6a2189943def77d179b4d70f4">&#9670;&#160;</a></span>on_consumed_event_identified</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_consumed_event_identified) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> status, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a013d004bc16d4fb128a3160bde27191c" name="a013d004bc16d4fb128a3160bde27191c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a013d004bc16d4fb128a3160bde27191c">&#9670;&#160;</a></span>on_consumed_event_pcer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* on_consumed_event_pcer) (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, uint16_t index, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> *event_id, <a class="el" href="openlcb__types_8h.html#a4d55dc9181adc6764d1e8f94bde6dbb8">event_payload_t</a> *payload)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa4893226a2fd15405ef5d823b4cbbd97" name="aa4893226a2fd15405ef5d823b4cbbd97"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa4893226a2fd15405ef5d823b4cbbd97">&#9670;&#160;</a></span>on_consumer_range_identified</h2>
 

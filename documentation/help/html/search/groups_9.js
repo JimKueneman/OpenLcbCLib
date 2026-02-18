@@ -20,5 +20,5 @@ var searchData=
   ['message_20network_20mti_20codes_17',['Message Network MTI Codes',['../group__mti__message__network.html',1,'']]],
   ['message_20payload_20buffer_20type_20definitions_18',['Message Payload Buffer Type Definitions',['../group__payload__buffer__types.html',1,'']]],
   ['mti_20bit_20field_20masks_19',['MTI Bit Field Masks',['../group__mti__field__masks.html',1,'']]],
-  ['mti_20codes_20',['MTI Codes',['../group__mti__datagram.html',1,'Datagram Protocol MTI Codes'],['../group__mti__event__transport.html',1,'Event Transport Protocol MTI Codes'],['../group__mti__message__network.html',1,'Message Network MTI Codes'],['../group__mti__snip.html',1,'Simple Node Information Protocol MTI Codes'],['../group__mti__stream.html',1,'Stream Protocol MTI Codes'],['../group__mti__traction.html',1,'Traction Protocol MTI Codes']]]
+  ['mti_20codes_20',['MTI Codes',['../group__mti__datagram.html',1,'Datagram Protocol MTI Codes'],['../group__mti__event__transport.html',1,'Event Transport Protocol MTI Codes'],['../group__mti__message__network.html',1,'Message Network MTI Codes'],['../group__mti__snip.html',1,'Simple Node Information Protocol MTI Codes'],['../group__mti__stream.html',1,'Stream Protocol MTI Codes'],['../group__mti__train.html',1,'Train Protocol MTI Codes']]]
 ];

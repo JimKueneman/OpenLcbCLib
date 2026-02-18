@@ -112,12 +112,12 @@ Macros</h2></td></tr>
 <tr class="memitem:ga798173bbb9542c63a08f1100ca29f85f" id="r_ga798173bbb9542c63a08f1100ca29f85f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga798173bbb9542c63a08f1100ca29f85f">CONFIG_MEM_SPACE_ACDI_USER_ACCESS</a>&#160;&#160;&#160;0xFB</td></tr>
 <tr class="memdesc:ga798173bbb9542c63a08f1100ca29f85f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ACDI User space - user-assignable node name and description.  <br /></td></tr>
 <tr class="separator:ga798173bbb9542c63a08f1100ca29f85f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae25ab9a543ee0a4ed48e19a0cd4fecb1" id="r_gae25ab9a543ee0a4ed48e19a0cd4fecb1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gae25ab9a543ee0a4ed48e19a0cd4fecb1">CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO</a>&#160;&#160;&#160;0xFA</td></tr>
-<tr class="memdesc:gae25ab9a543ee0a4ed48e19a0cd4fecb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">FDI (Function Description Information) space - traction function descriptions.  <br /></td></tr>
-<tr class="separator:gae25ab9a543ee0a4ed48e19a0cd4fecb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4a5036b6b829b0d556c3b27f2240ce3b" id="r_ga4a5036b6b829b0d556c3b27f2240ce3b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4a5036b6b829b0d556c3b27f2240ce3b">CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY</a>&#160;&#160;&#160;0xF9</td></tr>
-<tr class="memdesc:ga4a5036b6b829b0d556c3b27f2240ce3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traction Function Configuration Memory space.  <br /></td></tr>
-<tr class="separator:ga4a5036b6b829b0d556c3b27f2240ce3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga513f9c3b6ecde37314c450c1a3109a64" id="r_ga513f9c3b6ecde37314c450c1a3109a64"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga513f9c3b6ecde37314c450c1a3109a64">CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO</a>&#160;&#160;&#160;0xFA</td></tr>
+<tr class="memdesc:ga513f9c3b6ecde37314c450c1a3109a64"><td class="mdescLeft">&#160;</td><td class="mdescRight">FDI (Function Description Information) space - train function descriptions.  <br /></td></tr>
+<tr class="separator:ga513f9c3b6ecde37314c450c1a3109a64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2588ab44832db71d1488e253e02849ac" id="r_ga2588ab44832db71d1488e253e02849ac"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga2588ab44832db71d1488e253e02849ac">CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY</a>&#160;&#160;&#160;0xF9</td></tr>
+<tr class="memdesc:ga2588ab44832db71d1488e253e02849ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Train Function Configuration Memory space.  <br /></td></tr>
+<tr class="separator:ga2588ab44832db71d1488e253e02849ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafc381145ddaf6614b732c952e5aad6b0" id="r_gafc381145ddaf6614b732c952e5aad6b0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gafc381145ddaf6614b732c952e5aad6b0">CONFIG_MEM_SPACE_FIRMWARE</a>&#160;&#160;&#160;0xEF</td></tr>
 <tr class="memdesc:gafc381145ddaf6614b732c952e5aad6b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Firmware upgrade space.  <br /></td></tr>
 <tr class="separator:gafc381145ddaf6614b732c952e5aad6b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,8 +130,8 @@ Macros</h2></td></tr>
 <li>0xFD: Configuration memory - user-configurable values</li>
 <li>0xFC: ACDI Manufacturer - factory set identification</li>
 <li>0xFB: ACDI User - user-assignable identification</li>
-<li>0xFA: FDI (Function Description Information) - for traction nodes</li>
-<li>0xF9: Function configuration memory - for traction nodes</li>
+<li>0xFA: FDI (Function Description Information) - for train nodes</li>
+<li>0xF9: Function configuration memory - for train nodes</li>
 <li>0xEF: Firmware upgrade space </li>
 </ul>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -215,35 +215,35 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="gae25ab9a543ee0a4ed48e19a0cd4fecb1" name="gae25ab9a543ee0a4ed48e19a0cd4fecb1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae25ab9a543ee0a4ed48e19a0cd4fecb1">&#9670;&#160;</a></span>CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO</h2>
+<a id="ga513f9c3b6ecde37314c450c1a3109a64" name="ga513f9c3b6ecde37314c450c1a3109a64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga513f9c3b6ecde37314c450c1a3109a64">&#9670;&#160;</a></span>CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define CONFIG_MEM_SPACE_TRACTION_FUNCTION_DEFINITION_INFO&#160;&#160;&#160;0xFA</td>
+          <td class="memname">#define CONFIG_MEM_SPACE_TRAIN_FUNCTION_DEFINITION_INFO&#160;&#160;&#160;0xFA</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>FDI (Function Description Information) space - traction function descriptions. </p>
+<p>FDI (Function Description Information) space - train function descriptions. </p>
 
 </div>
 </div>
-<a id="ga4a5036b6b829b0d556c3b27f2240ce3b" name="ga4a5036b6b829b0d556c3b27f2240ce3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4a5036b6b829b0d556c3b27f2240ce3b">&#9670;&#160;</a></span>CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY</h2>
+<a id="ga2588ab44832db71d1488e253e02849ac" name="ga2588ab44832db71d1488e253e02849ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2588ab44832db71d1488e253e02849ac">&#9670;&#160;</a></span>CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define CONFIG_MEM_SPACE_TRACTION_FUNCTION_CONFIGURATION_MEMORY&#160;&#160;&#160;0xF9</td>
+          <td class="memname">#define CONFIG_MEM_SPACE_TRAIN_FUNCTION_CONFIGURATION_MEMORY&#160;&#160;&#160;0xF9</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Traction Function Configuration Memory space. </p>
+<p>Train Function Configuration Memory space. </p>
 
 </div>
 </div>

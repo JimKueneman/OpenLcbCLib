@@ -116,20 +116,32 @@ Macros</h2></td></tr>
 <tr class="memdesc:gaa41bfc2a48a167d019ddd088211b8d18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of CDI (Configuration Description Information) buffer in bytes.  <br /></td></tr>
 <tr class="separator:gaa41bfc2a48a167d019ddd088211b8d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0d663b83bcdf006041e64b5a981dc597" id="r_ga0d663b83bcdf006041e64b5a981dc597"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0d663b83bcdf006041e64b5a981dc597">USER_DEFINED_FDI_LENGTH</a>&#160;&#160;&#160;1000</td></tr>
-<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of FDI (Function Description Information) buffer in bytes for traction nodes.  <br /></td></tr>
+<tr class="memdesc:ga0d663b83bcdf006041e64b5a981dc597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of FDI (Function Description Information) buffer in bytes for train nodes.  <br /></td></tr>
 <tr class="separator:ga0d663b83bcdf006041e64b5a981dc597"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2a7a353f22f07963259ad19be53a5b35" id="r_ga2a7a353f22f07963259ad19be53a5b35"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga2a7a353f22f07963259ad19be53a5b35">USER_DEFINED_PRODUCER_COUNT</a>&#160;&#160;&#160;64</td></tr>
 <tr class="memdesc:ga2a7a353f22f07963259ad19be53a5b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of events a node can produce.  <br /></td></tr>
 <tr class="separator:ga2a7a353f22f07963259ad19be53a5b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaac581d5006ed69c49a2fdcdc0ef8c8e2" id="r_gaac581d5006ed69c49a2fdcdc0ef8c8e2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaac581d5006ed69c49a2fdcdc0ef8c8e2">USER_DEFINED_PRODUCER_RANGE_COUNT</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:gaac581d5006ed69c49a2fdcdc0ef8c8e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of event ranges a node can produce, must be at least one for a non zero array.  <br /></td></tr>
+<tr class="separator:gaac581d5006ed69c49a2fdcdc0ef8c8e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7f808bc3e97eec5e6a726f2b9b4698bd" id="r_ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7f808bc3e97eec5e6a726f2b9b4698bd">USER_DEFINED_CONSUMER_COUNT</a>&#160;&#160;&#160;32</td></tr>
 <tr class="memdesc:ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of events a node can consume.  <br /></td></tr>
 <tr class="separator:ga7f808bc3e97eec5e6a726f2b9b4698bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5de4baa8c4feab25b756b8ff800f906e" id="r_ga5de4baa8c4feab25b756b8ff800f906e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga5de4baa8c4feab25b756b8ff800f906e">USER_DEFINED_CONSUMER_RANGE_COUNT</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:ga5de4baa8c4feab25b756b8ff800f906e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of event ranges a node can consume, must be at least one for a non zero array.  <br /></td></tr>
+<tr class="separator:ga5de4baa8c4feab25b756b8ff800f906e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5ac77ac899b0afb5faeba64e61eda7b9" id="r_ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga5ac77ac899b0afb5faeba64e61eda7b9">USER_DEFINED_CONFIG_MEM_USER_NAME_ADDRESS</a>&#160;&#160;&#160;0x00000000</td></tr>
 <tr class="memdesc:ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in Configuration Memory for user-defined node name.  <br /></td></tr>
 <tr class="separator:ga5ac77ac899b0afb5faeba64e61eda7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga88abaa583b85af01cfe62c2e34fd0437" id="r_ga88abaa583b85af01cfe62c2e34fd0437"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga88abaa583b85af01cfe62c2e34fd0437">USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</a>&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a></td></tr>
+<tr class="memitem:ga88abaa583b85af01cfe62c2e34fd0437" id="r_ga88abaa583b85af01cfe62c2e34fd0437"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga88abaa583b85af01cfe62c2e34fd0437">USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS</a>&#160;&#160;&#160;(<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> - 1)</td></tr>
 <tr class="memdesc:ga88abaa583b85af01cfe62c2e34fd0437"><td class="mdescLeft">&#160;</td><td class="mdescRight">Address in Configuration Memory for user description.  <br /></td></tr>
 <tr class="separator:ga88abaa583b85af01cfe62c2e34fd0437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabdc8a0155ff1c1824dc2d31aaff834e0" id="r_gabdc8a0155ff1c1824dc2d31aaff834e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gabdc8a0155ff1c1824dc2d31aaff834e0">USER_DEFINED_TRAIN_NODE_COUNT</a>&#160;&#160;&#160;<a class="el" href="#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a></td></tr>
+<tr class="separator:gabdc8a0155ff1c1824dc2d31aaff834e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4391fa5bc7df0b55343220247f7fbf82" id="r_ga4391fa5bc7df0b55343220247f7fbf82"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4391fa5bc7df0b55343220247f7fbf82">USER_DEFINED_MAX_LISTENERS_PER_TRAIN</a>&#160;&#160;&#160;6</td></tr>
+<tr class="separator:ga4391fa5bc7df0b55343220247f7fbf82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga961fbf38fa41495760bac1affbe3ffaa" id="r_ga961fbf38fa41495760bac1affbe3ffaa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga961fbf38fa41495760bac1affbe3ffaa">USER_DEFINED_MAX_TRAIN_FUNCTIONS</a>&#160;&#160;&#160;29</td></tr>
+<tr class="separator:ga961fbf38fa41495760bac1affbe3ffaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Compile-time configuration parameters for buffer sizes and limits. </p>
@@ -253,7 +265,7 @@ Test defaults are provided for Google Tests </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Size of FDI (Function Description Information) buffer in bytes for traction nodes. </p>
+<p>Size of FDI (Function Description Information) buffer in bytes for train nodes. </p>
 
 </div>
 </div>
@@ -273,6 +285,22 @@ Test defaults are provided for Google Tests </dd></dl>
 
 </div>
 </div>
+<a id="gaac581d5006ed69c49a2fdcdc0ef8c8e2" name="gaac581d5006ed69c49a2fdcdc0ef8c8e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaac581d5006ed69c49a2fdcdc0ef8c8e2">&#9670;&#160;</a></span>USER_DEFINED_PRODUCER_RANGE_COUNT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define USER_DEFINED_PRODUCER_RANGE_COUNT&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maximum number of event ranges a node can produce, must be at least one for a non zero array. </p>
+
+</div>
+</div>
 <a id="ga7f808bc3e97eec5e6a726f2b9b4698bd" name="ga7f808bc3e97eec5e6a726f2b9b4698bd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga7f808bc3e97eec5e6a726f2b9b4698bd">&#9670;&#160;</a></span>USER_DEFINED_CONSUMER_COUNT</h2>
 
@@ -286,6 +314,22 @@ Test defaults are provided for Google Tests </dd></dl>
 </div><div class="memdoc">
 
 <p>Maximum number of events a node can consume. </p>
+
+</div>
+</div>
+<a id="ga5de4baa8c4feab25b756b8ff800f906e" name="ga5de4baa8c4feab25b756b8ff800f906e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5de4baa8c4feab25b756b8ff800f906e">&#9670;&#160;</a></span>USER_DEFINED_CONSUMER_RANGE_COUNT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define USER_DEFINED_CONSUMER_RANGE_COUNT&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maximum number of event ranges a node can consume, must be at least one for a non zero array. </p>
 
 </div>
 </div>
@@ -312,12 +356,55 @@ Test defaults are provided for Google Tests </dd></dl>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS&#160;&#160;&#160;<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a></td>
+          <td class="memname">#define USER_DEFINED_CONFIG_MEM_USER_DESCRIPTION_ADDRESS&#160;&#160;&#160;(<a class="el" href="group__buffer__size__constants.html#ga242f93351655c7e25ea4ad9610a5e725">LEN_SNIP_USER_NAME_BUFFER</a> - 1)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Address in Configuration Memory for user description. </p>
+
+</div>
+</div>
+<a id="gabdc8a0155ff1c1824dc2d31aaff834e0" name="gabdc8a0155ff1c1824dc2d31aaff834e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabdc8a0155ff1c1824dc2d31aaff834e0">&#9670;&#160;</a></span>USER_DEFINED_TRAIN_NODE_COUNT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define USER_DEFINED_TRAIN_NODE_COUNT&#160;&#160;&#160;<a class="el" href="#ga02b00dd66a6ba4b9d405bdff61cc5171">USER_DEFINED_NODE_BUFFER_DEPTH</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga4391fa5bc7df0b55343220247f7fbf82" name="ga4391fa5bc7df0b55343220247f7fbf82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4391fa5bc7df0b55343220247f7fbf82">&#9670;&#160;</a></span>USER_DEFINED_MAX_LISTENERS_PER_TRAIN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define USER_DEFINED_MAX_LISTENERS_PER_TRAIN&#160;&#160;&#160;6</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga961fbf38fa41495760bac1affbe3ffaa" name="ga961fbf38fa41495760bac1affbe3ffaa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga961fbf38fa41495760bac1affbe3ffaa">&#9670;&#160;</a></span>USER_DEFINED_MAX_TRAIN_FUNCTIONS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define USER_DEFINED_MAX_TRAIN_FUNCTIONS&#160;&#160;&#160;29</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>F0-F28, standard DCC range </p>
 
 </div>
 </div>

@@ -242,16 +242,16 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a37e5a1a649985cd431628dd8d0377fa5" id="r_a37e5a1a649985cd431628dd8d0377fa5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37e5a1a649985cd431628dd8d0377fa5">event_transport_pc_report_with_payload</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:a37e5a1a649985cd431628dd8d0377fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Producer/Consumer Event Report with Payload message (MTI 0x05F4)  <br /></td></tr>
 <tr class="separator:a37e5a1a649985cd431628dd8d0377fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">Optional Traction Protocol Handlers</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Train Protocol Handlers</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Train control protocol - set to NULL if not implemented </p>
 </div></td></tr>
-<tr class="memitem:a2dd644aa726fe290af3e4b7cf56e069c" id="r_a2dd644aa726fe290af3e4b7cf56e069c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2dd644aa726fe290af3e4b7cf56e069c">traction_control_command</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a2dd644aa726fe290af3e4b7cf56e069c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Traction Control Command message (MTI 0x05EB)  <br /></td></tr>
-<tr class="separator:a2dd644aa726fe290af3e4b7cf56e069c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05ba0a90b24a4a1f770f085ce2e3fd2c" id="r_a05ba0a90b24a4a1f770f085ce2e3fd2c"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05ba0a90b24a4a1f770f085ce2e3fd2c">traction_control_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
-<tr class="memdesc:a05ba0a90b24a4a1f770f085ce2e3fd2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Traction Control Reply message (MTI 0x01E9)  <br /></td></tr>
-<tr class="separator:a05ba0a90b24a4a1f770f085ce2e3fd2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">Optional Traction SNIP Protocol Handlers</div></td></tr>
+<tr class="memitem:a368c085e82434fce8eb17e3d3c463f08" id="r_a368c085e82434fce8eb17e3d3c463f08"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a368c085e82434fce8eb17e3d3c463f08">train_control_command</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a368c085e82434fce8eb17e3d3c463f08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Train Control Command message (MTI 0x05EB)  <br /></td></tr>
+<tr class="separator:a368c085e82434fce8eb17e3d3c463f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5d26667a8caaa4a1f14a518845f4bf" id="r_a1b5d26667a8caaa4a1f14a518845f4bf"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b5d26667a8caaa4a1f14a518845f4bf">train_control_reply</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
+<tr class="memdesc:a1b5d26667a8caaa4a1f14a518845f4bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Train Control Reply message (MTI 0x01E9)  <br /></td></tr>
+<tr class="separator:a1b5d26667a8caaa4a1f14a518845f4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Train SNIP Protocol Handlers</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Train node information - set to NULL if not implemented </p>
 </div></td></tr>
 <tr class="memitem:a073e47c65638014706cfa91e50589890" id="r_a073e47c65638014706cfa91e50589890"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a073e47c65638014706cfa91e50589890">simple_train_node_ident_info_request</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
@@ -290,6 +290,18 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ac7e86830e537ac54f7579f3d163184de" id="r_ac7e86830e537ac54f7579f3d163184de"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7e86830e537ac54f7579f3d163184de">stream_data_complete</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td></tr>
 <tr class="memdesc:ac7e86830e537ac54f7579f3d163184de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles Stream Data Complete message (MTI 0x08A8)  <br /></td></tr>
 <tr class="separator:ac7e86830e537ac54f7579f3d163184de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Broadcast Time Protocol Handler</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Fast clock synchronization - set to NULL if not implemented </p>
+</div></td></tr>
+<tr class="memitem:ae61e602b483057fc92d4c8e0dac986e9" id="r_ae61e602b483057fc92d4c8e0dac986e9"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae61e602b483057fc92d4c8e0dac986e9">broadcast_time_event_handler</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ae61e602b483057fc92d4c8e0dac986e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles broadcast time events for clock synchronization.  <br /></td></tr>
+<tr class="separator:ae61e602b483057fc92d4c8e0dac986e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Optional Train Search Protocol Handler</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Train search via event space &ndash; set to NULL if not implemented. Unlike broadcast time (node 0 only), called for every train node. </p>
+</div></td></tr>
+<tr class="memitem:ad91e972b5485893674763f527790e3d6" id="r_ad91e972b5485893674763f527790e3d6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad91e972b5485893674763f527790e3d6">train_search_event_handler</a> )(<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:ad91e972b5485893674763f527790e3d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles train search events for discovering train nodes.  <br /></td></tr>
+<tr class="separator:ad91e972b5485893674763f527790e3d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dependency injection interface for OpenLCB Main State Machine operations. </p>
@@ -305,7 +317,7 @@ Data Fields</h2></td></tr>
 <li>Node enumeration: First/next node iteration for multi-node support</li>
 <li>Required protocol handlers: Message Network and Protocol Support (PIP)</li>
 <li>Internal handlers: Exposed for testing and debugging</li>
-<li>Optional protocol handlers: SNIP, Events, Traction, Datagram, Stream</li>
+<li>Optional protocol handlers: SNIP, Events, Train, Datagram, Stream</li>
 </ul>
 <p>Required vs Optional handlers:</p><ul>
 <li>Required handlers MUST be non-NULL and properly implemented</li>
@@ -1570,45 +1582,45 @@ Payload size limited by transport (CAN: multi-frame up to 256 bytes)</dd></dl>
 
 </div>
 </div>
-<a id="a2dd644aa726fe290af3e4b7cf56e069c" name="a2dd644aa726fe290af3e4b7cf56e069c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dd644aa726fe290af3e4b7cf56e069c">&#9670;&#160;</a></span>traction_control_command</h2>
+<a id="a368c085e82434fce8eb17e3d3c463f08" name="a368c085e82434fce8eb17e3d3c463f08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a368c085e82434fce8eb17e3d3c463f08">&#9670;&#160;</a></span>train_control_command</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* traction_control_command) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
+          <td class="memname">void(* train_control_command) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Handles Traction Control Command message (MTI 0x05EB) </p>
+<p>Handles Train Control Command message (MTI 0x05EB) </p>
 <p>Processes train control commands (speed, function, emergency stop, etc.).</p>
-<p>Standard response: Traction Control Reply (MTI 0x01E9)</p>
+<p>Standard response: Train Control Reply (MTI 0x01E9)</p>
 <dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported </dd>
 <dd>
 Default implementation: Protocol-specific handler</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a05ba0a90b24a4a1f770f085ce2e3fd2c" title="Handles Traction Control Reply message (MTI 0x01E9)">traction_control_reply</a> - Response message </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a1b5d26667a8caaa4a1f14a518845f4bf" title="Handles Train Control Reply message (MTI 0x01E9)">train_control_reply</a> - Response message </dd></dl>
 
 </div>
 </div>
-<a id="a05ba0a90b24a4a1f770f085ce2e3fd2c" name="a05ba0a90b24a4a1f770f085ce2e3fd2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05ba0a90b24a4a1f770f085ce2e3fd2c">&#9670;&#160;</a></span>traction_control_reply</h2>
+<a id="a1b5d26667a8caaa4a1f14a518845f4bf" name="a1b5d26667a8caaa4a1f14a518845f4bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b5d26667a8caaa4a1f14a518845f4bf">&#9670;&#160;</a></span>train_control_reply</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void(* traction_control_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
+          <td class="memname">void(* train_control_reply) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Handles Traction Control Reply message (MTI 0x01E9) </p>
+<p>Handles Train Control Reply message (MTI 0x01E9) </p>
 <p>Processes command acknowledgment from train node.</p>
 <p>Standard response: None (informational message only)</p>
 <dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2dd644aa726fe290af3e4b7cf56e069c" title="Handles Traction Control Command message (MTI 0x05EB)">traction_control_command</a> - Command message </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a368c085e82434fce8eb17e3d3c463f08" title="Handles Train Control Command message (MTI 0x05EB)">train_control_command</a> - Command message </dd></dl>
 
 </div>
 </div>
@@ -1828,6 +1840,76 @@ Default implementation: Protocol-specific handler based on content ID</dd></dl>
 <p>Standard response: None (close stream connection)</p>
 <dl class="section note"><dt>Note</dt><dd>Optional - can be NULL if this command is not supported</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a317047b3f7f1050dd011108a4a3322eb" title="Handles Stream Data Send message (MTI 0x1F88)">stream_send_data</a> - Data message </dd></dl>
+
+</div>
+</div>
+<a id="ae61e602b483057fc92d4c8e0dac986e9" name="ae61e602b483057fc92d4c8e0dac986e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae61e602b483057fc92d4c8e0dac986e9">&#9670;&#160;</a></span>broadcast_time_event_handler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* broadcast_time_event_handler) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Handles broadcast time events for clock synchronization. </p>
+<p>Processes PC Event Report messages containing broadcast time Event IDs. This function is called by the Event Transport handler when it detects a broadcast time Event ID format.</p>
+<p>Broadcast time events encode clock data directly in the Event ID:</p><ul>
+<li>Time (hour/minute)</li>
+<li>Date (month/day)</li>
+<li>Year</li>
+<li>Clock rate (for fast/slow time simulation)</li>
+<li>Clock control commands (start/stop/query)</li>
+</ul>
+<p>Standard response: None (informational - consumer updates clock state)</p>
+<p>Event ID structure:</p><ul>
+<li>Bits 63-16: Clock ID (which clock this event belongs to)</li>
+<li>Bits 15-0: Encoded time/date/year/rate/command</li>
+</ul>
+<p>Use cases:</p><ul>
+<li>Fast clock synchronization for model railroad operations</li>
+<li>Multiple independent clocks on one network</li>
+<li>Clock displays and time-triggered automation</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>Optional - set to NULL if broadcast time not implemented </dd>
+<dd>
+Only processed if node-&gt;is_clock_consumer == 1</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default implementation: <a class="el" href="protocol__broadcast__time__handler_8c.html#a56545d916bd644bc5b3e8c8a6f86ef53" title="Handles incoming broadcast time events.">ProtocolBroadcastTime_handle_time_event()</a> </dd>
+<dd>
+Called from Event Transport handler, not main dispatcher </dd>
+<dd>
+Updates node-&gt;clock_state with decoded time data</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="protocol__broadcast__time__handler_8c.html#a56545d916bd644bc5b3e8c8a6f86ef53" title="Handles incoming broadcast time events.">ProtocolBroadcastTime_handle_time_event</a> - Default implementation </dd>
+<dd>
+<a class="el" href="protocol__broadcast__time__handler_8c.html#ae10dd7b8798b7f1d7805c8e5863b3e2a" title="Initializes the Broadcast Time Protocol handler.">ProtocolBroadcastTime_initialize</a> - Register application callbacks </dd>
+<dd>
+<a class="el" href="#adc01111fedf9f7728a66f2ada7b711b1" title="Handles Producer/Consumer Event Report message (MTI 0x05B4)">event_transport_pc_report</a> - Event Transport handler that calls this </dd></dl>
+
+</div>
+</div>
+<a id="ad91e972b5485893674763f527790e3d6" name="ad91e972b5485893674763f527790e3d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad91e972b5485893674763f527790e3d6">&#9670;&#160;</a></span>train_search_event_handler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* train_search_event_handler) (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Handles train search events for discovering train nodes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">statemachine_info</td><td>State machine context </td></tr>
+    <tr><td class="paramname">event_id</td><td>The full 64-bit search event ID </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

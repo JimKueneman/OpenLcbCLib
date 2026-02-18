@@ -104,6 +104,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a78c4dd26cc000fae9e2af5b6453ad511" id="r_a78c4dd26cc000fae9e2af5b6453ad511"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78c4dd26cc000fae9e2af5b6453ad511">OpenLcbApplication_initialize</a> (const <a class="el" href="structinterface__openlcb__application__t.html">interface_openlcb_application_t</a> *interface_openlcb_application)</td></tr>
 <tr class="memdesc:a78c4dd26cc000fae9e2af5b6453ad511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the OpenLCB Application interface.  <br /></td></tr>
 <tr class="separator:a78c4dd26cc000fae9e2af5b6453ad511"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90a0fe82553f0554429866a6bc770e40" id="r_a90a0fe82553f0554429866a6bc770e40"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90a0fe82553f0554429866a6bc770e40">OpenLcbApplication_send_event_with_mti</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t mti)</td></tr>
+<tr class="separator:a90a0fe82553f0554429866a6bc770e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d8d8805e7ddd4c67084bd273d6f95bb" id="r_a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d8d8805e7ddd4c67084bd273d6f95bb">OpenLcbApplication_clear_consumer_eventids</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
 <tr class="memdesc:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all consumer event IDs registered for the specified node.  <br /></td></tr>
 <tr class="separator:a5d8d8805e7ddd4c67084bd273d6f95bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,6 +118,14 @@ Functions</h2></td></tr>
 <tr class="memitem:a89b413f9021c179fab80ce4ec132cc2c" id="r_a89b413f9021c179fab80ce4ec132cc2c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89b413f9021c179fab80ce4ec132cc2c">OpenLcbApplication_register_producer_eventid</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, <a class="el" href="openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ce">event_status_enum</a> event_status)</td></tr>
 <tr class="memdesc:a89b413f9021c179fab80ce4ec132cc2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a producer event ID with the specified node.  <br /></td></tr>
 <tr class="separator:a89b413f9021c179fab80ce4ec132cc2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fbe6ee65257dfe82cb8931aaa1a65ab" id="r_a4fbe6ee65257dfe82cb8931aaa1a65ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fbe6ee65257dfe82cb8931aaa1a65ab">OpenLcbApplication_clear_consumer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="separator:a4fbe6ee65257dfe82cb8931aaa1a65ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9715c78e46027ef0b820f02db535773b" id="r_a9715c78e46027ef0b820f02db535773b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9715c78e46027ef0b820f02db535773b">OpenLcbApplication_clear_producer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node)</td></tr>
+<tr class="separator:a9715c78e46027ef0b820f02db535773b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32922743b79ea43e2c4b67a74f05db6c" id="r_a32922743b79ea43e2c4b67a74f05db6c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32922743b79ea43e2c4b67a74f05db6c">OpenLcbApplication_register_consumer_range</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id_base, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> range_size)</td></tr>
+<tr class="separator:a32922743b79ea43e2c4b67a74f05db6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fc87073f3058af5461777cf7c2bda91" id="r_a7fc87073f3058af5461777cf7c2bda91"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fc87073f3058af5461777cf7c2bda91">OpenLcbApplication_register_producer_range</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id_base, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> range_size)</td></tr>
+<tr class="separator:a7fc87073f3058af5461777cf7c2bda91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56e3f060f9a65d5d4b35588ffd4a0028" id="r_a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028">OpenLcbApplication_send_event_pc_report</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
 <tr class="memdesc:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a Producer/Consumer event report message.  <br /></td></tr>
 <tr class="separator:a56e3f060f9a65d5d4b35588ffd4a0028"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,6 +178,8 @@ protocol_config_mem.c - Configuration memory protocol handling </dd></dl>
 </div><div class="memdoc">
 
 <p>Initializes the OpenLCB Application interface. </p>
+<p>Initialization <br  />
+</p>
 <p>Algorithm: Stores the application-provided interface pointer in static memory for use by all application layer functions throughout the program's lifetime.</p><ol type="1">
 <li>Cast away const qualifier from interface pointer</li>
 <li>Store pointer in static _interface variable</li>
@@ -183,6 +195,32 @@ All function pointers in the interface must be non-NULL. NULL pointers will caus
 <dl class="section attention"><dt>Attention</dt><dd>Must be called during single-threaded initialization phase.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The const cast is safe because the interface structure should be defined as a static const in the application code.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structinterface__openlcb__application__t.html" title="Interface structure for application layer callbacks.">interface_openlcb_application_t</a> </dd></dl>
+
+</div>
+</div>
+<a id="a90a0fe82553f0554429866a6bc770e40" name="a90a0fe82553f0554429866a6bc770e40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90a0fe82553f0554429866a6bc770e40">&#9670;&#160;</a></span>OpenLcbApplication_send_event_with_mti()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplication_send_event_with_mti </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>mti</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -347,6 +385,92 @@ Producer array has fixed size USER_DEFINED_PRODUCER_COUNT. Caller must check for
 <a class="el" href="#a56e3f060f9a65d5d4b35588ffd4a0028" title="Sends a Producer/Consumer event report message.">OpenLcbApplication_send_event_pc_report</a> - To send registered events </dd>
 <dd>
 <a class="el" href="protocol__event__transport_8c.html" title="Implementation of event transport protocol.">protocol_event_transport.c</a> - Producer Identified message handling </dd></dl>
+
+</div>
+</div>
+<a id="a4fbe6ee65257dfe82cb8931aaa1a65ab" name="a4fbe6ee65257dfe82cb8931aaa1a65ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fbe6ee65257dfe82cb8931aaa1a65ab">&#9670;&#160;</a></span>OpenLcbApplication_clear_consumer_ranges()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbApplication_clear_consumer_ranges </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9715c78e46027ef0b820f02db535773b" name="a9715c78e46027ef0b820f02db535773b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9715c78e46027ef0b820f02db535773b">&#9670;&#160;</a></span>OpenLcbApplication_clear_producer_ranges()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbApplication_clear_producer_ranges </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a32922743b79ea43e2c4b67a74f05db6c" name="a32922743b79ea43e2c4b67a74f05db6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32922743b79ea43e2c4b67a74f05db6c">&#9670;&#160;</a></span>OpenLcbApplication_register_consumer_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplication_register_consumer_range </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id_base</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a></td>          <td class="paramname"><span class="paramname"><em>range_size</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7fc87073f3058af5461777cf7c2bda91" name="a7fc87073f3058af5461777cf7c2bda91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fc87073f3058af5461777cf7c2bda91">&#9670;&#160;</a></span>OpenLcbApplication_register_producer_range()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbApplication_register_producer_range </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id_base</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a></td>          <td class="paramname"><span class="paramname"><em>range_size</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

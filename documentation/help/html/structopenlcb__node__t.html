@@ -119,6 +119,8 @@ Data Fields</h2></td></tr>
 <tr class="separator:a3f27044ef211c0dd8c46db692a48850a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae5a12e607d0f782506d9e6ec6179c64" id="r_aae5a12e607d0f782506d9e6ec6179c64"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae5a12e607d0f782506d9e6ec6179c64">index</a></td></tr>
 <tr class="separator:aae5a12e607d0f782506d9e6ec6179c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06bedf5466ecbf8da42b92ba7431aa1a" id="r_a06bedf5466ecbf8da42b92ba7431aa1a"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structtrain__state___t_a_g.html">train_state_TAG</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06bedf5466ecbf8da42b92ba7431aa1a">train_state</a></td></tr>
+<tr class="separator:a06bedf5466ecbf8da42b92ba7431aa1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>OpenLCB virtual node structure. </p>
@@ -143,6 +145,7 @@ Data Fields</h2></td></tr>
 <p><b>Protocol State:</b></p><ul>
 <li>owner_node: Node ID that currently has this node locked</li>
 <li>last_received_datagram: Saved for reply processing</li>
+<li>train_state: Train protocol state (NULL if not a train node)</li>
 </ul>
 <dl class="section warning"><dt>Warning</dt><dd>Node structures cannot be deallocated once allocated </dd>
 <dd>
@@ -313,6 +316,21 @@ parameters pointer must remain valid for node lifetime</dd></dl>
       </table>
 </div><div class="memdoc">
 <p>Index in node array </p>
+
+</div>
+</div>
+<a id="a06bedf5466ecbf8da42b92ba7431aa1a" name="a06bedf5466ecbf8da42b92ba7431aa1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06bedf5466ecbf8da42b92ba7431aa1a">&#9670;&#160;</a></span>train_state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structtrain__state___t_a_g.html">train_state_TAG</a>* train_state</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Train state (NULL if not a train node) </p>
 
 </div>
 </div>

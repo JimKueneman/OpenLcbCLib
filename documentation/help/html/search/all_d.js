@@ -6,7 +6,7 @@ var searchData=
   ['node_20enumeration_20key_20management_3',['Node Enumeration Key Management',['../group__node__enum__keys.html',1,'']]],
   ['node_20information_20protocol_20mti_20codes_4',['Simple Node Information Protocol MTI Codes',['../group__mti__snip.html',1,'']]],
   ['node_20login_20state_20machine_20states_5',['Node Login State Machine States',['../group__node__login__states.html',1,'']]],
-  ['node_5fid_6',['node_id',['../structalias__mapping__struct.html#a26b9b3fc98a16e1a7ec6501b9c5395cc',1,'alias_mapping_struct']]],
+  ['node_5fid_6',['node_id',['../structtrain__listener__entry__t.html#a26b9b3fc98a16e1a7ec6501b9c5395cc',1,'train_listener_entry_t::node_id'],['../structalias__mapping__struct.html#a26b9b3fc98a16e1a7ec6501b9c5395cc',1,'alias_mapping_struct::node_id']]],
   ['node_5fid_5ft_7',['node_id_t',['../openlcb__types_8h.html#ab63b0eaf893badf557397c77fb74fe3c',1,'openlcb_types.h']]],
   ['node_5fparameters_5ft_8',['node_parameters_t',['../structnode__parameters__t.html',1,'']]],
   ['non_20auto_20routed_20well_20known_20events_9',['Non-Auto-Routed Well-Known Events',['../group__well__known__events__local.html',1,'']]],

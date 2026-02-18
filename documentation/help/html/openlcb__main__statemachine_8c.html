@@ -160,7 +160,7 @@ Functions</h2></td></tr>
 </ol>
 <p>Protocol support:</p><ul>
 <li>Required: Message Network Protocol, Protocol Support (PIP)</li>
-<li>Optional: SNIP, Events, Traction, Datagrams, Streams Optional protocols with NULL handlers automatically generate Interaction Rejected responses for compliance with OpenLCB specifications.</li>
+<li>Optional: SNIP, Events, Train, Datagrams, Streams Optional protocols with NULL handlers automatically generate Interaction Rejected responses for compliance with OpenLCB specifications.</li>
 </ul>
 <p>Thread safety: Resource locking callbacks protect access to shared buffer pools and FIFOs.</p>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
@@ -388,9 +388,9 @@ Assumes pointer message buffer is available</dd></dl>
 <li>MTI_PC_EVENT_REPORT → event_transport_pc_report</li>
 <li>MTI_PC_EVENT_REPORT_WITH_PAYLOAD → event_transport_pc_report_with_payload</li>
 </ul>
-<p>Traction Protocol:</p><ul>
-<li>MTI_TRACTION_PROTOCOL → traction_control_command (or reject)</li>
-<li>MTI_TRACTION_REPLY → traction_control_reply</li>
+<p>Train Protocol:</p><ul>
+<li>MTI_TRAIN_PROTOCOL → train_control_command (or reject)</li>
+<li>MTI_TRAIN_REPLY → train_control_reply</li>
 <li>MTI_SIMPLE_TRAIN_INFO_REQUEST → simple_train_node_ident_info_request (or reject)</li>
 <li>MTI_SIMPLE_TRAIN_INFO_REPLY → simple_train_node_ident_info_reply</li>
 </ul>
@@ -407,7 +407,7 @@ Assumes pointer message buffer is available</dd></dl>
 <li>MTI_STREAM_COMPLETE → stream_data_complete</li>
 </ul>
 <p>Interaction Rejected behavior:</p><ul>
-<li>Request messages (SNIP request, Traction command, Train info request): Generate Interaction Rejected if handler is NULL</li>
+<li>Request messages (SNIP request, Train command, Train info request): Generate Interaction Rejected if handler is NULL</li>
 <li>Reply/indication messages: Silently ignored if handler is NULL</li>
 <li>Unknown addressed MTIs: Generate Interaction Rejected</li>
 <li>Unknown global MTIs: Silently ignored</li>

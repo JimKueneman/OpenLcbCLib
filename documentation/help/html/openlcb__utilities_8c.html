@@ -197,6 +197,63 @@ Functions</h2></td></tr>
 <tr class="memitem:ad0acbbfd410c33c725f1be639783dbf7" id="r_ad0acbbfd410c33c725f1be639783dbf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0acbbfd410c33c725f1be639783dbf7">OpenLcbUtilities_load_config_mem_reply_read_fail_message_header</a> (<a class="el" href="structopenlcb__statemachine__info__t.html">openlcb_statemachine_info_t</a> *statemachine_info, <a class="el" href="structconfig__mem__read__request__info__t.html">config_mem_read_request_info_t</a> *config_mem_read_request_info, uint16_t error_code)</td></tr>
 <tr class="memdesc:ad0acbbfd410c33c725f1be639783dbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a configuration memory read failure reply message header.  <br /></td></tr>
 <tr class="separator:ad0acbbfd410c33c725f1be639783dbf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac96b7768edfeaf28e8a9474455f93659" id="r_ac96b7768edfeaf28e8a9474455f93659"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac96b7768edfeaf28e8a9474455f93659">OpenLcbUtilities_is_event_id_in_consumer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="separator:ac96b7768edfeaf28e8a9474455f93659"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad3895e8e4933d384cf8c626fa00f51c" id="r_aad3895e8e4933d384cf8c626fa00f51c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad3895e8e4933d384cf8c626fa00f51c">OpenLcbUtilities_is_event_id_in_producer_ranges</a> (<a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *openlcb_node, <a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="separator:aad3895e8e4933d384cf8c626fa00f51c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47b6a34610057c9cc23e130ddc33617f" id="r_a47b6a34610057c9cc23e130ddc33617f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47b6a34610057c9cc23e130ddc33617f">OpenLcbUtilities_generate_event_range_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> base_event_id, <a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a> count)</td></tr>
+<tr class="separator:a47b6a34610057c9cc23e130ddc33617f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d3dedeec93238f781376e67143c010c" id="r_a9d3dedeec93238f781376e67143c010c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d3dedeec93238f781376e67143c010c">OpenLcbUtilities_is_broadcast_time_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a9d3dedeec93238f781376e67143c010c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if an Event ID is a broadcast time event.  <br /></td></tr>
+<tr class="separator:a9d3dedeec93238f781376e67143c010c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f31c219624dab8c2aa02e39c2bca96e" id="r_a2f31c219624dab8c2aa02e39c2bca96e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f31c219624dab8c2aa02e39c2bca96e">OpenLcbUtilities_extract_clock_id_from_time_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a2f31c219624dab8c2aa02e39c2bca96e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts clock ID from broadcast time Event ID.  <br /></td></tr>
+<tr class="separator:a2f31c219624dab8c2aa02e39c2bca96e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf584d752ad0787034618a14f69c4a11" id="r_aaf584d752ad0787034618a14f69c4a11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf584d752ad0787034618a14f69c4a11">OpenLcbUtilities_get_broadcast_time_event_type</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aaf584d752ad0787034618a14f69c4a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the type of broadcast time event from Event ID.  <br /></td></tr>
+<tr class="separator:aaf584d752ad0787034618a14f69c4a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed514896d5573d06d6b41b5753091a08" id="r_aed514896d5573d06d6b41b5753091a08"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed514896d5573d06d6b41b5753091a08">OpenLcbUtilities_extract_time_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *hour, uint8_t *minute)</td></tr>
+<tr class="memdesc:aed514896d5573d06d6b41b5753091a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts time (hour/minute) from broadcast time Event ID.  <br /></td></tr>
+<tr class="separator:aed514896d5573d06d6b41b5753091a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa3b8179b16d53d28e90c3a5e1340193" id="r_afa3b8179b16d53d28e90c3a5e1340193"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa3b8179b16d53d28e90c3a5e1340193">OpenLcbUtilities_extract_date_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *month, uint8_t *day)</td></tr>
+<tr class="memdesc:afa3b8179b16d53d28e90c3a5e1340193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts date (month/day) from broadcast time Event ID.  <br /></td></tr>
+<tr class="separator:afa3b8179b16d53d28e90c3a5e1340193"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc10b4f6a222e95a620a12d193a27c69" id="r_abc10b4f6a222e95a620a12d193a27c69"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc10b4f6a222e95a620a12d193a27c69">OpenLcbUtilities_extract_year_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint16_t *year)</td></tr>
+<tr class="memdesc:abc10b4f6a222e95a620a12d193a27c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts year from broadcast time Event ID.  <br /></td></tr>
+<tr class="separator:abc10b4f6a222e95a620a12d193a27c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25a2546a9cd1f6caf4fefc7c9471847e" id="r_a25a2546a9cd1f6caf4fefc7c9471847e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25a2546a9cd1f6caf4fefc7c9471847e">OpenLcbUtilities_extract_rate_from_event_id</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, int16_t *rate)</td></tr>
+<tr class="memdesc:a25a2546a9cd1f6caf4fefc7c9471847e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts clock rate from broadcast time Event ID.  <br /></td></tr>
+<tr class="separator:a25a2546a9cd1f6caf4fefc7c9471847e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0749230cbe60928a3f601a0d919fdd46" id="r_a0749230cbe60928a3f601a0d919fdd46"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0749230cbe60928a3f601a0d919fdd46">OpenLcbUtilities_create_time_event_id</a> (uint64_t clock_id, uint8_t hour, uint8_t minute, bool is_set)</td></tr>
+<tr class="memdesc:a0749230cbe60928a3f601a0d919fdd46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for time events.  <br /></td></tr>
+<tr class="separator:a0749230cbe60928a3f601a0d919fdd46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3316cbf73ccec04d15b6f4a2285a7729" id="r_a3316cbf73ccec04d15b6f4a2285a7729"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3316cbf73ccec04d15b6f4a2285a7729">OpenLcbUtilities_create_date_event_id</a> (uint64_t clock_id, uint8_t month, uint8_t day, bool is_set)</td></tr>
+<tr class="memdesc:a3316cbf73ccec04d15b6f4a2285a7729"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for date events.  <br /></td></tr>
+<tr class="separator:a3316cbf73ccec04d15b6f4a2285a7729"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57fc8ec6df0324d5a8a2b96872fb999c" id="r_a57fc8ec6df0324d5a8a2b96872fb999c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57fc8ec6df0324d5a8a2b96872fb999c">OpenLcbUtilities_create_year_event_id</a> (uint64_t clock_id, uint16_t year, bool is_set)</td></tr>
+<tr class="memdesc:a57fc8ec6df0324d5a8a2b96872fb999c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for year events.  <br /></td></tr>
+<tr class="separator:a57fc8ec6df0324d5a8a2b96872fb999c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4075cb9bc1895bda34727a603915c342" id="r_a4075cb9bc1895bda34727a603915c342"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4075cb9bc1895bda34727a603915c342">OpenLcbUtilities_create_rate_event_id</a> (uint64_t clock_id, int16_t rate, bool is_set)</td></tr>
+<tr class="memdesc:a4075cb9bc1895bda34727a603915c342"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for rate events.  <br /></td></tr>
+<tr class="separator:a4075cb9bc1895bda34727a603915c342"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cfdd3213341ea2e3aa3c04f1a991205" id="r_a4cfdd3213341ea2e3aa3c04f1a991205"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cfdd3213341ea2e3aa3c04f1a991205">OpenLcbUtilities_create_command_event_id</a> (uint64_t clock_id, <a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> command)</td></tr>
+<tr class="memdesc:a4cfdd3213341ea2e3aa3c04f1a991205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a broadcast time Event ID for command events.  <br /></td></tr>
+<tr class="separator:a4cfdd3213341ea2e3aa3c04f1a991205"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72ea82898e834d55b36e11e07a83c04a" id="r_a72ea82898e834d55b36e11e07a83c04a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72ea82898e834d55b36e11e07a83c04a">OpenLcbUtilities_is_train_search_event</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:a72ea82898e834d55b36e11e07a83c04a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether an event ID belongs to the Train Search space.  <br /></td></tr>
+<tr class="separator:a72ea82898e834d55b36e11e07a83c04a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac16df99aa78e31a3d04339e23d1f9db8" id="r_ac16df99aa78e31a3d04339e23d1f9db8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac16df99aa78e31a3d04339e23d1f9db8">OpenLcbUtilities_extract_train_search_digits</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id, uint8_t *digits)</td></tr>
+<tr class="memdesc:ac16df99aa78e31a3d04339e23d1f9db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts 6 search-query nibbles from a train search event ID.  <br /></td></tr>
+<tr class="separator:ac16df99aa78e31a3d04339e23d1f9db8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5eda1bd2c9a26747d3d239661d99b8a" id="r_aa5eda1bd2c9a26747d3d239661d99b8a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5eda1bd2c9a26747d3d239661d99b8a">OpenLcbUtilities_extract_train_search_flags</a> (<a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> event_id)</td></tr>
+<tr class="memdesc:aa5eda1bd2c9a26747d3d239661d99b8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts the flags byte (byte 7) from a train search event ID.  <br /></td></tr>
+<tr class="separator:aa5eda1bd2c9a26747d3d239661d99b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe285d8d2b51616c319f1e98983e1f7b" id="r_afe285d8d2b51616c319f1e98983e1f7b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe285d8d2b51616c319f1e98983e1f7b">OpenLcbUtilities_train_search_digits_to_address</a> (const uint8_t *digits)</td></tr>
+<tr class="memdesc:afe285d8d2b51616c319f1e98983e1f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts 6-nibble digit array to a numeric DCC address.  <br /></td></tr>
+<tr class="separator:afe285d8d2b51616c319f1e98983e1f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1601d2fefb6a3693e58b50956e42376a" id="r_a1601d2fefb6a3693e58b50956e42376a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1601d2fefb6a3693e58b50956e42376a">OpenLcbUtilities_create_train_search_event_id</a> (uint16_t address, uint8_t flags)</td></tr>
+<tr class="memdesc:a1601d2fefb6a3693e58b50956e42376a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a train search event ID from address and flags.  <br /></td></tr>
+<tr class="separator:a1601d2fefb6a3693e58b50956e42376a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of common utility functions for OpenLCB message and buffer manipulation. </p>
@@ -1929,6 +1986,637 @@ Does NOT set outgoing_msg_info.valid (differs from write functions).</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#add25f972525f3d14f22f4657a74e0c9c" title="Loads a configuration memory read success reply message header.">OpenLcbUtilities_load_config_mem_reply_read_ok_message_header</a> - Success version </dd>
 <dd>
 protocol_config_mem_*.c - Uses this for error responses </dd></dl>
+
+</div>
+</div>
+<a id="ac96b7768edfeaf28e8a9474455f93659" name="ac96b7768edfeaf28e8a9474455f93659"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac96b7768edfeaf28e8a9474455f93659">&#9670;&#160;</a></span>OpenLcbUtilities_is_event_id_in_consumer_ranges()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_is_event_id_in_consumer_ranges </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aad3895e8e4933d384cf8c626fa00f51c" name="aad3895e8e4933d384cf8c626fa00f51c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad3895e8e4933d384cf8c626fa00f51c">&#9670;&#160;</a></span>OpenLcbUtilities_is_event_id_in_producer_ranges()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_is_event_id_in_producer_ranges </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structopenlcb__node__t.html">openlcb_node_t</a> *</td>          <td class="paramname"><span class="paramname"><em>openlcb_node</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a47b6a34610057c9cc23e130ddc33617f" name="a47b6a34610057c9cc23e130ddc33617f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47b6a34610057c9cc23e130ddc33617f">&#9670;&#160;</a></span>OpenLcbUtilities_generate_event_range_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_generate_event_range_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>base_event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a29cac8697a125631149cacda733a9faa">event_range_count_enum</a></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9d3dedeec93238f781376e67143c010c" name="a9d3dedeec93238f781376e67143c010c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d3dedeec93238f781376e67143c010c">&#9670;&#160;</a></span>OpenLcbUtilities_is_broadcast_time_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_is_broadcast_time_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determines if an Event ID is a broadcast time event. </p>
+<p>Checks if the upper 6 bytes of the Event ID match any of the well-known broadcast time clock IDs. This is used to detect time events before passing them to the broadcast time protocol handler.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit Event ID to check</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if Event ID is a broadcast time event, false otherwise</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__utilities_8h.html#aaf584d752ad0787034618a14f69c4a11" title="Determines the type of broadcast time event from Event ID.">OpenLcbUtilities_get_broadcast_time_event_type</a> - Determines event type </dd>
+<dd>
+<a class="el" href="group__broadcast__time__events.html#gaa660f0e811458386f2e21f644ac0aade" title="Mask for extracting clock ID (upper 6 bytes) from Event ID.">BROADCAST_TIME_MASK_CLOCK_ID</a> - Mask for extracting clock ID </dd></dl>
+
+</div>
+</div>
+<a id="a2f31c219624dab8c2aa02e39c2bca96e" name="a2f31c219624dab8c2aa02e39c2bca96e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f31c219624dab8c2aa02e39c2bca96e">&#9670;&#160;</a></span>OpenLcbUtilities_extract_clock_id_from_time_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t OpenLcbUtilities_extract_clock_id_from_time_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts clock ID from broadcast time Event ID. </p>
+<p>Extracts the upper 6 bytes of the Event ID which identify which clock this event belongs to.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>48-bit clock identifier (upper 6 bytes of Event ID)</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__broadcast__time__events.html#gaa660f0e811458386f2e21f644ac0aade" title="Mask for extracting clock ID (upper 6 bytes) from Event ID.">BROADCAST_TIME_MASK_CLOCK_ID</a> - Mask used for extraction </dd></dl>
+
+</div>
+</div>
+<a id="aaf584d752ad0787034618a14f69c4a11" name="aaf584d752ad0787034618a14f69c4a11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf584d752ad0787034618a14f69c4a11">&#9670;&#160;</a></span>OpenLcbUtilities_get_broadcast_time_event_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a> OpenLcbUtilities_get_broadcast_time_event_type </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determines the type of broadcast time event from Event ID. </p>
+<p>Examines the lower 2 bytes of the Event ID to determine which type of broadcast time event it represents (time, date, year, rate, command).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Enumerated event type, or BROADCAST_TIME_EVENT_UNKNOWN if invalid</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a" title="Broadcast Time Protocol event type enumeration.">broadcast_time_event_type_enum</a> - Return value enumeration </dd></dl>
+
+</div>
+</div>
+<a id="aed514896d5573d06d6b41b5753091a08" name="aed514896d5573d06d6b41b5753091a08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed514896d5573d06d6b41b5753091a08">&#9670;&#160;</a></span>OpenLcbUtilities_extract_time_from_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_extract_time_from_event_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>minute</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts time (hour/minute) from broadcast time Event ID. </p>
+<p>Decodes hour and minute from the lower 2 bytes of a Report Time or Set Time Event ID.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
+    <tr><td class="paramname">hour</td><td>Pointer to store extracted hour (0-23) </td></tr>
+    <tr><td class="paramname">minute</td><td>Pointer to store extracted minute (0-59)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful and values valid, false otherwise</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns false if hour &gt;= 24 or minute &gt;= 60 </dd></dl>
+
+</div>
+</div>
+<a id="afa3b8179b16d53d28e90c3a5e1340193" name="afa3b8179b16d53d28e90c3a5e1340193"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa3b8179b16d53d28e90c3a5e1340193">&#9670;&#160;</a></span>OpenLcbUtilities_extract_date_from_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_extract_date_from_event_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>month</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>day</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts date (month/day) from broadcast time Event ID. </p>
+<p>Decodes month and day from the lower 2 bytes of a Report Date or Set Date Event ID.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
+    <tr><td class="paramname">month</td><td>Pointer to store extracted month (1-12) </td></tr>
+    <tr><td class="paramname">day</td><td>Pointer to store extracted day (1-31)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful and values valid, false otherwise</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns false if month &lt; 1 or month &gt; 12 or day &lt; 1 or day &gt; 31 </dd></dl>
+
+</div>
+</div>
+<a id="abc10b4f6a222e95a620a12d193a27c69" name="abc10b4f6a222e95a620a12d193a27c69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc10b4f6a222e95a620a12d193a27c69">&#9670;&#160;</a></span>OpenLcbUtilities_extract_year_from_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_extract_year_from_event_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>year</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts year from broadcast time Event ID. </p>
+<p>Decodes year from the lower 2 bytes of a Report Year or Set Year Event ID.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
+    <tr><td class="paramname">year</td><td>Pointer to store extracted year (0-4095 AD)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a25a2546a9cd1f6caf4fefc7c9471847e" name="a25a2546a9cd1f6caf4fefc7c9471847e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25a2546a9cd1f6caf4fefc7c9471847e">&#9670;&#160;</a></span>OpenLcbUtilities_extract_rate_from_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_extract_rate_from_event_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t *</td>          <td class="paramname"><span class="paramname"><em>rate</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts clock rate from broadcast time Event ID. </p>
+<p>Decodes the 12-bit signed fixed-point rate value from a Report Rate or Set Rate Event ID. Rate format is 10.2 fixed point (2 fractional bits).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit broadcast time Event ID </td></tr>
+    <tr><td class="paramname">rate</td><td>Pointer to store extracted rate (12-bit signed fixed point)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if extraction successful, false otherwise</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Rate examples: 0x0004=1.00 (real-time), 0x0010=4.00 (4x speed) </dd></dl>
+
+</div>
+</div>
+<a id="a0749230cbe60928a3f601a0d919fdd46" name="a0749230cbe60928a3f601a0d919fdd46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0749230cbe60928a3f601a0d919fdd46">&#9670;&#160;</a></span>OpenLcbUtilities_create_time_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_create_time_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>minute</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a broadcast time Event ID for time events. </p>
+<p>Constructs a Report Time or Set Time Event ID by encoding hour and minute into the lower 2 bytes of the specified clock ID.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
+    <tr><td class="paramname">hour</td><td>Hour value (0-23) </td></tr>
+    <tr><td class="paramname">minute</td><td>Minute value (0-59) </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for Set Time, false for Report Time</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>No validation - caller must ensure hour &lt; 24 and minute &lt; 60 </dd></dl>
+
+</div>
+</div>
+<a id="a3316cbf73ccec04d15b6f4a2285a7729" name="a3316cbf73ccec04d15b6f4a2285a7729"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3316cbf73ccec04d15b6f4a2285a7729">&#9670;&#160;</a></span>OpenLcbUtilities_create_date_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_create_date_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>month</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>day</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a broadcast time Event ID for date events. </p>
+<p>Constructs a Report Date or Set Date Event ID by encoding month and day into the lower 2 bytes of the specified clock ID.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
+    <tr><td class="paramname">month</td><td>Month value (1-12) </td></tr>
+    <tr><td class="paramname">day</td><td>Day value (1-31) </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for Set Date, false for Report Date</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>No validation - caller must ensure valid month/day values </dd></dl>
+
+</div>
+</div>
+<a id="a57fc8ec6df0324d5a8a2b96872fb999c" name="a57fc8ec6df0324d5a8a2b96872fb999c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57fc8ec6df0324d5a8a2b96872fb999c">&#9670;&#160;</a></span>OpenLcbUtilities_create_year_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_create_year_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>year</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a broadcast time Event ID for year events. </p>
+<p>Constructs a Report Year or Set Year Event ID by encoding year into the lower 2 bytes of the specified clock ID.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
+    <tr><td class="paramname">year</td><td>Year value (0-4095 AD) </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for Set Year, false for Report Year</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>No validation - caller must ensure year &lt;= 4095 </dd></dl>
+
+</div>
+</div>
+<a id="a4075cb9bc1895bda34727a603915c342" name="a4075cb9bc1895bda34727a603915c342"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4075cb9bc1895bda34727a603915c342">&#9670;&#160;</a></span>OpenLcbUtilities_create_rate_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_create_rate_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t</td>          <td class="paramname"><span class="paramname"><em>rate</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>is_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a broadcast time Event ID for rate events. </p>
+<p>Constructs a Report Rate or Set Rate Event ID by encoding the 12-bit signed fixed-point rate into the lower 2 bytes.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
+    <tr><td class="paramname">rate</td><td>12-bit signed fixed point rate value </td></tr>
+    <tr><td class="paramname">is_set</td><td>true for Set Rate, false for Report Rate</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Rate format: 10.2 fixed point (e.g., 0x0004 = 1.00) </dd></dl>
+
+</div>
+</div>
+<a id="a4cfdd3213341ea2e3aa3c04f1a991205" name="a4cfdd3213341ea2e3aa3c04f1a991205"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cfdd3213341ea2e3aa3c04f1a991205">&#9670;&#160;</a></span>OpenLcbUtilities_create_command_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_create_command_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t</td>          <td class="paramname"><span class="paramname"><em>clock_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#ab52e2c84bc398c0dea7b742e92e2314a">broadcast_time_event_type_enum</a></td>          <td class="paramname"><span class="paramname"><em>command</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a broadcast time Event ID for command events. </p>
+<p>Constructs a command Event ID (Query, Start, Stop, Date Rollover) for the specified clock.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">clock_id</td><td>48-bit clock identifier (upper 6 bytes) </td></tr>
+    <tr><td class="paramname">command</td><td>Command type (QUERY, START, STOP, DATE_ROLLOVER)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit broadcast time Event ID </dd></dl>
+
+</div>
+</div>
+<a id="a72ea82898e834d55b36e11e07a83c04a" name="a72ea82898e834d55b36e11e07a83c04a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72ea82898e834d55b36e11e07a83c04a">&#9670;&#160;</a></span>OpenLcbUtilities_is_train_search_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenLcbUtilities_is_train_search_event </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tests whether an event ID belongs to the Train Search space. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>64-bit Event ID to test </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if upper 4 bytes are 0x090099FF </dd></dl>
+
+</div>
+</div>
+<a id="ac16df99aa78e31a3d04339e23d1f9db8" name="ac16df99aa78e31a3d04339e23d1f9db8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac16df99aa78e31a3d04339e23d1f9db8">&#9670;&#160;</a></span>OpenLcbUtilities_extract_train_search_digits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenLcbUtilities_extract_train_search_digits </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>digits</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts 6 search-query nibbles from a train search event ID. </p>
+<p>Nibbles are in bytes 4-6 (bits 31-8). Each nibble is 0-9 for a digit or 0xF for empty/wildcard. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>The search event ID </td></tr>
+    <tr><td class="paramname">digits</td><td>Output array of 6 uint8_t values </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa5eda1bd2c9a26747d3d239661d99b8a" name="aa5eda1bd2c9a26747d3d239661d99b8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5eda1bd2c9a26747d3d239661d99b8a">&#9670;&#160;</a></span>OpenLcbUtilities_extract_train_search_flags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t OpenLcbUtilities_extract_train_search_flags </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a></td>          <td class="paramname"><span class="paramname"><em>event_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extracts the flags byte (byte 7) from a train search event ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event_id</td><td>The search event ID </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The 8-bit flags byte </dd></dl>
+
+</div>
+</div>
+<a id="afe285d8d2b51616c319f1e98983e1f7b" name="afe285d8d2b51616c319f1e98983e1f7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe285d8d2b51616c319f1e98983e1f7b">&#9670;&#160;</a></span>OpenLcbUtilities_train_search_digits_to_address()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t OpenLcbUtilities_train_search_digits_to_address </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>digits</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts 6-nibble digit array to a numeric DCC address. </p>
+<p>Skips leading 0xF nibbles. E.g. {F,F,F,0,0,3} -&gt; 3 </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">digits</td><td>Array of 6 nibble values </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The numeric address (0 if all empty) </dd></dl>
+
+</div>
+</div>
+<a id="a1601d2fefb6a3693e58b50956e42376a" name="a1601d2fefb6a3693e58b50956e42376a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1601d2fefb6a3693e58b50956e42376a">&#9670;&#160;</a></span>OpenLcbUtilities_create_train_search_event_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="openlcb__types_8h.html#a124e6ffe91515b7b9f36f42c3517e70c">event_id_t</a> OpenLcbUtilities_create_train_search_event_id </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>address</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a train search event ID from address and flags. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">address</td><td>DCC address to encode (0-9999) </td></tr>
+    <tr><td class="paramname">flags</td><td>Flags byte </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>64-bit train search event ID </dd></dl>
 
 </div>
 </div>

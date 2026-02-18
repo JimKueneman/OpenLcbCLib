@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['space_5fencoding_5fenum_0',['space_encoding_enum',['../openlcb__types_8h.html#aab08faa6c2f49792c273f5267068d549',1,'openlcb_types.h']]]
+  ['payload_5ftype_5fenum_0',['payload_type_enum',['../openlcb__types_8h.html#aececf1be5c268eb2c680b4a0cc778467',1,'openlcb_types.h']]]
 ];

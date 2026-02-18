@@ -167,7 +167,7 @@ Functions</h2></td></tr>
 <li>Protocol Support Protocol/PIP (required)</li>
 <li>Simple Node Information Protocol/SNIP (optional)</li>
 <li>Event Transport Protocol (optional)</li>
-<li>Traction Protocol (optional)</li>
+<li>Train Protocol (optional)</li>
 <li>Datagram Protocol (optional)</li>
 <li>Stream Protocol (optional)</li>
 </ul>
@@ -850,9 +850,9 @@ Do not call directly in application</dd></dl>
 <li>MTI_PC_EVENT_REPORT → event_transport_pc_report</li>
 <li>MTI_PC_EVENT_REPORT_WITH_PAYLOAD → event_transport_pc_report_with_payload</li>
 </ul>
-<p>Traction Protocol:</p><ul>
-<li>MTI_TRACTION_PROTOCOL → traction_control_command (or reject)</li>
-<li>MTI_TRACTION_REPLY → traction_control_reply</li>
+<p>Train Protocol:</p><ul>
+<li>MTI_TRAIN_PROTOCOL → train_control_command (or reject)</li>
+<li>MTI_TRAIN_REPLY → train_control_reply</li>
 <li>MTI_SIMPLE_TRAIN_INFO_REQUEST → simple_train_node_ident_info_request (or reject)</li>
 <li>MTI_SIMPLE_TRAIN_INFO_REPLY → simple_train_node_ident_info_reply</li>
 </ul>
@@ -869,7 +869,7 @@ Do not call directly in application</dd></dl>
 <li>MTI_STREAM_COMPLETE → stream_data_complete</li>
 </ul>
 <p>Interaction Rejected behavior:</p><ul>
-<li>Request messages (SNIP request, Traction command, Train info request): Generate Interaction Rejected if handler is NULL</li>
+<li>Request messages (SNIP request, Train command, Train info request): Generate Interaction Rejected if handler is NULL</li>
 <li>Reply/indication messages: Silently ignored if handler is NULL</li>
 <li>Unknown addressed MTIs: Generate Interaction Rejected</li>
 <li>Unknown global MTIs: Silently ignored</li>

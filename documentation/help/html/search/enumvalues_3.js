@@ -1,6 +1,22 @@
 var searchData=
 [
-  ['event_5fstatus_5fclear_0',['EVENT_STATUS_CLEAR',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6',1,'openlcb_types.h']]],
-  ['event_5fstatus_5fset_1',['EVENT_STATUS_SET',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8',1,'openlcb_types.h']]],
-  ['event_5fstatus_5funknown_2',['EVENT_STATUS_UNKNOWN',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5',1,'openlcb_types.h']]]
+  ['event_5frange_5fcount_5f1_0',['EVENT_RANGE_COUNT_1',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaaf3cf9374f875518f965c7915e86c8d57',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f1024_1',['EVENT_RANGE_COUNT_1024',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaaa467ad5d735790da48c6629f0ee8880f',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f128_2',['EVENT_RANGE_COUNT_128',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaaf5a0dda3c6defaa7c1083ef40041939c',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f16_3',['EVENT_RANGE_COUNT_16',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa02dd44c73f6053d1e115115b523ef184',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f16384_4',['EVENT_RANGE_COUNT_16384',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaaf5415e3d7f8d538af12c7b5442d3b0a3',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f2_5',['EVENT_RANGE_COUNT_2',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa9468e41e19572f329f541d26d479e7ed',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f2048_6',['EVENT_RANGE_COUNT_2048',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaac99b6432c1d17877dfb1f48aca221242',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f256_7',['EVENT_RANGE_COUNT_256',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaadb8fe84787c36d2613ef8b6a6d922c65',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f32_8',['EVENT_RANGE_COUNT_32',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa34148699ccdcb018549bff4a6af46f55',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f32768_9',['EVENT_RANGE_COUNT_32768',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa5121e69499e6250862df79a412d959f7',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f4_10',['EVENT_RANGE_COUNT_4',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa72f3fae6685ccfc2c0ebfb5a27fe746f',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f4096_11',['EVENT_RANGE_COUNT_4096',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaae5b8e28f28495311e061a73b2ea4ce4f',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f512_12',['EVENT_RANGE_COUNT_512',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa28eafb973153365834c56bfc82b1f183',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f64_13',['EVENT_RANGE_COUNT_64',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaaa902bd21e2cc00adfab7c368b40d68e1',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f8_14',['EVENT_RANGE_COUNT_8',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa797b7fe1393e39d8b6da77b6b5c060b0',1,'openlcb_types.h']]],
+  ['event_5frange_5fcount_5f8192_15',['EVENT_RANGE_COUNT_8192',['../openlcb__types_8h.html#a29cac8697a125631149cacda733a9faaa5cba51a9b680b388089ba7879614f8d1',1,'openlcb_types.h']]],
+  ['event_5fstatus_5fclear_16',['EVENT_STATUS_CLEAR',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8cea9ce8d378811d224eca9ea7c230fffbd6',1,'openlcb_types.h']]],
+  ['event_5fstatus_5fset_17',['EVENT_STATUS_SET',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8ceaf582495956a84ffd11cb18c06a34ade8',1,'openlcb_types.h']]],
+  ['event_5fstatus_5funknown_18',['EVENT_STATUS_UNKNOWN',['../openlcb__types_8h.html#a236635602f03daeea70a4cabb135c8cea97e4a8bcda4964432f463587abba05b5',1,'openlcb_types.h']]]
 ];

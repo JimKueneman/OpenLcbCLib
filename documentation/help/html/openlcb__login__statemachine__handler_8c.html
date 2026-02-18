@@ -140,7 +140,7 @@ Functions</h2></td></tr>
 <p>State Transitions:</p><ul>
 <li>load_initialization_complete: RUNSTATE_LOAD_INITIALIZATION_COMPLETE -&gt; RUNSTATE_LOAD_PRODUCER_EVENTS</li>
 <li>load_producer_event: RUNSTATE_LOAD_PRODUCER_EVENTS -&gt; (enumerate) -&gt; RUNSTATE_LOAD_CONSUMER_EVENTS</li>
-<li>load_consumer_event: RUNSTATE_LOAD_CONSUMER_EVENTS -&gt; (enumerate) -&gt; RUNSTATE_RUN</li>
+<li>load_consumer_event: RUNSTATE_LOAD_CONSUMER_EVENTS -&gt; (enumerate) -&gt; RUNSTATE_LOGIN_COMPLETE</li>
 </ul>
 <dl class="section author"><dt>Author</dt><dd>Jim Kueneman </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jan 2026</dd></dl>
@@ -355,7 +355,7 @@ MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" t
 <p>Loads a Consumer Event Identified message for the current consumer event. </p>
 <p>Algorithm:</p><ol type="1">
 <li>Checks if node has any consumer events (consumers.count == 0)</li>
-<li>If no consumers: Sets valid=false, transitions to RUNSTATE_RUN, returns</li>
+<li>If no consumers: Sets valid=false, transitions to RUNSTATE_LOGIN_COMPLETE, returns</li>
 <li>Calls interface-&gt;extract_consumer_event_state_mti() to get event state MTI</li>
 <li>Retrieves event ID from consumers.list[enum_index]</li>
 <li>Calls <a class="el" href="openlcb__utilities_8c.html#a6b320eb92f3b9990fb78b35e4a93b8c0" title="Initializes an OpenLCB message structure with source, destination, and MTI.">OpenLcbUtilities_load_openlcb_message()</a> with node alias, ID, and event MTI</li>
@@ -363,7 +363,7 @@ MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" t
 <li>Sets payload_count to 8 (64-bit Event ID)</li>
 <li>Increments enum_index</li>
 <li>Sets enumerate=true and valid=true to trigger transmission and re-entry</li>
-<li>If enum_index &gt;= consumers.count: Resets enumeration, transitions to RUNSTATE_RUN</li>
+<li>If enum_index &gt;= consumers.count: Resets enumeration, transitions to RUNSTATE_LOGIN_COMPLETE</li>
 </ol>
 <p>Message Structure:</p><ul>
 <li>MTI: 0x04C4 (Valid), 0x04C5 (Invalid), or 0x04C7 (Unknown)</li>
@@ -376,9 +376,9 @@ MTI_PRODUCER_IDENTIFIED_VALID in <a class="el" href="openlcb__defines_8h.html" t
 <li>node-&gt;consumers.enumerator.running: true -&gt; false</li>
 <li>node-&gt;consumers.enumerator.enum_index: -&gt; 0</li>
 <li>outgoing_msg_info.enumerate: true -&gt; false</li>
-<li>node-&gt;state.run_state: RUNSTATE_LOAD_CONSUMER_EVENTS -&gt; RUNSTATE_RUN</li>
+<li>node-&gt;state.run_state: RUNSTATE_LOAD_CONSUMER_EVENTS -&gt; RUNSTATE_LOGIN_COMPLETE</li>
 </ul>
-<p>Login Completion: When this function transitions to RUNSTATE_RUN, the login sequence is complete and the node is fully operational on the network.</p>
+<p>Login Completion: When this function transitions to RUNSTATE_LOGIN_COMPLETE, the login message sequence is complete. The state machine dispatcher will then call on_login_complete (if set) before transitioning to RUNSTATE_RUN for normal operation.</p>
 <p>Use cases:</p><ul>
 <li>Called repeatedly during login to announce each consumed event</li>
 <li>May be called later in response to Identify Consumer messages</li>
@@ -400,7 +400,7 @@ Sets outgoing_msg_info.valid to false if no consumers exist </dd>
 <dd>
 Sets outgoing_msg_info.enumerate to true to process next event </dd>
 <dd>
-Transitions to RUNSTATE_RUN when complete (node fully initialized) </dd>
+Transitions to RUNSTATE_LOGIN_COMPLETE when complete </dd>
 <dd>
 Line length managed per StyleGuide 3x indentation for long function calls</dd></dl>
 <dl class="section see"><dt>See also</dt><dd>OpenLCB Event Transport Standard S-9.7.4.2 - Consumer Identified </dd>

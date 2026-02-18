@@ -375,6 +375,7 @@ If message handler needs multiple messages, re-enumerate the same message</dd></
 <li>RUNSTATE_LOAD_INITIALIZATION_COMPLETE → load_initialization_complete</li>
 <li>RUNSTATE_LOAD_PRODUCER_EVENTS → load_producer_events</li>
 <li>RUNSTATE_LOAD_CONSUMER_EVENTS → load_consumer_events</li>
+<li>RUNSTATE_LOGIN_COMPLETE → on_login_complete (if set), then RUNSTATE_RUN</li>
 </ul>
 <p>This function is exposed for unit testing but is normally called internally by the main state machine loop.</p>
 <p>Use cases:</p><ul>
@@ -402,12 +403,14 @@ Does nothing if node run_state is RUNSTATE_RUN or unrecognized</dd></dl>
 <li>For RUNSTATE_LOAD_INITIALIZATION_COMPLETE: Calls load_initialization_complete()</li>
 <li>For RUNSTATE_LOAD_PRODUCER_EVENTS: Calls load_producer_events()</li>
 <li>For RUNSTATE_LOAD_CONSUMER_EVENTS: Calls load_consumer_events()</li>
+<li>For RUNSTATE_LOGIN_COMPLETE: Calls on_login_complete() if set, transitions to RUNSTATE_RUN</li>
 <li>For all other states (including RUNSTATE_RUN): Returns without action</li>
 </ol>
 <p>State-to-Handler Mapping:</p><ul>
-<li>RUNSTATE_LOAD_INITIALIZATION_COMPLETE (0x01) -&gt; load_initialization_complete() Generates Initialization Complete message (MTI 0x0100 or 0x0101)</li>
-<li>RUNSTATE_LOAD_PRODUCER_EVENTS (0x02) -&gt; load_producer_events() Generates Producer Identified messages (MTI 0x0914/0x0915/0x0917) May be called multiple times via re-enumeration</li>
-<li>RUNSTATE_LOAD_CONSUMER_EVENTS (0x03) -&gt; load_consumer_events() Generates Consumer Identified messages (MTI 0x04C4/0x04C5/0x04C7) May be called multiple times via re-enumeration</li>
+<li>RUNSTATE_LOAD_INITIALIZATION_COMPLETE (10) -&gt; load_initialization_complete() Generates Initialization Complete message (MTI 0x0100 or 0x0101)</li>
+<li>RUNSTATE_LOAD_PRODUCER_EVENTS (12) -&gt; load_producer_events() Generates Producer Identified messages (MTI 0x0914/0x0915/0x0917) May be called multiple times via re-enumeration</li>
+<li>RUNSTATE_LOAD_CONSUMER_EVENTS (11) -&gt; load_consumer_events() Generates Consumer Identified messages (MTI 0x04C4/0x04C5/0x04C7) May be called multiple times via re-enumeration</li>
+<li>RUNSTATE_LOGIN_COMPLETE (13) -&gt; on_login_complete() if set Optional callback for final setup before entering RUNSTATE_RUN If callback returns false, stays in this state (retry on next iteration) If callback returns true or is NULL, transitions to RUNSTATE_RUN</li>
 </ul>
 <p>Handler Responsibilities: Each handler is responsible for:</p><ul>
 <li>Constructing the appropriate OpenLCB message</li>
