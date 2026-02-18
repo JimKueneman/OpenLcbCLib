@@ -1315,6 +1315,21 @@ typedef struct {
 
     /*@}*/
 
+    /*@{*/
+    /** @name Optional Train Search Protocol Handler
+     * Train search via event space -- set to NULL if not implemented.
+     * Unlike broadcast time (node 0 only), called for every train node.
+     */
+
+    /**
+     * @brief Handles train search events for discovering train nodes
+     * @param statemachine_info State machine context
+     * @param event_id The full 64-bit search event ID
+     */
+    void (*train_search_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+    /*@}*/
+
 } interface_openlcb_main_statemachine_t;
 
 #ifdef __cplusplus

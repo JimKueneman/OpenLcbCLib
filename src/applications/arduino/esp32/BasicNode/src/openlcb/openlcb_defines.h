@@ -822,6 +822,22 @@
     /** @brief Train search event space base */
 #define EVENT_TRAIN_SEARCH_SPACE 0x090099FF00000000
 
+    /** @brief Mask for upper 4 bytes of train search event ID */
+#define TRAIN_SEARCH_MASK              0xFFFFFFFF00000000ULL
+
+    /** @brief Train search flags byte — allocate new node if no match */
+#define TRAIN_SEARCH_FLAG_ALLOCATE     0x80
+    /** @brief Train search flags byte — exact match only */
+#define TRAIN_SEARCH_FLAG_EXACT        0x40
+    /** @brief Train search flags byte — match address only (not name) */
+#define TRAIN_SEARCH_FLAG_ADDRESS_ONLY 0x20
+    /** @brief Train search flags byte — DCC protocol */
+#define TRAIN_SEARCH_FLAG_DCC          0x08
+    /** @brief Train search flags byte — force long (14-bit) DCC address */
+#define TRAIN_SEARCH_FLAG_LONG_ADDR    0x04
+    /** @brief Train search flags byte — speed step mode mask (bits 1-0) */
+#define TRAIN_SEARCH_SPEED_STEP_MASK   0x03
+
     /** @} */ // end of well_known_events_local
     /** @} */ // end of well_known_events
 

@@ -1147,6 +1147,54 @@ extern "C" {
      */
     extern event_id_t OpenLcbUtilities_create_command_event_id(uint64_t clock_id, broadcast_time_event_type_enum command);
 
+    /*@}*/
+
+    /*@{*/
+    /** @name Train Search Event Utilities
+     * Functions for encoding/decoding Train Search event IDs
+     */
+
+    /**
+     * @brief Tests whether an event ID belongs to the Train Search space
+     * @param event_id 64-bit Event ID to test
+     * @return true if upper 4 bytes are 0x090099FF
+     */
+    extern bool OpenLcbUtilities_is_train_search_event(event_id_t event_id);
+
+    /**
+     * @brief Extracts 6 search-query nibbles from a train search event ID
+     * @details Nibbles are in bytes 4-6 (bits 31-8). Each nibble is 0-9
+     *          for a digit or 0xF for empty/wildcard.
+     * @param event_id The search event ID
+     * @param digits Output array of 6 uint8_t values
+     */
+    extern void OpenLcbUtilities_extract_train_search_digits(event_id_t event_id, uint8_t *digits);
+
+    /**
+     * @brief Extracts the flags byte (byte 7) from a train search event ID
+     * @param event_id The search event ID
+     * @return The 8-bit flags byte
+     */
+    extern uint8_t OpenLcbUtilities_extract_train_search_flags(event_id_t event_id);
+
+    /**
+     * @brief Converts 6-nibble digit array to a numeric DCC address
+     * @details Skips leading 0xF nibbles. E.g. {F,F,F,0,0,3} -> 3
+     * @param digits Array of 6 nibble values
+     * @return The numeric address (0 if all empty)
+     */
+    extern uint16_t OpenLcbUtilities_train_search_digits_to_address(const uint8_t *digits);
+
+    /**
+     * @brief Creates a train search event ID from address and flags
+     * @param address DCC address to encode (0-9999)
+     * @param flags Flags byte
+     * @return 64-bit train search event ID
+     */
+    extern event_id_t OpenLcbUtilities_create_train_search_event_id(uint16_t address, uint8_t flags);
+
+    /*@}*/
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

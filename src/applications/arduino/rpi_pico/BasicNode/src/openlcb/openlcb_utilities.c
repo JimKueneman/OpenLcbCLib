@@ -2374,3 +2374,103 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
 
      return (clock_id & BROADCAST_TIME_MASK_CLOCK_ID) | (uint64_t)command_data;
  }
+
+// =============================================================================
+// Train Search Event Utilities
+// =============================================================================
+
+bool OpenLcbUtilities_is_train_search_event(event_id_t event_id) {
+
+    return (event_id & TRAIN_SEARCH_MASK) == EVENT_TRAIN_SEARCH_SPACE;
+
+}
+
+void OpenLcbUtilities_extract_train_search_digits(event_id_t event_id, uint8_t *digits) {
+
+    if (!digits) { return; }
+
+    // Bytes 4-6 contain 6 nibbles (bits 31-8)
+    // Byte 4 = bits 31-24: nibbles 0 and 1
+    // Byte 5 = bits 23-16: nibbles 2 and 3
+    // Byte 6 = bits 15-8:  nibbles 4 and 5
+
+    uint32_t lower = (uint32_t)(event_id & 0xFFFFFFFF);
+
+    digits[0] = (uint8_t)((lower >> 28) & 0x0F);
+    digits[1] = (uint8_t)((lower >> 24) & 0x0F);
+    digits[2] = (uint8_t)((lower >> 20) & 0x0F);
+    digits[3] = (uint8_t)((lower >> 16) & 0x0F);
+    digits[4] = (uint8_t)((lower >> 12) & 0x0F);
+    digits[5] = (uint8_t)((lower >> 8) & 0x0F);
+
+}
+
+uint8_t OpenLcbUtilities_extract_train_search_flags(event_id_t event_id) {
+
+    return (uint8_t)(event_id & 0xFF);
+
+}
+
+uint16_t OpenLcbUtilities_train_search_digits_to_address(const uint8_t *digits) {
+
+    if (!digits) { return 0; }
+
+    uint16_t address = 0;
+
+    for (int i = 0; i < 6; i++) {
+
+        if (digits[i] <= 9) {
+
+            address = address * 10 + digits[i];
+
+        }
+
+    }
+
+    return address;
+
+}
+
+event_id_t OpenLcbUtilities_create_train_search_event_id(uint16_t address, uint8_t flags) {
+
+    // Encode address as decimal digits into 6 nibbles, right-justified, padded with 0xF
+    uint8_t digits[6];
+    int i;
+
+    for (i = 0; i < 6; i++) {
+
+        digits[i] = 0x0F;
+
+    }
+
+    // Fill from right to left with decimal digits
+    i = 5;
+    if (address == 0) {
+
+        digits[i] = 0;
+
+    } else {
+
+        while (address > 0 && i >= 0) {
+
+            digits[i] = (uint8_t)(address % 10);
+            address /= 10;
+            i--;
+
+        }
+
+    }
+
+    // Build the lower 4 bytes: 6 nibbles + flags byte
+    uint32_t lower = 0;
+    lower |= ((uint32_t)digits[0] << 28);
+    lower |= ((uint32_t)digits[1] << 24);
+    lower |= ((uint32_t)digits[2] << 20);
+    lower |= ((uint32_t)digits[3] << 16);
+    lower |= ((uint32_t)digits[4] << 12);
+    lower |= ((uint32_t)digits[5] << 8);
+    lower |= (uint32_t)flags;
+
+    return EVENT_TRAIN_SEARCH_SPACE | (event_id_t)lower;
+
+}

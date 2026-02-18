@@ -60,6 +60,7 @@
 #include "openlcb_application_broadcast_time.h"
 #include "protocol_train_handler.h"
 #include "openlcb_application_train.h"
+#include "protocol_train_search_handler.h"
 
 // CAN transport
 #include "../drivers/canbus/can_tx_statemachine.h"
@@ -83,6 +84,7 @@ static interface_openlcb_protocol_broadcast_time_handler_t _broadcast_time;
 static interface_openlcb_application_broadcast_time_t _app_broadcast_time;
 static interface_protocol_train_handler_t _train_handler;
 static interface_openlcb_application_train_t _app_train;
+static interface_protocol_train_search_handler_t _train_search;
 
 static const openlcb_config_t *_config;
 static uint32_t _features;
@@ -165,6 +167,15 @@ static void _build_app_train(void) {
     memset(&_app_train, 0, sizeof(_app_train));
 
     _app_train.send_openlcb_msg = &CanTxStatemachine_send_openlcb_message;
+
+}
+
+static void _build_train_search_handler(void) {
+
+    memset(&_train_search, 0, sizeof(_train_search));
+
+    _train_search.on_search_matched  = _config->on_train_search_matched;
+    _train_search.on_search_no_match = _config->on_train_search_no_match;
 
 }
 
@@ -502,6 +513,14 @@ static void _build_main_statemachine(void) {
         // simple_train_node_ident_info_request/reply will be wired in Phase 2
     }
 
+    // Train Search -- only if EVENTS + TRAIN + TRAIN_SEARCH enabled
+    if ((_features & OPENLCB_FEATURE_EVENTS) &&
+        (_features & OPENLCB_FEATURE_TRAIN) &&
+        (_features & OPENLCB_FEATURE_TRAIN_SEARCH)) {
+        _main_sm.train_search_event_handler =
+                &ProtocolTrainSearch_handle_search_event;
+    }
+
     // Stream -- only if STREAMS feature enabled
     // if (_features & OPENLCB_FEATURE_STREAMS) {
     //     _main_sm.stream_initiate_request = ...;
@@ -563,6 +582,12 @@ void OpenLcb_initialize(const openlcb_config_t *config, uint32_t features) {
         _build_app_train();
     }
 
+    if ((_features & OPENLCB_FEATURE_EVENTS) &&
+        (_features & OPENLCB_FEATURE_TRAIN) &&
+        (_features & OPENLCB_FEATURE_TRAIN_SEARCH)) {
+        _build_train_search_handler();
+    }
+
     _build_main_statemachine();  // Uses _features internally to select what to wire
 
     // 3. Initialize modules in dependency order -- only those that were built
@@ -592,6 +617,12 @@ void OpenLcb_initialize(const openlcb_config_t *config, uint32_t features) {
     if (_features & OPENLCB_FEATURE_TRAIN) {
         ProtocolTrainHandler_initialize(&_train_handler);
         OpenLcbApplicationTrain_initialize(&_app_train);
+    }
+
+    if ((_features & OPENLCB_FEATURE_EVENTS) &&
+        (_features & OPENLCB_FEATURE_TRAIN) &&
+        (_features & OPENLCB_FEATURE_TRAIN_SEARCH)) {
+        ProtocolTrainSearch_initialize(&_train_search);
     }
 
     OpenLcbNode_initialize(&_node);

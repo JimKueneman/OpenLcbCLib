@@ -100,6 +100,10 @@
 
         uint16_t functions[USER_DEFINED_MAX_TRAIN_FUNCTIONS]; /**< Function values (16-bit per function, indexed by function number) */
 
+        uint16_t dcc_address;            /**< DCC address (0 = not set) */
+        uint8_t is_long_address;         /**< 1 = extended (long) DCC address, 0 = short */
+        uint8_t speed_steps;             /**< DCC speed steps: 0=default, 1=14, 2=28, 3=128 */
+
     } train_state_t;
 
     /**
@@ -179,6 +183,24 @@ extern "C" {
 
     extern void OpenLcbApplicationTrain_send_noop(
             openlcb_node_t *openlcb_node, uint64_t train_node_id);
+
+    // Train search properties — set during setup, used by search handler
+
+    extern void OpenLcbApplicationTrain_set_dcc_address(
+            openlcb_node_t *openlcb_node, uint16_t dcc_address,
+            bool is_long_address);
+
+    extern uint16_t OpenLcbApplicationTrain_get_dcc_address(
+            openlcb_node_t *openlcb_node);
+
+    extern bool OpenLcbApplicationTrain_is_long_address(
+            openlcb_node_t *openlcb_node);
+
+    extern void OpenLcbApplicationTrain_set_speed_steps(
+            openlcb_node_t *openlcb_node, uint8_t speed_steps);
+
+    extern uint8_t OpenLcbApplicationTrain_get_speed_steps(
+            openlcb_node_t *openlcb_node);
 
 #ifdef __cplusplus
 }

@@ -68,6 +68,8 @@
 #define OPENLCB_FEATURE_TRAIN         (1 << 6)
 /** @brief Firmware Upgrade protocol (requires DATAGRAMS) */
 #define OPENLCB_FEATURE_FIRMWARE_UPGRADE (1 << 7)
+/** @brief Train Search protocol (requires EVENTS + TRAIN) */
+#define OPENLCB_FEATURE_TRAIN_SEARCH    (1 << 8)
 
 // =============================================================================
 // Predefined Profiles -- convenience combinations
@@ -385,6 +387,19 @@ typedef struct {
     /** @brief Heartbeat request received from train. timeout_seconds is deadline. */
     void (*on_train_heartbeat_request)(openlcb_node_t *openlcb_node,
             uint32_t timeout_seconds);
+
+    // =========================================================================
+    // OPTIONAL: Train Search Callbacks (OPENLCB_FEATURE_TRAIN_SEARCH)
+    // =========================================================================
+
+    /** @brief A train search matched this node. Optional. */
+    void (*on_train_search_matched)(openlcb_node_t *openlcb_node,
+            uint16_t search_address, uint8_t flags);
+
+    /** @brief No train node matched the search. If allocate bit set,
+     *  return a newly created train node, or NULL to decline. Optional. */
+    openlcb_node_t* (*on_train_search_no_match)(uint16_t search_address,
+            uint8_t flags);
 
 } openlcb_config_t;
 

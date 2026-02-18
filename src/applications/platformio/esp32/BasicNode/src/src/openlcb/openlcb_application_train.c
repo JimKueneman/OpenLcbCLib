@@ -426,3 +426,50 @@ void OpenLcbApplicationTrain_send_noop(
     _interface->send_openlcb_msg(&msg);
 
 }
+
+
+// Train search properties
+
+void OpenLcbApplicationTrain_set_dcc_address(
+        openlcb_node_t *openlcb_node, uint16_t dcc_address,
+        bool is_long_address) {
+
+    if (!openlcb_node || !openlcb_node->train_state) { return; }
+
+    openlcb_node->train_state->dcc_address = dcc_address;
+    openlcb_node->train_state->is_long_address = is_long_address ? 1 : 0;
+
+}
+
+uint16_t OpenLcbApplicationTrain_get_dcc_address(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) { return 0; }
+
+    return openlcb_node->train_state->dcc_address;
+
+}
+
+bool OpenLcbApplicationTrain_is_long_address(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) { return false; }
+
+    return openlcb_node->train_state->is_long_address != 0;
+
+}
+
+void OpenLcbApplicationTrain_set_speed_steps(
+        openlcb_node_t *openlcb_node, uint8_t speed_steps) {
+
+    if (!openlcb_node || !openlcb_node->train_state) { return; }
+
+    openlcb_node->train_state->speed_steps = speed_steps;
+
+}
+
+uint8_t OpenLcbApplicationTrain_get_speed_steps(openlcb_node_t *openlcb_node) {
+
+    if (!openlcb_node || !openlcb_node->train_state) { return 0; }
+
+    return openlcb_node->train_state->speed_steps;
+
+}
