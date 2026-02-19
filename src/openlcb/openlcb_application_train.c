@@ -132,7 +132,7 @@ void OpenLcbApplicationTrain_100ms_timer_tick(void) {
 
         if (state->heartbeat_counter_100ms == 0) {
 
-            state->estop_active = 1;
+            state->estop_active = true;
             state->set_speed = 0;
 
             if (_interface && _interface->on_heartbeat_timeout) {
@@ -334,7 +334,7 @@ void OpenLcbApplicationTrain_set_dcc_address(openlcb_node_t *openlcb_node, uint1
     }
 
     openlcb_node->train_state->dcc_address = dcc_address;
-    openlcb_node->train_state->is_long_address = is_long_address ? 1 : 0;
+    openlcb_node->train_state->is_long_address = is_long_address;
 
 }
 
@@ -358,7 +358,7 @@ bool OpenLcbApplicationTrain_is_long_address(openlcb_node_t *openlcb_node) {
     
     }
 
-    return openlcb_node->train_state->is_long_address != 0;
+    return openlcb_node->train_state->is_long_address;
 
 }
 

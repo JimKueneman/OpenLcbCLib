@@ -147,7 +147,8 @@ static void _build_train_handler(void) {
     // Train-node side: notifiers
     _train_handler.on_speed_changed       = _config->on_train_speed_changed;
     _train_handler.on_function_changed    = _config->on_train_function_changed;
-    _train_handler.on_emergency_stopped   = _config->on_train_emergency_stopped;
+    _train_handler.on_emergency_entered   = _config->on_train_emergency_entered;
+    _train_handler.on_emergency_exited    = _config->on_train_emergency_exited;
     _train_handler.on_controller_assigned = _config->on_train_controller_assigned;
     _train_handler.on_controller_released = _config->on_train_controller_released;
     _train_handler.on_listener_changed    = _config->on_train_listener_changed;
@@ -156,7 +157,6 @@ static void _build_train_handler(void) {
     // Train-node side: decision callbacks
     _train_handler.on_controller_assign_request  = _config->on_train_controller_assign_request;
     _train_handler.on_controller_changed_request = _config->on_train_controller_changed_request;
-    _train_handler.on_query_function_request     = _config->on_train_query_function_request;
 
     // Throttle-side: reply notifiers
     _train_handler.on_query_speeds_reply              = _config->on_train_query_speeds_reply;

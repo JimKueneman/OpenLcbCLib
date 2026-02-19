@@ -59,7 +59,7 @@ void ProtocolTrainHandler_initialize(const interface_protocol_train_handler_t *i
 // Listener management
 // ============================================================================
 
-bool ProtocolTrainHandler_attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags)
+static bool _attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags)
 {
 
     if (!state || node_id == 0) {
@@ -95,7 +95,7 @@ bool ProtocolTrainHandler_attach_listener(train_state_t *state, node_id_t node_i
 
 }
 
-bool ProtocolTrainHandler_detach_listener(train_state_t *state, node_id_t node_id) {
+static bool _detach_listener(train_state_t *state, node_id_t node_id) {
 
     if (!state || node_id == 0) {
 
@@ -130,30 +130,8 @@ bool ProtocolTrainHandler_detach_listener(train_state_t *state, node_id_t node_i
 
 }
 
-train_listener_entry_t* ProtocolTrainHandler_find_listener(
-        train_state_t *state, node_id_t node_id) {
 
-    if (!state || node_id == 0) {
-
-        return NULL;
-
-    }
-
-    for (uint8_t i = 0; i < state->listener_count; i++) {
-
-        if (state->listeners[i].node_id == node_id) {
-
-            return &state->listeners[i];
-
-        }
-
-    }
-
-    return NULL;
-
-}
-
-uint8_t ProtocolTrainHandler_get_listener_count(train_state_t *state) {
+static uint8_t _get_listener_count(train_state_t *state) {
 
     if (!state) {
 
@@ -165,7 +143,7 @@ uint8_t ProtocolTrainHandler_get_listener_count(train_state_t *state) {
 
 }
 
-train_listener_entry_t* ProtocolTrainHandler_get_listener_by_index(train_state_t *state, uint8_t index) {
+static train_listener_entry_t* _get_listener_by_index(train_state_t *state, uint8_t index) {
 
     if (!state || index >= state->listener_count) {
 
@@ -362,7 +340,7 @@ static void _handle_set_speed(openlcb_statemachine_info_t *statemachine_info) {
     if (state) {
 
         state->set_speed = speed;
-        state->estop_active = 0;
+        state->estop_active = false;
 
     }
 
@@ -403,7 +381,7 @@ static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_inf
 
     if (state) {
 
-        state->estop_active = 1;
+        state->estop_active = true;
 
         // Preserve direction, set speed magnitude to zero
         bool reverse = OpenLcbFloat16_get_direction(state->set_speed);
@@ -411,9 +389,9 @@ static void _handle_emergency_stop(openlcb_statemachine_info_t *statemachine_inf
 
     }
 
-    if (_interface && _interface->on_emergency_stopped) {
+    if (_interface && _interface->on_emergency_entered) {
 
-        _interface->on_emergency_stopped(node);
+        _interface->on_emergency_entered(node, TRAIN_EMERGENCY_TYPE_ESTOP);
 
     }
 
@@ -431,7 +409,7 @@ static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info)
     if (state) {
 
         set_speed = state->set_speed;
-        status = (state->estop_active || state->global_estop_active || state->global_eoff_active) ? 0x01 : 0x00;
+        status = state->estop_active ? 0x01 : 0x00;
         commanded_speed = state->commanded_speed;
         actual_speed = state->actual_speed;
 
@@ -443,7 +421,6 @@ static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info)
 
 static void _handle_query_function(openlcb_statemachine_info_t *statemachine_info) {
 
-    openlcb_node_t *node = statemachine_info->openlcb_node;
     train_state_t *state = statemachine_info->openlcb_node->train_state;
 
     uint32_t fn_address = _extract_fn_address(statemachine_info->incoming_msg_info.msg_ptr, 1);
@@ -453,12 +430,6 @@ static void _handle_query_function(openlcb_statemachine_info_t *statemachine_inf
     if (state && fn_address < USER_DEFINED_MAX_TRAIN_FUNCTIONS) {
 
         fn_value = state->functions[fn_address];
-
-    }
-
-    if (_interface && _interface->on_query_function_request) {
-
-        fn_value = _interface->on_query_function_request(node, fn_address);
 
     }
 
@@ -479,7 +450,7 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
         case TRAIN_CONTROLLER_ASSIGN: {
 
             node_id_t requesting_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
-            uint8_t result = 0;
+            bool accepted = true;
 
             if (state) {
 
@@ -493,11 +464,11 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
                     // Different controller — ask app or default accept
                     if (_interface && _interface->on_controller_assign_request) {
 
-                        result = _interface->on_controller_assign_request(node, state->controller_node_id, requesting_id);
+                        accepted = _interface->on_controller_assign_request(node, state->controller_node_id, requesting_id);
 
                     }
 
-                    if (result == 0) {
+                    if (accepted) {
 
                         state->controller_node_id = requesting_id;
 
@@ -507,9 +478,9 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
 
             }
 
-            _load_controller_assign_reply(statemachine_info, result);
+            _load_controller_assign_reply(statemachine_info, accepted ? 0x00 : 0xFF);
 
-            if (result == 0 && _interface && _interface->on_controller_assigned) {
+            if (accepted && _interface && _interface->on_controller_assigned) {
 
                 _interface->on_controller_assigned(node, requesting_id);
 
@@ -565,15 +536,15 @@ static void _handle_controller_config(openlcb_statemachine_info_t *statemachine_
         case TRAIN_CONTROLLER_CHANGED: {
 
             node_id_t new_controller_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(msg, 2);
-            uint8_t result = 0;
+            bool accepted = true;
 
             if (_interface && _interface->on_controller_changed_request) {
 
-                result = _interface->on_controller_changed_request(node, new_controller_id);
+                accepted = _interface->on_controller_changed_request(node, new_controller_id);
 
             }
 
-            _load_controller_changed_reply(statemachine_info, result);
+            _load_controller_changed_reply(statemachine_info, accepted ? 0x00 : 0xFF);
 
             break;
 
@@ -604,7 +575,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
             if (state) {
 
-                bool ok = ProtocolTrainHandler_attach_listener(state, listener_id, flags);
+                bool ok = _attach_listener(state, listener_id, flags);
 
                 if (!ok) {
 
@@ -640,7 +611,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
             if (state) {
 
-                bool ok = ProtocolTrainHandler_detach_listener(state, listener_id);
+                bool ok = _detach_listener(state, listener_id);
 
                 if (!ok) {
 
@@ -668,18 +639,18 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
         case TRAIN_LISTENER_QUERY: {
 
-            // Per spec Section 6.4 / Table 4.3.7: the query command
-            // carries byte 2 = NodeCount (ignored on receive) and
-            // byte 3 = NodeIndex (the index the caller is requesting).
+            // Per spec Table 4.3: the query command is
+            // byte 0 = 0x30 (LISTENER_CONFIG), byte 1 = 0x03 (QUERY),
+            // byte 2 = Listener index {optional}.
             // The reply returns the total count, the requested index,
             // and the entry at that index (flags + node_id).
 
-            uint8_t requested_index = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 3);
+            uint8_t requested_index = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 2);
             uint8_t count = 0;
 
             if (state) {
 
-                count = ProtocolTrainHandler_get_listener_count(state);
+                count = _get_listener_count(state);
 
             }
 
@@ -690,7 +661,7 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
             } else {
 
-                train_listener_entry_t *entry = ProtocolTrainHandler_get_listener_by_index(state, requested_index);
+                train_listener_entry_t *entry = _get_listener_by_index(state, requested_index);
 
                 if (entry) {
 
@@ -1111,26 +1082,56 @@ void ProtocolTrainHandler_handle_emergency_event(
     // estop_active, global_estop_active, and global_eoff_active when
     // driving hardware (motor, function outputs) and acts accordingly.
 
+    openlcb_node_t *node = statemachine_info->openlcb_node;
+
     switch (event_id) {
 
         case EVENT_ID_EMERGENCY_STOP:
 
-            state->global_estop_active = 1;
+            state->global_estop_active = true;
+
+            if (_interface && _interface->on_emergency_entered) {
+
+                _interface->on_emergency_entered(node, TRAIN_EMERGENCY_TYPE_GLOBAL_STOP);
+
+            }
+
             break;
 
         case EVENT_ID_CLEAR_EMERGENCY_STOP:
 
-            state->global_estop_active = 0;
+            state->global_estop_active = false;
+
+            if (_interface && _interface->on_emergency_exited) {
+
+                _interface->on_emergency_exited(node, TRAIN_EMERGENCY_TYPE_GLOBAL_STOP);
+
+            }
+
             break;
 
         case EVENT_ID_EMERGENCY_OFF:
 
-            state->global_eoff_active = 1;
+            state->global_eoff_active = true;
+
+            if (_interface && _interface->on_emergency_entered) {
+
+                _interface->on_emergency_entered(node, TRAIN_EMERGENCY_TYPE_GLOBAL_OFF);
+
+            }
+
             break;
 
         case EVENT_ID_CLEAR_EMERGENCY_OFF:
 
-            state->global_eoff_active = 0;
+            state->global_eoff_active = false;
+
+            if (_interface && _interface->on_emergency_exited) {
+
+                _interface->on_emergency_exited(node, TRAIN_EMERGENCY_TYPE_GLOBAL_OFF);
+
+            }
+
             break;
 
         default:

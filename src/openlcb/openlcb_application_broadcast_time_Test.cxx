@@ -615,7 +615,7 @@ TEST(BroadcastTimeApp, time_tick_skips_non_consumer_clocks)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;  // 1.0x real-time
 
     OpenLcbApplicationBroadcastTime_100ms_time_tick();
@@ -633,7 +633,7 @@ TEST(BroadcastTimeApp, time_tick_skips_stopped_clocks)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 0;
+    clock_state->is_running = false;
     clock_state->rate.rate = 4;
 
     OpenLcbApplicationBroadcastTime_100ms_time_tick();
@@ -650,7 +650,7 @@ TEST(BroadcastTimeApp, time_tick_skips_zero_rate)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 0;
 
     OpenLcbApplicationBroadcastTime_100ms_time_tick();
@@ -667,7 +667,7 @@ TEST(BroadcastTimeApp, time_tick_forward_one_minute_at_realtime)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;  // 1.0x real-time
     clock_state->time.hour = 10;
     clock_state->time.minute = 30;
@@ -692,7 +692,7 @@ TEST(BroadcastTimeApp, time_tick_forward_hour_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;  // 1.0x real-time
     clock_state->time.hour = 10;
     clock_state->time.minute = 59;
@@ -717,7 +717,7 @@ TEST(BroadcastTimeApp, time_tick_forward_day_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -748,7 +748,7 @@ TEST(BroadcastTimeApp, time_tick_forward_month_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -779,7 +779,7 @@ TEST(BroadcastTimeApp, time_tick_forward_year_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -812,7 +812,7 @@ TEST(BroadcastTimeApp, time_tick_forward_leap_year_feb_28)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -840,7 +840,7 @@ TEST(BroadcastTimeApp, time_tick_forward_non_leap_year_feb_28)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -868,7 +868,7 @@ TEST(BroadcastTimeApp, time_tick_forward_high_rate_multiple_minutes)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4 * 60;  // 60x real-time: 1 fast-minute per second
     clock_state->time.hour = 10;
     clock_state->time.minute = 0;
@@ -900,7 +900,7 @@ TEST(BroadcastTimeApp, time_tick_backward_one_minute)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;  // -1.0x (backward)
     clock_state->time.hour = 10;
     clock_state->time.minute = 30;
@@ -924,7 +924,7 @@ TEST(BroadcastTimeApp, time_tick_backward_hour_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 10;
     clock_state->time.minute = 0;
@@ -948,7 +948,7 @@ TEST(BroadcastTimeApp, time_tick_backward_day_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -977,7 +977,7 @@ TEST(BroadcastTimeApp, time_tick_backward_month_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -1008,7 +1008,7 @@ TEST(BroadcastTimeApp, time_tick_backward_year_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -1041,7 +1041,7 @@ TEST(BroadcastTimeApp, time_tick_backward_leap_year_mar_1)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -1502,7 +1502,7 @@ TEST(BroadcastTimeApp, send_query_reply_running_clock_full_sequence)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 0x0010;
     clock_state->year.year = 2026;
     clock_state->date.month = 6;
@@ -1546,7 +1546,7 @@ TEST(BroadcastTimeApp, send_query_reply_success_at_state_0_returns_true)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 0x0010;
     clock_state->year.year = 2026;
     clock_state->date.month = 6;
@@ -1576,7 +1576,7 @@ TEST(BroadcastTimeApp, send_query_reply_stopped_clock_sends_stop_event)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 0;  // Stopped
+    clock_state->is_running = false;  // Stopped
     clock_state->rate.rate = 0x0004;
     clock_state->year.year = 2026;
     clock_state->date.month = 1;
@@ -1636,7 +1636,7 @@ TEST(BroadcastTimeApp, send_query_reply_fail_advances_state_then_success)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 0x0004;
     clock_state->year.year = 2026;
     clock_state->date.month = 6;
@@ -1681,14 +1681,14 @@ TEST(BroadcastTimeApp, time_tick_advances_multiple_consumer_clocks)
 
     broadcast_clock_state_t *fast_clock = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    fast_clock->is_running = 1;
+    fast_clock->is_running = true;
     fast_clock->rate.rate = 4;
     fast_clock->time.hour = 10;
     fast_clock->time.minute = 0;
 
     broadcast_clock_state_t *realtime_clock = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_REALTIME_CLOCK);
-    realtime_clock->is_running = 1;
+    realtime_clock->is_running = true;
     realtime_clock->rate.rate = 8;  // 2.0x
     realtime_clock->time.hour = 5;
     realtime_clock->time.minute = 0;
@@ -1724,7 +1724,7 @@ TEST(BroadcastTimeApp, time_tick_null_interface_no_crash)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -1757,7 +1757,7 @@ TEST(BroadcastTimeApp, days_in_month_invalid_month)
     // This tests the _days_in_month fallback return of 30
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -1785,7 +1785,7 @@ TEST(BroadcastTimeApp, century_leap_year_divisible_by_400)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -1812,7 +1812,7 @@ TEST(BroadcastTimeApp, century_not_leap_year_divisible_by_100)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -1933,7 +1933,7 @@ TEST(BroadcastTimeApp, days_in_month_invalid_month_above_12)
     // Set month to 13 (above valid range) and advance past day boundary
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -1963,7 +1963,7 @@ TEST(BroadcastTimeApp, time_tick_forward_30_day_month_rollover)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -1992,7 +1992,7 @@ TEST(BroadcastTimeApp, time_tick_forward_no_month_rollover_at_day_30_in_31_day_m
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;
     clock_state->time.hour = 23;
     clock_state->time.minute = 59;
@@ -2255,7 +2255,7 @@ TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;  // Backward
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -2295,7 +2295,7 @@ TEST(BroadcastTimeApp, send_query_reply_failure_at_state_5_returns_true)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 0x0004;
     clock_state->year.year = 2026;
     clock_state->date.month = 6;
@@ -2335,7 +2335,7 @@ TEST(BroadcastTimeApp, send_query_reply_can_run_twice_consecutively)
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_producer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 0x0004;
     clock_state->year.year = 2026;
     clock_state->date.month = 6;
@@ -2381,7 +2381,7 @@ TEST(BroadcastTimeApp, time_tick_backward_month_rollover_to_31_day_month)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -2412,7 +2412,7 @@ TEST(BroadcastTimeApp, time_tick_backward_day_decrement_no_month_change)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -4;
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
@@ -2444,7 +2444,7 @@ TEST(BroadcastTimeApp, time_tick_quarter_speed_forward)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 1;  // 0.25x real-time
     clock_state->time.hour = 10;
     clock_state->time.minute = 0;
@@ -2470,7 +2470,7 @@ TEST(BroadcastTimeApp, time_tick_negative_rate_quarter_speed)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = -1;  // -0.25x real-time
     clock_state->time.hour = 10;
     clock_state->time.minute = 30;
@@ -2496,7 +2496,7 @@ TEST(BroadcastTimeApp, time_tick_super_high_rate_multiple_minutes_per_tick)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4 * 100;  // 100x real-time
     clock_state->time.hour = 10;
     clock_state->time.minute = 0;
@@ -2531,7 +2531,7 @@ TEST(BroadcastTimeApp, time_tick_accumulator_does_not_lose_fractional_time)
 
     broadcast_clock_state_t *clock_state = OpenLcbApplicationBroadcastTime_setup_consumer(
         NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    clock_state->is_running = 1;
+    clock_state->is_running = true;
     clock_state->rate.rate = 4;  // 1.0x
     clock_state->time.hour = 10;
     clock_state->time.minute = 0;

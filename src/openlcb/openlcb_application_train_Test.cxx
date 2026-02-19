@@ -142,14 +142,14 @@ static interface_protocol_train_handler_t _handler_interface_with_heartbeat = {
 
     .on_speed_changed = NULL,
     .on_function_changed = NULL,
-    .on_emergency_stopped = NULL,
+    .on_emergency_entered = NULL,
+    .on_emergency_exited = NULL,
     .on_controller_assigned = NULL,
     .on_controller_released = NULL,
     .on_listener_changed = NULL,
     .on_heartbeat_timeout = &_mock_on_heartbeat_timeout,
     .on_controller_assign_request = NULL,
     .on_controller_changed_request = NULL,
-    .on_query_function_request = NULL,
     .on_query_speeds_reply = NULL,
     .on_query_function_reply = NULL,
     .on_controller_assign_reply = NULL,
@@ -232,7 +232,7 @@ TEST(ApplicationTrain, setup_allocates_state)
     EXPECT_EQ(node->train_state, state);
     EXPECT_EQ(state->set_speed, 0);
     EXPECT_EQ(state->controller_node_id, (uint64_t) 0);
-    EXPECT_EQ(state->estop_active, 0);
+    EXPECT_FALSE(state->estop_active);
 
 }
 
@@ -584,7 +584,7 @@ TEST(ApplicationTrain, heartbeat_timer_countdown)
 
     EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
     EXPECT_TRUE(mock_heartbeat_timeout_called);
-    EXPECT_EQ(state->estop_active, 1);
+    EXPECT_TRUE(state->estop_active);
     EXPECT_EQ(state->set_speed, 0);
 
 }
@@ -610,7 +610,7 @@ TEST(ApplicationTrain, heartbeat_disabled)
     }
 
     EXPECT_FALSE(mock_heartbeat_timeout_called);
-    EXPECT_EQ(state->estop_active, 0);
+    EXPECT_FALSE(state->estop_active);
 
 }
 

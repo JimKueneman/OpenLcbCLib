@@ -493,27 +493,43 @@ void ProtocolEventTransport_handle_consumer_identify(openlcb_statemachine_info_t
     uint16_t event_index = 0;
     event_id_t target_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
-    if (!OpenLcbUtilities_is_consumer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index) &&
-          !OpenLcbUtilities_is_event_id_in_consumer_ranges(statemachine_info->openlcb_node, target_event_id)) {
+    if (OpenLcbUtilities_is_consumer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index)) {
+
+        // Event found in individual consumer list — reply with its status
+        OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->alias,
+                statemachine_info->openlcb_node->id,
+                statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+                statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, event_index));
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->consumers.list[event_index].event);
+
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else if (OpenLcbUtilities_is_event_id_in_consumer_ranges(statemachine_info->openlcb_node, target_event_id)) {
+
+        // Event matched by range only — echo the queried event ID with Unknown status
+        OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->alias,
+                statemachine_info->openlcb_node->id,
+                statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+                statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                MTI_CONSUMER_IDENTIFIED_UNKNOWN);
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                target_event_id);
+
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else {
 
         statemachine_info->outgoing_msg_info.valid = false;
 
-        return; //  done
-
     }
-
-    OpenLcbUtilities_load_openlcb_message(statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
-            statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_consumer_event_status_mti(statemachine_info->openlcb_node, event_index));
-
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->consumers.list[event_index].event);
-
-    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 
@@ -746,28 +762,45 @@ void ProtocolEventTransport_handle_producer_identify(openlcb_statemachine_info_t
     uint16_t event_index = 0;
     event_id_t target_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
 
-    if (!OpenLcbUtilities_is_producer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index) &&
-        !OpenLcbUtilities_is_event_id_in_producer_ranges(statemachine_info->openlcb_node, target_event_id))
-    {
+    if (OpenLcbUtilities_is_producer_event_assigned_to_node(statemachine_info->openlcb_node, target_event_id, &event_index)) {
+
+        // Event found in individual producer list — reply with its status
+        OpenLcbUtilities_load_openlcb_message(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->alias,
+                statemachine_info->openlcb_node->id,
+                statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+                statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, event_index));
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->producers.list[event_index].event);
+
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else if (OpenLcbUtilities_is_event_id_in_producer_ranges(statemachine_info->openlcb_node, target_event_id)) {
+
+        // Event matched by range only — echo the queried event ID with Unknown status
+        OpenLcbUtilities_load_openlcb_message(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                statemachine_info->openlcb_node->alias,
+                statemachine_info->openlcb_node->id,
+                statemachine_info->incoming_msg_info.msg_ptr->source_alias,
+                statemachine_info->incoming_msg_info.msg_ptr->source_id,
+                MTI_PRODUCER_IDENTIFIED_UNKNOWN);
+
+        OpenLcbUtilities_copy_event_id_to_openlcb_payload(
+                statemachine_info->outgoing_msg_info.msg_ptr,
+                target_event_id);
+
+        statemachine_info->outgoing_msg_info.valid = true;
+
+    } else {
 
         statemachine_info->outgoing_msg_info.valid = false;
 
-        return;
     }
-
-    OpenLcbUtilities_load_openlcb_message(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->alias,
-            statemachine_info->openlcb_node->id,
-            statemachine_info->incoming_msg_info.msg_ptr->source_alias,
-            statemachine_info->incoming_msg_info.msg_ptr->source_id,
-            ProtocolEventTransport_extract_producer_event_status_mti(statemachine_info->openlcb_node, event_index));
-
-    OpenLcbUtilities_copy_event_id_to_openlcb_payload(
-            statemachine_info->outgoing_msg_info.msg_ptr,
-            statemachine_info->openlcb_node->producers.list[event_index].event);
-
-    statemachine_info->outgoing_msg_info.valid = true;
 
 }
 

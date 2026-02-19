@@ -993,7 +993,7 @@ TEST(OpenLcbApplication, send_clock_full_sync_running)
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node1->alias = DEST_ALIAS;
     node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
-    node1->clock_state.is_running = 1;
+    node1->clock_state.is_running = true;
     node1->clock_state.rate.rate = 0x0010;
     node1->clock_state.year.year = 2026;
     node1->clock_state.date.month = 3;
@@ -1022,7 +1022,7 @@ TEST(OpenLcbApplication, send_clock_full_sync_stopped)
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node1->alias = DEST_ALIAS;
     node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
-    node1->clock_state.is_running = 0;
+    node1->clock_state.is_running = false;
     node1->clock_state.rate.rate = 0x0004;
     node1->clock_state.year.year = 1999;
     node1->clock_state.date.month = 12;
@@ -1044,7 +1044,7 @@ TEST(OpenLcbApplication, send_clock_full_sync_fail)
     openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
     node1->alias = DEST_ALIAS;
     node1->clock_state.clock_id = BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK;
-    node1->clock_state.is_running = 1;
+    node1->clock_state.is_running = true;
 
     send_msg_enum = SEND_MSG_CLOCK;
     fail_transmit_openlcb_msg = true;

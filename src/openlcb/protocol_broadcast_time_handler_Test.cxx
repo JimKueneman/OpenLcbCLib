@@ -1044,7 +1044,7 @@ TEST(BroadcastTimeHandler, handle_start)
 
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     ASSERT_NE(cs, nullptr);
-    cs->is_running = 0;
+    cs->is_running = false;
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
@@ -1059,7 +1059,7 @@ TEST(BroadcastTimeHandler, handle_start)
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
     EXPECT_TRUE(g_started_callback_called);
-    EXPECT_EQ(cs->is_running, 1);
+    EXPECT_TRUE(cs->is_running);
 
 }
 
@@ -1076,7 +1076,7 @@ TEST(BroadcastTimeHandler, handle_stop)
 
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     ASSERT_NE(cs, nullptr);
-    cs->is_running = 1;
+    cs->is_running = true;
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
@@ -1091,7 +1091,7 @@ TEST(BroadcastTimeHandler, handle_stop)
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
     EXPECT_TRUE(g_stopped_callback_called);
-    EXPECT_EQ(cs->is_running, 0);
+    EXPECT_FALSE(cs->is_running);
 
 }
 
@@ -1445,14 +1445,14 @@ TEST(BroadcastTimeHandler, null_interface_no_crash)
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(cs->is_running, 1);
+    EXPECT_TRUE(cs->is_running);
 
     // Stop
     event_id = OpenLcbUtilities_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(cs->is_running, 0);
+    EXPECT_FALSE(cs->is_running);
 
     // Date Rollover — just verify no crash
     event_id = OpenLcbUtilities_create_command_event_id(
@@ -1528,14 +1528,14 @@ TEST(BroadcastTimeHandler, null_callbacks_no_crash)
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(cs->is_running, 1);
+    EXPECT_TRUE(cs->is_running);
 
     // Stop with null callback
     event_id = OpenLcbUtilities_create_command_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    EXPECT_EQ(cs->is_running, 0);
+    EXPECT_FALSE(cs->is_running);
 
     // Date Rollover with null callback — just verify no crash
     event_id = OpenLcbUtilities_create_command_event_id(

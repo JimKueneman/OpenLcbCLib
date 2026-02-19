@@ -95,9 +95,12 @@ static uint32_t last_timeout = 0;
 static openlcb_node_t *last_notified_node = NULL;
 
 // Decision callback return values (configurable per test)
-static uint8_t decision_assign_result = 0;
-static uint8_t decision_changed_result = 0;
-static uint16_t decision_fn_value = 0;
+static bool decision_assign_result = true;
+static bool decision_changed_result = true;
+// Emergency callback tracking
+static train_emergency_type_enum last_emergency_type = TRAIN_EMERGENCY_TYPE_ESTOP;
+static int emergency_entered_called = 0;
+static int emergency_exited_called = 0;
 
 
 // ============================================================================
@@ -121,9 +124,11 @@ static void _reset_tracking(void) {
     last_index = 0;
     last_timeout = 0;
     last_notified_node = NULL;
-    decision_assign_result = 0;
-    decision_changed_result = 0;
-    decision_fn_value = 0;
+    decision_assign_result = true;
+    decision_changed_result = true;
+    last_emergency_type = TRAIN_EMERGENCY_TYPE_ESTOP;
+    emergency_entered_called = 0;
+    emergency_exited_called = 0;
 
 }
 
@@ -150,10 +155,23 @@ static void _mock_on_function_changed(openlcb_node_t *openlcb_node,
 
 }
 
-static void _mock_on_emergency_stopped(openlcb_node_t *openlcb_node) {
+static void _mock_on_emergency_entered(openlcb_node_t *openlcb_node,
+        train_emergency_type_enum emergency_type) {
 
     notifier_called = 3;
     last_notified_node = openlcb_node;
+    last_emergency_type = emergency_type;
+    emergency_entered_called++;
+
+}
+
+static void _mock_on_emergency_exited(openlcb_node_t *openlcb_node,
+        train_emergency_type_enum emergency_type) {
+
+    notifier_called = 8;
+    last_notified_node = openlcb_node;
+    last_emergency_type = emergency_type;
+    emergency_exited_called++;
 
 }
 
@@ -192,7 +210,7 @@ static void _mock_on_heartbeat_timeout(openlcb_node_t *openlcb_node) {
 // Mock Callbacks — Train-node side: decision callbacks
 // ============================================================================
 
-static uint8_t _mock_on_controller_assign_request(openlcb_node_t *openlcb_node,
+static bool _mock_on_controller_assign_request(openlcb_node_t *openlcb_node,
         uint64_t current_controller, uint64_t requesting_controller) {
 
     last_notified_node = openlcb_node;
@@ -200,23 +218,13 @@ static uint8_t _mock_on_controller_assign_request(openlcb_node_t *openlcb_node,
 
 }
 
-static uint8_t _mock_on_controller_changed_request(openlcb_node_t *openlcb_node,
+static bool _mock_on_controller_changed_request(openlcb_node_t *openlcb_node,
         uint64_t new_controller) {
 
     last_notified_node = openlcb_node;
     return decision_changed_result;
 
 }
-
-static uint16_t _mock_on_query_function_request(openlcb_node_t *openlcb_node,
-        uint32_t fn_address) {
-
-    last_notified_node = openlcb_node;
-    last_fn_address = fn_address;
-    return decision_fn_value;
-
-}
-
 
 // ============================================================================
 // Mock Callbacks — Throttle side: notifiers (receiving replies from train)
@@ -322,7 +330,8 @@ static interface_protocol_train_handler_t _interface_all = {
     // Train-node side: notifiers
     .on_speed_changed = &_mock_on_speed_changed,
     .on_function_changed = &_mock_on_function_changed,
-    .on_emergency_stopped = &_mock_on_emergency_stopped,
+    .on_emergency_entered = &_mock_on_emergency_entered,
+    .on_emergency_exited = &_mock_on_emergency_exited,
     .on_controller_assigned = &_mock_on_controller_assigned,
     .on_controller_released = &_mock_on_controller_released,
     .on_listener_changed = &_mock_on_listener_changed,
@@ -331,8 +340,6 @@ static interface_protocol_train_handler_t _interface_all = {
     // Train-node side: decision callbacks
     .on_controller_assign_request = &_mock_on_controller_assign_request,
     .on_controller_changed_request = &_mock_on_controller_changed_request,
-    .on_query_function_request = &_mock_on_query_function_request,
-
     // Throttle side: notifiers
     .on_query_speeds_reply = &_mock_on_query_speeds_reply,
     .on_query_function_reply = &_mock_on_query_function_reply,
@@ -351,7 +358,8 @@ static interface_protocol_train_handler_t _interface_nulls = {
 
     .on_speed_changed = NULL,
     .on_function_changed = NULL,
-    .on_emergency_stopped = NULL,
+    .on_emergency_entered = NULL,
+    .on_emergency_exited = NULL,
     .on_controller_assigned = NULL,
     .on_controller_released = NULL,
     .on_listener_changed = NULL,
@@ -359,8 +367,6 @@ static interface_protocol_train_handler_t _interface_nulls = {
 
     .on_controller_assign_request = NULL,
     .on_controller_changed_request = NULL,
-    .on_query_function_request = NULL,
-
     .on_query_speeds_reply = NULL,
     .on_query_function_reply = NULL,
     .on_controller_assign_reply = NULL,
@@ -510,7 +516,7 @@ TEST(ProtocolTrainHandler, command_set_speed_updates_state)
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
     EXPECT_NE(state, nullptr);
     EXPECT_EQ(state->set_speed, 0x3C00);
-    EXPECT_EQ(state->estop_active, 0);
+    EXPECT_FALSE(state->estop_active);
 
     // Verify notifier fired
     EXPECT_EQ(notifier_called, 1);
@@ -527,7 +533,7 @@ TEST(ProtocolTrainHandler, command_set_speed_clears_estop)
 
     openlcb_node_t *node = _create_train_node();
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
-    state->estop_active = 1;
+    state->estop_active = true;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -541,7 +547,7 @@ TEST(ProtocolTrainHandler, command_set_speed_clears_estop)
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    EXPECT_EQ(state->estop_active, 0);
+    EXPECT_FALSE(state->estop_active);
     EXPECT_EQ(state->set_speed, 0x4000);
 
 }
@@ -570,7 +576,7 @@ TEST(ProtocolTrainHandler, command_emergency_stop_updates_state)
     ProtocolTrainHandler_handle_train_command(&sm);
 
     // Verify estop active
-    EXPECT_EQ(state->estop_active, 1);
+    EXPECT_TRUE(state->estop_active);
     // Direction preserved (forward), speed zeroed
     EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
 
@@ -604,7 +610,7 @@ TEST(ProtocolTrainHandler, command_emergency_stop_preserves_reverse)
     ProtocolTrainHandler_handle_train_command(&sm);
 
     // Direction preserved (reverse), speed zeroed
-    EXPECT_EQ(state->estop_active, 1);
+    EXPECT_TRUE(state->estop_active);
     EXPECT_EQ(state->set_speed, FLOAT16_NEGATIVE_ZERO);
 
 }
@@ -852,7 +858,7 @@ TEST(ProtocolTrainHandler, command_query_speeds_auto_reply)
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
 
     state->set_speed = 0x3C00;
-    state->estop_active = 1;
+    state->estop_active = true;
     state->commanded_speed = 0x3E00;
     state->actual_speed = 0x3A00;
 
@@ -888,7 +894,7 @@ TEST(ProtocolTrainHandler, command_query_speeds_no_estop)
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
 
     state->set_speed = 0x4000;
-    state->estop_active = 0;
+    state->estop_active = false;
     state->commanded_speed = FLOAT16_NAN;
     state->actual_speed = FLOAT16_NAN;
 
@@ -908,45 +914,7 @@ TEST(ProtocolTrainHandler, command_query_speeds_no_estop)
 
 }
 
-TEST(ProtocolTrainHandler, command_query_function_with_callback)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-
-    // Configure decision callback to return value 0x0042 for any function
-    decision_fn_value = 0x0042;
-
-    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
-    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
-
-    openlcb_statemachine_info_t sm;
-    _setup_statemachine(&sm, node, incoming, outgoing);
-
-    // Query Function: fn address = 3
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x03, 3);
-    incoming->payload_count = 4;
-
-    ProtocolTrainHandler_handle_train_command(&sm);
-
-    // Verify reply was built with value from decision callback
-    EXPECT_TRUE(sm.outgoing_msg_info.valid);
-    EXPECT_EQ(outgoing->mti, MTI_TRAIN_REPLY);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_QUERY_FUNCTION);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3), 0x03);
-    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 4), 0x0042);
-
-    // Verify decision callback received correct fn_address
-    EXPECT_EQ(last_fn_address, (uint32_t) 3);
-
-}
-
-TEST(ProtocolTrainHandler, command_query_function_null_callback_returns_zero)
+TEST(ProtocolTrainHandler, command_query_function_default_returns_zero)
 {
 
     _reset_tracking();
@@ -1058,8 +1026,8 @@ TEST(ProtocolTrainHandler, command_controller_assign_different_accept)
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
     state->controller_node_id = TEST_CONTROLLER_NODE_ID;
 
-    // Decision callback returns 0 (accept)
-    decision_assign_result = 0;
+    // Decision callback returns true (accept)
+    decision_assign_result = true;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1091,8 +1059,8 @@ TEST(ProtocolTrainHandler, command_controller_assign_different_reject)
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
     state->controller_node_id = TEST_CONTROLLER_NODE_ID;
 
-    // Decision callback returns non-zero (reject)
-    decision_assign_result = 0x01;
+    // Decision callback returns false (reject)
+    decision_assign_result = false;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1109,8 +1077,8 @@ TEST(ProtocolTrainHandler, command_controller_assign_different_reject)
 
     // Original controller preserved
     EXPECT_EQ(state->controller_node_id, TEST_CONTROLLER_NODE_ID);
-    // Reply has non-zero result
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x01);
+    // Reply has non-zero result (0xFF = rejected)
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0xFF);
     // Notifier NOT called when rejected
     EXPECT_NE(notifier_called, 4);
 
@@ -1245,7 +1213,7 @@ TEST(ProtocolTrainHandler, command_controller_changed_accept)
 
     openlcb_node_t *node = _create_train_node();
 
-    decision_changed_result = 0;
+    decision_changed_result = true;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1276,7 +1244,7 @@ TEST(ProtocolTrainHandler, command_controller_changed_reject)
 
     openlcb_node_t *node = _create_train_node();
 
-    decision_changed_result = 0x02;
+    decision_changed_result = false;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1292,7 +1260,7 @@ TEST(ProtocolTrainHandler, command_controller_changed_reject)
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x02);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0xFF);
 
 }
 
@@ -1375,8 +1343,10 @@ TEST(ProtocolTrainHandler, command_listener_detach_success)
     openlcb_node_t *node = _create_train_node();
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
 
-    // Pre-attach a listener
-    ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, 0x00);
+    // Pre-populate a listener directly in state
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = 0x00;
+    state->listener_count = 1;
     EXPECT_EQ(state->listener_count, 1);
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1445,9 +1415,12 @@ TEST(ProtocolTrainHandler, command_listener_query_with_listeners)
     openlcb_node_t *node = _create_train_node();
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
 
-    // Add two listeners
-    ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_LINK_F0);
-    ProtocolTrainHandler_attach_listener(state, 0xAABBCCDDEEFFULL, 0x00);
+    // Pre-populate two listeners directly in state
+    state->listeners[0].node_id = TEST_LISTENER_NODE_ID;
+    state->listeners[0].flags = TRAIN_LISTENER_FLAG_LINK_F0;
+    state->listeners[1].node_id = 0xAABBCCDDEEFFULL;
+    state->listeners[1].flags = 0x00;
+    state->listener_count = 2;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1457,9 +1430,8 @@ TEST(ProtocolTrainHandler, command_listener_query_with_listeners)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // NodeCount (ignored)
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // NodeIndex = 0
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // Listener index = 0
+    incoming->payload_count = 3;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1490,9 +1462,8 @@ TEST(ProtocolTrainHandler, command_listener_query_no_listeners)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // NodeCount (ignored)
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // NodeIndex = 0
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // Listener index = 0
+    incoming->payload_count = 3;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -2113,7 +2084,7 @@ TEST(ProtocolTrainHandler, null_callbacks_commands_no_crash)
     incoming->payload_count = 1;
 
     ProtocolTrainHandler_handle_train_command(&sm);
-    EXPECT_EQ(state->estop_active, 1);
+    EXPECT_TRUE(state->estop_active);
     EXPECT_EQ(notifier_called, 0);
 
     // Controller assign with NULL decision and NULL notifier — default accept
@@ -2279,317 +2250,7 @@ TEST(ProtocolTrainHandler, query_speeds_no_train_state)
 
 
 // ============================================================================
-// Section 11: Listener Management (unit tests for ProtocolTrainHandler_*_listener)
-// ============================================================================
-
-TEST(ProtocolTrainHandler, listener_attach)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    EXPECT_NE(state, nullptr);
-    EXPECT_EQ(state->listener_count, 0);
-
-    bool result = ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_REVERSE);
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(state->listener_count, 1);
-    EXPECT_EQ(state->listeners[0].node_id, TEST_LISTENER_NODE_ID);
-    EXPECT_EQ(state->listeners[0].flags, TRAIN_LISTENER_FLAG_REVERSE);
-
-}
-
-TEST(ProtocolTrainHandler, listener_attach_multiple)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    uint64_t id1 = 0x010203040501ULL;
-    uint64_t id2 = 0x010203040502ULL;
-    uint64_t id3 = 0x010203040503ULL;
-
-    EXPECT_TRUE(ProtocolTrainHandler_attach_listener(state, id1, 0x00));
-    EXPECT_TRUE(ProtocolTrainHandler_attach_listener(state, id2, TRAIN_LISTENER_FLAG_LINK_F0));
-    EXPECT_TRUE(ProtocolTrainHandler_attach_listener(state, id3, TRAIN_LISTENER_FLAG_REVERSE));
-
-    EXPECT_EQ(state->listener_count, 3);
-    EXPECT_EQ(state->listeners[0].node_id, id1);
-    EXPECT_EQ(state->listeners[1].node_id, id2);
-    EXPECT_EQ(state->listeners[2].node_id, id3);
-
-}
-
-TEST(ProtocolTrainHandler, listener_attach_duplicate_updates_flags)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, 0x00);
-
-    EXPECT_EQ(state->listener_count, 1);
-    EXPECT_EQ(state->listeners[0].flags, 0x00);
-
-    // Attach same node again with different flags — should update, not add
-    bool result = ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_REVERSE);
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(state->listener_count, 1);
-    EXPECT_EQ(state->listeners[0].flags, TRAIN_LISTENER_FLAG_REVERSE);
-
-}
-
-TEST(ProtocolTrainHandler, listener_attach_full)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    // Fill all slots
-    for (int i = 0; i < USER_DEFINED_MAX_LISTENERS_PER_TRAIN; i++) {
-
-        bool result = ProtocolTrainHandler_attach_listener(state, 0x010203040500ULL + i, 0x00);
-        EXPECT_TRUE(result);
-
-    }
-
-    EXPECT_EQ(state->listener_count, USER_DEFINED_MAX_LISTENERS_PER_TRAIN);
-
-    // One more should fail
-    bool result = ProtocolTrainHandler_attach_listener(state, 0xAABBCCDDEEFFULL, 0x00);
-
-    EXPECT_FALSE(result);
-    EXPECT_EQ(state->listener_count, USER_DEFINED_MAX_LISTENERS_PER_TRAIN);
-
-}
-
-TEST(ProtocolTrainHandler, listener_attach_null_state)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    bool result = ProtocolTrainHandler_attach_listener(NULL, TEST_LISTENER_NODE_ID, 0x00);
-
-    EXPECT_FALSE(result);
-
-}
-
-TEST(ProtocolTrainHandler, listener_attach_zero_node_id)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    bool result = ProtocolTrainHandler_attach_listener(state, 0, 0x00);
-
-    EXPECT_FALSE(result);
-    EXPECT_EQ(state->listener_count, 0);
-
-}
-
-TEST(ProtocolTrainHandler, listener_detach)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_REVERSE);
-
-    EXPECT_EQ(state->listener_count, 1);
-
-    bool result = ProtocolTrainHandler_detach_listener(state, TEST_LISTENER_NODE_ID);
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(state->listener_count, 0);
-
-}
-
-TEST(ProtocolTrainHandler, listener_detach_middle)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    uint64_t id1 = 0x010203040501ULL;
-    uint64_t id2 = 0x010203040502ULL;
-    uint64_t id3 = 0x010203040503ULL;
-
-    ProtocolTrainHandler_attach_listener(state, id1, 0x00);
-    ProtocolTrainHandler_attach_listener(state, id2, 0x02);
-    ProtocolTrainHandler_attach_listener(state, id3, 0x04);
-
-    // Detach the middle one
-    bool result = ProtocolTrainHandler_detach_listener(state, id2);
-
-    EXPECT_TRUE(result);
-    EXPECT_EQ(state->listener_count, 2);
-    EXPECT_EQ(state->listeners[0].node_id, id1);
-    EXPECT_EQ(state->listeners[0].flags, 0x00);
-    EXPECT_EQ(state->listeners[1].node_id, id3);
-    EXPECT_EQ(state->listeners[1].flags, 0x04);
-
-}
-
-TEST(ProtocolTrainHandler, listener_detach_not_found)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, 0x00);
-
-    bool result = ProtocolTrainHandler_detach_listener(state, 0xAABBCCDDEEFFULL);
-
-    EXPECT_FALSE(result);
-    EXPECT_EQ(state->listener_count, 1);
-
-}
-
-TEST(ProtocolTrainHandler, listener_detach_null_state)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    bool result = ProtocolTrainHandler_detach_listener(NULL, TEST_LISTENER_NODE_ID);
-
-    EXPECT_FALSE(result);
-
-}
-
-TEST(ProtocolTrainHandler, listener_find)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    ProtocolTrainHandler_attach_listener(state, TEST_LISTENER_NODE_ID, TRAIN_LISTENER_FLAG_LINK_F0);
-
-    train_listener_entry_t *entry = ProtocolTrainHandler_find_listener(state, TEST_LISTENER_NODE_ID);
-
-    EXPECT_NE(entry, nullptr);
-    EXPECT_EQ(entry->node_id, TEST_LISTENER_NODE_ID);
-    EXPECT_EQ(entry->flags, TRAIN_LISTENER_FLAG_LINK_F0);
-
-}
-
-TEST(ProtocolTrainHandler, listener_find_not_found)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    train_listener_entry_t *entry = ProtocolTrainHandler_find_listener(state, TEST_LISTENER_NODE_ID);
-
-    EXPECT_EQ(entry, nullptr);
-
-}
-
-TEST(ProtocolTrainHandler, listener_find_null_state)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    train_listener_entry_t *entry = ProtocolTrainHandler_find_listener(NULL, TEST_LISTENER_NODE_ID);
-
-    EXPECT_EQ(entry, nullptr);
-
-}
-
-TEST(ProtocolTrainHandler, listener_get_count)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    EXPECT_EQ(ProtocolTrainHandler_get_listener_count(state), 0);
-
-    ProtocolTrainHandler_attach_listener(state, 0x010203040501ULL, 0x00);
-
-    EXPECT_EQ(ProtocolTrainHandler_get_listener_count(state), 1);
-
-    ProtocolTrainHandler_attach_listener(state, 0x010203040502ULL, 0x00);
-
-    EXPECT_EQ(ProtocolTrainHandler_get_listener_count(state), 2);
-
-    EXPECT_EQ(ProtocolTrainHandler_get_listener_count(NULL), 0);
-
-}
-
-TEST(ProtocolTrainHandler, listener_get_by_index)
-{
-
-    _reset_tracking();
-    _global_initialize();
-
-    openlcb_node_t *node = _create_train_node();
-    train_state_t *state = node->train_state;
-
-    uint64_t id1 = 0x010203040501ULL;
-    uint64_t id2 = 0x010203040502ULL;
-
-    ProtocolTrainHandler_attach_listener(state, id1, 0x00);
-    ProtocolTrainHandler_attach_listener(state, id2, TRAIN_LISTENER_FLAG_REVERSE);
-
-    train_listener_entry_t *entry0 = ProtocolTrainHandler_get_listener_by_index(state, 0);
-    train_listener_entry_t *entry1 = ProtocolTrainHandler_get_listener_by_index(state, 1);
-    train_listener_entry_t *entry2 = ProtocolTrainHandler_get_listener_by_index(state, 2);
-
-    EXPECT_NE(entry0, nullptr);
-    EXPECT_EQ(entry0->node_id, id1);
-
-    EXPECT_NE(entry1, nullptr);
-    EXPECT_EQ(entry1->node_id, id2);
-    EXPECT_EQ(entry1->flags, TRAIN_LISTENER_FLAG_REVERSE);
-
-    // Out of bounds
-    EXPECT_EQ(entry2, nullptr);
-
-    // Null state
-    EXPECT_EQ(ProtocolTrainHandler_get_listener_by_index(NULL, 0), nullptr);
-
-}
-
-
-// ============================================================================
-// Section 12: Global Emergency Events (event-based estop/eoff)
+// Section 11: Global Emergency Events (event-based estop/eoff)
 // ============================================================================
 
 TEST(ProtocolTrainHandler, global_emergency_stop_sets_flag) {
@@ -2604,11 +2265,11 @@ TEST(ProtocolTrainHandler, global_emergency_stop_sets_flag) {
     memset(&outgoing, 0, sizeof(outgoing));
     _setup_statemachine(&sm, node, &incoming, &outgoing);
 
-    EXPECT_EQ(node->train_state->global_estop_active, 0);
+    EXPECT_FALSE(node->train_state->global_estop_active);
 
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
 
-    EXPECT_EQ(node->train_state->global_estop_active, 1);
+    EXPECT_TRUE(node->train_state->global_estop_active);
 
 }
 
@@ -2624,11 +2285,11 @@ TEST(ProtocolTrainHandler, clear_global_emergency_stop) {
     memset(&outgoing, 0, sizeof(outgoing));
     _setup_statemachine(&sm, node, &incoming, &outgoing);
 
-    node->train_state->global_estop_active = 1;
+    node->train_state->global_estop_active = true;
 
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
 
-    EXPECT_EQ(node->train_state->global_estop_active, 0);
+    EXPECT_FALSE(node->train_state->global_estop_active);
 
 }
 
@@ -2644,11 +2305,11 @@ TEST(ProtocolTrainHandler, global_emergency_off_sets_flag) {
     memset(&outgoing, 0, sizeof(outgoing));
     _setup_statemachine(&sm, node, &incoming, &outgoing);
 
-    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+    EXPECT_FALSE(node->train_state->global_eoff_active);
 
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
 
-    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+    EXPECT_TRUE(node->train_state->global_eoff_active);
 
 }
 
@@ -2664,11 +2325,11 @@ TEST(ProtocolTrainHandler, clear_global_emergency_off) {
     memset(&outgoing, 0, sizeof(outgoing));
     _setup_statemachine(&sm, node, &incoming, &outgoing);
 
-    node->train_state->global_eoff_active = 1;
+    node->train_state->global_eoff_active = true;
 
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
 
-    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+    EXPECT_FALSE(node->train_state->global_eoff_active);
 
 }
 
@@ -2690,7 +2351,7 @@ TEST(ProtocolTrainHandler, global_emergency_does_not_change_set_speed) {
 
     // Set speed must NOT be changed by global emergency (per spec)
     EXPECT_EQ(node->train_state->set_speed, 0x3C00);
-    EXPECT_EQ(node->train_state->global_estop_active, 1);
+    EXPECT_TRUE(node->train_state->global_estop_active);
 
 }
 
@@ -2716,7 +2377,7 @@ TEST(ProtocolTrainHandler, global_emergency_off_does_not_change_functions) {
     // Per spec: Emergency Off de-energizes outputs but does NOT change
     // the stored function values.  The app layer checks global_eoff_active
     // and de-energizes.  Upon clearing, functions restore to these values.
-    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+    EXPECT_TRUE(node->train_state->global_eoff_active);
     EXPECT_EQ(node->train_state->functions[0], 1);
     EXPECT_EQ(node->train_state->functions[1], 1);
     EXPECT_EQ(node->train_state->functions[5], 0x0A);
@@ -2736,38 +2397,38 @@ TEST(ProtocolTrainHandler, overlapping_emergency_states_independent) {
     _setup_statemachine(&sm, node, &incoming, &outgoing);
 
     // Activate all three emergency states
-    node->train_state->estop_active = 1;
+    node->train_state->estop_active = true;
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
 
-    EXPECT_EQ(node->train_state->estop_active, 1);
-    EXPECT_EQ(node->train_state->global_estop_active, 1);
-    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+    EXPECT_TRUE(node->train_state->estop_active);
+    EXPECT_TRUE(node->train_state->global_estop_active);
+    EXPECT_TRUE(node->train_state->global_eoff_active);
 
     // Clear global estop — other two remain
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
 
-    EXPECT_EQ(node->train_state->estop_active, 1);
-    EXPECT_EQ(node->train_state->global_estop_active, 0);
-    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+    EXPECT_TRUE(node->train_state->estop_active);
+    EXPECT_FALSE(node->train_state->global_estop_active);
+    EXPECT_TRUE(node->train_state->global_eoff_active);
 
     // Clear global eoff — point-to-point estop remains
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
 
-    EXPECT_EQ(node->train_state->estop_active, 1);
-    EXPECT_EQ(node->train_state->global_estop_active, 0);
-    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+    EXPECT_TRUE(node->train_state->estop_active);
+    EXPECT_FALSE(node->train_state->global_estop_active);
+    EXPECT_FALSE(node->train_state->global_eoff_active);
 
 }
 
-TEST(ProtocolTrainHandler, query_speeds_status_reflects_global_estop) {
+TEST(ProtocolTrainHandler, query_speeds_status_ignores_global_estop) {
 
     _reset_tracking();
     _global_initialize();
     openlcb_node_t *node = _create_train_node();
 
     node->train_state->set_speed = 0x3C00;
-    node->train_state->global_estop_active = 1;
+    node->train_state->global_estop_active = true;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -2781,18 +2442,19 @@ TEST(ProtocolTrainHandler, query_speeds_status_reflects_global_estop) {
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+    // Status bit reports only point-to-point estop, not global states
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x00);
 
 }
 
-TEST(ProtocolTrainHandler, query_speeds_status_reflects_global_eoff) {
+TEST(ProtocolTrainHandler, query_speeds_status_ignores_global_eoff) {
 
     _reset_tracking();
     _global_initialize();
     openlcb_node_t *node = _create_train_node();
 
     node->train_state->set_speed = 0x3C00;
-    node->train_state->global_eoff_active = 1;
+    node->train_state->global_eoff_active = true;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -2806,7 +2468,8 @@ TEST(ProtocolTrainHandler, query_speeds_status_reflects_global_eoff) {
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+    // Status bit reports only point-to-point estop, not global states
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x00);
 
 }
 
@@ -2848,8 +2511,8 @@ TEST(ProtocolTrainHandler, global_emergency_unknown_event_no_crash) {
     // Unknown event ID — should not crash or change state
     ProtocolTrainHandler_handle_emergency_event(&sm, 0x0100000000001234ULL);
 
-    EXPECT_EQ(node->train_state->global_estop_active, 0);
-    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+    EXPECT_FALSE(node->train_state->global_estop_active);
+    EXPECT_FALSE(node->train_state->global_eoff_active);
 
 }
 
@@ -3091,7 +2754,7 @@ TEST(ProtocolTrainHandler, conformance_2_4_check_emergency_stop) {
     incoming->payload_count = 1;
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    EXPECT_EQ(state->estop_active, 1);
+    EXPECT_TRUE(state->estop_active);
 
     // Step 4: Query → 0 reverse  (Set Speed changed to zero, direction preserved)
     sm.outgoing_msg_info.valid = false;
@@ -3110,7 +2773,7 @@ TEST(ProtocolTrainHandler, conformance_2_4_check_emergency_stop) {
     incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    EXPECT_EQ(state->estop_active, 0);
+    EXPECT_FALSE(state->estop_active);
     EXPECT_EQ(state->set_speed, speed_0_1_fwd);
 
     // Step 6: Query → 0.1 forward
@@ -3181,7 +2844,7 @@ TEST(ProtocolTrainHandler, conformance_2_5_check_global_emergency_stop) {
     // Step 3: Produce Emergency Stop All event
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
 
-    EXPECT_EQ(state->global_estop_active, 1);
+    EXPECT_TRUE(state->global_estop_active);
 
     // Step 4: Query → 0.1 reverse  (Set Speed NOT changed by global estop)
     sm.outgoing_msg_info.valid = false;
@@ -3191,7 +2854,8 @@ TEST(ProtocolTrainHandler, conformance_2_5_check_global_emergency_stop) {
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+    // Status bit reports only point-to-point estop, not global states
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x00);
 
     // Step 5: Set speed 0.1 forward (accepted during global estop)
     sm.outgoing_msg_info.valid = false;
@@ -3201,7 +2865,7 @@ TEST(ProtocolTrainHandler, conformance_2_5_check_global_emergency_stop) {
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_EQ(state->set_speed, speed_0_1_fwd);
-    EXPECT_EQ(state->global_estop_active, 1);
+    EXPECT_TRUE(state->global_estop_active);
 
     // Step 6: Query → 0.1 forward
     sm.outgoing_msg_info.valid = false;
@@ -3215,7 +2879,7 @@ TEST(ProtocolTrainHandler, conformance_2_5_check_global_emergency_stop) {
     // Step 7: Produce Clear Emergency Stop event
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
 
-    EXPECT_EQ(state->global_estop_active, 0);
+    EXPECT_FALSE(state->global_estop_active);
 
     // Step 8: Set speed 0 forward
     sm.outgoing_msg_info.valid = false;
@@ -3275,7 +2939,7 @@ TEST(ProtocolTrainHandler, conformance_2_6_check_global_emergency_off) {
     // Step 3: Produce Emergency Off All event
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
 
-    EXPECT_EQ(state->global_eoff_active, 1);
+    EXPECT_TRUE(state->global_eoff_active);
 
     // Step 4: Query → 0.1 reverse  (Set Speed NOT changed by global eoff)
     sm.outgoing_msg_info.valid = false;
@@ -3285,7 +2949,8 @@ TEST(ProtocolTrainHandler, conformance_2_6_check_global_emergency_off) {
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
-    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+    // Status bit reports only point-to-point estop, not global states
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x00);
 
     // Step 5: Set speed 0.1 forward (accepted during global eoff)
     sm.outgoing_msg_info.valid = false;
@@ -3295,7 +2960,7 @@ TEST(ProtocolTrainHandler, conformance_2_6_check_global_emergency_off) {
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_EQ(state->set_speed, speed_0_1_fwd);
-    EXPECT_EQ(state->global_eoff_active, 1);
+    EXPECT_TRUE(state->global_eoff_active);
 
     // Step 6: Query → 0.1 forward
     sm.outgoing_msg_info.valid = false;
@@ -3309,7 +2974,7 @@ TEST(ProtocolTrainHandler, conformance_2_6_check_global_emergency_off) {
     // Step 7: Produce Clear Emergency Off event
     ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
 
-    EXPECT_EQ(state->global_eoff_active, 0);
+    EXPECT_FALSE(state->global_eoff_active);
 
     // Step 8: Set speed 0 forward
     sm.outgoing_msg_info.valid = false;
@@ -3546,7 +3211,7 @@ TEST(ProtocolTrainHandler, conformance_2_10_check_management_reserve_release) {
 
 // TN 2.11 — Check Listener Configuration command and response
 //
-// Per Train Control Standard Section 6.4:
+// Per Train Control Standard Section 6.5:
 //   - Attach adds a listener with flags; reply echoes node_id + result 0 (OK)
 //   - Detach removes a listener; reply echoes node_id + result 0 (OK)
 //   - Query returns total count, the requested index entry (flags + node_id)
@@ -3583,9 +3248,8 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     // Step 1: Query Listeners (index 0) → count=0
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // NodeCount (ignored)
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // NodeIndex = 0
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // Listener index = 0
+    incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -3612,9 +3276,8 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // index 0
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // index 0
+    incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -3639,9 +3302,8 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // index 0
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // index 0
+    incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -3654,9 +3316,8 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x01, 3);  // index 1
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x01, 2);  // index 1
+    incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -3684,9 +3345,8 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // index 0
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // index 0
+    incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);
@@ -3723,9 +3383,8 @@ TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
     sm.outgoing_msg_info.valid = false;
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
-    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
-    incoming->payload_count = 4;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // index 0
+    incoming->payload_count = 3;
     ProtocolTrainHandler_handle_train_command(&sm);
 
     EXPECT_TRUE(sm.outgoing_msg_info.valid);

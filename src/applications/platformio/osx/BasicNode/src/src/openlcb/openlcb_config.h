@@ -303,8 +303,11 @@ typedef struct {
     /** @brief Function was set on this train node. Standard functions stored in train_state.functions[]. */
     void (*on_train_function_changed)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
-    /** @brief Emergency stop triggered. estop_active and speed already updated in state. */
-    void (*on_train_emergency_stopped)(openlcb_node_t *openlcb_node);
+    /** @brief An emergency state was entered. State flags already updated. */
+    void (*on_train_emergency_entered)(openlcb_node_t *openlcb_node, train_emergency_type_enum emergency_type);
+
+    /** @brief An emergency state was exited. State flags already updated. */
+    void (*on_train_emergency_exited)(openlcb_node_t *openlcb_node, train_emergency_type_enum emergency_type);
 
     /** @brief Controller was assigned or changed. State already updated. */
     void (*on_train_controller_assigned)(openlcb_node_t *openlcb_node, node_id_t controller_node_id);
@@ -320,14 +323,11 @@ typedef struct {
 
     // ---- Train-node side: decision callbacks ----
 
-    /** @brief Another controller wants to take over. Return 0 to accept, non-zero to reject. If NULL, default = accept. */
-    uint8_t (*on_train_controller_assign_request)(openlcb_node_t *openlcb_node, node_id_t current_controller, node_id_t requesting_controller);
+    /** @brief Another controller wants to take over. Return true to accept, false to reject. If NULL, default = accept. */
+    bool (*on_train_controller_assign_request)(openlcb_node_t *openlcb_node, node_id_t current_controller, node_id_t requesting_controller);
 
-    /** @brief Old controller receiving Controller Changed Notify. Return 0 to accept, non-zero to reject. If NULL, default = accept. */
-    uint8_t (*on_train_controller_changed_request)(openlcb_node_t *openlcb_node, node_id_t new_controller);
-
-    /** @brief Query function value override. Return the 16-bit value. If NULL, default = return stored value. */
-    uint16_t (*on_train_query_function_request)(openlcb_node_t *openlcb_node, uint32_t fn_address);
+    /** @brief Old controller receiving Controller Changed Notify. Return true to accept, false to reject. If NULL, default = accept. */
+    bool (*on_train_controller_changed_request)(openlcb_node_t *openlcb_node, node_id_t new_controller);
 
     // ---- Throttle side: notifiers (receiving replies from train) ----
 

@@ -1588,7 +1588,9 @@ TEST(ProtocolEventTransport, handle_consumer_identify_in_range)
     ProtocolEventTransport_handle_consumer_identify(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->consumers.list[0].event);
+    // Range-only match: reply echoes the queried event ID with Unknown status
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), test_event);
+    EXPECT_EQ(outgoing_msg->mti, MTI_CONSUMER_IDENTIFIED_UNKNOWN);
 }
 
 TEST(ProtocolEventTransport, handle_consumer_identify_not_in_range)
@@ -1661,7 +1663,9 @@ TEST(ProtocolEventTransport, handle_producer_identify_in_range)
     ProtocolEventTransport_handle_producer_identify(&statemachine_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), node1->producers.list[0].event);
+    // Range-only match: reply echoes the queried event ID with Unknown status
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), test_event);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PRODUCER_IDENTIFIED_UNKNOWN);
 }
 
 TEST(ProtocolEventTransport, handle_producer_identify_not_in_range)

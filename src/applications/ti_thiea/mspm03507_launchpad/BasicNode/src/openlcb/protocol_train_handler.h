@@ -81,8 +81,11 @@
         /** Function was set. Standard functions (F0-F28) stored in train_state.functions[]. */
         void (*on_function_changed)(openlcb_node_t *openlcb_node, uint32_t fn_address, uint16_t fn_value);
 
-        /** Emergency stop. estop_active and speed already updated in state. */
-        void (*on_emergency_stopped)(openlcb_node_t *openlcb_node);
+        /** An emergency state was entered. State flags already updated. */
+        void (*on_emergency_entered)(openlcb_node_t *openlcb_node, train_emergency_type_enum emergency_type);
+
+        /** An emergency state was exited. State flags already updated. */
+        void (*on_emergency_exited)(openlcb_node_t *openlcb_node, train_emergency_type_enum emergency_type);
 
         /** Controller was assigned or changed. State already updated. */
         void (*on_controller_assigned)(openlcb_node_t *openlcb_node, node_id_t controller_node_id);
@@ -93,29 +96,23 @@
         /** Listener list was modified (attach or detach). */
         void (*on_listener_changed)(openlcb_node_t *openlcb_node);
 
-        /** Heartbeat timed out. estop_active and speed already updated. */
+        /** Heartbeat timed out. State already updated. */
         void (*on_heartbeat_timeout)(openlcb_node_t *openlcb_node);
 
         // ---- Train-node side: decision callbacks ----
 
         /**
-         * Another controller wants to take over. Return 0 to accept,
-         * non-zero result byte to reject. If NULL, default = accept (0).
+         * Another controller wants to take over. Return true to accept,
+         * false to reject. If NULL, default = accept (true).
          */
-        uint8_t (*on_controller_assign_request)(openlcb_node_t *openlcb_node, node_id_t current_controller, node_id_t requesting_controller);
+        bool (*on_controller_assign_request)(openlcb_node_t *openlcb_node, node_id_t current_controller, node_id_t requesting_controller);
 
         /**
          * Old controller receiving Controller Changed Notify from train.
-         * Return 0 to accept handoff, non-zero to reject.
-         * If NULL, default = accept (0).
+         * Return true to accept handoff, false to reject.
+         * If NULL, default = accept (true).
          */
-        uint8_t (*on_controller_changed_request)(openlcb_node_t *openlcb_node, node_id_t new_controller);
-
-        /**
-         * Query function value. Return the 16-bit value for the given
-         * function address. If NULL, default = return 0.
-         */
-        uint16_t (*on_query_function_request)(openlcb_node_t *openlcb_node, uint32_t fn_address);
+        bool (*on_controller_changed_request)(openlcb_node_t *openlcb_node, node_id_t new_controller);
 
         // ---- Throttle side: notifiers (receiving replies from train) ----
 
@@ -154,17 +151,6 @@ extern "C" {
     extern void ProtocolTrainHandler_handle_emergency_event(
             openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
 
-    // Listener management (train-node side — manages consist listener list)
-
-    extern bool ProtocolTrainHandler_attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags);
-
-    extern bool ProtocolTrainHandler_detach_listener(train_state_t *state, node_id_t node_id);
-
-    extern train_listener_entry_t* ProtocolTrainHandler_find_listener(train_state_t *state, node_id_t node_id);
-
-    extern uint8_t ProtocolTrainHandler_get_listener_count(train_state_t *state);
-
-    extern train_listener_entry_t* ProtocolTrainHandler_get_listener_by_index(train_state_t *state, uint8_t index);
 
 #ifdef __cplusplus
 }

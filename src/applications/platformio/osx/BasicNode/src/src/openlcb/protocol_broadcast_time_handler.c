@@ -142,7 +142,7 @@ static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *c
 
 static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
-    clock->is_running = 1;
+    clock->is_running = true;
 
     if (_interface && _interface->on_clock_started) {
 
@@ -155,7 +155,7 @@ static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *clock) 
 
 static void _handle_stop(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
-    clock->is_running = 0;
+    clock->is_running = false;
 
     if (_interface && _interface->on_clock_stopped) {
 

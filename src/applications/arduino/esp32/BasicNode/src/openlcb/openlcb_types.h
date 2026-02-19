@@ -419,6 +419,23 @@ extern "C" {
     } broadcast_time_event_type_enum;
 
     /**
+     * @enum train_emergency_type_enum
+     * @brief Emergency state type for train protocol callbacks
+     *
+     * @details Identifies which emergency state was entered or exited.
+     *
+     * @see interface_protocol_train_handler_t.on_emergency_entered
+     * @see interface_protocol_train_handler_t.on_emergency_exited
+     */
+    typedef enum {
+
+        TRAIN_EMERGENCY_TYPE_ESTOP = 0,        /**< Point-to-point Emergency Stop (cmd 0x02) */
+        TRAIN_EMERGENCY_TYPE_GLOBAL_STOP = 1,  /**< Global Emergency Stop (event-based) */
+        TRAIN_EMERGENCY_TYPE_GLOBAL_OFF = 2    /**< Global Emergency Off (event-based) */
+
+    } train_emergency_type_enum;
+
+    /**
      * @defgroup payload_buffer_types Message Payload Buffer Type Definitions
      * @brief Array types for different message payload sizes
      *
@@ -631,7 +648,7 @@ extern "C" {
         broadcast_date_t date; /**< Current date */
         broadcast_year_t year; /**< Current year */
         broadcast_rate_t rate; /**< Clock rate */
-        uint8_t is_running;    /**< Clock running state: 1=running, 0=stopped */
+        bool is_running;       /**< Clock running state: true=running, false=stopped */
         uint32_t ms_accumulator; /**< Internal: accumulated ms toward next minute (fixed-point scale) */
 
     } broadcast_clock_state_t;
@@ -1024,9 +1041,9 @@ extern "C" {
         uint16_t set_speed;               /**< Last commanded speed (float16 IEEE 754) */
         uint16_t commanded_speed;         /**< Control algorithm output speed (float16) */
         uint16_t actual_speed;            /**< Measured speed, optional (float16) */
-        uint8_t estop_active;             /**< Emergency stop active flag (point-to-point) */
-        uint8_t global_estop_active;      /**< Global Emergency Stop active (event-based) */
-        uint8_t global_eoff_active;       /**< Global Emergency Off active (event-based) */
+        bool estop_active;                /**< Emergency stop active flag (point-to-point) */
+        bool global_estop_active;         /**< Global Emergency Stop active (event-based) */
+        bool global_eoff_active;          /**< Global Emergency Off active (event-based) */
         node_id_t controller_node_id;     /**< Active controller node ID (0 if none) */
         uint8_t reserved_node_count;      /**< Reservation count */
         uint32_t heartbeat_timeout_s;     /**< Heartbeat deadline in seconds (0 = disabled) */
@@ -1038,7 +1055,7 @@ extern "C" {
         uint16_t functions[USER_DEFINED_MAX_TRAIN_FUNCTIONS]; /**< Function values (16-bit per function, indexed by function number) */
 
         uint16_t dcc_address;    /**< DCC address (0 = not set) */
-        uint8_t is_long_address; /**< 1 = extended (long) DCC address, 0 = short */
+        bool is_long_address;    /**< true = extended (long) DCC address, false = short */
         uint8_t speed_steps;     /**< DCC speed steps: 0=default, 1=14, 2=28, 3=128 */
 
     } train_state_t;
