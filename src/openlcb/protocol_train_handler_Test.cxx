@@ -38,6 +38,8 @@
 * - Section 8: Reply Dispatch Tests (throttle side)
 * - Section 9: NULL Callback Safety Tests
 * - Section 10: Edge Cases
+* - Section 12: Global Emergency Events (event-based estop/eoff)
+* - Section 13: Conformance Test Sequences (TN Section 2.2 - 2.11)
 *
 * @author Jim Kueneman
 * @date 17 Feb 2026
@@ -1455,7 +1457,9 @@ TEST(ProtocolTrainHandler, command_listener_query_with_listeners)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    incoming->payload_count = 2;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // NodeCount (ignored)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // NodeIndex = 0
+    incoming->payload_count = 4;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1486,7 +1490,9 @@ TEST(ProtocolTrainHandler, command_listener_query_no_listeners)
 
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
-    incoming->payload_count = 2;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // NodeCount (ignored)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // NodeIndex = 0
+    incoming->payload_count = 4;
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
@@ -1561,7 +1567,7 @@ TEST(ProtocolTrainHandler, command_management_reserve)
 
 }
 
-TEST(ProtocolTrainHandler, command_management_reserve_multiple)
+TEST(ProtocolTrainHandler, command_management_reserve_when_already_reserved_fails)
 {
 
     _reset_tracking();
@@ -1580,11 +1586,18 @@ TEST(ProtocolTrainHandler, command_management_reserve_multiple)
     OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
     incoming->payload_count = 2;
 
+    // First reserve succeeds
     ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->reserved_node_count, 1);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // Second reserve fails (already reserved)
     sm.outgoing_msg_info.valid = false;
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    EXPECT_EQ(state->reserved_node_count, 2);
+    EXPECT_EQ(state->reserved_node_count, 1);
+    EXPECT_NE(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
 
 }
 
@@ -1596,7 +1609,7 @@ TEST(ProtocolTrainHandler, command_management_release)
 
     openlcb_node_t *node = _create_train_node();
     train_state_t *state = OpenLcbApplicationTrain_get_state(node);
-    state->reserved_node_count = 2;
+    state->reserved_node_count = 1;
 
     openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
     openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
@@ -1610,7 +1623,7 @@ TEST(ProtocolTrainHandler, command_management_release)
 
     ProtocolTrainHandler_handle_train_command(&sm);
 
-    EXPECT_EQ(state->reserved_node_count, 1);
+    EXPECT_EQ(state->reserved_node_count, 0);
 
     // No reply for release
     EXPECT_FALSE(sm.outgoing_msg_info.valid);
@@ -2571,5 +2584,1151 @@ TEST(ProtocolTrainHandler, listener_get_by_index)
 
     // Null state
     EXPECT_EQ(ProtocolTrainHandler_get_listener_by_index(NULL, 0), nullptr);
+
+}
+
+
+// ============================================================================
+// Section 12: Global Emergency Events (event-based estop/eoff)
+// ============================================================================
+
+TEST(ProtocolTrainHandler, global_emergency_stop_sets_flag) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    EXPECT_EQ(node->train_state->global_estop_active, 0);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+
+    EXPECT_EQ(node->train_state->global_estop_active, 1);
+
+}
+
+TEST(ProtocolTrainHandler, clear_global_emergency_stop) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    node->train_state->global_estop_active = 1;
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
+
+    EXPECT_EQ(node->train_state->global_estop_active, 0);
+
+}
+
+TEST(ProtocolTrainHandler, global_emergency_off_sets_flag) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+
+    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+
+}
+
+TEST(ProtocolTrainHandler, clear_global_emergency_off) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    node->train_state->global_eoff_active = 1;
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
+
+    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+
+}
+
+TEST(ProtocolTrainHandler, global_emergency_does_not_change_set_speed) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    node->train_state->set_speed = 0x3C00;  // 1.0 float16
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+
+    // Set speed must NOT be changed by global emergency (per spec)
+    EXPECT_EQ(node->train_state->set_speed, 0x3C00);
+    EXPECT_EQ(node->train_state->global_estop_active, 1);
+
+}
+
+TEST(ProtocolTrainHandler, global_emergency_off_does_not_change_functions) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    // Set some functions to non-zero values
+    node->train_state->functions[0] = 1;    // F0 (headlight)
+    node->train_state->functions[1] = 1;    // F1
+    node->train_state->functions[5] = 0x0A; // F5
+
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+
+    // Per spec: Emergency Off de-energizes outputs but does NOT change
+    // the stored function values.  The app layer checks global_eoff_active
+    // and de-energizes.  Upon clearing, functions restore to these values.
+    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+    EXPECT_EQ(node->train_state->functions[0], 1);
+    EXPECT_EQ(node->train_state->functions[1], 1);
+    EXPECT_EQ(node->train_state->functions[5], 0x0A);
+
+}
+
+TEST(ProtocolTrainHandler, overlapping_emergency_states_independent) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    // Activate all three emergency states
+    node->train_state->estop_active = 1;
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+
+    EXPECT_EQ(node->train_state->estop_active, 1);
+    EXPECT_EQ(node->train_state->global_estop_active, 1);
+    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+
+    // Clear global estop — other two remain
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
+
+    EXPECT_EQ(node->train_state->estop_active, 1);
+    EXPECT_EQ(node->train_state->global_estop_active, 0);
+    EXPECT_EQ(node->train_state->global_eoff_active, 1);
+
+    // Clear global eoff — point-to-point estop remains
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
+
+    EXPECT_EQ(node->train_state->estop_active, 1);
+    EXPECT_EQ(node->train_state->global_estop_active, 0);
+    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+
+}
+
+TEST(ProtocolTrainHandler, query_speeds_status_reflects_global_estop) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    node->train_state->set_speed = 0x3C00;
+    node->train_state->global_estop_active = 1;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+
+}
+
+TEST(ProtocolTrainHandler, query_speeds_status_reflects_global_eoff) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    node->train_state->set_speed = 0x3C00;
+    node->train_state->global_eoff_active = 1;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+
+}
+
+TEST(ProtocolTrainHandler, global_emergency_null_train_state_no_crash) {
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(node));
+    node.train_state = NULL;
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, &node, &incoming, &outgoing);
+
+    // Should not crash
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
+
+}
+
+TEST(ProtocolTrainHandler, global_emergency_unknown_event_no_crash) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    openlcb_statemachine_info_t sm;
+    openlcb_msg_t incoming, outgoing;
+    memset(&incoming, 0, sizeof(incoming));
+    memset(&outgoing, 0, sizeof(outgoing));
+    _setup_statemachine(&sm, node, &incoming, &outgoing);
+
+    // Unknown event ID — should not crash or change state
+    ProtocolTrainHandler_handle_emergency_event(&sm, 0x0100000000001234ULL);
+
+    EXPECT_EQ(node->train_state->global_estop_active, 0);
+    EXPECT_EQ(node->train_state->global_eoff_active, 0);
+
+}
+
+TEST(ProtocolTrainHandler, global_emergency_null_statemachine_no_crash) {
+
+    _reset_tracking();
+    _global_initialize();
+
+    // Should not crash
+    ProtocolTrainHandler_handle_emergency_event(NULL, EVENT_ID_EMERGENCY_STOP);
+
+}
+
+
+// ============================================================================
+// Section 13: Conformance Test Sequences (TN Section 2.2 - 2.11)
+// ============================================================================
+
+// TN 2.2 — Check set and query speeds
+//
+// Verifies that forward/reverse direction is independent of speed,
+// particularly at zero.
+//
+// 1. Set speed 0.75 reverse
+// 2. Query → 0.75 reverse
+// 3. Set speed 0 reverse
+// 4. Query → 0 reverse
+// 5. Set speed 0.75 forward
+// 6. Query → 0.75 forward
+// 7. Set speed 0 forward
+// 8. Query → 0 forward
+
+TEST(ProtocolTrainHandler, conformance_2_2_check_set_and_query_speeds) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    uint16_t speed_0_75_fwd = OpenLcbFloat16_from_float(0.75f);
+    uint16_t speed_0_75_rev = speed_0_75_fwd | 0x8000;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set speed 0.75 reverse
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_75_rev, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_75_rev);
+
+    // Step 2: Query → 0.75 reverse
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_75_rev);
+
+    // Step 3: Set speed 0 reverse
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, FLOAT16_NEGATIVE_ZERO, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, FLOAT16_NEGATIVE_ZERO);
+
+    // Step 4: Query → 0 reverse
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), FLOAT16_NEGATIVE_ZERO);
+
+    // Step 5: Set speed 0.75 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_75_fwd, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_75_fwd);
+
+    // Step 6: Query → 0.75 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_75_fwd);
+
+    // Step 7: Set speed 0 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, FLOAT16_POSITIVE_ZERO, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+    // Step 8: Query → 0 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), FLOAT16_POSITIVE_ZERO);
+
+}
+
+// TN 2.3 — Check set and query of functions
+//
+// Tests F0 set to on, query on, set to off, query off.
+//
+// 1. Set F0 to on
+// 2. Query F0 → on
+// 3. Set F0 to off
+// 4. Query F0 → off
+
+TEST(ProtocolTrainHandler, conformance_2_3_check_set_and_query_functions) {
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set F0 to on (address 0x000000, value 0x0001)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0001, 4);
+    incoming->payload_count = 6;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->functions[0], 0x0001);
+
+    // Step 2: Query F0 → on
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 4), 0x0001);
+
+    // Step 3: Set F0 to off (value 0x0000)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0000, 4);
+    incoming->payload_count = 6;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->functions[0], 0x0000);
+
+    // Step 4: Query F0 → off
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 4), 0x0000);
+
+}
+
+// TN 2.4 — Check Emergency Stop (point-to-point cmd 0x02)
+//
+// 1. Set speed 0.1 reverse
+// 2. Query → 0.1 reverse
+// 3. Emergency stop command
+// 4. Query → 0 reverse  (Set Speed IS changed)
+// 5. Set speed 0.1 forward  (clears estop)
+// 6. Query → 0.1 forward
+// 7. Set speed 0 forward
+
+TEST(ProtocolTrainHandler, conformance_2_4_check_emergency_stop) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    uint16_t speed_0_1_fwd = OpenLcbFloat16_from_float(0.1f);
+    uint16_t speed_0_1_rev = speed_0_1_fwd | 0x8000;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set speed 0.1 reverse
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_1_rev, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_1_rev);
+
+    // Step 2: Query → 0.1 reverse
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
+
+    // Step 3: Emergency stop command (point-to-point, cmd 0x02)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_EMERGENCY_STOP, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->estop_active, 1);
+
+    // Step 4: Query → 0 reverse  (Set Speed changed to zero, direction preserved)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), FLOAT16_NEGATIVE_ZERO);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+
+    // Step 5: Set speed 0.1 forward (clears estop)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_1_fwd, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->estop_active, 0);
+    EXPECT_EQ(state->set_speed, speed_0_1_fwd);
+
+    // Step 6: Query → 0.1 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_fwd);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x00);
+
+    // Step 7: Set speed 0 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, FLOAT16_POSITIVE_ZERO, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+}
+
+// TN 2.5 — Check Global Emergency Stop
+//
+// 1. Set speed 0.1 reverse
+// 2. Query → 0.1 reverse
+// 3. Produce Emergency Stop All event
+// 4. Query → 0.1 reverse  (Set Speed NOT changed)
+// 5. Set speed 0.1 forward  (accepted even during global estop)
+// 6. Query → 0.1 forward
+// 7. Produce Clear Emergency Stop event
+// 8. Set speed 0 forward
+
+TEST(ProtocolTrainHandler, conformance_2_5_check_global_emergency_stop) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    uint16_t speed_0_1_fwd = OpenLcbFloat16_from_float(0.1f);
+    uint16_t speed_0_1_rev = speed_0_1_fwd | 0x8000;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set speed 0.1 reverse
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_1_rev, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_1_rev);
+
+    // Step 2: Query → 0.1 reverse
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
+
+    // Step 3: Produce Emergency Stop All event
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_STOP);
+
+    EXPECT_EQ(state->global_estop_active, 1);
+
+    // Step 4: Query → 0.1 reverse  (Set Speed NOT changed by global estop)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+
+    // Step 5: Set speed 0.1 forward (accepted during global estop)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_1_fwd, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_1_fwd);
+    EXPECT_EQ(state->global_estop_active, 1);
+
+    // Step 6: Query → 0.1 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_fwd);
+
+    // Step 7: Produce Clear Emergency Stop event
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_STOP);
+
+    EXPECT_EQ(state->global_estop_active, 0);
+
+    // Step 8: Set speed 0 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, FLOAT16_POSITIVE_ZERO, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+}
+
+// TN 2.6 — Check Global Emergency Off
+//
+// 1. Set speed 0.1 reverse
+// 2. Query → 0.1 reverse
+// 3. Produce Emergency Off All event
+// 4. Query → 0.1 reverse  (Set Speed NOT changed)
+// 5. Set speed 0.1 forward  (accepted even during global eoff)
+// 6. Query → 0.1 forward
+// 7. Produce Clear Emergency Off event
+// 8. Set speed 0 forward
+
+TEST(ProtocolTrainHandler, conformance_2_6_check_global_emergency_off) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    uint16_t speed_0_1_fwd = OpenLcbFloat16_from_float(0.1f);
+    uint16_t speed_0_1_rev = speed_0_1_fwd | 0x8000;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set speed 0.1 reverse
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_1_rev, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_1_rev);
+
+    // Step 2: Query → 0.1 reverse
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
+
+    // Step 3: Produce Emergency Off All event
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_EMERGENCY_OFF);
+
+    EXPECT_EQ(state->global_eoff_active, 1);
+
+    // Step 4: Query → 0.1 reverse  (Set Speed NOT changed by global eoff)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_rev);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3) & 0x01, 0x01);
+
+    // Step 5: Set speed 0.1 forward (accepted during global eoff)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, speed_0_1_fwd, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, speed_0_1_fwd);
+    EXPECT_EQ(state->global_eoff_active, 1);
+
+    // Step 6: Query → 0.1 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_SPEEDS, 0);
+    incoming->payload_count = 1;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 1), speed_0_1_fwd);
+
+    // Step 7: Produce Clear Emergency Off event
+    ProtocolTrainHandler_handle_emergency_event(&sm, EVENT_ID_CLEAR_EMERGENCY_OFF);
+
+    EXPECT_EQ(state->global_eoff_active, 0);
+
+    // Step 8: Set speed 0 forward
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, FLOAT16_POSITIVE_ZERO, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->set_speed, FLOAT16_POSITIVE_ZERO);
+
+}
+
+// TN 2.8 — Check function to/from memory space connection
+//
+// Verifies that a write to the 0xF9 memory space at address 0 is
+// reflected when querying function 0 via the Train Control protocol.
+//
+// 1. Set F0 off via Set Function command
+// 2. Write byte 0 in 0xF9 space to 1 (simulated by direct state update)
+// 3. Query F0 → on
+//
+// The 0xF9 write handler is tested in protocol_config_mem_write_handler_Test.
+// This test verifies the shared state: both paths use state->functions[].
+
+TEST(ProtocolTrainHandler, conformance_2_8_function_memory_space_connection) {
+
+    _reset_tracking();
+    _global_initialize_with_nulls();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set F0 off via Set Function command
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, 0x0000, 4);
+    incoming->payload_count = 6;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_EQ(state->functions[0], 0x0000);
+
+    // Step 2: Write byte 0 in 0xF9 space to 1.
+    // The 0xF9 write handler maps address 0 to functions[0] high byte
+    // (big-endian).  Per TN, the 0xF9 space holds one byte per function.
+    // A non-zero value means "on".  Simulate the write handler result:
+    state->functions[0] = 0x0001;
+
+    // Step 3: Query F0 → on
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_QUERY_FUNCTION, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_NE(OpenLcbUtilities_extract_word_from_openlcb_payload(outgoing, 4), 0x0000);
+
+}
+
+// TN 2.9 — Check Controller Configuration command and response
+//
+// 1. Set Speed 0
+// 2. Assign Controller → OK (flags = 0)
+// 3. Query Controller → checker's Node ID in Active Controller field
+// 4. Release Controller
+// 5. Query Controller → zero Node ID in Active Controller field
+//
+// Ends with Release Controller for cleanup.
+
+TEST(ProtocolTrainHandler, conformance_2_9_check_controller_configuration) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Set speed 0
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_SET_SPEED_DIRECTION, 0);
+    OpenLcbUtilities_copy_word_to_openlcb_payload(incoming, FLOAT16_POSITIVE_ZERO, 1);
+    incoming->payload_count = 3;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 2: Assign Controller with checker's Node ID
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_ASSIGN, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 2);
+    incoming->payload_count = 8;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Check for Assign reply with OK (result = 0)
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_CONTROLLER_CONFIG);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_CONTROLLER_ASSIGN);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // Step 4: Query Controller
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_QUERY, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 5: Check query reply has checker's Node ID
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_CONTROLLER_CONFIG);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_CONTROLLER_QUERY);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 3), TEST_SOURCE_ID);
+
+    // Step 6: Release Controller
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 2);
+    incoming->payload_count = 8;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 7: Controller should now be zero
+    EXPECT_EQ(state->controller_node_id, 0);
+
+    // Step 8: Query Controller
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_QUERY, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 9: Check query reply has zero Node ID
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 3), (uint64_t) 0);
+
+    // Cleanup: Release Controller (idempotent)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_CONTROLLER_RELEASE, 1);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, TEST_SOURCE_ID, 2);
+    incoming->payload_count = 8;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+}
+
+// TN 2.10 — Check Train Control Management command and response
+//
+// 1. Reserve → OK
+// 2. Release (no response)
+// 3. Reserve → OK
+// 4. Reserve again (already reserved) → fail
+// 5. Release (cleanup)
+
+TEST(ProtocolTrainHandler, conformance_2_10_check_management_reserve_release) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+    train_state_t *state = node->train_state;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Reserve → OK
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 2: Check OK
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_MANAGEMENT);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_MGMT_RESERVE);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // Step 3: Release (no response expected)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RELEASE, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(state->reserved_node_count, 0);
+
+    // Step 4: Reserve → OK
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 5: Check OK
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+
+    // Step 6: Reserve again (already reserved) → fail
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RESERVE, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    // Step 7: Check fail code
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_NE(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0x00);
+    EXPECT_EQ(state->reserved_node_count, 1);
+
+    // Step 8: Release (cleanup, no response expected)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_MGMT_RELEASE, 1);
+    incoming->payload_count = 2;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(state->reserved_node_count, 0);
+
+}
+
+// TN 2.11 — Check Listener Configuration command and response
+//
+// Per Train Control Standard Section 6.4:
+//   - Attach adds a listener with flags; reply echoes node_id + result 0 (OK)
+//   - Detach removes a listener; reply echoes node_id + result 0 (OK)
+//   - Query returns total count, the requested index entry (flags + node_id)
+//   - Detach of a non-existent listener returns non-zero result
+//
+// Sequence:
+//  1. Query Listeners (index 0) → count=0
+//  2. Attach Listener A with REVERSE flag → OK
+//  3. Query Listeners (index 0) → count=1, A with REVERSE
+//  4. Attach Listener B with LINK_F0 flag → OK
+//  5. Query Listeners (index 0) → count=2, A with REVERSE
+//  6. Query Listeners (index 1) → count=2, B with LINK_F0
+//  7. Detach Listener A → OK
+//  8. Query Listeners (index 0) → count=1, B with LINK_F0
+//  9. Detach non-existent Listener A again → fail (non-zero)
+// 10. Detach Listener B → OK
+// 11. Query Listeners (index 0) → count=0
+
+TEST(ProtocolTrainHandler, conformance_2_11_check_listener_configuration) {
+
+    _reset_tracking();
+    _global_initialize();
+    openlcb_node_t *node = _create_train_node();
+
+    node_id_t listener_a = 0x112233445566ULL;
+    node_id_t listener_b = 0xAABBCCDDEEFFULL;
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Step 1: Query Listeners (index 0) → count=0
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);  // NodeCount (ignored)
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // NodeIndex = 0
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_LISTENER_CONFIG);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_LISTENER_QUERY);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0);  // count = 0
+
+    // Step 2: Attach Listener A with REVERSE flag → OK
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_FLAG_REVERSE, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, listener_a, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_LISTENER_CONFIG);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_LISTENER_ATTACH);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 2), listener_a);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);  // OK
+
+    // Step 3: Query Listeners (index 0) → count=1, A with REVERSE
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // index 0
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 1);  // count
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3), 0);  // index
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4), TRAIN_LISTENER_FLAG_REVERSE);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 5), listener_a);
+
+    // Step 4: Attach Listener B with LINK_F0 flag → OK
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_ATTACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_FLAG_LINK_F0, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, listener_b, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);  // OK
+
+    // Step 5: Query Listeners (index 0) → count=2, A with REVERSE
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // index 0
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 2);  // count
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3), 0);  // index
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4), TRAIN_LISTENER_FLAG_REVERSE);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 5), listener_a);
+
+    // Step 6: Query Listeners (index 1) → count=2, B with LINK_F0
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x01, 3);  // index 1
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 2);  // count
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3), 1);  // index
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4), TRAIN_LISTENER_FLAG_LINK_F0);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 5), listener_b);
+
+    // Step 7: Detach Listener A → OK
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, listener_a, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 0), TRAIN_LISTENER_CONFIG);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 1), TRAIN_LISTENER_DETACH);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 2), listener_a);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);  // OK
+
+    // Step 8: Query Listeners (index 0) → count=1, B with LINK_F0
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);  // index 0
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 1);  // count
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 3), 0);  // index
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 4), TRAIN_LISTENER_FLAG_LINK_F0);
+    EXPECT_EQ(OpenLcbUtilities_extract_node_id_from_openlcb_payload(outgoing, 5), listener_b);
+
+    // Step 9: Detach non-existent Listener A again → fail (non-zero)
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, listener_a, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_NE(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);  // fail
+
+    // Step 10: Detach Listener B → OK
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_DETACH, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming, listener_b, 3);
+    incoming->payload_count = 9;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 8), 0x00);  // OK
+
+    // Step 11: Query Listeners (index 0) → count=0
+    sm.outgoing_msg_info.valid = false;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_CONFIG, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, TRAIN_LISTENER_QUERY, 1);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(incoming, 0x00, 3);
+    incoming->payload_count = 4;
+    ProtocolTrainHandler_handle_train_command(&sm);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+    EXPECT_EQ(OpenLcbUtilities_extract_byte_from_openlcb_payload(outgoing, 2), 0);  // count = 0
 
 }

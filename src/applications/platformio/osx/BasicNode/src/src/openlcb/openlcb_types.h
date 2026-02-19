@@ -1024,7 +1024,9 @@ extern "C" {
         uint16_t set_speed;               /**< Last commanded speed (float16 IEEE 754) */
         uint16_t commanded_speed;         /**< Control algorithm output speed (float16) */
         uint16_t actual_speed;            /**< Measured speed, optional (float16) */
-        uint8_t estop_active;             /**< Emergency stop active flag */
+        uint8_t estop_active;             /**< Emergency stop active flag (point-to-point) */
+        uint8_t global_estop_active;      /**< Global Emergency Stop active (event-based) */
+        uint8_t global_eoff_active;       /**< Global Emergency Off active (event-based) */
         node_id_t controller_node_id;     /**< Active controller node ID (0 if none) */
         uint8_t reserved_node_count;      /**< Reservation count */
         uint32_t heartbeat_timeout_s;     /**< Heartbeat deadline in seconds (0 = disabled) */

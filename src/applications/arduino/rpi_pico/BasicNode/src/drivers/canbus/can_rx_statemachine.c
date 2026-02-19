@@ -114,7 +114,7 @@ static void _handle_openlcb_msg_can_frame_addressed(can_msg_t* can_msg, uint16_t
 
     // Handle addressed message, note this assumes the message has already been tested be for one of our nodes
 
-    switch (can_msg->payload[0] & 0xF0) { // Extract Framing Bits
+    switch (can_msg->payload[0] & MASK_MULTIFRAME_BITS) { // Extract Framing Bits
 
         case MULTIFRAME_ONLY:
 

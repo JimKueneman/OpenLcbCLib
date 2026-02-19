@@ -151,6 +151,9 @@ extern "C" {
 
     extern void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statemachine_info);
 
+    extern void ProtocolTrainHandler_handle_emergency_event(
+            openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
     // Listener management (train-node side — manages consist listener list)
 
     extern bool ProtocolTrainHandler_attach_listener(train_state_t *state, node_id_t node_id, uint8_t flags);

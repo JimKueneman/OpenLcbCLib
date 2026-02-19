@@ -459,8 +459,9 @@ static void _build_main_statemachine(void) {
 
     // Train -- only if TRAIN feature enabled
     if (_features & OPENLCB_FEATURE_TRAIN) {
-        _main_sm.train_control_command = &ProtocolTrainHandler_handle_train_command;
-        _main_sm.train_control_reply   = &ProtocolTrainHandler_handle_train_reply;
+        _main_sm.train_control_command         = &ProtocolTrainHandler_handle_train_command;
+        _main_sm.train_control_reply           = &ProtocolTrainHandler_handle_train_reply;
+        _main_sm.train_emergency_event_handler = &ProtocolTrainHandler_handle_emergency_event;
         // simple_train_node_ident_info_request/reply will be wired in Phase 2
 
     }

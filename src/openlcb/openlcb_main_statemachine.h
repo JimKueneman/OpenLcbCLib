@@ -1330,6 +1330,21 @@ typedef struct {
 
     /*@}*/
 
+    /*@{*/
+    /** @name Optional Train Emergency Event Handler
+     * Global emergency stop/off via well-known events -- set to NULL if not implemented.
+     * Called for every train node (nodes with non-NULL train_state).
+     */
+
+    /**
+     * @brief Handles well-known emergency events for train nodes
+     * @param statemachine_info State machine context
+     * @param event_id The well-known emergency event ID
+     */
+    void (*train_emergency_event_handler)(openlcb_statemachine_info_t *statemachine_info, event_id_t event_id);
+
+    /*@}*/
+
 } interface_openlcb_main_statemachine_t;
 
 #ifdef __cplusplus

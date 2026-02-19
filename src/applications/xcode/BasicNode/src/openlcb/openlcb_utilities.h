@@ -1193,6 +1193,13 @@ extern "C" {
      */
     extern event_id_t OpenLcbUtilities_create_train_search_event_id(uint16_t address, uint8_t flags);
 
+    /**
+     * @brief Tests whether an event ID is one of the 4 well-known emergency events
+     * @param event_id 64-bit Event ID to test
+     * @return true if Emergency Off, Clear Emergency Off, Emergency Stop, or Clear Emergency Stop
+     */
+    extern bool OpenLcbUtilities_is_emergency_event(event_id_t event_id);
+
     /*@}*/
 
 #ifdef __cplusplus

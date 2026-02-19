@@ -2474,3 +2474,12 @@ event_id_t OpenLcbUtilities_create_train_search_event_id(uint16_t address, uint8
     return EVENT_TRAIN_SEARCH_SPACE | (event_id_t)lower;
 
 }
+
+bool OpenLcbUtilities_is_emergency_event(event_id_t event_id) {
+
+    return (event_id == EVENT_ID_EMERGENCY_OFF) ||
+           (event_id == EVENT_ID_CLEAR_EMERGENCY_OFF) ||
+           (event_id == EVENT_ID_EMERGENCY_STOP) ||
+           (event_id == EVENT_ID_CLEAR_EMERGENCY_STOP);
+
+}

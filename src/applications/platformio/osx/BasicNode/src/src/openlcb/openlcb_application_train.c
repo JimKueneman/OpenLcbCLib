@@ -36,6 +36,7 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "openlcb_application.h"
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 #include "openlcb_utilities.h"
@@ -82,6 +83,12 @@ train_state_t* OpenLcbApplicationTrain_setup(openlcb_node_t *openlcb_node) {
     _train_pool_count++;
     memset(state, 0, sizeof(train_state_t));
     openlcb_node->train_state = state;
+
+    OpenLcbApplication_register_producer_eventid(openlcb_node, EVENT_ID_TRAIN, EVENT_STATUS_SET);
+    OpenLcbApplication_register_consumer_eventid(openlcb_node, EVENT_ID_EMERGENCY_OFF, EVENT_STATUS_SET);
+    OpenLcbApplication_register_consumer_eventid(openlcb_node, EVENT_ID_EMERGENCY_STOP, EVENT_STATUS_SET);
+    OpenLcbApplication_register_consumer_eventid(openlcb_node, EVENT_ID_CLEAR_EMERGENCY_OFF, EVENT_STATUS_SET);
+    OpenLcbApplication_register_consumer_eventid(openlcb_node, EVENT_ID_CLEAR_EMERGENCY_STOP, EVENT_STATUS_SET);
 
     return state;
 

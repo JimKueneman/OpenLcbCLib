@@ -464,20 +464,20 @@
  * @{
  */
 
-    /** @brief Mask for multi-frame indicator bits in first data byte */
-#define MASK_MULTIFRAME_BITS 0xF0
+    /** @brief Mask for multi-frame indicator bits in first data byte (bits 5-4) */
+#define MASK_MULTIFRAME_BITS 0x30
 
-    /** @brief Single frame only (complete message in one frame) */
+    /** @brief Single frame only (complete message in one frame) - ff=00 */
 #define MULTIFRAME_ONLY 0x00
 
-    /** @brief First frame of multi-frame sequence */
-#define MULTIFRAME_FIRST 0x40
+    /** @brief First frame of multi-frame sequence - ff=01 */
+#define MULTIFRAME_FIRST 0x10
 
-    /** @brief Middle frame of multi-frame sequence */
-#define MULTIFRAME_MIDDLE 0xC0
+    /** @brief Middle frame of multi-frame sequence - ff=11 */
+#define MULTIFRAME_MIDDLE 0x30
 
-    /** @brief Final frame of multi-frame sequence */
-#define MULTIFRAME_FINAL 0x80
+    /** @brief Final frame of multi-frame sequence - ff=10 */
+#define MULTIFRAME_FINAL 0x20
 
     /** @} */ // end of data_field_masks
 

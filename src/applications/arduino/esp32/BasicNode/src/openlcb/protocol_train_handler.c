@@ -431,7 +431,7 @@ static void _handle_query_speeds(openlcb_statemachine_info_t *statemachine_info)
     if (state) {
 
         set_speed = state->set_speed;
-        status = state->estop_active ? 0x01 : 0x00;
+        status = (state->estop_active || state->global_estop_active || state->global_eoff_active) ? 0x01 : 0x00;
         commanded_speed = state->commanded_speed;
         actual_speed = state->actual_speed;
 
@@ -668,6 +668,13 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
         case TRAIN_LISTENER_QUERY: {
 
+            // Per spec Section 6.4 / Table 4.3.7: the query command
+            // carries byte 2 = NodeCount (ignored on receive) and
+            // byte 3 = NodeIndex (the index the caller is requesting).
+            // The reply returns the total count, the requested index,
+            // and the entry at that index (flags + node_id).
+
+            uint8_t requested_index = OpenLcbUtilities_extract_byte_from_openlcb_payload(msg, 3);
             uint8_t count = 0;
 
             if (state) {
@@ -676,25 +683,22 @@ static void _handle_listener_config(openlcb_statemachine_info_t *statemachine_in
 
             }
 
-            if (count == 0) {
+            if (count == 0 || requested_index >= count) {
 
-                // Reply with count=0, index=0, flags=0, node_id=0
-                _load_listener_query_reply(statemachine_info, 0, 0, 0, 0);
+                // No listeners or index out of range
+                _load_listener_query_reply(statemachine_info, count, requested_index, 0, 0);
 
             } else {
 
-                // Reply with the first listener entry
-                // Per spec, additional entries would need additional replies
-                // which requires multi-message support (future enhancement)
-                train_listener_entry_t *entry = ProtocolTrainHandler_get_listener_by_index(state, 0);
+                train_listener_entry_t *entry = ProtocolTrainHandler_get_listener_by_index(state, requested_index);
 
                 if (entry) {
 
-                    _load_listener_query_reply(statemachine_info, count, 0, entry->flags, entry->node_id);
+                    _load_listener_query_reply(statemachine_info, count, requested_index, entry->flags, entry->node_id);
 
                 } else {
 
-                    _load_listener_query_reply(statemachine_info, 0, 0, 0, 0);
+                    _load_listener_query_reply(statemachine_info, count, requested_index, 0, 0);
 
                 }
 
@@ -723,13 +727,26 @@ static void _handle_management(openlcb_statemachine_info_t *statemachine_info) {
 
         case TRAIN_MGMT_RESERVE: {
 
+            // Per conformance test TN 2.10: a second reserve without
+            // release shall return a fail code.  Only one reservation
+            // at a time is permitted.
+            uint8_t result = 0;
+
             if (state) {
 
-                state->reserved_node_count++;
+                if (state->reserved_node_count > 0) {
+
+                    result = 0xFF;
+
+                } else {
+
+                    state->reserved_node_count = 1;
+
+                }
 
             }
 
-            _load_reserve_reply(statemachine_info, 0);
+            _load_reserve_reply(statemachine_info, result);
 
             break;
 
@@ -1057,6 +1074,63 @@ void ProtocolTrainHandler_handle_train_reply(openlcb_statemachine_info_t *statem
         case TRAIN_MANAGEMENT:
 
             _handle_management_reply(statemachine_info);
+            break;
+
+        default:
+
+            break;
+
+    }
+
+}
+
+void ProtocolTrainHandler_handle_emergency_event(
+        openlcb_statemachine_info_t *statemachine_info, event_id_t event_id) {
+
+    if (!statemachine_info) { return; }
+
+    train_state_t *state = statemachine_info->openlcb_node->train_state;
+
+    if (!state) { return; }
+
+    // Per Train Control Standard Section 5 & 6.2:
+    //
+    // Three independent emergency state machines:
+    //   1. Emergency Stop  (point-to-point cmd 0x02 — handled by _handle_emergency_stop)
+    //   2. Global Emergency Stop  (event-based — here)
+    //   3. Global Emergency Off   (event-based — here)
+    //
+    // Global Emergency Stop / Off do NOT change Set Speed.
+    // The train remains stopped while ANY of the three states is active.
+    // Upon exiting ALL emergency states the train resumes at Set Speed.
+    //
+    // Global Emergency Off additionally de-energizes all other outputs.
+    // Upon clearing, outputs restore to their commanded state (functions[]).
+    //
+    // The handler only manages the flags.  The application layer checks
+    // estop_active, global_estop_active, and global_eoff_active when
+    // driving hardware (motor, function outputs) and acts accordingly.
+
+    switch (event_id) {
+
+        case EVENT_ID_EMERGENCY_STOP:
+
+            state->global_estop_active = 1;
+            break;
+
+        case EVENT_ID_CLEAR_EMERGENCY_STOP:
+
+            state->global_estop_active = 0;
+            break;
+
+        case EVENT_ID_EMERGENCY_OFF:
+
+            state->global_eoff_active = 1;
+            break;
+
+        case EVENT_ID_CLEAR_EMERGENCY_OFF:
+
+            state->global_eoff_active = 0;
             break;
 
         default:

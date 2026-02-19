@@ -481,7 +481,7 @@ TEST(CanRxStatemachine, error_info_report_frame)
  * Verifies single-frame messages are routed correctly
  * 
  * Single frame = message fits in one CAN frame
- * First byte bits [7:4] = 0x0 (MULTIFRAME_ONLY)
+ * First byte bits [5:4] = 0x0 (MULTIFRAME_ONLY)
  * Bytes [1:2] contain destination alias
  * 
  * IMPORTANT: Implementation checks if destination alias is registered
@@ -520,7 +520,7 @@ TEST(CanRxStatemachine, single_frame_addressed)
  * Test: First frame of multi-frame message
  * Verifies first frame is routed correctly and buffering starts
  * 
- * First byte bits [7:4] = 0x1 (MULTIFRAME_FIRST)
+ * First byte bits [5:4] = 0x1 (MULTIFRAME_FIRST)
  * 
  * IMPORTANT: Must register destination alias
  */
@@ -555,7 +555,7 @@ TEST(CanRxStatemachine, first_frame)
  * Test: Middle frame of multi-frame message
  * Verifies middle frames are appended to message buffer
  * 
- * First byte bits [7:4] = 0x3 (MULTIFRAME_MIDDLE)
+ * First byte bits [5:4] = 0x3 (MULTIFRAME_MIDDLE)
  * 
  * IMPORTANT: Must register destination alias
  */
@@ -589,7 +589,7 @@ TEST(CanRxStatemachine, middle_frame)
  * Test: Last frame of multi-frame message
  * Verifies last frame completes message and delivers to FIFO
  * 
- * First byte bits [7:4] = 0x2 (MULTIFRAME_FINAL)
+ * First byte bits [5:4] = 0x2 (MULTIFRAME_FINAL)
  * Can be 2-8 bytes
  * 
  * IMPORTANT: Must register destination alias
@@ -1433,47 +1433,50 @@ TEST(CanRxStatemachine, pc_event_report_last_frame)
 }
 
 /**
- * Test: Addressed message with invalid framing bits
- * 
+ * Test: Reserved bits 7-6 are ignored in framing dispatch
+ *
  * Purpose:
- *   Covers the default case for unrecognized framing bits.
+ *   Verifies that reserved bits in byte 0 don't affect multi-frame dispatch.
+ *   Per spec Section 7.3.1.3: byte 0 format is 0brrff dddd where
+ *   rr = reserved (bits 7-6), ff = framing (bits 5-4), dddd = dest alias hi nibble.
+ *   Only bits 5-4 (MASK_MULTIFRAME_BITS = 0x30) determine frame type.
  *
  * Coverage:
- *   Line 189-191: default case in framing bits switch
- *
- * Valid framing bits: 0x00 (ONLY), 0x40 (FIRST), 0x80 (FINAL), 0xC0 (MIDDLE)
- * Invalid: 0x10, 0x20, 0x30, 0x50, 0x60, 0x70, 0x90, 0xA0, 0xB0, 0xD0, 0xE0, 0xF0
+ *   Line 117: switch mask extracts only framing bits, ignoring reserved bits
  */
-TEST(CanRxStatemachine, addressed_invalid_framing_bits)
+TEST(CanRxStatemachine, addressed_reserved_bits_ignored)
 {
+
     setup_test();
     reset_test_variables();
-    
+
     // Register destination
     alias_mapping.alias = 0x0BBB;
     alias_mapping.node_id = 0x010203040506;
-    
+
     can_msg_t msg;
     CanUtilities_clear_can_message(&msg);
-    
-    // Addressed message with invalid framing bits (0x20)
+
+    // Addressed message with reserved bits 7-6 set (0xC0) but ff=00 (MULTIFRAME_ONLY)
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
                      ((MTI_VERIFY_NODE_ID_ADDRESSED & 0x0FFF) << 12) |
                      MASK_CAN_DEST_ADDRESS_PRESENT | 0x0AAA;
-    
-    // Invalid framing bits (0x20 - not 0x00, 0x40, 0x80, or 0xC0)
-    msg.payload[0] = 0x20 | 0x0B;  // Invalid framing + dest high nibble
+
+    // Reserved bits set: 0xC0 | dest hi nibble 0x0B = 0xCB
+    // ff bits are 00 (ONLY), so single_frame handler should be called
+    msg.payload[0] = 0xC0 | 0x0B;
     msg.payload[1] = 0xBB;
     msg.payload_count = 2;
-    
+
     CanRxStatemachine_incoming_can_driver_callback(&msg);
-    
+
     EXPECT_TRUE(on_receive_called);
-    // No handlers should be called (invalid framing)
-    EXPECT_FALSE(can_single_frame_called);
+    // With mask 0x30, bits 5-4 = 00 -> MULTIFRAME_ONLY -> single frame handler
+    EXPECT_TRUE(can_single_frame_called);
     EXPECT_FALSE(can_first_frame_called);
     EXPECT_FALSE(can_middle_frame_called);
     EXPECT_FALSE(can_last_frame_called);
+
 }
 
 /*******************************************************************************
@@ -1849,7 +1852,7 @@ TEST(CanRxStatemachine, null_handlers_unaddressed_messages)
  * - pc_event_report_first_frame: PC Event Report FIRST
  * - pc_event_report_middle_frame: PC Event Report MIDDLE
  * - pc_event_report_last_frame: PC Event Report LAST
- * - addressed_invalid_framing_bits: Invalid framing bits default case
+ * - addressed_reserved_bits_ignored: Reserved bits 7-6 ignored in framing dispatch
  * 
  * Additional Coverage Tests - Phase 4 - NULL Handler Safety (5):
  * - null_handlers_control_frames: All control frames with NULL handlers
@@ -1882,7 +1885,7 @@ TEST(CanRxStatemachine, null_handlers_unaddressed_messages)
  * ✓ OpenLCB Messages - Unaddressed: 100%
  * ✓ OpenLCB Messages - SNIP with FIRST frame: 100%
  * ✓ OpenLCB Messages - PC Event Report multi-frame: 100%
- * ✓ OpenLCB Messages - Invalid framing bits: 100%
+ * ✓ OpenLCB Messages - Reserved bits ignored: 100%
  * ✓ Datagram - All frame types (known dest): 100%
  * ✓ Datagram - All frame types (unknown dest): 100%
  * ✓ Datagram - Frame types WITH handlers: 100% ← NEW Phase 5
