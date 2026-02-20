@@ -83,6 +83,7 @@ train_state_t* OpenLcbApplicationTrain_setup(openlcb_node_t *openlcb_node) {
     _train_pool_count++;
     memset(state, 0, sizeof(train_state_t));
     openlcb_node->train_state = state;
+    state->owner_node = openlcb_node;
 
     OpenLcbApplication_register_producer_eventid(openlcb_node, EVENT_ID_TRAIN, EVENT_STATUS_SET);
     OpenLcbApplication_register_consumer_eventid(openlcb_node, EVENT_ID_EMERGENCY_OFF, EVENT_STATUS_SET);
@@ -112,6 +113,40 @@ train_state_t* OpenLcbApplicationTrain_get_state(openlcb_node_t *openlcb_node) {
 
 // Heartbeat timer
 
+static void _send_heartbeat_request(train_state_t *state) {
+
+    openlcb_node_t *node = state->owner_node;
+
+    if (!node || !_interface || !_interface->send_openlcb_msg) { return; }
+
+    if (state->controller_node_id == 0) { return; }
+
+    openlcb_msg_t msg;
+    payload_basic_t payload;
+
+    msg.payload = (openlcb_payload_t *) &payload;
+    msg.payload_type = BASIC;
+
+    OpenLcbUtilities_load_openlcb_message(
+            &msg,
+            node->alias,
+            node->id,
+            0,
+            state->controller_node_id,
+            MTI_TRAIN_REPLY);
+
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MANAGEMENT, 0);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, TRAIN_MGMT_NOOP, 1);
+
+    uint32_t timeout = state->heartbeat_timeout_s;
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (timeout >> 16) & 0xFF, 2);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, (timeout >> 8) & 0xFF, 3);
+    OpenLcbUtilities_copy_byte_to_openlcb_payload(&msg, timeout & 0xFF, 4);
+
+    _interface->send_openlcb_msg(&msg);
+
+}
+
 void OpenLcbApplicationTrain_100ms_timer_tick(void) {
 
     for (uint8_t i = 0; i < _train_pool_count; i++) {
@@ -130,6 +165,14 @@ void OpenLcbApplicationTrain_100ms_timer_tick(void) {
 
         }
 
+        uint32_t halfway = (state->heartbeat_timeout_s * 10) / 2;
+
+        if (state->heartbeat_counter_100ms == halfway) {
+
+            _send_heartbeat_request(state);
+
+        }
+
         if (state->heartbeat_counter_100ms == 0) {
 
             state->estop_active = true;
@@ -137,7 +180,7 @@ void OpenLcbApplicationTrain_100ms_timer_tick(void) {
 
             if (_interface && _interface->on_heartbeat_timeout) {
 
-                _interface->on_heartbeat_timeout(NULL);
+                _interface->on_heartbeat_timeout(state->owner_node);
 
             }
 

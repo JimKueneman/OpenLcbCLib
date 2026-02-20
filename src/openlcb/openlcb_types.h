@@ -1058,6 +1058,8 @@ extern "C" {
         bool is_long_address;    /**< true = extended (long) DCC address, false = short */
         uint8_t speed_steps;     /**< DCC speed steps: 0=default, 1=14, 2=28, 3=128 */
 
+        struct openlcb_node_TAG *owner_node;  /**< Back-pointer to owning node (set by setup) */
+
     } train_state_t;
 
         /**
@@ -1094,7 +1096,7 @@ extern "C" {
         * @see OpenLcbNode_allocate
         * @see openlcb_nodes_t
         */
-    typedef struct {
+    typedef struct openlcb_node_TAG {
         openlcb_node_state_t state;             /**< Node state flags */
         uint64_t id;                            /**< 48-bit Node ID */
         uint16_t alias;                         /**< 12-bit CAN alias */

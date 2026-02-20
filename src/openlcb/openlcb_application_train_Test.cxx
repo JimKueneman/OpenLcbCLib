@@ -76,6 +76,7 @@ static payload_basic_t last_sent_payload;
 static int send_call_count = 0;
 
 static bool mock_heartbeat_timeout_called = false;
+static openlcb_node_t *mock_heartbeat_timeout_node = NULL;
 
 
 // ============================================================================
@@ -89,6 +90,7 @@ static void _reset_tracking(void) {
     memset(&last_sent_payload, 0, sizeof(last_sent_payload));
     send_call_count = 0;
     mock_heartbeat_timeout_called = false;
+    mock_heartbeat_timeout_node = NULL;
 
 }
 
@@ -117,6 +119,7 @@ static bool _mock_send_openlcb_msg(openlcb_msg_t *openlcb_msg) {
 static void _mock_on_heartbeat_timeout(openlcb_node_t *openlcb_node) {
 
     mock_heartbeat_timeout_called = true;
+    mock_heartbeat_timeout_node = openlcb_node;
 
 }
 
@@ -230,6 +233,7 @@ TEST(ApplicationTrain, setup_allocates_state)
 
     EXPECT_NE(state, nullptr);
     EXPECT_EQ(node->train_state, state);
+    EXPECT_EQ(state->owner_node, node);
     EXPECT_EQ(state->set_speed, 0);
     EXPECT_EQ(state->controller_node_id, (uint64_t) 0);
     EXPECT_FALSE(state->estop_active);
@@ -584,6 +588,7 @@ TEST(ApplicationTrain, heartbeat_timer_countdown)
 
     EXPECT_EQ(state->heartbeat_counter_100ms, (uint32_t) 0);
     EXPECT_TRUE(mock_heartbeat_timeout_called);
+    EXPECT_EQ(mock_heartbeat_timeout_node, node);
     EXPECT_TRUE(state->estop_active);
     EXPECT_EQ(state->set_speed, 0);
 
@@ -628,6 +633,72 @@ TEST(ApplicationTrain, heartbeat_no_nodes)
     }
 
     EXPECT_FALSE(mock_heartbeat_timeout_called);
+
+}
+
+TEST(ApplicationTrain, heartbeat_sends_request_at_halfway)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 100;
+    state->controller_node_id = TEST_CONTROLLER_NODE_ID;
+
+    // Tick 50 times to reach halfway (100 - 50 = 50 = halfway of 10s * 10 / 2)
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbApplicationTrain_100ms_timer_tick();
+
+    }
+
+    EXPECT_TRUE(mock_send_called);
+    EXPECT_EQ(send_call_count, 1);
+    EXPECT_EQ(last_sent_msg.mti, MTI_TRAIN_REPLY);
+    EXPECT_EQ(last_sent_msg.dest_id, TEST_CONTROLLER_NODE_ID);
+    EXPECT_EQ(last_sent_msg.source_id, TEST_DEST_ID);
+    EXPECT_EQ(last_sent_payload[0], TRAIN_MANAGEMENT);
+    EXPECT_EQ(last_sent_payload[1], TRAIN_MGMT_NOOP);
+    // 3-byte timeout: 10 seconds = 0x00, 0x00, 0x0A
+    EXPECT_EQ(last_sent_payload[2], 0x00);
+    EXPECT_EQ(last_sent_payload[3], 0x00);
+    EXPECT_EQ(last_sent_payload[4], 0x0A);
+
+}
+
+TEST(ApplicationTrain, heartbeat_no_request_without_controller)
+{
+
+    _reset_tracking();
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    train_state_t *state = OpenLcbApplicationTrain_setup(node);
+
+    EXPECT_NE(state, nullptr);
+
+    state->heartbeat_timeout_s = 10;
+    state->heartbeat_counter_100ms = 100;
+    state->controller_node_id = 0;
+
+    // Tick to halfway — no controller, should not send
+    for (int i = 0; i < 50; i++) {
+
+        OpenLcbApplicationTrain_100ms_timer_tick();
+
+    }
+
+    EXPECT_FALSE(mock_send_called);
 
 }
 
