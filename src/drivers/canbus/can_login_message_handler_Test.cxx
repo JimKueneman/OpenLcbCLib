@@ -360,6 +360,39 @@ TEST(CanLoginMessageHandler, generate_alias)
     EXPECT_TRUE(on_alias_change_called);
 }
 
+/**
+ * Test: Generate alias rejects 0x000
+ * Verifies that a seed producing alias 0x000 advances the LFSR
+ * and regenerates until a non-zero alias is obtained.
+ *
+ * Seed 0x050101000151 produces alias 0x000 from the XOR formula,
+ * so the handler must detect and retry.
+ */
+TEST(CanLoginMessageHandler, generate_alias_rejects_zero)
+{
+    can_statemachine_info_t info;
+
+    setup_test(&interface_can_login_message_handler);
+    reset_test_variables();
+    initialize_statemachine_info(&info);
+
+    // Force a seed that produces alias 0x000
+    info.openlcb_node->seed = 0x050101000151ULL;
+    info.openlcb_node->alias = 0x00;
+
+    CanLoginMessageHandler_state_generate_alias(&info);
+
+    // Alias must be non-zero (the handler should have advanced the seed)
+    EXPECT_NE(info.openlcb_node->alias, 0x000);
+    EXPECT_LE(info.openlcb_node->alias, 0xFFF);
+
+    // Seed must have been advanced at least once
+    EXPECT_NE(info.openlcb_node->seed, (uint64_t) 0x050101000151ULL);
+
+    // Should still transition to CID7
+    EXPECT_EQ(info.openlcb_node->state.run_state, RUNSTATE_LOAD_CHECK_ID_07);
+}
+
 /*******************************************************************************
  * CID Frame Generation Tests
  ******************************************************************************/

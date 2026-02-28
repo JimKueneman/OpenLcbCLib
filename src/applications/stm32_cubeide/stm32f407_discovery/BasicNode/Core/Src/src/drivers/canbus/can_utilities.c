@@ -399,9 +399,9 @@ uint16_t CanUtilities_convert_can_mti_to_openlcb_mti(can_msg_t *can_msg) {
 
         switch (mti) {
 
-        case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST:
-        case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE:
-        case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST:
+        case CAN_MTI_PCER_WITH_PAYLOAD_FIRST:
+        case CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE:
+        case CAN_MTI_PCER_WITH_PAYLOAD_LAST:
 
             mti = MTI_PC_EVENT_REPORT_WITH_PAYLOAD;
             break;

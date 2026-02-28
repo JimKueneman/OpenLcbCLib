@@ -1510,31 +1510,55 @@ TEST(BroadcastTimeApp, send_query_reply_running_clock_full_sequence)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // The state machine advances state when send_event_with_mti fails (!false=true).
-    // When send succeeds (!true=false), it breaks and returns true (done).
-    // To drive through all 6 states, we fail sends for states 0-4 (advancing state each time)
-    // then succeed at state 5 (send_event_pc_report).
+    // The state machine advances state when send succeeds.
+    // Each call sends one message and advances to the next state, returning false (not done).
+    // State 5 (final) returns true when the last message is sent.
 
-    // States 0-4: Send fails -> state advances -> returns false (not done)
-    fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 0->1
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 1->2
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 2->3
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 3->4
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // state 4->5
-    EXPECT_EQ(send_count, 0);  // No messages actually sent yet
-
-    // State 5: send_event_pc_report succeeds -> state resets to 0 -> returns true (done)
-    fail_transmit = false;
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    // State 0: Start event (Producer Identified Set)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_start = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    EXPECT_EQ(last_sent_event_id, expected_start);
+
+    // State 1: Rate (Producer Identified Set)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 2);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_rate = OpenLcbUtilities_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+    EXPECT_EQ(last_sent_event_id, expected_rate);
+
+    // State 2: Year (Producer Identified Set)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 3);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_year = OpenLcbUtilities_create_year_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, false);
+    EXPECT_EQ(last_sent_event_id, expected_year);
+
+    // State 3: Date (Producer Identified Set)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 4);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_date = OpenLcbUtilities_create_date_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 6, 15, false);
+    EXPECT_EQ(last_sent_event_id, expected_date);
+
+    // State 4: Time (Producer Identified Set)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 5);
+    EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_time = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
+    EXPECT_EQ(last_sent_event_id, expected_time);
+
+    // State 5: Next minute (PC Event Report) -> returns true (done)
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 6);
     EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
     event_id_t expected_next = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31, false);
     EXPECT_EQ(last_sent_event_id, expected_next);
 
 }
 
-TEST(BroadcastTimeApp, send_query_reply_success_at_state_0_returns_true)
+TEST(BroadcastTimeApp, send_query_reply_success_at_state_0_advances)
 {
 
     _reset_test_state();
@@ -1554,13 +1578,24 @@ TEST(BroadcastTimeApp, send_query_reply_success_at_state_0_returns_true)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // When send succeeds at state 0, function returns true immediately (done)
-    // and sends a Producer Identified Set with start event
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    // When send succeeds at state 0, the start event is sent, state advances, returns false (not done)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
     event_id_t expected_start = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
     EXPECT_EQ(last_sent_event_id, expected_start);
+
+    // Next call should be state 1 (Rate), proving state advanced
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 2);
+    event_id_t expected_rate = OpenLcbUtilities_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
+    EXPECT_EQ(last_sent_event_id, expected_rate);
+
+    // Drive to completion to reset state
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 2: Year
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 3: Date
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 4: Time
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));   // 5: Next minute (done)
 
 }
 
@@ -1584,12 +1619,19 @@ TEST(BroadcastTimeApp, send_query_reply_stopped_clock_sends_stop_event)
     clock_state->time.hour = 0;
     clock_state->time.minute = 0;
 
-    // State 0: Send succeeds with stop event -> returns true (done)
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));
+    // State 0: Send succeeds with stop event, state advances, returns false (not done)
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
     event_id_t expected_stop = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_STOP);
     EXPECT_EQ(last_sent_event_id, expected_stop);
+
+    // Drive to completion to reset state
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));  // 1: Rate
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));  // 2: Year
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));  // 3: Date
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));  // 4: Time
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0, 1));   // 5: Next minute (done)
 
 }
 
@@ -1624,7 +1666,7 @@ TEST(BroadcastTimeApp, send_query_reply_consumer_only_returns_true)
 
 }
 
-TEST(BroadcastTimeApp, send_query_reply_fail_advances_state_then_success)
+TEST(BroadcastTimeApp, send_query_reply_fail_retries_same_state)
 {
 
     _reset_test_state();
@@ -1644,27 +1686,34 @@ TEST(BroadcastTimeApp, send_query_reply_fail_advances_state_then_success)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // Transmit fails: !false = true, state 0->1, returns false (not done)
+    // Transmit fails at state 0: state stays at 0, returns false (not done)
     fail_transmit = true;
     EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 0);
 
-    // Now allow transmit to succeed at state 1 (Rate):
-    // send succeeds: !true = false, break, return true (done)
+    // Retry: still state 0, fails again
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 0);
+
+    // Now allow transmit to succeed: state 0 sends start event, advances to 1
     fail_transmit = false;
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
     EXPECT_EQ(send_count, 1);
     EXPECT_EQ(last_sent_mti, MTI_PRODUCER_IDENTIFIED_SET);
+    event_id_t expected_start = OpenLcbUtilities_create_command_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, BROADCAST_TIME_EVENT_START);
+    EXPECT_EQ(last_sent_event_id, expected_start);
 
-    // Note: state is still at 1 (success doesn't advance/reset state for states 0-4).
-    // Drive state machine to completion to reset state to 0 for next test.
-    fail_transmit = true;
-    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 1->2
-    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 2->3
-    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 3->4
-    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 4->5
-    fail_transmit = false;
-    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);  // 5->0 (done)
+    // Next call is state 1 (Rate), confirming failure did not advance state
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 2);
+    event_id_t expected_rate = OpenLcbUtilities_create_rate_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0004, false);
+    EXPECT_EQ(last_sent_event_id, expected_rate);
+
+    // Drive to completion to reset state
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 2: Year
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 3: Date
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 4: Time
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));   // 5: Next minute (done)
 
 }
 
@@ -2283,7 +2332,7 @@ TEST(BroadcastTimeApp, time_tick_backward_null_interface_no_crash)
 // Section 16: Query Reply Transmit Failure at Different Stages
 // ============================================================================
 
-TEST(BroadcastTimeApp, send_query_reply_failure_at_state_5_returns_true)
+TEST(BroadcastTimeApp, send_query_reply_failure_at_state_5_retries)
 {
 
     _reset_test_state();
@@ -2303,23 +2352,24 @@ TEST(BroadcastTimeApp, send_query_reply_failure_at_state_5_returns_true)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // Drive through states 0-4 with failed sends (state advances on failure)
+    // Drive through states 0-4 with successful sends
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 0: Start
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 1: Rate
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 2: Year
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 3: Date
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 4: Time
+    EXPECT_EQ(send_count, 5);
+
+    // State 5: send_event_pc_report fails -> stays at state 5, returns false (not done)
     fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 0->1
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 1->2
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 2->3
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 3->4
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 4->5
-    EXPECT_EQ(send_count, 0);
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 5);  // nothing new sent
 
-    // State 5: send_event_pc_report also fails -> falls through break -> returns true (done)
-    // (state 5 does NOT advance state on failure, it just falls through)
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    EXPECT_EQ(send_count, 0);
-
-    // Reset state to 0: succeed at state 5 to complete the sequence
+    // Retry state 5: succeeds -> resets to state 0, returns true (done)
     fail_transmit = false;
-    OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31);
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
+    EXPECT_EQ(send_count, 6);
+    EXPECT_EQ(last_sent_mti, MTI_PC_EVENT_REPORT);
 
 }
 
@@ -2343,28 +2393,28 @@ TEST(BroadcastTimeApp, send_query_reply_can_run_twice_consecutively)
     clock_state->time.hour = 14;
     clock_state->time.minute = 30;
 
-    // First full sequence: fail states 0-4, succeed at state 5
-    fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    fail_transmit = false;
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));
-    EXPECT_EQ(send_count, 1);
+    // First full sequence: all sends succeed, 6 messages sent
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 0: Start
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 1: Rate
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 2: Year
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 3: Date
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));  // 4: Time
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 31));   // 5: Next minute (done)
+    EXPECT_EQ(send_count, 6);
 
     // Second full sequence should work (state resets to 0 after completion)
     send_count = 0;
-    fail_transmit = true;
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
-    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
-    fail_transmit = false;
-    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));
-    EXPECT_EQ(send_count, 1);
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));  // 0: Start
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));  // 1: Rate
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));  // 2: Year
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));  // 3: Date
+    EXPECT_FALSE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));  // 4: Time
+    EXPECT_TRUE(OpenLcbApplicationBroadcastTime_send_query_reply(node, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32));   // 5: Next minute (done)
+    EXPECT_EQ(send_count, 6);
+
+    // Second sequence should have sent the updated next_minute
+    event_id_t expected_next = OpenLcbUtilities_create_time_event_id(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 32, false);
+    EXPECT_EQ(last_sent_event_id, expected_next);
 
 }
 

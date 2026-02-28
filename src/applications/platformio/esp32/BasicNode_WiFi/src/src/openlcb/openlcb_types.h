@@ -428,6 +428,7 @@
         bool is_consumer : 1;
         bool is_producer : 1;
         bool is_allocated : 1;
+        uint8_t send_query_reply_state; /**< @brief Per-clock state for query reply sequence (0-5). */
 
     } broadcast_clock_t;
 

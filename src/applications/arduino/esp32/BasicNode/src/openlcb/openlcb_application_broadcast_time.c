@@ -657,7 +657,7 @@ void OpenLcbApplicationBroadcastTime_100ms_time_tick(void) {
 
             }
 
-            if (_interface->on_time_changed) {
+            if (_interface && _interface->on_time_changed) {
 
                 _interface->on_time_changed(clock);
 
@@ -937,12 +937,10 @@ bool OpenLcbApplicationBroadcastTime_send_date_rollover(openlcb_node_t *openlcb_
      *
      * @return true when all six messages have been queued, false if more calls are needed.
      *
-     * @warning Uses a static state variable — only one query reply may be in progress at
-     *          a time across the entire application.
+     * @note State is now stored per-clock in broadcast_clock_t.send_query_reply_state,
+     *       allowing concurrent query replies for different clocks.
      */
 bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t next_hour, uint8_t next_minute) {
-
-    static int _send_query_reply_state = 0;
 
     broadcast_clock_t *clock = _find_clock_by_id(clock_id);
     event_id_t event_id;
@@ -951,7 +949,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
         if (clock->is_allocated && clock->is_producer) {
 
-            switch (_send_query_reply_state) {
+            switch (clock->send_query_reply_state) {
 
                 case 0:  // 1. Start or Stop ------------------------------------------
 
@@ -965,11 +963,9 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
                     }
 
-                    if (!OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
 
-                        _send_query_reply_state = 1;
-
-                        return false; // not done
+                        clock->send_query_reply_state = 1;
 
                     }
 
@@ -979,11 +975,9 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
                     event_id = OpenLcbUtilities_create_rate_event_id(clock->state.clock_id, clock->state.rate.rate, false);
 
-                    if (!OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
 
-                        _send_query_reply_state = 2;
-
-                        return false; // not done
+                        clock->send_query_reply_state = 2;
 
                     }
 
@@ -993,11 +987,9 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
                     event_id = OpenLcbUtilities_create_year_event_id(clock->state.clock_id, clock->state.year.year, false);
 
-                    if (!OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
 
-                        _send_query_reply_state = 3;
-
-                        return false; // not done
+                        clock->send_query_reply_state = 3;
 
                     }
 
@@ -1007,11 +999,9 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
                     event_id = OpenLcbUtilities_create_date_event_id(clock->state.clock_id, clock->state.date.month, clock->state.date.day, false);
 
-                    if (!OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
 
-                        _send_query_reply_state = 4;
-
-                        return false; // not done
+                        clock->send_query_reply_state = 4;
 
                     }
 
@@ -1021,11 +1011,9 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
                     event_id = OpenLcbUtilities_create_time_event_id(clock->state.clock_id, clock->state.time.hour, clock->state.time.minute, false);
 
-                    if (!OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
+                    if (OpenLcbApplication_send_event_with_mti(openlcb_node, event_id, MTI_PRODUCER_IDENTIFIED_SET)) {
 
-                        _send_query_reply_state = 5;
-
-                        return false; // not done
+                        clock->send_query_reply_state = 5;
 
                     }
 
@@ -1037,7 +1025,7 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
                     if (OpenLcbApplication_send_event_pc_report(openlcb_node, event_id)) {
 
-                        _send_query_reply_state = 0;
+                        clock->send_query_reply_state = 0;
 
                         return true; // done
 
@@ -1047,11 +1035,13 @@ bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_no
 
             }
 
+            return false; // not done, more states to send
+
         }  // if (clock->is_allocated && clock->is_producer)
 
     }  // if (clock)
 
-    return true;  // done
+    return true;  // done (no clock or not a producer)
 
 }
 

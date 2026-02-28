@@ -28,7 +28,7 @@
  * @brief FIFO queue for OpenLCB message pointers.
  *
  * @details Provides a fixed-capacity First-In-First-Out queue that holds pointers
- * to @ref openlcb_msg_t buffers allocated from @ref OpenLcbBufferStore.  Messages
+ * to @ref openlcb_msg_t buffers allocated from @ref openlcb_buffer_store.h.  Messages
  * are delivered in the order they were pushed.  Must be initialized after
  * OpenLcbBufferStore_initialize() and before any push or pop operations.
  *

@@ -342,17 +342,17 @@ extern "C" {
          * @brief Stores the callback interface.  Call once at startup before any
          *        datagram processing.
          *
-         * @param interface  Pointer to @ref interface_protocol_datagram_handler_t (must remain valid for application lifetime).
+         * @param interface_protocol_datagram_handler  Pointer to @ref interface_protocol_datagram_handler_t (must remain valid for application lifetime).
          */
-    extern void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface);
+    extern void ProtocolDatagramHandler_initialize(const interface_protocol_datagram_handler_t *interface_protocol_datagram_handler);
 
         /**
          * @brief Builds a Datagram Received OK message (MTI 0x0A28).
          *
          * @param statemachine_info  Pointer to @ref openlcb_statemachine_info_t context.
-         * @param return_code        0 for simple OK, or Reply Pending + timeout flags.
+         * @param reply_pending_time_in_seconds  0 for simple OK, or Reply Pending + timeout flags.
          */
-    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t return_code);
+    extern void ProtocolDatagramHandler_load_datagram_received_ok_message(openlcb_statemachine_info_t *statemachine_info, uint16_t reply_pending_time_in_seconds);
 
         /**
          * @brief Builds a Datagram Rejected message (MTI 0x0A48).

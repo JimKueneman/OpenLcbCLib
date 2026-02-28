@@ -103,6 +103,11 @@ static void _extract_write_command_parameters(openlcb_statemachine_info_t *state
      */
 static uint16_t _is_valid_write_parameters(config_mem_write_request_info_t *config_mem_write_request_info) {
 
+    if (!config_mem_write_request_info->write_space_func) {
+
+        return ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN;
+    }
+
     if (!config_mem_write_request_info->space_info->present) {
 
         return ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN;
@@ -188,8 +193,6 @@ static void _dispatch_write_request(openlcb_statemachine_info_t *statemachine_in
 
         return;
     }
-
-    // Try to Complete Command Request, we know that config_mem_write_request_info->write_space_func is valid if we get here
 
     _check_for_write_overrun(statemachine_info, config_mem_write_request_info);
     config_mem_write_request_info->write_space_func(statemachine_info, config_mem_write_request_info);
@@ -440,8 +443,6 @@ static uint16_t _write_data(openlcb_statemachine_info_t *statemachine_info, conf
                 config_mem_write_request_info->bytes,
                 config_mem_write_request_info->write_buffer
                 );
-
-        statemachine_info->outgoing_msg_info.msg_ptr->payload_count += write_count;
 
         if (write_count < config_mem_write_request_info->bytes) {
 

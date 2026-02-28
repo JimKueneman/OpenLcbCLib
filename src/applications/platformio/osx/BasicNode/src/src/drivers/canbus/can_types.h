@@ -72,15 +72,14 @@ extern "C" {
     /** @brief Pass to functions when bytes 0-1 carry a destination alias; data starts at byte 2. */
 #define OFFSET_CAN_WITH_DEST_ADDRESS 2
 
-    /** @brief Bit mask for building global/addressed OpenLCB CAN identifiers. */
-#define _OPENLCB_GLOBAL_ADDRESSED (RESERVED_TOP_BIT | CAN_OPENLCB_MSG | CAN_FRAME_TYPE_GLOBAL_ADDRESSED)
+    /** @brief CAN framing MTI for first frame of segmented PCER-with-payload. */
+#define CAN_MTI_PCER_WITH_PAYLOAD_FIRST 0x0F16
 
-    /** @brief Pre-built upper bits for a Datagram Rejected reply CAN identifier. */
-#define _DATAGRAM_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_DATAGRAM_REJECTED_REPLY & 0x0FFF) << 12))
+    /** @brief CAN framing MTI for middle frame of segmented PCER-with-payload. */
+#define CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE 0x0F15
 
-    /** @brief Pre-built upper bits for an Optional Interaction Rejected reply CAN identifier. */
-#define _OPTIONAL_INTERACTION_REJECT_REPLY (_OPENLCB_GLOBAL_ADDRESSED | ((uint32_t) (MTI_OPTIONAL_INTERACTION_REJECTED & 0x0FFF) << 12))
-
+    /** @brief CAN framing MTI for last frame of segmented PCER-with-payload. */
+#define CAN_MTI_PCER_WITH_PAYLOAD_LAST 0x0F14
 
     /**
      * @typedef payload_bytes_can_t

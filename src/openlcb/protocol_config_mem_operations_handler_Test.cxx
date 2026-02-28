@@ -1111,7 +1111,8 @@ TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
     incoming_msg->dest_alias = DEST_ALIAS;
     *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     *incoming_msg->payload[1] = CONFIG_MEM_RESET_REBOOT;
-    incoming_msg->payload_count = 2;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, DEST_ID, 2);
+    incoming_msg->payload_count = 8;
 
     // *****************************************
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
@@ -1128,6 +1129,15 @@ TEST(ProtocolConfigMemOperationsHandler, reset_reboot)
     EXPECT_EQ(called_function_ptr, (void *)&_operations_request_reset_reboot);
     EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_reset_reboot);
     EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+
+    // Wrong Node ID should be ignored
+    _reset_variables();
+    node1->state.openlcb_datagram_ack_sent = false;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, 0x010203040506, 2);
+    ProtocolConfigMemOperationsHandler_reset_reboot(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(called_function_ptr, nullptr);
 }
 
 TEST(ProtocolConfigMemOperationsHandler, factory_reset)
@@ -1159,7 +1169,8 @@ TEST(ProtocolConfigMemOperationsHandler, factory_reset)
     incoming_msg->dest_alias = DEST_ALIAS;
     *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
     *incoming_msg->payload[1] = CONFIG_MEM_FACTORY_RESET;
-    incoming_msg->payload_count = 2;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, DEST_ID, 2);
+    incoming_msg->payload_count = 8;
 
     // *****************************************
     EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
@@ -1176,6 +1187,15 @@ TEST(ProtocolConfigMemOperationsHandler, factory_reset)
     EXPECT_EQ(called_function_ptr, (void *)&_operations_request_factory_reset);
     EXPECT_EQ(local_config_mem_operations_request_info.operations_func, &_operations_request_factory_reset);
     EXPECT_EQ(local_config_mem_operations_request_info.space_info, nullptr);
+
+    // Wrong Node ID should be ignored
+    _reset_variables();
+    node1->state.openlcb_datagram_ack_sent = false;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(incoming_msg, 0x010203040506, 2);
+    ProtocolConfigMemOperationsHandler_factory_reset(&statemachine_info);
+
+    EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(called_function_ptr, nullptr);
 }
 
 TEST(ProtocolConfigMemOperationsHandler, cover_all_spaces)

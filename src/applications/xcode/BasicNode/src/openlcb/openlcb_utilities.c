@@ -46,6 +46,7 @@
 #include "openlcb_defines.h"
 #include "openlcb_types.h"
 #include "openlcb_buffer_store.h"
+#include "openlcb_application_broadcast_time.h"
 
 // =============================================================================
 // Message Structure Operations
@@ -806,7 +807,8 @@ void OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(openlcb_sta
          return true;
      }
 
-     return false;
+     // Check registered custom clocks
+     return OpenLcbApplicationBroadcastTime_get_clock(clock_id) != NULL;
  }
 
     /** @brief Extracts the 48-bit clock ID (upper 6 bytes) from a broadcast time event ID. */

@@ -26,7 +26,7 @@
      *
      * @file protocol_config_mem_read_handler.h
      * @brief Configuration memory read handler — processes datagram read commands
-     *        for CDI (0xFF), All (0xFD), Config (0xFE), ACDI-Mfg (0xFC),
+     *        for CDI (0xFF), All (0xFE), Config (0xFD), ACDI-Mfg (0xFC),
      *        ACDI-User (0xFB), Train FDI (0xFA), and Train Fn Config (0xF9).
      *
      * @author Jim Kueneman

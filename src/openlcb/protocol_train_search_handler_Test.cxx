@@ -139,6 +139,27 @@ static node_parameters_t _test_node_parameters = {
 
 };
 
+static node_parameters_t _test_node_parameters_named = {
+
+    .consumer_count_autocreate = 5,
+    .producer_count_autocreate = 5,
+
+    .snip.mfg_version = 4,
+    .snip.name = "Loco 1234 Express",
+    .snip.model = "Test Model",
+    .snip.hardware_version = "0.001",
+    .snip.software_version = "0.002",
+    .snip.user_version = 2,
+
+    .protocol_support = (PSI_DATAGRAM |
+                         PSI_EVENT_EXCHANGE |
+                         PSI_SIMPLE_NODE_INFORMATION),
+
+    .configuration_options.high_address_space = CONFIG_MEM_SPACE_CONFIGURATION_DEFINITION_INFO,
+    .configuration_options.low_address_space = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY,
+
+};
+
 
 // ============================================================================
 // Test Helpers
@@ -171,6 +192,17 @@ static void _global_initialize_with_nulls(void) {
 static openlcb_node_t* _create_train_node(void) {
 
     openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters);
+    node->alias = TEST_DEST_ALIAS;
+    node->train_state = NULL;
+    OpenLcbApplicationTrain_setup(node);
+
+    return node;
+
+}
+
+static openlcb_node_t* _create_named_train_node(void) {
+
+    openlcb_node_t *node = OpenLcbNode_allocate(TEST_DEST_ID, &_test_node_parameters_named);
     node->alias = TEST_DEST_ALIAS;
     node->train_state = NULL;
     OpenLcbApplicationTrain_setup(node);
@@ -788,5 +820,236 @@ TEST(TrainSearch, handler_null_callbacks_no_crash)
 
     // Callback count stays at 0 since we used null interface
     EXPECT_EQ(_search_matched_count, 0);
+
+}
+
+
+// ============================================================================
+// Section 9: Handler — Prefix / Exact Match Tests (Item 25)
+// ============================================================================
+
+TEST(TrainSearch, handler_prefix_match_no_exact_flag)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "12" without EXACT — should prefix-match train 1234
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            12, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_prefix_no_match)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "13" without EXACT — does NOT prefix-match train 1234
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            13, TRAIN_SEARCH_FLAG_DCC);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_exact_flag_rejects_prefix)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "12" WITH EXACT — must NOT match train 1234
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            12, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_EXACT);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_exact_flag_full_match)
+{
+
+    _global_initialize();
+
+    openlcb_node_t *node = _create_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 1234, false);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "1234" WITH EXACT — should match train 1234
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_EXACT);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+
+// ============================================================================
+// Section 10: Handler — Name Match Tests (Item 26)
+// ============================================================================
+
+TEST(TrainSearch, handler_name_match_when_address_only_clear)
+{
+
+    _global_initialize();
+
+    // Named train "Loco 1234 Express" with DCC address 5000
+    openlcb_node_t *node = _create_named_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 5000, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "1234" without ADDRESS_ONLY — should match name "Loco 1234 Express"
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_name_match_blocked_by_address_only)
+{
+
+    _global_initialize();
+
+    // Named train "Loco 1234 Express" with DCC address 5000
+    openlcb_node_t *node = _create_named_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 5000, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "1234" WITH ADDRESS_ONLY — name match blocked, address 5000 != 1234
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_ADDRESS_ONLY);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_name_prefix_match)
+{
+
+    _global_initialize();
+
+    // Named train "Loco 1234 Express" with DCC address 5000
+    openlcb_node_t *node = _create_named_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 5000, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "12" without EXACT or ADDRESS_ONLY — prefix matches "1234" in name
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            12, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_name_exact_rejects_prefix)
+{
+
+    _global_initialize();
+
+    // Named train "Loco 1234 Express" with DCC address 5000
+    openlcb_node_t *node = _create_named_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 5000, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "12" WITH EXACT — "12" is not exact match of "1234" in name
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            12, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_FALSE(sm.outgoing_msg_info.valid);
+
+}
+
+TEST(TrainSearch, handler_name_exact_full_match)
+{
+
+    _global_initialize();
+
+    // Named train "Loco 1234 Express" with DCC address 5000
+    openlcb_node_t *node = _create_named_train_node();
+    OpenLcbApplicationTrain_set_dcc_address(node, 5000, true);
+
+    openlcb_msg_t *incoming = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    openlcb_statemachine_info_t sm;
+    _setup_statemachine(&sm, node, incoming, outgoing);
+
+    // Search for "1234" WITH EXACT — exact match of "1234" in name
+    event_id_t search_event = OpenLcbUtilities_create_train_search_event_id(
+            1234, TRAIN_SEARCH_FLAG_DCC | TRAIN_SEARCH_FLAG_LONG_ADDR | TRAIN_SEARCH_FLAG_EXACT);
+
+    ProtocolTrainSearch_handle_search_event(&sm, search_event);
+
+    EXPECT_TRUE(sm.outgoing_msg_info.valid);
 
 }

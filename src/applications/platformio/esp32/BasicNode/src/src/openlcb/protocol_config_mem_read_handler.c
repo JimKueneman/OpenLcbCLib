@@ -436,9 +436,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(openlcb_statema
 
         default:
 
-            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
-
-            statemachine_info->outgoing_msg_info.valid = true;
+            OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
 
             break;
     }
@@ -519,7 +517,7 @@ void ProtocolConfigMemReadHandler_read_request_acdi_user(openlcb_statemachine_in
 
         default:
 
-            _interface->load_datagram_received_rejected_message(statemachine_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
+            OpenLcbUtilities_load_config_mem_reply_read_fail_message_header(statemachine_info, config_mem_read_request_info, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
 
             break;
     }

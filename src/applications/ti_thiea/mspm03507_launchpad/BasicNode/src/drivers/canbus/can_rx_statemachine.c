@@ -184,7 +184,7 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
 
         // PC Event Report with payload is a unicorn global message and needs special attention
 
-        case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST:
+        case CAN_MTI_PCER_WITH_PAYLOAD_FIRST:
 
         {
 
@@ -197,7 +197,7 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
             break;
         }
 
-        case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE:
+        case CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE:
         {
 
             if (_interface->handle_middle_frame) {
@@ -209,7 +209,7 @@ static void _handle_openlcb_msg_can_frame_unaddressed(can_msg_t* can_msg, uint16
             break;
         }
 
-        case MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST:
+        case CAN_MTI_PCER_WITH_PAYLOAD_LAST:
         {
 
             if (_interface->handle_last_frame) {

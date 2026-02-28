@@ -640,6 +640,16 @@ void ProtocolConfigMemOperationsHandler_update_complete(openlcb_statemachine_inf
     /** @brief Dispatch Reset/Reboot command to two-phase handler. */
 void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t *statemachine_info) {
 
+    node_id_t target_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
+            statemachine_info->incoming_msg_info.msg_ptr, 2);
+
+    if (target_node_id != statemachine_info->openlcb_node->id) {
+
+        statemachine_info->outgoing_msg_info.valid = false;
+        return;
+
+    }
+
     config_mem_operations_request_info_t config_mem_operations_request_info;
 
     config_mem_operations_request_info.operations_func = _interface->operations_request_reset_reboot;
@@ -651,6 +661,16 @@ void ProtocolConfigMemOperationsHandler_reset_reboot(openlcb_statemachine_info_t
 
     /** @brief Dispatch Factory Reset command to two-phase handler. */
 void ProtocolConfigMemOperationsHandler_factory_reset(openlcb_statemachine_info_t *statemachine_info) {
+
+    node_id_t target_node_id = OpenLcbUtilities_extract_node_id_from_openlcb_payload(
+            statemachine_info->incoming_msg_info.msg_ptr, 2);
+
+    if (target_node_id != statemachine_info->openlcb_node->id) {
+
+        statemachine_info->outgoing_msg_info.valid = false;
+        return;
+
+    }
 
     config_mem_operations_request_info_t config_mem_operations_request_info;
 

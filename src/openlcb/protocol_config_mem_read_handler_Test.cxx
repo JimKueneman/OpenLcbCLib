@@ -1734,8 +1734,9 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturer)
     ProtocolConfigMemReadHandler_read_request_acdi_manufacturer(&statemachine_info, &config_mem_read_request_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
 }
 
 TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
@@ -1880,8 +1881,9 @@ TEST(ProtocolConfigMemReadHandler, read_request_acdi_user)
     ProtocolConfigMemReadHandler_read_request_acdi_user(&statemachine_info, &config_mem_read_request_info);
 
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
-    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
+    EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_READ_REPLY_FAIL_SPACE_IN_BYTE_6);
 }
 
 TEST(ProtocolConfigMemReadHandler, read_request_acdi_manufacturerr_null_snip_dependancies)

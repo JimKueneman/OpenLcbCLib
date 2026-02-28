@@ -810,8 +810,8 @@ void PrintMtiName(uint16_t mti)
     case MTI_OPTIONAL_INTERACTION_REJECTED:
         printf("MTI_OPTIONAL_INTERACTION_REJECTED");
         break;
-    case MTI_TERMINATE_DO_TO_ERROR:
-        printf("MTI_TERMINATE_DO_TO_ERROR");
+    case MTI_TERMINATE_DUE_TO_ERROR:
+        printf("MTI_TERMINATE_DUE_TO_ERROR");
         break;
     case MTI_PROTOCOL_SUPPORT_INQUIRY:
         printf("MTI_PROTOCOL_SUPPORT_INQUIRY");

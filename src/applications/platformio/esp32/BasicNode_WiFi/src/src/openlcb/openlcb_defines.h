@@ -174,7 +174,7 @@
 #define MTI_OPTIONAL_INTERACTION_REJECTED 0x0068
 
     /** @brief Fatal error detected, node is terminating operation */
-#define MTI_TERMINATE_DO_TO_ERROR 0x00A8
+#define MTI_TERMINATE_DUE_TO_ERROR 0x00A8
 
     /** @brief Query what protocols a node supports */
 #define MTI_PROTOCOL_SUPPORT_INQUIRY 0x0828
@@ -238,17 +238,8 @@
     /** @brief Producer/Consumer Event Report - event has occurred */
 #define MTI_PC_EVENT_REPORT 0x05B4
 
-    /** @brief Event report with payload data (single frame, up to 8 bytes payload) */
+    /** @brief Event report with payload data */
 #define MTI_PC_EVENT_REPORT_WITH_PAYLOAD 0x0F14
-
-    /** @brief Event report with payload - first frame of segmented message */
-#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST 0x0F16
-
-    /** @brief Event report with payload - middle frame of segmented message */
-#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE 0x0F15
-
-    /** @brief Event report with payload - last frame of segmented message */
-#define MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST 0x0F14
 
     /** @} */ // end of mti_event_transport
 
@@ -692,9 +683,6 @@
 
     /** @brief Temporary error base code */
 #define ERROR_TEMPORARY 0x2000
-
-    /** @brief Temporary: Operation timed out */
-#define ERROR_TEMPORARY_TIMEOUT 0x2010
 
     /** @brief Temporary: Buffer or resource currently unavailable */
 #define ERROR_TEMPORARY_BUFFER_UNAVAILABLE 0x2020

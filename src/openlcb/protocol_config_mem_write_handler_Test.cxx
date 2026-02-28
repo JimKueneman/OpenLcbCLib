@@ -1287,7 +1287,7 @@ TEST(ProtocolConfigMemWriteHandler, message_handlers_null)
     ProtocolConfigMemWriteHandler_write_space_all(&statemachine_info);
 
     EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
-    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_CONFIG_MEM_ADDRESS_SPACE_UNKNOWN);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
 }
 
 TEST(ProtocolConfigMemWriteHandler, write_request_config_mem)
@@ -1339,7 +1339,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem)
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_WRITE_REPLY_OK_SPACE_IN_BYTE_6);
-    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x17);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 
     // ************************************************************************
@@ -1362,7 +1362,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem)
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD);
-    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 0x16);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 6);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 }
 
@@ -1450,7 +1450,7 @@ TEST(ProtocolConfigMemWriteHandler, write_request_config_mem_with_configmem_writ
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->mti, MTI_DATAGRAM);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[0], CONFIG_MEM_CONFIGURATION);
     EXPECT_EQ(*statemachine_info.outgoing_msg_info.msg_ptr->payload[1], CONFIG_MEM_WRITE_REPLY_OK_SPACE_FD);
-    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 6 + 16);
+    EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 6);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
 }
 
@@ -1889,6 +1889,50 @@ TEST(ProtocolConfigMemWriteHandler, _memory_write_request_equals_null)
     EXPECT_EQ(OpenLcbUtilities_extract_word_from_openlcb_payload(statemachine_info.outgoing_msg_info.msg_ptr, 7), ERROR_PERMANENT_INVALID_ARGUMENTS);
     EXPECT_EQ(statemachine_info.outgoing_msg_info.msg_ptr->payload_count, 7 + 2);
     EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+}
+
+TEST(ProtocolConfigMemWriteHandler, null_write_space_func_rejected)
+{
+
+    _reset_variables();
+    _global_initialize_with_nulls();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+
+    openlcb_msg_t *incoming_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(SNIP);
+
+    EXPECT_NE(node1, nullptr);
+    EXPECT_NE(incoming_msg, nullptr);
+    EXPECT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = incoming_msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    incoming_msg->mti = MTI_DATAGRAM;
+    incoming_msg->source_id = SOURCE_ID;
+    incoming_msg->source_alias = SOURCE_ALIAS;
+    incoming_msg->dest_id = DEST_ID;
+    incoming_msg->dest_alias = DEST_ALIAS;
+    *incoming_msg->payload[0] = CONFIG_MEM_CONFIGURATION;
+    *incoming_msg->payload[1] = CONFIG_MEM_WRITE_SPACE_IN_BYTE_6;
+    OpenLcbUtilities_copy_dword_to_openlcb_payload(incoming_msg, 0x00000000, 2);
+    *incoming_msg->payload[6] = CONFIG_MEM_SPACE_CONFIGURATION_MEMORY;
+    *incoming_msg->payload[7] = 0x10;
+    incoming_msg->payload_count = 8;
+
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
+
+    // Phase 1: NULL write_space_func should be caught and rejected
+    ProtocolConfigMemWriteHandler_write_space_config_memory(&statemachine_info);
+
+    EXPECT_EQ(called_function_ptr, (void *)&_load_datagram_rejected_message);
+    EXPECT_EQ(datagram_reply_code, ERROR_PERMANENT_NOT_IMPLEMENTED_SUBCOMMAND_UNKNOWN);
+    EXPECT_FALSE(node1->state.openlcb_datagram_ack_sent);
 }
 
 // ============================================================================

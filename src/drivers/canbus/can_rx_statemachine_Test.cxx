@@ -1349,7 +1349,7 @@ TEST(CanRxStatemachine, addressed_snip_first_frame)
  *   Covers the special unaddressed multi-frame event report.
  *
  * Coverage:
- *   Line 227-236: MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST
+ *   Line 227-236: CAN_MTI_PCER_WITH_PAYLOAD_FIRST
  */
 TEST(CanRxStatemachine, pc_event_report_first_frame)
 {
@@ -1361,7 +1361,7 @@ TEST(CanRxStatemachine, pc_event_report_first_frame)
     
     // PC Event Report First Frame (unaddressed)
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
-                     ((MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST & 0x0FFF) << 12) | 0x0AAA;
+                     ((CAN_MTI_PCER_WITH_PAYLOAD_FIRST & 0x0FFF) << 12) | 0x0AAA;
     msg.payload[0] = 0x01;
     msg.payload[1] = 0x02;
     msg.payload_count = 2;
@@ -1379,7 +1379,7 @@ TEST(CanRxStatemachine, pc_event_report_first_frame)
  *   Covers the middle frame of multi-frame event report.
  *
  * Coverage:
- *   Line 240-249: MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE
+ *   Line 240-249: CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE
  */
 TEST(CanRxStatemachine, pc_event_report_middle_frame)
 {
@@ -1391,7 +1391,7 @@ TEST(CanRxStatemachine, pc_event_report_middle_frame)
     
     // PC Event Report Middle Frame (unaddressed)
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
-                     ((MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE & 0x0FFF) << 12) | 0x0AAA;
+                     ((CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE & 0x0FFF) << 12) | 0x0AAA;
     msg.payload[0] = 0x01;
     msg.payload[1] = 0x02;
     msg.payload_count = 2;
@@ -1409,7 +1409,7 @@ TEST(CanRxStatemachine, pc_event_report_middle_frame)
  *   Covers the last frame of multi-frame event report.
  *
  * Coverage:
- *   Line 252-261: MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST
+ *   Line 252-261: CAN_MTI_PCER_WITH_PAYLOAD_LAST
  */
 TEST(CanRxStatemachine, pc_event_report_last_frame)
 {
@@ -1421,7 +1421,7 @@ TEST(CanRxStatemachine, pc_event_report_last_frame)
     
     // PC Event Report Last Frame (unaddressed)
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
-                     ((MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST & 0x0FFF) << 12) | 0x0AAA;
+                     ((CAN_MTI_PCER_WITH_PAYLOAD_LAST & 0x0FFF) << 12) | 0x0AAA;
     msg.payload[0] = 0x01;
     msg.payload[1] = 0x02;
     msg.payload_count = 2;
@@ -1763,7 +1763,7 @@ TEST(CanRxStatemachine, null_handlers_unaddressed_messages)
     
     // Test PC Event Report FIRST with NULL handler
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
-                     ((MTI_PC_EVENT_REPORT_WITH_PAYLOAD_FIRST & 0x0FFF) << 12) | 0x0AAA;
+                     ((CAN_MTI_PCER_WITH_PAYLOAD_FIRST & 0x0FFF) << 12) | 0x0AAA;
     msg.payload_count = 2;
     CanRxStatemachine_incoming_can_driver_callback(&msg);
     EXPECT_TRUE(on_receive_called);
@@ -1773,7 +1773,7 @@ TEST(CanRxStatemachine, null_handlers_unaddressed_messages)
     
     // Test PC Event Report MIDDLE with NULL handler
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
-                     ((MTI_PC_EVENT_REPORT_WITH_PAYLOAD_MIDDLE & 0x0FFF) << 12) | 0x0AAA;
+                     ((CAN_MTI_PCER_WITH_PAYLOAD_MIDDLE & 0x0FFF) << 12) | 0x0AAA;
     msg.payload_count = 2;
     CanRxStatemachine_incoming_can_driver_callback(&msg);
     EXPECT_TRUE(on_receive_called);
@@ -1783,7 +1783,7 @@ TEST(CanRxStatemachine, null_handlers_unaddressed_messages)
     
     // Test PC Event Report LAST with NULL handler
     msg.identifier = RESERVED_TOP_BIT | CAN_OPENLCB_MSG | OPENLCB_MESSAGE_STANDARD_FRAME_TYPE |
-                     ((MTI_PC_EVENT_REPORT_WITH_PAYLOAD_LAST & 0x0FFF) << 12) | 0x0AAA;
+                     ((CAN_MTI_PCER_WITH_PAYLOAD_LAST & 0x0FFF) << 12) | 0x0AAA;
     msg.payload_count = 2;
     CanRxStatemachine_incoming_can_driver_callback(&msg);
     EXPECT_TRUE(on_receive_called);

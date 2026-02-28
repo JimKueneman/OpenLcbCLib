@@ -229,14 +229,15 @@ TEST(CanRxMessageHandler, ame_frame)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    
+
+    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping->is_permitted = true;
+
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
                                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
-    
+
     CanRxMessageHandler_ame_frame(&can_msg);
     
     EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
@@ -722,15 +723,16 @@ TEST(CanRxMessageHandler, ame_frame_with_node_id)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    
+
+    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping->is_permitted = true;
+
     // AME frame with specific Node ID in payload
     CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
                                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
-    
+
     CanRxMessageHandler_ame_frame(&can_msg);
     
     // Should respond with AMD for the matching node
@@ -775,11 +777,12 @@ TEST(CanRxMessageHandler, ame_frame_buffer_allocation_failure)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    
+
+    alias_mapping_t *mapping = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping->is_permitted = true;
+
     // Force buffer allocation to fail
     fail_buffer = true;
     
@@ -1072,12 +1075,14 @@ TEST(CanRxMessageHandler, ame_frame_broadcast)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
+
     // Register multiple aliases to test the loop
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    mapping2->is_permitted = true;
     
     // AME frame with NO payload (broadcast - tell me about ALL aliases)
     // This is the critical path that wasn't being tested!
@@ -1125,12 +1130,14 @@ TEST(CanRxMessageHandler, ame_frame_broadcast_buffer_fail)
 {
     _global_initialize();
     _global_reset_variables();
-    
+
     can_msg_t can_msg;
-    
+
     // Register multiple aliases
-    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
-    AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+    alias_mapping_t *mapping2 = AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+    mapping2->is_permitted = true;
     
     // Force buffer allocation failure
     fail_buffer = true;
@@ -1268,6 +1275,109 @@ TEST(CanRxMessageHandler, datagram_middle_frame_without_first_reject)
         OpenLcbBufferStore_free_buffer(reject_msg);
     }
     
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+/*******************************************************************************
+ * AME is_permitted TESTS - Standards Compliance (CanFrameTransferS §6.2.3)
+ ******************************************************************************/
+
+/**
+ * Test: Targeted AME ignored when node is in Inhibited state (is_permitted=false).
+ * Per CanFrameTransferS §6.2.3: "A node in Inhibited state shall not reply to
+ * an Alias Mapping Enquiry frame."
+ */
+TEST(CanRxMessageHandler, ame_targeted_inhibited_no_response)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register node but leave in Inhibited state (is_permitted defaults to false)
+    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // Targeted AME with matching Node ID
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 8,
+                                   0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Inhibited node shall NOT respond
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+/**
+ * Test: Global AME ignored when node is in Inhibited state (is_permitted=false).
+ * Per CanFrameTransferS §6.2.3: "A node in Inhibited state shall not reply to
+ * an Alias Mapping Enquiry frame."
+ */
+TEST(CanRxMessageHandler, ame_global_inhibited_no_response)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Register node but leave in Inhibited state
+    AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+
+    // Global AME (no payload)
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Inhibited node shall NOT respond
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 0);
+
+    _test_for_all_buffer_lists_empty();
+    _test_for_all_buffer_stores_empty();
+}
+
+/**
+ * Test: Global AME only responds for Permitted virtual nodes, not Inhibited ones.
+ * Two nodes registered: one Permitted, one Inhibited. Only Permitted responds.
+ */
+TEST(CanRxMessageHandler, ame_global_mixed_permitted_inhibited)
+{
+    _global_initialize();
+    _global_reset_variables();
+
+    can_msg_t can_msg;
+
+    // Node 1: Permitted
+    alias_mapping_t *mapping1 = AliasMappings_register(NODE_ALIAS_1, NODE_ID_1);
+    mapping1->is_permitted = true;
+
+    // Node 2: Inhibited (still logging in)
+    AliasMappings_register(NODE_ALIAS_2, NODE_ID_2);
+
+    // Global AME (no payload)
+    CanUtilities_load_can_message(&can_msg, 0x17020AAA, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0);
+
+    CanRxMessageHandler_ame_frame(&can_msg);
+
+    // Only the Permitted node should respond
+    EXPECT_EQ(CanBufferFifo_get_allocated_count(), 1);
+
+    can_msg_t *response = CanBufferFifo_pop();
+    EXPECT_NE(response, nullptr);
+    if (response)
+    {
+
+        // Verify the response is for NODE_ALIAS_1 (the permitted one)
+        uint16_t alias = response->identifier & 0xFFF;
+        EXPECT_EQ(alias, NODE_ALIAS_1);
+        CanBufferStore_free_buffer(response);
+
+    }
+
     _test_for_all_buffer_lists_empty();
     _test_for_all_buffer_stores_empty();
 }

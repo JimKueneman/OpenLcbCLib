@@ -857,13 +857,50 @@ TEST(ProtocolMessageNetwork, handle_initialization_complete)
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID + 1, 0);
     
     ProtocolMessageNetwork_handle_initialization_complete(&statemachine_info);
-    
+
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_FALSE(node1->state.duplicate_id_detected);
+}
+
+TEST(ProtocolMessageNetwork, handle_initialization_complete_duplicate)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->state.duplicate_id_detected = false;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_INITIALIZATION_COMPLETE);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID, 0);
+
+    ProtocolMessageNetwork_handle_initialization_complete(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PC_EVENT_REPORT);
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), EVENT_ID_DUPLICATE_NODE_DETECTED);
+    EXPECT_TRUE(node1->state.duplicate_id_detected);
 }
 
 // ============================================================================
 // TEST: Initialization Complete Simple
-// @details Tests initialization complete simple handler (no response expected)
+// @details Tests initialization complete simple handler with non-matching ID
 // @coverage ProtocolMessageNetwork_handle_initialization_complete_simple()
 // ============================================================================
 
@@ -896,8 +933,45 @@ TEST(ProtocolMessageNetwork, handle_initialization_complete_simple)
     OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID + 1, 0);
     
     ProtocolMessageNetwork_handle_initialization_complete_simple(&statemachine_info);
-    
+
     EXPECT_FALSE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_FALSE(node1->state.duplicate_id_detected);
+}
+
+TEST(ProtocolMessageNetwork, handle_initialization_complete_simple_duplicate)
+{
+    _reset_variables();
+    _global_initialize();
+
+    openlcb_node_t *node1 = OpenLcbNode_allocate(DEST_ID, &_node_parameters_main_node);
+    node1->alias = DEST_ALIAS;
+    node1->state.duplicate_id_detected = false;
+
+    openlcb_msg_t *openlcb_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    openlcb_msg_t *outgoing_msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+
+    ASSERT_NE(node1, nullptr);
+    ASSERT_NE(openlcb_msg, nullptr);
+    ASSERT_NE(outgoing_msg, nullptr);
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node1;
+    statemachine_info.incoming_msg_info.msg_ptr = openlcb_msg;
+    statemachine_info.incoming_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.msg_ptr = outgoing_msg;
+    statemachine_info.outgoing_msg_info.enumerate = false;
+    statemachine_info.outgoing_msg_info.valid = false;
+
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_INITIALIZATION_COMPLETE_SIMPLE);
+    openlcb_msg->payload_count = 6;
+    OpenLcbUtilities_copy_node_id_to_openlcb_payload(openlcb_msg, DEST_ID, 0);
+
+    ProtocolMessageNetwork_handle_initialization_complete_simple(&statemachine_info);
+
+    EXPECT_TRUE(statemachine_info.outgoing_msg_info.valid);
+    EXPECT_EQ(outgoing_msg->mti, MTI_PC_EVENT_REPORT);
+    EXPECT_EQ(OpenLcbUtilities_extract_event_id_from_openlcb_payload(outgoing_msg), EVENT_ID_DUPLICATE_NODE_DETECTED);
+    EXPECT_TRUE(node1->state.duplicate_id_detected);
 }
 
 // ============================================================================
@@ -970,7 +1044,7 @@ TEST(ProtocolMessageNetwork, handle_terminate_due_to_error)
     statemachine_info.outgoing_msg_info.valid = false;
 
     // Test terminate due to error
-    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TERMINATE_DO_TO_ERROR);
+    OpenLcbUtilities_load_openlcb_message(openlcb_msg, SOURCE_ALIAS, SOURCE_ID, DEST_ALIAS, DEST_ID, MTI_TERMINATE_DUE_TO_ERROR);
     openlcb_msg->payload_count = 6;
     OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, ERROR_PERMANENT_NOT_IMPLEMENTED, 0);
     OpenLcbUtilities_copy_word_to_openlcb_payload(openlcb_msg, 0x00, 2);

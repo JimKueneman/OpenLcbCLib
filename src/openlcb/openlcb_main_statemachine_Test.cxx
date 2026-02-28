@@ -2385,6 +2385,28 @@ TEST(OpenLcbMainStatemachine, process_verified_node_id)
     EXPECT_NE(called_function_ptr, nullptr);
 }
 
+TEST(OpenLcbMainStatemachine, process_verified_node_id_simple)
+{
+    _global_initialize();
+
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    called_function_ptr = nullptr;
+
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
+    EXPECT_NE(called_function_ptr, nullptr);
+}
+
 // ============================================================================
 // TEST: Message Network - Optional Interaction Rejected
 // ============================================================================
@@ -2423,7 +2445,7 @@ TEST(OpenLcbMainStatemachine, process_terminate_due_to_error)
     node->state.initialized = true;
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_TERMINATE_DO_TO_ERROR;
+    msg->mti = MTI_TERMINATE_DUE_TO_ERROR;
 
     openlcb_statemachine_info_t statemachine_info;
     statemachine_info.openlcb_node = node;
@@ -2900,7 +2922,27 @@ TEST(OpenLcbMainStatemachine, null_handler_verified_node_id)
 
     load_interaction_rejected_called = false;
     OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
-    
+
+    EXPECT_FALSE(load_interaction_rejected_called);
+}
+
+TEST(OpenLcbMainStatemachine, null_handler_verified_node_id_simple)
+{
+    _global_initialize_null_handlers();
+    openlcb_node_t *node = OpenLcbNode_allocate(0x060504030201, &_node_parameters_main_node);
+    node->state.initialized = true;
+
+    openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
+    msg->mti = MTI_VERIFIED_NODE_ID_SIMPLE;
+
+    openlcb_statemachine_info_t statemachine_info;
+    statemachine_info.openlcb_node = node;
+    statemachine_info.incoming_msg_info.msg_ptr = msg;
+    statemachine_info.outgoing_msg_info.msg_ptr = OpenLcbBufferStore_allocate_buffer(STREAM);
+
+    load_interaction_rejected_called = false;
+    OpenLcbMainStatemachine_process_main_statemachine(&statemachine_info);
+
     EXPECT_FALSE(load_interaction_rejected_called);
 }
 
@@ -2931,7 +2973,7 @@ TEST(OpenLcbMainStatemachine, null_handler_terminate_due_to_error)
     node->state.initialized = true;
 
     openlcb_msg_t *msg = OpenLcbBufferStore_allocate_buffer(BASIC);
-    msg->mti = MTI_TERMINATE_DO_TO_ERROR;
+    msg->mti = MTI_TERMINATE_DUE_TO_ERROR;
 
     openlcb_statemachine_info_t statemachine_info;
     statemachine_info.openlcb_node = node;

@@ -421,7 +421,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
         alias_mapping_t *alias_mapping = _interface->alias_mapping_find_mapping_by_node_id(CanUtilities_extract_can_payload_as_node_id(can_msg));
 
-        if (alias_mapping) {
+        if (alias_mapping && alias_mapping->is_permitted) {
 
             outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
 
@@ -445,7 +445,7 @@ void CanRxMessageHandler_ame_frame(can_msg_t* can_msg) {
 
     for (int i = 0; i < ALIAS_MAPPING_BUFFER_DEPTH; i++) {
 
-        if (alias_mapping_info->list[i].alias != 0x00) {
+        if (alias_mapping_info->list[i].alias != 0x00 && alias_mapping_info->list[i].is_permitted) {
 
             outgoing_can_msg = _interface->can_buffer_store_allocate_buffer();
 

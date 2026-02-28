@@ -50,7 +50,14 @@ extern "C" {
          * @param can_msg         Destination buffer.
          * @param identifier      29-bit CAN extended identifier.
          * @param payload_size    Number of valid payload bytes (0-8).
-         * @param byte1..byte8    Payload bytes in order.
+         * @param byte1           Payload byte 1.
+         * @param byte2           Payload byte 2.
+         * @param byte3           Payload byte 3.
+         * @param byte4           Payload byte 4.
+         * @param byte5           Payload byte 5.
+         * @param byte6           Payload byte 6.
+         * @param byte7           Payload byte 7.
+         * @param byte8           Payload byte 8.
          *
          * @warning NULL can_msg causes undefined behavior.
          */

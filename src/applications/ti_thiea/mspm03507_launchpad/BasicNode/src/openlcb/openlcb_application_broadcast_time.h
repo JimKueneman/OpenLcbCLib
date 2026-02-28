@@ -303,8 +303,8 @@ extern "C" {
          *
          * @return true when all six messages have been queued, false if more calls are needed.
          *
-         * @warning Uses a static state variable — only one query reply may be in progress at
-         *          a time across the entire application.
+         * @note State is stored per-clock in broadcast_clock_t.send_query_reply_state,
+         *       allowing concurrent query replies for different clocks.
          */
     extern bool OpenLcbApplicationBroadcastTime_send_query_reply(openlcb_node_t *openlcb_node, event_id_t clock_id, uint8_t next_hour, uint8_t next_minute);
 

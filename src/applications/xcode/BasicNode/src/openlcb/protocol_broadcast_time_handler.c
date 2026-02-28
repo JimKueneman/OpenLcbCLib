@@ -75,6 +75,7 @@ static void _handle_report_time(openlcb_node_t *node, broadcast_clock_state_t *c
         clock->time.hour = hour;
         clock->time.minute = minute;
         clock->time.valid = 1;
+        clock->ms_accumulator = 0;
 
         if (_interface && _interface->on_time_received) {
 
@@ -140,6 +141,7 @@ static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *c
 
         clock->rate.rate = rate;
         clock->rate.valid = 1;
+        clock->ms_accumulator = 0;
 
         if (_interface && _interface->on_rate_received) {
 
@@ -156,6 +158,7 @@ static void _handle_report_rate(openlcb_node_t *node, broadcast_clock_state_t *c
 static void _handle_start(openlcb_node_t *node, broadcast_clock_state_t *clock) {
 
     clock->is_running = true;
+    clock->ms_accumulator = 0;
 
     if (_interface && _interface->on_clock_started) {
 
@@ -260,19 +263,35 @@ void ProtocolBroadcastTime_handle_time_event(openlcb_statemachine_info_t *statem
             break;
 
         case BROADCAST_TIME_EVENT_SET_TIME:
-            _handle_report_time(node, clock, event_id);
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                _handle_report_time(node, clock, event_id);
+
+            }
             break;
 
         case BROADCAST_TIME_EVENT_SET_DATE:
-            _handle_report_date(node, clock, event_id);
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                _handle_report_date(node, clock, event_id);
+
+            }
             break;
 
         case BROADCAST_TIME_EVENT_SET_YEAR:
-            _handle_report_year(node, clock, event_id);
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                _handle_report_year(node, clock, event_id);
+
+            }
             break;
 
         case BROADCAST_TIME_EVENT_SET_RATE:
-            _handle_report_rate(node, clock, event_id);
+            if (OpenLcbApplicationBroadcastTime_is_producer(clock_id)) {
+
+                _handle_report_rate(node, clock, event_id);
+
+            }
             break;
 
         case BROADCAST_TIME_EVENT_START:

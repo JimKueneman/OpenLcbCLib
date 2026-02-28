@@ -114,15 +114,31 @@ static void _load_verified_node_id(openlcb_statemachine_info_t *statemachine_inf
 
 }
 
-    /** @brief Handle Initialization Complete (full node).  No automatic response. */
+    /** @brief Handle Initialization Complete (full node).  Check for duplicate Node ID. */
 void ProtocolMessageNetwork_handle_initialization_complete(openlcb_statemachine_info_t *statemachine_info) {
+
+    if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
+
+        _load_duplicate_node_id(statemachine_info);
+
+        return;
+
+    }
 
     statemachine_info->outgoing_msg_info.valid = false;
 
 }
 
-    /** @brief Handle Initialization Complete Simple.  No automatic response. */
+    /** @brief Handle Initialization Complete Simple.  Check for duplicate Node ID. */
 void ProtocolMessageNetwork_handle_initialization_complete_simple(openlcb_statemachine_info_t *statemachine_info) {
+
+    if (OpenLcbUtilities_extract_node_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr, 0) == statemachine_info->openlcb_node->id) {
+
+        _load_duplicate_node_id(statemachine_info);
+
+        return;
+
+    }
 
     statemachine_info->outgoing_msg_info.valid = false;
 

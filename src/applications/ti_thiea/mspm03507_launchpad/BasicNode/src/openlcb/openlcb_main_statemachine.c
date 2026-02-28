@@ -355,7 +355,7 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             break;
 
         case MTI_VERIFIED_NODE_ID:
-
+        case MTI_VERIFIED_NODE_ID_SIMPLE:
 
             if (_interface->message_network_verified_node_id) {
 
@@ -375,7 +375,7 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             break;
 
-        case MTI_TERMINATE_DO_TO_ERROR:
+        case MTI_TERMINATE_DUE_TO_ERROR:
 
             if (_interface->message_network_terminate_due_to_error) {
 
@@ -445,7 +445,22 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
 
             break;
 
-        case MTI_PRODUCER_IDENTIFY:
+        case MTI_PRODUCER_IDENTIFY: {
+
+            event_id_t producer_event_id = OpenLcbUtilities_extract_event_id_from_openlcb_payload(statemachine_info->incoming_msg_info.msg_ptr);
+
+            // Train Search intercept -- check ALL train nodes
+            if (_interface->train_search_event_handler && statemachine_info->openlcb_node->train_state) {
+
+                if (OpenLcbUtilities_is_train_search_event(producer_event_id)) {
+
+                    _interface->train_search_event_handler(statemachine_info, producer_event_id);
+
+                    break;
+
+                }
+
+            }
 
             if (_interface->event_transport_producer_identify) {
 
@@ -454,6 +469,8 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
             }
 
             break;
+
+        }
 
         case MTI_PRODUCER_RANGE_IDENTIFIED:
 
@@ -561,19 +578,6 @@ void OpenLcbMainStatemachine_process_main_statemachine(openlcb_statemachine_info
                     break;
 
                 }
-            }
-
-            // Train Search intercept -- check ALL train nodes (not just index 0)
-            if (_interface->train_search_event_handler && statemachine_info->openlcb_node->train_state) {
-
-                if (OpenLcbUtilities_is_train_search_event(event_id)) {
-
-                    _interface->train_search_event_handler(statemachine_info, event_id);
-
-                    break;
-
-                }
-
             }
 
             // Global Emergency event intercept -- check ALL train nodes

@@ -923,17 +923,20 @@ TEST(BroadcastTimeHandler, handle_report_time)
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    cs->ms_accumulator = 50000;  // Pre-set to non-zero to verify reset
+
     event_id_t event_id = OpenLcbUtilities_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 14, 30, false);
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_time_callback_called);
     EXPECT_EQ(cs->time.hour, 14);
     EXPECT_EQ(cs->time.minute, 30);
     EXPECT_EQ(cs->time.valid, 1);
+    EXPECT_EQ(cs->ms_accumulator, 0u);
 
 }
 
@@ -1018,16 +1021,19 @@ TEST(BroadcastTimeHandler, handle_report_rate)
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
 
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    cs->ms_accumulator = 50000;  // Pre-set to non-zero to verify reset
+
     event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0010, false);
 
     ProtocolBroadcastTime_handle_time_event(&info, event_id);
 
-    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
-    ASSERT_NE(cs, nullptr);
     EXPECT_TRUE(g_rate_callback_called);
     EXPECT_EQ(cs->rate.rate, 0x0010);
     EXPECT_EQ(cs->rate.valid, 1);
+    EXPECT_EQ(cs->ms_accumulator, 0u);
 
 }
 
@@ -1045,6 +1051,7 @@ TEST(BroadcastTimeHandler, handle_start)
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     ASSERT_NE(cs, nullptr);
     cs->is_running = false;
+    cs->ms_accumulator = 50000;  // Pre-set to non-zero to verify reset
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
@@ -1060,6 +1067,7 @@ TEST(BroadcastTimeHandler, handle_start)
 
     EXPECT_TRUE(g_started_callback_called);
     EXPECT_TRUE(cs->is_running);
+    EXPECT_EQ(cs->ms_accumulator, 0u);
 
 }
 
@@ -1170,7 +1178,7 @@ TEST(BroadcastTimeHandler, null_statemachine_info)
 
 }
 
-TEST(BroadcastTimeHandler, set_time_updates_state)
+TEST(BroadcastTimeHandler, set_time_ignored_by_consumer)
 {
 
     _reset_callback_flags();
@@ -1188,7 +1196,7 @@ TEST(BroadcastTimeHandler, set_time_updates_state)
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
 
-    // Set Time should also update clock state (consumers treat Set same as Report)
+    // Consumer shall ignore Set Time events (only producers handle Set)
     event_id_t event_id = OpenLcbUtilities_create_time_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, true);
 
@@ -1196,9 +1204,9 @@ TEST(BroadcastTimeHandler, set_time_updates_state)
 
     broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
     ASSERT_NE(cs, nullptr);
-    EXPECT_TRUE(g_time_callback_called);
-    EXPECT_EQ(cs->time.hour, 8);
-    EXPECT_EQ(cs->time.minute, 45);
+    EXPECT_FALSE(g_time_callback_called);
+    EXPECT_EQ(cs->time.hour, 0);
+    EXPECT_EQ(cs->time.minute, 0);
 
 }
 
@@ -1226,7 +1234,7 @@ TEST(BroadcastTimeHandler, null_node_pointer)
 
 }
 
-TEST(BroadcastTimeHandler, set_date_updates_state)
+TEST(BroadcastTimeHandler, set_date_ignored_by_consumer)
 {
 
     _reset_callback_flags();
@@ -1244,6 +1252,133 @@ TEST(BroadcastTimeHandler, set_date_updates_state)
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
 
+    // Consumer shall ignore Set Date events
+    event_id_t event_id = OpenLcbUtilities_create_date_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 7, 4, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_FALSE(g_date_callback_called);
+    EXPECT_EQ(cs->date.month, 0);
+    EXPECT_EQ(cs->date.day, 0);
+
+}
+
+TEST(BroadcastTimeHandler, set_year_ignored_by_consumer)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Consumer shall ignore Set Year events
+    event_id_t event_id = OpenLcbUtilities_create_year_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_FALSE(g_year_callback_called);
+    EXPECT_EQ(cs->year.year, 0);
+
+}
+
+TEST(BroadcastTimeHandler, set_rate_ignored_by_consumer)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Consumer shall ignore Set Rate events
+    event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0028, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_FALSE(g_rate_callback_called);
+    EXPECT_EQ(cs->rate.rate, 0);
+
+}
+
+TEST(BroadcastTimeHandler, set_time_updates_producer_state)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Producer handles Set Time from consumers
+    event_id_t event_id = OpenLcbUtilities_create_time_event_id(
+        BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 8, 45, true);
+
+    ProtocolBroadcastTime_handle_time_event(&info, event_id);
+
+    broadcast_clock_state_t *cs = OpenLcbApplicationBroadcastTime_get_clock(BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    ASSERT_NE(cs, nullptr);
+    EXPECT_TRUE(g_time_callback_called);
+    EXPECT_EQ(cs->time.hour, 8);
+    EXPECT_EQ(cs->time.minute, 45);
+
+}
+
+TEST(BroadcastTimeHandler, set_date_updates_producer_state)
+{
+
+    _reset_callback_flags();
+
+    OpenLcbBufferStore_initialize();
+
+    ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+
+    openlcb_node_t node;
+    memset(&node, 0, sizeof(openlcb_node_t));
+
+    openlcb_statemachine_info_t info;
+    memset(&info, 0, sizeof(openlcb_statemachine_info_t));
+    info.openlcb_node = &node;
+
+    // Producer handles Set Date from consumers
     event_id_t event_id = OpenLcbUtilities_create_date_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 7, 4, true);
 
@@ -1258,7 +1393,7 @@ TEST(BroadcastTimeHandler, set_date_updates_state)
 
 }
 
-TEST(BroadcastTimeHandler, set_year_updates_state)
+TEST(BroadcastTimeHandler, set_year_updates_producer_state)
 {
 
     _reset_callback_flags();
@@ -1267,7 +1402,7 @@ TEST(BroadcastTimeHandler, set_year_updates_state)
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
@@ -1276,6 +1411,7 @@ TEST(BroadcastTimeHandler, set_year_updates_state)
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
 
+    // Producer handles Set Year from consumers
     event_id_t event_id = OpenLcbUtilities_create_year_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 2026, true);
 
@@ -1289,7 +1425,7 @@ TEST(BroadcastTimeHandler, set_year_updates_state)
 
 }
 
-TEST(BroadcastTimeHandler, set_rate_updates_state)
+TEST(BroadcastTimeHandler, set_rate_updates_producer_state)
 {
 
     _reset_callback_flags();
@@ -1298,7 +1434,7 @@ TEST(BroadcastTimeHandler, set_rate_updates_state)
 
     ProtocolBroadcastTime_initialize(&_test_broadcast_time_interface);
     OpenLcbApplicationBroadcastTime_initialize(&_test_app_broadcast_time_interface);
-    OpenLcbApplicationBroadcastTime_setup_consumer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
+    OpenLcbApplicationBroadcastTime_setup_producer(NULL, BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK);
 
     openlcb_node_t node;
     memset(&node, 0, sizeof(openlcb_node_t));
@@ -1307,6 +1443,7 @@ TEST(BroadcastTimeHandler, set_rate_updates_state)
     memset(&info, 0, sizeof(openlcb_statemachine_info_t));
     info.openlcb_node = &node;
 
+    // Producer handles Set Rate from consumers
     event_id_t event_id = OpenLcbUtilities_create_rate_event_id(
         BROADCAST_TIME_ID_DEFAULT_FAST_CLOCK, 0x0028, true);
 

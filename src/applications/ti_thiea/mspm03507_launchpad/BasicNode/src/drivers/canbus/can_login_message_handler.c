@@ -144,6 +144,13 @@ void CanLoginMessageHandler_state_generate_alias(can_statemachine_info_t *can_st
 
     can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
 
+    while (can_statemachine_info->openlcb_node->alias == 0) {
+
+        can_statemachine_info->openlcb_node->seed = _generate_seed(can_statemachine_info->openlcb_node->seed);
+        can_statemachine_info->openlcb_node->alias = _generate_alias(can_statemachine_info->openlcb_node->seed);
+
+    }
+
     _interface->alias_mapping_register(can_statemachine_info->openlcb_node->alias, can_statemachine_info->openlcb_node->id);
 
     if (_interface->on_alias_change) {
